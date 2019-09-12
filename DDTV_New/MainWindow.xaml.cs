@@ -46,8 +46,7 @@ namespace DDTV_New
             工具层.Visibility = Visibility.Collapsed;
             软件启动配置初始化();
             icon();
-            MMPU.弹窗.IcoUpdate += A_IcoUpdate;
-            //公告加载现场
+            MMPU.弹窗.IcoUpdate += A_IcoUpdate;        
         }
 
         public void 软件启动配置初始化()

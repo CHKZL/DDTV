@@ -46,14 +46,37 @@ DDTV1.0的精神续作.jpg
 ### 在更新软件的时候请备份好RoomListConfig.json文件，该文件是监控房间配置文件
 
 ## 界面
-主界面DD中：
+主界面
 
-![主界面](https://github.com/CHKZL/DDTV/blob/master/src/5.png)
+![主界面](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E9%A6%96%E9%A1%B5.png)
 
+单推列表界面：
 
-开播提示：
+![单推列表](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%8D%95%E6%8E%A8%E7%9B%91%E6%8E%A7.png)
 
-![开播提示](https://github.com/CHKZL/DDTV/blob/master/src/4.png)
+DDNA列表(各平台当前直播情况):
+
+![DDNA列表](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/DDNA%E5%88%97%E8%A1%A8(%E5%90%84%E5%B9%B3%E5%8F%B0%E5%BD%93%E5%89%8D%E7%9B%B4%E6%92%AD%E6%83%85%E5%86%B5).png)
+
+下载界面:
+
+![下载界面](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E4%B8%8B%E8%BD%BD%E7%95%8C%E9%9D%A2.png)
+
+直播界面:
+
+![直播界面](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E6%92%AD%E6%94%BE%E5%87%86%E5%A4%87%E7%95%8C%E9%9D%A2.png)
+
+弹幕功能:
+
+![弹幕功能](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E6%92%AD%E6%94%BE%E5%BC%B9%E5%B9%95%E7%95%8C%E9%9D%A2.png)
+
+干净的播放窗口:
+
+![干净播放窗口](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%B9%B2%E5%87%80%E6%92%AD%E6%94%BE%E7%95%8C%E9%9D%A2.png)
+
+播放卡顿重连:
+
+![播放重连](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%8D%A1%E9%A1%BF%E9%87%8D%E8%BF%9E.png)
 
 ## 兼容性
 需要.net4.7.1环境  
