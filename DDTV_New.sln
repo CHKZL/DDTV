@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_New", "DDTV_New\DDTV_New.csproj", "{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_TCP服务端", "DDTV_TCP服务端\DDTV_TCP服务端.csproj", "{57E5E800-6355-489F-9C1C-B9D10F1570AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auxiliary", "Auxiliary\Auxiliary.csproj", "{B9797A7B-D297-4BBA-B54F-13C366CDDE49}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "播放器", "播放器\播放器.csproj", "{6403D03F-E6B4-4B9F-A8AE-E0D8F674B8B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayW", "PlayW\PlayW.csproj", "{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "启动器2.0", "启动器2.0\启动器2.0.csproj", "{22D00542-4E2F-443D-BC26-E0E1DC3ACACC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "demo", "demo\demo.csproj", "{D9D8D5FB-93D8-45DB-8406-FA88DD7FE4D5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57E5E800-6355-489F-9C1C-B9D10F1570AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57E5E800-6355-489F-9C1C-B9D10F1570AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57E5E800-6355-489F-9C1C-B9D10F1570AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57E5E800-6355-489F-9C1C-B9D10F1570AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6403D03F-E6B4-4B9F-A8AE-E0D8F674B8B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6403D03F-E6B4-4B9F-A8AE-E0D8F674B8B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6403D03F-E6B4-4B9F-A8AE-E0D8F674B8B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6403D03F-E6B4-4B9F-A8AE-E0D8F674B8B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22D00542-4E2F-443D-BC26-E0E1DC3ACACC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22D00542-4E2F-443D-BC26-E0E1DC3ACACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22D00542-4E2F-443D-BC26-E0E1DC3ACACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22D00542-4E2F-443D-BC26-E0E1DC3ACACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9D8D5FB-93D8-45DB-8406-FA88DD7FE4D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9D8D5FB-93D8-45DB-8406-FA88DD7FE4D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9D8D5FB-93D8-45DB-8406-FA88DD7FE4D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9D8D5FB-93D8-45DB-8406-FA88DD7FE4D5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {31C9C883-4433-4FB5-A070-860CCCB83088}
+	EndGlobalSection
+EndGlobal

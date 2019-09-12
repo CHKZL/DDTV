@@ -1,0 +1,52 @@
+﻿<Window x:Class="PlayW.MainWindow"
+        xmlns:vlc="clr-namespace:Vlc.DotNet.Wpf;assembly=Vlc.DotNet.Wpf"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PlayW"
+        mc:Ignorable="d"
+        Title="播放器" Height="450" Width="800" Loaded="Window_Loaded"
+         KeyDown="MainWindows_Keydown" WindowStyle="None" MouseWheel="鼠标滚轮事件">
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+        <vlc:VlcControl x:Name="VlcControl" MouseLeftButtonDown="VlcControl_MouseLeftButtonDown" >
+
+
+        </vlc:VlcControl>
+        <CheckBox x:Name="首页焦点" Margin="-55,0,830,424"/>
+        <Grid x:Name="弹幕框" Visibility="Collapsed">
+            <TextBox x:Name="弹幕" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" Foreground="#FFFFAE00" FontSize="16" IsEnabled="False" SelectionOpacity="0.8" FontWeight="Bold"/>
+        </Grid>
+        <Grid x:Name="字幕框" VerticalAlignment="Bottom" Height="78" Visibility="Collapsed">
+            <TextBox x:Name="字幕" Text="" FontSize="20" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" HorizontalAlignment="Center" VerticalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="Black" IsEnabled="False" FontWeight="Bold"/>
+
+        </Grid>
+
+        <Grid x:Name="设置框"  >
+
+            <Grid x:Name="设置框1" Background="#B25B71FF" Height="38" VerticalAlignment="Bottom"  >
+                <Button x:Name="修改字幕颜色按钮" Content="字幕颜色" Margin="402,0,0,6" Click="修改字幕颜色按钮点击事件" HorizontalAlignment="Left" Width="63" Height="25" VerticalAlignment="Bottom" />
+                <Button x:Name="修改弹幕颜色按钮" Content="弹幕颜色" Margin="523,0,0,6" Click="修改弹幕颜色按钮点击事件" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="63" />
+                <CheckBox x:Name="置顶选择" Margin="148,0,0,-1" Content="锁定顶层" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="166" Height="28" VerticalAlignment="Bottom" Click="置顶选择_Checked" />
+                <CheckBox x:Name="字幕开关" Margin="230,0,0,-1" Content="弹幕字幕【路人翻译】" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="175" Height="28" VerticalAlignment="Bottom" Click="字幕开关_Click" />
+                <CheckBox x:Name="弹幕开关" Margin="465,0,0,-1" Content="弹幕" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="65" Height="28" VerticalAlignment="Bottom" Click="弹幕开关_Click" />
+                <Slider x:Name="音量" Margin="-2,0,0,10" Height="19" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="146" Maximum="100" SmallChange="1" MouseMove="音量_MouseMove" Value="100" />
+                <Image Source="play_fill.png"  Stretch="Fill" MouseLeftButtonDown="pause_Click" Height="40" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="40" OpacityMask="White" Visibility="Collapsed"/>
+            </Grid>
+            <Label Content="显示/隐藏设置窗口→" Margin="0,0,30,3" Foreground="White" FontSize="16" HorizontalAlignment="Right" Width="162" Height="31" VerticalAlignment="Bottom"/>
+            <Label x:Name="非win10提示"  Content="检测到非WIN10系统,禁用弹幕/字幕功能" Margin="0,0,197,2" Foreground="White" FontSize="16" HorizontalAlignment="Right" Width="320" Height="31" VerticalAlignment="Bottom"/>
+        </Grid>
+
+
+        <Grid x:Name="提示框" Background="#B2424242" >
+            <Label Content="加载中........." VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
+            <Label x:Name="提示文字" Content="选中窗口回车切换全屏  鼠标滚轮和键盘↑↓调节音量  右下角设置按钮" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="#FFCDCDCD" FontSize="25" Margin="-4,10,-4,-72" />
+        </Grid>
+        <Image x:Name="播放设置按钮" Source="decoration_fill.png" Stretch="Fill" Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Bottom" MouseLeftButtonDown="播放设置按钮点击事件" OpacityMask="Black"/>
+        <Grid x:Name="关闭框" Visibility="Collapsed">
+            <Label Content="关闭播放窗口→" Margin="0,6,38,0" Foreground="White" FontSize="15" HorizontalAlignment="Right" Width="120" Height="28" VerticalAlignment="Top" Background="#FF838383"/>
+            <Image Margin="0,0,-2,0" Source="close.png" Stretch="Fill" Width="40" HorizontalAlignment="Right" MouseLeftButtonDown="Image_MouseLeftButtonDown_1" RenderTransformOrigin="0.65,-0.317" Height="40" VerticalAlignment="Top"/>
+        </Grid>
+
+    </Grid>
+</Window>
