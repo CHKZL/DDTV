@@ -854,35 +854,36 @@ namespace DDTV_New
                 System.Windows.MessageBox.Show("未选择");
                 return;
             }
-            switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
-            {
-                case "bilibili":
-                    if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
-                    {
-                        System.Windows.MessageBox.Show("该房间当前未直播");
+            new Thread(new ThreadStart(delegate {
+                switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
+                {
+                    case "bilibili":
+                        if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
+                        {
+                            System.Windows.MessageBox.Show("该房间当前未直播");
+                            return;
+                        }
+                        break;
+                    default:
+                        System.Windows.MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                         return;
-                    }
-                    break;
-                default:
-                    System.Windows.MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
+                }
+                string GUID = Guid.NewGuid().ToString();
+                string 标题 = bilibili.根据房间号获取房间信息.获取标题(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                string 下载地址 = string.Empty;
+                try
+                {
+                    下载地址 = bilibili.根据房间号获取房间信息.下载地址(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                }
+                catch (Exception)
+                {
+                    System.Windows.MessageBox.Show("获取下载地址失败");
                     return;
-            }
-            string GUID = Guid.NewGuid().ToString();
-            string 标题 = bilibili.根据房间号获取房间信息.获取标题(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
-            string 下载地址 = string.Empty;
-            try
-            {
-                下载地址 = bilibili.根据房间号获取房间信息.下载地址(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
-            }
-            catch (Exception)
-            {
-                System.Windows.MessageBox.Show("获取下载地址失败");
-                return;
-            }
-            Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true);
+                }
+                Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true);
 
-            System.Windows.MessageBox.Show("下载任务添加完成");
-
+                System.Windows.MessageBox.Show("下载任务添加完成");
+            })).Start();
         }
 
         private void 显示下载队列按钮点击事件(object sender, RoutedEventArgs e)

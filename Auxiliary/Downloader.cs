@@ -125,7 +125,7 @@ namespace Auxiliary
                 备注 = 备注
             };
             MMPU.DownList.Add(下载对象);
-            下载对象.Start(标题);
+            下载对象.Start(备注);
             
             return 下载对象;
         }
