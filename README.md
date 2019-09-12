@@ -1,10 +1,10 @@
 # DDTV2
 
 DDTV1.0的精神续作.jpg  
-使用WPF完全重写了，修改了很多在1.0不科学的地方。  
-
-(代码中大量<font color=#FF0000 size=5 face="黑体">中文</font>变量\函数，<font color=#FF0000 size=5 face="黑体">易#</font>警告，美术生出身，请各位大佬轻拍 ~~(后仰~~
-
+使用WPF完全重写了，修改了很多在1.0不科学的地方。    
+***
+(代码中大量 **中文** 变量\函数 **易#** 警告，美术生出身，请各位大佬轻拍 ~~(后仰~~
+***
 ## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？
 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击图片跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
 [![](https://user-images.githubusercontent.com/9378097/54915191-8e3f0f80-4f31-11e9-8bbb-b4f3fb0ead6b.png)](https://github.com/CHKZL/DDTV2/releases/latest)  
