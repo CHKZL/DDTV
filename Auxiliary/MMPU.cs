@@ -22,7 +22,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = MMPU.getFiles("Livefile");
         public static int 直播更新时间 = int.Parse(MMPU.getFiles("RoomTime"));
         public static string 下载储存目录 = MMPU.getFiles("file");
-        public static string 版本号 = "2.0.1.3";
+        public static string 版本号 = "2.0.1.4";
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量= int.Parse(MMPU.getFiles("DefaultVolume"));
         public static int 缩小功能 = int.Parse(MMPU.getFiles("Zoom"));

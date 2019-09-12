@@ -118,61 +118,99 @@ namespace DDTV_New
                 }
                 新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
                 new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
-              
-                    RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
-                    RoomBox RB = new RoomBox();
-                    RB.data = new List<RoomCadr>();
-                    if(rlc.data!=null)
-                    {
-                        foreach (var item in rlc.data)
-                        {
-                            RB.data.Add(item);
-                            if (RoomInit.根据唯一码获取直播状态(item.RoomNumber))
-                            {
-                                RB.data[RB.data.Count() - 1].LiveStatus = false;
-                            }
-                        }
-                    }
-                    RB.data.Add(new RoomCadr { Name = 中文名称.Text, RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = true, status = false, VideoStatus = false, OfficialName = 官方名称.Text, LiveStatus = RoomInit.根据唯一码获取直播状态(GUID) });
-                    string JOO = JsonConvert.SerializeObject(RB);
-                    MMPU.储存文本(JOO, RoomConfigFile);
-                    InitializeRoomList();
-                    //更新房间列表(平台.SelectedItem.ToString(), 唯一码.Text,1);
-                    //MessageBox.Show("添加成功");
-                
-            }
-            else if(this.Title=="修改单推属性")
-            {
-                
-                var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+
+                RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox();
                 RB.data = new List<RoomCadr>();
-                int rlclen = 房间主表.Count()-1;
-                for (int i =0;i< rlclen; i++)
+                if (rlc.data != null)
                 {
-                    if(房间主表[i].唯一码==GUID)
+                    foreach (var item in rlc.data)
                     {
-                        房间主表.Remove(房间主表[i]);
-                        i--;
-                        RB.data.Add(new RoomCadr { Name = 中文名称.Text, RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = false, status = false, VideoStatus = false, OfficialName = 官方名称.Text,LiveStatus= RoomInit.根据唯一码获取直播状态(GUID) });
-                    }
-                    else
-                    {
-                        RB.data.Add(new RoomCadr(){ LiveStatus= 房间主表[i] .直播状态,Name= 房间主表[i] .名称,OfficialName= 房间主表[i] .原名,RoomNumber= 房间主表[i] .唯一码,VideoStatus= 房间主表[i] .是否录制,Types= 房间主表[i] .平台, RemindStatus= 房间主表[i] .是否提醒,status=false });
-                        if (RoomInit.根据唯一码获取直播状态(房间主表[i].唯一码))
+                        RB.data.Add(item);
+                        if (RoomInit.根据唯一码获取直播状态(item.RoomNumber))
                         {
                             RB.data[RB.data.Count() - 1].LiveStatus = true;
                         }
                     }
                 }
-                新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
-
-                new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
+                RB.data.Add(new RoomCadr { Name = 中文名称.Text,RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = true, status = false, VideoStatus = false, OfficialName = 官方名称.Text, LiveStatus = RoomInit.根据唯一码获取直播状态(GUID) });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 InitializeRoomList();
-                //MessageBox.Show("修改成功");
-                
+                //更新房间列表(平台.SelectedItem.ToString(), 唯一码.Text,1);
+                //MessageBox.Show("添加成功");
+
+            }
+            else if(this.Title=="修改单推属性")
+            {
+                新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
+                new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
+
+                RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+                RoomBox RB = new RoomBox();
+                RB.data = new List<RoomCadr>();
+                if (rlc.data != null)
+                {
+                    foreach (var item in rlc.data)
+                    {
+                        if (item.RoomNumber == GUID)
+                        {
+                            RB.data.Add(item);
+                            RB.data[RB.data.Count() - 1].Name = 中文名称.Text;
+                            RB.data[RB.data.Count() - 1].OfficialName = 官方名称.Text;
+                            RB.data[RB.data.Count() - 1].Types = 平台.SelectedItem.ToString();
+                        }
+                        else
+                        {
+                            RB.data.Add(item);
+                            if (RoomInit.根据唯一码获取直播状态(item.RoomNumber))
+                            {
+                                RB.data[RB.data.Count() - 1].LiveStatus = true;
+                            }
+                        }
+                    }
+                }
+               
+                string JOO = JsonConvert.SerializeObject(RB);
+                MMPU.储存文本(JOO, RoomConfigFile);
+                InitializeRoomList();
+                //var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+                //RoomBox RB = new RoomBox();
+                //RB.data = new List<RoomCadr>();
+                //int rlclen = 房间主表.Count()-1;
+                //int 覆盖的编号 = 0;
+                //for (int i =0;i< rlclen; i++)
+                //{
+                //    if(房间主表[i].唯一码==GUID)
+                //    {
+                //        覆盖的编号 = i;
+                //        //房间主表.Remove(房间主表[i]);
+                //        //i--;
+                //        RB.data.Add(new RoomCadr { Name = 中文名称.Text, RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = false, status = false, VideoStatus = false, OfficialName = 官方名称.Text,LiveStatus= RoomInit.根据唯一码获取直播状态(GUID) });
+                //    }
+                //    else
+                //    {
+                //        RB.data.Add(new RoomCadr(){ LiveStatus= 房间主表[i] .直播状态,Name= 房间主表[i] .名称,OfficialName= 房间主表[i] .原名,RoomNumber= 房间主表[i] .唯一码,VideoStatus= 房间主表[i] .是否录制,Types= 房间主表[i] .平台, RemindStatus= 房间主表[i] .是否提醒,status=false });
+                //        if (RoomInit.根据唯一码获取直播状态(房间主表[i].唯一码))
+                //        {
+                //            RB.data[RB.data.Count() - 1].LiveStatus = true;
+                //        }
+                //    }
+                //}
+                //房间主表.Clear();
+                //foreach (var item in RB.data)
+                //{
+                //    房间主表.Add(new RL { 名称=item.Name,原名=item.OfficialName,唯一码=item.RoomNumber,平台=item.Types,是否录制=item.VideoStatus,是否提醒=item.RemindStatus,直播状态=item.LiveStatus});
+                //}
+
+                //新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
+
+                //new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
+                //string JOO = JsonConvert.SerializeObject(RB);
+                //MMPU.储存文本(JOO, RoomConfigFile);
+                //InitializeRoomList();
+                ////MessageBox.Show("修改成功");
+
             }
             this.Close();
         }

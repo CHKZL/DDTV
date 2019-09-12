@@ -148,7 +148,15 @@ namespace Auxiliary
                 }
                 catch (Exception)
                 {
-                    return false;
+                    try
+                    {
+                        roomHtml = wc.DownloadData(roomWebPageUrl);
+                    }
+                    catch (Exception)
+                    {
+                        return false;
+                    }
+                 
                 }
 
                 //解析返回结果
@@ -160,7 +168,18 @@ namespace Auxiliary
                 }
                 catch (Exception)
                 {
-                    return false;
+                    try
+                    {
+                        var roomJson = Encoding.UTF8.GetString(roomHtml);
+                        var result = JObject.Parse(roomJson);
+                        return result["data"]["live_status"].ToString() == "1" ? true : false;
+                    }
+                    catch (Exception)
+                    {
+
+                        return false;
+                    }
+                  
                 }
             }
 

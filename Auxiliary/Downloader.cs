@@ -141,18 +141,19 @@ namespace Auxiliary
        // public event EventHandler<EventArgs> DownOk;
         private void 下载完成事件(object sender, AsyncCompletedEventArgs e)
         {
-            if (e.Cancelled == false)
-            {
-                DownIofo.备注 = "下载完成";
-                DownIofo.下载状态 = false;
-            }
-            else if (e.Error.Message.Contains("请求被中止"))
+           
+            if (e.Error.Message.Contains("请求被中止"))
             {              
                 DownIofo.备注 = "用户取消，停止下载";   
                 if(!DownIofo.播放状态&&DownIofo.是否是播放任务)
                 {
                     DownIofo.备注 = "播放窗口关闭";
                 }
+            }
+            else if (e.Cancelled == false&& !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号))
+            {
+                DownIofo.备注 = "直播停止，下载完成下载完成";
+                DownIofo.下载状态 = true;
             }
             else
             {
