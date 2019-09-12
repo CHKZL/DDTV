@@ -38,11 +38,12 @@ DDTV1.0的精神续作.jpg
 ~~暂时还没想到其他的需求，欢迎提供~~
 
 ## 关于监控列表
-根目录的RoomListConfig.json件是监控房间配置文件，可以复制覆盖分享
+因为我自己平时也在用，所以会默认有一些，如果不需要，选择过后点击删除就行。  
+或者把软件执行文件根目录中的RoomListConfig.json文件删除即可。  
 
-### 在更新软件的时候请备份好RoomListConfig.json文件，防止被清空(
-### 在更新软件的时候请备份好RoomListConfig.json文件，防止被清空(
-### 在更新软件的时候请备份好RoomListConfig.json文件，防止被清空(
+### 在更新软件的时候请备份好RoomListConfig.json文件，该文件是监控房间配置文件
+### 在更新软件的时候请备份好RoomListConfig.json文件，该文件是监控房间配置文件
+### 在更新软件的时候请备份好RoomListConfig.json文件，该文件是监控房间配置文件
 
 ## 界面
 主界面DD中：
@@ -55,8 +56,8 @@ DDTV1.0的精神续作.jpg
 ![开播提示](https://github.com/CHKZL/DDTV/blob/master/src/4.png)
 
 ## 兼容性
-需要.net4.7.2环境  
-弹幕\字幕相关功能需要WIN10支持，在WIN10以外如WIN7系统下打开默认禁用隐藏弹幕\字幕相关功能
+需要.net4.7.1环境  
+如果桌面缩放布局比率不是100%，打开弹幕层可能会出现弹幕显示位置和大小错位的问题。
 
 ## FA♂Q
 有啥问题想到再写(
