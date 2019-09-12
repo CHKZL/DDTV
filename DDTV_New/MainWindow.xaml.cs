@@ -420,10 +420,16 @@ namespace DDTV_New
             {
                 new Thread(new ThreadStart(delegate
                 {
-                    FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
-                    foreach (var item in files)
+                    try
                     {
-                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name);
+                        FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
+                        foreach (var item in files)
+                        {
+                            MMPU.文件删除委托("./tmp/LiveCache/" + item.Name);
+                        }
+                    }
+                    catch (Exception)
+                    {
                     }
                     Environment.Exit(0);
                 })).Start();
