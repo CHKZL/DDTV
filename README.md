@@ -5,6 +5,16 @@ DDTV1.0的精神续作.jpg
 ***
 (代码中大量 **中文** 变量\函数 **易#** 警告，美术生出身，请各位大佬轻拍 ~~(后仰~~
 ***
+# 目录
+1. [怎么下载](https://github.com/CHKZL/DDTV2#%E5%86%99%E7%BB%99%E4%B8%8D%E4%BC%9A%E4%BD%BF%E7%94%A8gayhub%E7%9A%84%E6%80%8E%E4%B9%88%E4%B8%8B%E8%BD%BD%E6%80%8E%E4%B9%88%E4%B8%8B%E8%BD%BD%E6%80%8E%E4%B9%88%E4%B8%8B%E8%BD%BD)
+2. [为何要写这个东西](https://github.com/CHKZL/DDTV2#%E4%B8%BA%E4%BD%95%E8%A6%81%E5%86%99%E8%BF%99%E4%B8%AA%E4%B8%9C%E8%A5%BF)
+3. [关于监控列表](https://github.com/CHKZL/DDTV2#%E5%85%B3%E4%BA%8E%E7%9B%91%E6%8E%A7%E5%88%97%E8%A1%A8)
+4. [关于监控列表](https://github.com/CHKZL/DDTV2#%E5%8A%9F%E8%83%BD%E5%AE%8C%E6%88%90%E6%83%85%E5%86%B5)
+5. [界面](https://github.com/CHKZL/DDTV2#%E7%95%8C%E9%9D%A2)  
+6. [兼容性](https://github.com/CHKZL/DDTV2#%E5%85%BC%E5%AE%B9%E6%80%A7)  
+7. [捐助](https://github.com/CHKZL/DDTV2#%E6%8D%90%E5%8A%A9)  
+
+
 ## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？
 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击图片跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
 [![](https://user-images.githubusercontent.com/9378097/54915191-8e3f0f80-4f31-11e9-8bbb-b4f3fb0ead6b.png)](https://github.com/CHKZL/DDTV2/releases/latest)  
