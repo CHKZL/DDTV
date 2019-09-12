@@ -33,7 +33,12 @@ bld/
 [Ll]og/
 
 # Visual Studio 2015/2017 cache/options directory
-.vs/
+DDTV_TCP服务端/
+demo/
+播放器/
+启动器/
+启动器2.0/
+下载/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
