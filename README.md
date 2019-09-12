@@ -54,6 +54,11 @@ DDTV1.0的精神续作.jpg
 
 ![单推列表](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%8D%95%E6%8E%A8%E7%9B%91%E6%8E%A7.png)
 
+开播\自动录制气泡提示:
+
+![开播提示](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%BC%80%E6%92%AD%E6%8F%90%E9%86%92.png)  
+![录制提示](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/%E5%BD%95%E5%88%B6%E6%8F%90%E7%A4%BA.png)  
+
 DDNA列表(各平台当前直播情况):
 
 ![DDNA列表](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E8%BD%AF%E4%BB%B6%E5%9B%BE/DDNA%E5%88%97%E8%A1%A8(%E5%90%84%E5%B9%B3%E5%8F%B0%E5%BD%93%E5%89%8D%E7%9B%B4%E6%92%AD%E6%83%85%E5%86%B5).png)
