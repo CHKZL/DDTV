@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{AE08382F-4EDA-4E52-B453-FE5DCA9F69BF}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>DDTV_New</RootNamespace>
+    <AssemblyName>DDTV_New</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>DDTV.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="RoomInit.cs" />
+    <Compile Include="下载工具.xaml.cs">
+      <DependentUpon>下载工具.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="错误窗.xaml.cs">
+      <DependentUpon>错误窗.xaml</DependentUpon>
+    </Compile>
+    <Page Include="AddMonitoringList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="AddMonitoringList.xaml.cs">
+      <DependentUpon>AddMonitoringList.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="下载工具.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="错误窗.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="packages.config" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\ddtv_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\ico\add.png" />
+    <Resource Include="res\ico\addition.png" />
+    <Resource Include="res\ico\addition_fill.png" />
+    <Resource Include="res\ico\addpeople.png" />
+    <Resource Include="res\ico\addpeople_fill.png" />
+    <Resource Include="res\ico\barrage.png" />
+    <Resource Include="res\ico\barrage_fill.png" />
+    <Resource Include="res\ico\browse.png" />
+    <Resource Include="res\ico\browse_fill.png" />
+    <Resource Include="res\ico\clock.png" />
+    <Resource Include="res\ico\clock_fill.png" />
+    <Resource Include="res\ico\close.png" />
+    <Resource Include="res\ico\collection.png" />
+    <Resource Include="res\ico\collection_fill.png" />
+    <Resource Include="res\ico\decoration_fill.png" />
+    <Resource Include="res\ico\delete.png" />
+    <Resource Include="res\ico\dynamic.png" />
+    <Resource Include="res\ico\dynamic_fill.png" />
+    <Resource Include="res\ico\empty.png" />
+    <Resource Include="res\ico\empty_fill.png" />
+    <Resource Include="res\ico\enterinto.png" />
+    <Resource Include="res\ico\enterinto_fill.png" />
+    <Resource Include="res\ico\flashlight.png" />
+    <Resource Include="res\ico\flashlight_fill.png" />
+    <Resource Include="res\ico\homepage.png" />
+    <Resource Include="res\ico\homepage_fill.png" />
+    <Resource Include="res\ico\like.png" />
+    <Resource Include="res\ico\like_fill.png" />
+    <Resource Include="res\ico\live.png" />
+    <Resource Include="res\ico\live_fill.png" />
+    <Resource Include="res\ico\lock.png" />
+    <Resource Include="res\ico\lock_fill.png" />
+    <Resource Include="res\ico\mail.png" />
+    <Resource Include="res\ico\mail_fill.png" />
+    <Resource Include="res\ico\message.png" />
+    <Resource Include="res\ico\message_fill.png" />
+    <Resource Include="res\ico\mine.png" />
+    <Resource Include="res\ico\mine_fill.png" />
+    <Resource Include="res\ico\offline.png" />
+    <Resource Include="res\ico\offline_fill.png" />
+    <Resource Include="res\ico\packup.png" />
+    <Resource Include="res\ico\play.png" />
+    <Resource Include="res\ico\playon.png" />
+    <Resource Include="res\ico\playon_fill.png" />
+    <Resource Include="res\ico\play_fill.png" />
+    <Resource Include="res\ico\prompt.png" />
+    <Resource Include="res\ico\prompt_fill.png" />
+    <Resource Include="res\ico\refresh.png" />
+    <Resource Include="res\ico\remind.png" />
+    <Resource Include="res\ico\remind_fill.png" />
+    <Resource Include="res\ico\return.png" />
+    <Resource Include="res\ico\right.png" />
+    <Resource Include="res\ico\setup.png" />
+    <Resource Include="res\ico\setup_fill.png" />
+    <Resource Include="res\ico\stealth.png" />
+    <Resource Include="res\ico\stealth_fill.png" />
+    <Resource Include="res\ico\success.png" />
+    <Resource Include="res\ico\success_fill.png" />
+    <Resource Include="res\ico\supply.png" />
+    <Resource Include="res\ico\systemprompt.png" />
+    <Resource Include="res\ico\systemprompt_fill.png" />
+    <Resource Include="res\ico\time.png" />
+    <Resource Include="res\ico\time_fill.png" />
+    <Resource Include="res\ico\tools.png" />
+    <Resource Include="res\ico\trash.png" />
+    <Resource Include="res\ico\trash_fill.png" />
+    <Resource Include="res\ico\unfold.png" />
+    <Resource Include="res\ico\unlock.png" />
+    <Resource Include="res\ico\unlock_fill.png" />
+    <Resource Include="res\ico\video.png" />
+    <Resource Include="res\ico\video_fill.png" />
+    <Resource Include="res\ico\zhtn.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\top.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\w.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\img\home_ba.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="DDTV.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Auxiliary\Auxiliary.csproj">
+      <Project>{b9797a7b-d297-4bba-b54f-13c366cdde49}</Project>
+      <Name>Auxiliary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlayW\PlayW.csproj">
+      <Project>{81e4256f-71e7-48a8-89b6-de2ddf68fa0c}</Project>
+      <Name>PlayW</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Plugin\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="res\ico\关于.png" />
+    <Resource Include="res\ico\帮助.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="生活.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="DDTV.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

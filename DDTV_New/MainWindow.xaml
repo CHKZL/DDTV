@@ -1,0 +1,256 @@
+﻿<Window x:Class="DDTV_New.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDTV_New"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="515" Width="800"
+        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent">
+
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+        <Grid x:Name="bk">
+            <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
+        </Grid>
+        <Grid x:Name="home" Width="800" Height="515">
+            <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
+            <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
+            <Label x:Name="tabText" Content="单推列表正在更新中....." Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+            <Image Margin="110,326,590,89" Source="res/ico/barrage.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="关注列表_点击事件"/>
+            <Label Content="单推列表" Margin="100,422,580,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
+            <Image Margin="270,326,430,89" Source="res/ico/tools.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="插件_点击事件"/>
+            <Label Content="插件" Margin="260,422,420,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
+            <Image Margin="590,326,110,89" Source="res/ico/supply.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="工具箱_按钮事件"/>
+            <Label Content="其他工具" Margin="580,422,100,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
+            <Image Margin="430,326,270,89" Source="res/ico/setup.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="设置层_点击事件"/>
+            <Label Content="设置" Margin="420,422,260,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
+            <Label x:Name="版本显示" Content="版本：2.0.1.2" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top"/>
+            <Label Content="已单推" HorizontalAlignment="Left" Margin="691,228,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="newtime" Content="数据更新时间：单推列表正在更新中....." HorizontalAlignment="Left" Margin="576,258,0,0" VerticalAlignment="Top"/>
+            <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="ppnum" Content="114" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
+            <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="110,252,439,232" />
+            <Label x:Name="国内服务器延迟" Content="国内服务器延迟(阿B):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
+            <Label x:Name="国外服务器延迟" Content="服务器延迟(404):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
+            <Image Margin="10,283,740,182" Source="res/ico/帮助.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="帮助_按钮事件"/>
+            <Label Content="说明/帮助" HorizontalAlignment="Left" Margin="4,327,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
+            <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
+            <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
+        </Grid>
+
+        <Grid x:Name="直播层" Visibility="Collapsed" >
+
+            <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="编号" Width="30" DisplayMemberBinding="{Binding 编号}"/>
+                        <GridViewColumn Header="名称" Width="100" DisplayMemberBinding="{Binding 名称}"/>
+                        <GridViewColumn Header="原名" Width="100" DisplayMemberBinding="{Binding 原名}"/>
+                        <GridViewColumn Header="状态" Width="60" DisplayMemberBinding="{Binding 状态}"/>
+                        <GridViewColumn Header="平台" Width="60" DisplayMemberBinding="{Binding 平台}"/>
+                        <GridViewColumn Header="提醒" Width="60" DisplayMemberBinding="{Binding 是否提醒}"/>
+                        <GridViewColumn Header="录制" Width="60" DisplayMemberBinding="{Binding 是否录制}"/>
+                        <GridViewColumn Header="频道/房间号" Width="120" DisplayMemberBinding="{Binding 唯一码}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
+            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="715,296,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
+            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="715,332,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
+            <Button Content="添加" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
+            <Button Content="修改" HorizontalAlignment="Left" Margin="714,431,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
+            <Button Content="删除" HorizontalAlignment="Left" Margin="714,396,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
+            <Button Content="查看下载队列" HorizontalAlignment="Left" Margin="716,49,0,0" VerticalAlignment="Top" Width="75" Click="显示下载队列按钮点击事件"/>
+            <Label x:Name="动态推送1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="702" VerticalContentAlignment="Center" Foreground="Black" Margin="7,484,91,0" />
+            <Label x:Name="选中内容0" Content="当前选中行信息:" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" Width="103" VerticalContentAlignment="Center" Foreground="Black" Margin="703,154,-6,336" />
+            <Label x:Name="选中内容1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="60" Width="87" VerticalContentAlignment="Center" Foreground="Black" Margin="713,179,0,276" />
+            <Button Content="跳转到网页" HorizontalAlignment="Left" Margin="716,73,0,0" VerticalAlignment="Top" Width="75" Click="跳转到网页按钮点击事件"/>
+            <Grid x:Name="首次更新" Background="#B2636363">
+                <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
+            </Grid>
+        </Grid>
+        <Grid x:Name="设置层" Visibility="Collapsed">
+            <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
+            <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
+            <Slider x:Name="修改默认音量" HorizontalAlignment="Left" Margin="143,73,0,0" VerticalAlignment="Top" Width="251" Maximum="100" SmallChange="1" MouseMove="默认音量修改事件" Value="100"/>
+            <Label Content="下载/录制默认目录" Margin="25,104,657,383" RenderTransformOrigin="0.508,0.821"/>
+            <Button Margin="578,99,139,390" Content="修改目录" Click="修改默认下载目录按钮事件" />
+            <Label Content="缩小按钮功能" Margin="25,137,657,350" RenderTransformOrigin="0.508,0.821"/>
+            <RadioButton x:Name="缩小到任务栏选择按钮" Content="缩小到任务栏" HorizontalAlignment="Left" Margin="148,143,0,0" VerticalAlignment="Top" GroupName="缩小使能" Checked="缩小_任务栏选择事件" RenderTransformOrigin="0.473,-1.214"/>
+            <RadioButton x:Name="隐藏到后台托盘选择按钮" Content="隐藏到后台托盘" HorizontalAlignment="Left" Margin="273,143,0,0" VerticalAlignment="Top" GroupName="缩小使能" Checked="缩小_后台托盘选择事件"/>
+            <Label Content="是否尝试连接更新404类数据(打开前请确保可以连接404)" Margin="25,170,460,317" RenderTransformOrigin="0.508,0.821"/>
+            <CheckBox x:Name="连接404类使能开关" Content="连接404类" Margin="345,176,370,317" Click="连接404类使能开关点击事件"/>
+            <Label Content="最大直播并行数量:" Margin="25,198,662,289" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="并行直播数量" Margin="143,198,621,291" Text="5" VerticalContentAlignment="Center" KeyUp="并行直播数量_KeyUp" />
+            <Label Content="(根据电脑性能决定，过多的播放窗口可能会造成包括报错，闪退等错误,推荐不超过5个)" Margin="248,198,58,289" RenderTransformOrigin="0.508,0.821"/>
+            <Button Margin="191,199,563,292" Content="确定" Click="修改最大直播并行数量确定按钮点击事件" />
+            <Label x:Name="弹幕默认颜色" Content="弹幕默认颜色" Margin="25,226,688,261" RenderTransformOrigin="0.508,0.821"/>
+            <Button Margin="117,226,645,264" Content="修改" Click="修改弹幕颜色按钮点击事件" />
+            <Label x:Name="字幕默认颜色" Content="字幕默认颜色" Margin="25,256,662,231" RenderTransformOrigin="0.508,0.821"/>
+            <Button Margin="117,259,645,231" Content="修改" Click="修改字幕颜色按钮点击事件" />
+            <Label Content="弹幕文字大小:" Margin="231,226,482,261" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="弹幕文字大小" Margin="323,225,441,264" Text="20" VerticalContentAlignment="Center" KeyUp="弹幕文字大小_KeyUp" />
+            <Button Margin="365,226,389,265" Content="确定" Click="修改弹幕文字大小确定按钮点击事件" />
+            <Label Content="字幕文字大小:" Margin="231,256,482,231" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="字幕文字大小" Margin="323,255,441,234" Text="24" VerticalContentAlignment="Center" KeyUp="字幕文字大小_KeyUp" />
+            <Button Margin="365,256,389,235" Content="确定" Click="修改字幕文字大小确定按钮点击事件" />
+            <Label Content="(在播放串口使用鼠标滚轮和键盘上下可以单独调整每一个窗口的音量)" Margin="422,71,-12,416" RenderTransformOrigin="0.508,0.821"/>
+        </Grid>
+        <Grid x:Name="插件层" Visibility="Collapsed">
+            <ListView x:Name="PluginC" Margin="8,47,12,26">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="编号" Width="30" DisplayMemberBinding="{Binding 编号}"/>
+                        <GridViewColumn Header="名称" Width="200" DisplayMemberBinding="{Binding 名称}"/>
+                        <GridViewColumn Header="版本" Width="60" DisplayMemberBinding="{Binding 版本}"/>
+                        <GridViewColumn Header="是否加载" Width="60" DisplayMemberBinding="{Binding 是否加载}"/>
+                        <GridViewColumn Header="说明" Width="250" DisplayMemberBinding="{Binding 说明}"/>
+                        <GridViewColumn Header="备注" Width="30" DisplayMemberBinding="{Binding 备注}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+        <Grid x:Name="工具层" Visibility="Collapsed">
+            <Image Margin="48,53,652,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="DDNA列表_按钮事件"/>
+            <Label Content="DDNA列表" Margin="48,132,652,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
+            <Label Content="(各平台直播情况)" Margin="34,155,638,333" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
+        </Grid>
+        <Grid x:Name="AOE直播层" Visibility="Collapsed">
+            <TabControl HorizontalAlignment="Left" Height="447" Margin="10,58,0,0" VerticalAlignment="Top" Width="780">
+                <TabItem Header="BiliBili">
+                    <Grid Background="#FFE5E5E5">
+                        <ListView x:Name="bilibiliAOE直播列表" MouseDoubleClick="AOE直播表双击事件">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding 名称}"/>
+                                    <GridViewColumn Header="标题" Width="280" DisplayMemberBinding="{Binding 标题}"/>
+                                    <GridViewColumn Header="观看人数" Width="60" DisplayMemberBinding="{Binding 观看人数}"/>
+                                    <GridViewColumn Header="直播开始时间" Width="140" DisplayMemberBinding="{Binding 直播开始时间}"/>
+                                    <GridViewColumn Header="直播URL" Width="200" DisplayMemberBinding="{Binding 直播URL}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="YouTuBe">
+                    <Grid Background="#FFE5E5E5">
+                        <ListView x:Name="youtubeAOE直播列表" MouseDoubleClick="AOE直播表双击事件">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding 名称}"/>
+                                    <GridViewColumn Header="标题" Width="280" DisplayMemberBinding="{Binding 标题}"/>
+                                    <GridViewColumn Header="观看人数" Width="60" DisplayMemberBinding="{Binding 观看人数}"/>
+                                    <GridViewColumn Header="直播开始时间" Width="140" DisplayMemberBinding="{Binding 直播开始时间}"/>
+                                    <GridViewColumn Header="直播URL" Width="200" DisplayMemberBinding="{Binding 直播URL}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="TwitCasting">
+                    <Grid Background="#FFE5E5E5">
+                        <ListView x:Name="tcAOE直播列表" MouseDoubleClick="AOE直播表双击事件">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding 名称}"/>
+                                    <GridViewColumn Header="标题" Width="280" DisplayMemberBinding="{Binding 标题}"/>
+                                    <GridViewColumn Header="观看人数" Width="60" DisplayMemberBinding="{Binding 观看人数}"/>
+                                    <GridViewColumn Header="直播开始时间" Width="140" DisplayMemberBinding="{Binding 直播开始时间}"/>
+                                    <GridViewColumn Header="直播URL" Width="200" DisplayMemberBinding="{Binding 直播URL}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+            <Button x:Name="刷新AOE直播列表按钮" Content="刷新列表" Margin="696,43,10,440" BorderBrush="#FF707070" Background="White" Click="刷新AOE直播列表按钮点击事件_Click"/>
+            <Label Content="双击列表选项打开对应直播网页" VerticalAlignment="Center" HorizontalAlignment="Center" Height="32" Width="182" VerticalContentAlignment="Center" Foreground="Black" Margin="508,47,110,436" />
+
+        </Grid>
+        <Grid x:Name="帮助层" IsEnabled="False" Margin="0,52,0,0" Visibility="Collapsed">
+            <ListView Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" Margin="0,-34,0,0" >
+                <TextBox Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" />
+                <TextBox Text="直播列表" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="1.将房间/频道添加到列表中后，每(列表中的数量*0.5秒)刷新一次直播状态(防止频率过高被ban)" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="2.选择列表后由于更新UI，选中状态可能消失，这是正常的。只要右边显示的'选中内容'正确就行了" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="下载" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="1.下载窗口里的下载任务，包含自动录制、手动选择下载、观看直播缓冲三种任务，直播缓冲如字面意思，如果播放中停止缓冲任务，会自动重建." Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="2.下载窗口里的选中和直播列表同理，选中后上面显示'选中内容'无误即可。取消任务点击'取消下载'按钮即可。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="3.播放缓存默认在文件目录的./tmp/LiveCache/文件夹里，关闭播放窗口和退出DDTV时会自动删除。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="4.自动录制和手动下载默认储存到./tmp/对应的'平台_房间号'文件夹里，可在'设置'界面就行设置。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="播放" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="1.如果检测到系统非WIN10环境，将锁定弹幕和字幕功能关闭(老系统不支持对应的功能)" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="2.在播放窗口中使用鼠标滚轮和键盘↑↓键可调整音量大小。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="3.播放窗口中可以开关弹幕/【野生菌字幕】功能，字幕和弹幕的颜色在播放窗口中就可以修改" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="　字体的大小需要再主界面'设置'界面设置" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="播放界面的设置按钮隐藏/显示切换点右下角半透明扳手！" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" FontSize="16" FontWeight="Bold" Foreground="Red"/>
+            </ListView>
+            <Image Margin="551,165,10,10" Source="生活.png" Stretch="Fill"/>
+
+
+
+        </Grid>
+        <Grid x:Name="关于层" IsEnabled="False" Visibility="Collapsed">
+            <Label Content="想不到应该写些什么，不过我先放一个蒂蒂媞薇在这里。" Margin="10,54,0,0" FontSize="18" />
+            <Label Content="她没有怎么，只是觉得你们应该都看看.jpg" Margin="10,85,0,-31" FontSize="18" />
+            <Image Margin="575,85,3,5" Source="DDTV.png" Stretch="Fill"/>
+            <Label Content="?????" HorizontalAlignment="Left" Margin="682,64,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="15.533"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Label Content="?" HorizontalAlignment="Left" Margin="521,187,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-32.143"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Label Content="?" HorizontalAlignment="Left" Margin="613,102,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="36.519"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Label Content="???" HorizontalAlignment="Left" Margin="523,304,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-2.726"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+        </Grid>
+        <Grid x:Name="top层">
+            <Image x:Name="top" Source="res/img/top.png" Margin="0,-2,0,477" Height="40" Width="800"/>
+            <Image Margin="148,-2,612,477" Source="res/ico/return.png" Stretch="Fill" Width="40" Height="40" MouseLeftButtonDown="返回首页_点击事件"/>
+
+        </Grid>
+        <Grid x:Name="logo层">
+            <Image x:Name="logo" Source="res/img/ddtv_logo.png" Margin="8,6,662,474" Width="130" Height="35" />
+            <Image Source="res/ico/close.png" Name="exit" Stretch="Fill" Width="30" Height="30" Margin="760,5,10,480" MouseLeftButtonDown="关闭按钮_Click"/>
+            <Image Source="res/ico/unfold.png" Name="最小化" Stretch="Fill" Width="30" Height="30" Margin="725,5,45,480" MouseLeftButtonDown="最小化按钮_Click"/>
+            <Label x:Name="版本更新通知" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="183" VerticalContentAlignment="Center" Foreground="Black" Margin="526,484,91,0" />
+
+        </Grid>
+        <Grid x:Name="等待框" Background="#B2636363" Visibility="Collapsed" >
+            <Label Content="执行操作中...." VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
+        </Grid>
+
+    </Grid>
+</Window>
