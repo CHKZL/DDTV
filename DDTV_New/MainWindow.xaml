@@ -194,47 +194,8 @@
         <Grid x:Name="关于层" IsEnabled="False" Visibility="Collapsed">
             <Label Content="想不到应该写些什么，不过我先放一个蒂蒂媞薇在这里。" Margin="10,54,0,0" FontSize="18" />
             <Label Content="她没有怎么，只是觉得你们应该都看看.jpg" Margin="10,85,0,-31" FontSize="18" />
-            <Image Margin="575,85,3,5" Source="DDTV.png" Stretch="Fill"/>
-            <Label Content="?????" HorizontalAlignment="Left" Margin="682,64,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="15.533"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
-            <Label Content="?" HorizontalAlignment="Left" Margin="521,187,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="-32.143"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
-            <Label Content="?" HorizontalAlignment="Left" Margin="613,102,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="36.519"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
-            <Label Content="???" HorizontalAlignment="Left" Margin="523,304,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B" FontSize="40" RenderTransformOrigin="0.5,0.5">
-                <Label.RenderTransform>
-                    <TransformGroup>
-                        <ScaleTransform/>
-                        <SkewTransform/>
-                        <RotateTransform Angle="-2.726"/>
-                        <TranslateTransform/>
-                    </TransformGroup>
-                </Label.RenderTransform>
-            </Label>
+            <Image Source="DDTV.png" Stretch="Fill" Margin="459,50,3,5"/>
+
         </Grid>
         <Grid x:Name="top层">
             <Image x:Name="top" Source="res/img/top.png" Margin="0,-2,0,477" Height="40" Width="800"/>
@@ -251,6 +212,7 @@
         <Grid x:Name="等待框" Background="#B2636363" Visibility="Collapsed" >
             <Label Content="执行操作中...." VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
         </Grid>
+
 
     </Grid>
 </Window>

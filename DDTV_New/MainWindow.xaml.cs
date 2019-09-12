@@ -281,7 +281,11 @@ namespace DDTV_New
                     {
                         if (MMPU.版本号 != MMPU.TcpSend(20011, "{}", true))
                         {
-                            System.Windows.MessageBox.Show("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20012, "{}", true));
+                            MessageBoxResult dr = System.Windows.MessageBox.Show("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20012, "{}", true)+ "\n\n点击确定跳转到补丁(大约1MB)下载网页，点击取消忽略", "有新版本", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                            if (dr == MessageBoxResult.OK)
+                            {
+                                System.Diagnostics.Process.Start("https://github.com/CHKZL/DDTV2/releases/latest");
+                            }
                         }
                     }
                 }
@@ -364,8 +368,6 @@ namespace DDTV_New
                 }));
 
             }
-
-            MMPU.setFiles("RoomTime", ((int)((double)i * (double)0.6)).ToString());
             this.Dispatcher.Invoke(new Action(delegate
             {
                 ppnum.Content = i - 1;
