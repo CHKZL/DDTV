@@ -33,6 +33,7 @@ bld/
 [Ll]og/
 
 # Visual Studio 2015/2017 cache/options directory
+.vs/
 DDTV_TCP服务端/
 demo/
 播放器/
