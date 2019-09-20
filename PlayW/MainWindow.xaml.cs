@@ -31,10 +31,15 @@ namespace PlayW
         public bilibili.danmu DM = new bilibili.danmu();
         public bool 弹幕使能 = false;
         public bool 字幕使能=false;
+        public bool 窗口是否打开 = false;
 
-        public MainWindow(Downloader A,int 默认音量,SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色,int 弹幕大小,int 字幕大小)
+        public MainWindow(Downloader A, int 默认音量, SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色, int 弹幕大小, int 字幕大小, int 宽度, int 高度)
         {
             InitializeComponent();
+            this.Width = 宽度;
+
+            this.Height = 高度;
+            窗口是否打开 = true;
             音量.Value = 默认音量;
             this.Closed += 关闭窗口事件;
             DD = A;
@@ -73,8 +78,7 @@ namespace PlayW
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
-            new Task(() =>
-            {
+            new Thread(new ThreadStart(delegate {
                 try
                 {
                     this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
@@ -82,10 +86,9 @@ namespace PlayW
                 catch (Exception)
                 {
                 }
-               
-
-            }).Start();
-            DD.DownIofo.播放状态 = false; 
+            })).Start();
+            DD.DownIofo.播放状态 = false;
+            窗口是否打开 = false;
         }
         public void 增加字幕(string A)
         {
@@ -259,13 +262,14 @@ namespace PlayW
                     {
                         if (bilibili.根据房间号获取房间信息.是否正在直播(DD.DownIofo.房间_频道号))
                         {
-                            DD.DownIofo._wc.CancelAsync();
-                            DD.DownIofo.备注 = "用户取消";
-                            Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
-                            MMPU.文件删除委托(DD.DownIofo.文件保存路径);
-                            DD = 下载对象;
+                           
                             new Thread(new ThreadStart(delegate
                             {
+                                DD.DownIofo._wc.CancelAsync();
+                                DD.DownIofo.备注 = "用户取消";
+                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
+                                MMPU.文件删除委托(DD.DownIofo.文件保存路径);
+                                DD = 下载对象;
                                 for (int i = 0; i < 3; i++)
                                 {
                                     Thread.Sleep(1000);
@@ -286,7 +290,7 @@ namespace PlayW
                                             提示文字.Content = "直播源推流停止或卡顿，正在尝试重连,第" + (i + 1) + "次失败/一共尝试3次";
                                             if (i == 2)
                                             {
-                                                提示文字.Content = 提示文字.Content + "\n请尝试重开播放窗口";
+                                                提示文字.Content += "\n请尝试重开播放窗口";
                                                 return;
                                             }
                                         }));
@@ -386,15 +390,20 @@ namespace PlayW
             }
             return result;
         }
+        public event EventHandler<EventArgs> BossKey;
         private void MainWindows_Keydown(object sender, KeyEventArgs e)
         {
-            
+           
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.D)
+            {
+                BossKey?.Invoke(this, EventArgs.Empty);
+            }
             //音量增加
             if (e.KeyStates == Keyboard.GetKeyStates(Key.Up))
             {
                 if (音量.Value + 5 <= 100)
                 {
-                    音量.Value = 音量.Value + 5;
+                    音量.Value += 5;
                     this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
@@ -408,7 +417,7 @@ namespace PlayW
             {
                 if (音量.Value - 5 >= 0)
                 {
-                    音量.Value = 音量.Value - 5;
+                    音量.Value -= 5;
                     this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
@@ -476,7 +485,7 @@ namespace PlayW
             {
                 if (音量.Value + 5 <= 100)
                 {
-                    音量.Value = 音量.Value + 5;
+                    音量.Value += 5;
                     this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
@@ -489,7 +498,7 @@ namespace PlayW
             {
                 if (音量.Value - 5 >= 0)
                 {
-                    音量.Value = 音量.Value - 5;
+                    音量.Value -= 5;
                     this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else

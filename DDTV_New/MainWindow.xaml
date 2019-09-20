@@ -37,7 +37,6 @@
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
-
         <Grid x:Name="直播层" Visibility="Collapsed" >
 
             <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
@@ -69,7 +68,7 @@
                 <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
             </Grid>
         </Grid>
-        <Grid x:Name="设置层" Visibility="Collapsed">
+        <Grid x:Name="设置层" Visibility="Collapsed" >
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
@@ -96,6 +95,11 @@
             <TextBox x:Name="字幕文字大小" Margin="323,255,441,234" Text="24" VerticalContentAlignment="Center" KeyUp="字幕文字大小_KeyUp" />
             <Button Margin="365,256,389,235" Content="确定" Click="修改字幕文字大小确定按钮点击事件" />
             <Label Content="(在播放串口使用鼠标滚轮和键盘上下可以单独调整每一个窗口的音量)" Margin="422,71,-12,416" RenderTransformOrigin="0.508,0.821"/>
+            <Label Content="默认播放器分辨率:" Margin="25,289,645,198" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="默认播放宽度" Margin="143,289,611,200" Text="1920" VerticalContentAlignment="Center" KeyUp="分辨率大小_KeyUp" RenderTransformOrigin="1.889,0.308" />
+            <Label Content="X" Margin="189,289,594,198" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="默认播放高度" Margin="209,289,545,200" Text="1080" VerticalContentAlignment="Center" KeyUp="分辨率大小_KeyUp" RenderTransformOrigin="1.889,0.308" />
+            <Button Margin="260,291,494,200" Content="确定" Click="修改播放器默认大小确定按钮点击事件" />
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
             <ListView x:Name="PluginC" Margin="8,47,12,26">

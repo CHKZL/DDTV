@@ -12,6 +12,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Text.RegularExpressions;
 
 namespace Auxiliary
 {
@@ -19,22 +20,24 @@ namespace Auxiliary
     {
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
-        public static string 直播缓存目录 = MMPU.getFiles("Livefile");
-        public static int 直播更新时间 = int.Parse(MMPU.getFiles("RoomTime"));
-        public static string 下载储存目录 = MMPU.getFiles("file");
-        public static string 版本号 = "2.0.1.4";
+        public static string 直播缓存目录 ="";
+        public static int 直播更新时间 = 40;
+        public static string 下载储存目录 = "";
+        public static string 版本号 = "2.0.1.5";
         public static bool 第一次打开播放窗口 = true;
-        public static int 默认音量= int.Parse(MMPU.getFiles("DefaultVolume"));
-        public static int 缩小功能 = int.Parse(MMPU.getFiles("Zoom"));
+        public static int 默认音量= 0;
+        public static int 缩小功能 = 1;
         public static bool 连接404使能 = false;
         public static bool 是否能连接404 = false;
         public static bool 是否能连接阿B = true;
-        public static int 最大直播并行数量 = int.Parse(MMPU.getFiles("PlayNum"));
+        public static int 最大直播并行数量 = 0;
         public static int 当前直播窗口数量 = 0;
-        public static string 默认弹幕颜色 = MMPU.getFiles("DanMuColor");
-        public static string 默认字幕颜色 = MMPU.getFiles("ZiMuColor");
-        public static int 默认字幕大小 = int.Parse(MMPU.getFiles("ZiMuSize"));
-        public static int 默认弹幕大小 = int.Parse(MMPU.getFiles("DanMuSize"));
+        public static string 默认弹幕颜色 = "";
+        public static string 默认字幕颜色 = "";
+        public static int 默认字幕大小 = 24;
+        public static int 默认弹幕大小 = 20;
+        public static int PlayWindowH = 0;
+        public static int PlayWindowW = 0;
         public static int versionMajor = Environment.OSVersion.Version.Major;
         public static void 修改默认音量设置(int A)
         {
@@ -84,6 +87,59 @@ namespace Auxiliary
                 result = reader.ReadToEnd();
             }
             return result;
+        }
+        public static string 获取网页数据_下载视频用(string url,bool 解码)
+        {
+            HttpWebRequest rq = (HttpWebRequest)WebRequest.Create(url);
+            rq.CookieContainer = new CookieContainer();
+            string GUID = Guid.NewGuid().ToString();
+            rq.Method = "GET";
+            rq.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
+            rq.Headers.Add("Accept-Encoding: gzip, deflate, br");
+            rq.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+            rq.Headers.Add("Accept-Encoding: gzip, deflate, br");
+            rq.Headers.Add("Cache-Control: max-age=0");
+            rq.Headers.Add("Sec-Fetch-Mode: navigate");
+            rq.Headers.Add("Sec-Fetch-Site: none");
+            rq.Headers.Add("Sec-Fetch-User: ?1");
+            rq.Headers.Add("Upgrade-Insecure-Requests: 1");
+            rq.Headers.Add("Cache-Control: max-age=0");
+            //rq.Host = "www.bilibili.com";
+            rq.UserAgent = Ver.UA;
+            if (解码)
+            {
+                HttpWebResponse webResponse = (System.Net.HttpWebResponse)rq.GetResponse();
+                string contentype = webResponse.Headers["Content-Type"];
+                string responseString = "";
+                using (System.IO.Stream streamReceive = webResponse.GetResponseStream())
+                {
+
+                    using (var zipStream = new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress))
+                    {
+                        Regex regex = new Regex("charset\\s*=\\s*[\\W]?\\s*([\\w-]+)", RegexOptions.IgnoreCase);
+                        if (regex.IsMatch(contentype))
+                        {
+                            Encoding ending = Encoding.GetEncoding(regex.Match(contentype).Groups[1].Value.Trim());
+                            using (StreamReader sr = new System.IO.StreamReader(zipStream, ending))
+                            {
+                                responseString = sr.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+                return responseString;
+            }
+            else
+            {
+                HttpWebResponse resp = (HttpWebResponse)rq.GetResponse();
+                using (Stream stream = resp.GetResponseStream())
+                {
+
+                    StreamReader reader = new StreamReader(stream, Encoding.UTF8);
+                    String responseString = reader.ReadToEnd();
+                    return responseString;
+                }
+            }
         }
         public static byte[] strToToHexByte(string hexString)
         {
@@ -164,12 +220,10 @@ namespace Auxiliary
                                 {
 
                                 }
-                                else
-                                {
-
-                                }
                                 return true;
                             }
+                        case "主站视频":
+                            return true;
                         default:
                             return false;
                     }
@@ -356,16 +410,44 @@ namespace Auxiliary
 
         }
         /// <summary>
-        /// 保存配置
+        /// 修改和添加AppSettings中配置 如果相应的Key存在则修改 如不存在则添加
         /// </summary>
-        /// <param name="files"></param>
-        public static void setFiles(string name, string Value)
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            config.AppSettings.Settings[name].Value = Value;
-            config.Save(ConfigurationSaveMode.Modified);
+        /// <param name="key">key值</param>
+        /// <param name="value">相应值</param>
+        public static bool setFiles(string key, string value)
+        {//转载请保留 http://www.luofenming.com/show.aspx?id=ART2018030100002
+            try
+            {
+                Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                if (config.AppSettings.Settings[key] != null)
+                {
+                    config.AppSettings.Settings[key].Value = value;
+                }
+                else
+                {
+                    config.AppSettings.Settings.Add(key, value);
+                }
 
+                config.Save(ConfigurationSaveMode.Modified);
+                ConfigurationManager.RefreshSection("appSettings");
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
+        ///// <summary>
+        ///// 保存配置
+        ///// </summary>
+        ///// <param name="files"></param>
+        //public static void setFiles(string name, string Value)
+        //{
+        //    Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+        //    config.AppSettings.Settings[name].Value = Value;
+        //    config.Save(ConfigurationSaveMode.Modified);
+
+        //}
         public static string TcpSend(int code, string msg, bool 是否需要回复)
         {
             try
@@ -401,8 +483,10 @@ namespace Auxiliary
         }
         public static string 拼接SQL查询语句(string sql, Dictionary<string, string> myDic)
         {
-            SQL中间件数据格式 SQLmian = new SQL中间件数据格式();
-            SQLmian.SQL = sql;
+            SQL中间件数据格式 SQLmian = new SQL中间件数据格式
+            {
+                SQL = sql
+            };
             foreach (var item in myDic)
             {
                 SQLmian.code.Add(new SQL数据对() { name = item.Key, val = item.Key });

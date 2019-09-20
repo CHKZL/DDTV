@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayW"
         mc:Ignorable="d"
-        Title="播放器" Height="450" Width="800" Loaded="Window_Loaded"
+        Title="播放器" Height="720" Width="1280" Loaded="Window_Loaded"
          KeyDown="MainWindows_Keydown" WindowStyle="None" MouseWheel="鼠标滚轮事件">
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <vlc:VlcControl x:Name="VlcControl" MouseLeftButtonDown="VlcControl_MouseLeftButtonDown" >

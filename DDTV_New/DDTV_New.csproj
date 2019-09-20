@@ -241,5 +241,8 @@
   <ItemGroup>
     <Resource Include="DDTV.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="更新日志\2.0.1.5.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
