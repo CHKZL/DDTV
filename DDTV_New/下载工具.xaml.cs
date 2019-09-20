@@ -89,6 +89,7 @@ namespace DDTV_New
                 {
                     Auxiliary.MMPU.DownList[选中的行].DownIofo._wc.CancelAsync();
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.备注 = "用户取消";
+                    Auxiliary.MMPU.DownList[选中的行].DownIofo.下载状态 = false;
                 }           
             }
          
