@@ -65,6 +65,15 @@ namespace DDTV_New
                 MMPU.setFiles("RoomConfiguration", "./RoomListConfig.json");
                 RoomConfigFile = "./RoomListConfig.json";
             }
+            try
+            {
+                MMPU.直播列表刷新间隔 =int.Parse( MMPU.getFiles("LiveListTime"));
+            }
+            catch (Exception)
+            {
+                MMPU.setFiles("LiveListTime", "5");
+                MMPU.直播列表刷新间隔 = int.Parse(MMPU.getFiles("LiveListTime"));
+            }
             //播放窗口默认高度
             try
             {
@@ -83,7 +92,7 @@ namespace DDTV_New
             catch (Exception)
             {
                 MMPU.setFiles("PlayWindowW", "800");
-                MMPU.PlayWindowH = 800;     
+                MMPU.PlayWindowW = 800;     
             }
             //直播缓存目录
             try
@@ -198,7 +207,6 @@ namespace DDTV_New
                 while (true)
                 {
                     刷新房间列表UI();
-                    Thread.Sleep(5 * 1000);
                     this.Dispatcher.Invoke(new Action(delegate
                     {
                         newtime.Content = "数据更新时间：" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -215,6 +223,7 @@ namespace DDTV_New
                         }
                         Thread.Sleep(100);
                     }
+                    Thread.Sleep(MMPU.直播列表刷新间隔 * 1000);
                 }
             })).Start();
             //延迟测试
@@ -359,6 +368,15 @@ namespace DDTV_New
                     是否加载 = "√",
                     说明 = "用于获取目前已知正在直播的vtb列表(工具箱内)",
                     备注 = ""
+                });
+                PluginC.Items.Add(new
+                {
+                    编号 = "4",
+                    名称 = "弹幕录制工具",
+                    版本 = "1.0.0.1",
+                    是否加载 = "√",
+                    说明 = "用于录制直播弹幕内容(工具箱内)",
+                    备注 = "调试中的功能，还没写完"
                 });
             }
 
@@ -882,7 +900,7 @@ namespace DDTV_New
             PlayWindow.Show();
             PlayWindow.BossKey += 老板键事件;
             playList.Add(PlayWindow);
-            MMPU.ClearMemory();
+           // MMPU.ClearMemory();
         }
 
         private void 老板键事件(object sender, EventArgs e)
@@ -1075,12 +1093,26 @@ namespace DDTV_New
                 switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
                 {
                     case "bilibili":
-                        if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
                         {
-                            System.Windows.MessageBox.Show("该房间当前未直播");
-                            return;
+                            if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
+                            {
+                                System.Windows.MessageBox.Show("该房间当前未直播");
+                                return;
+                            }
+                            break;
                         }
-                        break;
+                    //case "youtube":
+                    //    {
+                    //        break; 
+                    //    }
+                    //case "tw":
+                    //    {
+                    //        break;
+                    //    }
+                    //case "douyu":
+                    //    {
+                    //        break;
+                    //    }
                     default:
                         System.Windows.MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                         return;

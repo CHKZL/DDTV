@@ -23,7 +23,7 @@ namespace Auxiliary
         public static string 直播缓存目录 ="";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.1.5";
+        public static string 版本号 = "2.0.1.7";
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量= 0;
         public static int 缩小功能 = 1;
@@ -39,6 +39,7 @@ namespace Auxiliary
         public static int PlayWindowH = 0;
         public static int PlayWindowW = 0;
         public static int versionMajor = Environment.OSVersion.Version.Major;
+        public static int 直播列表刷新间隔 = 0;
         public static void 修改默认音量设置(int A)
         {
             默认音量 = A;
@@ -63,6 +64,11 @@ namespace Auxiliary
             date = start.AddMilliseconds(unixDate).ToLocalTime();
 
             return date.ToString("yyyy-MM-dd HH:mm:ss");
+
+        }
+
+        public static void 启动内部SSR和V2代理配置()
+        {
 
         }
         /// <summary>
@@ -243,24 +249,14 @@ namespace Auxiliary
         /// 释放内存
         /// </summary>
         public static void ClearMemory()
-
         {
-
             GC.Collect();
-
             GC.WaitForPendingFinalizers();
-
             if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-
             {
-
                 SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
-
             }
-
         }
-
-
         public static void 文件删除委托(string file)
         {
 

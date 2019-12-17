@@ -67,6 +67,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="RoomInit.cs" />
+    <Compile Include="UserControl1.xaml.cs">
+      <DependentUpon>UserControl1.xaml</DependentUpon>
+    </Compile>
     <Compile Include="下载工具.xaml.cs">
       <DependentUpon>下载工具.xaml</DependentUpon>
     </Compile>
@@ -92,6 +95,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="下载工具.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -243,6 +250,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="更新日志\2.0.1.5.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="更新日志\up.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="更新日志\2.0.1.6.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="更新日志\2.0.1.7.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

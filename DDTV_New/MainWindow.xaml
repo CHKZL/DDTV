@@ -216,7 +216,5 @@
         <Grid x:Name="等待框" Background="#B2636363" Visibility="Collapsed" >
             <Label Content="执行操作中...." VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
         </Grid>
-
-
     </Grid>
 </Window>

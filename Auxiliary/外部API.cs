@@ -46,14 +46,14 @@ namespace Auxiliary
                             频道ID = item["ch_id"].ToString(),
                             频道类型 = int.Parse(item["ch_type"].ToString()),
                             头像URL = item["channel_thumbnail_url"].ToString(),
-                            最大观众 = int.Parse(item["max_viewers"].ToString()),
+                            //最大观众 = int.Parse(item["max_viewers"].ToString()),
                             名称 = item["name"].ToString(),
                             已直播时长_秒 = int.Parse(item["seconds"].ToString()),
                             已直播时长_日本时间 = item["start_time_str"].ToString(),
                             主播名称 = item["streamer_name"].ToString(),
-                            封面URL = item["thumbnail_url"].ToString(),
-                            封面图高度 = int.Parse(item["thumbnail_height"].ToString()),
-                            封面图宽度 = int.Parse(item["thumbnail_width"].ToString()),
+                            //封面URL = item["thumbnail_url"].ToString(),
+                           // 封面图高度 = int.Parse(item["thumbnail_height"].ToString()),
+                            //封面图宽度 = int.Parse(item["thumbnail_width"].ToString()),
                             标题 = item["title"].ToString(),
                             当前观众 = item["viewers"].ToString(),
                             频道相关信息=item["channel_misc"].ToString(),
@@ -61,9 +61,9 @@ namespace Auxiliary
                         });
                         直播数据[直播数据.Count() - 1].直播连接 = 根据频道类型返回直播地址(直播数据[直播数据.Count() - 1]);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-
+                        Console.WriteLine(ex.ToString());
                     
                     }
                 }
