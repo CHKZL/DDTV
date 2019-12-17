@@ -127,6 +127,7 @@ namespace Auxiliary
             Downloader 下载对象 = new Downloader();
             string 保存路径 = string.Empty;
 
+
             if (MMPU.下载储存目录 == "./tmp/")
             {
                 保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\" + 平台 + "_" + 唯一码 + "\\";
@@ -134,23 +135,21 @@ namespace Auxiliary
                 {
                     Directory.CreateDirectory(保存路径);
                 }
-                保存路径 = 保存路径 + 标题 +"_"+ GUID + ".flv";
+                保存路径 = 保存路径 + 标题 + "_" + GUID + ".flv";
             }
             else
             {
-                保存路径 = MMPU.下载储存目录+"\\" + 平台+"_" + 唯一码 + "\\";
+                保存路径 = MMPU.下载储存目录 + "\\" + 平台 + "_" + 唯一码 + "\\";
                 if (Directory.Exists(保存路径))//如果不存在就创建file文件夹
                 {
                     Directory.CreateDirectory(保存路径);
                 }
                 保存路径 = 保存路径 + 标题 + "_" + GUID + ".flv";
-                //保存路径 = MMPU.下载储存目录
             }
             下载对象.DownIofo = new Downloader.DownIofoData
             {
                 平台 = 平台,
                 房间_频道号 = 唯一码,
-
                 文件保存路径 = 保存路径,
                 事件GUID = GUID,
                 下载地址 = 下载地址,
@@ -158,6 +157,16 @@ namespace Auxiliary
                 标题 = 标题,
                 备注 = 备注
             };
+            if(!是否保存)
+            {
+                int 优雅 = new Random().Next(1000, 9999);
+                下载对象.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + 下载对象.DownIofo.标题 + 下载对象.DownIofo.事件GUID + "_" + 优雅 + ".flv";
+                if (File.Exists(下载对象.DownIofo.文件保存路径))
+                {
+                    下载对象.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + 下载对象.DownIofo.标题 + 下载对象.DownIofo.事件GUID + "_" + (优雅)+1 + ".flv";
+                }
+               
+            }
             MMPU.DownList.Add(下载对象);
             下载对象.Start(备注);
             

@@ -32,7 +32,7 @@ namespace PlayW
         public bool 弹幕使能 = false;
         public bool 字幕使能=false;
         public bool 窗口是否打开 = false;
-
+        public int 刷新次数 = 0;
         public MainWindow(Downloader A, int 默认音量, SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色, int 弹幕大小, int 字幕大小, int 宽度, int 高度)
         {
             InitializeComponent();
@@ -43,11 +43,15 @@ namespace PlayW
             音量.Value = 默认音量;
             this.Closed += 关闭窗口事件;
             DD = A;
+            弹幕框.Opacity = 0.5;
             字幕.Foreground = 字幕颜色;
             弹幕.Foreground = 弹幕颜色;
-            字幕.FontSize = 字幕大小;
-            弹幕.FontSize = 弹幕大小;
-            DD.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + A.DownIofo.标题 + A.DownIofo.事件GUID + ".flv";
+           // 字幕.FontSize = 字幕大小;
+            字幕.字体大小 = 字幕大小;
+            字幕.是否居中 = true;
+            //弹幕.FontSize = 弹幕大小;
+            弹幕.字体大小 = 弹幕大小;
+            DD.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + A.DownIofo.标题 + A.DownIofo.事件GUID + "_"+ 刷新次数 + ".flv";
             this.Title = A.DownIofo.标题;
             设置框.Visibility = Visibility.Collapsed;
             关闭框.Visibility = Visibility.Collapsed;
@@ -98,8 +102,8 @@ namespace PlayW
             string C = "";
             this.Dispatcher.Invoke(new Action(delegate
             {
-                B = 字幕.Text;
-                Len = 字幕.Text.Split('\n').Length;
+                B = 字幕.内容;
+                Len = 字幕.内容.Split('\n').Length;
             }));
             if (Len > 显示的字幕数)
             {
@@ -122,7 +126,13 @@ namespace PlayW
             }
             this.Dispatcher.Invoke(new Action(delegate
             {
-                字幕.Text = A + "\n" + C;
+                字幕.内容 = A + "\n" + C;
+                if(字幕.FontSize>50)
+                {
+                    字幕.FontSize = 1;
+                }
+                else { 
+                }
             }));
         }
         public void 增加弹幕(string A)
@@ -133,8 +143,8 @@ namespace PlayW
             string C = "";
             this.Dispatcher.Invoke(new Action(delegate
             {
-                B = 弹幕.Text;
-                Len = 弹幕.Text.Split('\n').Length;
+                B = 弹幕.内容;
+                Len = 弹幕.内容.Split('\n').Length;
             }));
             if (Len > 显示的弹幕数)
             {
@@ -157,7 +167,15 @@ namespace PlayW
             }
             this.Dispatcher.Invoke(new Action(delegate
             {
-                弹幕.Text = A + "\n" + C;
+                弹幕.内容 = A + "\n" + C;
+                if (弹幕.FontSize > 50)
+                {
+                    弹幕.FontSize = 1;
+                }
+                else
+                {
+                    弹幕.FontSize++;
+                }
             }));
 
 
@@ -185,7 +203,13 @@ namespace PlayW
                 {
                     this.Dispatcher.Invoke(new Action(delegate
                     {
-                        this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                        try
+                        {
+                            this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                        }
+                        catch (Exception)
+                        {
+                        }
                     }));
 
                     this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.文件保存路径));
@@ -276,9 +300,18 @@ namespace PlayW
                                     if (下载对象.DownIofo.已下载大小bit > 1000)
                                     {
                                         Thread.Sleep(1000);
-                                        this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(下载对象.DownIofo.文件保存路径));
+                                        try
+                                        {
+                                            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(下载对象.DownIofo.文件保存路径));
+                                        }
+                                        catch (Exception)
+                                        {
+                                            
+                                            return;
+                                        }
                                         this.Dispatcher.Invoke(new Action(delegate
                                         {
+                                            DD = 下载对象;
                                             提示框.Visibility = Visibility.Collapsed;
                                         }));
                                         return;
@@ -337,7 +370,34 @@ namespace PlayW
         private void 音量_MouseMove(object sender, MouseEventArgs e)
         {
 
-            this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+            try
+            {
+                this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+        private void 字幕位置_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (字幕.字幕位置 != (int)this.Width / 100 * (int)字幕位置.Value)
+            {
+                字幕.字幕位置 = (int)this.Width / 100 * (int)字幕位置.Value;
+                if (字幕.FontSize > 50)
+                {
+                    字幕.FontSize = 1;
+                }
+                else
+                {
+                    字幕.FontSize++;
+                }
+            }
+        }
+        private void 弹幕透明度_MouseMove(object sender, MouseEventArgs e)
+        {
+            弹幕框.Opacity = 弹幕透明度.Value;
+           
         }
 
         private void 播放设置按钮点击事件(object sender, MouseButtonEventArgs e)
@@ -436,6 +496,18 @@ namespace PlayW
                 else if (this.WindowState == WindowState.Maximized)
                 {
                     this.WindowState = WindowState.Normal;
+                }
+                if (字幕.字幕位置 != (int)this.Width / 100 * (int)字幕位置.Value)
+                {
+                    字幕.字幕位置 = (int)this.Width / 100 * (int)字幕位置.Value;
+                    if (字幕.FontSize > 50)
+                    {
+                        字幕.FontSize = 1;
+                    }
+                    else
+                    {
+                        字幕.FontSize++;
+                    }
                 }
             }
             //F5刷新
@@ -558,9 +630,17 @@ namespace PlayW
             if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color);
-                SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
-               
-                字幕.Foreground = solidColorBrush;
+                //SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
+                字幕.字体颜色 = Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B);
+                //字幕.Foreground = solidColorBrush;
+                if (弹幕.FontSize > 50)
+                {
+                    弹幕.FontSize = 1;
+                }
+                else
+                {
+                    弹幕.FontSize++;
+                }
             }
             首页焦点.Focus();
         }
@@ -570,9 +650,17 @@ namespace PlayW
             if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color);
-                SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
-                
-                弹幕.Foreground = solidColorBrush;
+                //SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
+                弹幕.字体颜色 = Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B);
+                //弹幕.Foreground = solidColorBrush;
+                if (弹幕.FontSize > 50)
+                {
+                    弹幕.FontSize = 1;
+                }
+                else
+                {
+                    弹幕.FontSize++;
+                }
             }
             首页焦点.Focus();
         }
