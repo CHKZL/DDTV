@@ -33,7 +33,21 @@ namespace PlayW
         public bool 字幕使能=false;
         public bool 窗口是否打开 = false;
         public int 刷新次数 = 0;
-        public MainWindow(Downloader A, int 默认音量, SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色, int 弹幕大小, int 字幕大小, int 宽度, int 高度)
+
+
+
+        /// <summary>
+        /// 建立新的播放窗口实例
+        /// </summary>
+        /// <param name="DL">播放对象实例</param>
+        /// <param name="默认音量">新建实例的默认音量</param>
+        /// <param name="弹幕颜色">新建实例的默认弹幕颜色</param>
+        /// <param name="字幕颜色">新建实例的默认字幕颜色</param>
+        /// <param name="弹幕大小">新建实例的默认弹幕字体大小</param>
+        /// <param name="字幕大小">新建实例的默认字幕字体大小</param>
+        /// <param name="宽度">新建实例的默认窗口宽度</param>
+        /// <param name="高度">新建实例的默认窗口高度</param>
+        public MainWindow(Downloader DL, int 默认音量, SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色, int 弹幕大小, int 字幕大小, int 宽度, int 高度)
         {
             InitializeComponent();
             this.Width = 宽度;
@@ -42,7 +56,7 @@ namespace PlayW
             窗口是否打开 = true;
             音量.Value = 默认音量;
             this.Closed += 关闭窗口事件;
-            DD = A;
+            DD = DL;
             弹幕框.Opacity = 0.5;
             字幕.Foreground = 字幕颜色;
             弹幕.Foreground = 弹幕颜色;
@@ -51,8 +65,8 @@ namespace PlayW
             字幕.是否居中 = true;
             //弹幕.FontSize = 弹幕大小;
             弹幕.字体大小 = 弹幕大小;
-            DD.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + A.DownIofo.标题 + A.DownIofo.事件GUID + "_"+ 刷新次数 + ".flv";
-            this.Title = A.DownIofo.标题;
+            DD.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + DL.DownIofo.标题 + DL.DownIofo.事件GUID + "_"+ 刷新次数 + ".flv";
+            this.Title = DL.DownIofo.标题;
             设置框.Visibility = Visibility.Collapsed;
             关闭框.Visibility = Visibility.Collapsed;
             if (MMPU.第一次打开播放窗口)
@@ -71,6 +85,8 @@ namespace PlayW
                 字幕开关.Visibility = Visibility.Collapsed;
                 修改字幕颜色按钮.Visibility = Visibility.Collapsed;
                 修改弹幕颜色按钮.Visibility = Visibility.Collapsed;
+                弹幕输入窗口.Visibility = Visibility.Collapsed;
+                弹幕发送提示.Visibility = Visibility.Collapsed;
                 非win10提示.Visibility = Visibility.Visible;
             }
             else
@@ -131,7 +147,8 @@ namespace PlayW
                 {
                     字幕.FontSize = 1;
                 }
-                else { 
+                else {
+                    字幕.FontSize++;
                 }
             }));
         }
@@ -194,7 +211,7 @@ namespace PlayW
                 MMPU.DownList.Add(DD);
                 DD.Start("直播观看缓冲进行中");
                 DD.DownIofo.备注 = "直播观看缓冲进行中";
-                Thread.Sleep(2000);
+                Thread.Sleep(MMPU.播放缓冲时长*1000);
                 this.Dispatcher.Invoke(new Action(delegate
                 {
                     提示框.Visibility = Visibility.Collapsed;
@@ -251,7 +268,11 @@ namespace PlayW
                                     }
                                     if (弹幕使能)
                                     {
-                                        增加弹幕(JA[i]["Name"].ToString() + "：" + JA[i]["Text"].ToString());
+                                        if (!JA[i]["Text"].ToString().Contains("【") || !JA[i]["Text"].ToString().Contains("】"))
+                                        {
+                                            增加弹幕(/*JA[i]["Name"].ToString() + "：" +*/ JA[i]["Text"].ToString());
+                                        }
+                                        
                                     }
 
                                 }
@@ -262,7 +283,7 @@ namespace PlayW
                     catch (Exception)
                     {
                     }
-                    Thread.Sleep(1000);
+                    //Thread.Sleep(10);
                 }
             })).Start();
         }
@@ -270,7 +291,7 @@ namespace PlayW
         {
             if (播放状态)
             {
-                刷新播放("直播源推流停止或卡顿，正在尝试重连");
+                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
             }
         }
         public void 刷新播放(string 提示内容)
@@ -289,12 +310,13 @@ namespace PlayW
                            
                             new Thread(new ThreadStart(delegate
                             {
-                                DD.DownIofo._wc.CancelAsync();
+                                DD.DownIofo.WC.CancelAsync();
                                 DD.DownIofo.备注 = "用户取消";
+                                DD.DownIofo.下载状态 = false;
                                 Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
                                 MMPU.文件删除委托(DD.DownIofo.文件保存路径);
                                 DD = 下载对象;
-                                for (int i = 0; i < 3; i++)
+                                for (int i = 0; i < MMPU.播放缓冲时长; i++)
                                 {
                                     Thread.Sleep(1000);
                                     if (下载对象.DownIofo.已下载大小bit > 1000)
@@ -320,8 +342,8 @@ namespace PlayW
                                     {
                                         this.Dispatcher.Invoke(new Action(delegate
                                         {
-                                            提示文字.Content = "直播源推流停止或卡顿，正在尝试重连,第" + (i + 1) + "次失败/一共尝试3次";
-                                            if (i == 2)
+                                            提示文字.Content = "直播源推流停止或卡顿，正在尝试重连,第" + (i + 1) + "次失败/一共尝试"+ MMPU.播放缓冲时长 + "次";
+                                            if (i >= MMPU.播放缓冲时长-1)
                                             {
                                                 提示文字.Content += "\n请尝试重开播放窗口";
                                                 return;
@@ -416,13 +438,12 @@ namespace PlayW
             }
         }
 
-        private int LastWidth;
+       // private int LastWidth;
         private int LastHeight;
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
-            HwndSource source = HwndSource.FromVisual(this) as HwndSource;
-            if (source != null)
+            if (HwndSource.FromVisual(this) is HwndSource source)
             {
                 source.AddHook(new HwndSourceHook(WinProc));
             }
@@ -443,7 +464,7 @@ namespace PlayW
                         {
                             this.Height = this.Width / 1.75;
                         }
-                        LastWidth = (int)this.Width;
+                        //LastWidth = (int)this.Width;
                         LastHeight = (int)this.Height;
                         break;
                     }
@@ -454,6 +475,7 @@ namespace PlayW
         private void MainWindows_Keydown(object sender, KeyEventArgs e)
         {
            
+            //老板键(缩小所有播放窗口)
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.D)
             {
                 BossKey?.Invoke(this, EventArgs.Empty);
@@ -632,6 +654,7 @@ namespace PlayW
                 System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color);
                 //SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
                 字幕.字体颜色 = Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B);
+                sb.Dispose();
                 //字幕.Foreground = solidColorBrush;
                 if (弹幕.FontSize > 50)
                 {
@@ -641,7 +664,9 @@ namespace PlayW
                 {
                     弹幕.FontSize++;
                 }
+                sb.Dispose();
             }
+            colorDialog.Dispose();
             首页焦点.Focus();
         }
         private void 修改弹幕颜色按钮点击事件(object sender, RoutedEventArgs e)
@@ -652,6 +677,7 @@ namespace PlayW
                 System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color);
                 //SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
                 弹幕.字体颜色 = Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B);
+                sb.Dispose();
                 //弹幕.Foreground = solidColorBrush;
                 if (弹幕.FontSize > 50)
                 {
@@ -662,7 +688,23 @@ namespace PlayW
                     弹幕.FontSize++;
                 }
             }
+            colorDialog.Dispose();
             首页焦点.Focus();
+        }
+
+
+        private void 发送弹幕按钮_Click(object sender, RoutedEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(弹幕输入窗口.Text) && 弹幕输入窗口.Text.Length < 20)
+            {
+
+                弹幕发送提示.Content = bilibili.danmu.发送弹幕(DD.DownIofo.房间_频道号, 弹幕输入窗口.Text);
+                弹幕输入窗口.Text = "";
+            }
+            else
+            {
+                弹幕发送提示.Content ="发送内容不能为空或超过20个字符！";
+            }
         }
     }
 }

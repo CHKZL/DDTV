@@ -6,13 +6,14 @@
         xmlns:local="clr-namespace:DDTV_New"
         mc:Ignorable="d"
         Title="MainWindow" Height="515" Width="800"
-        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent">
+        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515">
 
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid x:Name="bk">
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
+
         </Grid>
-        <Grid x:Name="home" Width="800" Height="515">
+        <Grid x:Name="home" Width="800" Height="515"  Visibility="Collapsed">
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
             <Label x:Name="tabText" Content="单推列表正在更新中....." Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
@@ -29,7 +30,7 @@
             <Label x:Name="newtime" Content="数据更新时间：单推列表正在更新中....." HorizontalAlignment="Left" Margin="576,258,0,0" VerticalAlignment="Top"/>
             <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
             <Label x:Name="ppnum" Content="114" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
-            <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="110,252,439,232" />
+            <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="533,187,16,297" />
             <Label x:Name="国内服务器延迟" Content="国内服务器延迟(阿B):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
             <Label x:Name="国外服务器延迟" Content="服务器延迟(404):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
             <Image Margin="10,283,740,182" Source="res/ico/帮助.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="帮助_按钮事件"/>
@@ -37,7 +38,7 @@
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
-        <Grid x:Name="直播层" Visibility="Collapsed" >
+        <Grid x:Name="直播层" Visibility="Collapsed">
 
             <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
                 <ListView.View>
@@ -53,22 +54,23 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="获取网络列表按钮点击事件"/>
             <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
-            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="715,296,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
-            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="715,332,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
+            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="713,263,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
+            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="713,299,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
             <Button Content="添加" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
-            <Button Content="修改" HorizontalAlignment="Left" Margin="714,431,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
-            <Button Content="删除" HorizontalAlignment="Left" Margin="714,396,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
+            <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
+            <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
             <Button Content="查看下载队列" HorizontalAlignment="Left" Margin="716,49,0,0" VerticalAlignment="Top" Width="75" Click="显示下载队列按钮点击事件"/>
             <Label x:Name="动态推送1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="702" VerticalContentAlignment="Center" Foreground="Black" Margin="7,484,91,0" />
             <Label x:Name="选中内容0" Content="当前选中行信息:" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" Width="103" VerticalContentAlignment="Center" Foreground="Black" Margin="703,154,-6,336" />
             <Label x:Name="选中内容1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="60" Width="87" VerticalContentAlignment="Center" Foreground="Black" Margin="713,179,0,276" />
             <Button Content="跳转到网页" HorizontalAlignment="Left" Margin="716,73,0,0" VerticalAlignment="Top" Width="75" Click="跳转到网页按钮点击事件"/>
-            <Grid x:Name="首次更新" Background="#B2636363">
+            <Grid x:Name="首次更新" Background="#B2636363" Visibility="Collapsed">
                 <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
             </Grid>
         </Grid>
-        <Grid x:Name="设置层" Visibility="Collapsed" >
+        <Grid x:Name="设置层" >
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
@@ -100,6 +102,12 @@
             <Label Content="X" Margin="189,289,594,198" RenderTransformOrigin="0.508,0.821"/>
             <TextBox x:Name="默认播放高度" Margin="209,289,545,200" Text="1080" VerticalContentAlignment="Center" KeyUp="分辨率大小_KeyUp" RenderTransformOrigin="1.889,0.308" />
             <Button Margin="260,291,494,200" Content="确定" Click="修改播放器默认大小确定按钮点击事件" />
+            <Button x:Name="登陆B站账号" Content="登陆bilibili账号" HorizontalAlignment="Left" Margin="25,469,0,0" VerticalAlignment="Top" Width="106" Click="登陆B站账号_Click" Height="26"/>
+            <Button x:Name="注销B站账号" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="149,469,0,0" VerticalAlignment="Top" Width="106" Click="注销B站账号_Click" IsEnabled="False" Height="26"/>
+            <Button x:Name="一键导入账号关注VTB和VUP" Content="一键导入账号关注VTB和VUP" HorizontalAlignment="Left" Margin="270,469,0,0" VerticalAlignment="Top" Width="176" Height="26" Click="一键导入账号关注VTB和VUP_Click"/>
+            <Label Content="默认缓冲时长(秒):" Margin="25,321,662,166" RenderTransformOrigin="0.508,0.821"/>
+            <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
+            <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
             <ListView x:Name="PluginC" Margin="8,47,12,26">
@@ -178,6 +186,7 @@
                 <TextBox Text="直播列表" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="1.将房间/频道添加到列表中后，每(列表中的数量*0.5秒)刷新一次直播状态(防止频率过高被ban)" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="2.选择列表后由于更新UI，选中状态可能消失，这是正常的。只要右边显示的'选中内容'正确就行了" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="3.在设置界面登陆后可以一键导入关注的V列表" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="下载" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="1.下载窗口里的下载任务，包含自动录制、手动选择下载、观看直播缓冲三种任务，直播缓冲如字面意思，如果播放中停止缓冲任务，会自动重建." Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="2.下载窗口里的选中和直播列表同理，选中后上面显示'选中内容'无误即可。取消任务点击'取消下载'按钮即可。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
@@ -188,6 +197,8 @@
                 <TextBox Text="2.在播放窗口中使用鼠标滚轮和键盘↑↓键可调整音量大小。" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="3.播放窗口中可以开关弹幕/【野生菌字幕】功能，字幕和弹幕的颜色在播放窗口中就可以修改" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="　字体的大小需要再主界面'设置'界面设置" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="4.登陆后可以发送弹幕和观看已经购买门票的限定直播" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
+                <TextBox Text="登陆" FontSize="16" FontWeight="Bold" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}"/>
                 <TextBox Text="播放界面的设置按钮隐藏/显示切换点右下角半透明扳手！" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" FontSize="16" FontWeight="Bold" Foreground="Red"/>
             </ListView>
             <Image Margin="551,165,10,10" Source="生活.png" Stretch="Fill"/>

@@ -40,25 +40,118 @@ namespace Auxiliary
                 {
                     try
                     {
-                        直播数据.Add(new 直播信息()
+                        直播数据.Add(new 直播信息());
+                        #region 实际开始时间
+                        try
                         {
-                            实际开始时间 = long.Parse(item["actual_start_time"].ToString()),
-                            频道ID = item["ch_id"].ToString(),
-                            频道类型 = int.Parse(item["ch_type"].ToString()),
-                            头像URL = item["channel_thumbnail_url"].ToString(),
-                            //最大观众 = int.Parse(item["max_viewers"].ToString()),
-                            名称 = item["name"].ToString(),
-                            已直播时长_秒 = int.Parse(item["seconds"].ToString()),
-                            已直播时长_日本时间 = item["start_time_str"].ToString(),
-                            主播名称 = item["streamer_name"].ToString(),
-                            //封面URL = item["thumbnail_url"].ToString(),
-                           // 封面图高度 = int.Parse(item["thumbnail_height"].ToString()),
-                            //封面图宽度 = int.Parse(item["thumbnail_width"].ToString()),
-                            标题 = item["title"].ToString(),
-                            当前观众 = item["viewers"].ToString(),
-                            频道相关信息=item["channel_misc"].ToString(),
-                            阿B房间号= item["desc"].ToString()
-                        });
+                            直播数据[直播数据.Count - 1].实际开始时间 = long.Parse(item["actual_start_time"].ToString());
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].实际开始时间 = 0;
+                        }
+                        #endregion
+                        #region 频道ID
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].频道ID = item["ch_id"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].频道ID = "0";
+                        }
+                        #endregion
+                        #region 频道类型
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].频道类型 = int.Parse(item["ch_type"].ToString());
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].频道类型 = 0;
+                        }
+                        #endregion
+                        #region 名称
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].名称 = item["name"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].名称 = "获取失败";
+                        }
+                        #endregion
+                        #region 已直播时长_秒
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].已直播时长_秒 = int.Parse(item["seconds"].ToString());
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].已直播时长_秒 = 0;
+                        }
+                        #endregion
+                        #region 已直播时长_日本时间
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].已直播时长_日本时间 = item["start_time_str"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].已直播时长_日本时间 = "null";
+                        }
+                        #endregion
+                        #region 主播名称
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].主播名称 = item["streamer_name"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].主播名称 = "null";
+                        }
+                        #endregion
+                        #region 标题
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].标题 = item["title"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].标题 = "null";
+                        }
+                        #endregion
+                        #region 当前观众
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].当前观众 = item["viewers"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].当前观众 = "null";
+                        }
+                        #endregion
+                        #region 频道相关信息
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].频道相关信息 = item["channel_misc"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].频道相关信息 = "null";
+                        }
+                        #endregion
+                        #region 阿B房间号
+                        try
+                        {
+                            直播数据[直播数据.Count - 1].阿B房间号 = item["desc"].ToString();
+                        }
+                        catch (Exception)
+                        {
+                            直播数据[直播数据.Count - 1].阿B房间号 = "null";
+                        }
+                        #endregion
+
                         直播数据[直播数据.Count() - 1].直播连接 = 根据频道类型返回直播地址(直播数据[直播数据.Count() - 1]);
                     }
                     catch (Exception ex)
