@@ -225,13 +225,13 @@ namespace Auxiliary
                 }
                 else
                 {
-                    if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号))
+                    if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号)&& DownIofo.是否保存)
                     {
                         switch (DownIofo.平台)
                         {
                             case "bilibili":
                                 {
-                                    Downloader 下载对象 = Downloader.新建下载对象(DownIofo.平台, DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号), "播放缓冲重连", false);
+                                    Downloader 下载对象 = Downloader.新建下载对象(DownIofo.平台, DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号), "重连", false);
                                     if (!下载对象.DownIofo.下载状态)
                                     {
                                         下载对象.DownIofo.备注 = "该房间当前状态不能获取到直播流";
