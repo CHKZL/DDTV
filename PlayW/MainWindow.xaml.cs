@@ -311,7 +311,7 @@ namespace PlayW
                             new Thread(new ThreadStart(delegate
                             {
                                 DD.DownIofo.WC.CancelAsync();
-                                DD.DownIofo.备注 = "用户取消";
+                                DD.DownIofo.备注 = "播放刷新";
                                 DD.DownIofo.下载状态 = false;
                                 Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
                                 MMPU.文件删除委托(DD.DownIofo.文件保存路径);
@@ -321,7 +321,7 @@ namespace PlayW
                                     Thread.Sleep(1000);
                                     if (下载对象.DownIofo.已下载大小bit > 1000)
                                     {
-                                        Thread.Sleep(1000);
+                                        Thread.Sleep(MMPU.播放缓冲时长*1000);
                                         try
                                         {
                                             this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(下载对象.DownIofo.文件保存路径));
