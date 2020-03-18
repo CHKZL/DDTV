@@ -47,7 +47,11 @@ namespace DDTV_New
                 Brushes.Black, 5);
 
             var geometry = formattedText.BuildGeometry(new Point(10, 10));
-
+            if(drawingContext==null)
+            {
+                MessageBox.Show("UserControl绘制drawingContext出错！");
+                return;
+            }
             drawingContext.DrawGeometry
             (
                 new SolidColorBrush(字体颜色),

@@ -13,6 +13,8 @@ using System.Runtime.InteropServices;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography;
+using Newtonsoft.Json.Linq;
 
 namespace Auxiliary
 {
@@ -23,7 +25,8 @@ namespace Auxiliary
         public static string 直播缓存目录 ="";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.1.7";
+        public static string 版本号 = "2.0.2.1";
+        public static string[] 不检测的版本号 = {"2.0.2.0b", "2.0.2.0c" , "2.0.2.0d" , "2.0.2.0e" , "2.0.2.0f", "2.0.2.0g", "2.0.2.0" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量= 0;
         public static int 缩小功能 = 1;
@@ -40,10 +43,30 @@ namespace Auxiliary
         public static int PlayWindowW = 0;
         public static int versionMajor = Environment.OSVersion.Version.Major;
         public static int 直播列表刷新间隔 = 0;
+        public static string Cookie = "";
+        public static string csrf = "";
+        public static DateTime CookieEX = new DateTime();
+        public static string UID = "";
+        public static string BiliUserFile= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BiliUser.ini");
+        public static int 播放缓冲时长 = 3;
+
+        public static string 房间状态MD5值 = string.Empty;
         public static void 修改默认音量设置(int A)
         {
             默认音量 = A;
             MMPU.setFiles("DefaultVolume", A.ToString());
+        }
+        public static string 寻找下载列表键值(string str,string name)
+        {
+            str = str.Replace(" ", "").Replace("\"", "").Replace("{", "").Replace("}", "");
+            foreach (var item in str.Split(','))
+            {
+                if(item.Split('=')[0]==name)
+                {
+                    return item.Split('=')[1];
+                }
+            }
+            return null;
         }
 
         /// <summary>
@@ -67,9 +90,35 @@ namespace Auxiliary
 
         }
 
-        public static void 启动内部SSR和V2代理配置()
+        /// <summary>
+        /// 读取配置文件
+        /// </summary>
+        /// <param name="name">值名称</param>
+        /// <param name="V">默认值</param>
+        public static string 读取exe默认配置文件(string name,string V)
+        {
+            string A1 = V;
+            try
+            {
+                A1 = getFiles(name);
+            }
+            catch (Exception)
+            {
+                setFiles(name, V);
+            }
+            return A1;
+        }
+
+        public static string 读ini配置文件(string 节点, string 项目,string 路径)
         {
 
+            return bilibili.BiliUser.Read(节点, 项目, null, 路径);
+        }
+
+        public static string 写ini配置文件(string 节点, string 项目,string 值, string 路径)
+        {
+            bilibili.BiliUser.Write(节点, 项目, 值, 路径);
+            return null;
         }
         /// <summary>
         /// 
@@ -94,11 +143,22 @@ namespace Auxiliary
             }
             return result;
         }
+        public static string 使用WC获取网络内容(string url)
+        {
+            var wc = new WebClient();
+            wc.Headers.Add("Accept: */*");
+            wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+            if (!string.IsNullOrEmpty(MMPU.Cookie))
+            {
+                wc.Headers.Add("Cookie", MMPU.Cookie);
+            }
+            byte[] roomHtml = wc.DownloadData(url);
+            return Encoding.UTF8.GetString(roomHtml);
+        }
         public static string 获取网页数据_下载视频用(string url,bool 解码)
         {
             HttpWebRequest rq = (HttpWebRequest)WebRequest.Create(url);
             rq.CookieContainer = new CookieContainer();
-            string GUID = Guid.NewGuid().ToString();
             rq.Method = "GET";
             rq.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             rq.Headers.Add("Accept-Encoding: gzip, deflate, br");
@@ -147,16 +207,92 @@ namespace Auxiliary
                 }
             }
         }
-        public static byte[] strToToHexByte(string hexString)
+        public class 加载网络房间方法
         {
-            hexString = hexString.Replace(" ", "");
-            if ((hexString.Length % 2) != 0)
-                hexString += " ";
-            byte[] returnBytes = new byte[hexString.Length / 2];
-            for (int i = 0; i < returnBytes.Length; i++)
-                returnBytes[i] = Convert.ToByte(hexString.Substring(i * 2, 2), 16);
-            return returnBytes;
+            public static List<列表加载缓存> 列表缓存 = new List<列表加载缓存>();
+            public static void 更新网络房间缓存()
+            {
+                int A = 1;
+                new Thread(new ThreadStart(delegate
+                {
+                    var wc = new WebClient();
+                    wc.Headers.Add("Accept: */*");
+                    wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+                    byte[] roomHtml = wc.DownloadData("https://gitee.com/SYXM/vdb/raw/master/json/list.json");
+                    var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
+
+                    foreach (var item in result["vtbs"])
+                    {
+                        foreach (var x in item["accounts"])
+                        {
+                            if (x["platform"].ToString() == "bilibili")
+                            {
+
+                                string name = "";
+                                if (item["name"].ToString().Contains("ch"))
+                                {
+                                    try
+                                    {
+                                        name = item["name"]["ch"].ToString();
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                }
+                                else if (item["name"].ToString().Contains("cn"))
+                                {
+                                    try
+                                    {
+                                        name = item["name"]["cn"].ToString();
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                    }
+                                }
+                                列表缓存.Add(new 列表加载缓存
+                                {
+                                    编号 = A,
+                                    名称 = name,
+                                    官方名称 = item["name"][item["name"]["default"].ToString()].ToString(),
+                                    平台 = "bilibili",
+                                    UID = x["id"].ToString(),
+                                    类型 = x["type"].ToString()
+                                });
+                                A++;
+                            }
+                        }
+                    }
+                    //this.Dispatcher.Invoke(new Action(delegate
+                    //{
+                    //    选中内容展示.Content = "";
+                    //    更新网络房间列表.IsEnabled = true;
+                    //}));
+                })).Start();
+
+            }
+            public class 列表加载缓存
+            {
+                public int 编号 { set; get; }
+                public string 名称 { set; get; }
+                public string 官方名称 { set; get; }
+                public string 平台 { set; get; }
+                public string UID { set; get; }
+                public string 类型 { set; get; }
+            }
+
+            public class 选中的网络房间
+            {
+                public int 编号 { set; get; }
+                public string 名称 { set; get; }
+                public string 官方名称 { set; get; }
+                public string UID { set; get; }
+                public string 房间号 { set; get; }
+                public string 平台 { set; get; }
+            }
         }
+       
         public static double 测试延迟(string Url)
         {
             try
@@ -219,7 +355,7 @@ namespace Auxiliary
                                 httpWebRequest.UserAgent = Ver.UA;
                                 httpWebRequest.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                                 // httpWebRequest
-                                httpWebRequest.Timeout = 1000;
+                                httpWebRequest.Timeout = 3000;
                                 //返回响应状态是否是成功比较的布尔值
 
                                 if(((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode==HttpStatusCode.OK)
@@ -288,10 +424,9 @@ namespace Auxiliary
         public static bool 文件是否正在被使用(string fileName)
         {
             bool inUse = true;
-            FileStream fs = null;
             try
             {
-                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
+                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
                 FileShare.None);
                 fs.Close();
                 inUse = false;
@@ -411,7 +546,7 @@ namespace Auxiliary
         /// <param name="key">key值</param>
         /// <param name="value">相应值</param>
         public static bool setFiles(string key, string value)
-        {//转载请保留 http://www.luofenming.com/show.aspx?id=ART2018030100002
+        {
             try
             {
                 Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -473,21 +608,78 @@ namespace Auxiliary
                 return null;
             }
         }
+        /// <summary>
+        /// MD5加密
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <returns>返回32位字符串</returns>
+        public static string GetMD5(string inputString)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            byte[] encryptedBytes = md5.ComputeHash(Encoding.ASCII.GetBytes(inputString));
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < encryptedBytes.Length; i++)
+            {
+                sb.AppendFormat("{0:x2}", encryptedBytes[i]);
+            }
+            return sb.ToString();
+        }
+
         public static string JSON发送拼接(int code, string msg)
         {
             return "{\"code\":\"" + code + "\",\"msg\":\"" + msg.Replace("\"", "\\\"") + "\"}";
         }
-        public static string 拼接SQL查询语句(string sql, Dictionary<string, string> myDic)
+        /// <summary>
+        /// 指定Post地址和添加cookis使用Get 方式获取网页返回内容  
+        /// </summary>  
+        /// <param name="url">请求后台地址</param>  
+        /// <param name="dic">Post表参数</param>
+        /// <param name="cook">cookis</param>
+        /// <returns></returns>
+        public static string 返回网页内容(string url, Dictionary<string, string> dic, CookieContainer cook)
         {
-            SQL中间件数据格式 SQLmian = new SQL中间件数据格式
+            string result = "";
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+            #region 添加Post 参数  
+            StringBuilder builder = new StringBuilder();
+            int i = 0;
+            foreach (var item in dic)
             {
-                SQL = sql
-            };
-            foreach (var item in myDic)
-            {
-                SQLmian.code.Add(new SQL数据对() { name = item.Key, val = item.Key });
+                if (item.Key.Length > 20)
+                {
+                    if (i > 0)
+                        builder.Append("&");
+                    builder.AppendFormat("{0}", item.Key);
+                    i++;
+                }
+                else
+                {
+                    if (i > 0)
+                        builder.Append("&");
+                    builder.AppendFormat("{0}={1}", item.Key, item.Value);
+                    i++;
+                }
             }
-            return JsonConvert.SerializeObject(SQLmian);
+            byte[] data = Encoding.UTF8.GetBytes(builder.ToString());
+            req.ContentLength = data.Length;
+            req.CookieContainer = cook;
+            using (Stream reqStream = req.GetRequestStream())
+            {
+                reqStream.Write(data, 0, data.Length);
+                reqStream.Close();
+            }
+            #endregion
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            //获取响应内容  
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
         }
 
         public class SQL中间件数据格式

@@ -29,7 +29,12 @@ namespace DDTV_New
         /// <summary>
         /// 确认框
         /// </summary>
-        /// <param name="title">标题名称</param>
+        /// <param name="Title">标题名称</param>
+        /// <param name="CN_Name">中文名称</param>
+        /// <param name="LA_Name">官方名称</param>
+        /// <param name="Platform">平台</param>
+        /// <param name="号码">房间号</param>
+        /// <param name="LiveStatus"></param>
         public AddMonitoringList(string Title,string CN_Name,string LA_Name,string Platform,string 号码,bool LiveStatus)
         {
             直播状态 = LiveStatus;
@@ -39,9 +44,9 @@ namespace DDTV_New
             this.Title = Title;
             中文名称.Text = CN_Name;
             官方名称.Text = LA_Name;
-            平台.SelectedItem = Platform ;
             唯一码.Text = 号码;
             平台.Items.Add("bilibili");
+            平台.SelectedItem = Platform;
             if (this.Title == "修改单推属性")
             {
                 唯一码.IsEnabled = false;
@@ -106,7 +111,7 @@ namespace DDTV_New
                 MessageBox.Show("不能留空");
                 return;
             }
-            if (this.Title == "添加新单推")
+            if (this.Title == "添加新单推"|| this.Title == "从网络添加房间")
             {
                 foreach (var item in RoomInit.房间主表)
                 {
@@ -133,7 +138,7 @@ namespace DDTV_New
                         }
                     }
                 }
-                RB.data.Add(new RoomCadr { Name = 中文名称.Text,RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = true, status = false, VideoStatus = false, OfficialName = 官方名称.Text, LiveStatus = RoomInit.根据唯一码获取直播状态(GUID) });
+                RB.data.Add(new RoomCadr { Name = 中文名称.Text,RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = false, status = false, VideoStatus = false, OfficialName = 官方名称.Text, LiveStatus = RoomInit.根据唯一码获取直播状态(GUID) });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 InitializeRoomList();
@@ -156,9 +161,9 @@ namespace DDTV_New
                         if (item.RoomNumber == GUID)
                         {
                             RB.data.Add(item);
-                            RB.data[RB.data.Count() - 1].Name = 中文名称.Text;
-                            RB.data[RB.data.Count() - 1].OfficialName = 官方名称.Text;
-                            RB.data[RB.data.Count() - 1].Types = 平台.SelectedItem.ToString();
+                            RB.data[RB.data.Count - 1].Name = 中文名称.Text;
+                            RB.data[RB.data.Count - 1].OfficialName = 官方名称.Text;
+                            RB.data[RB.data.Count - 1].Types = 平台.SelectedItem.ToString();
                         }
                         else
                         {

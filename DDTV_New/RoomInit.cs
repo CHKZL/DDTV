@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_New
 {
-    public class RoomInit
+    public static class RoomInit
     {
         public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration");
         
@@ -34,7 +34,7 @@ namespace DDTV_New
         }
         public static bool 根据唯一码获取直播状态(string GUID)
         {
-            foreach (var item in 房间主表)
+            foreach (RL item in 房间主表)
             {
                 try
                 {
@@ -67,7 +67,7 @@ namespace DDTV_New
                 {
                     刷新B站房间列表();
                     房间信息更新次数++;
-                    await Task.Delay(5 * 1000);
+                    await Task.Delay(5 * 1000).ConfigureAwait(false);
                 }
             });
         }
@@ -286,7 +286,7 @@ namespace DDTV_New
                     });
                     if (首次启动)
                     {
-                        bilibili.RoomList[bilibili.RoomList.Count() - 1].直播状态 = false;
+                        bilibili.RoomList[bilibili.RoomList.Count - 1].直播状态 = false;
                     }
                 }
             }
