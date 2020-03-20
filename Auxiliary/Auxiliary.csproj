@@ -84,6 +84,7 @@
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,6 +96,7 @@
   <ItemGroup>
     <Compile Include="bilibili.cs" />
     <Compile Include="Downloader.cs" />
+    <Compile Include="Encryption.cs" />
     <Compile Include="InfoLogger.cs" />
     <Compile Include="MMPU.cs" />
     <Compile Include="Program.cs" />

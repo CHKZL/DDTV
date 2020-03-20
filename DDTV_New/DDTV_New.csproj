@@ -74,6 +74,7 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -292,7 +293,7 @@
     <Resource Include="更新日志\2.0.2.0c.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="更新日志\2.0.2.1.txt" />
+    <Resource Include="更新日志\2.0.2.1c.txt" />
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.VersionCheckAnalyzer.2.9.8\analyzers\dotnet\cs\Microsoft.CodeAnalysis.VersionCheckAnalyzer.resources.dll" />

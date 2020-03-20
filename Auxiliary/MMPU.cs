@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
+using System.Windows.Forms;
 
 namespace Auxiliary
 {
@@ -25,7 +26,7 @@ namespace Auxiliary
         public static string 直播缓存目录 ="";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.1b";
+        public static string 版本号 = "2.0.2.1c";
         public static string[] 不检测的版本号 = {"2.0.2.0b", "2.0.2.0c" , "2.0.2.0d" , "2.0.2.0e" , "2.0.2.0f", "2.0.2.0g", "2.0.2.0" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量= 0;
@@ -49,6 +50,8 @@ namespace Auxiliary
         public static string UID = "";
         public static string BiliUserFile= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BiliUser.ini");
         public static int 播放缓冲时长 = 3;
+        public static string AESKey="rzqIzYmDQFqQmWfr";
+        public static string AESVal = "itkIBBs5JdCLKqpP";
 
         public static string 房间状态MD5值 = string.Empty;
         public static void 修改默认音量设置(int A)
@@ -120,6 +123,8 @@ namespace Auxiliary
             bilibili.BiliUser.Write(节点, 项目, 值, 路径);
             return null;
         }
+
+       
         /// <summary>
         /// 
         /// </summary>
@@ -215,54 +220,60 @@ namespace Auxiliary
                 int A = 1;
                 new Thread(new ThreadStart(delegate
                 {
-                    var wc = new WebClient();
-                    wc.Headers.Add("Accept: */*");
-                    wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                    byte[] roomHtml = wc.DownloadData("https://gitee.com/SYXM/vdb/raw/master/json/list.json");
-                    var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
-
-                    foreach (var item in result["vtbs"])
+                    try
                     {
-                        foreach (var x in item["accounts"])
+                        var wc = new WebClient();
+                        wc.Headers.Add("Accept: */*");
+                        wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+                        byte[] roomHtml = wc.DownloadData("https://gitee.com/SYXM/vdb/raw/master/json/list.json");
+                        var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
+
+                        foreach (var item in result["vtbs"])
                         {
-                            if (x["platform"].ToString() == "bilibili")
+                            foreach (var x in item["accounts"])
                             {
-
-                                string name = "";
-                                if (item["name"].ToString().Contains("ch"))
+                                if (x["platform"].ToString() == "bilibili")
                                 {
-                                    try
-                                    {
-                                        name = item["name"]["ch"].ToString();
-                                    }
-                                    catch (Exception)
-                                    {
 
+                                    string name = "";
+                                    if (item["name"].ToString().Contains("ch"))
+                                    {
+                                        try
+                                        {
+                                            name = item["name"]["ch"].ToString();
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
                                     }
+                                    else if (item["name"].ToString().Contains("cn"))
+                                    {
+                                        try
+                                        {
+                                            name = item["name"]["cn"].ToString();
+                                        }
+                                        catch (Exception)
+                                        {
+
+                                        }
+                                    }
+                                    列表缓存.Add(new 列表加载缓存
+                                    {
+                                        编号 = A,
+                                        名称 = name,
+                                        官方名称 = item["name"][item["name"]["default"].ToString()].ToString(),
+                                        平台 = "bilibili",
+                                        UID = x["id"].ToString(),
+                                        类型 = x["type"].ToString()
+                                    });
+                                    A++;
                                 }
-                                else if (item["name"].ToString().Contains("cn"))
-                                {
-                                    try
-                                    {
-                                        name = item["name"]["cn"].ToString();
-                                    }
-                                    catch (Exception)
-                                    {
-
-                                    }
-                                }
-                                列表缓存.Add(new 列表加载缓存
-                                {
-                                    编号 = A,
-                                    名称 = name,
-                                    官方名称 = item["name"][item["name"]["default"].ToString()].ToString(),
-                                    平台 = "bilibili",
-                                    UID = x["id"].ToString(),
-                                    类型 = x["type"].ToString()
-                                });
-                                A++;
                             }
                         }
+                    }
+                    catch (Exception)
+                    {
                     }
                     //this.Dispatcher.Invoke(new Action(delegate
                     //{
