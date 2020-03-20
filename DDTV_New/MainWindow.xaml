@@ -130,7 +130,7 @@
         </Grid>
         <Grid x:Name="AOE直播层" Visibility="Collapsed">
             <TabControl HorizontalAlignment="Left" Height="447" Margin="10,58,0,0" VerticalAlignment="Top" Width="780">
-                <TabItem Header="BiliBili">
+                <TabItem Header="BiliBili限定直播">
                     <Grid Background="#FFE5E5E5">
                         <ListView x:Name="bilibiliAOE直播列表" MouseDoubleClick="AOE直播表双击事件">
                             <ListView.View>

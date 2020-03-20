@@ -40,7 +40,7 @@ namespace DDTV_New.window
 
         private void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, Account account = null)
         {
-            if (account != null)
+            if (status == ByQRCode.QrCodeStatus.Success)
             {
                 Plugin.BilibiliAccount.account = account;
                 Console.WriteLine(status);
@@ -49,19 +49,19 @@ namespace DDTV_New.window
                 MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);
                 foreach (var item in account.Cookies)
                 {
-                    MMPU.Cookie = MMPU.Cookie + item.ToString() + ";";
+                    MMPU.Cookie = MMPU.Cookie + item + ";";
                 }
                 MMPU.CookieEX = account.Expires_Cookies;
                 MMPU.csrf = account.CsrfToken;
+                ;
                 MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
-                MMPU.写ini配置文件("User", "Cookie", MMPU.Cookie, MMPU.BiliUserFile);
+                MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
                 MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString(), MMPU.BiliUserFile);
                 Dispatcher.Invoke(new Action(delegate
                 {
                     Close();
                 }));
             }
-         
         }
 
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]

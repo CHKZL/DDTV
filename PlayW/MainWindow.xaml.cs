@@ -291,7 +291,32 @@ namespace PlayW
         {
             if (播放状态)
             {
-                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
+                //if(!string.IsNullOrEmpty(DD.DownIofo.重连文件路径))
+                //{
+                //    try
+                //    {
+                //        new Task(() =>
+                //        {
+                //            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                //            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.重连文件路径));
+                //            DD.DownIofo.重连文件路径 = null;
+                //        }).Start();
+                       
+                //    }
+                //    catch (Exception)
+                //    {
+
+                //        return;
+                //    }
+                  
+                  
+                //}
+                //else
+                {
+                    刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
+                }
+
+
             }
         }
         public void 刷新播放(string 提示内容)
@@ -313,7 +338,7 @@ namespace PlayW
                                 DD.DownIofo.WC.CancelAsync();
                                 DD.DownIofo.备注 = "播放刷新";
                                 DD.DownIofo.下载状态 = false;
-                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
+                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号,1), "播放缓冲重连", false);
                                 MMPU.文件删除委托(DD.DownIofo.文件保存路径);
                                 DD = 下载对象;
                                 for (int i = 0; i < MMPU.播放缓冲时长; i++)

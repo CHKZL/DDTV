@@ -45,7 +45,16 @@ namespace DDTV_New
             软件启动配置初始化();
             icon();
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
+
+            System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+            delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
+            {
+                return true; // **** Always accept
+            };
+            System.Net.ServicePointManager.DefaultConnectionLimit = 999;/*---------这里最重要--------*/
+            System.Net.ServicePointManager.MaxServicePoints = 999;
         }
+
 
         public void 软件启动配置初始化()
         {
@@ -86,7 +95,15 @@ namespace DDTV_New
 
             #region BiliUser配置文件初始化
             //账号登陆cookie
-            MMPU.Cookie = MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile);
+
+            try
+            {
+                MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
+            }
+            catch (Exception)
+            {
+                MMPU.Cookie = "";
+            }
             //账号UID
             MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
             //账号登陆cookie的有效期
@@ -279,6 +296,16 @@ namespace DDTV_New
             }
             //增加插件列表
             {
+
+                PluginC.Items.Add(new
+                {
+                    编号 = "0",
+                    名称 = "DDTV",
+                    版本 = MMPU.版本号,
+                    是否加载 = "强制",
+                    说明 = "本软件的所有必须内容()",
+                    备注 = ""
+                });
                 PluginC.Items.Add(new
                 {
                     编号 = "1",
@@ -311,7 +338,7 @@ namespace DDTV_New
                     编号 = "4",
                     名称 = "弹幕录制工具",
                     版本 = "1.0.0.1",
-                    是否加载 = "√",
+                    是否加载 = "X",
                     说明 = "用于录制直播弹幕内容(工具箱内)",
                     备注 = "调试中的功能，还没写完"
                 });
@@ -322,7 +349,7 @@ namespace DDTV_New
                     版本 = "2.2.0.12",
                     是否加载 = "√",
                     说明 = "用于处理B站账号类的操作",
-                    备注 = "引用GITHUB @LeoChen98/BiliAccount"
+                    备注 = "基于MIT授权引用GITHUB @LeoChen98/BiliAccount"
                 });
             }
 
@@ -826,6 +853,14 @@ namespace DDTV_New
         }
         public void 打开直播列表(Downloader DL)
         {
+            //System.Diagnostics.Process p = new System.Diagnostics.Process();
+            //p.StartInfo.FileName = @"D:\Program Files (x86)\Pure Codec\x64\PotPlayerMini64.exe";//需要启动的程序名       
+            //p.StartInfo.Arguments = " \""+DL.DownIofo.下载地址+"\"";//启动参数       
+            //p.Start();//启动       
+          
+            //return;
+
+
             if (DL != null)
             {
                 DL.DownIofo.播放状态 = true;
@@ -1462,7 +1497,7 @@ namespace DDTV_New
 
         private void 播放缓冲时长_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 60, 2);
+            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 60, 1);
         }
 
         private void 修改播放缓冲时长确定按钮点击事件(object sender, RoutedEventArgs e)

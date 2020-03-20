@@ -302,6 +302,7 @@ namespace Auxiliary
             }
             public static string 下载地址(string roomid)
             {
+               // return "https://d1--cn-gotcha04.bilivideo.com/live-bvc/793662/live_458154143_84879393.flv?cdn=cn-gotcha04&expires=1584633755&len=0&oi=3664520922&pt=web&qn=10000&trid=ceaa755109194e2aa2249569d4945b22&sigparams=cdn,expires,len,oi,pt,qn,trid&sign=81057e08abe71ffa9a1a86d0c93cd0c3&ptype=0&platform=web&pSession=keiyK8Ef-t7iZ-4xGe-hER9-NfFXX7SF7ibN";
                 roomid = 获取真实房间号(roomid);
                 if (roomid == null)
                 {
@@ -319,7 +320,61 @@ namespace Auxiliary
                 {
                     wc.Headers.Add("Cookie", MMPU.Cookie);
                 }
-              
+                string resultString;
+                try
+                {
+                    resultString = wc.DownloadString(apiUrl);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("发送解析请求失败：" + e.Message);
+                    return "";
+                }
+
+                //解析结果使用最高清晰度
+                try
+                {
+                    //foreach (var item in JObject.Parse(resultString)["data"]["durl"])
+                    //{
+                    //    Console.WriteLine(item["url"].ToString());
+
+                    //}
+                    MMPU.判断网络路径是否存在 判断文件是否存在 = new MMPU.判断网络路径是否存在();
+                    string BBBC = (JObject.Parse(resultString)["data"]["durl"][0]["url"].ToString() + "&platform=web").Replace("pt=", "pt=web") + "&pSession=" + Guid.NewGuid();
+                    if (!判断文件是否存在.判断(BBBC, "bilibili"))
+                    {
+                        BBBC = (JObject.Parse(resultString)["data"]["durl"][0]["url"].ToString());
+                    }
+                 
+                    Console.WriteLine(BBBC);
+                    return BBBC;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("视频流地址解析失败：" + e.Message);
+                    return "";
+                }
+            }
+            public static string 下载地址(string roomid,int live)
+            {
+                roomid = 获取真实房间号(roomid);
+                if (roomid == null)
+                {
+                    Console.WriteLine("房间号获取错误。");
+                    return null;
+                }
+                var apiUrl = "https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json";
+
+                //访问API获取结果
+                var wc = new WebClient();
+                wc.Headers.Add("Accept: */*");
+                wc.Headers.Add("User-Agent: " + Ver.UA);
+                wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.9,ja;q=0.8");
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    wc.Headers.Add("Cookie", MMPU.Cookie);
+                }
+
                 string resultString;
 
                 try
@@ -335,7 +390,7 @@ namespace Auxiliary
                 //解析结果使用最高清晰度
                 try
                 {
-                    return JObject.Parse(resultString)["data"]["durl"][0]["url"].ToString();
+                    return JObject.Parse(resultString)["data"]["durl"][live]["url"].ToString();
                 }
                 catch (Exception e)
                 {
