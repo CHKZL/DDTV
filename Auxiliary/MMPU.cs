@@ -26,7 +26,7 @@ namespace Auxiliary
         public static string 直播缓存目录 ="";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.1c";
+        public static string 版本号 = "2.0.2.1d";
         public static string[] 不检测的版本号 = {"2.0.2.0b", "2.0.2.0c" , "2.0.2.0d" , "2.0.2.0e" , "2.0.2.0f", "2.0.2.0g", "2.0.2.0" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量= 0;
@@ -365,14 +365,19 @@ namespace Auxiliary
                                 httpWebRequest.Accept = "*/*";
                                 httpWebRequest.UserAgent = Ver.UA;
                                 httpWebRequest.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+                                //if (!string.IsNullOrEmpty(MMPU.Cookie))
+                                //{
+                                //    httpWebRequest.Headers.Add("Cookie", MMPU.Cookie);
+                                //}
                                 // httpWebRequest
-                                httpWebRequest.Timeout = 3000;
+                                httpWebRequest.Timeout = 2000;
                                 //返回响应状态是否是成功比较的布尔值
 
                                 if(((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode==HttpStatusCode.OK)
                                 {
 
                                 }
+                                Console.WriteLine("判断文件存在");
                                 return true;
                             }
                         case "主站视频":
@@ -383,6 +388,7 @@ namespace Auxiliary
                 }
                 catch(Exception)
                 {
+                    Console.WriteLine("判断文件不存在");
                     return false;
                 }
             }
