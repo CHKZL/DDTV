@@ -18,6 +18,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Forms;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 
 namespace PlayW
 {
@@ -94,14 +97,14 @@ namespace PlayW
                 非win10提示.Visibility = Visibility.Collapsed;
             }
         }
-
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
             new Thread(new ThreadStart(delegate {
                 try
                 {
-                    this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                    Play_STOP();
+                    //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
                 catch (Exception)
                 {
@@ -110,6 +113,28 @@ namespace PlayW
             DD.DownIofo.播放状态 = false;
             窗口是否打开 = false;
         }
+        #region 播放控件事件
+        public void Play_STOP()
+        {
+            //Aplayer.Close();
+            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+        }
+        public void Play_SETVolume(int a)
+        {
+            this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume =a;
+           // Aplayer.SetVolume(a);
+        }
+        public void Play_Play()
+        {
+            this.VlcControl.SourceProvider.MediaPlayer.Play();
+            //Aplayer.Play();
+        }
+        public void Play_Open(string A)
+        {
+            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(A));
+           // Aplayer.Open(A);
+        }
+        #endregion
         public void 增加字幕(string A)
         {
             int 显示的字幕数 = 3;
@@ -222,17 +247,21 @@ namespace PlayW
                     {
                         try
                         {
-                            this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                            Play_SETVolume((int)音量.Value);
+                            //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                         }
                         catch (Exception)
                         {
                         }
                     }));
 
-                    this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.文件保存路径));
-                    this.VlcControl.SourceProvider.MediaPlayer.EndReached += 播放到达结尾触发事件;
-                    播放状态 = true;
-                    if(DD.DownIofo.平台=="bilibili")
+                    // Aplayer.Open(DD.DownIofo.文件保存路径);
+                    // this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.文件保存路径));
+                    this.VlcControl.SourceProvider.MediaPlayer.EndReached += 播放到达结尾触发事件; ;
+                    Play_Open(DD.DownIofo.文件保存路径);
+                    //Aplayer.OnStateChanged += 播放到达结尾触发事件;  
+                    播放状态 = true; 
+                    if (DD.DownIofo.平台=="bilibili")
                     {
                         获取弹幕();
                     }
@@ -244,6 +273,8 @@ namespace PlayW
             })).Start();
          
         }
+
+
         private void 获取弹幕()
         {
             new Thread(new ThreadStart(delegate {
@@ -287,9 +318,10 @@ namespace PlayW
                 }
             })).Start();
         }
-        private void 播放到达结尾触发事件(object sender, Vlc.DotNet.Core.VlcMediaPlayerEndReachedEventArgs e)
+        private void 播放到达结尾触发事件(object sender, Vlc.DotNet.Core.VlcMediaPlayerEndReachedEventArgs e)// AxAPlayer3Lib._IPlayerEvents_OnStateChangedEvent e)
         {
-            if (播放状态)
+            //if (e.nOldState==6)
+            if(播放状态)
             {
                 //if(!string.IsNullOrEmpty(DD.DownIofo.重连文件路径))
                 //{
@@ -338,7 +370,7 @@ namespace PlayW
                                 DD.DownIofo.WC.CancelAsync();
                                 DD.DownIofo.备注 = "播放刷新";
                                 DD.DownIofo.下载状态 = false;
-                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号,1), "播放缓冲重连", false);
+                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
                                 MMPU.文件删除委托(DD.DownIofo.文件保存路径);
                                 DD = 下载对象;
                                 for (int i = 0; i < MMPU.播放缓冲时长; i++)
@@ -349,7 +381,8 @@ namespace PlayW
                                         Thread.Sleep(MMPU.播放缓冲时长*1000);
                                         try
                                         {
-                                            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(下载对象.DownIofo.文件保存路径));
+                                            Play_Open(下载对象.DownIofo.文件保存路径);
+                                            //this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(下载对象.DownIofo.文件保存路径));
                                         }
                                         catch (Exception)
                                         {
@@ -404,12 +437,14 @@ namespace PlayW
 
             if (播放状态)
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Pause();
+                Play_STOP();
+                //this.VlcControl.SourceProvider.MediaPlayer.Pause();
                 播放状态 = !播放状态;
             }
             else
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Play();
+                Play_Play();
+                //this.VlcControl.SourceProvider.MediaPlayer.Play();
                 播放状态 = !播放状态;
             }
         }
@@ -419,7 +454,8 @@ namespace PlayW
 
             try
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                Play_SETVolume((int)音量.Value);
+                //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
             }
             catch (Exception)
             {
@@ -511,12 +547,14 @@ namespace PlayW
                 if (音量.Value + 5 <= 100)
                 {
                     音量.Value += 5;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
                 {
                     音量.Value = 100;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
             //音量降低
@@ -525,12 +563,14 @@ namespace PlayW
                 if (音量.Value - 5 >= 0)
                 {
                     音量.Value -= 5;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //  this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
                 {
                     音量.Value = 0;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //  this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
             //全屏回车
@@ -562,7 +602,8 @@ namespace PlayW
             {
                 new Task(() =>
                 {
-                    this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                    Play_STOP();
+                    //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                     刷新播放("检测到F5按下,刷新中..");
                 }).Start();
                
@@ -575,13 +616,14 @@ namespace PlayW
 
         private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
         {
-            //播放状态 = false;
-            //new Task(() =>
-            //{
-            //    this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+            播放状态 = false;
+            new Task(() =>
+            {
+                this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
 
-            //}).Start();
-            //DD.DownIofo.播放状态 = false;
+            }).Start();
+            DD.DownIofo.播放状态 = false;
+            //Aplayer.Dispose();
             this.VlcControl.Dispose();
             this.Close();
         }
@@ -605,12 +647,14 @@ namespace PlayW
                 if (音量.Value + 5 <= 100)
                 {
                     音量.Value += 5;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
                 {
                     音量.Value = 100;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    // this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
             else if (e.Delta<0)
@@ -618,12 +662,14 @@ namespace PlayW
                 if (音量.Value - 5 >= 0)
                 {
                     音量.Value -= 5;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //  this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
                 else
                 {
                     音量.Value = 0;
-                    this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+                    Play_SETVolume((int)音量.Value);
+                    //  this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
             

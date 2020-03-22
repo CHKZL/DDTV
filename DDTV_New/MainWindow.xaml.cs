@@ -25,9 +25,14 @@ namespace DDTV_New
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
         public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
-        public static List<PlayW.MainWindow> playList = new List<PlayW.MainWindow>();
+        public static List<PlayW.MainWindow> playList1 = new List<PlayW.MainWindow>();
+        public static int 播放器版本 = 1;
+      //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
+       
+
 
         public MainWindow()
         {
@@ -525,6 +530,12 @@ namespace DDTV_New
                     i++;
                 }
             }
+            int 单推人数 = i - 1;
+            this.Dispatcher.Invoke(new Action(delegate
+            {
+                ppnum.Content = 单推人数;
+                
+            }));
 
             if (正在直播.Count == 0)
             {
@@ -865,12 +876,29 @@ namespace DDTV_New
             {
                 DL.DownIofo.播放状态 = true;
                 DL.DownIofo.是否是播放任务 = true;
-
-                PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
-                PlayWindow.Closed += 播放窗口退出事件;
-                PlayWindow.Show();
-                PlayWindow.BossKey += 老板键事件;
-                playList.Add(PlayWindow);
+                switch(播放器版本)
+                {
+                    case 1:
+                        {
+                            PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
+                            PlayWindow.Closed += 播放窗口退出事件;
+                            PlayWindow.Show();
+                            PlayWindow.BossKey += 老板键事件;
+                            playList1.Add(PlayWindow);
+                            break;
+                        }
+                    case 2:
+                        {
+                            //硬解播放器.Form1 PlayWindow = new 硬解播放器.Form1(DL, MMPU.默认音量,MMPU.PlayWindowW, MMPU.PlayWindowH);
+                            //PlayWindow.Closed += 播放窗口退出事件;
+                            //PlayWindow.Show();
+                            //playList2.Add(PlayWindow);
+                            break;
+                        }
+                }
+               // PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
+               
+                
                 
                 // MMPU.ClearMemory();
             }
@@ -885,7 +913,7 @@ namespace DDTV_New
         private void 老板键事件(object sender, EventArgs e)
         {
             this.WindowState = WindowState.Minimized;
-            foreach (var item in playList)
+            foreach (var item in playList1)
             {
                 if (item.窗口是否打开)
                 {
@@ -901,26 +929,58 @@ namespace DDTV_New
                 new Thread(new ThreadStart(delegate
                 {
                     MMPU.当前直播窗口数量--;
-                    PlayW.MainWindow p = (PlayW.MainWindow)sender;
-                    playList.Remove(p);
-                    foreach (var item in MMPU.DownList)
+                    switch (播放器版本)
                     {
-                        if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
-                        {
-                            item.DownIofo.WC.CancelAsync();
-                            item.DownIofo.下载状态 = false;
-                            item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                            if (item.DownIofo.是否保存)
+                        case 1:
                             {
+                                PlayW.MainWindow p = (PlayW.MainWindow)sender;
+                                playList1.Remove(p);
+                                foreach (var item in MMPU.DownList)
+                                {
+                                    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                                    {
+                                        item.DownIofo.WC.CancelAsync();
+                                        item.DownIofo.下载状态 = false;
+                                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                        if (item.DownIofo.是否保存)
+                                        {
 
+                                        }
+                                        else
+                                        {
+                                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                        }
+                                        break;
+                                    }
+                                }
+                                break;
                             }
-                            else
+                        case 2:
                             {
-                                MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                //硬解播放器.Form1 p = (硬解播放器.Form1)sender;
+                                //playList2.Remove(p);
+                                //foreach (var item in MMPU.DownList)
+                                //{
+                                //    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                                //    {
+                                //        item.DownIofo.WC.CancelAsync();
+                                //        item.DownIofo.下载状态 = false;
+                                //        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                //        if (item.DownIofo.是否保存)
+                                //        {
+
+                                //        }
+                                //        else
+                                //        {
+                                //            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                //        }
+                                //        break;
+                                //    }
+                                //}
+                                break;
                             }
-                            break;
-                        }
                     }
+                   
                 })).Start();
             }
             catch (Exception)
@@ -1512,12 +1572,12 @@ namespace DDTV_New
 
             double W = SystemParameters.WorkArea.Width;//得到屏幕工作区域宽度
             double H = SystemParameters.WorkArea.Height;//得到屏幕工作区域高度
-            switch (playList.Count)
+            switch (playList1.Count)
             {
                 case 1:
                     {
-                        playList[0].Width = W;
-                        playList[0].Height = H;
+                        playList1[0].Width = W;
+                        playList1[0].Height = H;
                         break;
                     }
             }
