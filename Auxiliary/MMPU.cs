@@ -15,7 +15,6 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
-using System.Windows.Forms;
 
 namespace Auxiliary
 {
@@ -23,13 +22,13 @@ namespace Auxiliary
     {
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
-        public static string 直播缓存目录 ="";
+        public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.1d";
-        public static string[] 不检测的版本号 = {"2.0.2.0b", "2.0.2.0c" , "2.0.2.0d" , "2.0.2.0e" , "2.0.2.0f", "2.0.2.0g", "2.0.2.0" };
+        public static string 版本号 = "2.0.2.2a";
+        public static string[] 不检测的版本号 = { };
         public static bool 第一次打开播放窗口 = true;
-        public static int 默认音量= 0;
+        public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
         public static bool 连接404使能 = false;
         public static bool 是否能连接404 = false;
@@ -48,23 +47,167 @@ namespace Auxiliary
         public static string csrf = "";
         public static DateTime CookieEX = new DateTime();
         public static string UID = "";
-        public static string BiliUserFile= Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BiliUser.ini");
+        public static string BiliUserFile = "./BiliUser.ini";
         public static int 播放缓冲时长 = 3;
-        public static string AESKey="rzqIzYmDQFqQmWfr";
+        public static string AESKey = "rzqIzYmDQFqQmWfr";
         public static string AESVal = "itkIBBs5JdCLKqpP";
-
+        public static bool 转码功能使能 = false;
         public static string 房间状态MD5值 = string.Empty;
+        public static bool 初始化后启动下载提示 = true;
+        public static bool 是否提示一键导入 = true;
+
+
+        public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
+
+        /// <summary>
+        /// 配置文件初始化
+        /// </summary>
+        /// <param name="模式">//0：DDTV,1：DDTVLive</param>
+        public static bool 配置文件初始化(int 模式)
+        {
+            if (模式 == 0)
+            {
+                InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
+                {
+                    Debug = true,
+                    下载必要提示 = true,
+                    杂项提示 = false,
+                    系统错误信息 = true,
+                    输出到文件 = false
+                });
+                启动模式 = 0;
+            }
+            else if (模式 == 1)
+            {
+                InfoLog.InfoInit("./DDTVLiveRecLog.out", new InfoLog.InfoClasslBool()
+                {
+                    Debug = false,
+                    下载必要提示 = true,
+                    杂项提示 = false,
+                    系统错误信息 = true,
+                    输出到文件 = true
+                });
+                启动模式 = 1;
+            }
+            InfoLog.InfoPrintf("消息系统初始化完成", InfoLog.InfoClass.Debug);
+            #region 配置文件设置
+            if (模式 == 0)
+            {
+                //默认音量
+                MMPU.默认音量 = int.Parse(MMPU.读取exe默认配置文件("DefaultVolume", "50"));
+                //缩小功能
+                MMPU.缩小功能 = int.Parse(MMPU.读取exe默认配置文件("Zoom", "1"));
+                //最大直播并行数量
+                MMPU.最大直播并行数量 = int.Parse(MMPU.读取exe默认配置文件("PlayNum", "5"));
+                //默认弹幕颜色
+                MMPU.默认弹幕颜色 = MMPU.读取exe默认配置文件("DanMuColor", "0xFF, 0x00, 0x00, 0x00");
+                //默认字幕颜色
+                MMPU.默认字幕颜色 = MMPU.读取exe默认配置文件("ZiMuColor", "0xFF, 0x00, 0x00, 0x00");
+                //默认字幕大小
+                MMPU.默认字幕大小 = int.Parse(MMPU.读取exe默认配置文件("ZiMuSize", "24"));
+                //默认弹幕大小
+                MMPU.默认弹幕大小 = int.Parse(MMPU.读取exe默认配置文件("DanMuSize", "20"));
+                //默认弹幕大小
+                MMPU.播放缓冲时长 = int.Parse(MMPU.读取exe默认配置文件("BufferDuration", "3"));
+                //直播缓存目录
+                MMPU.直播缓存目录 = MMPU.读取exe默认配置文件("Livefile", "./tmp/LiveCache/");
+                //播放窗口默认高度
+                MMPU.PlayWindowH = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
+                //播放窗口默认宽度
+                MMPU.PlayWindowW = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
+            }
+            else if (模式 == 1)
+            {
+            }
+            //检查配置文件
+            bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
+
+            //房间配置文件
+            RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
+            //房间配置文件
+            MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
+            //直播表刷新默认间隔
+            MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
+
+
+            //直播更新时间
+            MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "40"));
+
+            //转码功能使能
+            MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
+            #endregion
+            InfoLog.InfoPrintf("通用配置加载完成", InfoLog.InfoClass.Debug);
+            #region BiliUser配置文件初始化
+            //账号登陆cookie
+
+            try
+            {
+                MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
+            }
+            catch (Exception)
+            {
+                MMPU.Cookie = "";
+            }
+            //账号UID
+            MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
+            //账号登陆cookie的有效期
+            try
+            {
+                if (!string.IsNullOrEmpty(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile)))
+                {
+                    MMPU.CookieEX = DateTime.Parse(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile));
+                    if (DateTime.Compare(DateTime.Now, MMPU.CookieEX) > 0)
+                    {
+                        MMPU.Cookie = "";
+
+                        if (模式 == 0)
+                        {
+                            //MessageBox.Show("BILIBILI账号登陆已过期");
+                            MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
+                            MMPU.csrf = null;
+                            MMPU.写ini配置文件("User", "csrf", "", MMPU.BiliUserFile);
+                        }
+
+                    }
+                }
+
+            }
+            catch (Exception)
+            {
+                if (模式 == 0)
+                {
+                    MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
+                }
+
+                MMPU.Cookie = null;
+
+            }
+            //账号csrf
+            if (string.IsNullOrEmpty(MMPU.Cookie))
+            {
+                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
+                return false;
+            }
+            MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
+            #endregion
+            InfoLog.InfoPrintf("Bilibili账号信息加载完成", InfoLog.InfoClass.Debug);
+            //初始化房间
+            RoomInit.start();
+            return true;
+        }
         public static void 修改默认音量设置(int A)
         {
             默认音量 = A;
             MMPU.setFiles("DefaultVolume", A.ToString());
         }
-        public static string 寻找下载列表键值(string str,string name)
+        public static string 寻找下载列表键值(string str, string name)
         {
             str = str.Replace(" ", "").Replace("\"", "").Replace("{", "").Replace("}", "");
             foreach (var item in str.Split(','))
             {
-                if(item.Split('=')[0]==name)
+                if (item.Split('=')[0] == name)
                 {
                     return item.Split('=')[1];
                 }
@@ -98,12 +241,12 @@ namespace Auxiliary
         /// </summary>
         /// <param name="name">值名称</param>
         /// <param name="V">默认值</param>
-        public static string 读取exe默认配置文件(string name,string V)
+        public static string 读取exe默认配置文件(string name, string V)
         {
             string A1 = V;
             try
             {
-                A1 = getFiles(name);
+                A1 = getFiles(name, V);
             }
             catch (Exception)
             {
@@ -112,19 +255,39 @@ namespace Auxiliary
             return A1;
         }
 
-        public static string 读ini配置文件(string 节点, string 项目,string 路径)
+        public static string 读ini配置文件(string 节点, string 项目, string 路径)
         {
-
-            return bilibili.BiliUser.Read(节点, 项目, null, 路径);
+            if (MMPU.启动模式 == 0)
+            {
+                return bilibili.BiliUser.Read(节点, 项目, null, 路径);
+            }
+            else if(MMPU.启动模式==1)
+            {
+                string text = File.ReadAllText(路径);
+                try
+                {
+                    string A1 = text.Replace(项目, "壹").Split('壹')[1].Split('\r')[0].Split('=')[1];
+                    return A1;
+                }
+                catch (Exception)
+                {
+                    return "";
+                }
+                
+            }
+            else
+            {
+                return "";
+            }
         }
 
-        public static string 写ini配置文件(string 节点, string 项目,string 值, string 路径)
+        public static string 写ini配置文件(string 节点, string 项目, string 值, string 路径)
         {
             bilibili.BiliUser.Write(节点, 项目, 值, 路径);
             return null;
         }
 
-       
+
         /// <summary>
         /// 
         /// </summary>
@@ -160,7 +323,7 @@ namespace Auxiliary
             byte[] roomHtml = wc.DownloadData(url);
             return Encoding.UTF8.GetString(roomHtml);
         }
-        public static string 获取网页数据_下载视频用(string url,bool 解码)
+        public static string 获取网页数据_下载视频用(string url, bool 解码)
         {
             HttpWebRequest rq = (HttpWebRequest)WebRequest.Create(url);
             rq.CookieContainer = new CookieContainer();
@@ -168,7 +331,6 @@ namespace Auxiliary
             rq.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             rq.Headers.Add("Accept-Encoding: gzip, deflate, br");
             rq.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-            rq.Headers.Add("Accept-Encoding: gzip, deflate, br");
             rq.Headers.Add("Cache-Control: max-age=0");
             rq.Headers.Add("Sec-Fetch-Mode: navigate");
             rq.Headers.Add("Sec-Fetch-Site: none");
@@ -176,7 +338,7 @@ namespace Auxiliary
             rq.Headers.Add("Upgrade-Insecure-Requests: 1");
             rq.Headers.Add("Cache-Control: max-age=0");
             //rq.Host = "www.bilibili.com";
-            rq.UserAgent = Ver.UA;
+            rq.UserAgent = Ver.UA();
             if (解码)
             {
                 HttpWebResponse webResponse = (System.Net.HttpWebResponse)rq.GetResponse();
@@ -225,55 +387,41 @@ namespace Auxiliary
                         var wc = new WebClient();
                         wc.Headers.Add("Accept: */*");
                         wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                        byte[] roomHtml = wc.DownloadData("https://gitee.com/SYXM/vdb/raw/master/json/list.json");
+                        byte[] roomHtml = wc.DownloadData("https://vdb.vtbs.moe/json/list.json");
                         var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
 
                         foreach (var item in result["vtbs"])
                         {
                             foreach (var x in item["accounts"])
                             {
-                                if (x["platform"].ToString() == "bilibili")
+                                try
+                                {
+                                    if (x["platform"].ToString() == "bilibili")
+                                    {
+                                        string name = item["name"][item["name"]["default"].ToString()].ToString();
+                                        列表缓存.Add(new 列表加载缓存
+                                        {
+                                            编号 = A,
+                                            名称 = name,
+                                            官方名称 = name,
+                                            平台 = "bilibili",
+                                            UID = x["id"].ToString(),
+                                            类型 = x["type"].ToString()
+                                        });
+                                        A++;
+                                    }
+                                }
+                                catch (Exception)
                                 {
 
-                                    string name = "";
-                                    if (item["name"].ToString().Contains("ch"))
-                                    {
-                                        try
-                                        {
-                                            name = item["name"]["ch"].ToString();
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-                                    }
-                                    else if (item["name"].ToString().Contains("cn"))
-                                    {
-                                        try
-                                        {
-                                            name = item["name"]["cn"].ToString();
-                                        }
-                                        catch (Exception)
-                                        {
-
-                                        }
-                                    }
-                                    列表缓存.Add(new 列表加载缓存
-                                    {
-                                        编号 = A,
-                                        名称 = name,
-                                        官方名称 = item["name"][item["name"]["default"].ToString()].ToString(),
-                                        平台 = "bilibili",
-                                        UID = x["id"].ToString(),
-                                        类型 = x["type"].ToString()
-                                    });
-                                    A++;
+                                    //throw;
                                 }
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        ;
                     }
                     //this.Dispatcher.Invoke(new Action(delegate
                     //{
@@ -303,7 +451,7 @@ namespace Auxiliary
                 public string 平台 { set; get; }
             }
         }
-       
+
         public static double 测试延迟(string Url)
         {
             try
@@ -352,8 +500,13 @@ namespace Auxiliary
             /// <param name="url">目标路径</param>
             /// <param name="P">平台</param>
             /// <returns></returns>
-            public bool 判断(string url, string P)
+            public bool 判断(string url, string P,string roomId)
             {
+                //return true;
+                if (roomId == "21618129")
+                {
+                    return true;
+                }
                 try
                 {
                     switch (P)
@@ -361,23 +514,22 @@ namespace Auxiliary
                         case "bilibili":
                             {
 
-                                HttpWebRequest httpWebRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.CreateDefault(new Uri(url));
+                                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
                                 httpWebRequest.Accept = "*/*";
-                                httpWebRequest.UserAgent = Ver.UA;
+                                httpWebRequest.UserAgent = Ver.UA();
                                 httpWebRequest.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                                //if (!string.IsNullOrEmpty(MMPU.Cookie))
-                                //{
-                                //    httpWebRequest.Headers.Add("Cookie", MMPU.Cookie);
-                                //}
-                                // httpWebRequest
-                                httpWebRequest.Timeout = 2000;
+                                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                                {
+                                    httpWebRequest.Headers.Add("Cookie", MMPU.Cookie);
+                                }
+                                httpWebRequest.Timeout = 3000;
                                 //返回响应状态是否是成功比较的布尔值
 
-                                if(((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode==HttpStatusCode.OK)
+                                if (((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode == HttpStatusCode.OK)
                                 {
 
                                 }
-                                Console.WriteLine("判断文件存在");
+                                InfoLog.InfoPrintf("判断文件存在", InfoLog.InfoClass.杂项提示);
                                 return true;
                             }
                         case "主站视频":
@@ -386,15 +538,40 @@ namespace Auxiliary
                             return false;
                     }
                 }
-                catch(Exception)
+                //catch (WebException e)
+                //{
+                //    if(e.Status== WebExceptionStatus.Timeout)
+                //    {
+                //        return true;
+                //    }
+                //    return false;
+
+                //}
+                catch (Exception E)
                 {
-                    Console.WriteLine("判断文件不存在");
+                    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
                     return false;
+                    if (E.Message.Contains("404"))
+                    {
+                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                        return false;
+                    }
+                    else if (E.Message.Contains("475"))
+                    {
+                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                   
                 }
             }
+
         }
 
- 
+
 
         [DllImport("kernel32.dll", EntryPoint = "SetProcessWorkingSetSize")]
         public static extern int SetProcessWorkingSetSize(IntPtr process, int minSize, int maxSize);
@@ -413,7 +590,8 @@ namespace Auxiliary
         public static void 文件删除委托(string file)
         {
 
-            new Thread(new ThreadStart(delegate {
+            new Thread(new ThreadStart(delegate
+            {
                 int i = 0;
                 try
                 {
@@ -436,7 +614,7 @@ namespace Auxiliary
                 {
                 }
             })).Start();
-          
+
         }
         public static bool 文件是否正在被使用(string fileName)
         {
@@ -551,10 +729,24 @@ namespace Auxiliary
         /// 获取配置
         /// </summary>
         /// <returns></returns>
-        public static string getFiles(string name)
+        public static string getFiles(string name, string V)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            return config.AppSettings.Settings[name].Value;
+            bool A = false;
+            string[] B = config.AppSettings.Settings.AllKeys;
+            for (int i = 0; i < B.Length; i++)
+            {
+                if (B[i] == name)
+                {
+                    // A = true;
+                    return config.AppSettings.Settings[name].Value;
+                }
+            }
+
+            setFiles(name, V);
+            return V;
+
+
 
         }
         /// <summary>

@@ -15,8 +15,8 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using static Auxiliary.bilibili;
-using static DDTV_New.RoomInit;
 using MessageBox = System.Windows.MessageBox;
+using static Auxiliary.RoomInit;
 
 namespace DDTV_New
 {
@@ -30,23 +30,30 @@ namespace DDTV_New
         public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
         public static List<PlayW.MainWindow> playList1 = new List<PlayW.MainWindow>();
         public static int 播放器版本 = 1;
-      //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
-       
+        //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
+
 
 
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
-            home.Visibility = Visibility.Visible;
-            top层.Visibility = Visibility.Collapsed;
-            直播层.Visibility = Visibility.Collapsed;
-            设置层.Visibility = Visibility.Collapsed;
-            关于层.Visibility = Visibility.Collapsed;
-            帮助层.Visibility = Visibility.Collapsed;
-            插件层.Visibility = Visibility.Collapsed;
-            工具层.Visibility = Visibility.Collapsed;
-            AOE直播层.Visibility = Visibility.Collapsed;
+            try
+            {
+                home.Visibility = Visibility.Visible;
+                top层.Visibility = Visibility.Collapsed;
+                直播层.Visibility = Visibility.Collapsed;
+                设置层.Visibility = Visibility.Collapsed;
+                关于层.Visibility = Visibility.Collapsed;
+                帮助层.Visibility = Visibility.Collapsed;
+                插件层.Visibility = Visibility.Collapsed;
+                工具层.Visibility = Visibility.Collapsed;
+                AOE直播层.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception)
+            {
+            }
+
             软件启动配置初始化();
             icon();
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
@@ -58,93 +65,22 @@ namespace DDTV_New
             };
             System.Net.ServicePointManager.DefaultConnectionLimit = 999;/*---------这里最重要--------*/
             System.Net.ServicePointManager.MaxServicePoints = 999;
+
+            // MessageBox.Show(Encryption.机器码.获取机器码(""));
         }
 
 
         public void 软件启动配置初始化()
         {
-            //检查配置文件
-            bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
-            #region 配置文件设置
-            //房间配置文件
-            RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
-            //房间配置文件
-            MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
-            //直播表刷新默认间隔
-            MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
-            //播放窗口默认高度
-            MMPU.PlayWindowH = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
-            //播放窗口默认宽度
-            MMPU.PlayWindowW = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
-            //直播缓存目录
-            MMPU.直播缓存目录 = MMPU.读取exe默认配置文件("Livefile", "./tmp/LiveCache/");
-            //直播更新时间
-            MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "40"));
-            //默认音量
-            MMPU.默认音量 = int.Parse(MMPU.读取exe默认配置文件("DefaultVolume", "50"));
-            //缩小功能
-            MMPU.缩小功能 = int.Parse(MMPU.读取exe默认配置文件("Zoom", "1"));
-            //最大直播并行数量
-            MMPU.最大直播并行数量 = int.Parse(MMPU.读取exe默认配置文件("PlayNum", "5"));
-            //默认弹幕颜色
-            MMPU.默认弹幕颜色 = MMPU.读取exe默认配置文件("DanMuColor", "0xFF, 0x00, 0x00, 0x00");
-            //默认字幕颜色
-            MMPU.默认字幕颜色 = MMPU.读取exe默认配置文件("ZiMuColor", "0xFF, 0x00, 0x00, 0x00");
-            //默认字幕大小
-            MMPU.默认字幕大小 = int.Parse(MMPU.读取exe默认配置文件("ZiMuSize", "24"));
-            //默认弹幕大小
-            MMPU.默认弹幕大小 = int.Parse(MMPU.读取exe默认配置文件("DanMuSize", "20"));
-            //默认弹幕大小
-            MMPU.播放缓冲时长 = int.Parse(MMPU.读取exe默认配置文件("BufferDuration", "3"));
-            #endregion
-
-            #region BiliUser配置文件初始化
-            //账号登陆cookie
-
-            try
+            if(!MMPU.配置文件初始化(0))
             {
-                MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
+                ;
             }
-            catch (Exception)
+            if (string.IsNullOrEmpty(MMPU.Cookie))
             {
-                MMPU.Cookie = "";
+                MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
             }
-            //账号UID
-            MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
-            //账号登陆cookie的有效期
-            try
-            {
-                if (!string.IsNullOrEmpty(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile)))
-                {
-                    MMPU.CookieEX = DateTime.Parse(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile));
-                    if (DateTime.Compare(DateTime.Now, MMPU.CookieEX) > 0)
-                    {
-                        MessageBox.Show("BILIBILI账号登陆已过期");
-                        MMPU.Cookie = "";
-                        MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
-                        MMPU.csrf = null;
-                        MMPU.写ini配置文件("User", "csrf", "", MMPU.BiliUserFile);
-                    }
-                }
-                if (!string.IsNullOrEmpty(MMPU.Cookie))
-                {
-                    登陆B站账号.IsEnabled = false;
-                    注销B站账号.IsEnabled = true;
-                }
-            }
-            catch (Exception)
-            {
-                MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
-                MMPU.Cookie = null;
 
-            }
-            //账号csrf
-
-            MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
-            #endregion
-
-            //初始化房间
-            RoomInit.start();
             //公告加载线程
             new Thread(new ThreadStart(delegate
             {
@@ -168,11 +104,20 @@ namespace DDTV_New
                     }));
                     while (true)
                     {
-                        if (房间信息更新次数 > 0)
+                        if (RoomInit.房间信息更新次数 > 0)
                         {
                             this.Dispatcher.Invoke(new Action(delegate
                             {
-                                首次更新.Visibility = Visibility.Collapsed;
+                                try
+                                {
+                                    首次更新.Visibility = Visibility.Collapsed;
+                                }
+                                catch (Exception)
+                                {
+
+                                    // throw;
+                                }
+
                             }));
                             break;
                         }
@@ -250,7 +195,7 @@ namespace DDTV_New
             })).Start();
             //缩小功能
             {
-                MMPU.缩小功能 = int.Parse(MMPU.getFiles("Zoom"));
+                MMPU.缩小功能 = int.Parse(MMPU.getFiles("Zoom","0"));
                 if (MMPU.缩小功能 == 1)
                 {
                     缩小到任务栏选择按钮.IsChecked = true;
@@ -409,7 +354,7 @@ namespace DDTV_New
                                 动态推送1.Content = 动态推送内容;
                             }));
                         }
-                        Thread.Sleep(600 * 1000);
+                        Thread.Sleep(3600 * 1000);
                     }
                 }
                 catch (Exception) { }
@@ -425,14 +370,14 @@ namespace DDTV_New
                         bool 检测状态 = true;
                         foreach (var item in MMPU.不检测的版本号)
                         {
-                            if(服务器版本号 == item)
+                            if (服务器版本号 == item)
                             {
                                 检测状态 = false;
                             }
                         }
                         if (MMPU.版本号 != 服务器版本号 && 检测状态)
                         {
-                            MessageBoxResult dr = System.Windows.MessageBox.Show("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20012, "{}", true) + "\n\n点击确定跳转到补丁(大约1MB)下载网页，点击取消忽略", "有新版本", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                            MessageBoxResult dr = MessageBox.Show("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20012, "{}", true) + "\n\n点击确定跳转到补丁下载网页，点击取消忽略", "有新版本", MessageBoxButton.OKCancel, MessageBoxImage.Question);
                             if (dr == MessageBoxResult.OK)
                             {
                                 System.Diagnostics.Process.Start("https://github.com/CHKZL/DDTV2/releases/latest");
@@ -530,11 +475,11 @@ namespace DDTV_New
                     i++;
                 }
             }
-            int 单推人数 = i - 1;
+            int 单推人数 = 正在直播.Count + 未直播.Count;
             this.Dispatcher.Invoke(new Action(delegate
             {
                 ppnum.Content = 单推人数;
-                
+
             }));
 
             if (正在直播.Count == 0)
@@ -555,10 +500,25 @@ namespace DDTV_New
             }
             this.Dispatcher.Invoke(new Action(delegate
             {
-                ppnum.Content = i - 1;
-                等待框.Visibility = Visibility.Collapsed;
-            }));
+                ppnum.Content = 正在直播.Count + 未直播.Count;
+                try
+                {
+                    等待框.Visibility = Visibility.Collapsed;
+                }
+                catch (Exception)
+                {
+                }
 
+            }));
+            if (MMPU.是否提示一键导入)
+            {
+                MMPU.是否提示一键导入 = !MMPU.是否提示一键导入;
+                if (正在直播.Count + 未直播.Count < 1)
+                {
+                    MessageBox.Show("房间配置文件为空，没有监控中的房间，请手动添加或在设置界面登录后一键导入");
+                }
+
+            }
         }
         public void LiveListAdd(int 编号, string 名称, bool 状态, string 平台, bool 直播提醒, bool 是否录制, string 唯一码, string 原名)
         {
@@ -736,7 +696,6 @@ namespace DDTV_New
                     已选内容 = LV.SelectedItems[0].ToString();
                     选中内容1.Content = MMPU.获取livelist平台和唯一码.平台(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.唯一码(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.名称(已选内容);
                 }
-                //Console.WriteLine("已选内容");
             }
             catch (Exception)
             {
@@ -789,14 +748,28 @@ namespace DDTV_New
                 System.Windows.MessageBox.Show("达到了设置的最大直播窗口数量,新建直播窗口失败");
                 return;
             }
-            等待框.Visibility = Visibility.Visible;
+            try
+            {
+                等待框.Visibility = Visibility.Visible;
+            }
+            catch (Exception)
+            {
+            }
+
             System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
             try
             {
                 if (!bilibili.GetRoomInfo(MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString())).直播状态)
                 {
                     System.Windows.MessageBox.Show("该房间未直播");
-                    等待框.Visibility = Visibility.Collapsed;
+                    try
+                    {
+                        等待框.Visibility = Visibility.Collapsed;
+                    }
+                    catch (Exception)
+                    {
+                    }
+
                     return;
                 }
             }
@@ -835,7 +808,7 @@ namespace DDTV_New
                             }
                             Downloader 下载对象 = new Downloader
                             {
-                                DownIofo = new Downloader.DownIofoData() { 平台 = 平台, 房间_频道号 = 唯一码, 标题 = 标题, 事件GUID = GUID, 下载地址 = 下载地址, 备注 = "视频播放缓存", 是否保存 = false }
+                                DownIofo = new Downloader.DownIofoData() { 平台 = 平台, 房间_频道号 = 唯一码, 标题 = 标题, 事件GUID = GUID, 下载地址 = 下载地址, 备注 = "视频播放缓存", 是否保存 = false,继承 =new Downloader.继承() }
                             };
                             //Downloader 下载对象 = Downloader.新建下载对象(平台, 唯一码, 标题, GUID, 下载地址, "视频播放缓存", false);
 
@@ -845,7 +818,14 @@ namespace DDTV_New
                                 {
                                     打开直播列表(下载对象);
                                     MMPU.当前直播窗口数量++;
-                                    等待框.Visibility = Visibility.Collapsed;
+                                    try
+                                    {
+                                        等待框.Visibility = Visibility.Collapsed;
+                                    }
+                                    catch (Exception)
+                                    {
+                                    }
+
                                 }));
                             });
                             break;
@@ -868,7 +848,7 @@ namespace DDTV_New
             //p.StartInfo.FileName = @"D:\Program Files (x86)\Pure Codec\x64\PotPlayerMini64.exe";//需要启动的程序名       
             //p.StartInfo.Arguments = " \""+DL.DownIofo.下载地址+"\"";//启动参数       
             //p.Start();//启动       
-          
+
             //return;
 
 
@@ -876,7 +856,7 @@ namespace DDTV_New
             {
                 DL.DownIofo.播放状态 = true;
                 DL.DownIofo.是否是播放任务 = true;
-                switch(播放器版本)
+                switch (播放器版本)
                 {
                     case 1:
                         {
@@ -896,10 +876,10 @@ namespace DDTV_New
                             break;
                         }
                 }
-               // PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
-               
-                
-                
+                // PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
+
+
+
                 // MMPU.ClearMemory();
             }
             else
@@ -941,6 +921,7 @@ namespace DDTV_New
                                     {
                                         item.DownIofo.WC.CancelAsync();
                                         item.DownIofo.下载状态 = false;
+                                        item.DownIofo.备注 = "播放串口关闭，停止下载";
                                         item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         if (item.DownIofo.是否保存)
                                         {
@@ -980,7 +961,7 @@ namespace DDTV_New
                                 break;
                             }
                     }
-                   
+
                 })).Start();
             }
             catch (Exception)
@@ -997,7 +978,14 @@ namespace DDTV_New
                 System.Windows.MessageBox.Show("未选择");
                 return;
             }
-            等待框.Visibility = Visibility.Visible;
+            try
+            {
+                等待框.Visibility = Visibility.Visible;
+            }
+            catch (Exception)
+            {
+            }
+
             var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
             foreach (var item in rlc2.data)
             {
@@ -1037,7 +1025,7 @@ namespace DDTV_New
         /// <param name="a">T修改录制设置，F修改提醒设置</param>
         public void 修改列表设置(bool a)
         {
-            Console.WriteLine(已选内容);
+            InfoLog.InfoPrintf(已选内容, InfoLog.InfoClass.Debug);
             bool 是否改过 = false;
             if (string.IsNullOrEmpty(已选内容))
             {
@@ -1045,7 +1033,14 @@ namespace DDTV_New
                 return;
             }
             //编号 = 1, 名称 = 智障爱, 状态 = ○未直播, 平台 = bilibili, 是否提醒 = √, 是否录制 = , 唯一码 = 1485080, 原名 = 
-            等待框.Visibility = Visibility.Visible;
+            try
+            {
+                等待框.Visibility = Visibility.Visible;
+            }
+            catch (Exception)
+            {
+            }
+
             RoomBox RB = new RoomBox
             {
                 data = new List<RoomCadr>()
@@ -1138,7 +1133,7 @@ namespace DDTV_New
                         {
                             if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
                             {
-                                System.Windows.MessageBox.Show("该房间当前未直播");
+                                MessageBox.Show("该房间当前未直播");
                                 return;
                             }
                             break;
@@ -1167,6 +1162,7 @@ namespace DDTV_New
                         System.Windows.MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                         return;
                 }
+
                 string GUID = Guid.NewGuid().ToString();
                 string 标题 = bilibili.根据房间号获取房间信息.获取标题(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
                 string 下载地址 = string.Empty;
@@ -1179,7 +1175,7 @@ namespace DDTV_New
                     System.Windows.MessageBox.Show("获取下载地址失败");
                     return;
                 }
-                Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true);
+                Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true, MMPU.获取livelist平台和唯一码.名称(已选内容)+"-"+ MMPU.获取livelist平台和唯一码.原名(已选内容), false,null);
 
                 System.Windows.MessageBox.Show("下载任务添加完成");
             })).Start();
@@ -1245,7 +1241,6 @@ namespace DDTV_New
 
         private void 连接404类使能开关点击事件(object sender, RoutedEventArgs e)
         {
-            //Console.WriteLine(MMPU.测试延迟("https://www.google.com"));
             if (连接404类使能开关.IsChecked == true)
             {
                 MMPU.连接404使能 = true;
@@ -1256,6 +1251,19 @@ namespace DDTV_New
 
                 MMPU.连接404使能 = false;
                 MMPU.是否能连接404 = false;
+            }
+        }
+        private void 录制完成后转码开关点击事件(object sender, RoutedEventArgs e)
+        {
+            if (转码使能按钮.IsChecked == true)
+            {
+                MMPU.转码功能使能 = true;
+                MMPU.setFiles("AutoTranscoding", "1");
+            }
+            else
+            {
+                MMPU.转码功能使能 = false;
+                MMPU.setFiles("AutoTranscoding", "0");
             }
         }
 
@@ -1301,11 +1309,11 @@ namespace DDTV_New
         }
         private void 并行直播数量_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 30,3);
+            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 30, 3);
         }
         private void 弹幕文字大小_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 30,1);
+            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 30, 1);
         }
         private void 修改弹幕文字大小确定按钮点击事件(object sender, RoutedEventArgs e)
         {
@@ -1315,11 +1323,11 @@ namespace DDTV_New
         }
         private void 字幕文字大小_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 99,1);
+            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 99, 1);
         }
         private void 分辨率大小_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 4000,128);
+            //检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 4000, 128);
         }
         private void 修改字幕文字大小确定按钮点击事件(object sender, RoutedEventArgs e)
         {
@@ -1329,6 +1337,23 @@ namespace DDTV_New
         }
         private void 修改播放器默认大小确定按钮点击事件(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (int.Parse(默认播放宽度.Text) < 128 || int.Parse(默认播放宽度.Text) > 5000)
+                {
+
+                }
+                if (int.Parse(默认播放高度.Text) < 128 || int.Parse(默认播放高度.Text) > 3000)
+                {
+
+                }
+            }
+            catch (Exception)
+            {
+                InfoLog.InfoPrintf("输入的播放器默认长宽数字不符合要求", InfoLog.InfoClass.系统错误信息);
+                MessageBox.Show("输入的播放器默认长宽数字不符合要求");
+                //throw;
+            }
             MMPU.PlayWindowW = int.Parse(默认播放宽度.Text);
             MMPU.setFiles("PlayWindowW", 默认播放宽度.Text);
             MMPU.PlayWindowH = int.Parse(默认播放高度.Text);
@@ -1336,7 +1361,7 @@ namespace DDTV_New
 
             System.Windows.MessageBox.Show("修改成功");
         }
-        private void 检测输入框是否为数字(System.Windows.Controls.TextBox A, int max,int min)
+        private void 检测输入框是否为数字(System.Windows.Controls.TextBox A, int max, int min)
         {
             if (!string.IsNullOrEmpty(A.Text))
             {
@@ -1470,7 +1495,7 @@ namespace DDTV_New
 
         private void 一键导入账号关注VTB和VUP_Click(object sender, RoutedEventArgs e)
         {
-           
+
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
                 MessageBox.Show("请先登录");
@@ -1480,7 +1505,8 @@ namespace DDTV_New
             {
                 MessageBox.Show("=======================\n点击确定开始导入，在此期间请勿操作\n=======================");
             }
-            new Thread(new ThreadStart(delegate {
+            new Thread(new ThreadStart(delegate
+            {
                 int 增加的数量 = 0;
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox
@@ -1544,10 +1570,10 @@ namespace DDTV_New
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 InitializeRoomList();
-               
+
                 MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，请多等待几秒");
             })).Start();
-            
+
         }
 
         private void 播放本地视频文件按钮_Click(object sender, RoutedEventArgs e)
@@ -1557,14 +1583,27 @@ namespace DDTV_New
 
         private void 播放缓冲时长_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
-            检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 60, 1);
+          //  检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 60, 1);
         }
 
         private void 修改播放缓冲时长确定按钮点击事件(object sender, RoutedEventArgs e)
         {
-            MMPU.播放缓冲时长 = int.Parse(播放缓冲时长.Text);
-            MMPU.setFiles("BufferDuration", 播放缓冲时长.Text);
-            MessageBox.Show("修改成功");
+            try
+            {
+               if (int.Parse(播放缓冲时长.Text)>2)
+                {
+                    MMPU.播放缓冲时长 = int.Parse(播放缓冲时长.Text);
+                    MMPU.setFiles("BufferDuration", 播放缓冲时长.Text);
+                    MessageBox.Show("修改成功");
+                }
+            }
+            catch (Exception)
+            {
+                InfoLog.InfoPrintf("输入的播放缓冲时长数值不符合要求，最低2秒", InfoLog.InfoClass.系统错误信息);
+                MessageBox.Show("输入的播放缓冲时长数值不符合要求，最低2秒");
+                //  throw;
+            }
+         
         }
 
         private void 播放窗口排序按钮点击事件(object sender, RoutedEventArgs e)

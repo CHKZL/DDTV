@@ -1,19 +1,19 @@
-﻿using Auxiliary;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
-namespace DDTV_New
+namespace Auxiliary
 {
-    public static class ARoomInit
+    public static class RoomInit
     {
-        public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration");
-        
-       
+        public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration", "./RoomListConfig.json");
+
+
         public static List<RL> 房间主表 = new List<RL>();
         public static List<RL> 之前的房间主表状态 = new List<RL>();
         public static List<RL> 现在的房间主表状态 = new List<RL>();
@@ -49,7 +49,7 @@ namespace DDTV_New
                 catch (Exception)
                 {
                 }
-              
+
             }
             return false;
         }
@@ -57,12 +57,13 @@ namespace DDTV_New
         {
             InitializeRoomConfigFile();
             InitializeRoomList();
+           
 
-
-            Auxiliary.bilibili.start();
+            bilibili.start();
 
             Task.Run(async () =>
             {
+                InfoLog.InfoPrintf("开始周期轮询房间开播状态", InfoLog.InfoClass.Debug);
                 while (true)
                 {
                     刷新B站房间列表();
@@ -96,23 +97,40 @@ namespace DDTV_New
             {
                 foreach (var 之前的状态 in 之前的房间主表状态)
                 {
-                    if (B站更新刷新次数>5)
+
+                    if (之前的状态.唯一码 == 最新的状态.房间号)
                     {
-                        if (之前的状态.唯一码 == 最新的状态.房间号)
+                        if (B站更新刷新次数 > 5)
                         {
                             if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否提醒)
                             {
                                 MMPU.弹窗.Add(3000, "直播提醒", 最新的状态.名称 + "/" + 最新的状态.原名 + "的直播状态发生了变化");
                             }
-
-                            if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否录制 == true)
+                        }
+                        if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否录制 == true)
+                        {
+                            if (B站更新刷新次数 > 5)
                             {
                                 MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制");
-                               
-                                Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(之前的状态.唯一码), "自动录制", true, 之前的状态.名称,false,null).DownIofo.备注 = "自动录制下载中";
+
                             }
-                            break;
+                            if(MMPU.初始化后启动下载提示)
+                            {
+                                MMPU.初始化后启动下载提示 = !MMPU.初始化后启动下载提示;
+                                MMPU.弹窗.Add(3000, "自动录制", "有关注的正在直播,根据配置列表开始自动录制");
+                            }
+                              
+                            InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制", InfoLog.InfoClass.下载必要提示);
+                            //Console.WriteLine(最新的状态.名称);
+                            new Task(() =>
+                            {
+                                Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(之前的状态.唯一码), "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null).DownIofo.备注 = "自动录制下载中";
+                            }).Start();
+                            
+                           
                         }
+                        break;
+
                     }
                 }
                 int B = 之前的房间主表状态.Count();
@@ -122,7 +140,7 @@ namespace DDTV_New
             foreach (var item in 临时主表)
             {
                 房间主表.Add(item);
-                
+
             }
             房间主表长度 = 房间主表.Count();
             B站更新刷新次数++;
@@ -135,12 +153,13 @@ namespace DDTV_New
             try
             {
                 ReadConfigFile(RoomConfigFile);
+                InfoLog.InfoPrintf("房间配置信息加载完成", InfoLog.InfoClass.Debug);
             }
             catch (Exception)
             {
 
                 File.WriteAllText(RoomConfigFile, "{}");
-
+                InfoLog.InfoPrintf("未检测到房间配置文件，生成一个新的缺省配置文件", InfoLog.InfoClass.Debug);
             }
         }
         /// <summary>
@@ -161,14 +180,26 @@ namespace DDTV_New
         /// </summary>
         public static void InitializeRoomList()
         {
+            InfoLog.InfoPrintf("开始刷新本地房间列表", InfoLog.InfoClass.Debug);
             var rlc = new RoomBox();
-            rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+            try
+            {
+                rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+            }
+            catch (Exception)
+            {
+                rlc = JsonConvert.DeserializeObject<RoomBox>("{}");
+                InfoLog.InfoPrintf("房间json配置文件格式错误！请检测核对！", InfoLog.InfoClass.系统错误信息);
+                InfoLog.InfoPrintf("房间json配置文件格式错误！请检测核对！", InfoLog.InfoClass.系统错误信息);
+                InfoLog.InfoPrintf("房间json配置文件格式错误！请检测核对！", InfoLog.InfoClass.系统错误信息);
+                return;
+            }
             List<RoomCadr> RoomConfigList = new List<RoomCadr>();//房间信息1List
             RoomConfigList = rlc?.data;
             if (RoomConfigList == null)
                 RoomConfigList = new List<RoomCadr>();
             bilibili.RoomList.Clear();
-            if(初始化储存房间储存一次)
+            if (初始化储存房间储存一次)
             {
                 string JOO = JsonConvert.SerializeObject(rlc);
                 MMPU.储存文本(JOO, RoomConfigFile);
@@ -191,7 +222,7 @@ namespace DDTV_New
                         名称 = item.Name,
                         直播状态 = item.LiveStatus,
                         原名 = item.OfficialName,
-                        是否提醒=item.RemindStatus
+                        是否提醒 = item.RemindStatus
                     });
                     if (首次启动)
                     {
@@ -199,7 +230,12 @@ namespace DDTV_New
                     }
                 }
             }
+            if (首次启动)
+            {
+                InfoLog.InfoPrintf("监控列表中有"+ bilibili.RoomList.Count() + "个单推对象，开始监控", InfoLog.InfoClass.下载必要提示);
+            }
             首次启动 = false;
+            InfoLog.InfoPrintf("刷新本地房间列表完成", InfoLog.InfoClass.Debug);
         }
         public class RoomBox
         {
@@ -214,7 +250,7 @@ namespace DDTV_New
             public string Types { get; set; } = "NU";
             public bool status { get; set; } = false;
             public bool VideoStatus { get; set; } = false;
-            public bool RemindStatus { get; set; } = true;
+            public bool RemindStatus { get; set; } = false;
             public bool LiveStatus { get; set; } = false;
 
         }

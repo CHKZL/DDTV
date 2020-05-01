@@ -43,7 +43,7 @@ namespace DDTV_New.window
             if (status == ByQRCode.QrCodeStatus.Success)
             {
                 Plugin.BilibiliAccount.account = account;
-                Console.WriteLine(status);
+                InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.杂项提示);
                 //MessageBox.Show("UID:"+account.Uid+",登陆成功");
                 MMPU.UID = account.Uid;
                 MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);

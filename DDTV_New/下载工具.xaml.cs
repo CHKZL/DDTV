@@ -36,11 +36,6 @@ namespace DDTV_New
             })).Start();
         }
 
-        private void 下载队列右键停止下载事件(object sender, RoutedEventArgs e)
-        {
-            //int num = this.DownList.SelectedIndex; //选中的listview的行
-            //Console.WriteLine(num);
-        }
 
         public void 更新下载队列()
         {
@@ -65,12 +60,6 @@ namespace DDTV_New
             }
         }
 
-        private void DD_DownUpdate(object sender, EventArgs e)
-        {
-            //Auxiliary.Downloader DD = (Auxiliary.Downloader)sender;
-            //Console.WriteLine(DD.DownIofo.房间_频道号+DD.DownIofo.已下载大小str);
-        }
-
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
 
@@ -78,17 +67,18 @@ namespace DDTV_New
 
         private void 取消下载按钮点击事件(object sender, RoutedEventArgs e)
         {
-            if(选中的行>=0)
+            if (选中的行 >= 0)
             {
-                MessageBoxResult dr = MessageBox.Show("确认取消第"+ (选中的行+1) + "行的下载任务？\n详细内容:\n"+ Auxiliary.MMPU.DownList[选中的行].DownIofo.平台+"\n"+ Auxiliary.MMPU.DownList[选中的行].DownIofo.房间_频道号+"\n"+ Auxiliary.MMPU.DownList[选中的行].DownIofo.标题, "确定", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                MessageBoxResult dr = MessageBox.Show("确认取消第" + (选中的行 + 1) + "行的下载任务？\n详细内容:\n" + Auxiliary.MMPU.DownList[选中的行].DownIofo.平台 + "\n" + Auxiliary.MMPU.DownList[选中的行].DownIofo.房间_频道号 + "\n" + Auxiliary.MMPU.DownList[选中的行].DownIofo.标题, "确定", MessageBoxButton.OKCancel, MessageBoxImage.Question);
                 if (dr == MessageBoxResult.OK)
                 {
-                    Auxiliary.MMPU.DownList[选中的行].DownIofo.WC.CancelAsync();
-                    Auxiliary.MMPU.DownList[选中的行].DownIofo.备注 = "用户取消";
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.下载状态 = false;
-                }           
+                    Auxiliary.MMPU.DownList[选中的行].DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                    Auxiliary.MMPU.DownList[选中的行].DownIofo.备注 = "用户取消";
+                    Auxiliary.MMPU.DownList[选中的行].DownIofo.WC.CancelAsync();
+                }
             }
-         
+
         }
 
         private void DownList_SelectionChanged(object sender, SelectionChangedEventArgs e)
