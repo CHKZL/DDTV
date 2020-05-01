@@ -33,7 +33,7 @@ namespace PlayW
         public bool 播放状态 = false;
         public bilibili.danmu DM = new bilibili.danmu();
         public bool 弹幕使能 = false;
-        public bool 字幕使能=false;
+        public bool 字幕使能 = false;
         public bool 窗口是否打开 = false;
         public int 刷新次数 = 0;
 
@@ -54,7 +54,6 @@ namespace PlayW
         {
             InitializeComponent();
             this.Width = 宽度;
-
             this.Height = 高度;
             窗口是否打开 = true;
             音量.Value = 默认音量;
@@ -63,12 +62,13 @@ namespace PlayW
             弹幕框.Opacity = 0.5;
             字幕.Foreground = 字幕颜色;
             弹幕.Foreground = 弹幕颜色;
-           // 字幕.FontSize = 字幕大小;
+            // 字幕.FontSize = 字幕大小;
             字幕.字体大小 = 字幕大小;
             字幕.是否居中 = true;
             //弹幕.FontSize = 弹幕大小;
             弹幕.字体大小 = 弹幕大小;
-            DD.DownIofo.文件保存路径 = AppDomain.CurrentDomain.BaseDirectory + "tmp\\LiveCache\\" + DL.DownIofo.标题 + DL.DownIofo.事件GUID + "_"+ 刷新次数 + ".flv";
+            DD.DownIofo.文件保存路径 =   "./tmp/LiveCache/" + DL.DownIofo.标题 + DL.DownIofo.事件GUID + "_" + 刷新次数 + ".flv";
+            DD.DownIofo.继承 = new Downloader.继承();
             this.Title = DL.DownIofo.标题;
             设置框.Visibility = Visibility.Collapsed;
             关闭框.Visibility = Visibility.Collapsed;
@@ -100,7 +100,8 @@ namespace PlayW
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
-            new Thread(new ThreadStart(delegate {
+            new Thread(new ThreadStart(delegate
+            {
                 try
                 {
                     Play_STOP();
@@ -117,22 +118,47 @@ namespace PlayW
         public void Play_STOP()
         {
             //Aplayer.Close();
-            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+            new Thread(new ThreadStart(delegate
+            {
+                try
+                {
+                    if (VlcControl.SourceProvider.MediaPlayer != null)
+                    {
+                        this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            })).Start();
+
         }
         public void Play_SETVolume(int a)
         {
-            this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume =a;
-           // Aplayer.SetVolume(a);
+            if (VlcControl.SourceProvider.MediaPlayer != null)
+            {
+                this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = a;
+            }
+
+            // Aplayer.SetVolume(a);
         }
         public void Play_Play()
         {
-            this.VlcControl.SourceProvider.MediaPlayer.Play();
+            if (VlcControl.SourceProvider.MediaPlayer != null)
+            {
+                this.VlcControl.SourceProvider.MediaPlayer.Play();
+            }
+
             //Aplayer.Play();
         }
         public void Play_Open(string A)
         {
-            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(A));
-           // Aplayer.Open(A);
+            if (VlcControl.SourceProvider.MediaPlayer != null) 
+            {
+                this.VlcControl.SourceProvider.MediaPlayer.Play(new FileInfo(A));
+            }
+
+            // Aplayer.Open(A);
         }
         #endregion
         public void 增加字幕(string A)
@@ -168,11 +194,12 @@ namespace PlayW
             this.Dispatcher.Invoke(new Action(delegate
             {
                 字幕.内容 = A + "\n" + C;
-                if(字幕.FontSize>50)
+                if (字幕.FontSize > 50)
                 {
                     字幕.FontSize = 1;
                 }
-                else {
+                else
+                {
                     字幕.FontSize++;
                 }
             }));
@@ -192,7 +219,7 @@ namespace PlayW
             {
                 for (int i = 0; i < 显示的弹幕数; i++)
                 {
-                    if(i==0)
+                    if (i == 0)
                     {
                         C = B.Split('\n')[i];
                     }
@@ -236,7 +263,7 @@ namespace PlayW
                 MMPU.DownList.Add(DD);
                 DD.Start("直播观看缓冲进行中");
                 DD.DownIofo.备注 = "直播观看缓冲进行中";
-                Thread.Sleep(MMPU.播放缓冲时长*1000);
+                Thread.Sleep(MMPU.播放缓冲时长 * 1000);
                 this.Dispatcher.Invoke(new Action(delegate
                 {
                     提示框.Visibility = Visibility.Collapsed;
@@ -260,24 +287,25 @@ namespace PlayW
                     this.VlcControl.SourceProvider.MediaPlayer.EndReached += 播放到达结尾触发事件; ;
                     Play_Open(DD.DownIofo.文件保存路径);
                     //Aplayer.OnStateChanged += 播放到达结尾触发事件;  
-                    播放状态 = true; 
-                    if (DD.DownIofo.平台=="bilibili")
+                    播放状态 = true;
+                    if (DD.DownIofo.平台 == "bilibili")
                     {
                         获取弹幕();
                     }
                 }
-                catch (Exception)
+                catch (Exception C)
                 {
-
+                    ;
                 }
             })).Start();
-         
+
         }
 
 
         private void 获取弹幕()
         {
-            new Thread(new ThreadStart(delegate {
+            new Thread(new ThreadStart(delegate
+            {
                 while (true)
                 {
                     try
@@ -303,7 +331,7 @@ namespace PlayW
                                         {
                                             增加弹幕(/*JA[i]["Name"].ToString() + "：" +*/ JA[i]["Text"].ToString());
                                         }
-                                        
+
                                     }
 
                                 }
@@ -320,35 +348,9 @@ namespace PlayW
         }
         private void 播放到达结尾触发事件(object sender, Vlc.DotNet.Core.VlcMediaPlayerEndReachedEventArgs e)// AxAPlayer3Lib._IPlayerEvents_OnStateChangedEvent e)
         {
-            //if (e.nOldState==6)
-            if(播放状态)
+            if (播放状态)
             {
-                //if(!string.IsNullOrEmpty(DD.DownIofo.重连文件路径))
-                //{
-                //    try
-                //    {
-                //        new Task(() =>
-                //        {
-                //            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
-                //            this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.重连文件路径));
-                //            DD.DownIofo.重连文件路径 = null;
-                //        }).Start();
-                       
-                //    }
-                //    catch (Exception)
-                //    {
-
-                //        return;
-                //    }
-                  
-                  
-                //}
-                //else
-                {
-                    刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
-                }
-
-
+                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
             }
         }
         public void 刷新播放(string 提示内容)
@@ -364,13 +366,14 @@ namespace PlayW
                     {
                         if (bilibili.根据房间号获取房间信息.是否正在直播(DD.DownIofo.房间_频道号))
                         {
-                           
+
                             new Thread(new ThreadStart(delegate
                             {
                                 DD.DownIofo.WC.CancelAsync();
                                 DD.DownIofo.备注 = "播放刷新";
                                 DD.DownIofo.下载状态 = false;
-                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false);
+                                DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false, DD.DownIofo.主播名称, false, null);
                                 MMPU.文件删除委托(DD.DownIofo.文件保存路径);
                                 DD = 下载对象;
                                 for (int i = 0; i < MMPU.播放缓冲时长; i++)
@@ -378,7 +381,7 @@ namespace PlayW
                                     Thread.Sleep(1000);
                                     if (下载对象.DownIofo.已下载大小bit > 1000)
                                     {
-                                        Thread.Sleep(MMPU.播放缓冲时长*1000);
+                                        Thread.Sleep(MMPU.播放缓冲时长 * 1000);
                                         try
                                         {
                                             Play_Open(下载对象.DownIofo.文件保存路径);
@@ -386,7 +389,7 @@ namespace PlayW
                                         }
                                         catch (Exception)
                                         {
-                                            
+
                                             return;
                                         }
                                         this.Dispatcher.Invoke(new Action(delegate
@@ -400,8 +403,8 @@ namespace PlayW
                                     {
                                         this.Dispatcher.Invoke(new Action(delegate
                                         {
-                                            提示文字.Content = "直播源推流停止或卡顿，正在尝试重连,第" + (i + 1) + "次失败/一共尝试"+ MMPU.播放缓冲时长 + "次";
-                                            if (i >= MMPU.播放缓冲时长-1)
+                                            提示文字.Content = "直播源推流停止或卡顿，正在尝试重连,第" + (i + 1) + "次失败/一共尝试" + MMPU.播放缓冲时长 + "次";
+                                            if (i >= MMPU.播放缓冲时长 - 1)
                                             {
                                                 提示文字.Content += "\n请尝试重开播放窗口";
                                                 return;
@@ -414,8 +417,9 @@ namespace PlayW
                         }
                         else
                         {
+                            InfoLog.InfoPrintf(DD.DownIofo.房间_频道号 + "房间:" + DD.DownIofo.主播名称 + " 下播放，录制完成", InfoLog.InfoClass.下载必要提示);
                             this.Dispatcher.Invoke(new Action(delegate
-                            {                           
+                            {
                                 提示文字.Content = "该房间/频道 直播停止..";
                                 return;
                             }));
@@ -430,7 +434,7 @@ namespace PlayW
                     }));
                     return;
             }
-         
+
         }
         private void pause_Click(object sender, MouseButtonEventArgs e)
         {
@@ -480,7 +484,7 @@ namespace PlayW
         private void 弹幕透明度_MouseMove(object sender, MouseEventArgs e)
         {
             弹幕框.Opacity = 弹幕透明度.Value;
-           
+
         }
 
         private void 播放设置按钮点击事件(object sender, MouseButtonEventArgs e)
@@ -499,7 +503,7 @@ namespace PlayW
             }
         }
 
-       // private int LastWidth;
+        // private int LastWidth;
         private int LastHeight;
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -535,7 +539,7 @@ namespace PlayW
         public event EventHandler<EventArgs> BossKey;
         private void MainWindows_Keydown(object sender, KeyEventArgs e)
         {
-           
+
             //老板键(缩小所有播放窗口)
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.D)
             {
@@ -606,12 +610,12 @@ namespace PlayW
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                     刷新播放("检测到F5按下,刷新中..");
                 }).Start();
-               
+
             }
         }
         private void VlcControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-          
+
         }
 
         private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
@@ -630,7 +634,7 @@ namespace PlayW
 
         private void 置顶选择_Checked(object sender, RoutedEventArgs e)
         {
-            if(置顶选择.IsChecked==true)
+            if (置顶选择.IsChecked == true)
             {
                 this.Topmost = true;
             }
@@ -642,7 +646,7 @@ namespace PlayW
 
         private void 鼠标滚轮事件(object sender, MouseWheelEventArgs e)
         {
-            if (e.Delta>0)
+            if (e.Delta > 0)
             {
                 if (音量.Value + 5 <= 100)
                 {
@@ -657,7 +661,7 @@ namespace PlayW
                     // this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
-            else if (e.Delta<0)
+            else if (e.Delta < 0)
             {
                 if (音量.Value - 5 >= 0)
                 {
@@ -672,8 +676,8 @@ namespace PlayW
                     //  this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
             }
-            
-           
+
+
         }
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -689,7 +693,7 @@ namespace PlayW
 
         private void 字幕开关_Click(object sender, RoutedEventArgs e)
         {
-          
+
 
             if (字幕开关.IsChecked == true)
             {
@@ -774,7 +778,7 @@ namespace PlayW
             }
             else
             {
-                弹幕发送提示.Content ="发送内容不能为空或超过20个字符！";
+                弹幕发送提示.Content = "发送内容不能为空或超过20个字符！";
             }
         }
     }

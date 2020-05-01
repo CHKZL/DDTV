@@ -96,7 +96,7 @@ namespace DDTV_New.window
                     选中内容.UID = LV.SelectedItems[0].ToString().Split(',')[4].Split('=')[1].Replace("\"", "").Replace(" ", "");
                     选中内容展示.Content = "选中内容:" + 选中内容.名称 + "/" + 选中内容.官方名称;
                 }
-                //Console.WriteLine("已选内容");
+               
             }
             catch (Exception)
             {

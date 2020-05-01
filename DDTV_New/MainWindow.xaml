@@ -108,6 +108,7 @@
             <Label Content="默认缓冲时长(秒):" Margin="25,321,662,166" RenderTransformOrigin="0.508,0.821"/>
             <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
+            <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
             <ListView x:Name="PluginC" Margin="8,47,12,26">

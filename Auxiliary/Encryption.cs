@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +11,26 @@ namespace Auxiliary
 {
     public static class Encryption
     {
+        /// <summary>
+        /// MD5加密
+        /// </summary>
+        public static string Md532(this string source)
+        {
+            if (string.IsNullOrEmpty(source))
+            {
+                return null;
+            }
+            var encoding = Encoding.UTF8;
+            MD5 md5 = MD5.Create();
+            return HashAlgorithmBase(md5, source, encoding);
+        }
+        /// <summary>
+        /// 加盐MD5加密
+        /// </summary>
+        public static string Md532Salt(this string source, string salt)
+        {
+            return string.IsNullOrEmpty(salt) ? source.Md532() : (source + "[" + salt + "]").Md532();
+        }
         #region AES 加密解密
 
         /// <summary>  
@@ -97,17 +118,6 @@ namespace Auxiliary
         #region 内部方法
 
         /// <summary>
-        /// 转成数组
-        /// </summary>
-        private static byte[] Str2Bytes(this string source)
-        {
-            source = source.Replace(" ", "");
-            byte[] buffer = new byte[source.Length / 2];
-            for (int i = 0; i < source.Length; i += 2) buffer[i / 2] = Convert.ToByte(source.Substring(i, 2), 16);
-            return buffer;
-        }
-
-        /// <summary>
         /// 转换成字符串
         /// </summary>
         private static string Bytes2Str(this IEnumerable<byte> source, string formatStr = "{0:X2}")
@@ -131,7 +141,40 @@ namespace Auxiliary
             byte[] hashStr = hashAlgorithmObj.ComputeHash(btStr);
             return hashStr.Bytes2Str();
         }
-
         #endregion
+
+        #region 机器码(仅用于P2P穿透服务器区分设备使用，传输前会MD5)
+        public class 机器码
+        {
+            // 取得设备硬盘的卷标号
+            private static string 取得设备硬盘的卷标号()
+            {
+                ManagementClass mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+                ManagementObject disk = new ManagementObject("win32_logicaldisk.deviceid=\"c:\"");
+                disk.Get();
+                return disk.GetPropertyValue("VolumeSerialNumber").ToString();
+            }
+            //获得CPU的序列号
+            private static string 获得CPU的序列号()
+            {
+                string strCpu = null;
+                ManagementClass myCpu = new ManagementClass("win32_Processor");
+                ManagementObjectCollection myCpuConnection = myCpu.GetInstances();
+                foreach (ManagementObject myObject in myCpuConnection)
+                {
+                    strCpu = myObject.Properties["Processorid"].Value.ToString();
+                    break;
+                }
+                return strCpu;
+            }
+            public static string 获取机器码(string name)
+            {
+                string code = 获得CPU的序列号() +"|"+ 取得设备硬盘的卷标号()+"|"+name;
+                code = Md532Salt(code, "DDTV");
+                return code+"|"+ name;
+            }  
+        }    
+        #endregion
+
     }
 }

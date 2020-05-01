@@ -156,8 +156,7 @@ namespace Auxiliary
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.ToString());
-                    
+                        InfoLog.InfoPrintf("外部API:正在直播的列表更新出现错误"+ ex.ToString(), InfoLog.InfoClass.系统错误信息);
                     }
                 }
             }

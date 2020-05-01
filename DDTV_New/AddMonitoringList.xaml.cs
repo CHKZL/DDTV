@@ -14,8 +14,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using static DDTV_New.RoomInit;
 using System.Threading;
+using static Auxiliary.RoomInit;
 
 namespace DDTV_New
 {
