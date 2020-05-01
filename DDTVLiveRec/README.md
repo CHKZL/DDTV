@@ -26,7 +26,7 @@
 4. 启动DDTVLiveRec文件(win x64为DDTVLiveRec.exe)
 5. (DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
 
-* 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["Live"]文件夹内
+* 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["tmp"]文件夹内
 
 
 web服务端:  
