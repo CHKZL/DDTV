@@ -11,6 +11,8 @@ using System.Threading;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.IO;
+using BiliAccount;
+using BiliAccount.Linq;
 
 namespace Auxiliary
 {
@@ -511,6 +513,40 @@ namespace Auxiliary
 
         public class BiliUser
         {
+            public static Account account = new Account();
+
+            public static void 登陆()
+            {
+                ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                ByQRCode.LoginByQrCode().Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
+            private static void ByQRCode_QrCodeRefresh(Bitmap newQrCode)
+            {
+                newQrCode.Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+            }
+
+            public static void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, Account account = null)
+            {
+                if (status == ByQRCode.QrCodeStatus.Success)
+                {
+                    BiliUser.account = account;
+                    InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.杂项提示);
+                    //MessageBox.Show("UID:"+account.Uid+",登陆成功");
+                    MMPU.UID = account.Uid;
+                    MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);
+                    foreach (var item in account.Cookies)
+                    {
+                        MMPU.Cookie = MMPU.Cookie + item + ";";
+                    }
+                    MMPU.CookieEX = account.Expires_Cookies;
+                    MMPU.csrf = account.CsrfToken;
+                    ;
+                    MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
+                    MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
+                    MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
+                }
+            }
             /// <summary>
             /// 读取INI文件值
             /// </summary>

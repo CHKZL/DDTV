@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRec", "DDTVLiveRec\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRecWebServer", "DDTVLiveRecWebServer\DDTVLiveRecWebServer.csproj", "{4EFD5FD1-F206-4297-86EA-498B7BB7CEB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV服务端WEB版", "DDTV服务端WEB版\DDTV服务端WEB版.csproj", "{39B03797-888E-4F55-9AAC-A8EC0860FF4C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -146,18 +144,6 @@ Global
 		{4EFD5FD1-F206-4297-86EA-498B7BB7CEB7}.Release|x64.Build.0 = Release|Any CPU
 		{4EFD5FD1-F206-4297-86EA-498B7BB7CEB7}.Release|x86.ActiveCfg = Release|Any CPU
 		{4EFD5FD1-F206-4297-86EA-498B7BB7CEB7}.Release|x86.Build.0 = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|x64.Build.0 = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Debug|x86.Build.0 = Debug|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|x64.ActiveCfg = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|x64.Build.0 = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|x86.ActiveCfg = Release|Any CPU
-		{39B03797-888E-4F55-9AAC-A8EC0860FF4C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
