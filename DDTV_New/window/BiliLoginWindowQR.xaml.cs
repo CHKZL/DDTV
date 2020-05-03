@@ -42,7 +42,8 @@ namespace DDTV_New.window
         {
             if (status == ByQRCode.QrCodeStatus.Success)
             {
-                Plugin.BilibiliAccount.account = account;
+
+                bilibili.BiliUser.account = account;
                 InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.杂项提示);
                 //MessageBox.Show("UID:"+account.Uid+",登陆成功");
                 MMPU.UID = account.Uid;
@@ -56,7 +57,7 @@ namespace DDTV_New.window
                 ;
                 MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
                 MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
-                MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString(), MMPU.BiliUserFile);
+                MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
                 Dispatcher.Invoke(new Action(delegate
                 {
                     Close();

@@ -80,6 +80,11 @@ namespace DDTV_New
             {
                 MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
             }
+            else
+            {
+                登陆B站账号.IsEnabled = false;
+                注销B站账号.IsEnabled = true;
+            }
 
             //公告加载线程
             new Thread(new ThreadStart(delegate
@@ -1475,7 +1480,9 @@ namespace DDTV_New
 
         private void 登陆B站账号_Click(object sender, RoutedEventArgs e)
         {
-            Plugin.BilibiliAccount.BiliLogin();
+            window.BiliLoginWindowQR BLW = new window.BiliLoginWindowQR();
+            BLW.ShowDialog();
+          //  Plugin.BilibiliAccount.BiliLogin();
             if (!string.IsNullOrEmpty(MMPU.Cookie))
             {
                 登陆B站账号.IsEnabled = false;

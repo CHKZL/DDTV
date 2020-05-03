@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using static System.IO.Path;
 
 namespace Auxiliary
@@ -143,7 +144,16 @@ namespace Auxiliary
                 }
             }
             DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-            DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
+            
+            try
+            {
+                DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
+            }
+            catch (WebException e)
+            {
+                ;
+                //throw;
+            }
             DownIofo.备注 = 开始后显示的备注;
             DownIofo.下载状态 = true;
             return DownIofo.文件保存路径;
@@ -224,13 +234,16 @@ namespace Auxiliary
        // public event EventHandler<EventArgs> DownOk;
         private void 下载完成事件(object sender, AsyncCompletedEventArgs e)
         {
-
+            WebClient WWC = (WebClient)sender;
             new Thread(new ThreadStart(delegate
             {
                 DownIofo.下载状态 = false;
                 DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                 DownIofo.备注 = "下载任务结束";
-                if (e.Error != null && e.Error.Message.Contains("请求被中止"))
+                // if (e.Error != null && e.Error.)
+                //Clipboard.SetDataObject(e.Error.Message);
+
+                if (e.Cancelled)
                 {
                     DownIofo.备注 = "用户取消，停止下载";
                     if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
@@ -291,7 +304,7 @@ namespace Auxiliary
                                        
                                         下载对象.DownIofo.下载状态 = false;
                                         下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                        下载对象.DownIofo.备注 = "服务器主动断开连接，不能获取到直播流";
+                                        下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
                                         if (DownIofo.继承.是否为继承对象&&!DownIofo.是否是播放任务)
                                         {
                                             DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, true);

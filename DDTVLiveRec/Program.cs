@@ -1,8 +1,11 @@
 ﻿using Auxiliary;
+using BiliAccount;
+using BiliAccount.Linq;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Threading;
-
+using System.Threading.Tasks;
 
 namespace DDTVLiveRec
 {
@@ -14,13 +17,10 @@ namespace DDTVLiveRec
            下载("14275133");
 
 #else
-            if(!MMPU.配置文件初始化(1))
-            {
-                InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请更新BiliUser.ini文件", InfoLog.InfoClass.下载必要提示);
-                Console.WriteLine("\n\n按任意键退出.............");
-                Console.ReadKey();   
-                return;
-            }
+            new Task(() => {
+                DDTVLiveRecWebServer.Program.Main(new string[] { });
+            }).Start();
+            MMPU.配置文件初始化(1);
 #endif
             new Thread(new ThreadStart(delegate
             {
@@ -47,34 +47,11 @@ namespace DDTVLiveRec
                 catch (Exception) { }
             })).Start();
             MMPU.下载储存目录 = "./tmp/";
-            InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动", InfoLog.InfoClass.下载必要提示);
-            DDTVLiveRecWebServer.Program.Main(new string[] { });
+            InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载必要提示);       
             while (true)
             {
                 Thread.Sleep(10);
             }
         }
-        public static void 测试下载(string RoomId)
-        {
-            if (!bilibili.根据房间号获取房间信息.是否正在直播(RoomId))
-            {
-                // System.Windows.MessageBox.Show("该房间当前未直播");
-                return;
-            }
-            string GUID = Guid.NewGuid().ToString();
-            string 标题 = bilibili.根据房间号获取房间信息.获取标题(RoomId);
-            string 下载地址 = string.Empty;
-            try
-            {
-                下载地址 = bilibili.根据房间号获取房间信息.下载地址(RoomId);
-            }
-            catch (Exception)
-            {
-                //System.Windows.MessageBox.Show("获取下载地址失败");
-                return;
-            }
-            Downloader.新建下载对象("bilibili", RoomId, 标题, GUID, 下载地址, "手动下载任务", true, "TEST", false, null);
-        }
-        
     }
 }

@@ -12,6 +12,7 @@
 * 录制完成后自动合并文件
 * 多路异步下载
 * 在网页直接查看运行状态\日志\下载文件列表
+* 直接启动后在web端或直接打开图片文件扫码扫码登陆
   
 有啥试用功能想法欢迎加群：307156949讨论
 
@@ -21,12 +22,11 @@
 
 启动准备:  
 1. 因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。 
-2. 把DDTV里登陆过的【BiliUser.ini】复制到对应的DDTVLive文件夹中覆盖
-3. 把DDTV目录里配置好的【RoomListConfig.json】复制到对应的DDTVLive_for_linux文件夹中，该文件是自动录制的房间配置文件
-4. 启动DDTVLiveRec文件(win x64为DDTVLiveRec.exe)
-5. (DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
+2. 把DDTV目录里配置好的【RoomListConfig.json】复制到对应的DDTVLive_for_linux文件夹中，该文件是自动录制的房间配置文件
+3. 启动DDTVLiveRec文件(win x64为DDTVLiveRec.exe)
+4. (DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
 
-* 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["Live"]文件夹内
+* 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["tmp"]文件夹内
 
 
 web服务端:  

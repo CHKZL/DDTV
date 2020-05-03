@@ -25,7 +25,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.2a";
+        public static string 版本号 = "2.0.2.2b";
         public static string[] 不检测的版本号 = { };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
@@ -69,7 +69,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = true,
+                    Debug = false,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -142,6 +142,7 @@ namespace Auxiliary
 
             try
             {
+
                 MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
             }
             catch (Exception)
@@ -178,9 +179,7 @@ namespace Auxiliary
                 {
                     MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
                 }
-
                 MMPU.Cookie = null;
-
             }
             //账号csrf
             if (string.IsNullOrEmpty(MMPU.Cookie))
@@ -188,7 +187,17 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
                 InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
                 InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
-                return false;
+                if (模式 == 1)
+                {
+                    bilibili.BiliUser.登陆();
+                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]或访问[http://本机IP:11419/login]使用B站客户端扫描二维码登陆", InfoLog.InfoClass.下载必要提示);
+                  
+                    while (string.IsNullOrEmpty(MMPU.Cookie))
+                    {
+                       // break;
+                    }              
+                }
+               
             }
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
             #endregion
@@ -795,6 +804,7 @@ namespace Auxiliary
                 string 回复内容 = "";
                 Socket tcpClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 IPAddress ipaddress = IPAddress.Parse("39.98.207.17");
+                //IPAddress ipaddress = IPAddress.Parse("127.0.0.1");
                 EndPoint point = new IPEndPoint(ipaddress, 11433);
                 tcpClient.Connect(point);//通过IP和端口号来定位一个所要连接的服务器端
                 tcpClient.Send(Encoding.UTF8.GetBytes(JSON发送拼接(code, msg)));
