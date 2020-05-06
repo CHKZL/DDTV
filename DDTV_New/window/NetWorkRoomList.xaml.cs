@@ -30,7 +30,7 @@ namespace DDTV_New.window
         {
             更新网络房间列表.IsEnabled = false;
             选中内容展示.Content = "更新中";
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 if (MMPU.加载网络房间方法.列表缓存.Count < 1)
                 {
@@ -135,7 +135,7 @@ namespace DDTV_New.window
                 MessageBox.Show("请输入搜索内容");
                 return;
             }
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 if (搜索缓存.Count < 1)
                 {

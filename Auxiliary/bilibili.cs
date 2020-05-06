@@ -17,23 +17,11 @@ using BiliAccount.Linq;
 namespace Auxiliary
 {
 
-    
+
     public class bilibili
     {
-        public class RoomInfo
-        {
-            public bool 是否提醒 { set; get; }
-            public string 名称 { set; get; }
-            public string 房间号 { set; get; }
-            public string 标题 { set; get; }
-            public bool 直播状态 { set; get; }
-            public string UID { set; get; }
-            public string 直播开始时间 { set; get; }
-            public bool 是否录制视频 { set; get; }
-            public bool 是否录制弹幕 { set; get; }
-            public string 原名 { set; get; }
-        }
-        public static List<RoomInfo> RoomList = new List<RoomInfo>();
+
+        public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
         public static void start()
         {
             Task.Run(async () =>
@@ -48,9 +36,9 @@ namespace Auxiliary
                     }
                     catch (Exception e)
                     {
-                        InfoLog.InfoPrintf("房间信息本地缓存更新出现错误:"+e.ToString(), InfoLog.InfoClass.Debug);
+                        InfoLog.InfoPrintf("房间信息本地缓存更新出现错误:" + e.ToString(), InfoLog.InfoClass.Debug);
                     }
-                    
+
 
                 }
             });
@@ -61,13 +49,14 @@ namespace Auxiliary
             InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
             foreach (var roomtask in RoomList)
             {
-                RoomInfo A = GetRoomInfo(roomtask.房间号);
+                RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
                 if (A != null)
                 {
                     for (int i = 0; i < RoomList.Count(); i++)
                     {
                         if (RoomList[i].房间号 == A.房间号)
                         {
+                            RoomList[i].平台 = A.平台;
                             RoomList[i].标题 = A.标题;
                             RoomList[i].UID = A.UID;
                             RoomList[i].直播开始时间 = A.直播开始时间;
@@ -125,7 +114,7 @@ namespace Auxiliary
                 }
                 catch (Exception ex)
                 {
-                    InfoLog.InfoPrintf("弹幕获取出现错误"+ ex.ToString(), InfoLog.InfoClass.系统错误信息);
+                    InfoLog.InfoPrintf("弹幕获取出现错误" + ex.ToString(), InfoLog.InfoClass.系统错误信息);
                 }
                 Thread.Sleep(600);
                 return JsonConvert.SerializeObject(返回的弹幕数据);
@@ -137,9 +126,9 @@ namespace Auxiliary
                 public string uid { set; get; }
                 public string Time { set; get; }
             }
-            public static string 发送弹幕(string roomid,string mess)
+            public static string 发送弹幕(string roomid, string mess)
             {
-                if(string.IsNullOrEmpty(MMPU.Cookie))
+                if (string.IsNullOrEmpty(MMPU.Cookie))
                 {
                     return "未登录，发送失败";
                 }
@@ -200,11 +189,11 @@ namespace Auxiliary
 
 
 
-            byte[] roomHtml = wc.DownloadData("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid="+ uid);
+            byte[] roomHtml = wc.DownloadData("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + uid);
 
             var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
             string roomId = result["data"]["roomid"].ToString();
-            InfoLog.InfoPrintf("根据UID获取到房间号:"+ roomId, InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
             return roomId;
         }
         public class 根据房间号获取房间信息
@@ -214,7 +203,7 @@ namespace Auxiliary
                 var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + RoomId;
                 var wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + Ver.UA());
+                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
                 wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                 if (!string.IsNullOrEmpty(MMPU.Cookie))
                 {
@@ -237,7 +226,7 @@ namespace Auxiliary
                     {
                         return false;
                     }
-                 
+
                 }
 
                 //解析返回结果
@@ -260,10 +249,10 @@ namespace Auxiliary
 
                         return false;
                     }
-                  
+
                 }
             }
-          
+
             public static string 获取标题(string roomid)
             {
                 roomid = 获取真实房间号(roomid);
@@ -275,7 +264,7 @@ namespace Auxiliary
                 var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomid;
                 var wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + Ver.UA());
+                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
                 wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                 if (!string.IsNullOrEmpty(MMPU.Cookie))
                 {
@@ -328,9 +317,9 @@ namespace Auxiliary
                 //访问API获取结果
                 var wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + Ver.UA());
+                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
                 wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.9,ja;q=0.8");
-                if(!string.IsNullOrEmpty(MMPU.Cookie))
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
                 {
                     wc.Headers.Add("Cookie", MMPU.Cookie);
                 }
@@ -349,12 +338,12 @@ namespace Auxiliary
                 try
                 {
                     MMPU.判断网络路径是否存在 判断文件是否存在 = new MMPU.判断网络路径是否存在();
-                    string BBBC ="";
+                    string BBBC = "";
                     BBBC = (JObject.Parse(resultString)["data"]["durl"][0]["url"].ToString());
                     //BBBC = (JObject.Parse(resultString)["data"]["durl"][0]["url"].ToString() + "&platform=web").Replace("&pt=", "&pt=web") + "&pSession=" + Guid.NewGuid();
                     if (!判断文件是否存在.判断(BBBC, "bilibili", roomid))
                     {
-                        InfoLog.InfoPrintf("请求的开播房间当前推流数据为空，推测还未开播，等待数据流...：" , InfoLog.InfoClass.Debug);
+                        InfoLog.InfoPrintf("请求的开播房间当前推流数据为空，推测还未开播，等待数据流...：", InfoLog.InfoClass.Debug);
                         BBBC = (JObject.Parse(resultString)["data"]["durl"][1]["url"].ToString());
                     }
                     return BBBC;
@@ -365,13 +354,13 @@ namespace Auxiliary
                     return "";
                 }
             }
-         
+
             public static string 获取真实房间号(string roomID)
             {
                 var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomID;
                 var wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + Ver.UA());
+                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
                 wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                 if (!string.IsNullOrEmpty(MMPU.Cookie))
                 {
@@ -386,7 +375,7 @@ namespace Auxiliary
                 }
                 catch (Exception e)
                 {
-                    InfoLog.InfoPrintf(roomID+"获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
+                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
                     return null;
                 }
                 //从返回结果中提取真实房间号
@@ -412,7 +401,8 @@ namespace Auxiliary
 
         public static JObject 根据UID获取关注列表(string UID)
         {
-            关注列表类 关注列表 = new 关注列表类() { 
+            关注列表类 关注列表 = new 关注列表类()
+            {
                 data = new List<关注列表类.账号信息>()
             };
             int pg = 1;
@@ -430,7 +420,7 @@ namespace Auxiliary
                         名称 = item["uname"].ToString()
                     });
                 }
-              
+
                 pg++;
             }
             while (ps > 0);
@@ -447,16 +437,16 @@ namespace Auxiliary
                 public string 名称 { set; get; }
                 public string 介绍 { set; get; }
             }
-          
+
         }
 
-        public static RoomInfo GetRoomInfo(string originalRoomId)
+        public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
 
             var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + originalRoomId;
             var wc = new WebClient();
             wc.Headers.Add("Accept: */*");
-            wc.Headers.Add("User-Agent: " + Ver.UA());
+            wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
             wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
             if (!string.IsNullOrEmpty(MMPU.Cookie))
             {
@@ -483,24 +473,25 @@ namespace Auxiliary
                 var uid = result["data"]["uid"].ToString();
                 if (result["data"]["room_id"].ToString() != originalRoomId)
                 {
-                    for(int i=0;i< RoomList.Count();i++)
+                    for (int i = 0; i < RoomList.Count(); i++)
                     {
-                        if(RoomList[i].房间号== originalRoomId)
+                        if (RoomList[i].房间号 == originalRoomId)
                         {
                             RoomList[i].房间号 = result["data"]["room_id"].ToString();
                             break;
                         }
                     }
                 }
-                var roominfo = new RoomInfo
+                var roominfo = new RoomInit.RoomInfo
                 {
                     房间号 = result["data"]["room_id"].ToString(),
                     标题 = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", ""),
                     直播状态 = result["data"]["live_status"].ToString() == "1" ? true : false,
                     UID = result["data"]["uid"].ToString(),
-                    直播开始时间 = result["data"]["live_time"].ToString()
+                    直播开始时间 = result["data"]["live_time"].ToString(),
+                    平台="bilibili"
                 };
-                InfoLog.InfoPrintf("获取到房间信息:"+roominfo.UID+" "+ (roominfo.直播状态?"已开播":"未开播")+" "+ (roominfo.直播状态 ? "开播时间:"+ roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
                 return roominfo;
             }
             catch (Exception e)
@@ -580,12 +571,12 @@ namespace Auxiliary
             {
                 if (!File.Exists(FilePath))
                 {
-                    
+
                     new Task(() =>
                     {
                         //File.Create(MMPU.BiliUserFile);//创建INI文件
                         File.AppendAllText(MMPU.BiliUserFile, "#本文件为BiliBili扫码登陆缓存，为登陆缓存cookie，不包含账号密码，请注意");
-                       
+
                     }).Start();
                 }
             }
@@ -637,9 +628,14 @@ namespace Auxiliary
             [DllImport("kernel32")]
             public static extern int WritePrivateProfileString(string lpApplicationName, string lpKeyName, string lpString, string lpFileName);
         }
+
+        public class MainVideo
+        {
+         
+        }
     }
 
-   
+
     public class WebClientto : WebClient
     {
         /// <summary>
@@ -665,59 +661,5 @@ namespace Auxiliary
             return request;
         }
     }
-    [SuppressMessage("ReSharper", "InconsistentNaming")]
-    internal static class Ver
-    {
-        public const string VER = "1.5.1";
-        public const string DATE = "(2019-3-1)";
-        public const string DESC = "修改API";
-        public static readonly string OS_VER = "(" + WinVer.SystemVersion.Major + "." + WinVer.SystemVersion.Minor + "." + WinVer.SystemVersion.Build + ")";
-        //ublic static readonly string UA = OS_VER + " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
-        public static string UA()
-        {
-            if(MMPU.启动模式==0)
-            {
-                return OS_VER + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
-            }
-            else if(MMPU.启动模式==1)
-            {
-                return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
-            }
-            else
-            {
-                return "Mozilla/5.0 AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11";
-            }
-        }
-    }
-    internal static class WinVer
-    {
-        public static readonly Version SystemVersion = GetSystemVersion();
-
-        private static Delegate GetFunctionAddress(IntPtr dllModule, string functionName, Type t)
-        {
-            var address = WinApi.GetProcAddress(dllModule, functionName);
-            return address == IntPtr.Zero ? null : Marshal.GetDelegateForFunctionPointer(address, t);
-        }
-
-        private delegate IntPtr RtlGetNtVersionNumbers(ref int dwMajor, ref int dwMinor, ref int dwBuildNumber);
-
-        private static Version GetSystemVersion()
-        {
-            var hinst = WinApi.LoadLibrary("ntdll.dll");
-            var func = (RtlGetNtVersionNumbers)GetFunctionAddress(hinst, "RtlGetNtVersionNumbers", typeof(RtlGetNtVersionNumbers));
-            int dwMajor = 0, dwMinor = 0, dwBuildNumber = 0;
-            func.Invoke(ref dwMajor, ref dwMinor, ref dwBuildNumber);
-            dwBuildNumber &= 0xffff;
-            return new Version(dwMajor, dwMinor, dwBuildNumber);
-        }
-    }
-
-    internal static class WinApi
-    {
-        [DllImport("Kernel32")]
-        public static extern IntPtr LoadLibrary(string funcname);
-
-        [DllImport("Kernel32")]
-        public static extern IntPtr GetProcAddress(IntPtr handle, string funcname);
-    }
 }
+
