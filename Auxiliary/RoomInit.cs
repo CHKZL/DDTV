@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Auxiliary
@@ -14,14 +12,35 @@ namespace Auxiliary
         public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration", "./RoomListConfig.json");
 
 
-        public static List<RL> 房间主表 = new List<RL>();
-        public static List<RL> 之前的房间主表状态 = new List<RL>();
-        public static List<RL> 现在的房间主表状态 = new List<RL>();
+        public static List<RL> bilibili房间主表 = new List<RL>();
+        public static List<RL> 之前的bilibili房间主表状态 = new List<RL>();
+        public static int bilibili房间主表长度 = 0;
+        public static int bilibili房间信息更新次数 = 0;
+
+        public static List<RL> youtube房间主表 = new List<RL>();
+        public static List<RL> 之前的youtube房间主表状态 = new List<RL>();
+        public static int youtube房间主表长度 = 0;
+        public static int youtube房间信息更新次数 = 0;
+
         public static bool 首次启动 = true;
+
         public static int B站更新刷新次数 = 0;
-        public static bool 首次更新提醒列表 = true;
-        public static int 房间主表长度 = 0;
-        public static int 房间信息更新次数 = 0;
+        public static int youtube更新刷新次数 = 0;
+        public class RoomInfo
+        {
+            public bool 是否提醒 { set; get; }
+            public string 名称 { set; get; }
+            public string 房间号 { set; get; }
+            public string 标题 { set; get; }
+            public bool 直播状态 { set; get; }
+            public string UID { set; get; }
+            public string 直播开始时间 { set; get; }
+            public bool 是否录制视频 { set; get; }
+            public bool 是否录制弹幕 { set; get; }
+            public string 原名 { set; get; }
+            public string 平台 { set; get; }
+        }
+
         public class RL
         {
             public string 名称 { set; get; }
@@ -34,7 +53,7 @@ namespace Auxiliary
         }
         public static bool 根据唯一码获取直播状态(string GUID)
         {
-            foreach (RL item in 房间主表)
+            foreach (RL item in bilibili房间主表)
             {
                 try
                 {
@@ -57,17 +76,27 @@ namespace Auxiliary
         {
             InitializeRoomConfigFile();
             InitializeRoomList();
-           
 
             bilibili.start();
+            youtube.start();
 
             Task.Run(async () =>
             {
-                InfoLog.InfoPrintf("开始周期轮询房间开播状态", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf("开始周期轮询bilibili房间开播状态", InfoLog.InfoClass.Debug);
                 while (true)
                 {
                     刷新B站房间列表();
-                    房间信息更新次数++;
+                    bilibili房间信息更新次数++;
+                    await Task.Delay(5 * 1000).ConfigureAwait(false);
+                }
+            });
+            Task.Run(async () =>
+            {
+                InfoLog.InfoPrintf("开始周期轮询youtube频道开播状态", InfoLog.InfoClass.Debug);
+                while (true)
+                {
+                    刷新youtube站房间列表();
+                    youtube房间信息更新次数++;
                     await Task.Delay(5 * 1000).ConfigureAwait(false);
                 }
             });
@@ -76,12 +105,15 @@ namespace Auxiliary
         {
             if (!MMPU.是否能连接阿B)
                 return;
-            之前的房间主表状态.Clear();
+            之前的bilibili房间主表状态.Clear();
             List<RL> 临时主表 = new List<RL>();
-            foreach (var item in 房间主表)
+            foreach (var item in bilibili房间主表)
             {
-                之前的房间主表状态.Add(item);
-                临时主表.Add(item);
+                if (item.平台 == "bilibili")
+                {
+                    之前的bilibili房间主表状态.Add(item);
+                    临时主表.Add(item);
+                }
             }
             int A = 临时主表.Count();
             for (int i = 0; i < A; i++)
@@ -95,7 +127,7 @@ namespace Auxiliary
             }
             foreach (var 最新的状态 in bilibili.RoomList)
             {
-                foreach (var 之前的状态 in 之前的房间主表状态)
+                foreach (var 之前的状态 in 之前的bilibili房间主表状态)
                 {
 
                     if (之前的状态.唯一码 == 最新的状态.房间号)
@@ -114,37 +146,101 @@ namespace Auxiliary
                                 MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制");
 
                             }
-                            if(MMPU.初始化后启动下载提示)
+                            if (MMPU.初始化后启动下载提示)
                             {
                                 MMPU.初始化后启动下载提示 = !MMPU.初始化后启动下载提示;
                                 MMPU.弹窗.Add(3000, "自动录制", "有关注的正在直播,根据配置列表开始自动录制");
                             }
-                              
+
                             InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制", InfoLog.InfoClass.下载必要提示);
                             //Console.WriteLine(最新的状态.名称);
                             new Task(() =>
                             {
                                 Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(之前的状态.唯一码), "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null).DownIofo.备注 = "自动录制下载中";
                             }).Start();
-                            
-                           
                         }
                         break;
 
                     }
                 }
-                int B = 之前的房间主表状态.Count();
+                int B = 之前的bilibili房间主表状态.Count();
                 临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名 });
             }
-            房间主表.Clear();
+            bilibili房间主表.Clear();
             foreach (var item in 临时主表)
             {
-                房间主表.Add(item);
+                bilibili房间主表.Add(item);
 
             }
-            房间主表长度 = 房间主表.Count();
+            bilibili房间主表长度 = bilibili房间主表.Count();
             B站更新刷新次数++;
         }
+        private static void 刷新youtube站房间列表()
+        {
+          
+            之前的youtube房间主表状态.Clear();
+            List<RL> 临时主表 = new List<RL>();
+            foreach (var item in youtube房间主表)
+            {
+                if (item.平台 == "youtube")
+                {
+                    之前的youtube房间主表状态.Add(item);
+                    临时主表.Add(item);
+                }
+            }
+            int A = 临时主表.Count();
+            for (int i = 0; i < A; i++)
+            {
+                if (临时主表[i].平台 == "youtube")
+                {
+                    临时主表.Remove(临时主表[i]);
+                    i--;
+                }
+                A--;
+            }
+            foreach (var 最新的状态 in youtube.RoomList)
+            {
+                foreach (var 之前的状态 in 之前的youtube房间主表状态)
+                {
+
+                    if (之前的状态.唯一码 == 最新的状态.房间号)
+                    {
+                        if (youtube更新刷新次数 > 5)
+                        {
+                            if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否提醒)
+                            {
+                                MMPU.弹窗.Add(3000, "youtube直播提醒", 最新的状态.名称 + "/" + 最新的状态.原名 + "正在直播");
+                            }
+                        }
+                        //if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否录制 == true)
+                        //{
+                        //    //if (B站更新刷新次数 > 5)
+                        //    //{
+                        //    //    MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制");
+
+                        //    //}
+                        //    if (MMPU.初始化后启动下载提示)
+                        //    {
+                        //        MMPU.初始化后启动下载提示 = !MMPU.初始化后启动下载提示;
+                        //        MMPU.弹窗.Add(4000, "直播提醒", "启动前已有关注列表频youtube频道开始直播");
+                        //    }
+                        //}
+                        break;
+                    }
+                }
+                int B = 之前的youtube房间主表状态.Count();
+                临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "youtube", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名 });
+            }
+            youtube房间主表.Clear();
+            foreach (var item in 临时主表)
+            {
+                youtube房间主表.Add(item);
+
+            }
+            youtube房间主表长度 = youtube房间主表.Count();
+            youtube更新刷新次数++;
+        }
+
         /// <summary>
         /// 初始化房间配置文件
         /// </summary>
@@ -199,6 +295,7 @@ namespace Auxiliary
             if (RoomConfigList == null)
                 RoomConfigList = new List<RoomCadr>();
             bilibili.RoomList.Clear();
+            youtube.RoomList.Clear();
             if (初始化储存房间储存一次)
             {
                 string JOO = JsonConvert.SerializeObject(rlc);
@@ -211,7 +308,7 @@ namespace Auxiliary
                 if (item.Types == "bilibili")
                 {
 
-                    bilibili.RoomList.Add(new bilibili.RoomInfo
+                    bilibili.RoomList.Add(new RoomInfo
                     {
                         房间号 = item.RoomNumber,
                         标题 = "",
@@ -222,17 +319,40 @@ namespace Auxiliary
                         名称 = item.Name,
                         直播状态 = item.LiveStatus,
                         原名 = item.OfficialName,
-                        是否提醒 = item.RemindStatus
+                        是否提醒 = item.RemindStatus,
+                        平台="bilibili"
                     });
                     if (首次启动)
                     {
                         bilibili.RoomList[bilibili.RoomList.Count - 1].直播状态 = false;
                     }
                 }
+                else if (item.Types == "youtube")
+                {
+
+                    youtube.RoomList.Add(new RoomInfo
+                    {
+                        房间号 = item.RoomNumber,
+                        标题 = "",
+                        是否录制弹幕 = item.VideoStatus,
+                        是否录制视频 = item.VideoStatus,
+                        UID = "",
+                        直播开始时间 = "",
+                        名称 = item.Name,
+                        直播状态 = item.LiveStatus,
+                        原名 = item.OfficialName,
+                        是否提醒 = item.RemindStatus,
+                        平台="youtube"
+                    });
+                    if (首次启动)
+                    {
+                        youtube.RoomList[youtube.RoomList.Count - 1].直播状态 = false;
+                    }
+                }
             }
             if (首次启动)
             {
-                InfoLog.InfoPrintf("监控列表中有"+ bilibili.RoomList.Count() + "个单推对象，开始监控", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("监控列表中有" + (bilibili.RoomList.Count()+ youtube.RoomList.Count()) + "个单推对象，开始监控", InfoLog.InfoClass.下载必要提示);
             }
             首次启动 = false;
             InfoLog.InfoPrintf("刷新本地房间列表完成", InfoLog.InfoClass.Debug);

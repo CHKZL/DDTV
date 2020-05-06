@@ -7,15 +7,16 @@
         mc:Ignorable="d"
         Title="增加直播监控列表" Height="244.464" Width="291.609">
     <Grid>
-        <Label Content="中文名称" HorizontalAlignment="Left" Margin="15,38,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="中文名称" HorizontalAlignment="Left" Height="23" Margin="86,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160"/>
-        <Label Content="官方名称" HorizontalAlignment="Left" Margin="15,66,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="官方名称" HorizontalAlignment="Left" Height="23" Margin="86,68,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160"/>
-        <Label Content="平台" HorizontalAlignment="Left" Margin="15,94,0,0" VerticalAlignment="Top"/>
-        <Label Content="房间/频道号" HorizontalAlignment="Left" Margin="15,122,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="86,124,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="160"/>
-        <ComboBox x:Name="平台" HorizontalAlignment="Left" Margin="86,96,0,0" VerticalAlignment="Top" Width="160">
+        <Label Content="中文名称" HorizontalAlignment="Left" Margin="6,38,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="中文名称" HorizontalAlignment="Left" Height="23" Margin="77,40,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+        <Label Content="官方名称" HorizontalAlignment="Left" Margin="6,66,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="官方名称" HorizontalAlignment="Left" Height="23" Margin="77,68,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+        <Label Content="平台" HorizontalAlignment="Left" Margin="6,94,0,0" VerticalAlignment="Top"/>
+        <Label Content="房间/频道号" HorizontalAlignment="Left" Margin="6,122,0,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="77,124,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+        <ComboBox x:Name="平台" HorizontalAlignment="Left" Margin="77,96,0,0" VerticalAlignment="Top" Width="197">
             <Label Content="bilibili"/>
+            <Label Content="youtube"/>
         </ComboBox>
         <Button x:Name="BT1" Content="确定" HorizontalAlignment="Left" Margin="44,184,0,0" VerticalAlignment="Top" Width="75" Click="BT1_Click"/>
         <Button Content="取消" HorizontalAlignment="Left" Margin="157,184,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
