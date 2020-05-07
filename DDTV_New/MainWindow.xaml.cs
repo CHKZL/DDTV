@@ -65,8 +65,7 @@ namespace DDTV_New
             };
             System.Net.ServicePointManager.DefaultConnectionLimit = 999;/*---------这里最重要--------*/
             System.Net.ServicePointManager.MaxServicePoints = 999;
-
-            // MessageBox.Show(Encryption.机器码.获取机器码(""));
+         
         }
 
 
@@ -328,7 +327,7 @@ namespace DDTV_New
                         try
                         {
                             string CP = Clipboard.GetText();
-                            if (CP.ToLower().Contains("http") && CP.ToLower().Contains("bilibili.com/video/") && 粘贴板缓存 != CP)
+                            if (CP.ToLower(System.Globalization.CultureInfo.CurrentCulture).Contains("http") && CP.ToLower().Contains("bilibili.com/video/") && 粘贴板缓存 != CP)
                             {
 
                                 粘贴板缓存 = CP;
@@ -372,7 +371,7 @@ namespace DDTV_New
 
 
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
 
                             //throw;
@@ -639,8 +638,8 @@ namespace DDTV_New
         }
         private void 主站视频播放_按钮事件(object sender, MouseButtonEventArgs e)
         {
-            window.主站视频播放选择窗 MainBili = new window.主站视频播放选择窗();
-            MainBili.Show();
+            //window.主站视频播放选择窗 MainBili = new window.主站视频播放选择窗();
+            //MainBili.Show();
         }
         private void 关于_按钮事件(object sender, MouseButtonEventArgs e)
         {

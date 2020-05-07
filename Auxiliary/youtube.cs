@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -35,7 +36,6 @@ namespace Auxiliary
         }
         private static void 周期更新youtube频道状态()
         {
-
             int a = 0;
             InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
             foreach (var roomtask in RoomList)
@@ -54,6 +54,7 @@ namespace Auxiliary
                                 RoomList[i].UID = A.UID;
                                 RoomList[i].直播开始时间 = A.直播开始时间;
                                 RoomList[i].直播状态 = A.直播状态;
+                                RoomList[i].youtubeVideoId = A.youtubeVideoId;
                                 if (A.直播状态)
                                     a++;
                                 break;
@@ -61,9 +62,39 @@ namespace Auxiliary
                         }
                     }
                 }
-                
             }
             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+        }
+        public static void 使用youtubeDl下载(string url)
+        {
+            Process process = new Process();
+
+            process.StartInfo.FileName = "./libffmpeg/youtube-dl.exe";  // 这里也可以指定ffmpeg的绝对路径
+            process.StartInfo.Arguments = " "+ url+ " --ffmpeg-location ./libffmpeg/ffmpeg.exe";
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = true;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardInput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.ErrorDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的错误信息
+            process.OutputDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的错误信息
+           
+            DateTime beginTime = DateTime.Now;
+
+            process.Start();
+            process.BeginErrorReadLine();   // 开始异步读取
+            process.Exited += Process_Exited;
+            GC.Collect();
+        }
+        private static void Process_Exited(object sender, EventArgs e)
+        {
+            Process P = (Process)sender;
+            InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载必要提示);
+        }
+        private static void Output(object sender, DataReceivedEventArgs e)
+        {
+            InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.下载必要提示);
+            // Console.WriteLine(e.Data);
         }
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
@@ -97,7 +128,8 @@ namespace Auxiliary
                     直播状态 = false,
                     UID = originalRoomId,
                     直播开始时间 = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    平台="youtube"
+                    平台 = "youtube",
+                    youtubeVideoId = roomHtml.Replace(":{\\\"videoId\\\":\\\"", "⒆").Split('⒆')[1].Replace("\\\",", "⒆").Split('⒆')[0]
                 };
 
                 try
@@ -113,7 +145,7 @@ namespace Auxiliary
                         roominfo.直播状态 = false;
                     }
                 }
-                catch (Exception ex)
+                catch (Exception )
                 {
 
                     roominfo.直播状态 = false;

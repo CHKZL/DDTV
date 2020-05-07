@@ -303,7 +303,7 @@ namespace PlayW
                         获取弹幕();
                     }
                 }
-                catch (Exception C)
+                catch (Exception )
                 {
                     ;
                 }

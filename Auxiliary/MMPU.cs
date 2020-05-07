@@ -73,7 +73,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = true,
+                    Debug = false,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -471,7 +471,7 @@ namespace Auxiliary
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         ;
                     }
@@ -595,24 +595,24 @@ namespace Auxiliary
                 //    return false;
 
                 //}
-                catch (Exception E)
+                catch (Exception )
                 {
                     InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
                     return false;
-                    if (E.Message.Contains("404"))
-                    {
-                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
-                        return false;
-                    }
-                    else if (E.Message.Contains("475"))
-                    {
-                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    //if (E.Message.Contains("404"))
+                    //{
+                    //    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                    //    return false;
+                    //}
+                    //else if (E.Message.Contains("475"))
+                    //{
+                    //    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                    //    return false;
+                    //}
+                    //else
+                    //{
+                    //    return true;
+                    //}
                    
                 }
             }
@@ -780,7 +780,6 @@ namespace Auxiliary
         public static string getFiles(string name, string V)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            bool A = false;
             string[] B = config.AppSettings.Settings.AllKeys;
             for (int i = 0; i < B.Length; i++)
             {

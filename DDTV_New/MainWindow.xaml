@@ -109,7 +109,7 @@
             <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
             <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
-            <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="27,376,227,117" Click="剪贴板监听按钮开关点击事件"/>
+            <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="475,176,134,317" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
             <ListView x:Name="PluginC" Margin="8,47,12,26">
@@ -125,12 +125,13 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        <Grid x:Name="工具层"  Visibility="Collapsed">
+        <Grid x:Name="工具层" >
             <Image Margin="48,53,652,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="DDNA列表_按钮事件"/>
             <Label Content="DDNA列表" Margin="48,132,652,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
             <Label Content="(各平台直播情况)" Margin="34,155,638,333" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
             <Image Margin="193,53,507,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="主站视频播放_按钮事件"/>
             <Label Content="主站视频播放" Margin="183,132,496,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="121" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
+            <Label Content="(功能未完善,锁定)" Margin="176,158,496,330" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
 
         </Grid>
         <Grid x:Name="AOE直播层" Visibility="Collapsed">
