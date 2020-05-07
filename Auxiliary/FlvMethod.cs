@@ -38,7 +38,7 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("续录文件[" + path2 + "]文件不存在，不符合合并条件，文件合并取消", InfoLog.InfoClass.Debug);
                 return null;
             }
-            String output = "";
+            String output;
             if (是否直播结束)
             {
                 output = A.File1Url.Replace("_202", "⒂").Split('⒂')[0] + ".flv";
@@ -76,7 +76,7 @@ namespace Auxiliary
                         File.Delete(path1);
                         File.Delete(path2);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
 
                     }
@@ -173,7 +173,6 @@ namespace Auxiliary
 
         static bool IsFLVFile(FileStream fs)
         {
-            int len;
             byte[] buf = new byte[FLV_HEADER_SIZE];
             fs.Position = 0;
             if (FLV_HEADER_SIZE != fs.Read(buf, 0, buf.Length))
@@ -188,7 +187,7 @@ namespace Auxiliary
         static FLVContext GetFLVFileInfo(FileStream fs)
         {
             bool hasAudioParams, hasVideoParams;
-            int skipSize, readLen;
+            int skipSize;
             int dataSize;
             byte tagType;
             byte[] tmp = new byte[FLV_TAG_HEADER_SIZE + 1];

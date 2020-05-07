@@ -141,18 +141,22 @@ namespace Auxiliary
                 {
                     return "发送失败，未选择房间或者房间异常";
                 }
-                Dictionary<string, string> POST表单 = new Dictionary<string, string>();
-                POST表单.Add("color", "16777215");
-                POST表单.Add("fontsize", "25");
-                POST表单.Add("mode", "1");
-                POST表单.Add("msg", mess);
-                POST表单.Add("rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1))).TotalSeconds.ToString());
-                POST表单.Add("roomid", roomid);
-                POST表单.Add("csrf_token", MMPU.csrf);
-                POST表单.Add("csrf", MMPU.csrf);
-                CookieContainer CK = new CookieContainer();
-                CK.MaxCookieSize = 4096;
-                CK.PerDomainCapacity = 50;
+                Dictionary<string, string> POST表单 = new Dictionary<string, string>
+                {
+                    { "color", "16777215" },
+                    { "fontsize", "25" },
+                    { "mode", "1" },
+                    { "msg", mess },
+                    { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1))).TotalSeconds.ToString() },
+                    { "roomid", roomid },
+                    { "csrf_token", MMPU.csrf },
+                    { "csrf", MMPU.csrf }
+                };
+                CookieContainer CK = new CookieContainer
+                {
+                    MaxCookieSize = 4096,
+                    PerDomainCapacity = 50
+                };
 
                 string[] cook = cookie.Replace(" ", "").Split(';');
                 for (int i = 0; i < cook.Length; i++)
@@ -161,9 +165,9 @@ namespace Auxiliary
                     {
                         CK.Add(new Cookie(cook[i].Split('=')[0], cook[i].Split('=')[1].Replace(",", "%2C")) { Domain = "live.bilibili.com" });
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        string ca = ex.ToString();
+                       
                     }
                 }
 
@@ -406,7 +410,7 @@ namespace Auxiliary
                 data = new List<关注列表类.账号信息>()
             };
             int pg = 1;
-            int ps = 0;
+            int ps;
             do
             {
                 JObject JO = JObject.Parse(MMPU.使用WC获取网络内容("https://api.bilibili.com/x/relation/followings?vmid=" + UID + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp"));

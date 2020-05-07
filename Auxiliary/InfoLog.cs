@@ -59,7 +59,7 @@ namespace Auxiliary
             
             for (int i = 0; i < 下载任务.Count; i++)
             {
-                返回字符串 = 返回字符串 + 下载任务[i];
+                返回字符串 += 下载任务[i];
             }
             返回字符串 = (返回字符串 + "</table></body></html>").Replace("%title%", "正在下载:"+ 正在下载数量+" 已经完成:"+完成数量);
             return 返回字符串;

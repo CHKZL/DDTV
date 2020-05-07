@@ -164,7 +164,7 @@ namespace Auxiliary
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 ;
                 //throw;
@@ -207,6 +207,19 @@ namespace Auxiliary
                 }
                 保存路径 = 保存路径 + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
             }
+            switch(平台)
+            {
+                case "bilibili":
+                    {
+                        下载地址 = 下载地址;
+                        break;
+                    }
+                case "youtube":
+                    {
+
+                        break;
+                    }
+            }
             下载对象.DownIofo = new Downloader.DownIofoData
             {
                 平台 = 平台,
@@ -220,7 +233,8 @@ namespace Auxiliary
                 主播名称 = 主播名称,
                 继承=new 继承() { 
                 是否为继承对象= 是否为继承项目,
-                继承的下载文件路径= 继承项目的原始文件
+                继承的下载文件路径= 继承项目的原始文件,
+                
                 }
             };
             if(!是否保存)

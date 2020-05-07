@@ -39,6 +39,7 @@ namespace Auxiliary
             public bool 是否录制弹幕 { set; get; }
             public string 原名 { set; get; }
             public string 平台 { set; get; }
+            public string youtubeVideoId { set; get; }
         }
 
         public class RL
@@ -212,23 +213,19 @@ namespace Auxiliary
                                 MMPU.弹窗.Add(3000, "youtube直播提醒", 最新的状态.名称 + "/" + 最新的状态.原名 + "正在直播");
                             }
                         }
-                        //if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否录制 == true)
+                        //if (之前的状态.直播状态 == true && 最新的状态.直播状态 == false && 之前的状态.是否录制 == true)
                         //{
-                        //    //if (B站更新刷新次数 > 5)
-                        //    //{
-                        //    //    MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制");
-
-                        //    //}
-                        //    if (MMPU.初始化后启动下载提示)
+                        //    new Task(() =>
                         //    {
-                        //        MMPU.初始化后启动下载提示 = !MMPU.初始化后启动下载提示;
-                        //        MMPU.弹窗.Add(4000, "直播提醒", "启动前已有关注列表频youtube频道开始直播");
-                        //    }
+                        //        youtube.使用youtubeDl下载("https://www.youtube.com/watch?v="+ 最新的状态.youtubeVideoId);
+                        //        //Downloader.新建下载对象(之前的状态.平台, 最新的状态.youtubeVideoId, 最新的状态.标题, Guid.NewGuid().ToString(), 最新的状态.平台, "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null).DownIofo.备注 = "自动录制下载中";
+                        //    }).Start();
+
                         //}
-                        break;
+                        //break;
                     }
                 }
-                int B = 之前的youtube房间主表状态.Count();
+                
                 临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "youtube", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名 });
             }
             youtube房间主表.Clear();
