@@ -611,7 +611,7 @@ namespace DDTV_New
             {
                 BalloonTipText = "DDTV已启动", //设置程序启动时显示的文本
                 Text = "DDTV",//最小化到托盘时，鼠标点击时显示的文本
-                Icon = new System.Drawing.Icon("DDTV.ico"),//程序图标
+                Icon = DDTV_New.Properties.Resources.DDTV,//程序图标
                 Visible = true
             };
             notifyIcon.MouseDoubleClick += OnNotifyIconDoubleClick;
