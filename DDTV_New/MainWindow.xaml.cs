@@ -17,6 +17,8 @@ using System.Windows.Media;
 using static Auxiliary.bilibili;
 using MessageBox = System.Windows.MessageBox;
 using static Auxiliary.RoomInit;
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 
 namespace DDTV_New
 {
@@ -55,6 +57,24 @@ namespace DDTV_New
             }
 
             软件启动配置初始化();
+
+            #region 命令行参数处理
+            Dictionary<string, string> arguments;
+            try
+            {
+                arguments = ArgumentParser.parse(Environment.GetCommandLineArgs());
+                if (arguments.ContainsKey("m") ||
+                    (arguments.ContainsKey("minimized") && arguments["minimized"] == "true"))
+                {
+                    minimizeWindow();
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("命令行参数无效，请检查");
+            }
+            #endregion
+
             icon();
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
 
@@ -588,6 +608,11 @@ namespace DDTV_New
         }
         NotifyIcon notifyIcon;
         private void 最小化按钮_Click(object sender, MouseButtonEventArgs e)
+        {
+            minimizeWindow();
+        }
+
+        private void minimizeWindow()
         {
             if (MMPU.缩小功能 == 1)
             {
