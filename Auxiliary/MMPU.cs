@@ -41,9 +41,9 @@ namespace Auxiliary
         public static string 默认字幕颜色 = "";
         public static int 默认字幕大小 = 24;
         public static int 默认弹幕大小 = 20;
-        public static int PlayWindowH = 0;
-        public static int PlayWindowW = 0;
-        public static int versionMajor = Environment.OSVersion.Version.Major;
+        public static int 播放器默认高度 = 0;
+        public static int 播放器默认宽度 = 0;
+        public static int 系统内核版本 = Environment.OSVersion.Version.Major;
         public static int 直播列表刷新间隔 = 0;
         public static string Cookie = "";
         public static string csrf = "";
@@ -116,9 +116,9 @@ namespace Auxiliary
                 //直播缓存目录
                 MMPU.直播缓存目录 = MMPU.读取exe默认配置文件("Livefile", "./tmp/LiveCache/");
                 //播放窗口默认高度
-                MMPU.PlayWindowH = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
+                MMPU.播放器默认高度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
                 //播放窗口默认宽度
-                MMPU.PlayWindowW = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
+                MMPU.播放器默认宽度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
                 //剪切板监听
                 MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
             }
@@ -789,12 +789,8 @@ namespace Auxiliary
                     return config.AppSettings.Settings[name].Value;
                 }
             }
-
             setFiles(name, V);
             return V;
-
-
-
         }
         /// <summary>
         /// 修改和添加AppSettings中配置 如果相应的Key存在则修改 如不存在则添加
