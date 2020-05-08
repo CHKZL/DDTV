@@ -16,7 +16,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static Auxiliary.bilibili;
 using MessageBox = System.Windows.MessageBox;
-using static Auxiliary.RoomInit;
+using static Auxiliary.RoomInit;r
+using System.Windows.Automation.Peers;
+using System.Windows.Automation.Provider;
 using Clipboard = System.Windows.Clipboard;
 
 namespace DDTV_New
@@ -55,6 +57,24 @@ namespace DDTV_New
             }
 
             软件启动配置初始化();
+
+            #region 命令行参数处理
+            Dictionary<string, string> arguments;
+            try
+            {
+                arguments = ArgumentParser.parse(Environment.GetCommandLineArgs());
+                if (arguments.ContainsKey("m") ||
+                    (arguments.ContainsKey("minimized") && arguments["minimized"] == "true"))
+                {
+                    minimizeWindow();
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("命令行参数无效，请检查");
+            }
+            #endregion
+
             icon();
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
 
@@ -676,6 +696,11 @@ namespace DDTV_New
         NotifyIcon notifyIcon;
         private void 最小化按钮_Click(object sender, MouseButtonEventArgs e)
         {
+            minimizeWindow();
+        }
+
+        private void minimizeWindow()
+        {
             if (MMPU.缩小功能 == 1)
             {
                 this.WindowState = WindowState.Minimized;
@@ -698,7 +723,7 @@ namespace DDTV_New
             {
                 BalloonTipText = "DDTV已启动", //设置程序启动时显示的文本
                 Text = "DDTV",//最小化到托盘时，鼠标点击时显示的文本
-                Icon = new System.Drawing.Icon("DDTV.ico"),//程序图标
+                Icon = DDTV_New.Properties.Resources.DDTV,//程序图标
                 Visible = true
             };
             notifyIcon.MouseDoubleClick += OnNotifyIconDoubleClick;
