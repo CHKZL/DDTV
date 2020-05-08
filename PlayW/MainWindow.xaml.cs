@@ -78,7 +78,7 @@ namespace PlayW
                 关闭框.Visibility = Visibility.Visible;
                 MMPU.第一次打开播放窗口 = false;
             }
-            if (MMPU.versionMajor != 10)
+            if (MMPU.系统内核版本 != 10)
             {
                 弹幕使能 = false;
                 弹幕开关.IsChecked = false;
@@ -808,3 +808,4 @@ namespace PlayW
         }
     }
 }
+

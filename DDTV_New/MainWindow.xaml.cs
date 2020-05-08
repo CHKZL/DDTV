@@ -241,8 +241,8 @@ namespace DDTV_New
                 }
                 //播放窗口默认大小
                 {
-                    默认播放宽度.Text = MMPU.PlayWindowW.ToString();
-                    默认播放高度.Text = MMPU.PlayWindowH.ToString();
+                    默认播放宽度.Text = MMPU.播放器默认宽度.ToString();
+                    默认播放高度.Text = MMPU.播放器默认高度.ToString();
                 }
                 //播放缓冲时长
                 {
@@ -965,7 +965,7 @@ namespace DDTV_New
                 {
                     case 1:
                         {
-                            PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, MMPU.弹幕颜色, MMPU.字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
+                            PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, MMPU.弹幕颜色, MMPU.字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
                             PlayWindow.Closed += 播放窗口退出事件;
                             PlayWindow.Show();
                             PlayWindow.BossKey += 老板键事件;
@@ -1497,9 +1497,9 @@ namespace DDTV_New
                 MessageBox.Show("输入的播放器默认长宽数字不符合要求");
                 //throw;
             }
-            MMPU.PlayWindowW = int.Parse(默认播放宽度.Text);
+            MMPU.播放器默认宽度 = int.Parse(默认播放宽度.Text);
             MMPU.setFiles("PlayWindowW", 默认播放宽度.Text);
-            MMPU.PlayWindowH = int.Parse(默认播放高度.Text);
+            MMPU.播放器默认高度 = int.Parse(默认播放高度.Text);
             MMPU.setFiles("PlayWindowH", 默认播放高度.Text);
 
             System.Windows.MessageBox.Show("修改成功");
