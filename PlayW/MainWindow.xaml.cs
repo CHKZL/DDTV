@@ -78,7 +78,7 @@ namespace PlayW
                 关闭框.Visibility = Visibility.Visible;
                 MMPU.第一次打开播放窗口 = false;
             }
-            if (MMPU.versionMajor != 10)
+            if (MMPU.系统内核版本 != 10)
             {
                 弹幕使能 = false;
                 弹幕开关.IsChecked = false;
@@ -96,11 +96,12 @@ namespace PlayW
             {
                 非win10提示.Visibility = Visibility.Collapsed;
             }
+
         }
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 try
                 {
@@ -118,7 +119,7 @@ namespace PlayW
         public void Play_STOP()
         {
             //Aplayer.Close();
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 try
                 {
@@ -258,11 +259,20 @@ namespace PlayW
                 提示框.Visibility = Visibility.Visible;
                 提示文字.Content = "该房间已开播,检测直播流状态,等待推流数据中....";
             }));
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 MMPU.DownList.Add(DD);
-                DD.Start("直播观看缓冲进行中");
-                DD.DownIofo.备注 = "直播观看缓冲进行中";
+                if (DD.DownIofo.是否是播放任务)
+                {
+                    DD.Start("缓冲视频中");
+                    DD.DownIofo.备注 = "缓冲视频中";
+                }
+                else
+                {
+                    DD.Start("直播观看缓冲进行中");
+                    DD.DownIofo.备注 = "直播观看缓冲进行中";
+                }
+              
                 Thread.Sleep(MMPU.播放缓冲时长 * 1000);
                 this.Dispatcher.Invoke(new Action(delegate
                 {
@@ -293,7 +303,7 @@ namespace PlayW
                         获取弹幕();
                     }
                 }
-                catch (Exception C)
+                catch (Exception )
                 {
                     ;
                 }
@@ -304,7 +314,7 @@ namespace PlayW
 
         private void 获取弹幕()
         {
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 while (true)
                 {
@@ -350,10 +360,15 @@ namespace PlayW
         {
             if (播放状态)
             {
-                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）");
+                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）",false);
             }
         }
-        public void 刷新播放(string 提示内容)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="提示内容"></param>
+        /// <param name="来源">真为手动，假为自动</param>
+        public void 刷新播放(string 提示内容,bool 来源)
         {
             this.Dispatcher.Invoke(new Action(delegate
             {
@@ -367,8 +382,9 @@ namespace PlayW
                         if (bilibili.根据房间号获取房间信息.是否正在直播(DD.DownIofo.房间_频道号))
                         {
 
-                            new Thread(new ThreadStart(delegate
+                            new Task((() => 
                             {
+                                ///需要DEBUG：CancelAsync过后，刷新播放没有显示出来
                                 DD.DownIofo.WC.CancelAsync();
                                 DD.DownIofo.备注 = "播放刷新";
                                 DD.DownIofo.下载状态 = false;
@@ -608,7 +624,7 @@ namespace PlayW
                 {
                     Play_STOP();
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
-                    刷新播放("检测到F5按下,刷新中..");
+                    刷新播放("检测到F5按下,刷新中..",true);
                 }).Start();
 
             }
@@ -623,12 +639,21 @@ namespace PlayW
             播放状态 = false;
             new Task(() =>
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
-
+                try
+                {
+                    if (this.VlcControl.SourceProvider.MediaPlayer != null)
+                    {
+                        this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                    }
+                    this.VlcControl.Dispose();
+                }
+                catch (Exception)
+                {
+                }
             }).Start();
             DD.DownIofo.播放状态 = false;
-            //Aplayer.Dispose();
-            this.VlcControl.Dispose();
+            DD.DownIofo.备注 = "播放串口关闭";
+            DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             this.Close();
         }
 
@@ -783,3 +808,4 @@ namespace PlayW
         }
     }
 }
+

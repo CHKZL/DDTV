@@ -46,12 +46,13 @@ namespace DDTV_New
             官方名称.Text = LA_Name;
             唯一码.Text = 号码;
             平台.Items.Add("bilibili");
+            平台.Items.Add("youtube");
             平台.SelectedItem = Platform;
             if (this.Title == "修改单推属性")
             {
                 唯一码.IsEnabled = false;
             }
-            //new Thread(new ThreadStart(delegate {
+            //new Task((() =>  {
             //    try
             //    {
             //        JObject jo = (JObject)JsonConvert.DeserializeObject(MMPU.TcpSend(20002, "", true));
@@ -113,7 +114,7 @@ namespace DDTV_New
             }
             if (this.Title == "添加新单推"|| this.Title == "从网络添加房间")
             {
-                foreach (var item in RoomInit.房间主表)
+                foreach (var item in RoomInit.bilibili房间主表)
                 {
                     if (item.唯一码 == 唯一码.Text)
                     {

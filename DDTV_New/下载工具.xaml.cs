@@ -27,7 +27,7 @@ namespace DDTV_New
             InitializeComponent();
 
  
-            new Thread(new ThreadStart(delegate {
+            new Task((() =>  {
                 while(true)
                 {
                     更新下载队列();
