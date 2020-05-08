@@ -22,7 +22,7 @@ namespace DDTVLiveRec
             }).Start();
             MMPU.配置文件初始化(1);
 #endif
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 try
                 {

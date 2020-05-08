@@ -14,12 +14,10 @@ namespace Auxiliary
 {
     public class Downloader
     {
-
         public DownIofoData DownIofo = new DownIofoData()
         {
             继承 = new 继承()
         };
-
         public class DownIofoData
         {
             public WebClient WC { set; get; }
@@ -41,6 +39,7 @@ namespace Auxiliary
             public string 重连文件路径 { set; get; }
             public string 主播名称 { set; get; }    
             public 继承 继承 { set; get; }
+            public bool 是否是固定视频 { set; get; } = false;
         }
         public class 继承
         {
@@ -50,14 +49,10 @@ namespace Auxiliary
         }
         public string Start(string 开始后显示的备注)
         {
-            if(DownIofo.房间_频道号=="21618129")
-            {
-                ;
-            }
             int a = 0;
             DownIofo.WC = new WebClient();
             DownIofo.WC.Headers.Add("Accept: */*");
-            DownIofo.WC.Headers.Add("User-Agent: " + Ver.UA());
+            DownIofo.WC.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
             DownIofo.WC.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
             DownIofo.WC.DownloadFileCompleted += 下载完成事件;
             DownIofo.WC.DownloadProgressChanged += 下载过程中事件;
@@ -69,6 +64,7 @@ namespace Auxiliary
             DownIofo.WC.Headers.Add("Sec-Fetch-User: ?1");
             DownIofo.WC.Headers.Add("Upgrade-Insecure-Requests: 1");
             DownIofo.WC.Headers.Add("Cache-Control: max-age=0");
+            DownIofo.WC.Headers.Add("Referer: https://www.bilibili.com/");
             if (!string.IsNullOrEmpty(MMPU.Cookie))
             {
                 DownIofo.WC.Headers.Add("Cookie", MMPU.Cookie);
@@ -114,33 +110,52 @@ namespace Auxiliary
                 else
                 {
                     Thread.Sleep(5000);
-                    if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号))
+                    switch (DownIofo.平台)
                     {
-                       
-                        a++;
-                        if (判断文件是否存在.判断(DownIofo.下载地址, DownIofo.平台, DownIofo.房间_频道号))
-                        {
-                            //DownIofo.下载地址 = bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号);
-                            break;
-                        }
-                        else
-                        {
-                            DownIofo.下载地址= bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号);
-                            if (判断文件是否存在.判断(DownIofo.下载地址, DownIofo.平台, DownIofo.房间_频道号))
+                        case "bilibili":
+                            {
+                                if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号))
+                                {
+
+                                    a++;
+                                    if (判断文件是否存在.判断(DownIofo.下载地址, DownIofo.平台, DownIofo.房间_频道号))
+                                    {
+                                        //DownIofo.下载地址 = bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        DownIofo.下载地址 = bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号);
+                                        if (判断文件是否存在.判断(DownIofo.下载地址, DownIofo.平台, DownIofo.房间_频道号))
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间未直播，下载任务取消", InfoLog.InfoClass.下载必要提示);
+                                    DownIofo.下载状态 = false;
+                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                    if (DownIofo.继承.是否为继承对象)
+                                    {
+                                        //MMPU.弹窗.Add(3000, "重连任务取消", DownIofo.房间_频道号 + "，该房间未直播");
+                                    }
+                                    else
+                                    {
+                                        MMPU.弹窗.Add(3000, "下载任务取消", DownIofo.房间_频道号 + "，该房间未直播");
+                                    }
+                                    DownIofo.备注 = "该房间未直播";
+                                    return null;
+                                }
+                                break;
+                            }
+                        case "主站视频":
                             {
                                 break;
                             }
-                        }
                     }
-                    else
-                    {
-                        InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间未直播，下载任务取消", InfoLog.InfoClass.下载必要提示);
-                        DownIofo.下载状态 = false;
-                        DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                        MMPU.弹窗.Add(3000, "缓冲/下载失败", DownIofo.房间_频道号 + "，该房间未直播");
-                        DownIofo.备注 = "该房间未直播";
-                        return null;
-                    }
+                    
                 }
             }
             DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -149,7 +164,7 @@ namespace Auxiliary
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
             }
-            catch (WebException e)
+            catch (WebException)
             {
                 ;
                 //throw;
@@ -192,6 +207,19 @@ namespace Auxiliary
                 }
                 保存路径 = 保存路径 + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
             }
+            switch(平台)
+            {
+                case "bilibili":
+                    {
+                        下载地址 = 下载地址;
+                        break;
+                    }
+                case "youtube":
+                    {
+
+                        break;
+                    }
+            }
             下载对象.DownIofo = new Downloader.DownIofoData
             {
                 平台 = 平台,
@@ -205,7 +233,8 @@ namespace Auxiliary
                 主播名称 = 主播名称,
                 继承=new 继承() { 
                 是否为继承对象= 是否为继承项目,
-                继承的下载文件路径= 继承项目的原始文件
+                继承的下载文件路径= 继承项目的原始文件,
+                
                 }
             };
             if(!是否保存)
@@ -235,7 +264,7 @@ namespace Auxiliary
         private void 下载完成事件(object sender, AsyncCompletedEventArgs e)
         {
             WebClient WWC = (WebClient)sender;
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 DownIofo.下载状态 = false;
                 DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -325,7 +354,7 @@ namespace Auxiliary
                                         DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         return;
                                     }
-                                    new Thread(new ThreadStart(delegate
+                                    new Task((() => 
                                     {
                                         while (true)
                                         {

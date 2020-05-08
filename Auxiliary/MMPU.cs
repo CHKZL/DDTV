@@ -15,6 +15,8 @@ using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Windows.Media;
 
 namespace Auxiliary
 {
@@ -25,8 +27,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.2b";
-        public static string[] 不检测的版本号 = { };
+        public static string 版本号 = "2.0.2.2b.α";
+        public static string[] 不检测的版本号 = { "2.0.2.2b" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -39,9 +41,9 @@ namespace Auxiliary
         public static string 默认字幕颜色 = "";
         public static int 默认字幕大小 = 24;
         public static int 默认弹幕大小 = 20;
-        public static int PlayWindowH = 0;
-        public static int PlayWindowW = 0;
-        public static int versionMajor = Environment.OSVersion.Version.Major;
+        public static int 播放器默认高度 = 0;
+        public static int 播放器默认宽度 = 0;
+        public static int 系统内核版本 = Environment.OSVersion.Version.Major;
         public static int 直播列表刷新间隔 = 0;
         public static string Cookie = "";
         public static string csrf = "";
@@ -55,7 +57,9 @@ namespace Auxiliary
         public static string 房间状态MD5值 = string.Empty;
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
-
+        public static bool 剪贴板监听 = false;
+        public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
+        public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -112,9 +116,11 @@ namespace Auxiliary
                 //直播缓存目录
                 MMPU.直播缓存目录 = MMPU.读取exe默认配置文件("Livefile", "./tmp/LiveCache/");
                 //播放窗口默认高度
-                MMPU.PlayWindowH = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
+                MMPU.播放器默认高度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
                 //播放窗口默认宽度
-                MMPU.PlayWindowW = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
+                MMPU.播放器默认宽度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
+                //剪切板监听
+                MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
             }
             else if (模式 == 1)
             {
@@ -320,14 +326,35 @@ namespace Auxiliary
             }
             return result;
         }
+        public static string 返回网页内容_GET(string url)
+        {
+            string result = "";
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Method = "GET";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.UserAgent = MMPU.UA.Ver.UA(); ;
+            
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            //获取响应内容  
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+            return result;
+        }
         public static string 使用WC获取网络内容(string url)
         {
             var wc = new WebClient();
             wc.Headers.Add("Accept: */*");
             wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-            if (!string.IsNullOrEmpty(MMPU.Cookie))
+            wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
+            if (url.Contains("bilibili"))
             {
-                wc.Headers.Add("Cookie", MMPU.Cookie);
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    wc.Headers.Add("Cookie", MMPU.Cookie);
+                }
             }
             byte[] roomHtml = wc.DownloadData(url);
             return Encoding.UTF8.GetString(roomHtml);
@@ -347,7 +374,7 @@ namespace Auxiliary
             rq.Headers.Add("Upgrade-Insecure-Requests: 1");
             rq.Headers.Add("Cache-Control: max-age=0");
             //rq.Host = "www.bilibili.com";
-            rq.UserAgent = Ver.UA();
+            rq.UserAgent = MMPU.UA.Ver.UA();
             if (解码)
             {
                 HttpWebResponse webResponse = (System.Net.HttpWebResponse)rq.GetResponse();
@@ -389,25 +416,27 @@ namespace Auxiliary
             public static void 更新网络房间缓存()
             {
                 int A = 1;
-                new Thread(new ThreadStart(delegate
+                new Task((() => 
                 {
+                    InfoLog.InfoPrintf("开始更新网络房间缓存",InfoLog.InfoClass.Debug);
                     try
                     {
                         var wc = new WebClient();
                         wc.Headers.Add("Accept: */*");
                         wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                        byte[] roomHtml = wc.DownloadData("https://vdb.vtbs.moe/json/list.json");
-                        var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
-
+                        string roomHtml = wc.DownloadString("https://gitee.com/SYXM/vdb/raw/master/vdbList.txt");
+                        var result = JObject.Parse(roomHtml);
+                        InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
                         foreach (var item in result["vtbs"])
                         {
                             foreach (var x in item["accounts"])
                             {
                                 try
                                 {
+                                    string name = item["name"][item["name"]["default"].ToString()].ToString();
                                     if (x["platform"].ToString() == "bilibili")
                                     {
-                                        string name = item["name"][item["name"]["default"].ToString()].ToString();
+                                       
                                         列表缓存.Add(new 列表加载缓存
                                         {
                                             编号 = A,
@@ -419,6 +448,20 @@ namespace Auxiliary
                                         });
                                         A++;
                                     }
+                                    //else if (x["platform"].ToString() == "youtube")
+                                    //{
+
+                                    //    列表缓存.Add(new 列表加载缓存
+                                    //    {
+                                    //        编号 = A,
+                                    //        名称 = name,
+                                    //        官方名称 = name,
+                                    //        平台 = "youtube",
+                                    //        UID = x["id"].ToString(),
+                                    //        类型 = x["type"].ToString()
+                                    //    });
+                                    //    A++;
+                                    //}
                                 }
                                 catch (Exception)
                                 {
@@ -428,10 +471,11 @@ namespace Auxiliary
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         ;
                     }
+                    InfoLog.InfoPrintf("网络房间缓存更新成功", InfoLog.InfoClass.Debug);
                     //this.Dispatcher.Invoke(new Action(delegate
                     //{
                     //    选中内容展示.Content = "";
@@ -511,11 +555,6 @@ namespace Auxiliary
             /// <returns></returns>
             public bool 判断(string url, string P,string roomId)
             {
-                //return true;
-                if (roomId == "21618129")
-                {
-                    return true;
-                }
                 try
                 {
                     switch (P)
@@ -525,7 +564,7 @@ namespace Auxiliary
 
                                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(url));
                                 httpWebRequest.Accept = "*/*";
-                                httpWebRequest.UserAgent = Ver.UA();
+                                httpWebRequest.UserAgent = MMPU.UA.Ver.UA();
                                 httpWebRequest.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                                 if (!string.IsNullOrEmpty(MMPU.Cookie))
                                 {
@@ -556,24 +595,24 @@ namespace Auxiliary
                 //    return false;
 
                 //}
-                catch (Exception E)
+                catch (Exception )
                 {
                     InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
                     return false;
-                    if (E.Message.Contains("404"))
-                    {
-                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
-                        return false;
-                    }
-                    else if (E.Message.Contains("475"))
-                    {
-                        InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
+                    //if (E.Message.Contains("404"))
+                    //{
+                    //    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                    //    return false;
+                    //}
+                    //else if (E.Message.Contains("475"))
+                    //{
+                    //    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                    //    return false;
+                    //}
+                    //else
+                    //{
+                    //    return true;
+                    //}
                    
                 }
             }
@@ -599,7 +638,7 @@ namespace Auxiliary
         public static void 文件删除委托(string file)
         {
 
-            new Thread(new ThreadStart(delegate
+            new Task((() => 
             {
                 int i = 0;
                 try
@@ -741,7 +780,6 @@ namespace Auxiliary
         public static string getFiles(string name, string V)
         {
             Configuration config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            bool A = false;
             string[] B = config.AppSettings.Settings.AllKeys;
             for (int i = 0; i < B.Length; i++)
             {
@@ -751,12 +789,8 @@ namespace Auxiliary
                     return config.AppSettings.Settings[name].Value;
                 }
             }
-
             setFiles(name, V);
             return V;
-
-
-
         }
         /// <summary>
         /// 修改和添加AppSettings中配置 如果相应的Key存在则修改 如不存在则添加
@@ -899,6 +933,65 @@ namespace Auxiliary
                 result = reader.ReadToEnd();
             }
             return result;
+        }
+
+        public class UA
+        {
+            [SuppressMessage("ReSharper", "InconsistentNaming")]
+            internal static class Ver
+            {
+                public const string VER = "1.5.1";
+                public const string DATE = "(2019-3-1)";
+                public const string DESC = "修改API";
+                public static readonly string OS_VER = "(" + WinVer.SystemVersion.Major + "." + WinVer.SystemVersion.Minor + "." + WinVer.SystemVersion.Build + ")";
+                //ublic static readonly string UA = OS_VER + " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+                public static string UA()
+                {
+                    if (MMPU.启动模式 == 0)
+                    {
+                        return OS_VER + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+                    }
+                    else if (MMPU.启动模式 == 1)
+                    {
+                        return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+                    }
+                    else
+                    {
+                        return "Mozilla/5.0 AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11";
+                    }
+                }
+            }
+            internal static class WinVer
+            {
+                public static readonly Version SystemVersion = GetSystemVersion();
+
+                private static Delegate GetFunctionAddress(IntPtr dllModule, string functionName, Type t)
+                {
+                    var address = WinApi.GetProcAddress(dllModule, functionName);
+                    return address == IntPtr.Zero ? null : Marshal.GetDelegateForFunctionPointer(address, t);
+                }
+
+                private delegate IntPtr RtlGetNtVersionNumbers(ref int dwMajor, ref int dwMinor, ref int dwBuildNumber);
+
+                private static Version GetSystemVersion()
+                {
+                    var hinst = WinApi.LoadLibrary("ntdll.dll");
+                    var func = (RtlGetNtVersionNumbers)GetFunctionAddress(hinst, "RtlGetNtVersionNumbers", typeof(RtlGetNtVersionNumbers));
+                    int dwMajor = 0, dwMinor = 0, dwBuildNumber = 0;
+                    func.Invoke(ref dwMajor, ref dwMinor, ref dwBuildNumber);
+                    dwBuildNumber &= 0xffff;
+                    return new Version(dwMajor, dwMinor, dwBuildNumber);
+                }
+            }
+
+            internal static class WinApi
+            {
+                [DllImport("Kernel32")]
+                public static extern IntPtr LoadLibrary(string funcname);
+
+                [DllImport("Kernel32")]
+                public static extern IntPtr GetProcAddress(IntPtr handle, string funcname);
+            }
         }
 
         public class SQL中间件数据格式

@@ -139,6 +139,7 @@
   <ItemGroup>
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="bilibili.cs" />
+    <Compile Include="BiliVideoInfo.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="Encryption.cs" />
     <Compile Include="FlvMethod.cs" />
