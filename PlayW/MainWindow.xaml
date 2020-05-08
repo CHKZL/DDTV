@@ -6,14 +6,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PlayW"
         mc:Ignorable="d"
-      xmlns:aplayer="clr-namespace:AxAPlayer3Lib;assembly=AxInterop.APlayer3Lib"
         Title="播放器" Height="720" Width="1280" Loaded="Window_Loaded"
          KeyDown="MainWindows_Keydown" WindowStyle="None" MouseWheel="鼠标滚轮事件">
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <vlc:VlcControl x:Name="VlcControl" MouseLeftButtonDown="VlcControl_MouseLeftButtonDown" />
-        <!--<WindowsFormsHost Panel.ZIndex="-1">
-            <aplayer:AxPlayer x:Name="Aplayer" />
-        </WindowsFormsHost>-->
         <CheckBox x:Name="首页焦点" Margin="-55,0,830,424"/>
         <Grid x:Name="弹幕框" Visibility="Collapsed">
             <local:字幕描边控件 x:Name="弹幕"  IsEnabled="False"></local:字幕描边控件>
