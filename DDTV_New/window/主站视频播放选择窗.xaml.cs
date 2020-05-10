@@ -112,7 +112,7 @@ namespace DDTV_New.window
             {
                 DL.DownIofo.播放状态 = true;
                 DL.DownIofo.是否是播放任务 = true;
-                PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, MMPU.弹幕颜色, MMPU.字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
+                PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, new SolidColorBrush(Color.FromArgb(0xFF, Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[1], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[2], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[3], 16))), new SolidColorBrush(Color.FromArgb(0xFF, Convert.ToByte(MMPU.默认字幕颜色.Split(',')[1], 16), Convert.ToByte(MMPU.默认字幕颜色.Split(',')[2], 16), Convert.ToByte(MMPU.默认字幕颜色.Split(',')[3], 16))), MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
                 PlayWindow.Closed += 播放窗口退出事件;
                 PlayWindow.Show();
                 //PlayWindow.BossKey += 老板键事件;

@@ -125,7 +125,7 @@
                 </ListView.View>
             </ListView>
         </Grid>
-        <Grid x:Name="工具层" >
+        <Grid x:Name="工具层" Visibility="Collapsed">
             <Image Margin="48,53,652,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="DDNA列表_按钮事件"/>
             <Label Content="DDNA列表" Margin="48,132,652,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
             <Label Content="(各平台直播情况)" Margin="34,155,638,333" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>

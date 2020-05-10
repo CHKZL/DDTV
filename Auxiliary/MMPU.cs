@@ -16,7 +16,6 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
-using System.Windows.Media;
 
 namespace Auxiliary
 {
@@ -58,8 +57,7 @@ namespace Auxiliary
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
         public static bool 剪贴板监听 = false;
-        public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
-        public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
+ 
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
