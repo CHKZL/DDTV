@@ -16,10 +16,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using static Auxiliary.bilibili;
 using MessageBox = System.Windows.MessageBox;
-using static Auxiliary.RoomInit;r
+using static Auxiliary.RoomInit;
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using Clipboard = System.Windows.Clipboard;
+using ture = System.Boolean;
 
 namespace DDTV_New
 {
@@ -29,7 +30,8 @@ namespace DDTV_New
     public partial class MainWindow : Window
     {
 
-       
+        public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
+        public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
         public static List<PlayW.MainWindow> playList1 = new List<PlayW.MainWindow>();
         public static int 播放器版本 = 1;
         //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
@@ -241,13 +243,13 @@ namespace DDTV_New
                     this.Dispatcher.Invoke(new Action(delegate
                     {
                         字幕默认颜色.Foreground = S1;
-                        MMPU.字幕颜色 = S1;
+                        字幕颜色 = S1;
                     }));
                     SolidColorBrush S2 = new SolidColorBrush(Color.FromArgb(0xFF, Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[1], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[2], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[3], 16)));
                     this.Dispatcher.Invoke(new Action(delegate
                     {
                         弹幕默认颜色.Foreground = S2;
-                        MMPU.弹幕颜色 = S2;
+                        弹幕颜色 = S2;
                     }));
                 }
                 //读取字幕弹幕字体大小
@@ -990,7 +992,7 @@ namespace DDTV_New
                 {
                     case 1:
                         {
-                            PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, MMPU.弹幕颜色, MMPU.字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
+                            PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
                             PlayWindow.Closed += 播放窗口退出事件;
                             PlayWindow.Show();
                             PlayWindow.BossKey += 老板键事件;
@@ -1453,7 +1455,7 @@ namespace DDTV_New
                         弹幕默认颜色.Foreground = solidColorBrush;
                         MMPU.默认弹幕颜色 = solidColorBrush.Color.A.ToString("X2") + "," + solidColorBrush.Color.R.ToString("X2") + "," + solidColorBrush.Color.G.ToString("X2") + "," + solidColorBrush.Color.B.ToString("X2");
                         MMPU.setFiles("DanMuColor", MMPU.默认弹幕颜色);
-                        MMPU.弹幕颜色 = solidColorBrush;
+                        弹幕颜色 = solidColorBrush;
                     }
                 }
             }
@@ -1470,7 +1472,7 @@ namespace DDTV_New
                         字幕默认颜色.Foreground = solidColorBrush;
                         MMPU.默认字幕颜色 = solidColorBrush.Color.A.ToString("X2") + "," + solidColorBrush.Color.R.ToString("X2") + "," + solidColorBrush.Color.G.ToString("X2") + "," + solidColorBrush.Color.B.ToString("X2");
                         MMPU.setFiles("ZiMuColor", MMPU.默认字幕颜色);
-                        MMPU.字幕颜色 = solidColorBrush;
+                        字幕颜色 = solidColorBrush;
                     }
                 }
             }
