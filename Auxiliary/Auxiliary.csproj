@@ -148,6 +148,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoomInit.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="youtube.cs" />
     <Compile Include="外部API.cs" />
   </ItemGroup>
