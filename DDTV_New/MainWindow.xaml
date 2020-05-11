@@ -1,4 +1,5 @@
-﻿<Window x:Class="DDTV_New.MainWindow"
+﻿<Window
+        x:Class="DDTV_New.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -16,7 +17,7 @@
         <Grid x:Name="home" Width="800" Height="515"  Visibility="Collapsed">
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
-            <Label x:Name="tabText" Content="单推列表正在更新中....." Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+            <Label x:Name="TabTextLabel" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
             <Image Margin="110,326,590,89" Source="res/ico/barrage.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="关注列表_点击事件"/>
             <Label Content="单推列表" Margin="100,422,580,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
             <Image Margin="270,326,430,89" Source="res/ico/tools.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="插件_点击事件"/>
@@ -25,14 +26,14 @@
             <Label Content="其他工具" Margin="580,422,100,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
             <Image Margin="430,326,270,89" Source="res/ico/setup.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="设置层_点击事件"/>
             <Label Content="设置" Margin="420,422,260,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
-            <Label x:Name="版本显示" Content="版本：2.0.1.2" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="版本显示" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top"/>
             <Label Content="已单推" HorizontalAlignment="Left" Margin="691,228,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="newtime" Content="数据更新时间：单推列表正在更新中....." HorizontalAlignment="Left" Margin="576,258,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="newtime" HorizontalAlignment="Left" Margin="592,258,0,0" VerticalAlignment="Top"/>
             <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="ppnum" Content="114" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
+            <Label x:Name="TanoshiNumLabel" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
             <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="533,187,16,297" />
-            <Label x:Name="国内服务器延迟" Content="国内服务器延迟(阿B):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
-            <Label x:Name="国外服务器延迟" Content="服务器延迟(404):" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
+            <Label x:Name="国内服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
+            <Label x:Name="国外服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
             <Image Margin="10,283,740,182" Source="res/ico/帮助.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="帮助_按钮事件"/>
             <Label Content="说明/帮助" HorizontalAlignment="Left" Margin="4,327,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
