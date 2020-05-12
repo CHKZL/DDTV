@@ -67,6 +67,7 @@ namespace Auxiliary
                         }
                     }
                 }
+                Thread.Sleep(150);
             }
             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
         }
