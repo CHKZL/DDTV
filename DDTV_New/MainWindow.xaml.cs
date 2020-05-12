@@ -21,13 +21,16 @@ using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using Clipboard = System.Windows.Clipboard;
 using ture = System.Boolean;
+using ReactiveUI;
+using System.Reactive.Disposables;
+using DDTV_New.Utility;
 
 namespace DDTV_New
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IViewFor<MainViewModel>
     {
 
         public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
@@ -36,12 +39,42 @@ namespace DDTV_New
         public static int 播放器版本 = 1;
         //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
 
-
+        public static readonly DependencyProperty ViewModelProperty = DependencyProperty
+            .Register(nameof(ViewModel), typeof(MainViewModel), typeof(MainWindow));
+        public MainViewModel ViewModel
+        {
+            get => (MainViewModel) GetValue(ViewModelProperty);
+            set => SetValue(ViewModelProperty, value);
+        }
+        object IViewFor.ViewModel
+        {
+            get => ViewModel;
+            set => ViewModel = (MainViewModel) value;
+        }
 
         public MainWindow()
         {
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
+
+            ViewModel = new MainViewModel();
+
+            this.WhenActivated(disposable =>
+            {
+                this.OneWayBind(ViewModel, vm => vm.TanoshiNum, v => v.TanoshiNumLabel.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.TabText, v => v.TabTextLabel.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.PushNotification, v => v.动态推送1.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.ServerDelayBilibiliText, v => v.国内服务器延迟.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.ServerDelayYoutubeText, v => v.国外服务器延迟.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.LatestDataUpdateTimeText, v => v.newtime.Content)
+                    .DisposeWith(disposable);
+            });
+
             try
             {
                 home.Visibility = Visibility.Visible;
@@ -81,10 +114,12 @@ namespace DDTV_New
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
 
             System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+#pragma warning disable CA5359 // Do Not Disable Certificate Validation
             delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
             {
                 return true; // **** Always accept
             };
+#pragma warning restore CA5359 // Do Not Disable Certificate Validation
             System.Net.ServicePointManager.DefaultConnectionLimit = 999;/*---------这里最重要--------*/
             System.Net.ServicePointManager.MaxServicePoints = 999;
          
@@ -108,118 +143,74 @@ namespace DDTV_New
             }
 
             //公告加载线程
-
-            new Task((() =>
+            NewThreadTask.Run(() =>
             {
                 公告项目启动();
-            })).Start();
+            });
 
-            new Task(() =>
+            NewThreadTask.Run(() =>
             {
                 MMPU.加载网络房间方法.更新网络房间缓存();
-            }).Start();
+            });
 
             //房间刷新线程
-            new Task((() =>
+            NewThreadTask.Loop(runOnLocalThread =>
             {
+                刷新房间列表UI();
+                runOnLocalThread(() => ViewModel.LatestDataUpdateTime = DateTime.Now);
+                
                 while (true)
                 {
-                    刷新房间列表UI();
-                    this.Dispatcher.Invoke(new Action(delegate
+                    if (bilibili房间信息更新次数 > 0)
                     {
-                        newtime.Content = "数据更新时间：" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    }));
-                    while (true)
-                    {
-                        if (RoomInit.bilibili房间信息更新次数 > 0)
+                        runOnLocalThread(() =>
                         {
-                            this.Dispatcher.Invoke(new Action(delegate
+                            try
                             {
-                                try
-                                {
-                                    首次更新.Visibility = Visibility.Collapsed;
-                                }
-                                catch (Exception)
-                                {
-
-                                    // throw;
-                                }
-
-                            }));
-                            break;
-                        }
-                        Thread.Sleep(100);
+                                首次更新.Visibility = Visibility.Collapsed;
+                            }
+                            catch (Exception) { }
+                        });
+                        break;
                     }
-                    Thread.Sleep(MMPU.直播列表刷新间隔 * 1000);
+                    Thread.Sleep(100);
                 }
-            })).Start();
+            }, this, MMPU.直播列表刷新间隔 * 1000);
             //延迟测试
-            new Task((() =>
+            NewThreadTask.Loop(runOnLocalThread =>
             {
-                while (true)
+                double 国内 = MMPU.测试延迟("https://live.bilibili.com");
+                if (国内 > 0)
                 {
-                    try
-                    {
-                        double 国内 = MMPU.测试延迟("https://live.bilibili.com");
-                        string 国内延迟 = string.Empty;
-                        string 国外延迟 = string.Empty;
-                        if (国内 > 0)
-                        {
-                            国内延迟 = "国内服务器延迟(阿B):" + 国内.ToString().Split('.')[0] + "ms";
-                            MMPU.是否能连接阿B = true;
-                        }
-                        else
-                        {
-                            国内延迟 = "国内服务器延迟(阿B): 连接超时";
-                            MMPU.是否能连接阿B = false;
-                        }
-
-                        if (MMPU.连接404使能)
-                        {
-                            double 国外 = MMPU.测试延迟("https://www.google.com");
-                            if (国外 > 0)
-                            {
-                                国外延迟 = "国内服务器延迟(404):" + 国外.ToString().Split('.')[0] + "ms";
-                                MMPU.是否能连接404 = true;
-                            }
-                            else
-                            {
-                                国外延迟 = "国内服务器延迟(404): 连接超时";
-                                MMPU.是否能连接404 = false;
-                            }
-
-                        }
-                        else
-                        {
-                            MMPU.是否能连接404 = false;
-                            国外延迟 = "";
-                        }
-                        this.Dispatcher.Invoke(new Action(delegate
-                        {
-                            国内服务器延迟.Content = 国内延迟;
-                        }));
-                        if (MMPU.连接404使能)
-                        {
-                            this.Dispatcher.Invoke(new Action(delegate
-                            {
-                                国外服务器延迟.Content = 国外延迟;
-                            }));
-
-                        }
-                        else
-                        {
-                            this.Dispatcher.Invoke(new Action(delegate
-                            {
-                                国外服务器延迟.Content = "";
-                            }));
-
-                        }
-
-                    }
-                    catch (Exception) { }
-                    Thread.Sleep(4000);
+                    runOnLocalThread(() => ViewModel.ServerDelayBilibili = 国内);
+                    MMPU.是否能连接阿B = true;
                 }
-            })).Start();
+                else
+                {
+                    runOnLocalThread(() => ViewModel.ServerDelayBilibili = -2.0);
+                    MMPU.是否能连接阿B = false;
+                }
+
+                if (MMPU.连接404使能)
+                {
+                    double 国外 = MMPU.测试延迟("https://www.google.com");
+                    if (国外 > 0)
+                    {
+                        runOnLocalThread(() => ViewModel.ServerDelayYoutube = 国外);
+                        MMPU.是否能连接404 = true;
+                    }
+                    else
+                    {
+                        runOnLocalThread(() => ViewModel.ServerDelayYoutube = -2.0);
+                        MMPU.是否能连接404 = false;
+                    }
+                }
+                else
+                {
+                    MMPU.是否能连接404 = false;
+                    runOnLocalThread(() => ViewModel.ServerDelayYoutube = -1.0);
+                }
+            }, this, 4000);
             //缩小功能
             {
                 MMPU.缩小功能 = int.Parse(MMPU.getFiles("Zoom", "0"));
@@ -273,7 +264,6 @@ namespace DDTV_New
             }
             //增加插件列表
             {
-
                 PluginC.Items.Add(new
                 {
                     编号 = "0",
@@ -407,12 +397,8 @@ namespace DDTV_New
             CPT.Start();
             //CPT.Join();
 
-
-            this.Dispatcher.Invoke(new Action(delegate
-            {
-                版本显示.Content = "版本：" + MMPU.版本号;
-            }));
-
+            //版本号更新
+            版本显示.Content = "版本: " + MMPU.版本号;
         }
         /// <summary>
         /// 通过get方式返回内容
@@ -441,72 +427,61 @@ namespace DDTV_New
         public void 公告项目启动()
         {
             //动态推送1
-            new Task((() =>
+            NewThreadTask.Loop(runOnLocalThread =>
             {
-                try
-                {
+                bool 动态推送1开关 = MMPU.TcpSend(
+                        Server.RequestCode.GET_TOGGLE_PUSH_NOTIFICATION, "{}", true)
+                        == "1" ? true : false;
 
-                    while (true)
-                    {
-                        bool 动态推送1开关 = MMPU.TcpSend(20009, "{}", true) == "1" ? true : false;
-                        if (动态推送1开关)
-                        {
-                            string 动态推送内容 = MMPU.TcpSend(20010, "{}", true);
-                            this.Dispatcher.Invoke(new Action(delegate
-                            {
-                                动态推送1.Content = 动态推送内容;
-                            }));
-                        }
-                        Thread.Sleep(3600 * 1000);
-                    }
+                if (动态推送1开关)
+                {
+                    string 动态推送内容 = MMPU.TcpSend(
+                            Server.RequestCode.GET_PUSH_NOTIFICATION, "{}", true);
+                    runOnLocalThread(() => ViewModel.PushNotification = 动态推送内容);
                 }
-                catch (Exception) { }
-            })).Start();
+            }, this, 3600 * 1000);
             //版本检查
-            new Task((() =>
+            NewThreadTask.Run(() =>
             {
-                try
-                {
-                    string 服务器版本号 = MMPU.TcpSend(20011, "{}", true);
-                    if (!string.IsNullOrEmpty(服务器版本号))
-                    {
-                        bool 检测状态 = true;
-                        foreach (var item in MMPU.不检测的版本号)
-                        {
-                            if (服务器版本号 == item)
-                            {
-                                检测状态 = false;
-                            }
-                        }
-                        if (MMPU.版本号 != 服务器版本号 && 检测状态)
-                        {
-                            MessageBoxResult dr = MessageBox.Show("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20012, "{}", true) + "\n\n点击确定跳转到补丁下载网页，点击取消忽略", "有新版本", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-                            if (dr == MessageBoxResult.OK)
-                            {
-                                System.Diagnostics.Process.Start("https://github.com/CHKZL/DDTV2/releases/latest");
-                            }
-                        }
-                    }
-                }
-                catch (Exception) { }
-            })).Start();
-            //推送内容1
-            new Task((() =>
-            {
-                try
-                {
-                    string 推送内容1text = MMPU.TcpSend(20005, "{}", true);
-                    if (推送内容1text.Length < 25)
-                    {
-                        this.Dispatcher.Invoke(new Action(delegate
-                        {
-                            推送内容1.Content = 推送内容1text;
-                        }));
-                    }
+                string 服务器版本号 = MMPU.TcpSend(
+                    Server.RequestCode.GET_LATEST_VERSION_NUMBER, "{}", true);
 
+                if (!string.IsNullOrEmpty(服务器版本号))
+                {
+                    bool 检测状态 = true;
+                    foreach (var item in MMPU.不检测的版本号)
+                    {
+                        if (服务器版本号 == item)
+                        {
+                            检测状态 = false;
+                        }
+                    }
+                    if (MMPU.版本号 != 服务器版本号 && 检测状态)
+                    {
+                        MessageBoxResult dr = MessageBox.Show(
+                            "检测到版本更新,更新公告:\n" 
+                                + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true) 
+                                + "\n\n点击确定跳转到补丁下载网页，点击取消忽略", 
+                            "有新版本", 
+                            MessageBoxButton.OKCancel, 
+                            MessageBoxImage.Question);
+
+                        if (dr == MessageBoxResult.OK)
+                        {
+                            System.Diagnostics.Process.Start(Server.PROJECT_ADDRESS);
+                        }
+                    }
                 }
-                catch (Exception) { }
-            })).Start();
+            });
+            //推送内容1
+            NewThreadTask.Run(runOnLocalThread =>
+            {
+                string 推送内容1text = MMPU.TcpSend(20005, "{}", true);
+                if (推送内容1text.Length < 25)
+                {
+                    runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);
+                }
+            }, this);
         }
         private void 刷新房间列表UI()
         {
@@ -584,31 +559,12 @@ namespace DDTV_New
                 }
             }
             int 单推人数 = 正在直播.Count + 未直播.Count;
+            Dispatcher.Invoke(() => ViewModel.TanoshiNum = 单推人数);
+            Dispatcher.Invoke(() => ViewModel.NowStreamingNum = 正在直播.Count);
+            Dispatcher.Invoke(() => ViewModel.NotStreamingNum = 未直播.Count);
+
             this.Dispatcher.Invoke(new Action(delegate
             {
-                ppnum.Content = 单推人数;
-
-            }));
-
-            if (正在直播.Count == 0)
-            {
-                this.Dispatcher.Invoke(new Action(delegate
-                {
-                    tabText.Content = "监控列表中没有直播中的单推对象";
-                }));
-
-            }
-            else
-            {
-                this.Dispatcher.Invoke(new Action(delegate
-                {
-                    tabText.Content = "在监控列表中有" + 正在直播.Count + "个单推对象正在直播";
-                }));
-
-            }
-            this.Dispatcher.Invoke(new Action(delegate
-            {
-                ppnum.Content = 正在直播.Count + 未直播.Count;
                 try
                 {
                     等待框.Visibility = Visibility.Collapsed;
@@ -616,7 +572,6 @@ namespace DDTV_New
                 catch (Exception)
                 {
                 }
-
             }));
             if (MMPU.是否提示一键导入)
             {
