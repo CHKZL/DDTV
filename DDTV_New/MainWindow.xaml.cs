@@ -1271,7 +1271,15 @@ namespace DDTV_New
                         System.Windows.MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                         return;
                 }
-
+                string 唯一码 = MMPU.获取livelist平台和唯一码.唯一码(已选内容);
+                foreach (var item in MMPU.DownList)
+                {
+                    if (item.DownIofo.房间_频道号 == 唯一码)
+                    {
+                        MessageBox.Show("该房间在下载列表中已存在!");
+                        return;
+                    }
+                }
                 string GUID = Guid.NewGuid().ToString();
                 string 标题 = bilibili.根据房间号获取房间信息.获取标题(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
                 string 下载地址 = string.Empty;
