@@ -20,7 +20,6 @@ namespace Auxiliary
 
     public class bilibili
     {
-
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
         public static void start()
         {
@@ -38,8 +37,6 @@ namespace Auxiliary
                     {
                         InfoLog.InfoPrintf("房间信息本地缓存更新出现错误:" + e.ToString(), InfoLog.InfoClass.Debug);
                     }
-
-
                 }
             });
         }
