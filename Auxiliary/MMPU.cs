@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Windows;
 
 namespace Auxiliary
 {
@@ -26,8 +27,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 40;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.2b.α";
-        public static string[] 不检测的版本号 = { "2.0.2.2b" };
+        public static string 版本号 = "2.0.2.3b";
+        public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -422,7 +423,10 @@ namespace Auxiliary
                         var wc = new WebClient();
                         wc.Headers.Add("Accept: */*");
                         wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                        string roomHtml = wc.DownloadString("https://gitee.com/SYXM/vdb/raw/master/vdbList.txt");
+                        wc.Encoding = Encoding.UTF8;
+                        string roomHtml = wc.DownloadString("https://vdb.vtbs.moe/json/list.json");//File.ReadAllText("T:/Untitled-1.json");//
+                       // File.WriteAllText("T:/1tt.txt", roomHtml);
+                        //Clipboard.SetDataObject(roomHtml);
                         var result = JObject.Parse(roomHtml);
                         InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
                         foreach (var item in result["vtbs"])
@@ -461,7 +465,7 @@ namespace Auxiliary
                                     //    A++;
                                     //}
                                 }
-                                catch (Exception)
+                                catch (Exception e)
                                 {
 
                                     //throw;
@@ -469,7 +473,7 @@ namespace Auxiliary
                             }
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         ;
                     }
