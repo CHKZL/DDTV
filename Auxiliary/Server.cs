@@ -8,7 +8,8 @@ namespace Auxiliary
 {
     public static class Server
     {
-        public static readonly string IP_ADDRESS = "";
+        public static readonly string IP_ADDRESS = "39.98.207.17";
+        public static readonly int PORT = 11433;
         public static readonly string PROJECT_ADDRESS = "https://github.com/CHKZL/DDTV2/releases/latest";
         public static class RequestCode
         {

@@ -845,9 +845,8 @@ namespace Auxiliary
             {
                 string 回复内容 = "";
                 Socket tcpClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ipaddress = IPAddress.Parse("39.98.207.17");
-                //IPAddress ipaddress = IPAddress.Parse("127.0.0.1");
-                EndPoint point = new IPEndPoint(ipaddress, 11433);
+                IPAddress ipaddress = IPAddress.Parse(Server.IP_ADDRESS);
+                EndPoint point = new IPEndPoint(ipaddress, Server.PORT);
                 tcpClient.Connect(point);//通过IP和端口号来定位一个所要连接的服务器端
                 tcpClient.Send(Encoding.UTF8.GetBytes(JSON发送拼接(code, msg)));
                 if (是否需要回复)
