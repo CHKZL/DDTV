@@ -37,6 +37,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -46,6 +47,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -60,6 +62,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <OutputPath>bin\x64\Release\</OutputPath>
@@ -71,6 +74,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -82,6 +86,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
@@ -93,8 +98,12 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
+      <HintPath>..\packages\AWSSDK.Core.3.3.106.22\lib\net45\AWSSDK.Core.dll</HintPath>
+    </Reference>
     <Reference Include="BiliAccount, Version=2.3.6.20, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BiliAccount.2.3.6.20\lib\net472\BiliAccount.dll</HintPath>
     </Reference>
@@ -140,10 +149,20 @@
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="bilibili.cs" />
     <Compile Include="BiliVideoInfo.cs" />
+    <Compile Include="DataCache.cs" />
+    <Compile Include="DDcenter\DdcClient.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="Encryption.cs" />
     <Compile Include="FlvMethod.cs" />
     <Compile Include="InfoLog.cs" />
+    <Compile Include="LiveChatScript\ActivityBannerEventArgs.cs" />
+    <Compile Include="LiveChatScript\BEBitConverter.cs" />
+    <Compile Include="LiveChatScript\DanmuMessageEventArgs.cs" />
+    <Compile Include="LiveChatScript\Extensions.cs" />
+    <Compile Include="LiveChatScript\GiftMessageEventArgs.cs" />
+    <Compile Include="LiveChatScript\LiveChatListener.cs" />
+    <Compile Include="LiveChatScript\MessageEventArgs.cs" />
+    <Compile Include="LiveChatScript\WelcomeEventArgs.cs" />
     <Compile Include="MMPU.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

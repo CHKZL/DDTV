@@ -17,6 +17,7 @@ using System.Security.Cryptography;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
+using static Auxiliary.bilibili;
 
 namespace Auxiliary
 {
@@ -25,9 +26,9 @@ namespace Auxiliary
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
         public static string 直播缓存目录 = "";
-        public static int 直播更新时间 = 40;
+        public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.3b";
+        public static string 版本号 = "2.0.2.3b.β";
         public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
@@ -58,7 +59,9 @@ namespace Auxiliary
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
         public static bool 剪贴板监听 = false;
- 
+        public static bool DDC采集使能 = true;
+        public static int DDC采集间隔 = 3000;
+        public static int 数据源 = 0;//0：vdb   1：B API
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -74,7 +77,7 @@ namespace Auxiliary
                 {
                     Debug = false,
                     下载必要提示 = true,
-                    杂项提示 = false,
+                    杂项提示 = true,
                     系统错误信息 = true,
                     输出到文件 = false
                 });
@@ -207,6 +210,11 @@ namespace Auxiliary
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
             #endregion
             InfoLog.InfoPrintf("Bilibili账号信息加载完成", InfoLog.InfoClass.Debug);
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+            DDcenter.DdcClient.Connect();
+            //BiliWebSocket BWS = new BiliWebSocket();
+
+            //BWS.WebSocket(21572617);
             //初始化房间
             RoomInit.start();
             return true;
@@ -424,9 +432,7 @@ namespace Auxiliary
                         wc.Headers.Add("Accept: */*");
                         wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
                         wc.Encoding = Encoding.UTF8;
-                        string roomHtml = wc.DownloadString("https://vdb.vtbs.moe/json/list.json");//File.ReadAllText("T:/Untitled-1.json");//
-                       // File.WriteAllText("T:/1tt.txt", roomHtml);
-                        //Clipboard.SetDataObject(roomHtml);
+                        string roomHtml = wc.DownloadString("https://vdb.vtbs.moe/json/list.json");//File.ReadAllText("T:/Untitled-1.json");//;
                         var result = JObject.Parse(roomHtml);
                         InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
                         foreach (var item in result["vtbs"])

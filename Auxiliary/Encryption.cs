@@ -31,6 +31,26 @@ namespace Auxiliary
         {
             return string.IsNullOrEmpty(salt) ? source.Md532() : (source + "[" + salt + "]").Md532();
         }
+
+        #region 16MD5
+        /// <summary>
+        /// 获取16位md5加密
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public static string Get16MD5One(string source)
+        {
+            using (MD5 md5Hash = MD5.Create())
+            {
+                byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(source));
+                //转换成字符串，并取9到25位
+                string sBuilder = BitConverter.ToString(data, 4, 8);
+                //BitConverter转换出来的字符串会在每个字符中间产生一个分隔符，需要去除掉
+                sBuilder = sBuilder.Replace("-", "");
+                return sBuilder.ToString().ToUpper();
+            }
+        }
+        #endregion
         #region AES 加密解密
 
         /// <summary>  
@@ -143,7 +163,7 @@ namespace Auxiliary
         }
         #endregion
 
-        #region 机器码(仅用于P2P穿透服务器区分设备使用，传输前会MD5)
+        #region 机器码(仅用于区分设备使用，不会储存，而且加盐单向加密)
         public class 机器码
         {
             // 取得设备硬盘的卷标号
@@ -171,7 +191,8 @@ namespace Auxiliary
             {
                 string code = 获得CPU的序列号() +"|"+ 取得设备硬盘的卷标号()+"|"+name;
                 code = Md532Salt(code, "DDTV");
-                return code+"|"+ name;
+                return Get16MD5One(code);
+               // return code+"|"+ name;
             }  
         }    
         #endregion

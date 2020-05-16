@@ -114,12 +114,26 @@ namespace DDTV_New
             }
             if (this.Title == "添加新单推"|| this.Title == "从网络添加房间")
             {
-                foreach (var item in RoomInit.bilibili房间主表)
+                if (平台.SelectedItem.ToString() == "bilibili")
                 {
-                    if (item.唯一码 == 唯一码.Text)
+                    foreach (var item in RoomInit.bilibili房间主表)
                     {
-                        MessageBox.Show("已存在相同的房间号!\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
-                        return;
+                        if (item.唯一码 == 唯一码.Text)
+                        {
+                            MessageBox.Show("已存在相同的房间号!\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
+                            return;
+                        }
+                    }
+                }
+                else if(平台.SelectedItem.ToString()=="youtube")
+                {
+                    foreach (var item in RoomInit.youtube房间主表)
+                    {
+                        if (item.唯一码 == 唯一码.Text)
+                        {
+                            MessageBox.Show("已存在相同的房间号!\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
+                            return;
+                        }
                     }
                 }
                 新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
@@ -142,7 +156,17 @@ namespace DDTV_New
                 RB.data.Add(new RoomCadr { Name = 中文名称.Text,RoomNumber = 唯一码.Text, Types = 平台.SelectedItem.ToString(), RemindStatus = false, status = false, VideoStatus = false, OfficialName = 官方名称.Text, LiveStatus = RoomInit.根据唯一码获取直播状态(GUID) });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
-                InitializeRoomList();
+                if (平台.SelectedItem.ToString() == "bilibili")
+                {
+                    InitializeRoomList(int.Parse(唯一码.Text), false, false);
+                }
+                else
+                {
+                    InitializeRoomList(0, false, false);
+                }
+
+                  
+
                 //更新房间列表(平台.SelectedItem.ToString(), 唯一码.Text,1);
                 //MessageBox.Show("添加成功");
 
@@ -179,7 +203,7 @@ namespace DDTV_New
                
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
-                InitializeRoomList();
+                InitializeRoomList(0,false, false);
                 //var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 //RoomBox RB = new RoomBox();
                 //RB.data = new List<RoomCadr>();

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Auxiliary
 {
-    public static class RoomInit
+    public class RoomInit:bilibili
     {
         public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration", "./RoomListConfig.json");
-
+        public static List<BiliWebSocket> biliWebSocket = new List<BiliWebSocket>();
 
         public static List<RL> bilibili房间主表 = new List<RL>();
         public static List<RL> 之前的bilibili房间主表状态 = new List<RL>();
@@ -26,6 +26,7 @@ namespace Auxiliary
 
         public static int B站更新刷新次数 = 0;
         public static int youtube更新刷新次数 = 0;
+
         public class RoomInfo
         {
             public bool 是否提醒 { set; get; }
@@ -40,6 +41,7 @@ namespace Auxiliary
             public string 原名 { set; get; }
             public string 平台 { set; get; }
             public string youtubeVideoId { set; get; }
+           
         }
 
         public class RL
@@ -73,10 +75,10 @@ namespace Auxiliary
             }
             return false;
         }
-        public static void start()
+        new public static void start()
         {
             InitializeRoomConfigFile();
-            InitializeRoomList();
+            InitializeRoomList(0,false,false);
 
             bilibili.start();
             youtube.start();
@@ -271,8 +273,42 @@ namespace Auxiliary
         /// <summary>
         /// 初始化房间列表
         /// </summary>
-        public static void InitializeRoomList()
+        /// <param name="roomId">有变动的房间号</param>
+        /// <param name="R">是否是删除操作</param>
+        public static void InitializeRoomList(int roomId, bool Rem,bool Rst)
         {
+            //if(Rst)
+            //{
+            //    首次启动 = true;
+            //    foreach (var BWSitem in biliWebSocket)
+            //    {
+            //        BWSitem.listener.Close();
+            //        BWSitem.listener.Dispose();
+            //        biliWebSocket.Remove(BWSitem);
+            //    }
+            //}
+            //if (roomId > 0)
+            //{
+            //    if(!Rem)
+            //    {
+            //        BiliWebSocket BWS = new BiliWebSocket();
+            //        BWS.WebSocket(roomId);
+            //        biliWebSocket.Add(BWS);
+            //    }
+            //    else
+            //    {
+            //        foreach (var item in biliWebSocket)
+            //        {
+            //            if(item.room_id==roomId)
+            //            {
+            //                item.listener.Close();
+            //                item.listener.Dispose();
+            //                biliWebSocket.Remove(item);
+            //                break;
+            //            }
+            //        }
+            //    }       
+            //}
             InfoLog.InfoPrintf("开始刷新本地房间列表", InfoLog.InfoClass.Debug);
             var rlc = new RoomBox();
             try
@@ -304,7 +340,13 @@ namespace Auxiliary
             {
                 if (item.Types == "bilibili")
                 {
-
+                    //if(首次启动)
+                    //{
+                       
+                    //    BiliWebSocket BWS = new BiliWebSocket();
+                    //    BWS.WebSocket(int.Parse(item.RoomNumber));
+                    //    biliWebSocket.Add(BWS);
+                    //}
                     bilibili.RoomList.Add(new RoomInfo
                     {
                         房间号 = item.RoomNumber,

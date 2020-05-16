@@ -22,6 +22,16 @@ namespace DDTV_New
                 })
                 .ToProperty(this, x => x.TabText);
 
+            _serverVdbText = this
+              .WhenAnyValue(x => x.serverVdb)
+              .Select(delay =>
+              {
+                  if (delay == -1.0) return "数据源服务器(vtbs)延迟: 未测试";
+                  if (delay == -2.0) return "数据源服务器(vtbs)延迟: 连接超时";
+                  return "数据源服务器(vtbs)延迟: " + delay + "ms";
+              })
+              .ToProperty(this, x => x.serverVdbText);
+
             _serverDelayBilibiliText = this
                 .WhenAnyValue(x => x.ServerDelayBilibili)
                 .Select(delay =>
@@ -66,18 +76,30 @@ namespace DDTV_New
             set => this.RaiseAndSetIfChanged(ref _announcement, value);
         }
 
+        private double _serverVdb;
+        public double serverVdb
+        {
+            get => _serverVdb;
+            set => this.RaiseAndSetIfChanged(ref _serverVdb, value);
+        }
+
+
         private double _serverDelayBilibili;
         public double ServerDelayBilibili
         {
             get => _serverDelayBilibili;
             set => this.RaiseAndSetIfChanged(ref _serverDelayBilibili, value);
         }
+
         private double _serverDelayYoutube;
         public double ServerDelayYoutube
         {
             get => _serverDelayYoutube;
             set => this.RaiseAndSetIfChanged(ref _serverDelayYoutube, value);
         }
+
+        private readonly ObservableAsPropertyHelper<string> _serverVdbText;
+        public string serverVdbText => _serverVdbText.Value;
         private readonly ObservableAsPropertyHelper<string> _serverDelayBilibiliText;
         public string ServerDelayBilibiliText => _serverDelayBilibiliText.Value;
         private readonly ObservableAsPropertyHelper<string> _serverDelayYoutubeText;
