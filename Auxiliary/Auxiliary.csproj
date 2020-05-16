@@ -151,6 +151,7 @@
     <Compile Include="BiliVideoInfo.cs" />
     <Compile Include="DataCache.cs" />
     <Compile Include="DDcenter\DdcClient.cs" />
+    <Compile Include="CacheSystem.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="Encryption.cs" />
     <Compile Include="FlvMethod.cs" />
