@@ -7,14 +7,14 @@
         xmlns:local="clr-namespace:DDTV_New"
         mc:Ignorable="d"
         Title="MainWindow" Height="515" Width="800"
-        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515">
+        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515" Closing="Window_Closing">
 
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid x:Name="bk">
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
 
         </Grid>
-        <Grid x:Name="home" Width="800" Height="515"  Visibility="Collapsed">
+        <Grid x:Name="home" Width="800" Height="515" >
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
             <Label x:Name="TabTextLabel" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
@@ -32,6 +32,7 @@
             <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
             <Label x:Name="TanoshiNumLabel" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
             <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="533,187,16,297" />
+            <Label x:Name="数据源服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="259" VerticalContentAlignment="Center" Foreground="Black" Margin="10,47,531,440" />
             <Label x:Name="国内服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
             <Label x:Name="国外服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
             <Image Margin="10,283,740,182" Source="res/ico/帮助.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="帮助_按钮事件"/>
@@ -55,7 +56,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="获取网络列表按钮点击事件"/>
+            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
             <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
             <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="713,263,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
             <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="713,299,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
@@ -71,7 +72,7 @@
                 <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
             </Grid>
         </Grid>
-        <Grid x:Name="设置层">
+        <Grid x:Name="设置层" Visibility="Collapsed">
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />

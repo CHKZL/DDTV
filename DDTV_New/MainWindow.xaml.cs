@@ -17,10 +17,7 @@ using System.Windows.Media;
 using static Auxiliary.bilibili;
 using MessageBox = System.Windows.MessageBox;
 using static Auxiliary.RoomInit;
-using System.Windows.Automation.Peers;
-using System.Windows.Automation.Provider;
 using Clipboard = System.Windows.Clipboard;
-using ture = System.Boolean;
 using ReactiveUI;
 using System.Reactive.Disposables;
 using DDTV_New.Utility;
@@ -32,7 +29,6 @@ namespace DDTV_New
     /// </summary>
     public partial class MainWindow : Window, IViewFor<MainViewModel>
     {
-
         public static SolidColorBrush 弹幕颜色 = new SolidColorBrush();
         public static SolidColorBrush 字幕颜色 = new SolidColorBrush();
         public static List<PlayW.MainWindow> playList1 = new List<PlayW.MainWindow>();
@@ -68,6 +64,8 @@ namespace DDTV_New
                 this.OneWayBind(ViewModel, vm => vm.PushNotification, v => v.动态推送1.Content)
                     .DisposeWith(disposable);
                 this.OneWayBind(ViewModel, vm => vm.ServerDelayBilibiliText, v => v.国内服务器延迟.Content)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.serverVdbText, v => v.数据源服务器延迟.Content)
                     .DisposeWith(disposable);
                 this.OneWayBind(ViewModel, vm => vm.ServerDelayYoutubeText, v => v.国外服务器延迟.Content)
                     .DisposeWith(disposable);
@@ -113,16 +111,18 @@ namespace DDTV_New
             icon();
             MMPU.弹窗.IcoUpdate += A_IcoUpdate;
 
-            System.Net.ServicePointManager.ServerCertificateValidationCallback +=
+            ServicePointManager.ServerCertificateValidationCallback +=
 #pragma warning disable CA5359 // Do Not Disable Certificate Validation
             delegate (object sender, System.Security.Cryptography.X509Certificates.X509Certificate certificate, System.Security.Cryptography.X509Certificates.X509Chain chain, System.Net.Security.SslPolicyErrors sslPolicyErrors)
             {
                 return true; // **** Always accept
             };
 #pragma warning restore CA5359 // Do Not Disable Certificate Validation
-            System.Net.ServicePointManager.DefaultConnectionLimit = 999;/*---------这里最重要--------*/
-            System.Net.ServicePointManager.MaxServicePoints = 999;
-         
+            ServicePointManager.DefaultConnectionLimit = 999;
+            ServicePointManager.MaxServicePoints = 999;
+
+
+        
         }
 
 
@@ -177,6 +177,8 @@ namespace DDTV_New
                 }
             }, this, MMPU.直播列表刷新间隔 * 1000);
             //延迟测试
+
+            int 超时次数 = 0;
             NewThreadTask.Loop(runOnLocalThread =>
             {
                 double 国内 = MMPU.测试延迟("https://live.bilibili.com");
@@ -209,6 +211,25 @@ namespace DDTV_New
                 {
                     MMPU.是否能连接404 = false;
                     runOnLocalThread(() => ViewModel.ServerDelayYoutube = -1.0);
+                }
+                {
+                    double vdb延迟 = MMPU.测试延迟("https://vtbs.moe/");
+                    if (vdb延迟 > 0)
+                    {
+                        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
+                        超时次数 = 0;
+                        MMPU.数据源 = 0;
+                    }
+                    else
+                    {
+                        超时次数++;
+                        if (超时次数 > 5)
+                        {
+                            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
+                            MMPU.数据源 = 1;
+                        }
+
+                    }
                 }
             }, this, 4000);
             //缩小功能
@@ -588,7 +609,6 @@ namespace DDTV_New
         {
             LiveList.Items.Add(new { 编号 = 编号, 名称 = 名称, 状态 = 状态 ? "●直播中" : "○未直播", 平台 = 平台, 是否提醒 = 直播提醒 ? "√" : "", 是否录制 = 是否录制 ? "√" : "", 唯一码 = 唯一码, 原名 = 原名 });
         }
-
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             try
@@ -625,30 +645,36 @@ namespace DDTV_New
 
         private void 关闭按钮_Click(object sender, MouseButtonEventArgs e)
         {
-            DDTV关闭事件();
+            MessageBoxResult dr = System.Windows.MessageBox.Show("确定退出DDTV？如果要修改为缩小到后台，请修改设置界面缩小按钮功能", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                DDTV关闭事件();
+            }
+            else
+            {
+
+            }
         }
         public static void DDTV关闭事件()
         {
 
-            MessageBoxResult dr = System.Windows.MessageBox.Show("确定退出DDTV？", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            if (dr == MessageBoxResult.OK)
+
+            new Task((() =>
             {
-                new Task((() =>
+                try
                 {
-                    try
+                    FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
+                    foreach (var item in files)
                     {
-                        FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
-                        foreach (var item in files)
-                        {
-                            MMPU.文件删除委托("./tmp/LiveCache/" + item.Name);
-                        }
+                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name);
                     }
-                    catch (Exception)
-                    {
-                    }
-                    Environment.Exit(0);
-                })).Start();
-            }
+                }
+                catch (Exception)
+                {
+                }
+                Environment.Exit(0);
+            })).Start();
+
         }
         NotifyIcon notifyIcon;
         private void 最小化按钮_Click(object sender, MouseButtonEventArgs e)
@@ -778,16 +804,25 @@ namespace DDTV_New
         public static string 已选内容 = "";
         private void 添加直播列表按钮点击事件(object sender, RoutedEventArgs e)
         {
+            MessageBoxResult dr = MessageBox.Show("现在DDTV主数据源来自vdb.vtbs.moe，点击确定跳转vtbs网页提交新的数据\r\r提交后等待平台后台同步完成一键导入即可导入新的监控列表\r\rvtbs.moe是一个V圈的分布式DD大数据平台，可以查询直播人气、舰队、V圈宏观经济、直播状态、视频势数据、风云榜等数据\n\nDDTV客户端安装在后台也回把直播数据统计发送到vtbs，帮助vtbs.moe持续运行", "添加新的监控", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                System.Diagnostics.Process.Start("https://submit.vtbs.moe/");
+            }
+            else
+            {
+                ;
+            }
+            return;
             等待框.Visibility = Visibility.Visible;
             AddMonitoringList AML = new AddMonitoringList("添加新单推", "", "", "", "", false);
             AML.ShowDialog();
-
         }
         private void 修改直播列表按钮点击事件(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(已选内容))
             {
-                System.Windows.MessageBox.Show("未选择");
+                MessageBox.Show("未选择");
                 return;
             }
             等待框.Visibility = Visibility.Visible;
@@ -812,7 +847,7 @@ namespace DDTV_New
             }
             catch (Exception)
             {
-                System.Windows.MessageBox.Show("打开这个直播发生错误，可能是由于无法连接目标网页");
+                MessageBox.Show("打开这个直播发生错误，可能是由于无法连接目标网页");
             }
         }
         private void 直播表双击事件(object sender, MouseButtonEventArgs e)
@@ -892,8 +927,6 @@ namespace DDTV_New
                             {
                                 DownIofo = new Downloader.DownIofoData() { 平台 = 平台, 房间_频道号 = 唯一码, 标题 = 标题, 事件GUID = GUID, 下载地址 = 下载地址, 备注 = "视频播放缓存", 是否保存 = false, 继承 = new Downloader.继承() }
                             };
-                            //Downloader 下载对象 = Downloader.新建下载对象(平台, 唯一码, 标题, GUID, 下载地址, "视频播放缓存", false);
-
                             Task.Run(() =>
                             {
                                 this.Dispatcher.Invoke(new Action(delegate
@@ -1085,7 +1118,14 @@ namespace DDTV_New
 
             string JOO = JsonConvert.SerializeObject(rlc2);
             MMPU.储存文本(JOO, RoomConfigFile);
-            InitializeRoomList();
+            if(MMPU.获取livelist平台和唯一码.平台(已选内容) =="bilibili")
+            {
+                InitializeRoomList(int.Parse(MMPU.获取livelist平台和唯一码.唯一码(已选内容)), true, false);
+            }
+            else
+            {
+                InitializeRoomList(0, false, false);
+            }
             //更新房间列表(MMPU.获取livelist平台和唯一码(已选内容, "平台"), MMPU.获取livelist平台和唯一码(已选内容, "唯一码"),0);
             System.Windows.MessageBox.Show("删除完成");
 
@@ -1216,7 +1256,7 @@ namespace DDTV_New
             }
             string JOO = JsonConvert.SerializeObject(RB);
             MMPU.储存文本(JOO, RoomConfigFile);
-            InitializeRoomList();
+            InitializeRoomList(0,false, false);
             //更新房间列表(平台.SelectedItem.ToString(), 唯一码.Text,2);
             //System.Windows.MessageBox.Show("修改成功");
 
@@ -1274,7 +1314,7 @@ namespace DDTV_New
                 string 唯一码 = MMPU.获取livelist平台和唯一码.唯一码(已选内容);
                 foreach (var item in MMPU.DownList)
                 {
-                    if (item.DownIofo.房间_频道号 == 唯一码)
+                    if (item.DownIofo.房间_频道号 == 唯一码&& item.DownIofo.结束时间==0)
                     {
                         MessageBox.Show("该房间在下载列表中已存在!");
                         return;
@@ -1602,8 +1642,8 @@ namespace DDTV_New
         }
         private void 获取网络列表按钮点击事件(object sender, RoutedEventArgs e)
         {
-            window.NetRoomList NRL = new window.NetRoomList();
-            NRL.Show();
+            //window.NetRoomList NRL = new window.NetRoomList();
+            //NRL.Show();
         }
 
         private void 登陆B站账号_Click(object sender, RoutedEventArgs e)
@@ -1685,7 +1725,6 @@ namespace DDTV_New
 
                 foreach (var 符合条件的 in 符合条件的房间)
                 {
-
                     if (!string.IsNullOrEmpty(符合条件的.UID))
                     {
                         string 房间号 = 通过UID获取房间号(符合条件的.UID);
@@ -1706,11 +1745,11 @@ namespace DDTV_New
                             RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
                         }
                     }
-
+                    Thread.Sleep(150);
                 }
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
-                InitializeRoomList();
+                InitializeRoomList(0,false, false);
 
                 MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，请多等待几秒");
             })).Start();
@@ -1763,6 +1802,19 @@ namespace DDTV_New
             }
 
             //playList
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MessageBoxResult dr = System.Windows.MessageBox.Show("确定退出DDTV？如果要修改为缩小到后台，请修改设置界面缩小按钮功能", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                DDTV关闭事件();
+            }
+            else
+            {
+                e.Cancel = true;
+            }   
         }
     }
 }

@@ -372,9 +372,6 @@
     <Resource Include="更新日志\2.0.1.5.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="更新日志\up.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="更新日志\2.0.1.6.txt" />
   </ItemGroup>
   <ItemGroup>

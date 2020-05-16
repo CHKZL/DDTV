@@ -13,6 +13,10 @@ using System.Drawing;
 using System.IO;
 using BiliAccount;
 using BiliAccount.Linq;
+using System.Net.WebSockets;
+using System.Text.RegularExpressions;
+using System.IO.Compression;
+using Auxiliary.LiveChatScript;
 
 namespace Auxiliary
 {
@@ -44,28 +48,57 @@ namespace Auxiliary
         {
             int a = 0;
             InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
-            foreach (var roomtask in RoomList)
+           
+
+            switch (MMPU.数据源)
             {
-                RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
-                if (A != null)
-                {
-                    for (int i = 0; i < RoomList.Count(); i++)
+                case 0:
                     {
-                        if (RoomList[i].房间号 == A.房间号)
+                        JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living"));
+                        foreach (var roomtask in RoomList)
                         {
-                            RoomList[i].平台 = A.平台;
-                            RoomList[i].标题 = A.标题;
-                            RoomList[i].UID = A.UID;
-                            RoomList[i].直播开始时间 = A.直播开始时间;
-                            RoomList[i].直播状态 = A.直播状态;
-                            if (A.直播状态)
-                                a++;
-                            break;
+                            roomtask.直播状态 = false;
+                            if (JO.ToString().Contains(roomtask.房间号))
+                            {
+                                roomtask.直播状态 = true;
+                            }
+                            else
+                            {
+                                roomtask.直播状态 = false;
+                            }
                         }
+                        break;
                     }
-                }
-                Thread.Sleep(150);
+                case 1:
+                    {
+                        foreach (var roomtask in RoomList)
+                        {
+                            RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
+                            if (A != null)
+                            {
+                                for (int i = 0; i < RoomList.Count(); i++)
+                                {
+                                    if (RoomList[i].房间号 == A.房间号)
+                                    {
+                                        RoomList[i].平台 = A.平台;
+                                        RoomList[i].标题 = A.标题;
+                                        RoomList[i].UID = A.UID;
+                                        RoomList[i].直播开始时间 = A.直播开始时间;
+                                        RoomList[i].直播状态 = A.直播状态;
+                                        if (A.直播状态)
+                                            a++;
+                                        break;
+                                    }
+                                }
+                            }
+                            Thread.Sleep(500);
+                        }
+                        break;
+                    }
             }
+
+
+            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
         }
         public class danmu
@@ -183,19 +216,23 @@ namespace Auxiliary
         }
         public static string 通过UID获取房间号(string uid)
         {
+            //键值:byUIDgetROOMID+UID
+            if(DataCache.通过UID获取房间号键值对.TryGetValue("byUIDgetROOMID"+ uid, out string CacheData))
+            {
+                InfoLog.InfoPrintf("缓存命中,从缓存根据UID获取到房间号:" + CacheData, InfoLog.InfoClass.Debug);
+                return CacheData;
+            }
             var wc = new WebClient();
             wc.Headers.Add("Accept: */*");
             wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-
             //发送HTTP请求
-
-
-
             byte[] roomHtml = wc.DownloadData("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + uid);
-
             var result = JObject.Parse(Encoding.UTF8.GetString(roomHtml));
             string roomId = result["data"]["roomid"].ToString();
-            InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
+            //InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
+            DataCache.通过UID获取房间号键值对.Add("byUIDgetROOMID" + uid, roomId);
+            InfoLog.InfoPrintf("缓存未命中,缓存根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
+            DataCache.BilibiliApiCount++;
             return roomId;
         }
         public class 根据房间号获取房间信息
@@ -236,6 +273,7 @@ namespace Auxiliary
                 {
                     var roomJson = Encoding.UTF8.GetString(roomHtml);
                     var result = JObject.Parse(roomJson);
+                    DataCache.BilibiliApiCount++;
                     return result["data"]["live_status"].ToString() == "1" ? true : false;
                 }
                 catch (Exception)
@@ -244,6 +282,7 @@ namespace Auxiliary
                     {
                         var roomJson = Encoding.UTF8.GetString(roomHtml);
                         var result = JObject.Parse(roomJson);
+                        DataCache.BilibiliApiCount++;
                         return result["data"]["live_status"].ToString() == "1" ? true : false;
                     }
                     catch (Exception)
@@ -257,6 +296,17 @@ namespace Auxiliary
 
             public static string 获取标题(string roomid)
             {
+                //键值:byROOMIDgetTITLE+UID
+                if (DataCache.获取标题键值对.TryGetValue("byROOMIDgetTITLE" + roomid, out string CacheData))
+                {
+                    DataCache.获取标题有效期.TryGetValue("byROOMIDgetTITLE" + roomid, out DateTime DT);
+                    TimeSpan TS = DateTime.Now - DT;
+                    if (TS.TotalSeconds< 3600.0)
+                    {
+                        InfoLog.InfoPrintf("缓存命中,从缓存获取标题键值对:" + CacheData, InfoLog.InfoClass.Debug);
+                        return CacheData;
+                    } 
+                }
                 roomid = 获取真实房间号(roomid);
                 if (roomid == null)
                 {
@@ -292,6 +342,12 @@ namespace Auxiliary
                     var result = JObject.Parse(roomJson);
                     string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
                     InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+
+                    DataCache.获取标题键值对.Add("byROOMIDgetTITLE" + roomid, roomName);
+                    DataCache.获取标题有效期.Add("byROOMIDgetTITLE" + roomid, DateTime.Now);
+                    InfoLog.InfoPrintf("缓存未命中,缓存标题:" + roomName, InfoLog.InfoClass.Debug);
+                    DataCache.BilibiliApiCount++;
+
                     return roomName;
                 }
                 catch (Exception e)
@@ -348,6 +404,7 @@ namespace Auxiliary
                         InfoLog.InfoPrintf("请求的开播房间当前推流数据为空，推测还未开播，等待数据流...：", InfoLog.InfoClass.Debug);
                         BBBC = (JObject.Parse(resultString)["data"]["durl"][1]["url"].ToString());
                     }
+                    DataCache.BilibiliApiCount++;
                     return BBBC;
                 }
                 catch (Exception e)
@@ -359,6 +416,12 @@ namespace Auxiliary
 
             public static string 获取真实房间号(string roomID)
             {
+
+                if (DataCache.通过UID获取房间号键值对.TryGetValue("byROOMIDgetTRUEroomid" + roomID, out string CacheData))
+                {
+                    InfoLog.InfoPrintf("缓存命中,从缓存获取真实房间号:" + CacheData, InfoLog.InfoClass.Debug);
+                    return CacheData;
+                }
                 var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomID;
                 var wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
@@ -391,7 +454,10 @@ namespace Auxiliary
                         return "-1";
                     }
                     var roomid = result["data"]["room_id"].ToString();
-                    InfoLog.InfoPrintf("获取到真实房间号: " + roomid, InfoLog.InfoClass.杂项提示);
+
+                    DataCache.通过UID获取房间号键值对.Add("byROOMIDgetTRUEroomid" + roomID, roomid);
+                    InfoLog.InfoPrintf("缓存未命中,缓存获取真实房间号:" + roomid, InfoLog.InfoClass.Debug);
+                    DataCache.BilibiliApiCount++;
                     return roomid;
                 }
                 catch
@@ -400,7 +466,6 @@ namespace Auxiliary
                 }
             }
         }
-
         public static JObject 根据UID获取关注列表(string UID)
         {
             关注列表类 关注列表 = new 关注列表类()
@@ -412,6 +477,7 @@ namespace Auxiliary
             do
             {
                 JObject JO = JObject.Parse(MMPU.使用WC获取网络内容("https://api.bilibili.com/x/relation/followings?vmid=" + UID + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp"));
+                DataCache.BilibiliApiCount++;
                 ps = JO["data"]["list"].Count();
                 foreach (var item in JO["data"]["list"])
                 {
@@ -422,14 +488,13 @@ namespace Auxiliary
                         名称 = item["uname"].ToString()
                     });
                 }
-
+                Thread.Sleep(500);
                 pg++;
             }
             while (ps > 0);
 
             return JObject.FromObject(关注列表);
         }
-
         public class 关注列表类
         {
             public List<账号信息> data { set; get; }
@@ -441,7 +506,6 @@ namespace Auxiliary
             }
 
         }
-
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
 
@@ -491,9 +555,10 @@ namespace Auxiliary
                     直播状态 = result["data"]["live_status"].ToString() == "1" ? true : false,
                     UID = result["data"]["uid"].ToString(),
                     直播开始时间 = result["data"]["live_time"].ToString(),
-                    平台="bilibili"
+                    平台 = "bilibili"
                 };
                 InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
+                DataCache.BilibiliApiCount++;
                 return roominfo;
             }
             catch (Exception e)
@@ -503,7 +568,6 @@ namespace Auxiliary
             }
 
         }
-
         public class BiliUser
         {
             public static Account account = new Account();
@@ -630,13 +694,387 @@ namespace Auxiliary
             [DllImport("kernel32")]
             public static extern int WritePrivateProfileString(string lpApplicationName, string lpKeyName, string lpString, string lpFileName);
         }
-
-        public class MainVideo
+        public class BiliWebSocket: RoomInit.RoomInfo
         {
-         
+            public int room_id;
+            public async void WebSocket(int roomId)
+            {
+                LiveChatListener listener = new LiveChatListener();
+                await listener.ConnectAsync(roomId);
+                listener.MessageReceived += Listener_MessageReceived;
+                //Debug.LogError(MessageBox(IntPtr.Zero, "???", "只有红茶了可以吗", 1));
+                //jiba();
+            }
+
+            private void Listener_MessageReceived(object sender, MessageEventArgs e)
+            {
+                switch (e)
+                {
+                    case DanmuMessageEventArgs danmu:
+                       // Console.WriteLine("WebSocket收到弹幕数据:{0}:{1}", danmu.UserName, danmu.Message);
+                        //Debug.Log("M:" + danmu.Message);
+                        //mtext.text = "M:" + danmu.Message;
+                        break;
+                    case SendGiftEventArgs gift:
+                        //Debug.Log("G:"+gift.GiftName);
+                        //gtext.text = "G:" + gift.GiftName;
+                        break;
+                    case GuardBuyEventArgs guard:
+                        // Debug.LogError("JZ:" + guard.GiftName);
+                        break;
+                    case WelcomeEventArgs Welcome:
+
+                        break;
+                    case ActivityBannerEventArgs activityBannerEventArgs:
+
+                        break;
+
+                    default:
+                        // Debug.LogError("???" + e.JsonObject);
+                        // Debug.LogError(LitJson.JsonMapper.ToJson(e.JsonObject));
+                        
+                        break;
+                }
+            }
+
+            #region ClientWebSocket
+
+            //            readonly ClientWebSocket _webSocket = new ClientWebSocket();
+            //            readonly CancellationToken _cancellation = new CancellationToken();
+            //            private CancellationTokenSource m_innerRts = new CancellationTokenSource();
+            //            private readonly byte[] m_ReceiveBuffer = new byte[] { };
+
+            //            public async void WebSocket()
+            //            {
+            //                try
+            //                {
+
+            //                    //建立连接
+            //                    await _webSocket.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), _cancellation);
+            //                    await _sendObject(7, new
+            //                    {
+            //                        uid = 0,
+            //                        roomid = 21320551,
+            //                        protover = 2,
+            //                        platform = "web",
+            //                        clientver = "1.7.3"
+            //                    });
+            //                    _ = _innerLoop().ContinueWith((t) =>
+            //                    {
+            //                        if (t.IsFaulted)
+            //                        {
+            //                            //UnityEngine.Debug.LogError(t.Exception.);
+            //                            if (!m_innerRts.IsCancellationRequested)
+            //                            {
+
+            //                                m_innerRts.Cancel();
+            //                            }
+            //                        }
+            //                        else
+            //                        {
+            //                            //POST-CANCEL
+            //#if DEBUG
+            //                            Console.WriteLine("LiveChatListender cancelled.");
+            //#endif
+            //                        }
+            //                        _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+            //                        _webSocket.Dispose();
+            //                        m_innerRts.Dispose();
+            //                    });
+            //                    _ = _innerHeartbeat();
+
+            //                }
+            //                catch (Exception ex)
+            //                {
+            //                    Console.WriteLine(ex.Message);
+            //                }
+            //            }
+            //            private async Task _innerLoop()
+            //            {
+            //#if DEBUG
+            //                Console.WriteLine("LiveChatListender start.");
+            //#endif
+            //                while (!m_innerRts.IsCancellationRequested)
+            //                {
+            //                    try
+            //                    {
+            //                        WebSocketReceiveResult result;
+            //                        int length = 0;
+            //                        do
+            //                        {
+            //                            result = await _webSocket.ReceiveAsync(
+            //                                new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length),
+            //                                m_innerRts.Token);
+            //                            length += result.Count;
+            //                        }
+            //                        while (!result.EndOfMessage);
+
+            //                        //=========fuckbilibili==========
+            //                        DepackDanmakuData(m_ReceiveBuffer);
+            //                        //===============================
+
+            //                        #region 已失效[弃用]
+            //                        //var segments = _depack(new ArraySegment<byte>(m_ReceiveBuffer, 0, length));
+            //                        //foreach (var segment in segments)
+            //                        //{
+            //                        //    string jsonBody = System.Text.Encoding.UTF8.GetString(segment.Array, segment.Offset, segment.Count);
+            //                        //    _parse(jsonBody);
+            //                        //}
+            //                        #endregion
+            //                    }
+            //                    catch (OperationCanceledException)
+            //                    {
+            //                        continue;
+            //                    }
+            //                    catch (ObjectDisposedException)
+            //                    {
+            //                        continue;
+            //                    }
+            //                    catch (WebSocketException we)
+            //                    {
+            //                        throw we;
+            //                    }
+            //                    catch (Newtonsoft.Json.JsonException)
+            //                    {
+            //                        continue;
+            //                    }
+            //                    catch (Exception e)
+            //                    {
+            //                        //UnityEngine.Debug.LogException(e);
+            //                        throw e;
+            //                    }
+            //                }
+            //            }
+            //            private async Task _innerHeartbeat()
+            //            {
+            //                while (!m_innerRts.IsCancellationRequested)
+            //                {
+            //                    try
+            //                    {
+            //                        //UnityEngine.Debug.Log("heartbeat");
+            //                        await _sendBinary(2, System.Text.Encoding.UTF8.GetBytes("[object Object]"));
+            //                        await Task.Delay(30 * 1000, m_innerRts.Token);
+            //                    }
+            //                    catch (OperationCanceledException)
+            //                    {
+            //                        break;
+            //                    }
+            //                    catch (Exception e)
+            //                    {
+            //                        throw e;
+            //                    }
+            //                }
+            //            }
+            //            public async Task _sendObject(int type, object obj)
+            //            {
+
+            //                //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
+            //                string jsonBody = JsonMapper.ToJson(obj);
+            //                await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
+            //            }
+            //            public async Task _sendBinary(int type, byte[] body)
+            //            {
+            //                byte[] head = new byte[16];
+            //                using (MemoryStream ms = new MemoryStream(head))
+            //                {
+            //                    using (BinaryWriter bw = new BinaryWriter(ms))
+            //                    {
+            //                        bw.WriteBE(16 + body.Length);
+            //                        bw.WriteBE((ushort)16);
+            //                        bw.WriteBE((ushort)1);
+            //                        bw.WriteBE(type);
+            //                        bw.WriteBE(1);
+            //                    }
+            //                }
+            //                await _webSocket.SendAsync(new ArraySegment<byte>(head), WebSocketMessageType.Binary, false, CancellationToken.None);
+            //                await _webSocket.SendAsync(new ArraySegment<byte>(body), WebSocketMessageType.Binary, true, CancellationToken.None);
+            //            }
+            //            private void _parse(string jsonBody)
+            //            {
+            //                var obj = JsonMapper.ToObject(jsonBody);
+            //                //Debug.Log(jsonBody);
+            //                string cmd = (string)obj["cmd"];
+            //                switch (cmd)
+            //                {
+            //                    case "DANMU_MSG":
+            //                      //  MessageReceived(this, new DanmuMessageEventArgs(obj));
+            //                        break;
+            //                    case "SEND_GIFT":
+            //                       // MessageReceived(this, new SendGiftEventArgs(obj));
+            //                        break;
+            //                    case "GUARD_BUY":
+            //                        //Debug.Log("guraddd\n"+obj);
+            //                       // MessageReceived(this, new GuardBuyEventArgs(obj));
+            //                        break;
+            //                    default:
+            //                        //Debug.Log("Unknow\n"+obj);
+            //                       // MessageReceived(this, new MessageEventArgs(obj));
+            //                        break;
+            //                }
+            //            }
+            //            #endregion
+            //            #region 新协议解析方法
+
+            //            /// <summary>
+            //            /// 消息协议
+            //            /// </summary>
+            //            public class DanmakuProtocol
+            //            {
+            //                /// <summary>
+            //                /// 消息总长度 (协议头 + 数据长度)
+            //                /// </summary>
+            //                public int PacketLength;
+            //                /// <summary>
+            //                /// 消息头长度 (固定为16[sizeof(DanmakuProtocol)])
+            //                /// </summary>
+            //                public short HeaderLength;
+            //                /// <summary>
+            //                /// 消息版本号
+            //                /// </summary>
+            //                public short Version;
+            //                /// <summary>
+            //                /// 消息类型
+            //                /// </summary>
+            //                public int Operation;
+            //                /// <summary>
+            //                /// 参数, 固定为1
+            //                /// </summary>
+            //                public int Parameter;
+
+            //                /// <summary>
+            //                /// 转为本机字节序
+            //                /// </summary>
+            //                public DanmakuProtocol(byte[] buff)
+            //                {
+            //                    PacketLength = IPAddress.NetworkToHostOrder(BitConverter.ToInt32(buff, 0));
+            //                    HeaderLength = IPAddress.HostToNetworkOrder(BitConverter.ToInt16(buff, 4));
+            //                    Version = IPAddress.HostToNetworkOrder(BitConverter.ToInt16(buff, 6));
+            //                    Operation = IPAddress.HostToNetworkOrder(BitConverter.ToInt32(buff, 8));
+            //                    Parameter = IPAddress.HostToNetworkOrder(BitConverter.ToInt32(buff, 12));
+            //                }
+            //            }
+
+            //            /// <summary>
+            //            /// 消息处理
+            //            /// </summary>
+            //            private void ProcessDanmakuData(int opt, byte[] buffer, int length)
+            //            {
+            //                switch (opt)
+            //                {
+            //                    case 5:
+            //                        {
+            //                            try
+            //                            {
+            //                                string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
+            //                                jsonBody = Regex.Unescape(jsonBody);
+            //                                _parse(jsonBody);
+            //                                //Debug.Log(jsonBody);
+            //                                //ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
+            //                            }
+            //                            catch (Exception ex)
+            //                            {
+            //                                if (ex is Newtonsoft.Json.JsonException || ex is KeyNotFoundException)
+            //                                {
+            //                                    //LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕识别错误 {json}" });
+            //                                }
+            //                                else
+            //                                {
+            //                                    //LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
+            //                                }
+            //                            }
+            //                            break;
+            //                        }
+            //                }
+            //            }
+
+            //            /// <summary>
+            //            /// 消息拆包
+            //            /// </summary>
+            //            private void DepackDanmakuData(byte[] messages)
+            //            {
+            //                var headerBuffer = new byte[16];
+            //                //for (int i = 0; i < 16; i++)
+            //                //{
+            //                //    headerBuffer[i] = messages[i];
+            //                //}
+            //                Array.Copy(messages, 0, headerBuffer, 0, 16);
+            //                var protocol = new DanmakuProtocol(headerBuffer);
+
+            //                //Debug.LogError(protocol.Version + "\\" + protocol.Operation);
+            //                //
+            //                if (protocol.PacketLength < 16)
+            //                {
+            //                    throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
+            //                }
+            //                var bodyLength = protocol.PacketLength - 16;
+            //                if (bodyLength == 0)
+            //                {
+            //                    //continue;
+            //                    return;
+            //                }
+            //                var buffer = new byte[bodyLength];
+            //                //for (int i = 0; i < bodyLength; i++)
+            //                //{
+            //                //    buffer[i] = messages[i + 16];
+            //                //}
+            //                Array.Copy(messages, 16, buffer, 0, bodyLength);
+            //                switch (protocol.Version)
+            //                {
+            //                    case 1:
+            //                        ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
+            //                        break;
+            //                    case 2:
+            //                        {
+            //                            var ms = new MemoryStream(buffer, 2, bodyLength - 2);
+            //                            var deflate = new DeflateStream(ms, CompressionMode.Decompress);
+            //                            while (deflate.Read(headerBuffer, 0, 16) > 0)
+            //                            {
+            //                                protocol = new DanmakuProtocol(headerBuffer);
+            //                                bodyLength = protocol.PacketLength - 16;
+            //                                if (bodyLength == 0)
+            //                                {
+            //                                    continue; // 没有内容了
+            //                                }
+            //                                if (buffer.Length < bodyLength) // 不够长再申请
+            //                                {
+            //                                    buffer = new byte[bodyLength];
+            //                                }
+            //                                deflate.Read(buffer, 0, bodyLength);
+            //                                ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
+            //                            }
+            //                            ms.Dispose();
+            //                            deflate.Dispose();
+            //                            break;
+            //                        }
+            //                }
+            //            }
+
+            #endregion
         }
     }
+    internal static class Extensions
+    {
+        internal static void WriteBE(this BinaryWriter writer, int value)
+        {
+            unsafe { SwapBytes((byte*)&value, 4); }
+            writer.Write(value);
+        }
+        internal static void WriteBE(this BinaryWriter writer, ushort value)
+        {
+            unsafe { SwapBytes((byte*)&value, 2); }
+            writer.Write(value);
+        }
 
+        internal static unsafe void SwapBytes(byte* ptr, int length)
+        {
+            for (int i = 0; i < length / 2; ++i)
+            {
+                byte b = *(ptr + i);
+                *(ptr + i) = *(ptr + length - i - 1);
+                *(ptr + length - i - 1) = b;
+            }
+        }
+    }
 
     public class WebClientto : WebClient
     {

@@ -21,6 +21,7 @@ using System.Windows.Shapes;
 using System.Windows.Forms;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using Auxiliary.LiveChatScript;
 
 namespace PlayW
 {
@@ -36,7 +37,8 @@ namespace PlayW
         public bool 字幕使能 = false;
         public bool 窗口是否打开 = false;
         public int 刷新次数 = 0;
-
+        LiveChatListener listener = new LiveChatListener();
+   
 
 
         /// <summary>
@@ -90,6 +92,7 @@ namespace PlayW
                 修改弹幕颜色按钮.Visibility = Visibility.Collapsed;
                 弹幕输入窗口.Visibility = Visibility.Collapsed;
                 弹幕发送提示.Visibility = Visibility.Collapsed;
+                弹幕高CPU使用率警告.Visibility = Visibility.Collapsed;
                 非win10提示.Visibility = Visibility.Visible;
             }
             else
@@ -98,6 +101,8 @@ namespace PlayW
             }
 
         }
+
+
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
@@ -112,6 +117,8 @@ namespace PlayW
                 {
                 }
             })).Start();
+            listener.Close();
+            listener.Dispose();
             DD.DownIofo.播放状态 = false;
             窗口是否打开 = false;
         }
@@ -254,6 +261,7 @@ namespace PlayW
         {
             string A = System.IO.Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "libvlc", /*IntPtr.Size == 4 ?*/ "win-x64" /*: "win-x64"*/);
             this.VlcControl.SourceProvider.CreatePlayer(new DirectoryInfo(A));
+            
             this.Dispatcher.Invoke(new Action(delegate
             {
                 提示框.Visibility = Visibility.Visible;
@@ -261,6 +269,8 @@ namespace PlayW
             }));
             new Task((() => 
             {
+                listener.ConnectAsync(int.Parse(DD.DownIofo.房间_频道号));
+                listener.MessageReceived += Listener_MessageReceived;
                 MMPU.DownList.Add(DD);
                 if (DD.DownIofo.是否是播放任务)
                 {
@@ -300,7 +310,7 @@ namespace PlayW
                     播放状态 = true;
                     if (DD.DownIofo.平台 == "bilibili")
                     {
-                        获取弹幕();
+                        //获取弹幕();
                     }
                 }
                 catch (Exception )
@@ -310,7 +320,51 @@ namespace PlayW
             })).Start();
 
         }
+        private void Listener_MessageReceived(object sender, MessageEventArgs e)
+        {
+            switch (e)
+            {
+                case DanmuMessageEventArgs danmu:
+                    if (字幕使能)
+                    {
+                        if (danmu.Message.Contains("【") || danmu.Message.Contains("】"))
+                        {
+                            增加字幕(danmu.Message);
+                        }
+                    }
+                    if (弹幕使能)
+                    {
+                        if (!danmu.Message.Contains("【") || !danmu.Message.Contains("】"))
+                        {
+                            增加弹幕(danmu.Message);
+                        }
 
+                    }
+                    // Console.WriteLine("WebSocket收到弹幕数据:{0}:{1}", danmu.UserName, danmu.Message);
+                    //Debug.Log("M:" + danmu.Message);
+                    //mtext.text = "M:" + danmu.Message;
+                    break;
+                case SendGiftEventArgs gift:
+                    //Debug.Log("G:"+gift.GiftName);
+                    //gtext.text = "G:" + gift.GiftName;
+                    break;
+                case GuardBuyEventArgs guard:
+                    // Debug.LogError("JZ:" + guard.GiftName);
+                    break;
+                case WelcomeEventArgs Welcome:
+
+                    break;
+                case ActivityBannerEventArgs activityBannerEventArgs:
+
+                    break;
+
+                default:
+                    // Debug.LogError("???" + e.JsonObject);
+                    // Debug.LogError(LitJson.JsonMapper.ToJson(e.JsonObject));
+
+                    break;
+            }
+        }
 
         private void 获取弹幕()
         {

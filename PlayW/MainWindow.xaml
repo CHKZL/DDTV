@@ -29,6 +29,7 @@
                 <Button x:Name="发送弹幕按钮" Content="发送弹幕" HorizontalAlignment="Left" Height="20" Margin="274,94,0,0" VerticalAlignment="Top" Width="64" Click="发送弹幕按钮_Click"/>
                 <Button x:Name="修改字幕颜色按钮" Content="字幕颜色" Margin="180,0,0,123" Click="修改字幕颜色按钮点击事件" HorizontalAlignment="Left" Width="63" Height="25" VerticalAlignment="Bottom" />
                 <Button x:Name="修改弹幕颜色按钮" Content="弹幕颜色" Margin="56,0,0,151" Click="修改弹幕颜色按钮点击事件" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="63" />
+                <Label x:Name="弹幕高CPU使用率警告" Content="弹幕显示功能会对CPU压力翻倍，请注意" HorizontalAlignment="Left" Margin="124,5,0,0" VerticalAlignment="Top" FontSize="16" FontWeight="Bold" Background="#00000000" Foreground="#FFFF2222"/>
                 <CheckBox x:Name="置顶选择" Margin="0,0,0,90" Content="窗口置顶" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="166" Height="28" VerticalAlignment="Bottom" Click="置顶选择_Checked" />
                 <CheckBox x:Name="字幕开关" Margin="0,0,0,118" Content="弹幕字幕【路人翻译】" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="175" Height="28" VerticalAlignment="Bottom" Click="字幕开关_Click" />
                 <CheckBox x:Name="弹幕开关" Margin="0,0,0,146" Content="弹幕" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="65" Height="28" VerticalAlignment="Bottom" Click="弹幕开关_Click" />
