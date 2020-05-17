@@ -195,7 +195,7 @@ namespace DDTV_New
 
                 if (MMPU.连接404使能)
                 {
-                    double 国外 = MMPU.测试延迟("https://www.google.com");
+                    double 国外 = MMPU.测试延迟("https://www.youtube.com");
                     if (国外 > 0)
                     {
                         runOnLocalThread(() => ViewModel.ServerDelayYoutube = 国外);
@@ -503,6 +503,7 @@ namespace DDTV_New
                     runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);
                 }
             }, this);
+          
         }
         private void 刷新房间列表UI()
         {
@@ -1678,6 +1679,12 @@ namespace DDTV_New
             }
             else if (MMPU.加载网络房间方法.列表缓存.Count < 1000)
             {
+                if(!MMPU.加载网络房间方法.是否正在缓存)
+                {
+                    new Task(()=> {
+                        MMPU.加载网络房间方法.更新网络房间缓存();
+                    }).Start();
+                }
                 MessageBox.Show("=======================\n房间列表数据后台加载中，请30秒后再试\n=======================");
                 return;
             }

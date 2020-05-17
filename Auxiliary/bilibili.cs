@@ -576,12 +576,12 @@ namespace Auxiliary
             {
                 ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                 ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                ByQRCode.LoginByQrCode().Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                ByQRCode.LoginByQrCode("#FF000000","#FFFFFFFF",true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
             }
             private static void ByQRCode_QrCodeRefresh(Bitmap newQrCode)
             {
                 newQrCode.Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-            }
+            } 
 
             public static void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, Account account = null)
             {

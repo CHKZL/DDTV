@@ -14,7 +14,8 @@ namespace Auxiliary
             public static readonly int GET_TOGGLE_PUSH_NOTIFICATION = 20009;
             public static readonly int GET_PUSH_NOTIFICATION = 20010;
             public static readonly int GET_LATEST_VERSION_NUMBER = 20011;
-            public static readonly int GET_UPDATE_ANNOUNCEMENT = 20011;
+            public static readonly int GET_UPDATE_ANNOUNCEMENT = 20012;
+            public static readonly int GET_DDC_TIME_NUMBER = 30001;
         }
     }
 }
