@@ -531,7 +531,7 @@ namespace DDTV_New
             NewThreadTask.Run(runOnLocalThread =>
             {
                 string 推送内容1text = MMPU.TcpSend(20005, "{}", true);
-                if (推送内容1text.Length < 25)
+                if (推送内容1text.Length >0)
                 {
                     runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);
                 }
