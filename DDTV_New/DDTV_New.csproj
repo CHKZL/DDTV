@@ -415,6 +415,9 @@
   <ItemGroup>
     <Resource Include="更新日志\2.0.2.4a.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="更新日志\2.0.3.1a.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -21,6 +21,7 @@ using Clipboard = System.Windows.Clipboard;
 using ReactiveUI;
 using System.Reactive.Disposables;
 using DDTV_New.Utility;
+using System.Diagnostics;
 
 namespace DDTV_New
 {
@@ -482,14 +483,46 @@ namespace DDTV_New
                         MessageBoxResult dr = MessageBox.Show(
                             "检测到版本更新,更新公告:\n" 
                                 + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true) 
-                                + "\n\n点击确定跳转到补丁下载网页，点击取消忽略", 
+                                + "\n\n点击确定启动自动更新，点击取消忽略", 
                             "有新版本", 
                             MessageBoxButton.OKCancel, 
                             MessageBoxImage.Question);
 
                         if (dr == MessageBoxResult.OK)
                         {
-                            System.Diagnostics.Process.Start(Server.PROJECT_ADDRESS);
+                            if(File.Exists("./update/DDTV_Update.exe"))
+                            {
+                                //启动外部程式
+                            
+                                ProcessStartInfo startInfo = new ProcessStartInfo();
+                                startInfo.FileName = System.Windows.Forms.Application.StartupPath + "./update/DDTV_Update.exe";
+                                startInfo.Arguments = "DDTV";
+                                startInfo.WindowStyle = ProcessWindowStyle.Normal;
+                                try
+                                {
+                                    Process.Start(startInfo);
+                                }
+                                catch (Exception e)
+                                {
+                                    ;
+                                   // throw;
+                                }
+                               
+                                // string mFilePath = System.Windows.Forms.Application.StartupPath + "./updeta/DDTV_Updeta.exe";
+
+                                //关闭自己
+
+                                Environment.Exit(0);
+                            }
+                            else
+                            {
+                                MessageBox.Show("未找到自动更新程序，请到github或者群共享手动下载,点击确定跳转到github页面");
+                                System.Diagnostics.Process.Start(Server.PROJECT_ADDRESS);
+                            }
+                           
+
+
+                            // System.Diagnostics.Process.Start(Server.PROJECT_ADDRESS);
                         }
                     }
                 }
@@ -853,6 +886,7 @@ namespace DDTV_New
         }
         private void 直播表双击事件(object sender, MouseButtonEventArgs e)
         {
+            RoomInit.RoomInfo roomInfo=new RoomInfo();
             System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
             string 平台 = MMPU.获取livelist平台和唯一码.平台(LV.SelectedItems[0].ToString());
             if (MMPU.当前直播窗口数量 >= MMPU.最大直播并行数量)
@@ -877,9 +911,10 @@ namespace DDTV_New
             {
                 if (平台 == "bilibili")
                 {
-                    if (!bilibili.GetRoomInfo(MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString())).直播状态)
+                    roomInfo = bilibili.GetRoomInfo(MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString()));
+                    if (!roomInfo.直播状态)
                     {
-                        System.Windows.MessageBox.Show("该房间未直播");
+                        MessageBox.Show("该房间未直播");
                         try
                         {
                             等待框.Visibility = Visibility.Collapsed;
@@ -897,8 +932,8 @@ namespace DDTV_New
                 等待框.Visibility = Visibility.Collapsed;
                 return;
             }
-            string 唯一码 = MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString());
-            string 标题 = "";
+            string 唯一码 = roomInfo.房间号;
+            string 标题 = roomInfo.标题;
             try
             {
                 switch (平台)
@@ -911,6 +946,7 @@ namespace DDTV_New
                             {
                                 if (item.房间号 == 唯一码)
                                 {
+                                    item.标题 = roomInfo.标题;
                                     标题 = item.标题;
                                 }
                             }
@@ -921,7 +957,7 @@ namespace DDTV_New
                             }
                             catch (Exception)
                             {
-                                System.Windows.MessageBox.Show("获取下载地址错误");
+                                MessageBox.Show("获取下载地址错误");
                                 return;
                             }
                             Downloader 下载对象 = new Downloader

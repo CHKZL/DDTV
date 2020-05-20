@@ -26,7 +26,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRec", "DDTVLiveRec\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRecWebServer", "DDTVLiveRecWebServer\DDTVLiveRecWebServer.csproj", "{4EFD5FD1-F206-4297-86EA-498B7BB7CEB7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuxiliaryTests", "AuxiliaryTests\AuxiliaryTests.csproj", "{E4D1F3F1-006A-43E7-8EAF-36FB778B6092}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuxiliaryTests", "AuxiliaryTests\AuxiliaryTests.csproj", "{E4D1F3F1-006A-43E7-8EAF-36FB778B6092}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OSS_Updeta", "OSS_Updeta\OSS_Updeta.csproj", "{0EA7806F-0A7E-4FE0-9269-972172111CD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_Update", "DDTV_Update\DDTV_Update.csproj", "{30DAF786-5635-4371-A620-CD5024534ECC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -158,6 +162,30 @@ Global
 		{E4D1F3F1-006A-43E7-8EAF-36FB778B6092}.Release|x64.Build.0 = Release|Any CPU
 		{E4D1F3F1-006A-43E7-8EAF-36FB778B6092}.Release|x86.ActiveCfg = Release|Any CPU
 		{E4D1F3F1-006A-43E7-8EAF-36FB778B6092}.Release|x86.Build.0 = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|x64.Build.0 = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Debug|x86.Build.0 = Debug|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|x64.ActiveCfg = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|x64.Build.0 = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|x86.ActiveCfg = Release|Any CPU
+		{0EA7806F-0A7E-4FE0-9269-972172111CD3}.Release|x86.Build.0 = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|x64.Build.0 = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Debug|x86.Build.0 = Debug|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|x64.ActiveCfg = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|x64.Build.0 = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|x86.ActiveCfg = Release|Any CPU
+		{30DAF786-5635-4371-A620-CD5024534ECC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
