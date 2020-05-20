@@ -337,7 +337,7 @@ namespace Auxiliary
             req.Method = "GET";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = MMPU.UA.Ver.UA(); ;
-            
+            req.Timeout = 8000;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();
             //获取响应内容  
