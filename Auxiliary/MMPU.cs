@@ -28,7 +28,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.2.4a";
+        public static string 版本号 = "2.0.3.1a";
         public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
@@ -332,11 +332,13 @@ namespace Auxiliary
         }
         public static string 返回网页内容_GET(string url)
         {
+
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Method = "GET";
             req.ContentType = "application/x-www-form-urlencoded";
-            req.UserAgent = MMPU.UA.Ver.UA(); ;
+            req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
+            req.UserAgent = MMPU.UA.Ver.UA();
             req.Timeout = 8000;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();

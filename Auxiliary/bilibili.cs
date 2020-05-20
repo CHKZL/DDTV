@@ -86,7 +86,7 @@ namespace Auxiliary
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 使用B站API更新房间状态();
             }
