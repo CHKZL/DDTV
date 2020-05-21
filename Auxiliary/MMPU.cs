@@ -71,6 +71,7 @@ namespace Auxiliary
         /// <param name="模式">//0：DDTV,1：DDTVLive</param>
         public static bool 配置文件初始化(int 模式)
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
