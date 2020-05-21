@@ -225,7 +225,37 @@ namespace Auxiliary
         }
         public static string 通过UID获取房间号(string uid)
         {
-            return BiliCache.Instance.UIDsToRoomIDs.Get(uid);
+            string CacheStr = "byUIDgetROOMID";
+            if (DataCache.读缓存(CacheStr + uid, 0, out string CacheData))
+            {
+                return CacheData;
+            }
+            //发送HTTP请求
+            string roomHtml;
+            try
+            {
+                roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld?mid=" + uid);
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf(uid + " 通过UID获取房间号:" + e.Message, InfoLog.InfoClass.Debug);
+                return null;
+
+            }
+            try
+            {
+                var result = JObject.Parse(roomHtml);
+                string roomId = result["data"]["roomid"].ToString();
+                //InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
+                DataCache.写缓存(CacheStr + uid, roomId);
+                return roomId;
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf(uid + " 通过UID获取房间号:" + e.Message, InfoLog.InfoClass.Debug);
+                return null;
+            }
+
         }
         public class 根据房间号获取房间信息
         {
@@ -288,7 +318,36 @@ namespace Auxiliary
 
             public static string 获取标题(string roomID)
             {
-                return BiliCache.Instance.RoomIDsToTitles.Get(roomID);
+                roomID = 获取真实房间号(roomID);
+                if (roomID == null)
+                {
+                    InfoLog.InfoPrintf("房间号获取错误", InfoLog.InfoClass.下载必要提示);
+                    return null;
+                }
+
+                string roomHtml;
+                try
+                {
+                    roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomID);
+                }
+                catch (Exception e)
+                {
+                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.下载必要提示);
+                    return null;
+                }
+                //解析结果
+                try
+                {
+                    JObject result = JObject.Parse(roomHtml);
+                    string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
+                    InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                    return roomName;
+                }
+                catch (Exception e)
+                {
+                    InfoLog.InfoPrintf("视频标题解析失败：" + e.Message, InfoLog.InfoClass.Debug);
+                    return "";
+                }
             }
             /// <summary>
             /// 获取BILIBILI直播流下载地址
@@ -304,21 +363,10 @@ namespace Auxiliary
                     InfoLog.InfoPrintf("房间号获取错误", InfoLog.InfoClass.Debug);
                     return null;
                 }
-                var apiUrl = "https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web";
-
-                //访问API获取结果
-                var wc = new WebClient();
-                wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
-                wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.9,ja;q=0.8");
-                if (!string.IsNullOrEmpty(MMPU.Cookie))
-                {
-                    wc.Headers.Add("Cookie", MMPU.Cookie);
-                }
                 string resultString;
                 try
                 {
-                    resultString = wc.DownloadString(apiUrl);
+                    resultString = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web");
                 }
                 catch (Exception e)
                 {
@@ -350,7 +398,38 @@ namespace Auxiliary
 
             public static string 获取真实房间号(string roomID)
             {
-                return BiliCache.Instance.RoomIDsToRealRoomIDs.Get(roomID);
+                string CacheStr = "byROOMIDgetTRUEroomid";
+                if (DataCache.读缓存(CacheStr + roomID, 0, out string CacheData))
+                {
+                    return CacheData;
+                }
+                string roomHtml;
+                try
+                {
+                    roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomID);
+                }
+                catch (Exception e)
+                {
+                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
+                    return null;
+                }
+                //从返回结果中提取真实房间号
+                try
+                {
+                    JObject result = JObject.Parse(roomHtml);
+                    string live_status = result["data"]["live_status"].ToString();
+                    if (live_status != "1")
+                    {
+                        return "-1";
+                    }
+                    string roomid = result["data"]["room_id"].ToString();
+                    DataCache.写缓存(CacheStr + roomID, roomid);
+                    return roomid;
+                }
+                catch
+                {
+                    return roomID;
+                }
             }
         }
         public static JObject 根据UID获取关注列表(string UID)
@@ -396,7 +475,50 @@ namespace Auxiliary
 
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
-            return BiliCache.Instance.RoomIDsToRoomInfos.Get(originalRoomId);
+            string roomHtml;
+            try
+            {
+                roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + originalRoomId);
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf(originalRoomId + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
+                return null;
+            }
+            //解析返回结果
+            try
+            {
+                JObject result = JObject.Parse(roomHtml);
+                string uid = result["data"]["uid"].ToString();
+                if (result["data"]["room_id"].ToString() != originalRoomId)
+                {
+                    for (int i = 0; i < RoomList.Count(); i++)
+                    {
+                        if (RoomList[i].房间号 == originalRoomId)
+                        {
+                            RoomList[i].房间号 = result["data"]["room_id"].ToString();
+                            break;
+                        }
+                    }
+                }
+                var roominfo = new RoomInit.RoomInfo
+                {
+                    房间号 = result["data"]["room_id"].ToString(),
+                    标题 = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", ""),
+                    直播状态 = result["data"]["live_status"].ToString() == "1" ? true : false,
+                    UID = result["data"]["uid"].ToString(),
+                    直播开始时间 = result["data"]["live_time"].ToString(),
+                    平台 = "bilibili"
+                };
+                InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
+                DataCache.BilibiliApiCount++;
+                return roominfo;
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf(originalRoomId + "房间信息解析失败:" + e.Message, InfoLog.InfoClass.Debug);
+                return null;
+            }
         }
         public class BiliUser
         {
