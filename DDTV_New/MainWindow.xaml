@@ -31,7 +31,7 @@
             <Label x:Name="newtime" HorizontalAlignment="Left" Margin="592,258,0,0" VerticalAlignment="Top"/>
             <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
             <Label x:Name="TanoshiNumLabel" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
-            <Label x:Name="推送内容1" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" VerticalContentAlignment="Center" Foreground="Black" Margin="533,187,16,297" />
+            <TextBlock x:Name="推送内容1"  TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" Foreground="Black" Margin="533,187,16,297" />
             <Label x:Name="数据源服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="259" VerticalContentAlignment="Center" Foreground="Black" Margin="10,47,531,440" />
             <Label x:Name="国内服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
             <Label x:Name="国外服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
