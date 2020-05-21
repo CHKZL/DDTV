@@ -10,6 +10,7 @@ namespace Auxiliary
 {
     public class DataCache
     {
+        public static int BilibiliApiCount = 0;
         public static Dictionary<string, string> 缓存队列 = new Dictionary<string, string>();
         public static Dictionary<string, DateTime> 缓存创建时间 = new Dictionary<string, DateTime>();
 
