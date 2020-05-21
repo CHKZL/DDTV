@@ -72,6 +72,8 @@ namespace DDTV_New
                     .DisposeWith(disposable);
                 this.OneWayBind(ViewModel, vm => vm.LatestDataUpdateTimeText, v => v.newtime.Content)
                     .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.Announcement, v => v.推送内容1.Text)
+                    .DisposeWith(disposable);
             });
 
             try
@@ -452,13 +454,13 @@ namespace DDTV_New
             NewThreadTask.Loop(runOnLocalThread =>
             {
                 bool 动态推送1开关 = MMPU.TcpSend(
-                        Server.RequestCode.GET_TOGGLE_PUSH_NOTIFICATION, "{}", true)
+                        Server.RequestCode.GET_TOGGLE_DYNAMIC_NOTIFICATION, "{}", true)
                         == "1" ? true : false;
 
                 if (动态推送1开关)
                 {
                     string 动态推送内容 = MMPU.TcpSend(
-                            Server.RequestCode.GET_PUSH_NOTIFICATION, "{}", true);
+                            Server.RequestCode.GET_DYNAMIC_NOTIFICATION, "{}", true);
                     runOnLocalThread(() => ViewModel.PushNotification = 动态推送内容);
                 }
             }, this, 3600 * 1000);
@@ -530,7 +532,8 @@ namespace DDTV_New
             //推送内容1
             NewThreadTask.Run(runOnLocalThread =>
             {
-                string 推送内容1text = MMPU.TcpSend(20005, "{}", true);
+                string 推送内容1text = MMPU.TcpSend(
+                    Server.RequestCode.GET_PUSH_NOTIFICATION_1, "{}", true);
                 if (推送内容1text.Length >0)
                 {
                     runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);

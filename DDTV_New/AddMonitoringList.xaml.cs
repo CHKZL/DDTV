@@ -138,7 +138,11 @@ namespace DDTV_New
                     }
                 }
                 新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
-                new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
+                new Task(() => 
+                { 
+                    MMPU.TcpSend(Server.RequestCode.GET_NEW_MEMBER_LIST_CONTENT, 
+                        JsonConvert.SerializeObject(NEWV), true);
+                }).Start();
 
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox();
@@ -175,7 +179,11 @@ namespace DDTV_New
             else if(this.Title=="修改单推属性")
             {
                 新增V信息 NEWV = new 新增V信息() { CN_Name = 中文名称.Text, LA_Name = 官方名称.Text, Platform = 平台.SelectedItem.ToString(), GUID = 唯一码.Text };
-                new Task(() => { MMPU.TcpSend(20001, JsonConvert.SerializeObject(NEWV), true); }).Start();
+                new Task(() => 
+                { 
+                    MMPU.TcpSend(Server.RequestCode.GET_NEW_MEMBER_LIST_CONTENT, 
+                        JsonConvert.SerializeObject(NEWV), true); 
+                }).Start();
 
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox();

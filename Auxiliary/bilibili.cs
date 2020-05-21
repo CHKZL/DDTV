@@ -20,8 +20,6 @@ using Auxiliary.LiveChatScript;
 
 namespace Auxiliary
 {
-
-
     public class bilibili
     {
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
@@ -258,7 +256,6 @@ namespace Auxiliary
                 return null;
             }
 
-
         }
         public class 根据房间号获取房间信息
         {
@@ -321,7 +318,6 @@ namespace Auxiliary
 
             public static string 获取标题(string roomID)
             {
-
                 roomID = 获取真实房间号(roomID);
                 if (roomID == null)
                 {
@@ -476,6 +472,7 @@ namespace Auxiliary
             }
 
         }
+
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
             string roomHtml;
@@ -522,7 +519,6 @@ namespace Auxiliary
                 InfoLog.InfoPrintf(originalRoomId + "房间信息解析失败:" + e.Message, InfoLog.InfoClass.Debug);
                 return null;
             }
-
         }
         public class BiliUser
         {
