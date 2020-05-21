@@ -14,10 +14,6 @@ namespace Auxiliary
 
         public static Dictionary<string, string> 缓存队列 = new Dictionary<string, string>();
         public static Dictionary<string, DateTime> 缓存创建时间 = new Dictionary<string, DateTime>();
-        public static Dictionary<string, string> 通过UID获取房间号键值对 = new Dictionary<string, string>();
-        public static Dictionary<string, string> 获取真实房间号键值对 = new Dictionary<string, string>();
-        public static Dictionary<string, string> 获取标题键值对 = new Dictionary<string, string>();
-        public static Dictionary<string, DateTime> 获取标题有效期 = new Dictionary<string, DateTime>();
 
         /// <summary>
         /// 读缓存
