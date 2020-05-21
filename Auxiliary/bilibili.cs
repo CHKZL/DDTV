@@ -72,7 +72,7 @@ namespace Auxiliary
         {
             try
             {
-                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living"));
+                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living",8000));
                 foreach (var roomtask in RoomList)
                 {
                     roomtask.直播状态 = false;

@@ -330,7 +330,7 @@ namespace Auxiliary
             }
             return result;
         }
-        public static string 返回网页内容_GET(string url)
+        public static string 返回网页内容_GET(string url,int outTime)
         {
 
             string result = "";
@@ -339,7 +339,7 @@ namespace Auxiliary
             req.ContentType = "application/x-www-form-urlencoded";
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = MMPU.UA.Ver.UA();
-            req.Timeout = 8000;
+            req.Timeout = outTime;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();
             //获取响应内容  
@@ -433,11 +433,26 @@ namespace Auxiliary
                             InfoLog.InfoPrintf("开始更新网络房间缓存", InfoLog.InfoClass.Debug);
                             try
                             {
-                                var wc = new WebClient();
-                                wc.Headers.Add("Accept: */*");
-                                wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-                                wc.Encoding = Encoding.UTF8;
-                                string roomHtml = wc.DownloadString("https://vdb.vtbs.moe/json/list.json");//File.ReadAllText("T:/Untitled-1.json");//;
+
+                                string roomHtml = "";
+                                try
+                                {
+                                    roomHtml = 返回网页内容_GET("https://vdb.vtbs.moe/json/list.json",8000);
+                                    InfoLog.InfoPrintf("网络房间缓存vtbs加载异常", InfoLog.InfoClass.Debug);
+                                }
+                                catch (Exception)
+                                {
+                                    try
+                                    {
+                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/list.json", 10000);
+                                        InfoLog.InfoPrintf("网络房间缓存github加载异常", InfoLog.InfoClass.Debug);
+                                    }
+                                    catch (Exception)
+                                    {
+
+                                        roomHtml = File.ReadAllText("AddList,json");
+                                    }
+                                }
                                 var result = JObject.Parse(roomHtml);
                                 InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
                                 foreach (var item in result["vtbs"])
