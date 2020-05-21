@@ -440,17 +440,17 @@ namespace Auxiliary
                                     roomHtml = 返回网页内容_GET("https://vdb.vtbs.moe/json/list.json",8000);
                                     InfoLog.InfoPrintf("网络房间缓存vtbs加载异常", InfoLog.InfoClass.Debug);
                                 }
-                                catch (Exception)
+                                catch (Exception e1)
                                 {
                                     try
                                     {
-                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/list.json", 10000);
+                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载异常", InfoLog.InfoClass.Debug);
                                     }
-                                    catch (Exception)
+                                    catch (Exception e2)
                                     {
 
-                                        roomHtml = File.ReadAllText("AddList,json");
+                                        roomHtml = File.ReadAllText("AddList.json");
                                     }
                                 }
                                 var result = JObject.Parse(roomHtml);
