@@ -50,6 +50,7 @@ namespace DDTV_New
             平台.SelectedItem = Platform;
             if (this.Title == "修改单推属性")
             {
+                平台.IsEnabled = false;
                 唯一码.IsEnabled = false;
             }
             //new Task((() =>  {

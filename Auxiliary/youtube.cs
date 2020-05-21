@@ -102,7 +102,7 @@ namespace Auxiliary
             string roomHtml;
             try
             {
-                roomHtml = MMPU.返回网页内容_GET("https://www.youtube.com/channel/"+ originalRoomId+"/live");
+                roomHtml = MMPU.返回网页内容_GET("https://www.youtube.com/channel/"+ originalRoomId+"/live",8000);
             }
             catch (Exception e)
             {

@@ -44,7 +44,7 @@ namespace Auxiliary
         }
         private static void 周期更新B站房间状态()
         {
-            int a = 0;
+         
             InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
            
 
@@ -52,52 +52,65 @@ namespace Auxiliary
             {
                 case 0:
                     {
-                        JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living"));
-                        foreach (var roomtask in RoomList)
-                        {
-                            roomtask.直播状态 = false;
-                            if (JO.ToString().Contains(roomtask.房间号))
-                            {
-                                roomtask.直播状态 = true;
-                            }
-                            else
-                            {
-                                roomtask.直播状态 = false;
-                            }
-                        }
+                        使用vtbsAPI更新房间状态();
                         break;
                     }
                 case 1:
                     {
-                        foreach (var roomtask in RoomList)
-                        {
-                            RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
-                            if (A != null)
-                            {
-                                for (int i = 0; i < RoomList.Count(); i++)
-                                {
-                                    if (RoomList[i].房间号 == A.房间号)
-                                    {
-                                        RoomList[i].平台 = A.平台;
-                                        RoomList[i].标题 = A.标题;
-                                        RoomList[i].UID = A.UID;
-                                        RoomList[i].直播开始时间 = A.直播开始时间;
-                                        RoomList[i].直播状态 = A.直播状态;
-                                        if (A.直播状态)
-                                            a++;
-                                        break;
-                                    }
-                                }
-                            }
-                            Thread.Sleep(500);
-                        }
+                        使用B站API更新房间状态();
                         break;
                     }
             }
 
-
+            
             InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+        }
+        public static void 使用vtbsAPI更新房间状态()
+        {
+            try
+            {
+                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living",8000));
+                foreach (var roomtask in RoomList)
+                {
+                    roomtask.直播状态 = false;
+                    if (JO.ToString().Contains(roomtask.房间号))
+                    {
+                        roomtask.直播状态 = true;
+                    }
+                    else
+                    {
+                        roomtask.直播状态 = false;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                使用B站API更新房间状态();
+            }
+        }
+        public static void 使用B站API更新房间状态()
+        {
+            foreach (var roomtask in RoomList)
+            {
+                RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
+                if (A != null)
+                {
+                    for (int i = 0; i < RoomList.Count(); i++)
+                    {
+                        if (RoomList[i].房间号 == A.房间号)
+                        {
+                            RoomList[i].平台 = A.平台;
+                            RoomList[i].标题 = A.标题;
+                            RoomList[i].UID = A.UID;
+                            RoomList[i].直播开始时间 = A.直播开始时间;
+                            RoomList[i].直播状态 = A.直播状态;
+                            break;
+                        }
+                    }
+                }
+                Thread.Sleep(800);
+            }
         }
         public class danmu
         {
@@ -395,12 +408,12 @@ namespace Auxiliary
             {
                 ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                 ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                ByQRCode.LoginByQrCode().Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                ByQRCode.LoginByQrCode("#FF000000","#FFFFFFFF",true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
             }
             private static void ByQRCode_QrCodeRefresh(Bitmap newQrCode)
             {
                 newQrCode.Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-            }
+            } 
 
             public static void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, Account account = null)
             {
