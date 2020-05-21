@@ -36,7 +36,7 @@ namespace Auxiliary.DDcenter
 
             public ClientWebSocket _webSocket = new ClientWebSocket();
             public CancellationToken _cancellation = new CancellationToken();
-
+            public static int 采集次数 = 0;
             public async void WebSocket()
             {
                 if (MMPU.启动模式 == 1)
@@ -55,16 +55,28 @@ namespace Auxiliary.DDcenter
 
                         while (MMPU.DDC采集使能)
                         {
-
-                            await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes("DDhttp")), WebSocketMessageType.Text, true, _cancellation);
+                            await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes("DDDhttp")), WebSocketMessageType.Text, true, _cancellation);
                             var result = new byte[1024];
                             await _webSocket.ReceiveAsync(new ArraySegment<byte>(result), new CancellationToken());
-                            JObject str = JObject.Parse(Encoding.UTF8.GetString(result, 0, result.Length).Trim('\0'));
-                            getUrl((string)str["data"]["url"], (string)str["key"], out string instr);
-                            if (!string.IsNullOrEmpty(instr))
+                            string JsonStr = Encoding.UTF8.GetString(result, 0, result.Length).Trim('\0');
+                            JObject JO = JObject.Parse(JsonStr);
+                            switch((string)JO["data"]["type"])
                             {
-                                await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(instr)), WebSocketMessageType.Text, true, _cancellation);
-                                InfoLog.InfoPrintf("DDC采集成功\n" + str + "\n\n" + instr, InfoLog.InfoClass.Debug);
+                                case "http":
+                                    getUrl((string)JO["data"]["url"], (string)JO["key"], out string instr);
+                                    if (!string.IsNullOrEmpty(instr))
+                                    {
+                                        await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(instr)), WebSocketMessageType.Text, true, _cancellation);
+                                        InfoLog.InfoPrintf("DDC采集成功\n" + JO + "\n\n" + instr, InfoLog.InfoClass.Debug);
+                                        采集次数++;
+                                        Console.WriteLine("DDC采集{0}次", 采集次数);
+                                    }
+                                    break;
+                                case "wait":
+                                    Thread.Sleep(MMPU.DDC采集间隔*3);
+                                    break;
+                                default:
+                                    break;
                             }
                             Thread.Sleep(MMPU.DDC采集间隔);
                         }
@@ -80,9 +92,6 @@ namespace Auxiliary.DDcenter
                         {
 
                         }
-                       
-                       
-                        // await _webSocket.ConnectAsync(new Uri("wss://cluster.vtbs.moe"), _cancellation);
                         InfoLog.InfoPrintf("DDC采集失败:" + ex.ToString(), InfoLog.InfoClass.Debug);
                     }
                     Thread.Sleep(1000);
