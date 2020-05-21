@@ -63,8 +63,6 @@ namespace Auxiliary
                         break;
                     }
             }
-
-            
             InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
         }
