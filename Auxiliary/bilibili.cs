@@ -232,9 +232,6 @@ namespace Auxiliary
             {
                 return CacheData;
             }
-            var wc = new WebClient();
-            wc.Headers.Add("Accept: */*");
-            wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
             //发送HTTP请求
             string roomHtml;
             try
@@ -370,21 +367,10 @@ namespace Auxiliary
                     InfoLog.InfoPrintf("房间号获取错误", InfoLog.InfoClass.Debug);
                     return null;
                 }
-                var apiUrl = "https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web";
-
-                //访问API获取结果
-                var wc = new WebClient();
-                wc.Headers.Add("Accept: */*");
-                wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
-                wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.9,ja;q=0.8");
-                if (!string.IsNullOrEmpty(MMPU.Cookie))
-                {
-                    wc.Headers.Add("Cookie", MMPU.Cookie);
-                }
                 string resultString;
                 try
                 {
-                    resultString = wc.DownloadString(apiUrl);
+                    resultString = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web");
                 }
                 catch (Exception e)
                 {
@@ -492,35 +478,21 @@ namespace Auxiliary
         }
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)
         {
-
-            var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + originalRoomId;
-            var wc = new WebClient();
-            wc.Headers.Add("Accept: */*");
-            wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
-            wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-            if (!string.IsNullOrEmpty(MMPU.Cookie))
-            {
-                wc.Headers.Add("Cookie", MMPU.Cookie);
-            }
-            //发送HTTP请求
-            byte[] roomHtml;
-
+            string roomHtml;
             try
             {
-                roomHtml = wc.DownloadData(roomWebPageUrl);
+                roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + originalRoomId);
             }
             catch (Exception e)
             {
                 InfoLog.InfoPrintf(originalRoomId + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
                 return null;
             }
-
             //解析返回结果
             try
             {
-                var roomJson = Encoding.UTF8.GetString(roomHtml);
-                var result = JObject.Parse(roomJson);
-                var uid = result["data"]["uid"].ToString();
+                JObject result = JObject.Parse(roomHtml);
+                string uid = result["data"]["uid"].ToString();
                 if (result["data"]["room_id"].ToString() != originalRoomId)
                 {
                     for (int i = 0; i < RoomList.Count(); i++)
