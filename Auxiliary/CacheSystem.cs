@@ -8,32 +8,80 @@ using System.Threading.Tasks;
 
 namespace Auxiliary
 {
-    public class Pipeline<TIn, TOut>
+    /// <summary>
+    /// 请求处理器接口。
+    /// 一个请求处理器接受某一表示获取对象特征的标识符（ID），并通过请求API返回该对象。
+    /// </summary>
+    /// <typeparam name="T">返回对象的类型</typeparam>
+    public interface IRequestHandler<T>
     {
-        private List<IPipe> _steps = new List<IPipe>();
+        T Accept(string id);
+    }
 
-        public void AddStep(IPipe step)
+    /// <summary>
+    /// 实现请求处理器接口的基类。
+    /// 包含一部分所有请求处理器都通用的代码，并暴露一些钩子函数交由子类实现。
+    /// </summary>
+    /// <typeparam name="T">返回对象的类型</typeparam>
+    public abstract class BaseRequestHandler<T> : IRequestHandler<T>
+    {
+        protected IAPIRequest _request;
+        protected JObject _responseJObject;
+        protected string _id;
+
+        /// <summary>
+        /// 返回请求API对象所需的WebClient。由子类重载。
+        /// 可以通过引用已创建的WebClient对象来降低内存消耗。
+        /// </summary>
+        /// <returns></returns>
+        protected abstract WebClient getWebClient();
+
+        /// <summary>
+        /// 由标识符（ID）构建通用API请求对象的过程。由子类重载。
+        /// </summary>
+        /// <param name="id">唯一表示返回对象的标识符（ID），类似字典中的键值。</param>
+        /// <returns></returns>
+        protected abstract IAPIRequest buildRequest(string id);
+
+        private JObject _getResponseJObject()
         {
-            _steps.Add(step);
+            byte[] responseBytes;
+            try
+            {
+                responseBytes = getWebClient().DownloadData(_request.Url);
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf($"[{_id}] {_request.ExceptionString}: {e.Message}", 
+                    InfoLog.InfoClass.Debug);
+                return null;
+            }
+            var responseString = Encoding.UTF8.GetString(responseBytes);
+            var jsonObject = JObject.Parse(responseString);
+            return jsonObject;
         }
 
-        public TOut Accept(TIn initialObject)
+        
+        /// <summary>
+        /// 从返回的JSON对象得到结果所需的处理过程。由子类重载。
+        /// </summary>
+        /// <param name="responseJObject">API返回的JSON对象。可能为空，代表API访问失败。</param>
+        /// <returns></returns>
+        protected abstract T responseToResult(JObject responseJObject);
+
+        public T Accept(string id)
         {
-            object input = initialObject;
-            object output = null;
-            foreach (var s in _steps)
-            {
-                output = s.Invoke(input);
-                input = output;
-            }
-            return (TOut)output;
+            _id = id;
+            _request = buildRequest(_id);
+            _responseJObject = _getResponseJObject();
+            return responseToResult(_responseJObject);
         }
     }
 
     public class CachedObject<T>
     {
-        private IAPIRequest _apiRequest;
-        private Pipeline<IAPIRequest, T> _pipeline;
+        private string _id;
+        private IRequestHandler<T> _handler;
 
         public bool IsCached { get => _value != null; }
         public DateTime LastUpdateTime { get; protected set; }
@@ -50,99 +98,65 @@ namespace Auxiliary
 
         public T ForceUpdate()
         {
-            var result = _pipeline.Accept(_apiRequest);
+            T result = _handler.Accept(_id);
             _value = result;
             LastUpdateTime = DateTime.Now;
             return result;
         }
 
-        public CachedObject(IAPIRequest apiRequest, Pipeline<IAPIRequest, T> pipeline)
+        public CachedObject(IRequestHandler<T> handler, string id)
         {
-            _apiRequest = apiRequest;
-            _pipeline = pipeline;
+            _id = id;
+            _handler = handler;
             TimeoutSec = int.MaxValue;
         }
     }
 
     public class CachedObjectCollection<T>
     {
-        private Dictionary<string, CachedObject<T>> _objects = new Dictionary<string, CachedObject<T>>();
+        private Dictionary<string, CachedObject<T>> _objects 
+            = new Dictionary<string, CachedObject<T>>();
 
-        private IAPIRequestBuilder _builder;
-        private Pipeline<IAPIRequest, T> _pipeline;
+        private IRequestHandler<T> _handler;
         private int _timeoutSec = int.MaxValue;
 
-        public T Get(string name)
+        public T Get(string id)
         {
-            if (_objects.ContainsKey(name))
+            if (_objects.ContainsKey(id))
             {
-                return _objects[name].Get();
+                return _objects[id].Get();
             }
             else
             {
-                var obj = new CachedObject<T>(_builder.Build(name), _pipeline);
+                var obj = new CachedObject<T>(_handler, id);
                 obj.TimeoutSec = _timeoutSec;
-                _objects.Add(name, obj);
+                _objects.Add(id, obj);
                 DataCache.BilibiliApiCount++;
                 return obj.Get();
             }
         }
 
-        public CachedObjectCollection(IAPIRequestBuilder builder, Pipeline<IAPIRequest, T> pipeline)
+        public CachedObjectCollection(IRequestHandler<T> handler)
         {
-            _builder = builder;
-            _pipeline = pipeline;
+            _handler = handler;
         }
 
-        public CachedObjectCollection(IAPIRequestBuilder builder, Pipeline<IAPIRequest, T> pipeline, int timeoutSec)
+        public CachedObjectCollection(IRequestHandler<T> handler, int timeoutSec)
         {
-            _builder = builder;
-            _pipeline = pipeline;
+            _handler = handler;
             _timeoutSec = timeoutSec;
         }
     }
 
-    public interface IAPIRequestBuilder
-    {
-        IAPIRequest Build(string args);
-    }
-
-    public enum APIPlatforms
-    {
-        Bilibili,
-        Youtube
-    }
-
     public interface IAPIRequest
     {
-        APIPlatforms Platform { get; }
         string Url { get; }
-        int ID { get; }
-        WebClient WebClient { get; }
         string ExceptionString { get; }
-    }
-
-    public class APIRequest : IAPIRequest
-    {
-        public APIPlatforms Platform { get; set; }
-        public string Url { get; set; }
-        public int ID { get; set; }
-        public WebClient WebClient { get; set; }
-        public string ExceptionString { get; set; }
     }
 
     public class BiliAPIRequest : IAPIRequest
     {
-        public APIPlatforms Platform { get; set; }
         public string BaseUrl { get; set; }
-        public int ID 
-        { 
-            get
-            {
-                if (int.TryParse(Args.Values.FirstOrDefault(), out int result)) return result;
-                else return -1;
-            }
-        }
         public Dictionary<string, string> Args { get;set; }
         public string Url 
         {
@@ -158,57 +172,6 @@ namespace Auxiliary
                 return result;
             }
         }
-        public WebClient WebClient { get; set; }
         public string ExceptionString { get; set; }
-    }
-
-    public interface IPipe
-    {
-        object Invoke(object input);
-    }
-
-    public class APIRequestToResponseJObjectPipe : IPipe
-    {
-        public object Invoke(object input)
-        {
-            var request = (IAPIRequest)input;
-            byte[] responseBytes;
-            try
-            {
-                responseBytes = request.WebClient.DownloadData(request.Url);
-            }
-            catch (Exception e)
-            {
-                InfoLog.InfoPrintf(request.ID + request.ExceptionString + ": " + 
-                    e.Message, InfoLog.InfoClass.Debug);
-                return null;
-            }
-            var responseString = Encoding.UTF8.GetString(responseBytes);
-            var jsonObject = JObject.Parse(responseString);
-            return jsonObject;
-        }
-    }
-
-    public class APIRequestToResponseJObjectWithArgPipe : IPipe
-    {
-        public object Invoke(object input)
-        {
-            var request = (IAPIRequest)input;
-            byte[] responseBytes;
-            try
-            {
-                responseBytes = request.WebClient.DownloadData(request.Url);
-            }
-            catch (Exception e)
-            {
-                InfoLog.InfoPrintf(request.ID + request.ExceptionString + ": " +
-                    e.Message, InfoLog.InfoClass.Debug);
-                return null;
-            }
-            var responseString = Encoding.UTF8.GetString(responseBytes);
-            var jsonObject = JObject.Parse(responseString);
-            jsonObject.Add("@@", request.ID);
-            return jsonObject;
-        }
     }
 }
