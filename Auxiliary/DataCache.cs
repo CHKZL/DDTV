@@ -10,220 +10,43 @@ namespace Auxiliary
 {
     public class DataCache
     {
+        public static Dictionary<string, string> 缓存队列 = new Dictionary<string, string>();
+        public static Dictionary<string, DateTime> 缓存创建时间 = new Dictionary<string, DateTime>();
+
         /// <summary>
-        /// 一个通用的WebClient。通过单例模式保证全局唯一。
+        /// 读缓存
         /// </summary>
-        public WebClient GeneralWebClient { get; private set; }
-
-        private static readonly Lazy<DataCache> _lazy = new Lazy<DataCache>(() =>
+        /// <param name="key">查询的键名</param>
+        /// <param name="ExTime">超时时间,0为永远超时</param>
+        /// <param name="data">查询到的结果</param>
+        /// <returns>该键名是否有对应的数据</returns>
+        public static bool 读缓存(string key, double ExTime, out string data)
         {
-            var instance = new DataCache();
-            var wc = new WebClient();
-            instance.GeneralWebClient = wc;
-
-            wc.Headers.Add("Accept: */*");
-            wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
-            wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-            if (!string.IsNullOrEmpty(MMPU.Cookie))
+            data = null;
+            if (DataCache.缓存创建时间.TryGetValue(key, out DateTime Cache))
             {
-                wc.Headers.Add("Cookie", MMPU.Cookie);
-            }
-
-            return instance;
-        });
-
-        private DataCache() { }
-
-        public static DataCache Instance { get { return _lazy.Value; } }
-
-        public static int BilibiliApiCount = 0;
-    }
-
-
-    public class UIDToRoomIDHandler : BaseRequestHandler<string>
-    {
-        protected override WebClient getWebClient()
-        {
-            return DataCache.Instance.GeneralWebClient;
-        }
-
-        protected override IAPIRequest buildRequest(string id)
-        {
-            return new BiliAPIRequest
-            {
-                BaseUrl = "https://api.live.bilibili.com/room/v1/Room/getRoomInfoOld",
-                ExceptionString = "获取房间信息（旧API）失败",
-                Args = new Dictionary<string, string>
+                TimeSpan TS = DateTime.Now - Cache;
+                if ((TS.TotalSeconds < ExTime || ExTime == 0 )&& DataCache.缓存队列.TryGetValue(key, out string CacheData))
                 {
-                    { "mid", id }
-                }
-            };
-        }
-
-        protected override string responseToResult(JObject responseJObject)
-        {
-            if (responseJObject == null) return "";
-
-            return responseJObject["data"]["roomid"].ToString();
-        }
-    }
-
-    public class RoomIDToTitleHandler : BaseRequestHandler<string>
-    {
-        protected override WebClient getWebClient()
-        {
-            return DataCache.Instance.GeneralWebClient;
-        }
-
-        protected override IAPIRequest buildRequest(string id)
-        {
-            return new BiliAPIRequest
-            {
-                BaseUrl = "https://api.live.bilibili.com/room/v1/Room/get_info",
-                ExceptionString = "获取房间信息失败",
-                Args = new Dictionary<string, string>
-                {
-                    { "id", id }
-                }
-            };
-        }
-
-        protected override string responseToResult(JObject responseJObject)
-        {
-            if (responseJObject == null) return "";
-
-            string roomName = responseJObject["data"]["title"].ToString()
-                 .Replace(" ", "")
-                 .Replace("/", "")
-                 .Replace("\\", "")
-                 .Replace("\"", "")
-                 .Replace(":", "")
-                 .Replace("*", "")
-                 .Replace("?", "")
-                 .Replace("<", "")
-                 .Replace(">", "")
-                 .Replace("|", "")
-                 .ToString();
-
-            InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
-
-            return roomName;
-        }
-    }
-
-    public class RoomIDToRealRoomIDHandler : BaseRequestHandler<string>
-    {
-        protected override WebClient getWebClient()
-        {
-            return DataCache.Instance.GeneralWebClient;
-        }
-
-        protected override IAPIRequest buildRequest(string id)
-        {
-            return new BiliAPIRequest
-            {
-                BaseUrl = "https://api.live.bilibili.com/room/v1/Room/get_info",
-                ExceptionString = "获取房间信息失败",
-                Args = new Dictionary<string, string>
-                {
-                    { "id", id }
-                }
-            };
-        }
-
-        protected override string responseToResult(JObject responseJObject)
-        {
-            if (responseJObject == null) return "";
-
-            var live_status = responseJObject["data"]["live_status"].ToString();
-            if (live_status != "1")
-            {
-                return "-1";
-            }
-            var roomid = responseJObject["data"]["room_id"].ToString();
-            return roomid;
-        }
-    }
-
-    public class RoomIDToRoomInfoHandler : BaseRequestHandler<RoomInit.RoomInfo>
-    {
-        protected override WebClient getWebClient()
-        {
-            return DataCache.Instance.GeneralWebClient;
-        }
-
-        protected override IAPIRequest buildRequest(string id)
-        {
-            return new BiliAPIRequest
-            {
-                BaseUrl = "https://api.live.bilibili.com/room/v1/Room/get_info",
-                ExceptionString = "获取房间信息失败",
-                Args = new Dictionary<string, string>
-                {
-                    { "id", id }
-                }
-            };
-        }
-
-        protected override RoomInit.RoomInfo responseToResult(JObject responseJObject)
-        {
-            if (responseJObject == null) return null;
-
-            if (responseJObject["data"]["room_id"].ToString() != _id)
-            {
-                for (int i = 0; i < bilibili.RoomList.Count(); i++)
-                {
-                    if (bilibili.RoomList[i].房间号 == _id)
-                    {
-                        bilibili.RoomList[i].房间号 = responseJObject["data"]["room_id"].ToString();
-                        break;
-                    }
+                    data = CacheData;
+                    InfoLog.InfoPrintf("缓存命中,读取数据:" + key + "|" + CacheData, InfoLog.InfoClass.Debug);
+                    return true;
                 }
             }
-
-            var roominfo = new RoomInit.RoomInfo
-            {
-                房间号 = responseJObject["data"]["room_id"].ToString(),
-                标题 = responseJObject["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", ""),
-                直播状态 = responseJObject["data"]["live_status"].ToString() == "1" ? true : false,
-                UID = responseJObject["data"]["uid"].ToString(),
-                直播开始时间 = responseJObject["data"]["live_time"].ToString(),
-                平台 = "bilibili"
-            };
-
-            InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
-
-            return roominfo;
+            return false;
         }
-    }
-
-
-    public class BiliCache
-    {
-        private static readonly Lazy<BiliCache> _lazy = new Lazy<BiliCache>(() =>
+        /// <summary>
+        /// 写缓存
+        /// </summary>
+        /// <param name="key">写入的键名</param>
+        /// <param name="value">写入的值</param>
+        /// <param name="TS"></param>
+        public static void 写缓存(string key,string value)
         {
-            var instance = new BiliCache();
-
-            instance.UIDsToRoomIDs = new CachedObjectCollection<string>(
-                new UIDToRoomIDHandler());
-            instance.RoomIDsToTitles = new CachedObjectCollection<string>(
-                new RoomIDToTitleHandler(), 3600);
-            instance.RoomIDsToRealRoomIDs = new CachedObjectCollection<string>(
-                new RoomIDToRealRoomIDHandler());
-            instance.RoomIDsToRoomInfos = new CachedObjectCollection<RoomInit.RoomInfo>(
-                new RoomIDToRoomInfoHandler(), 0/*不缓存（超时时间为0）*/);
-
-            return instance;
-        });
-
-        public static BiliCache Instance { get { return _lazy.Value; } }
-
-        private BiliCache() { }
-
-
-        public CachedObjectCollection<string> UIDsToRoomIDs { get; private set; }
-        public CachedObjectCollection<string> RoomIDsToTitles { get; private set; }
-        public CachedObjectCollection<string> RoomIDsToRealRoomIDs { get; private set; }
-        public CachedObjectCollection<RoomInit.RoomInfo> RoomIDsToRoomInfos { get; private set; }
+            缓存创建时间.Add(key,DateTime.Now);
+            缓存队列.Add(key, value);
+            InfoLog.InfoPrintf("缓存未命中,缓存数据:"+key+"|" + value, InfoLog.InfoClass.Debug);
+            DataCache.BilibiliApiCount++;
+        }  
     }
 }
