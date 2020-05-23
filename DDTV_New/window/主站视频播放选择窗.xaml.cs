@@ -1,4 +1,5 @@
 ﻿using Auxiliary;
+using DDTV_New.Utility;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -136,39 +137,31 @@ namespace DDTV_New.window
         }
         private void 播放窗口退出事件(object sender, EventArgs e)
         {
-            try
+            NewThreadTask.Run(() =>
             {
-                new Task((() =>
+                MMPU.当前直播窗口数量--;
+                PlayW.MainWindow p = (PlayW.MainWindow)sender;
+                playList1.Remove(p);
+                foreach (var item in MMPU.DownList)
                 {
-                    MMPU.当前直播窗口数量--;
-                    PlayW.MainWindow p = (PlayW.MainWindow)sender;
-                    playList1.Remove(p);
-                    foreach (var item in MMPU.DownList)
+                    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
                     {
-                        if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                        item.DownIofo.WC.CancelAsync();
+                        item.DownIofo.下载状态 = false;
+                        item.DownIofo.备注 = "播放串口关闭，停止下载";
+                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                        if (item.DownIofo.是否保存)
                         {
-                            item.DownIofo.WC.CancelAsync();
-                            item.DownIofo.下载状态 = false;
-                            item.DownIofo.备注 = "播放串口关闭，停止下载";
-                            item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                            if (item.DownIofo.是否保存)
-                            {
 
-                            }
-                            else
-                            {
-                                MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
-                            }
-                            break;
                         }
+                        else
+                        {
+                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                        }
+                        break;
                     }
-                })).Start();
-            }
-            catch (Exception)
-            {
-
-
-            }
+                }
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Auxiliary;
+using DDTV_New.Utility;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace DDTV_New.window
         {
             更新网络房间列表.IsEnabled = false;
             选中内容展示.Content = "更新中";
-            new Task((() => 
+            NewThreadTask.Run(runOnLocalThread =>
             {
                 if (MMPU.加载网络房间方法.列表缓存.Count < 1)
                 {
@@ -38,7 +39,7 @@ namespace DDTV_New.window
                     MMPU.加载网络房间方法.更新网络房间缓存();
                     return;
                 }
-                this.Dispatcher.Invoke(new Action(delegate
+                runOnLocalThread(() =>
                 {
                     NetWorkRoomList.Items.Clear();
                     foreach (var item in MMPU.加载网络房间方法.列表缓存)
@@ -55,8 +56,8 @@ namespace DDTV_New.window
                     }
                     选中内容展示.Content = "";
                     更新网络房间列表.IsEnabled = true;
-                }));
-            })).Start();
+                });
+            }, this);
 
         }
      
@@ -135,14 +136,14 @@ namespace DDTV_New.window
                 MessageBox.Show("请输入搜索内容");
                 return;
             }
-            new Task((() => 
+            NewThreadTask.Run(runOnLocalThread =>
             {
                 if (搜索缓存.Count < 1)
                 {
                     MessageBox.Show("云端数据中没有满足条件的数据");
                     return;
                 }
-                this.Dispatcher.Invoke(new Action(delegate
+                runOnLocalThread(() =>
                 {
                     NetWorkRoomList.Items.Clear();
                     foreach (var item in 搜索缓存)
@@ -159,8 +160,8 @@ namespace DDTV_New.window
                     }
                     选中内容展示.Content = "";
                     更新网络房间列表.IsEnabled = true;
-                }));
-            })).Start();
+                });
+            }, this);
         }
     }
 }
