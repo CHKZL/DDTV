@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Threading;
+using DDTV_New.Utility;
 
 namespace DDTV_New
 {
@@ -26,38 +27,42 @@ namespace DDTV_New
         {
             InitializeComponent();
 
- 
-            new Task((() =>  {
-                while(true)
-                {
-                    更新下载队列();
-                    Thread.Sleep(1*1000);
-                }
-            })).Start();
-        }
-
-
-        public void 更新下载队列()
-        {
-            int i = 1;
-            this.Dispatcher.Invoke(new Action(delegate
+            NewThreadTask.Loop(runOnLocalThread =>
             {
-                DownList.Items.Clear();
-            }));
-            try
-            {
-                foreach (var item in Auxiliary.MMPU.DownList)
+                //更新下载队列
+                int i = 1;
+                runOnLocalThread(() => DownList.Items.Clear());
+                try
                 {
-                    this.Dispatcher.Invoke(new Action(delegate
+                    foreach (var item in Auxiliary.MMPU.DownList)
                     {
-                        DownList.Items.Add(new { 编号 = i, 唯一码 = item.DownIofo.房间_频道号, 名称 = item.DownIofo.标题, 状态 = item.DownIofo.结束时间 > 0 ? "下载结束" : "下载中", 备注 = item.DownIofo.备注, 平台 = item.DownIofo.平台, 已下载 = item.DownIofo.已下载大小str, 开始时间 = Auxiliary.MMPU.Unix转换为DateTime(item.DownIofo.开始时间.ToString()).ToString("yyyy-MM-dd HH:mm:ss"), 结束时间 = item.DownIofo.结束时间 > 0 ? Auxiliary.MMPU.Unix转换为DateTime(item.DownIofo.结束时间.ToString()).ToString("yyyy-MM-dd HH:mm:ss") : "", 保存地址 = item.DownIofo.文件保存路径 });
-                    }));
-                    i++;
+                        runOnLocalThread(() =>
+                        {
+                            DownList.Items.Add(new 
+                            { 
+                                编号 = i, 
+                                唯一码 = item.DownIofo.房间_频道号, 
+                                名称 = item.DownIofo.标题, 
+                                状态 = item.DownIofo.结束时间 > 0 ? "下载结束" : "下载中", 
+                                备注 = item.DownIofo.备注, 
+                                平台 = item.DownIofo.平台, 
+                                已下载 = item.DownIofo.已下载大小str, 
+                                开始时间 = Auxiliary.MMPU.Unix转换为DateTime(
+                                        item.DownIofo.开始时间.ToString()
+                                    ).ToString("yyyy-MM-dd HH:mm:ss"), 
+                                结束时间 = item.DownIofo.结束时间 > 0 
+                                    ? Auxiliary.MMPU.Unix转换为DateTime(
+                                          item.DownIofo.结束时间.ToString()
+                                      ).ToString("yyyy-MM-dd HH:mm:ss") 
+                                    : "", 
+                                保存地址 = item.DownIofo.文件保存路径 
+                            });
+                        });
+                        i++;
+                    }
                 }
-            }
-            catch (Exception)
-            {
-            }
+                catch (Exception) { }
+            }, this, 1 * 1000);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
