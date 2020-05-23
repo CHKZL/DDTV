@@ -52,6 +52,7 @@ DDTVLiveRec
 # 使用到的第三方组件
 * [BiliAccount](https://github.com/LeoChen98/BiliAccount)
 * [FFmpeg](https://github.com/FFmpeg/FFmpeg)
+* [vtbs.moe](https://github.com/dd-center/vtbs.moe)
 
 # 捐助
 ### 捐助表示您对我这个项目的认可，也能激励我继续开发更多好的项目

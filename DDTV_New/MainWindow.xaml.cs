@@ -346,6 +346,15 @@ namespace DDTV_New
                     说明 = "用于压制和编码",
                     备注 = "需要在设置里启用"
                 });
+                PluginC.Items.Add(new
+                {
+                    编号 = "7",
+                    名称 = "vtbs.moe",
+                    版本 = "α",
+                    是否加载 = "√",
+                    说明 = "V圈大数据平台，提供DDTV运作所需的数据API接口",
+                    备注 = ""
+                });
             }
             //剪贴板监听
             Thread CPT = new Thread(() => 
