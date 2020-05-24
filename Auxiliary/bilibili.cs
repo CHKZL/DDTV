@@ -454,7 +454,7 @@ namespace Auxiliary
                         名称 = item["uname"].ToString()
                     });
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(100);
                 pg++;
             }
             while (ps > 0);

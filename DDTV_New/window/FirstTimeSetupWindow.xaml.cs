@@ -45,7 +45,7 @@ namespace DDTV_New.window
         }
 
         private List<Grid> _grids;
-        private int _数据源;
+        private int _数据源 = 0;
         private bool _已导入 = false;
 
         public void 切换界面(Grid grid)
@@ -101,8 +101,10 @@ namespace DDTV_New.window
         private void 完成初始化()
         {
             //写配置文件
-            MMPU.setFiles("IsSetUpped", "1");
+            MMPU.setFiles("IsSetUpped", "0");
             MMPU.setFiles("DataSource", _数据源.ToString());
+            MMPU.数据源 = _数据源;
+            MMPU.是否第一次使用DDTV = false;
             //关闭此窗口
             this.Close();
         }
@@ -119,9 +121,9 @@ namespace DDTV_New.window
                 {
                     上一步按钮.IsEnabled = false;
                     下一步按钮.IsEnabled = false;
-                    导入VTBVUP((增加的数量) =>
+                    导入VTBVUP((增加的数量, 已经存在的数量) =>
                     {
-                        导入VTBVUP提示文本.Text = $"导入成功！新增VTB/VUP数：{增加的数量}";
+                        导入VTBVUP提示文本.Text = $"导入成功！原有:{已经存在的数量}个，新增VTB/VUP数：{增加的数量}";
                         上一步按钮.IsEnabled = true;
                         下一步按钮.IsEnabled = true;
                     });
@@ -129,7 +131,7 @@ namespace DDTV_New.window
             }
         }
 
-        private void 导入VTBVUP(Action<int> callback)
+        private void 导入VTBVUP(Action<int,int> callback)
         {
             NewThreadTask.Run(runOnLocalThread =>
             {
@@ -141,8 +143,9 @@ namespace DDTV_New.window
                     Thread.Sleep(500);
                 }
 
-                runOnLocalThread(() => 导入VTBVUP提示文本.Text = "正在导入所有VTB/VUP，请稍候……");
+                runOnLocalThread(() => 导入VTBVUP提示文本.Text = "正在导入关注列表里符合的VTB/VUP数据，请稍候……");
                 int 增加的数量 = 0;
+                int 已经存在的数量 = 0;
                 RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
                 RoomInit.InitializeRoomConfigFile();
                 RoomInit.InitializeRoomList(0, false, false);
@@ -200,8 +203,12 @@ namespace DDTV_New.window
                             增加的数量++;
                             RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
                         }
+                        else
+                        {
+                            已经存在的数量++;
+                        }
                     }
-                    Thread.Sleep(150);
+                    Thread.Sleep(100);
                 }
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
@@ -210,7 +217,7 @@ namespace DDTV_New.window
                 _已导入 = true;
                 runOnLocalThread(() =>
                 {
-                    callback(增加的数量);
+                    callback(增加的数量, 已经存在的数量);
                 });
             }, this);
         }
@@ -259,6 +266,26 @@ namespace DDTV_New.window
             {
                 登录bilibili提示文本1.Text = "登录失败，请重试";
             }
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                this.DragMove();
+            }
+            catch (Exception) { }
+        }
+        private void 跳过设置按钮_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("跳过设置默认使用vtbs数据源，如需设置和导入关注列表，请在主界面“设置界面”进行设置");
+            //写配置文件
+            MMPU.setFiles("IsSetUpped", "0");
+            MMPU.setFiles("DataSource", "0");
+            MMPU.数据源 = 0;
+            MMPU.是否第一次使用DDTV = false;
+            //关闭此窗口
+            this.Close();
         }
     }
 }
