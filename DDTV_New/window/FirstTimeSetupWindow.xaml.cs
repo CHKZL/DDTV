@@ -105,7 +105,7 @@ namespace DDTV_New.window
             MMPU.setFiles("DataSource", _数据源.ToString());
             MMPU.数据源 = _数据源;
             MMPU.是否第一次使用DDTV = false;
-            bilibili.周期更新B站房间状态();
+           
             //关闭此窗口
             this.Close();
         }

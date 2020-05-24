@@ -139,6 +139,7 @@ namespace DDTV_New
                     MessageBox.Show("未完成初始化，请重新启动程序");
                     Environment.Exit(-1);
                 }
+                bilibili.周期更新B站房间状态();
             }
             this.Show();
         }
