@@ -23,6 +23,7 @@ namespace Auxiliary
     public class bilibili
     {
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
+        public static bool 是否正在更新房间信息 = false;
         public static void start()
         {
             Task.Run(async () =>
@@ -42,27 +43,31 @@ namespace Auxiliary
                 }
             });
         }
-        private static void 周期更新B站房间状态()
+        public static void 周期更新B站房间状态()
         {
-         
-            InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
-           
-
-            switch (MMPU.数据源)
+            if(!是否正在更新房间信息)
             {
-                case 0:
-                    {
-                        使用vtbsAPI更新房间状态();
-                        break;
-                    }
-                case 1:
-                    {
-                        使用B站API更新房间状态();
-                        break;
-                    }
-            }
-            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
-            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                是否正在更新房间信息 = true;
+                InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
+
+
+                switch (MMPU.数据源)
+                {
+                    case 0:
+                        {
+                            使用vtbsAPI更新房间状态();
+                            break;
+                        }
+                    case 1:
+                        {
+                            使用B站API更新房间状态();
+                            break;
+                        }
+                }
+                InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
+                InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                是否正在更新房间信息 = false;
+            }     
         }
         public static void 使用vtbsAPI更新房间状态()
         {
