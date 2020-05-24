@@ -124,6 +124,8 @@ namespace Auxiliary
                 MMPU.播放器默认宽度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
                 //剪切板监听
                 MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
+                //数据源
+                MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
             }
             else if (模式 == 1)
             {
@@ -146,12 +148,23 @@ namespace Auxiliary
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             #endregion
             InfoLog.InfoPrintf("通用配置加载完成", InfoLog.InfoClass.Debug);
-            #region BiliUser配置文件初始化
-            //账号登陆cookie
 
+            BiliUser配置文件初始化(模式);
+            InfoLog.InfoPrintf("Bilibili账号信息加载完成", InfoLog.InfoClass.Debug);
+            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
+
+            if (MMPU.数据源 == 0)
+            {
+                DDcenter.DdcClient.Connect();
+            }
+            RoomInit.start();
+            return true;
+        }
+        public static void BiliUser配置文件初始化(int 模式)
+        {
+            //账号登陆cookie
             try
             {
-
                 MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
             }
             catch (Exception)
@@ -200,22 +213,15 @@ namespace Auxiliary
                 {
                     bilibili.BiliUser.登陆();
                     InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]或访问[http://本机IP:11419/login]使用B站客户端扫描二维码登陆", InfoLog.InfoClass.下载必要提示);
-                  
+
                     while (string.IsNullOrEmpty(MMPU.Cookie))
                     {
-                       // break;
-                    }              
+                        // break;
+                    }
                 }
-               
+
             }
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
-            #endregion
-            InfoLog.InfoPrintf("Bilibili账号信息加载完成", InfoLog.InfoClass.Debug);
-            ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, sslPolicyErrors) => true;
-           
-            DDcenter.DdcClient.Connect();
-            RoomInit.start();
-            return true;
         }
         public static void 修改默认音量设置(int A)
         {

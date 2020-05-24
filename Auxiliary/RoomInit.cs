@@ -243,7 +243,7 @@ namespace Auxiliary
         /// <summary>
         /// 初始化房间配置文件
         /// </summary>
-        private static void InitializeRoomConfigFile()
+        public static void InitializeRoomConfigFile()
         {
             try
             {

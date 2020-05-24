@@ -22,6 +22,8 @@ using ReactiveUI;
 using System.Reactive.Disposables;
 using DDTV_New.Utility;
 using System.Diagnostics;
+using DDTV_New.window;
+using System.Configuration;
 
 namespace DDTV_New
 {
@@ -48,9 +50,37 @@ namespace DDTV_New
             get => ViewModel;
             set => ViewModel = (MainViewModel)value;
         }
+        private bool 第一次启动()
+        {
+            Configuration config = ConfigurationManager.OpenExeConfiguration(
+                ConfigurationUserLevel.None);
+            string[] keys = config.AppSettings.Settings.AllKeys;
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] == "IsSetUpped")
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
 
         public MainWindow()
         {
+            if (第一次启动())
+            {
+                // 启动初始化配置窗口
+                FirstTimeSetupWindow w = new FirstTimeSetupWindow();
+                this.Hide();
+                w.ShowDialog();
+
+                if (第一次启动()) // 非正常关闭窗口
+                {
+                    MessageBox.Show("未完成初始化，请重新启动程序");
+                    Environment.Exit(-1);
+                }
+            }
+
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
 
