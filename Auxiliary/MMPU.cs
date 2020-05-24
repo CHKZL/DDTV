@@ -62,7 +62,8 @@ namespace Auxiliary
         public static bool DDC采集使能 = true;
         public static int DDC采集间隔 = 1000;
         public static int 数据源 = 0;//0：vdb   1：B API
-
+        public static bool 是否第一次使用DDTV = true;
+       
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
         /// <summary>
@@ -126,6 +127,8 @@ namespace Auxiliary
                 MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
                 //数据源
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
+                //第一次使用DDTV
+                MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsSetUpped", "1") == "0" ? false :true;
             }
             else if (模式 == 1)
             {
@@ -445,14 +448,14 @@ namespace Auxiliary
                                 try
                                 {
                                     roomHtml = 返回网页内容_GET("https://vdb.vtbs.moe/json/list.json",8000);
-                                    InfoLog.InfoPrintf("网络房间缓存vtbs加载异常", InfoLog.InfoClass.Debug);
+                                    InfoLog.InfoPrintf("网络房间缓存vtbs加载完成", InfoLog.InfoClass.Debug);
                                 }
                                 catch (Exception e1)
                                 {
                                     try
                                     {
                                         roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
-                                        InfoLog.InfoPrintf("网络房间缓存github加载异常", InfoLog.InfoClass.Debug);
+                                        InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
                                     catch (Exception e2)
                                     {

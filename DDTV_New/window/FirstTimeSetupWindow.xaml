@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDTV_New.window"
         mc:Ignorable="d"
-        Title="FirstTimeSetupWindow" Height="450" Width="800">
-    <Grid>
+        Title="FirstTimeSetupWindow" Height="450" Width="800"
+        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="#FFDAFCFF" MinWidth="800" MaxWidth="800" MinHeight="450" MaxHeight="450" >
+    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="120"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
@@ -24,6 +25,7 @@
                 <Line X1="60" Y1="0" X2="60" Y2="10" Stroke="Black"></Line>
                 <Label Content="完成" HorizontalAlignment="Center"></Label>
             </StackPanel>
+            <Button x:Name="跳过设置" Content="跳过设置" Width="64" Height="28" Click="跳过设置按钮_Click" Margin="9,272,47,-135"></Button>
         </Grid>
         <!--欢迎使用-->
         <Grid x:Name="欢迎使用层" Grid.Column="1" Margin="40" Visibility="Collapsed">

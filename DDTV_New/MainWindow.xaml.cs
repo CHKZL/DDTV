@@ -50,36 +50,10 @@ namespace DDTV_New
             get => ViewModel;
             set => ViewModel = (MainViewModel)value;
         }
-        private bool 第一次启动()
-        {
-            Configuration config = ConfigurationManager.OpenExeConfiguration(
-                ConfigurationUserLevel.None);
-            string[] keys = config.AppSettings.Settings.AllKeys;
-            for (int i = 0; i < keys.Length; i++)
-            {
-                if (keys[i] == "IsSetUpped")
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
 
         public MainWindow()
         {
-            if (第一次启动())
-            {
-                // 启动初始化配置窗口
-                FirstTimeSetupWindow w = new FirstTimeSetupWindow();
-                this.Hide();
-                w.ShowDialog();
-
-                if (第一次启动()) // 非正常关闭窗口
-                {
-                    MessageBox.Show("未完成初始化，请重新启动程序");
-                    Environment.Exit(-1);
-                }
-            }
+            
 
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
@@ -152,6 +126,21 @@ namespace DDTV_New
 #pragma warning restore CA5359 // Do Not Disable Certificate Validation
             ServicePointManager.DefaultConnectionLimit = 999;
             ServicePointManager.MaxServicePoints = 999;
+
+            if (MMPU.是否第一次使用DDTV && string.IsNullOrEmpty(MMPU.Cookie))
+            {
+                // 启动初始化配置窗口
+                FirstTimeSetupWindow w = new FirstTimeSetupWindow();
+                this.Hide();
+                w.ShowDialog();
+
+                if (MMPU.是否第一次使用DDTV) // 非正常关闭窗口
+                {
+                    MessageBox.Show("未完成初始化，请重新启动程序");
+                    Environment.Exit(-1);
+                }
+            }
+            this.Show();
         }
 
         /// <summary>
@@ -181,10 +170,10 @@ namespace DDTV_New
                 公告项目启动();
             });
 
-            NewThreadTask.Run(() =>
-            {
-                MMPU.加载网络房间方法.更新网络房间缓存();
-            });
+            //NewThreadTask.Run(() =>
+            //{
+            //    MMPU.加载网络房间方法.更新网络房间缓存();
+            //});
 
             //房间刷新线程
             NewThreadTask.Loop(runOnLocalThread =>
