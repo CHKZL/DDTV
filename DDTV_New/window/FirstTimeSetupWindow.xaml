@@ -21,7 +21,7 @@
                 <Line X1="60" Y1="0" X2="60" Y2="10" Stroke="Black"></Line>
                 <Label Content="登录bilibili" HorizontalAlignment="Center"></Label>
                 <Line X1="60" Y1="0" X2="60" Y2="10" Stroke="Black"></Line>
-                <Label Content="导入所有VTB/VUP" HorizontalAlignment="Center"></Label>
+                <Label Content="导入VTB/VUP数据" HorizontalAlignment="Center"></Label>
                 <Line X1="60" Y1="0" X2="60" Y2="10" Stroke="Black"></Line>
                 <Label Content="完成" HorizontalAlignment="Center"></Label>
             </StackPanel>
