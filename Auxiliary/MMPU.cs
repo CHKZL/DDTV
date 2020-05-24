@@ -128,7 +128,7 @@ namespace Auxiliary
                 //数据源
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
                 //第一次使用DDTV
-                MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsSetUpped", "1") == "0" ? false :true;
+                MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
             }
             else if (模式 == 1)
             {
