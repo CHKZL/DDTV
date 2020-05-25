@@ -37,7 +37,7 @@ namespace DDTV_New.window
                 欢迎使用层,
                 设置数据源层,
                 登录bilibili层,
-                导入所有VTBVUP层,
+                导入VTBVUP数据层,
                 完成层
             };
 
@@ -110,7 +110,7 @@ namespace DDTV_New.window
             this.Close();
         }
 
-        private void 导入所有VTBVUP层_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void 导入VTBVUP数据层_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if ((bool)e.NewValue) // 显示
             {

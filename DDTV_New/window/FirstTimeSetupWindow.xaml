@@ -69,9 +69,9 @@
                 <Button x:Name="登录bilibili按钮" Content="登录Bilibili" Margin="0 50 0 0" Width="100" Height="50" Click="登录bilibili按钮_Click"></Button>
             </StackPanel>
         </Grid>
-        <!--导入所有VTB/VUP-->
-        <Grid x:Name="导入所有VTBVUP层" Grid.Column="1" Margin="40" Visibility="Collapsed" IsVisibleChanged="导入所有VTBVUP层_IsVisibleChanged">
-            <TextBlock Text="导入所有VTB/VUP" FontSize="40"></TextBlock>
+        <!--导入VTB/VUP数据-->
+        <Grid x:Name="导入VTBVUP数据层" Grid.Column="1" Margin="40" Visibility="Collapsed" IsVisibleChanged="导入VTBVUP数据层_IsVisibleChanged">
+            <TextBlock Text="导入VTB/VUP数据" FontSize="40"></TextBlock>
             <StackPanel Margin="0 50 0 0">
                 <TextBlock x:Name="导入VTBVUP提示文本" Text="" FontSize="20" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
             </StackPanel>
