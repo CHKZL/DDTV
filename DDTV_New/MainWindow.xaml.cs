@@ -139,7 +139,11 @@ namespace DDTV_New
                     MessageBox.Show("未完成初始化，请重新启动程序");
                     Environment.Exit(-1);
                 }
-                bilibili.周期更新B站房间状态();
+                NewThreadTask.Run(runOnLocalThread =>
+                 {
+                     bilibili.周期更新B站房间状态();
+                 }, this);
+
             }
             this.Show();
         }
@@ -157,7 +161,10 @@ namespace DDTV_New
             }
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
-                MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
+                if (!MMPU.是否第一次使用DDTV)
+                {
+                    MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
+                }
             }
             else
             {
@@ -599,7 +606,11 @@ namespace DDTV_New
                 MMPU.是否提示一键导入 = !MMPU.是否提示一键导入;
                 if (正在直播.Count + 未直播.Count < 1)
                 {
-                    MessageBox.Show("房间配置文件为空，没有监控中的房间，请手动添加或在设置界面登录后一键导入");
+                    if (!MMPU.是否第一次使用DDTV)
+                    {
+                        MessageBox.Show("房间配置文件为空，没有监控中的房间，请手动添加或在设置界面登录后一键导入");
+                    }
+                 
                 }
             }
         }
