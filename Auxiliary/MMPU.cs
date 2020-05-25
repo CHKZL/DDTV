@@ -84,6 +84,7 @@ namespace Auxiliary
                     输出到文件 = false
                 });
                 启动模式 = 0;
+                update.检查升级程序是否需要升级();
             }
             else if (模式 == 1)
             {
