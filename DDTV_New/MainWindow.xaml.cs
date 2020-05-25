@@ -142,8 +142,12 @@ namespace DDTV_New
                 NewThreadTask.Run(runOnLocalThread =>
                  {
                      bilibili.周期更新B站房间状态();
-                 }, this);
-
+                 }, this);            
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    登陆B站账号.IsEnabled = false;
+                    注销B站账号.IsEnabled = true;
+                }
             }
             this.Show();
         }
