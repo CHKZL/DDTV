@@ -78,7 +78,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = true,
                     系统错误信息 = true,
@@ -455,12 +455,13 @@ namespace Auxiliary
                                 {
                                     try
                                     {
+                                        InfoLog.InfoPrintf("网络房间缓存vtbs加载失败", InfoLog.InfoClass.Debug);
                                         roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
                                     catch (Exception e2)
                                     {
-
+                                        InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
                                         roomHtml = File.ReadAllText("AddList.json");
                                     }
                                 }
