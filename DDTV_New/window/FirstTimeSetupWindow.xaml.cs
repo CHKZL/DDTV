@@ -279,9 +279,16 @@ namespace DDTV_New.window
         }
         private void 跳过设置按钮_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("跳过设置默认使用vtbs数据源，如需设置和导入关注列表，请在主界面“设置界面”进行设置");
-            _数据源 = 0;
-            完成初始化();
+            MessageBoxResult dr = MessageBox.Show("跳过设置默认使用vtbs数据源，如需设置和导入关注列表，请在主界面“设置界面”进行设置,点击[OK]跳过引导页", "确认跳过引导设置吗？", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                _数据源 = 0;
+                完成初始化();
+            }
+            else
+            {
+              
+            }
         }
     }
 }
