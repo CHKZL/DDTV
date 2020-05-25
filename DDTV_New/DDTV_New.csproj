@@ -171,6 +171,9 @@
     <Compile Include="window\BiliLoginWindowQR.xaml.cs">
       <DependentUpon>BiliLoginWindowQR.xaml</DependentUpon>
     </Compile>
+    <Compile Include="window\FirstTimeSetupWindow.xaml.cs">
+      <DependentUpon>FirstTimeSetupWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="window\NetWorkRoomList.xaml.cs">
       <DependentUpon>NetWorkRoomList.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="UserControl1.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="window\FirstTimeSetupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -788,6 +795,7 @@
     <Content Include="libvlc\win-x64\plugins\visualization\libgoom_plugin.dll" />
     <Content Include="libvlc\win-x64\plugins\visualization\libprojectm_plugin.dll" />
     <Content Include="libvlc\win-x64\plugins\visualization\libvisual_plugin.dll" />
+    <Resource Include="更新日志\2.0.3.3a.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
