@@ -22,6 +22,8 @@ using ReactiveUI;
 using System.Reactive.Disposables;
 using DDTV_New.Utility;
 using System.Diagnostics;
+using DDTV_New.window;
+using System.Configuration;
 
 namespace DDTV_New
 {
@@ -51,6 +53,8 @@ namespace DDTV_New
 
         public MainWindow()
         {
+            
+
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
 
@@ -122,6 +126,30 @@ namespace DDTV_New
 #pragma warning restore CA5359 // Do Not Disable Certificate Validation
             ServicePointManager.DefaultConnectionLimit = 999;
             ServicePointManager.MaxServicePoints = 999;
+
+            if (MMPU.是否第一次使用DDTV && string.IsNullOrEmpty(MMPU.Cookie))
+            {
+                // 启动初始化配置窗口
+                FirstTimeSetupWindow w = new FirstTimeSetupWindow();
+                this.Hide();
+                w.ShowDialog();
+
+                if (MMPU.是否第一次使用DDTV) // 非正常关闭窗口
+                {
+                    MessageBox.Show("未完成初始化，请重新启动程序");
+                    Environment.Exit(-1);
+                }
+                NewThreadTask.Run(runOnLocalThread =>
+                 {
+                     bilibili.周期更新B站房间状态();
+                 }, this);            
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    登陆B站账号.IsEnabled = false;
+                    注销B站账号.IsEnabled = true;
+                }
+            }
+            this.Show();
         }
 
         /// <summary>
@@ -137,7 +165,10 @@ namespace DDTV_New
             }
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
-                MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
+                if (!MMPU.是否第一次使用DDTV)
+                {
+                    MessageBox.Show("BILIBILI登陆信息已过期或丢失，推荐重新登陆");
+                }
             }
             else
             {
@@ -151,10 +182,10 @@ namespace DDTV_New
                 公告项目启动();
             });
 
-            NewThreadTask.Run(() =>
-            {
-                MMPU.加载网络房间方法.更新网络房间缓存();
-            });
+            //NewThreadTask.Run(() =>
+            //{
+            //    MMPU.加载网络房间方法.更新网络房间缓存();
+            //});
 
             //房间刷新线程
             NewThreadTask.Loop(runOnLocalThread =>
@@ -489,6 +520,13 @@ namespace DDTV_New
                             }
                         }
                     }
+                    else
+                    {
+                        if (MMPU.启动模式 == 0)
+                        {   
+                            update.检查升级程序是否需要升级();
+                        }
+                    }
                 }
             });
             //推送内容1
@@ -579,7 +617,11 @@ namespace DDTV_New
                 MMPU.是否提示一键导入 = !MMPU.是否提示一键导入;
                 if (正在直播.Count + 未直播.Count < 1)
                 {
-                    MessageBox.Show("房间配置文件为空，没有监控中的房间，请手动添加或在设置界面登录后一键导入");
+                    if (!MMPU.是否第一次使用DDTV)
+                    {
+                        MessageBox.Show("房间配置文件为空，没有监控中的房间，请手动添加或在设置界面登录后一键导入");
+                    }
+                 
                 }
             }
         }
