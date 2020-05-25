@@ -516,6 +516,13 @@ namespace DDTV_New
                             }
                         }
                     }
+                    else
+                    {
+                        if (MMPU.启动模式 == 0)
+                        {   
+                            update.检查升级程序是否需要升级();
+                        }
+                    }
                 }
             });
             //推送内容1

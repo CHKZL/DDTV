@@ -63,6 +63,7 @@ namespace Auxiliary
         public static int DDC采集间隔 = 1000;
         public static int 数据源 = 0;//0：vdb   1：B API
         public static bool 是否第一次使用DDTV = true;
+        public static bool 是否有新版本 = true;
        
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -84,7 +85,6 @@ namespace Auxiliary
                     输出到文件 = false
                 });
                 启动模式 = 0;
-                update.检查升级程序是否需要升级();
             }
             else if (模式 == 1)
             {
