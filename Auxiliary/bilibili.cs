@@ -86,10 +86,34 @@ namespace Auxiliary
                         roomtask.直播状态 = false;
                     }
                 }
+                InfoLog.InfoPrintf("Vtbs数据加载成功", InfoLog.InfoClass.Debug);
             }
             catch (Exception e)
             {
-                使用B站API更新房间状态();
+                InfoLog.InfoPrintf("Vtbs数据加载失败，使用备用数据源开始获取", InfoLog.InfoClass.Debug);
+                try
+                {   
+                    JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.TcpSend(Server.RequestCode.GET_LIVELSIT, "{}", true));
+                    foreach (var roomtask in RoomList)
+                    {
+                        roomtask.直播状态 = false;
+                        if (JO.ToString().Contains(roomtask.房间号))
+                        {
+                            roomtask.直播状态 = true;
+                        }
+                        else
+                        {
+                            roomtask.直播状态 = false;
+                        }
+                    }
+                    InfoLog.InfoPrintf("备用数据源加载成功", InfoLog.InfoClass.Debug);
+                }
+                catch (Exception)
+                {
+                    InfoLog.InfoPrintf("备用缓存数据加载失败，使用原生阿Bapi开始获取开始获取", InfoLog.InfoClass.Debug);
+                    使用B站API更新房间状态();
+                }
+               
             }
         }
         public static void 使用B站API更新房间状态()

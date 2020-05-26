@@ -731,14 +731,25 @@ namespace DDTV_New
         public static string 已选内容 = "";
         private void 添加直播列表按钮点击事件(object sender, RoutedEventArgs e)
         {
-            MessageBoxResult dr = MessageBox.Show("现在DDTV主数据源来自vdb.vtbs.moe，点击确定跳转vtbs网页提交新的数据\r\r提交后等待平台后台同步完成一键导入即可导入新的监控列表\r\rvtbs.moe是一个V圈的分布式DD大数据平台，可以查询直播人气、舰队、V圈宏观经济、直播状态、视频势数据、风云榜等数据\n\nDDTV客户端安装在后台也回把直播数据统计发送到vtbs，帮助vtbs.moe持续运行", "添加新的监控", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            if (dr == MessageBoxResult.OK)
+            try
             {
-                Process.Start("https://submit.vtbs.moe/");
+                MessageBoxResult dr = MessageBox.Show(
+            "现在DDTV主数据源来自vdb.vtbs.moe，点击确定跳转vtbs网页提交新的数据\r\r提交后等待平台后台同步完成一键导入即可导入新的监控列表\r\rvtbs.moe是一个V圈的分布式DD大数据平台，可以查询直播人气、舰队、V圈宏观经济、直播状态、视频势数据、风云榜等数据\n\nDDTV客户端安装在后台也回把直播数据统计发送到vtbs，帮助vtbs.moe持续运行",
+            "添加新的监控",
+            MessageBoxButton.OKCancel,
+            MessageBoxImage.Question);
+                if (dr == MessageBoxResult.OK)
+                {
+                    Process.Start("https://submit.vtbs.moe/");
+                }
+                else
+                {
+                    ;
+                }
             }
-            else
+            catch (Exception)
             {
-                ;
+                MessageBox.Show("未找到默认浏览器，请手动在浏览器输入网址submit.vtbs.moe浏览");
             }
             return;
             等待框.Visibility = Visibility.Visible;

@@ -28,7 +28,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.3.1a";
+        public static string 版本号 = "2.0.3.3a";
         public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
@@ -78,7 +78,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = true,
                     系统错误信息 = true,
@@ -130,10 +130,13 @@ namespace Auxiliary
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
+
             }
             else if (模式 == 1)
             {
             }
+            //转码功能使能
+            MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             //检查配置文件
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
 
@@ -148,8 +151,7 @@ namespace Auxiliary
             //直播更新时间
             MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "40"));
 
-            //转码功能使能
-            MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
+           
             #endregion
             InfoLog.InfoPrintf("通用配置加载完成", InfoLog.InfoClass.Debug);
 
@@ -455,12 +457,13 @@ namespace Auxiliary
                                 {
                                     try
                                     {
+                                        InfoLog.InfoPrintf("网络房间缓存vtbs加载失败", InfoLog.InfoClass.Debug);
                                         roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
                                     catch (Exception e2)
                                     {
-
+                                        InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
                                         roomHtml = File.ReadAllText("AddList.json");
                                     }
                                 }
