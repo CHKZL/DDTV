@@ -285,11 +285,16 @@ namespace DDTV_New
                 默认下载路径.Text = MMPU.下载储存目录;
                 //读取字幕弹幕颜色
                 {
-                    SolidColorBrush S1 = new SolidColorBrush(Color.FromArgb(0xFF, Convert.ToByte(MMPU.默认字幕颜色.Split(',')[1], 16), Convert.ToByte(MMPU.默认字幕颜色.Split(',')[2], 16), Convert.ToByte(MMPU.默认字幕颜色.Split(',')[3], 16)));
+                    byte A2 = Convert.ToByte(MMPU.默认字幕颜色.Split(',')[1], 16);
+                    byte A3 = Convert.ToByte(MMPU.默认字幕颜色.Split(',')[2], 16);
+                    byte A4 = Convert.ToByte(MMPU.默认字幕颜色.Split(',')[3], 16);
+                    SolidColorBrush S1 = new SolidColorBrush(Color.FromArgb(0xFF, A2, A3, A4));
                     字幕默认颜色.Foreground = S1;
                     字幕颜色 = S1;
-
-                    SolidColorBrush S2 = new SolidColorBrush(Color.FromArgb(0xFF, Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[1], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[2], 16), Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[3], 16)));
+                    byte B2 = Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[1], 16);
+                    byte B3 = Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[2], 16);
+                    byte B4 = Convert.ToByte(MMPU.默认弹幕颜色.Split(',')[3], 16);
+                    SolidColorBrush S2 = new SolidColorBrush(Color.FromArgb(0xFF, B2, B3, B4));
                     弹幕默认颜色.Foreground = S2;
                     弹幕颜色 = S2;
                 }
