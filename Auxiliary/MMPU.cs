@@ -130,10 +130,13 @@ namespace Auxiliary
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
+
             }
             else if (模式 == 1)
             {
             }
+            //转码功能使能
+            MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             //检查配置文件
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
 
@@ -148,8 +151,7 @@ namespace Auxiliary
             //直播更新时间
             MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "40"));
 
-            //转码功能使能
-            MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
+           
             #endregion
             InfoLog.InfoPrintf("通用配置加载完成", InfoLog.InfoClass.Debug);
 
