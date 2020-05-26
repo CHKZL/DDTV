@@ -36,15 +36,14 @@ namespace DDTV_New
         public static int 播放器版本 = 1;
         //  public static List<硬解播放器.Form1> playList2 = new List<硬解播放器.Form1>();
 
-        public static readonly DependencyProperty ViewModelProperty = DependencyProperty
-            .Register(nameof(ViewModel), typeof(MainViewModel), typeof(MainWindow));
-        public MainViewModel ViewModel
+        public MainViewModel ViewModel;
+        MainViewModel IViewFor<MainViewModel>.ViewModel 
         {
-            get => (MainViewModel)GetValue(ViewModelProperty);
-            set => SetValue(ViewModelProperty, value);
+            get => ViewModel;
+            set => ViewModel = (MainViewModel)value;
         }
-        object IViewFor.ViewModel
-        {
+        object IViewFor.ViewModel 
+        { 
             get => ViewModel;
             set => ViewModel = (MainViewModel)value;
         }
@@ -101,6 +100,8 @@ namespace DDTV_New
                 this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.帮助按钮);
                 this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.关于按钮);
                 this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.DDNA列表按钮);
+                this.OneWayBind(ViewModel, vm => vm.选中内容文本, v => v.选中内容1.Content)
+                    .DisposeWith(disposable);
             });
 
             ViewModel.切换界面命令.Execute("home").Subscribe();
@@ -675,6 +676,7 @@ namespace DDTV_New
             });
         }
         NotifyIcon notifyIcon;
+
         private void 最小化按钮_Click(object sender, MouseButtonEventArgs e)
         {
             minimizeWindow();
@@ -707,12 +709,8 @@ namespace DDTV_New
                 Icon = DDTV_New.Properties.Resources.DDTV,//程序图标
                 Visible = true
             };
-            notifyIcon.MouseDoubleClick += OnNotifyIconDoubleClick;
+            notifyIcon.MouseDoubleClick += (sender, e) => this.Show();
             this.notifyIcon.ShowBalloonTip(1000);
-        }
-        private void OnNotifyIconDoubleClick(object sender, EventArgs e)
-        {
-            this.Show();
         }
 
         private void 直播表单击事件(object sender, SelectionChangedEventArgs e)
@@ -722,13 +720,11 @@ namespace DDTV_New
                 System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
                 if (LV.Items.Count != 0)
                 {
-                    已选内容 = LV.SelectedItems[0].ToString();
-                    选中内容1.Content = MMPU.获取livelist平台和唯一码.平台(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.唯一码(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.名称(已选内容);
+                    ViewModel.当前选中直播间 = new 直播间(LV.SelectedItems[0].ToString());
                 }
             }
             catch (Exception) { }
         }
-        public static string 已选内容 = "";
         private void 添加直播列表按钮点击事件(object sender, RoutedEventArgs e)
         {
             try
@@ -758,13 +754,18 @@ namespace DDTV_New
         }
         private void 修改直播列表按钮点击事件(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(已选内容))
+            if (ViewModel.当前选中直播间 == null)
             {
                 MessageBox.Show("未选择");
                 return;
             }
             等待框.Visibility = Visibility.Visible;
-            AddMonitoringList AML = new AddMonitoringList("修改单推属性", MMPU.获取livelist平台和唯一码.名称(已选内容), MMPU.获取livelist平台和唯一码.原名(已选内容), MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), MMPU.获取livelist平台和唯一码.状态(已选内容) == "●直播中" ? true : false);
+            AddMonitoringList AML = new AddMonitoringList("修改单推属性",
+                ViewModel.当前选中直播间.名称,
+                ViewModel.当前选中直播间.原名,
+                ViewModel.当前选中直播间.平台,
+                ViewModel.当前选中直播间.唯一码,
+                ViewModel.当前选中直播间.是否直播中);
             AML.ShowDialog();
         }
 
@@ -1022,7 +1023,7 @@ namespace DDTV_New
 
         private void 直播列表删除按钮点击事件(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(已选内容))
+            if (ViewModel.当前选中直播间 == null)
             {
                 MessageBox.Show("未选择");
                 return;
@@ -1036,7 +1037,7 @@ namespace DDTV_New
             var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
             foreach (var item in rlc2.data)
             {
-                if (item.RoomNumber == MMPU.获取livelist平台和唯一码.唯一码(已选内容))
+                if (item.RoomNumber == ViewModel.当前选中直播间.唯一码)
                 {
                     rlc2.data.Remove(item);
                     break;
@@ -1045,9 +1046,9 @@ namespace DDTV_New
 
             string JOO = JsonConvert.SerializeObject(rlc2);
             MMPU.储存文本(JOO, RoomConfigFile);
-            if (MMPU.获取livelist平台和唯一码.平台(已选内容) == "bilibili")
+            if (ViewModel.当前选中直播间.平台 == "bilibili")
             {
-                InitializeRoomList(int.Parse(MMPU.获取livelist平台和唯一码.唯一码(已选内容)), true, false);
+                InitializeRoomList(int.Parse(ViewModel.当前选中直播间.唯一码), true, false);
             }
             else
             {
@@ -1055,11 +1056,6 @@ namespace DDTV_New
             }
             //更新房间列表(MMPU.获取livelist平台和唯一码(已选内容, "平台"), MMPU.获取livelist平台和唯一码(已选内容, "唯一码"),0);
             MessageBox.Show("删除完成");
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void 修改录制状态点击事件(object sender, RoutedEventArgs e)
@@ -1093,9 +1089,9 @@ namespace DDTV_New
                     return;
                 }
             }
-            InfoLog.InfoPrintf(已选内容, InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf(ViewModel.当前选中直播间.ToString(), InfoLog.InfoClass.Debug);
             bool 是否改过 = false;
-            if (string.IsNullOrEmpty(已选内容))
+            if (ViewModel.当前选中直播间 == null)
             {
                 MessageBox.Show("未选择");
                 return;
@@ -1119,7 +1115,7 @@ namespace DDTV_New
             int rlclen = bilibili房间主表.Count() + youtube房间主表.Count();
             for (int i = 0; i < rlclen; i++)
             {
-                string 唯一码 = MMPU.获取livelist平台和唯一码.唯一码(已选内容);
+                string 唯一码 = ViewModel.当前选中直播间.唯一码;
                 if (房间表[i].唯一码 == 唯一码)
                 {
                     if (!是否改过)
@@ -1129,43 +1125,25 @@ namespace DDTV_New
                         房间表.Remove(房间表[i]);
                         rlclen--;
                         i--;
-                        bool 是否录制 = MMPU.获取livelist平台和唯一码.是否录制(已选内容) == "√" ? true : false;
-                        bool 是否提醒 = MMPU.获取livelist平台和唯一码.是否提醒(已选内容) == "√" ? true : false;
                         if (a)
                         {
-                            是否录制 = !是否录制;
-                            if (是否录制)
-                            {
-                                已选内容 = 已选内容.Replace("是否录制 = ", "是否录制 = √");
-                            }
-                            else
-                            {
-                                已选内容 = 已选内容.Replace("是否录制 = √", "是否录制 = ");
-                            }
+                            ViewModel.当前选中直播间.是否录制 = !ViewModel.当前选中直播间.是否录制;
                         }
                         else
                         {
-                            是否提醒 = !是否提醒;
-                            if (是否提醒)
-                            {
-                                已选内容 = 已选内容.Replace("是否提醒 = ", "是否提醒 = √");
-                            }
-                            else
-                            {
-                                已选内容 = 已选内容.Replace("是否提醒 = √", "是否提醒 = ");
-                            }
+                            ViewModel.当前选中直播间.是否提醒 = !ViewModel.当前选中直播间.是否提醒;
                         }
 
                         RB.data.Add(new RoomCadr
                         {
-                            Name = MMPU.获取livelist平台和唯一码.名称(已选内容),
-                            RoomNumber = MMPU.获取livelist平台和唯一码.唯一码(已选内容),
-                            Types = MMPU.获取livelist平台和唯一码.平台(已选内容),
-                            RemindStatus = 是否提醒,
-                            status = MMPU.获取livelist平台和唯一码.状态(已选内容) == "●直播中" ? true : false,
-                            VideoStatus = 是否录制,
-                            OfficialName = MMPU.获取livelist平台和唯一码.原名(已选内容),
-                            LiveStatus = MMPU.获取livelist平台和唯一码.状态(已选内容) == "●直播中" ? true : false
+                            Name = ViewModel.当前选中直播间.名称,
+                            RoomNumber = ViewModel.当前选中直播间.唯一码,
+                            Types = ViewModel.当前选中直播间.平台,
+                            RemindStatus = ViewModel.当前选中直播间.是否提醒,
+                            status = ViewModel.当前选中直播间.是否直播中,
+                            VideoStatus = ViewModel.当前选中直播间.是否录制,
+                            OfficialName = ViewModel.当前选中直播间.原名,
+                            LiveStatus = ViewModel.当前选中直播间.是否直播中
                         });
                     }
                 }
@@ -1196,18 +1174,18 @@ namespace DDTV_New
 
         private void 录制按钮点击事件(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(已选内容))
+            if (ViewModel.当前选中直播间 == null)
             {
                 MessageBox.Show("未选择");
                 return;
             }
             NewThreadTask.Run(() =>
             {
-                switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
+                switch (ViewModel.当前选中直播间.平台)
                 {
                     case "bilibili":
                         {
-                            if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
+                            if (!bilibili.根据房间号获取房间信息.是否正在直播(ViewModel.当前选中直播间.唯一码))
                             {
                                 MessageBox.Show("该房间当前未直播");
                                 return;
@@ -1243,7 +1221,7 @@ namespace DDTV_New
                         MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                         return;
                 }
-                string 唯一码 = MMPU.获取livelist平台和唯一码.唯一码(已选内容);
+                string 唯一码 = ViewModel.当前选中直播间.唯一码;
                 foreach (var item in MMPU.DownList)
                 {
                     if (item.DownIofo.房间_频道号 == 唯一码 && item.DownIofo.结束时间 == 0)
@@ -1253,18 +1231,28 @@ namespace DDTV_New
                     }
                 }
                 string GUID = Guid.NewGuid().ToString();
-                string 标题 = bilibili.根据房间号获取房间信息.获取标题(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                string 标题 = bilibili.根据房间号获取房间信息.获取标题(ViewModel.当前选中直播间.唯一码);
                 string 下载地址 = string.Empty;
                 try
                 {
-                    下载地址 = bilibili.根据房间号获取房间信息.下载地址(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                    下载地址 = bilibili.根据房间号获取房间信息.下载地址(ViewModel.当前选中直播间.唯一码);
                 }
                 catch (Exception)
                 {
                     MessageBox.Show("获取下载地址失败");
                     return;
                 }
-                Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true, MMPU.获取livelist平台和唯一码.名称(已选内容) + "-" + MMPU.获取livelist平台和唯一码.原名(已选内容), false, null);
+                Downloader 下载对象 = Downloader.新建下载对象(
+                    ViewModel.当前选中直播间.平台,
+                    ViewModel.当前选中直播间.唯一码, 
+                    标题, 
+                    GUID, 
+                    下载地址, 
+                    "手动下载任务", 
+                    true,
+                    ViewModel.当前选中直播间.名称 + "-" + ViewModel.当前选中直播间.原名,
+                    false, 
+                    null);
 
                 MessageBox.Show("下载任务添加完成");
             });
@@ -1278,28 +1266,23 @@ namespace DDTV_New
 
         private void 跳转到网页按钮点击事件(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(已选内容))
+            if (ViewModel.当前选中直播间 == null)
             {
                 MessageBox.Show("未选择");
                 return;
             }
-            switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
+            switch (ViewModel.当前选中直播间.平台)
             {
                 case "bilibili":
-                    Process.Start("https://live.bilibili.com/" + MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                    Process.Start("https://live.bilibili.com/" + ViewModel.当前选中直播间.唯一码);
                     break;
                 case "youtube":
-                    Process.Start("https://www.youtube.com/channel/" + MMPU.获取livelist平台和唯一码.唯一码(已选内容) + "/live");
+                    Process.Start("https://www.youtube.com/channel/" + ViewModel.当前选中直播间.唯一码 + "/live");
                     break;
                 default:
                     MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
                     return;
             }
-        }
-
-        private void Slider_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-
         }
 
         private void 修改默认下载目录按钮事件(object sender, RoutedEventArgs e)
@@ -1543,10 +1526,6 @@ namespace DDTV_New
             }, this);
         }
 
-        private void Image_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
         private void 获取网络列表按钮点击事件(object sender, RoutedEventArgs e)
         {
             //window.NetRoomList NRL = new window.NetRoomList();
@@ -1663,11 +1642,6 @@ namespace DDTV_New
 
                 MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，请多等待几秒");
             });
-        }
-
-        private void 播放本地视频文件按钮_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void 播放缓冲时长_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
