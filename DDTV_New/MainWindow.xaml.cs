@@ -1,12 +1,16 @@
 ﻿using Auxiliary;
+using DDTV_New.Utility;
+using DDTV_New.window;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Reactive.Disposables;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,15 +19,9 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using static Auxiliary.bilibili;
-using MessageBox = System.Windows.MessageBox;
 using static Auxiliary.RoomInit;
 using Clipboard = System.Windows.Clipboard;
-using ReactiveUI;
-using System.Reactive.Disposables;
-using DDTV_New.Utility;
-using System.Diagnostics;
-using DDTV_New.window;
-using System.Configuration;
+using MessageBox = System.Windows.MessageBox;
 
 namespace DDTV_New
 {
@@ -53,49 +51,59 @@ namespace DDTV_New
 
         public MainWindow()
         {
-            
-
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
 
+            软件启动配置初始化();
+
             ViewModel = new MainViewModel();
+
+            ViewModel.所有层 = new Dictionary<string, Grid>
+            {
+                { "home", home },
+                { "top层", top层 },
+                { "直播层", 直播层 },
+                { "设置层", 设置层 },
+                { "关于层", 关于层 },
+                { "帮助层", 帮助层 },
+                { "插件层", 插件层 },
+                { "工具层", 工具层 },
+                { "AOE直播层", AOE直播层 }
+            };
 
             this.WhenActivated(disposable =>
             {
-                this.OneWayBind(ViewModel, vm => vm.TanoshiNum, v => v.TanoshiNumLabel.Content)
+                this.OneWayBind(ViewModel, vm => vm.单推数量, v => v.单推数量标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.TabText, v => v.TabTextLabel.Content)
+                this.OneWayBind(ViewModel, vm => vm.当前状态, v => v.当前状态标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.PushNotification, v => v.动态推送1.Content)
+                this.OneWayBind(ViewModel, vm => vm.动态推送1, v => v.动态推送1标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.ServerDelayBilibiliText, v => v.国内服务器延迟.Content)
+                this.OneWayBind(ViewModel, vm => vm.国内服务器延迟文本, v => v.国内服务器延迟标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.serverVdbText, v => v.数据源服务器延迟.Content)
+                this.OneWayBind(ViewModel, vm => vm.数据源服务器延迟文本, v => v.数据源服务器延迟标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.ServerDelayYoutubeText, v => v.国外服务器延迟.Content)
+                this.OneWayBind(ViewModel, vm => vm.国外服务器延迟文本, v => v.国外服务器延迟标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.LatestDataUpdateTimeText, v => v.newtime.Content)
+                this.OneWayBind(ViewModel, vm => vm.数据更新时间文本, v => v.数据更新时间标签.Content)
                     .DisposeWith(disposable);
-                this.OneWayBind(ViewModel, vm => vm.Announcement, v => v.推送内容1.Text)
+                this.OneWayBind(ViewModel, vm => vm.推送内容1, v => v.推送内容1标签.Text)
                     .DisposeWith(disposable);
+                this.Bind(ViewModel, vm => vm.默认音量, v => v.默认音量滑块.Value)
+                    .DisposeWith(disposable);
+                this.OneWayBind(ViewModel, vm => vm.默认音量, v => v.默认音量标签.Content)
+                    .DisposeWith(disposable);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.返回按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.关注列表按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.插件按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.其他工具按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.设置按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.帮助按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.关于按钮);
+                this.BindCommand(ViewModel, vm => vm.切换界面命令, v => v.DDNA列表按钮);
             });
 
-            _grids = new List<Grid>
-            {
-                home,
-                top层,
-                直播层,
-                设置层,
-                关于层,
-                帮助层,
-                插件层,
-                工具层,
-                AOE直播层,
-            };
-
-            切换界面(home);
-
-            软件启动配置初始化();
+            ViewModel.切换界面命令.Execute("home").Subscribe();
 
             #region 命令行参数处理
             Dictionary<string, string> arguments;
@@ -152,11 +160,6 @@ namespace DDTV_New
             this.Show();
         }
 
-        /// <summary>
-        /// 所有层的集合
-        /// </summary>
-        private List<Grid> _grids;
-
         public void 软件启动配置初始化()
         {
             if (!MMPU.配置文件初始化(0))
@@ -191,7 +194,7 @@ namespace DDTV_New
             NewThreadTask.Loop(runOnLocalThread =>
             {
                 刷新房间列表UI(runOnLocalThread);
-                runOnLocalThread(() => ViewModel.LatestDataUpdateTime = DateTime.Now);
+                runOnLocalThread(() => ViewModel.数据更新时间 = DateTime.Now);
 
                 while (true)
                 {
@@ -218,12 +221,12 @@ namespace DDTV_New
                 double 国内 = MMPU.测试延迟("https://live.bilibili.com");
                 if (国内 > 0)
                 {
-                    runOnLocalThread(() => ViewModel.ServerDelayBilibili = 国内);
+                    runOnLocalThread(() => ViewModel.国内服务器延迟 = 国内);
                     MMPU.是否能连接阿B = true;
                 }
                 else
                 {
-                    runOnLocalThread(() => ViewModel.ServerDelayBilibili = -2.0);
+                    runOnLocalThread(() => ViewModel.国内服务器延迟 = -2.0);
                     MMPU.是否能连接阿B = false;
                 }
 
@@ -232,25 +235,25 @@ namespace DDTV_New
                     double 国外 = MMPU.测试延迟("https://www.youtube.com");
                     if (国外 > 0)
                     {
-                        runOnLocalThread(() => ViewModel.ServerDelayYoutube = 国外);
+                        runOnLocalThread(() => ViewModel.国外服务器延迟 = 国外);
                         MMPU.是否能连接404 = true;
                     }
                     else
                     {
-                        runOnLocalThread(() => ViewModel.ServerDelayYoutube = -2.0);
+                        runOnLocalThread(() => ViewModel.国外服务器延迟 = -2.0);
                         MMPU.是否能连接404 = false;
                     }
                 }
                 else
                 {
                     MMPU.是否能连接404 = false;
-                    runOnLocalThread(() => ViewModel.ServerDelayYoutube = -1.0);
+                    runOnLocalThread(() => ViewModel.国外服务器延迟 = -1.0);
                 }
                 {
                     double vdb延迟 = MMPU.测试延迟("https://vtbs.moe/");
                     if (vdb延迟 > 0)
                     {
-                        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
+                        runOnLocalThread(() => ViewModel.数据源服务器延迟 = vdb延迟);
                         超时次数 = 0;
                         MMPU.数据源 = 0;
                     }
@@ -259,7 +262,7 @@ namespace DDTV_New
                         超时次数++;
                         if (超时次数 > 5)
                         {
-                            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
+                            runOnLocalThread(() => ViewModel.数据源服务器延迟 = -2.0);
                             MMPU.数据源 = 1;
                         }
 
@@ -280,8 +283,6 @@ namespace DDTV_New
             }
             //加载配置文件
             {
-                默认音量值显示.Content = MMPU.默认音量;
-                修改默认音量.Value = MMPU.默认音量;
                 默认下载路径.Text = MMPU.下载储存目录;
                 //读取字幕弹幕颜色
                 {
@@ -297,10 +298,6 @@ namespace DDTV_New
                 {
                     字幕文字大小.Text = MMPU.默认字幕大小.ToString();
                     弹幕文字大小.Text = MMPU.默认弹幕大小.ToString();
-                }
-                //默认音量
-                {
-                    修改默认音量.Value = MMPU.默认音量;
                 }
                 //播放窗口默认大小
                 {
@@ -465,7 +462,7 @@ namespace DDTV_New
                 {
                     string 动态推送内容 = MMPU.TcpSend(
                             Server.RequestCode.GET_DYNAMIC_NOTIFICATION, "{}", true);
-                    runOnLocalThread(() => ViewModel.PushNotification = 动态推送内容);
+                    runOnLocalThread(() => ViewModel.动态推送1 = 动态推送内容);
                 }
             }, this, 3600 * 1000);
             //版本检查
@@ -536,7 +533,7 @@ namespace DDTV_New
                     Server.RequestCode.GET_PUSH_NOTIFICATION_1, "{}", true);
                 if (推送内容1text.Length > 0)
                 {
-                    runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);
+                    runOnLocalThread(() => ViewModel.推送内容1 = 推送内容1text);
                 }
             }, this);
 
@@ -607,9 +604,9 @@ namespace DDTV_New
                 }
             }
             int 单推人数 = 正在直播.Count + 未直播.Count;
-            runOnLocalThread(() => ViewModel.TanoshiNum = 单推人数);
-            runOnLocalThread(() => ViewModel.NowStreamingNum = 正在直播.Count);
-            runOnLocalThread(() => ViewModel.NotStreamingNum = 未直播.Count);
+            runOnLocalThread(() => ViewModel.单推数量 = 单推人数);
+            runOnLocalThread(() => ViewModel.直播中数量 = 正在直播.Count);
+            runOnLocalThread(() => ViewModel.未直播数量 = 未直播.Count);
 
             runOnLocalThread(() => 等待框.Visibility = Visibility.Collapsed);
             if (MMPU.是否提示一键导入)
@@ -647,26 +644,10 @@ namespace DDTV_New
             }
             catch (Exception) { }
         }
-        private void 工具箱_按钮事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(工具层);
-        }
-        private void 帮助_按钮事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(帮助层);
-        }
-        private void DDNA列表_按钮事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(AOE直播层);
-        }
         private void 主站视频播放_按钮事件(object sender, MouseButtonEventArgs e)
         {
             //window.主站视频播放选择窗 MainBili = new window.主站视频播放选择窗();
             //MainBili.Show();
-        }
-        private void 关于_按钮事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(关于层);
         }
 
         private void 关闭按钮_Click(object sender, MouseButtonEventArgs e)
@@ -732,46 +713,6 @@ namespace DDTV_New
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
             this.Show();
-        }
-        private void 返回首页_点击事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(home);
-        }
-
-        /// <summary>
-        /// 切换界面
-        /// </summary>
-        /// <param name="grid">要显示的界面Grid对象</param>
-        public void 切换界面(Grid grid)
-        {
-            foreach (Grid g in _grids)
-            {
-                if (grid == g)
-                {
-                    if (grid != home) top层.Visibility = Visibility.Visible;
-                    g.Visibility = Visibility.Visible;
-                }
-                else g.Visibility = Visibility.Collapsed;
-            }
-        }
-
-        private void 默认音量修改事件(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            默认音量值显示.Content = (int)修改默认音量.Value;
-            MMPU.默认音量 = (int)修改默认音量.Value;
-            MMPU.修改默认音量设置(MMPU.默认音量);
-        }
-        private void 关注列表_点击事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(直播层);
-        }
-        private void 设置层_点击事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(设置层);
-        }
-        private void 插件_点击事件(object sender, MouseButtonEventArgs e)
-        {
-            切换界面(插件层);
         }
 
         private void 直播表单击事件(object sender, SelectionChangedEventArgs e)

@@ -9,6 +9,22 @@
         Title="MainWindow" Height="515" Width="800"
         AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515" Closing="Window_Closing">
 
+    <Window.Resources>
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid x:Name="bk">
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
@@ -17,27 +33,39 @@
         <Grid x:Name="home" Width="800" Height="515" >
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
-            <Label x:Name="TabTextLabel" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
-            <Image Margin="110,326,590,89" Source="res/ico/barrage.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="关注列表_点击事件"/>
+            <Label x:Name="当前状态标签" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
+            <Button x:Name="关注列表按钮" CommandParameter="直播层" Margin="110,326,590,89" Width="100" Height="100" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/barrage.png"/>
+            </Button>
             <Label Content="单推列表" Margin="100,422,580,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
-            <Image Margin="270,326,430,89" Source="res/ico/tools.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="插件_点击事件"/>
+            <Button x:Name="插件按钮" CommandParameter="插件层" Margin="270,326,430,89" Width="100" Height="100" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/tools.png"/>
+            </Button>
             <Label Content="插件" Margin="260,422,420,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
-            <Image Margin="590,326,110,89" Source="res/ico/supply.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="工具箱_按钮事件"/>
+            <Button x:Name="其他工具按钮" CommandParameter="工具层" Margin="590,326,110,89" Width="100" Height="100" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/supply.png"/>
+            </Button>
             <Label Content="其他工具" Margin="580,422,100,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
-            <Image Margin="430,326,270,89" Source="res/ico/setup.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="设置层_点击事件"/>
+            <Button x:Name="设置按钮" CommandParameter="设置层" Margin="430,326,270,89" Width="100" Height="100" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/setup.png"/>
+            </Button>
             <Label Content="设置" Margin="420,422,260,53" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="120" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24" Foreground="#FF646464"/>
             <Label x:Name="版本显示" HorizontalAlignment="Left" Margin="10,258,0,0" VerticalAlignment="Top"/>
             <Label Content="已单推" HorizontalAlignment="Left" Margin="691,228,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="newtime" HorizontalAlignment="Left" Margin="592,258,0,0" VerticalAlignment="Top"/>
+            <Label x:Name="数据更新时间标签" HorizontalAlignment="Left" Margin="592,258,0,0" VerticalAlignment="Top"/>
             <Label Content="人" HorizontalAlignment="Left" Margin="768,228,0,0" VerticalAlignment="Top"/>
-            <Label x:Name="TanoshiNumLabel" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
-            <TextBlock x:Name="推送内容1"  TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" Foreground="Black" Margin="533,187,16,297" />
-            <Label x:Name="数据源服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="259" VerticalContentAlignment="Center" Foreground="Black" Margin="10,47,531,440" />
-            <Label x:Name="国内服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
-            <Label x:Name="国外服务器延迟" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
-            <Image Margin="10,283,740,182" Source="res/ico/帮助.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="帮助_按钮事件"/>
+            <Label x:Name="单推数量标签" HorizontalAlignment="Left" Margin="730,223,0,0" VerticalAlignment="Top" Foreground="#FFFFA421" FontSize="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Width="45"/>
+            <TextBlock x:Name="推送内容1标签"  TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="251" Foreground="Black" Margin="533,187,16,297" />
+            <Label x:Name="数据源服务器延迟标签" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="259" VerticalContentAlignment="Center" Foreground="Black" Margin="10,47,531,440" />
+            <Label x:Name="国内服务器延迟标签" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,229,590,258" />
+            <Label x:Name="国外服务器延迟标签" VerticalAlignment="Center" HorizontalAlignment="Center" Height="28" Width="200" VerticalContentAlignment="Center" Foreground="Black" Margin="10,201,590,286" />
+            <Button x:Name="帮助按钮" CommandParameter="帮助层" Margin="10,283,740,182" Width="50" Height="50" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/帮助.png"/>
+            </Button>
             <Label Content="说明/帮助" HorizontalAlignment="Left" Margin="4,327,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
-            <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
+            <Button x:Name="关于按钮" CommandParameter="关于层" Margin="742,283,8,182" Width="50" Height="50" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/关于.png"/>
+            </Button>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
         <Grid x:Name="直播层" Visibility="Collapsed">
@@ -64,7 +92,7 @@
             <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
             <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
             <Button Content="查看下载队列" HorizontalAlignment="Left" Margin="716,49,0,0" VerticalAlignment="Top" Width="75" Click="显示下载队列按钮点击事件"/>
-            <Label x:Name="动态推送1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="702" VerticalContentAlignment="Center" Foreground="Black" Margin="7,484,91,0" />
+            <Label x:Name="动态推送1标签" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="702" VerticalContentAlignment="Center" Foreground="Black" Margin="7,484,91,0" />
             <Label x:Name="选中内容0" Content="当前选中行信息:" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" Width="103" VerticalContentAlignment="Center" Foreground="Black" Margin="703,154,-6,336" />
             <Label x:Name="选中内容1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="60" Width="87" VerticalContentAlignment="Center" Foreground="Black" Margin="713,179,0,276" />
             <Button Content="跳转到网页" HorizontalAlignment="Left" Margin="716,73,0,0" VerticalAlignment="Top" Width="75" Click="跳转到网页按钮点击事件"/>
@@ -74,9 +102,9 @@
         </Grid>
         <Grid x:Name="设置层" Visibility="Collapsed">
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
-            <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label x:Name="默认音量标签" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
-            <Slider x:Name="修改默认音量" HorizontalAlignment="Left" Margin="143,73,0,0" VerticalAlignment="Top" Width="251" Maximum="100" SmallChange="1" MouseMove="默认音量修改事件" Value="100"/>
+            <Slider x:Name="默认音量滑块" HorizontalAlignment="Left" Margin="143,73,0,0" VerticalAlignment="Top" Width="251" Maximum="100" SmallChange="1" Value="100"/>
             <Label Content="下载/录制默认目录" Margin="25,104,657,383" RenderTransformOrigin="0.508,0.821"/>
             <Button Margin="578,99,139,390" Content="修改目录" Click="修改默认下载目录按钮事件" />
             <Label Content="缩小按钮功能" Margin="25,137,657,350" RenderTransformOrigin="0.508,0.821"/>
@@ -128,7 +156,9 @@
             </ListView>
         </Grid>
         <Grid x:Name="工具层" Visibility="Collapsed">
-            <Image Margin="48,53,652,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="DDNA列表_按钮事件"/>
+            <Button x:Name="DDNA列表按钮" CommandParameter="AOE直播层" Margin="48,53,652,362" Width="100" Height="100" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/live.png"/>
+            </Button>
             <Label Content="DDNA列表" Margin="48,132,652,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
             <Label Content="(各平台直播情况)" Margin="34,155,638,333" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
             <Image Margin="193,53,507,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="主站视频播放_按钮事件"/>
@@ -222,8 +252,9 @@
         </Grid>
         <Grid x:Name="top层">
             <Image x:Name="top" Source="res/img/top.png" Margin="0,-2,0,477" Height="40" Width="800"/>
-            <Image Margin="148,-2,612,477" Source="res/ico/return.png" Stretch="Fill" Width="40" Height="40" MouseLeftButtonDown="返回首页_点击事件"/>
-
+            <Button x:Name="返回按钮" CommandParameter="home" Margin="148,-2,612,477" Width="40" Height="40" Style="{StaticResource ButtonStyle}">
+                <Image Source="res/ico/return.png" />
+            </Button>
         </Grid>
         <Grid x:Name="logo层">
             <Image x:Name="logo" Source="res/img/ddtv_logo.png" Margin="8,6,662,474" Width="130" Height="35" />

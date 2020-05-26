@@ -1,10 +1,14 @@
-﻿using ReactiveUI;
+﻿using Auxiliary;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace DDTV_New
 {
@@ -12,129 +16,168 @@ namespace DDTV_New
     {
         public MainViewModel()
         {
-            _tabText = this
-                .WhenAnyValue(x => x.NowStreamingNum)
+            _当前状态 = this
+                .WhenAnyValue(x => x.直播中数量)
                 .Select(num =>
                 {
                     if (num == -1) return "单推列表正在更新中.....";
                     if (num == 0) return "监控列表中没有直播中的单推对象";
                     return "在监控列表中有" + num + "个单推对象正在直播";
                 })
-                .ToProperty(this, x => x.TabText);
+                .ToProperty(this, x => x.当前状态);
 
-            _serverVdbText = this
-              .WhenAnyValue(x => x.serverVdb)
+            _数据源服务器延迟文本 = this
+              .WhenAnyValue(x => x.数据源服务器延迟)
               .Select(delay =>
               {
                   if (delay == -1.0) return "数据源服务器(vtbs)延迟: 未测试";
                   if (delay == -2.0) return "数据源服务器(vtbs)延迟: 连接超时";
                   return "数据源服务器(vtbs)延迟: " + delay + "ms";
               })
-              .ToProperty(this, x => x.serverVdbText);
+              .ToProperty(this, x => x.数据源服务器延迟文本);
 
-            _serverDelayBilibiliText = this
-                .WhenAnyValue(x => x.ServerDelayBilibili)
+            _国内服务器延迟文本 = this
+                .WhenAnyValue(x => x.国内服务器延迟)
                 .Select(delay =>
                 {
                     if (delay == -1.0) return "国内服务器延迟(阿B): 未测试";
                     if (delay == -2.0) return "国内服务器延迟(阿B): 连接超时";
                     return "国内服务器延迟(阿B): " + delay + "ms";
                 })
-                .ToProperty(this, x => x.ServerDelayBilibiliText);
+                .ToProperty(this, x => x.国内服务器延迟文本);
 
-            _serverDelayYoutubeText = this
-               .WhenAnyValue(x => x.ServerDelayYoutube)
+            _国外服务器延迟文本 = this
+               .WhenAnyValue(x => x.国外服务器延迟)
                .Select(delay =>
                {
                    if (delay == -1.0) return "国外服务器延迟(404): 未测试";
                    if (delay == -2.0) return "国外服务器延迟(404): 连接超时";
                    return "国外服务器延迟(404): " + delay + "ms";
                })
-               .ToProperty(this, x => x.ServerDelayYoutubeText);
+               .ToProperty(this, x => x.国外服务器延迟文本);
 
-            _latestDataUpdateTimeText = this
-                .WhenAnyValue(x => x.LatestDataUpdateTime)
+            _数据更新时间文本 = this
+                .WhenAnyValue(x => x.数据更新时间)
                 .Select(time =>
                 {
                     if (time == null) return "数据更新时间: 单推列表正在更新中.....";
                     return "数据更新时间: " + time.ToString("yyyy-MM-dd HH:mm:ss");
                 })
-                .ToProperty(this, x => x.LatestDataUpdateTimeText);
+                .ToProperty(this, x => x.数据更新时间文本);
+
+            更新默认音量命令 = ReactiveCommand.Create<int, Unit>(新音量 =>
+            {
+                MMPU.默认音量 = 新音量;
+                MMPU.修改默认音量设置(MMPU.默认音量);
+                return Unit.Default;
+            });
+
+            this.WhenAnyValue(x => x.默认音量)
+                .Throttle(TimeSpan.FromMilliseconds(500)) // 每500ms更新一次MMPU数值
+                .InvokeCommand(更新默认音量命令);
+
+            默认音量 = MMPU.默认音量;
+
+            切换界面命令 = ReactiveCommand.Create<string, Unit>(要切换的层对应的字符串 =>
+            {
+                foreach (string 层对应的字符串 in 所有层.Keys)
+                {
+                    if (层对应的字符串 == 要切换的层对应的字符串)
+                    {
+                        if (层对应的字符串 != "home")
+                            所有层["top层"].Visibility = Visibility.Visible;
+                        所有层[层对应的字符串].Visibility = Visibility.Visible;
+                    }
+                    else 所有层[层对应的字符串].Visibility = Visibility.Collapsed;
+                }
+                return Unit.Default;
+            });
         }
 
-        private int _tanoshiNum;
-        public int TanoshiNum 
-        { 
-            get => _tanoshiNum;
-            set => this.RaiseAndSetIfChanged(ref _tanoshiNum, value); 
-        }
-
-        private string _announcement;
-        public string Announcement 
-        { 
-            get => _announcement;
-            set => this.RaiseAndSetIfChanged(ref _announcement, value);
-        }
-
-        private double _serverVdb;
-        public double serverVdb
+        private int _单推数量;
+        public int 单推数量
         {
-            get => _serverVdb;
-            set => this.RaiseAndSetIfChanged(ref _serverVdb, value);
+            get => _单推数量;
+            set => this.RaiseAndSetIfChanged(ref _单推数量, value);
         }
 
-
-        private double _serverDelayBilibili;
-        public double ServerDelayBilibili
+        private string _推送内容1;
+        public string 推送内容1
         {
-            get => _serverDelayBilibili;
-            set => this.RaiseAndSetIfChanged(ref _serverDelayBilibili, value);
+            get => _推送内容1;
+            set => this.RaiseAndSetIfChanged(ref _推送内容1, value);
         }
 
-        private double _serverDelayYoutube;
-        public double ServerDelayYoutube
+        private double _数据源服务器延迟;
+        public double 数据源服务器延迟
         {
-            get => _serverDelayYoutube;
-            set => this.RaiseAndSetIfChanged(ref _serverDelayYoutube, value);
+            get => _数据源服务器延迟;
+            set => this.RaiseAndSetIfChanged(ref _数据源服务器延迟, value);
         }
+        private readonly ObservableAsPropertyHelper<string> _数据源服务器延迟文本;
+        public string 数据源服务器延迟文本 => _数据源服务器延迟文本.Value;
 
-        private readonly ObservableAsPropertyHelper<string> _serverVdbText;
-        public string serverVdbText => _serverVdbText.Value;
-        private readonly ObservableAsPropertyHelper<string> _serverDelayBilibiliText;
-        public string ServerDelayBilibiliText => _serverDelayBilibiliText.Value;
-        private readonly ObservableAsPropertyHelper<string> _serverDelayYoutubeText;
-        public string ServerDelayYoutubeText => _serverDelayYoutubeText.Value;
-
-        private int _nowStreamingNum = -1;
-        public int NowStreamingNum
+        private double _国内服务器延迟;
+        public double 国内服务器延迟
         {
-            get => _nowStreamingNum;
-            set => this.RaiseAndSetIfChanged(ref _nowStreamingNum, value);
+            get => _国内服务器延迟;
+            set => this.RaiseAndSetIfChanged(ref _国内服务器延迟, value);
         }
-        private int _notStreamingNum = -1;
-        public int NotStreamingNum
+        private readonly ObservableAsPropertyHelper<string> _国内服务器延迟文本;
+        public string 国内服务器延迟文本 => _国内服务器延迟文本.Value;
+
+        private double _国外服务器延迟;
+        public double 国外服务器延迟
         {
-            get => _notStreamingNum;
-            set => this.RaiseAndSetIfChanged(ref _notStreamingNum, value);
+            get => _国外服务器延迟;
+            set => this.RaiseAndSetIfChanged(ref _国外服务器延迟, value);
+        }
+        private readonly ObservableAsPropertyHelper<string> _国外服务器延迟文本;
+        public string 国外服务器延迟文本 => _国外服务器延迟文本.Value;
+
+
+        private int _直播中数量 = -1;
+        public int 直播中数量
+        {
+            get => _直播中数量;
+            set => this.RaiseAndSetIfChanged(ref _直播中数量, value);
+        }
+        private int _未直播数量 = -1;
+        public int 未直播数量
+        {
+            get => _未直播数量;
+            set => this.RaiseAndSetIfChanged(ref _未直播数量, value);
         }
 
-        private readonly ObservableAsPropertyHelper<string> _tabText;
-        public string TabText => _tabText.Value;
+        private readonly ObservableAsPropertyHelper<string> _当前状态;
+        public string 当前状态 => _当前状态.Value;
 
-        private string _pushNotification;
-        public string PushNotification
+        private string _动态推送1;
+        public string 动态推送1
         {
-            get => _pushNotification;
-            set => this.RaiseAndSetIfChanged(ref _pushNotification, value);
+            get => _动态推送1;
+            set => this.RaiseAndSetIfChanged(ref _动态推送1, value);
         }
 
-        private DateTime _latestDataUpdateTime;
-        public DateTime LatestDataUpdateTime
+        private DateTime _数据更新时间;
+        public DateTime 数据更新时间
         {
-            get => _latestDataUpdateTime;
-            set => this.RaiseAndSetIfChanged(ref _latestDataUpdateTime, value);
+            get => _数据更新时间;
+            set => this.RaiseAndSetIfChanged(ref _数据更新时间, value);
         }
-        private readonly ObservableAsPropertyHelper<string> _latestDataUpdateTimeText;
-        public string LatestDataUpdateTimeText => _latestDataUpdateTimeText.Value;
+        private readonly ObservableAsPropertyHelper<string> _数据更新时间文本;
+        public string 数据更新时间文本 => _数据更新时间文本.Value;
+
+        private int _默认音量;
+        public int 默认音量
+        {
+            get => _默认音量;
+            set => this.RaiseAndSetIfChanged(ref _默认音量, value);
+        }
+        public ReactiveCommand<int, Unit> 更新默认音量命令 { get; }
+
+        public ReactiveCommand<string, Unit> 切换界面命令 { get; }
+
+        public Dictionary<string, Grid> 所有层 { get; set; }
     }
 }
