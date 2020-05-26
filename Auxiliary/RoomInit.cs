@@ -46,6 +46,7 @@ namespace Auxiliary
 
         public class RL
         {
+            public string 编号 { get; set; }
             public string 名称 { set; get; }
             public string 原名 { set; get; }
             public bool 直播状态 { set; get; }
@@ -53,6 +54,24 @@ namespace Auxiliary
             public bool 是否提醒 { set; get; }
             public bool 是否录制 { set; get; }
             public string 唯一码 { set; get; }
+
+            public RL() { }
+            public RL(string 内容文本)
+            {
+                编号 = MMPU.获取livelist平台和唯一码.编号(内容文本);
+                名称 = MMPU.获取livelist平台和唯一码.名称(内容文本);
+                原名 = MMPU.获取livelist平台和唯一码.原名(内容文本);
+                直播状态 = MMPU.获取livelist平台和唯一码.状态(内容文本) == "●直播中" ? true : false;
+                平台 = MMPU.获取livelist平台和唯一码.平台(内容文本);
+                是否提醒 = MMPU.获取livelist平台和唯一码.是否提醒(内容文本) == "√" ? true : false;
+                是否录制 = MMPU.获取livelist平台和唯一码.是否录制(内容文本) == "√" ? true : false;
+                唯一码 = MMPU.获取livelist平台和唯一码.唯一码(内容文本);
+            }
+
+            public override string ToString()
+            {
+                return $"{{ 编号 = {编号}, 名称 = {名称}, 原名 = {原名}, 直播状态 = {(直播状态 ? "●直播中" : "○未直播")}, 平台 = {平台}, 是否提醒 = {(是否提醒 ? "√" : "")}, 是否录制 = {(是否录制 ? "√" : "")}, 唯一码 = {唯一码} }}";
+            }
         }
         public static bool 根据唯一码获取直播状态(string GUID)
         {
@@ -411,7 +430,6 @@ namespace Auxiliary
             public bool VideoStatus { get; set; } = false;
             public bool RemindStatus { get; set; } = false;
             public bool LiveStatus { get; set; } = false;
-
         }
     }
 }

@@ -190,41 +190,13 @@ namespace DDTV_New
 
         public Dictionary<string, Grid> 所有层 { get; set; }
 
-        private 直播间 _当前选中直播间;
-        public 直播间 当前选中直播间
+        private RoomInit.RL _当前选中直播间;
+        public RoomInit.RL 当前选中直播间
         {
             get => _当前选中直播间;
             set => this.RaiseAndSetIfChanged(ref _当前选中直播间, value);
         }
         private readonly ObservableAsPropertyHelper<string> _选中内容文本;
         public string 选中内容文本 => _选中内容文本.Value;
-    }
-
-    public class 直播间
-    {
-        public string 编号 { get; set; }
-        public string 名称 { get; set; }
-        public string 原名 { get; set; }
-        public bool 是否直播中 { get; set; }
-        public string 平台 { get; set; }
-        public bool 是否提醒 { get; set; }
-        public bool 是否录制 { get; set; }
-        public string 唯一码 { get; set; }
-
-        public 直播间(string 内容文本)
-        {
-            编号 = MMPU.获取livelist平台和唯一码.编号(内容文本);
-            名称 = MMPU.获取livelist平台和唯一码.名称(内容文本);
-            原名 = MMPU.获取livelist平台和唯一码.原名(内容文本);
-            是否直播中 = MMPU.获取livelist平台和唯一码.状态(内容文本) == "●直播中" ? true : false;
-            平台 = MMPU.获取livelist平台和唯一码.平台(内容文本);
-            是否提醒 = MMPU.获取livelist平台和唯一码.是否提醒(内容文本) == "√" ? true : false;
-            是否录制 = MMPU.获取livelist平台和唯一码.是否录制(内容文本) == "√" ? true : false;
-            唯一码 = MMPU.获取livelist平台和唯一码.唯一码(内容文本);
-        }
-        public override string ToString()
-        {
-            return $"{{ 编号 = {编号}, 名称 = {名称}, 原名 = {原名}, 是否直播中 = {(是否直播中 ? "●直播中" : "○未直播")}, 平台 = {平台}, 是否提醒 = {(是否提醒 ? "√" : "")}, 是否录制 = {(是否录制 ? "√" : "")}, 唯一码 = {唯一码} }}";
-        }
     }
 }

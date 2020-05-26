@@ -720,7 +720,7 @@ namespace DDTV_New
                 System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
                 if (LV.Items.Count != 0)
                 {
-                    ViewModel.当前选中直播间 = new 直播间(LV.SelectedItems[0].ToString());
+                    ViewModel.当前选中直播间 = new RoomInit.RL(LV.SelectedItems[0].ToString());
                 }
             }
             catch (Exception) { }
@@ -765,7 +765,7 @@ namespace DDTV_New
                 ViewModel.当前选中直播间.原名,
                 ViewModel.当前选中直播间.平台,
                 ViewModel.当前选中直播间.唯一码,
-                ViewModel.当前选中直播间.是否直播中);
+                ViewModel.当前选中直播间.直播状态);
             AML.ShowDialog();
         }
 
@@ -1060,18 +1060,15 @@ namespace DDTV_New
 
         private void 修改录制状态点击事件(object sender, RoutedEventArgs e)
         {
-            修改列表设置(true);
+            修改列表设置(() => ViewModel.当前选中直播间.是否录制 = !ViewModel.当前选中直播间.是否录制);
         }
 
         private void 修改提醒状态点击事件(object sender, RoutedEventArgs e)
         {
-            修改列表设置(false);
+            修改列表设置(() => ViewModel.当前选中直播间.是否提醒 = !ViewModel.当前选中直播间.是否提醒);
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="a">T修改录制设置，F修改提醒设置</param>
-        public void 修改列表设置(bool a)
+
+        public void 修改列表设置(Action action)
         {
             if (MMPU.连接404使能)
             {
@@ -1115,8 +1112,7 @@ namespace DDTV_New
             int rlclen = bilibili房间主表.Count() + youtube房间主表.Count();
             for (int i = 0; i < rlclen; i++)
             {
-                string 唯一码 = ViewModel.当前选中直播间.唯一码;
-                if (房间表[i].唯一码 == 唯一码)
+                if (房间表[i].唯一码 == ViewModel.当前选中直播间.唯一码)
                 {
                     if (!是否改过)
                     {
@@ -1125,14 +1121,8 @@ namespace DDTV_New
                         房间表.Remove(房间表[i]);
                         rlclen--;
                         i--;
-                        if (a)
-                        {
-                            ViewModel.当前选中直播间.是否录制 = !ViewModel.当前选中直播间.是否录制;
-                        }
-                        else
-                        {
-                            ViewModel.当前选中直播间.是否提醒 = !ViewModel.当前选中直播间.是否提醒;
-                        }
+
+                        action.Invoke();
 
                         RB.data.Add(new RoomCadr
                         {
@@ -1140,10 +1130,10 @@ namespace DDTV_New
                             RoomNumber = ViewModel.当前选中直播间.唯一码,
                             Types = ViewModel.当前选中直播间.平台,
                             RemindStatus = ViewModel.当前选中直播间.是否提醒,
-                            status = ViewModel.当前选中直播间.是否直播中,
+                            status = ViewModel.当前选中直播间.直播状态,
                             VideoStatus = ViewModel.当前选中直播间.是否录制,
                             OfficialName = ViewModel.当前选中直播间.原名,
-                            LiveStatus = ViewModel.当前选中直播间.是否直播中
+                            LiveStatus = ViewModel.当前选中直播间.直播状态
                         });
                     }
                 }
