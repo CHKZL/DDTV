@@ -170,15 +170,7 @@ namespace DDTV_New.window
                     {
                         if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
                         {
-                            符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间()
-                            {
-                                UID = 网络房间数据.UID,
-                                名称 = 网络房间数据.名称,
-                                官方名称 = 网络房间数据.官方名称,
-                                平台 = 网络房间数据.平台,
-                                房间号 = null,
-                                编号 = 0
-                            });
+                            符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间(网络房间数据));
                             break;
                         }
                     }
@@ -202,7 +194,7 @@ namespace DDTV_New.window
                         if (!是否已经存在 && !string.IsNullOrEmpty(房间号.Trim('0')))
                         {
                             增加的数量++;
-                            RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
+                            RB.data.Add(new RoomCadr(符合条件的));
                         }
                         else
                         {

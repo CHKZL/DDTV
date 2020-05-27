@@ -430,6 +430,31 @@ namespace Auxiliary
             public bool VideoStatus { get; set; } = false;
             public bool RemindStatus { get; set; } = false;
             public bool LiveStatus { get; set; } = false;
+
+            public RoomCadr() { }
+            public RoomCadr(RL rl)
+            {
+                Name = rl.名称;
+                RoomNumber = rl.唯一码;
+                Types = rl.平台;
+                RemindStatus = rl.是否提醒;
+                status = rl.直播状态;
+                VideoStatus = rl.是否录制;
+                OfficialName = rl.原名;
+                LiveStatus = rl.直播状态;
+            }
+
+            public RoomCadr(MMPU.加载网络房间方法.选中的网络房间 房间)
+            {
+                Name = 房间.名称;
+                RoomNumber = 房间.房间号;
+                Types = 房间.平台;
+                RemindStatus = false;
+                status = false;
+                VideoStatus = false;
+                OfficialName = 房间.官方名称;
+                LiveStatus = false;
+            }
         }
     }
 }

@@ -553,6 +553,17 @@ namespace Auxiliary
                 public string UID { set; get; }
                 public string 房间号 { set; get; }
                 public string 平台 { set; get; }
+
+                public 选中的网络房间() { }
+                public 选中的网络房间(列表加载缓存 缓存)
+                {
+                    UID = 缓存.UID;
+                    名称 = 缓存.名称;
+                    官方名称 = 缓存.官方名称;
+                    平台 = 缓存.平台;
+                    房间号 = null;
+                    编号 = 0;
+                }
             }
         }
 

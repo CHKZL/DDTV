@@ -595,12 +595,12 @@ namespace DDTV_New
                 runOnLocalThread(() => LiveList.Items.Clear());
                 foreach (var item in 正在直播)
                 {
-                    runOnLocalThread(() => LiveListAdd(i, item.名称, item.直播状态, item.平台, item.是否提醒, item.是否录制视频, item.房间号, item.原名));
+                    runOnLocalThread(() => LiveListAdd(i, item));
                     i++;
                 }
                 foreach (var item in 未直播)
                 {
-                    runOnLocalThread(() => LiveListAdd(i, item.名称, item.直播状态, item.平台, item.是否提醒, item.是否录制视频, item.房间号, item.原名));
+                    runOnLocalThread(() => LiveListAdd(i, item));
                     i++;
                 }
             }
@@ -623,18 +623,18 @@ namespace DDTV_New
                 }
             }
         }
-        public void LiveListAdd(int 编号, string 名称, bool 状态, string 平台, bool 直播提醒, bool 是否录制, string 唯一码, string 原名)
+        public void LiveListAdd(int 编号, RoomInfo info)
         {
             LiveList.Items.Add(new 
             { 
                 编号 = 编号, 
-                名称 = 名称, 
-                状态 = 状态 ? "●直播中" : "○未直播", 
-                平台 = 平台, 
-                是否提醒 = 直播提醒 ? "√" : "", 
-                是否录制 = 是否录制 ? "√" : "", 
-                唯一码 = 唯一码, 
-                原名 = 原名 
+                名称 = info.名称, 
+                状态 = info.直播状态 ? "●直播中" : "○未直播", 
+                平台 = info.平台, 
+                是否提醒 = info.是否提醒 ? "√" : "", 
+                是否录制 = info.是否录制视频 ? "√" : "", 
+                唯一码 = info.房间号, 
+                原名 = info.原名
             });
         }
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1124,31 +1124,13 @@ namespace DDTV_New
 
                         action.Invoke();
 
-                        RB.data.Add(new RoomCadr
-                        {
-                            Name = ViewModel.当前选中直播间.名称,
-                            RoomNumber = ViewModel.当前选中直播间.唯一码,
-                            Types = ViewModel.当前选中直播间.平台,
-                            RemindStatus = ViewModel.当前选中直播间.是否提醒,
-                            status = ViewModel.当前选中直播间.直播状态,
-                            VideoStatus = ViewModel.当前选中直播间.是否录制,
-                            OfficialName = ViewModel.当前选中直播间.原名,
-                            LiveStatus = ViewModel.当前选中直播间.直播状态
-                        });
+                        RB.data.Add(new RoomCadr(ViewModel.当前选中直播间));
                     }
                 }
                 else
                 {
-                    RB.data.Add(new RoomCadr
-                    { 
-                        LiveStatus = 房间表[i].直播状态,
-                        Name = 房间表[i].名称, OfficialName = 房间表[i].原名,
-                        RoomNumber = 房间表[i].唯一码,
-                        VideoStatus = 房间表[i].是否录制,
-                        Types = 房间表[i].平台,
-                        RemindStatus = 房间表[i].是否提醒,
-                        status = false 
-                    });
+                    RB.data.Add(new RoomCadr(房间表[i]) { status = false });
+
                     if (RoomInit.根据唯一码获取直播状态(房间表[i].唯一码))
                     {
                         RB.data[RB.data.Count() - 1].LiveStatus = true;
@@ -1346,25 +1328,29 @@ namespace DDTV_New
             MMPU.setFiles("PlayNum", 并行直播数量.Text);
             MessageBox.Show("修改成功");
         }
+
         private void 修改弹幕颜色按钮点击事件(object sender, RoutedEventArgs e)
         {
-            using (ColorDialog colorDialog = new ColorDialog())
-            {
-                if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                {
-                    using (System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color))
-                    {
-                        SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
-                        弹幕默认颜色.Foreground = solidColorBrush;
-                        MMPU.默认弹幕颜色 = solidColorBrush.Color.A.ToString("X2") + "," + solidColorBrush.Color.R.ToString("X2") + "," + solidColorBrush.Color.G.ToString("X2") + "," + solidColorBrush.Color.B.ToString("X2");
-                        MMPU.setFiles("DanMuColor", MMPU.默认弹幕颜色);
-                        弹幕颜色 = solidColorBrush;
-                    }
-                }
-            }
+            var 用户选择的颜色 = 获取用户选择的颜色();
+            if (用户选择的颜色 == null) return;
+
+            弹幕默认颜色.Foreground = 用户选择的颜色;
+            MMPU.默认弹幕颜色 = 笔刷转字符串(用户选择的颜色);
+            MMPU.setFiles("DanMuColor", MMPU.默认弹幕颜色);
+            弹幕颜色 = 用户选择的颜色;
         }
         private void 修改字幕颜色按钮点击事件(object sender, RoutedEventArgs e)
         {
+            var 用户选择的颜色 = 获取用户选择的颜色();
+            if (用户选择的颜色 == null) return;
+
+            字幕默认颜色.Foreground = 用户选择的颜色;
+            MMPU.默认字幕颜色 = 笔刷转字符串(用户选择的颜色);
+            MMPU.setFiles("ZiMuColor", MMPU.默认字幕颜色);
+            字幕颜色 = 用户选择的颜色;
+        }
+        private SolidColorBrush 获取用户选择的颜色()
+        {
             using (ColorDialog colorDialog = new ColorDialog())
             {
                 if (colorDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
@@ -1372,14 +1358,23 @@ namespace DDTV_New
                     using (System.Drawing.SolidBrush sb = new System.Drawing.SolidBrush(colorDialog.Color))
                     {
                         SolidColorBrush solidColorBrush = new SolidColorBrush(Color.FromArgb(sb.Color.A, sb.Color.R, sb.Color.G, sb.Color.B));
-                        字幕默认颜色.Foreground = solidColorBrush;
-                        MMPU.默认字幕颜色 = solidColorBrush.Color.A.ToString("X2") + "," + solidColorBrush.Color.R.ToString("X2") + "," + solidColorBrush.Color.G.ToString("X2") + "," + solidColorBrush.Color.B.ToString("X2");
-                        MMPU.setFiles("ZiMuColor", MMPU.默认字幕颜色);
-                        字幕颜色 = solidColorBrush;
+                        return solidColorBrush;
                     }
+                }
+                else
+                {
+                    return null;
                 }
             }
         }
+        private string 笔刷转字符串(SolidColorBrush solidColorBrush)
+        {
+            return solidColorBrush.Color.A.ToString("X2") + "," 
+                + solidColorBrush.Color.R.ToString("X2") + "," 
+                + solidColorBrush.Color.G.ToString("X2") + "," 
+                + solidColorBrush.Color.B.ToString("X2");
+        }
+
         private void 并行直播数量_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             检测输入框是否为数字((System.Windows.Controls.TextBox)sender, 30, 3);
@@ -1588,15 +1583,7 @@ namespace DDTV_New
                     {
                         if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
                         {
-                            符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间()
-                            {
-                                UID = 网络房间数据.UID,
-                                名称 = 网络房间数据.名称,
-                                官方名称 = 网络房间数据.官方名称,
-                                平台 = 网络房间数据.平台,
-                                房间号 = null,
-                                编号 = 0
-                            });
+                            符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间(网络房间数据));
                             break;
                         }
                     }
@@ -1621,7 +1608,7 @@ namespace DDTV_New
                         if (!是否已经存在 && !string.IsNullOrEmpty(房间号.Trim('0')))
                         {
                             增加的数量++;
-                            RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
+                            RB.data.Add(new RoomCadr(符合条件的));
                         }
                     }
                     Thread.Sleep(150);
