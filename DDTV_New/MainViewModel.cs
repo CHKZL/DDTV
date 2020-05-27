@@ -1,4 +1,5 @@
 ﻿using Auxiliary;
+using DDTV_New.Utility;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -74,8 +75,6 @@ namespace DDTV_New
                 .Throttle(TimeSpan.FromMilliseconds(500)) // 每500ms更新一次MMPU数值
                 .InvokeCommand(更新默认音量命令);
 
-            默认音量 = MMPU.默认音量;
-
             切换界面命令 = ReactiveCommand.Create<string, Unit>(要切换的层对应的字符串 =>
             {
                 foreach (string 层对应的字符串 in 所有层.Keys)
@@ -97,11 +96,26 @@ namespace DDTV_New
                 {
                     if (当前选中直播间 == null) return "";
 
-                    return 当前选中直播间.平台 + "\n" 
-                        + 当前选中直播间.唯一码 + "\n" 
+                    return 当前选中直播间.平台 + "\n"
+                        + 当前选中直播间.唯一码 + "\n"
                         + 当前选中直播间.名称;
                 })
                 .ToProperty(this, x => x.选中内容文本);
+
+            更新直播间文字命令 = ReactiveCommand.Create<直播间文字, Unit>(新规格 =>
+            {
+                if (新规格 != null) 新规格.保存至配置文件();
+                return Unit.Default;
+            });
+
+            this.WhenAnyValue(x => x.默认弹幕)
+                .Throttle(TimeSpan.FromMilliseconds(500)) // 每500ms更新一次MMPU数值
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(更新直播间文字命令);
+            this.WhenAnyValue(x => x.默认字幕)
+                .Throttle(TimeSpan.FromMilliseconds(500)) // 每500ms更新一次MMPU数值
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(更新直播间文字命令);
         }
 
         private int _单推数量;
@@ -198,5 +212,21 @@ namespace DDTV_New
         }
         private readonly ObservableAsPropertyHelper<string> _选中内容文本;
         public string 选中内容文本 => _选中内容文本.Value;
+
+
+        private 直播间文字 _默认弹幕;
+        public 直播间文字 默认弹幕
+        {
+            get => _默认弹幕;
+            set => this.RaiseAndSetIfChanged(ref _默认弹幕, value);
+        }
+
+        private 直播间文字 _默认字幕;
+        public 直播间文字 默认字幕
+        {
+            get => _默认字幕;
+            set => this.RaiseAndSetIfChanged(ref _默认字幕, value);
+        }
+        public ReactiveCommand<直播间文字, Unit> 更新直播间文字命令 { get; }
     }
 }

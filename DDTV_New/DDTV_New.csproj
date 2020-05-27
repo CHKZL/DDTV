@@ -168,6 +168,7 @@
       <DependentUpon>UserControl1.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="Utility\RoomWord.cs" />
     <Compile Include="window\BiliLoginWindowQR.xaml.cs">
       <DependentUpon>BiliLoginWindowQR.xaml</DependentUpon>
     </Compile>

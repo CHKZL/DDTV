@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:DDTV_New"
         mc:Ignorable="d"
         Title="MainWindow" Height="515" Width="800"
-        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515" Closing="Window_Closing">
+        AllowsTransparency="True" WindowStyle="None" OpacityMask="White" Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="515" MaxHeight="515" Closing="窗口关闭事件">
 
     <Window.Resources>
         <Style x:Key="ButtonStyle" TargetType="Button">
@@ -25,7 +25,7 @@
         </Style>
     </Window.Resources>
 
-    <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+    <Grid MouseLeftButtonDown="基层鼠标左键按下事件">
         <Grid x:Name="bk">
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
 
@@ -84,10 +84,10 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
+            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP按钮点击事件"/>
             <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
-            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="713,263,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
-            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="713,299,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
+            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="713,263,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态按钮点击事件"/>
+            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="713,299,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态按钮点击事件"/>
             <Button Content="添加" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
             <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
             <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
@@ -106,14 +106,14 @@
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
             <Slider x:Name="默认音量滑块" HorizontalAlignment="Left" Margin="143,73,0,0" VerticalAlignment="Top" Width="251" Maximum="100" SmallChange="1" Value="100"/>
             <Label Content="下载/录制默认目录" Margin="25,104,657,383" RenderTransformOrigin="0.508,0.821"/>
-            <Button Margin="578,99,139,390" Content="修改目录" Click="修改默认下载目录按钮事件" />
+            <Button Margin="578,99,139,390" Content="修改目录" Click="修改默认下载目录按钮点击事件" />
             <Label Content="缩小按钮功能" Margin="25,137,657,350" RenderTransformOrigin="0.508,0.821"/>
             <RadioButton x:Name="缩小到任务栏选择按钮" Content="缩小到任务栏" HorizontalAlignment="Left" Margin="148,143,0,0" VerticalAlignment="Top" GroupName="缩小使能" Checked="缩小_任务栏选择事件" RenderTransformOrigin="0.473,-1.214"/>
             <RadioButton x:Name="隐藏到后台托盘选择按钮" Content="隐藏到后台托盘" HorizontalAlignment="Left" Margin="273,143,0,0" VerticalAlignment="Top" GroupName="缩小使能" Checked="缩小_后台托盘选择事件"/>
             <Label Content="是否尝试连接更新404类数据(打开前请确保可以连接404)" Margin="25,170,460,317" RenderTransformOrigin="0.508,0.821"/>
             <CheckBox x:Name="连接404类使能开关" Content="连接404类" Margin="345,176,370,317" Click="连接404类使能开关点击事件"/>
             <Label Content="最大直播并行数量:" Margin="25,198,662,289" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="并行直播数量" Margin="143,198,621,291" Text="5" VerticalContentAlignment="Center" KeyUp="并行直播数量_KeyUp" />
+            <TextBox x:Name="并行直播数量" Margin="143,198,621,291" Text="5" VerticalContentAlignment="Center" KeyUp="并行直播数量按键抬起事件" />
             <Label Content="(根据电脑性能决定，过多的播放窗口可能会造成包括报错，闪退等错误,推荐不超过5个)" Margin="248,198,58,289" RenderTransformOrigin="0.508,0.821"/>
             <Button Margin="191,199,563,292" Content="确定" Click="修改最大直播并行数量确定按钮点击事件" />
             <Label x:Name="弹幕默认颜色" Content="弹幕默认颜色" Margin="25,226,688,261" RenderTransformOrigin="0.508,0.821"/>
@@ -121,22 +121,22 @@
             <Label x:Name="字幕默认颜色" Content="字幕默认颜色" Margin="25,256,662,231" RenderTransformOrigin="0.508,0.821"/>
             <Button Margin="117,259,645,231" Content="修改" Click="修改字幕颜色按钮点击事件" />
             <Label Content="弹幕文字大小:" Margin="231,226,482,261" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="弹幕文字大小" Margin="323,225,441,264" Text="20" VerticalContentAlignment="Center" KeyUp="弹幕文字大小_KeyUp" />
+            <TextBox x:Name="弹幕文字大小" Margin="323,225,441,264" Text="20" VerticalContentAlignment="Center" KeyUp="弹幕文字大小按键抬起事件" />
             <Button Margin="365,226,389,265" Content="确定" Click="修改弹幕文字大小确定按钮点击事件" />
             <Label Content="字幕文字大小:" Margin="231,256,482,231" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="字幕文字大小" Margin="323,255,441,234" Text="24" VerticalContentAlignment="Center" KeyUp="字幕文字大小_KeyUp" />
+            <TextBox x:Name="字幕文字大小" Margin="323,255,441,234" Text="24" VerticalContentAlignment="Center" KeyUp="字幕文字大小按键抬起事件" />
             <Button Margin="365,256,389,235" Content="确定" Click="修改字幕文字大小确定按钮点击事件" />
             <Label Content="(在播放串口使用鼠标滚轮和键盘上下可以单独调整每一个窗口的音量)" Margin="422,71,-12,416" RenderTransformOrigin="0.508,0.821"/>
             <Label Content="默认播放器分辨率:" Margin="25,289,645,198" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="默认播放宽度" Margin="143,289,611,200" Text="1920" VerticalContentAlignment="Center" KeyUp="分辨率大小_KeyUp" RenderTransformOrigin="1.889,0.308" />
+            <TextBox x:Name="默认播放宽度" Margin="143,289,611,200" Text="1920" VerticalContentAlignment="Center" KeyUp="分辨率大小按键抬起事件" RenderTransformOrigin="1.889,0.308" />
             <Label Content="X" Margin="189,289,594,198" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="默认播放高度" Margin="209,289,545,200" Text="1080" VerticalContentAlignment="Center" KeyUp="分辨率大小_KeyUp" RenderTransformOrigin="1.889,0.308" />
+            <TextBox x:Name="默认播放高度" Margin="209,289,545,200" Text="1080" VerticalContentAlignment="Center" KeyUp="分辨率大小按键抬起事件" RenderTransformOrigin="1.889,0.308" />
             <Button Margin="260,291,494,200" Content="确定" Click="修改播放器默认大小确定按钮点击事件" />
-            <Button x:Name="登陆B站账号" Content="登陆bilibili账号" HorizontalAlignment="Left" Margin="25,469,0,0" VerticalAlignment="Top" Width="106" Click="登陆B站账号_Click" Height="26"/>
-            <Button x:Name="注销B站账号" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="149,469,0,0" VerticalAlignment="Top" Width="106" Click="注销B站账号_Click" IsEnabled="False" Height="26"/>
-            <Button x:Name="一键导入账号关注VTB和VUP" Content="一键导入账号关注VTB和VUP" HorizontalAlignment="Left" Margin="270,469,0,0" VerticalAlignment="Top" Width="176" Height="26" Click="一键导入账号关注VTB和VUP_Click"/>
+            <Button x:Name="登陆B站账号" Content="登陆bilibili账号" HorizontalAlignment="Left" Margin="25,469,0,0" VerticalAlignment="Top" Width="106" Click="登陆B站账号按钮点击事件" Height="26"/>
+            <Button x:Name="注销B站账号" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="149,469,0,0" VerticalAlignment="Top" Width="106" Click="注销B站账号按钮点击事件" IsEnabled="False" Height="26"/>
+            <Button x:Name="一键导入账号关注VTB和VUP" Content="一键导入账号关注VTB和VUP" HorizontalAlignment="Left" Margin="270,469,0,0" VerticalAlignment="Top" Width="176" Height="26" Click="一键导入账号关注VTB和VUP按钮点击事件"/>
             <Label Content="默认缓冲时长(秒):" Margin="25,321,662,166" RenderTransformOrigin="0.508,0.821"/>
-            <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
+            <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长按键抬起事件" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
             <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
             <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="475,176,134,317" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
@@ -161,7 +161,7 @@
             </Button>
             <Label Content="DDNA列表" Margin="48,132,652,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="100" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
             <Label Content="(各平台直播情况)" Margin="34,155,638,333" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
-            <Image Margin="193,53,507,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="主站视频播放_按钮事件"/>
+            <Image Margin="193,53,507,362" Source="res/ico/live.png" Stretch="Fill" Width="100" Height="100" MouseLeftButtonDown="主站视频播放按钮点击事件"/>
             <Label Content="主站视频播放" Margin="183,132,496,343" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="121" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="18" Foreground="#FF646464"/>
             <Label Content="(功能未完善,锁定)" Margin="176,158,496,330" VerticalAlignment="Center" Height="27" HorizontalAlignment="Center" Width="128" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="14" Foreground="#FF646464"/>
 
@@ -214,7 +214,7 @@
                     </Grid>
                 </TabItem>
             </TabControl>
-            <Button x:Name="刷新AOE直播列表按钮" Content="刷新列表" Margin="696,43,10,440" BorderBrush="#FF707070" Background="White" Click="刷新AOE直播列表按钮点击事件_Click"/>
+            <Button x:Name="刷新AOE直播列表按钮" Content="刷新列表" Margin="696,43,10,440" BorderBrush="#FF707070" Background="White" Click="刷新AOE直播列表按钮点击事件"/>
             <Label Content="双击列表选项打开对应直播网页" VerticalAlignment="Center" HorizontalAlignment="Center" Height="32" Width="182" VerticalContentAlignment="Center" Foreground="Black" Margin="508,47,110,436" />
 
         </Grid>
@@ -258,8 +258,8 @@
         </Grid>
         <Grid x:Name="logo层">
             <Image x:Name="logo" Source="res/img/ddtv_logo.png" Margin="8,6,662,474" Width="130" Height="35" />
-            <Image Source="res/ico/close.png" Name="exit" Stretch="Fill" Width="30" Height="30" Margin="760,5,10,480" MouseLeftButtonDown="关闭按钮_Click"/>
-            <Image Source="res/ico/unfold.png" Name="最小化" Stretch="Fill" Width="30" Height="30" Margin="725,5,45,480" MouseLeftButtonDown="最小化按钮_Click"/>
+            <Image Source="res/ico/close.png" Name="exit" Stretch="Fill" Width="30" Height="30" Margin="760,5,10,480" MouseLeftButtonDown="关闭按钮点击事件"/>
+            <Image Source="res/ico/unfold.png" Name="最小化" Stretch="Fill" Width="30" Height="30" Margin="725,5,45,480" MouseLeftButtonDown="最小化按钮点击事件"/>
             <Label x:Name="版本更新通知" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="183" VerticalContentAlignment="Center" Foreground="Black" Margin="526,484,91,0" />
 
         </Grid>

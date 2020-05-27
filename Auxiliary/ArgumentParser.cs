@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Auxiliary
 {
-    public class ArgumentParser
+    public class 参数解析器
     {
-        public static Dictionary<string, string> parse(string[] args)
+        public static Dictionary<string, string> 解析(string[] args)
         {
             Dictionary<string, string> result = new Dictionary<string, string>();
 
@@ -28,7 +28,7 @@ namespace Auxiliary
                 }
                 else
                 {
-                    throw new FormatException("Bad Arguments");
+                    throw new FormatException("参数无效");
                 }
             }
 
