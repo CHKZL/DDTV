@@ -10,7 +10,7 @@ namespace Auxiliary
     public class RoomInit:bilibili
     {
         public static string RoomConfigFile = MMPU.getFiles("RoomConfiguration", "./RoomListConfig.json");
-        public static List<BiliWebSocket> biliWebSocket = new List<BiliWebSocket>();
+       // public static List<BiliWebSocket> biliWebSocket = new List<BiliWebSocket>();
 
         public static List<RL> bilibili房间主表 = new List<RL>();
         public static List<RL> 之前的bilibili房间主表状态 = new List<RL>();
