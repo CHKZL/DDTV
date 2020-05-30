@@ -111,14 +111,15 @@ namespace PlayW
                 try
                 {
                     Play_STOP();
+                    listener.Close();
+                    listener.Dispose();
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
                 catch (Exception)
                 {
                 }
             })).Start();
-            listener.Close();
-            listener.Dispose();
+          
             DD.DownIofo.播放状态 = false;
             窗口是否打开 = false;
         }
@@ -269,8 +270,15 @@ namespace PlayW
             }));
             new Task((() => 
             {
-                listener.ConnectAsync(int.Parse(DD.DownIofo.房间_频道号));
-                listener.MessageReceived += Listener_MessageReceived;
+                try
+                {
+                    listener.ConnectAsync(int.Parse(DD.DownIofo.房间_频道号));
+                    listener.MessageReceived += Listener_MessageReceived;
+                }
+                catch (Exception)
+                {
+
+                }
                 MMPU.DownList.Add(DD);
                 if (DD.DownIofo.是否是播放任务)
                 {
@@ -322,47 +330,54 @@ namespace PlayW
         }
         private void Listener_MessageReceived(object sender, MessageEventArgs e)
         {
-            switch (e)
+            try
             {
-                case DanmuMessageEventArgs danmu:
-                    if (字幕使能)
-                    {
-                        if (danmu.Message.Contains("【") || danmu.Message.Contains("】"))
+                switch (e)
+                {
+                    case DanmuMessageEventArgs danmu:
+                        if (字幕使能)
                         {
-                            增加字幕(danmu.Message);
+                            if (danmu.Message.Contains("【") || danmu.Message.Contains("】"))
+                            {
+                                增加字幕(danmu.Message);
+                            }
                         }
-                    }
-                    if (弹幕使能)
-                    {
-                        if (!danmu.Message.Contains("【") || !danmu.Message.Contains("】"))
+                        if (弹幕使能)
                         {
-                            增加弹幕(danmu.Message);
+                            if (!danmu.Message.Contains("【") || !danmu.Message.Contains("】"))
+                            {
+                                增加弹幕(danmu.Message);
+                            }
+
                         }
+                        // Console.WriteLine("WebSocket收到弹幕数据:{0}:{1}", danmu.UserName, danmu.Message);
+                        //Debug.Log("M:" + danmu.Message);
+                        //mtext.text = "M:" + danmu.Message;
+                        break;
+                    case SendGiftEventArgs gift:
+                        //Debug.Log("G:"+gift.GiftName);
+                        //gtext.text = "G:" + gift.GiftName;
+                        break;
+                    case GuardBuyEventArgs guard:
+                        // Debug.LogError("JZ:" + guard.GiftName);
+                        break;
+                    case WelcomeEventArgs Welcome:
 
-                    }
-                    // Console.WriteLine("WebSocket收到弹幕数据:{0}:{1}", danmu.UserName, danmu.Message);
-                    //Debug.Log("M:" + danmu.Message);
-                    //mtext.text = "M:" + danmu.Message;
-                    break;
-                case SendGiftEventArgs gift:
-                    //Debug.Log("G:"+gift.GiftName);
-                    //gtext.text = "G:" + gift.GiftName;
-                    break;
-                case GuardBuyEventArgs guard:
-                    // Debug.LogError("JZ:" + guard.GiftName);
-                    break;
-                case WelcomeEventArgs Welcome:
+                        break;
+                    case ActivityBannerEventArgs activityBannerEventArgs:
 
-                    break;
-                case ActivityBannerEventArgs activityBannerEventArgs:
+                        break;
 
-                    break;
+                    default:
+                        // Debug.LogError("???" + e.JsonObject);
+                        // Debug.LogError(LitJson.JsonMapper.ToJson(e.JsonObject));
 
-                default:
-                    // Debug.LogError("???" + e.JsonObject);
-                    // Debug.LogError(LitJson.JsonMapper.ToJson(e.JsonObject));
-
-                    break;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                
             }
         }
 
