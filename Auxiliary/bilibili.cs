@@ -136,7 +136,7 @@ namespace Auxiliary
                         }
                     }
                 }
-                Thread.Sleep(800);
+                Thread.Sleep(2000);
             }
         }
         public class danmu

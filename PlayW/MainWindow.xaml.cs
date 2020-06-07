@@ -705,25 +705,37 @@ namespace PlayW
 
         private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
         {
-            播放状态 = false;
-            new Task(() =>
-            {
-                try
-                {
-                    if (this.VlcControl.SourceProvider.MediaPlayer != null)
-                    {
-                        this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
-                    }
-                    this.VlcControl.Dispose();
-                }
-                catch (Exception)
-                {
-                }
-            }).Start();
-            DD.DownIofo.播放状态 = false;
-            DD.DownIofo.备注 = "播放串口关闭";
-            DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            关闭窗口();
             this.Close();
+        }
+        private void 关闭窗口()
+        {
+            try
+            {
+                播放状态 = false;
+                new Task(() =>
+                {
+                    try
+                    {
+                        if (this.VlcControl.SourceProvider.MediaPlayer != null)
+                        {
+                            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                        }
+                        this.VlcControl.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }).Start();
+                DD.DownIofo.播放状态 = false;
+                DD.DownIofo.备注 = "播放串口关闭";
+                DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            }
+            catch (Exception C)
+            {
+                System.Windows.MessageBox.Show("发生了意外的错误，请把该错误内容发送给开发者，谢谢\n错误内容：\n" + C.ToString());
+            }
+           
         }
 
         private void 置顶选择_Checked(object sender, RoutedEventArgs e)
@@ -874,6 +886,11 @@ namespace PlayW
             {
                 弹幕发送提示.Content = "发送内容不能为空或超过20个字符！";
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            关闭窗口();
         }
     }
 }

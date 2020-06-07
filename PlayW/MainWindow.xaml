@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:PlayW"
         mc:Ignorable="d"
         Title="播放器" Height="720" Width="1280" Loaded="Window_Loaded"
-         KeyDown="MainWindows_Keydown" WindowStyle="None" MouseWheel="鼠标滚轮事件">
+         KeyDown="MainWindows_Keydown" WindowStyle="None" MouseWheel="鼠标滚轮事件" Closing="Window_Closing">
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <vlc:VlcControl x:Name="VlcControl" MouseLeftButtonDown="VlcControl_MouseLeftButtonDown" />
         <CheckBox x:Name="首页焦点" Margin="-55,0,830,424"/>
