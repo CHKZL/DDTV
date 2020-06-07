@@ -23,7 +23,8 @@ namespace Auxiliary.DDcenter
                 }
                 catch (Exception)
                 {
-                    MMPU.DDC采集间隔 = 1000;
+                    //如果服务器无响应或者返回内容错误，保守使用8000ms延迟
+                    MMPU.DDC采集间隔 = 8000;
                 }
                 DDC DDC = new DDC();
                 DDC.WebSocket();

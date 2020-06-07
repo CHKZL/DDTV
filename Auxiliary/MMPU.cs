@@ -78,7 +78,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = true,
+                    Debug = false,
                     下载必要提示 = true,
                     杂项提示 = true,
                     系统错误信息 = true,
