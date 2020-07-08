@@ -81,7 +81,7 @@ namespace PlayW
                 MMPU.第一次打开播放窗口 = false;
             }
             if (MMPU.系统内核版本 != 10)
-            {
+            {  
                 弹幕使能 = false;
                 弹幕开关.IsChecked = false;
                 弹幕开关.Visibility = Visibility.Collapsed;
@@ -728,7 +728,7 @@ namespace PlayW
                     }
                 }).Start();
                 DD.DownIofo.播放状态 = false;
-                DD.DownIofo.备注 = "播放串口关闭";
+                DD.DownIofo.备注 = "播放窗口关闭";
                 DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             }
             catch (Exception C)

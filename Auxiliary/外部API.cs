@@ -34,10 +34,13 @@ namespace Auxiliary
             }
             public List<直播信息> 直播数据 = new List<直播信息>();
             public void 更新正在直播数据()
-            {   
-                JObject jo = (JObject)JsonConvert.DeserializeObject(MMPU.返回网页内容("https://hiyoko.sonoj.net/f/avtapi/live/fetch_current_v2"));
-                foreach (var item in jo["current_live"])
+            {
+                string UURL = MMPU.TcpSend(30002, "{}", true);
+                string URL = string.IsNullOrEmpty(UURL)?"https://hiyoko.sonoj.net/dy-st/30s/6c6cb639-1d2f-4151-81c7-fd877700cf98.json": UURL;
+                JArray jo = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容(URL));
+                for(int i =0;i< jo.Count;i++)
                 {
+                    JToken item = jo[i];
                     try
                     {
                         直播数据.Add(new 直播信息());

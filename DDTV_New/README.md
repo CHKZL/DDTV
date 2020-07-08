@@ -7,9 +7,9 @@ DDTV1.0的精神续作.jpg
 ***
 
 ## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？
-↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击图片跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
-[![](https://user-images.githubusercontent.com/9378097/54915191-8e3f0f80-4f31-11e9-8bbb-b4f3fb0ead6b.png)](https://github.com/CHKZL/DDTV2/releases/latest)  
-↑↑↑↑↑↑↑↑↑↑↑↑↑↑点击图片跳转下载页面↑↑↑↑↑↑↑↑↑↑↑↑↑↑  
+↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
+[点击跳转到releases下载页面](https://github.com/CHKZL/DDTV2/releases/latest)  
+↑↑↑↑↑↑↑↑↑↑↑↑↑↑点击跳转下载页面↑↑↑↑↑↑↑↑↑↑↑↑↑↑  
 ===如果实在是下载不动也可以加群在群共享中下载,群：307156949===
 
 # 为何要写这个东西
