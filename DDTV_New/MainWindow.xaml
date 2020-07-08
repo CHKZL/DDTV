@@ -14,7 +14,7 @@
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
 
         </Grid>
-        <Grid x:Name="home" Width="800" Height="515" >
+        <Grid x:Name="home" Width="800" Height="515" Visibility="Collapsed" >
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
             <Label x:Name="TabTextLabel" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
@@ -40,7 +40,7 @@
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
-        <Grid x:Name="直播层" Visibility="Collapsed">
+        <Grid x:Name="直播层" >
 
             <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
                 <ListView.View>
@@ -56,13 +56,13 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="从网络添加" HorizontalAlignment="Left" Margin="714,446,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
+            <Button Content="同步\添加" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
             <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
             <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="713,263,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
             <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="713,299,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
-            <Button Content="添加" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
-            <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件"/>
-            <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件"/>
+            <Button Content="打开vtbs页面" HorizontalAlignment="Left" Margin="715,421,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
+            <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件" Visibility="Collapsed"/>
+            <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件" Visibility="Collapsed"/>
             <Button Content="查看下载队列" HorizontalAlignment="Left" Margin="716,49,0,0" VerticalAlignment="Top" Width="75" Click="显示下载队列按钮点击事件"/>
             <Label x:Name="动态推送1" Content="." VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="702" VerticalContentAlignment="Center" Foreground="Black" Margin="7,484,91,0" />
             <Label x:Name="选中内容0" Content="当前选中行信息:" VerticalAlignment="Center" HorizontalAlignment="Center" Height="25" Width="103" VerticalContentAlignment="Center" Foreground="Black" Margin="703,154,-6,336" />

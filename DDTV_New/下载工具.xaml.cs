@@ -101,7 +101,7 @@ namespace DDTV_New
         {
             for(int i =0;i< Auxiliary.MMPU.DownList.Count;i++)
             {
-                if (!Auxiliary.MMPU.DownList[i].DownIofo.下载状态)
+                if (!Auxiliary.MMPU.DownList[i].DownIofo.下载状态|| Auxiliary.MMPU.DownList[i].DownIofo.结束时间>0)
                 {
                     Auxiliary.MMPU.DownList.Remove(Auxiliary.MMPU.DownList[i]);
                     i--;

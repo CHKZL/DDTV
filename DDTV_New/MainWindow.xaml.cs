@@ -1558,7 +1558,6 @@ namespace DDTV_New
                 {
                     外部API.正在直播数据 直播数据 = new 外部API.正在直播数据();
                     直播数据.更新正在直播数据();
-
                     runOnLocalThread(() =>
                     {
                         bilibiliAOE直播列表.Items.Clear();
@@ -1587,7 +1586,7 @@ namespace DDTV_New
                     }
                     if (bilibiliAOE直播列表.Items.Count == 0)
                     {
-                        runOnLocalThread(() => bilibiliAOE直播列表.Items.Add(new { 名称 = "", 标题 = "当前没有在BILIBILI直播的VTB", 观看人数 = "", 直播开始时间 = "", 直播URL = "" }));
+                        runOnLocalThread(() => bilibiliAOE直播列表.Items.Add(new { 名称 = "", 标题 = "没有正在BILIBILI直播的VTB数据,这有可能是外部服务器或者bilibili拒绝提供数据", 观看人数 = "", 直播开始时间 = "", 直播URL = "" }));
                     }
                     if (youtubeAOE直播列表.Items.Count == 0)
                     {
@@ -1597,7 +1596,7 @@ namespace DDTV_New
                     {
                         runOnLocalThread(() => tcAOE直播列表.Items.Add(new { 名称 = "", 标题 = "当前没有在TwitCasting直播的VTB", 观看人数 = "", 直播开始时间 = "", 直播URL = "" }));
                     }
-                } catch (Exception) { }
+                } catch (Exception e) { }
 
                 runOnLocalThread(() =>
                 {

@@ -51,7 +51,12 @@ namespace Auxiliary.DDcenter
                     {
                         InfoLog.InfoPrintf("DDC采集开始", InfoLog.InfoClass.Debug);
 
-                        await _webSocket.ConnectAsync(new Uri("wss://cluster.vtbs.moe/?uuid=DDTVvtbs&runtime=DDTV" + MMPU.版本号 + "&version=" + MMPU.版本号 + "&platform=" + (MMPU.启动模式 == 0 ? "win64" : "linux") + "&name=" + (MMPU.启动模式 == 0 ? "DDTV|" + Encryption.机器码.获取机器码("1145141919810") : "DDTVLiveRec")), _cancellation);
+                        await _webSocket.ConnectAsync(new Uri(
+                            "wss://cluster.vtbs.moe/?uuid=DDTVvtbs" +
+                            "&runtime=DDTV" + MMPU.版本号 + 
+                            "&version=" + MMPU.版本号 + 
+                            "&platform=" + (MMPU.启动模式 == 0 ? "win64" : "linux") + 
+                            "&name=" + (MMPU.启动模式 == 0 ? "DDTV|" + Encryption.机器码.获取机器码("1145141919810") : "DDTVLiveRec")), _cancellation);
 
 
                         while (MMPU.DDC采集使能)
