@@ -49,6 +49,13 @@ DDTVLiveRec
 * 在网页直接查看运行状态\日志\下载文件列表
 
 ***
+
+## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？
+↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
+[点击跳转到releases下载页面](https://github.com/CHKZL/DDTV2/releases/latest)  
+↑↑↑↑↑↑↑↑↑↑↑↑↑↑点击跳转下载页面↑↑↑↑↑↑↑↑↑↑↑↑↑↑  
+===如果实在是下载不动也可以加群在群共享中下载,群：307156949===
+
 # 使用到的第三方组件
 * [BiliAccount](https://github.com/LeoChen98/BiliAccount)
 * [FFmpeg](https://github.com/FFmpeg/FFmpeg)
