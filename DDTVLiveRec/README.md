@@ -61,7 +61,7 @@ web服务端:
 * ["status"]为DDTV需要的配置文件，在DDTVLive中无用，默认为false
 * ["VideoStatus"]为是否开播自动录制的标识，false为检测到开播后不录制，true为检测到开播后自动录制
 * ["RemindStatus"]为DDTV开播弹窗提醒标识，在DDTVLive中无用，默认为false
-* ["RoomNumber"]为DDTV直播状态标识，在DDTVLive中无用，默认为false
+* ["LiveStatus"]为DDTV直播状态标识，在DDTVLive中无用，默认为false
 
 
 也就是说["VideoStatus"]为false的项不会自动录制，请注意    

@@ -49,6 +49,10 @@ namespace DDTVLiveRecWebServer
                 });
                 endpoints.MapGet("/file", async context =>
                 {
+                    if(!Directory.Exists("./tmp"))
+                    {
+                        Directory.CreateDirectory("./tmp");
+                    }
                     string A = "当前录制文件夹文件列表:\r\n";
                     context.Response.ContentType = "text/plain; charset=utf-8";
                     foreach (DirectoryInfo NextFolder1 in new DirectoryInfo("./tmp").GetDirectories())

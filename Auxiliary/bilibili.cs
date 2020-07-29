@@ -618,13 +618,13 @@ namespace Auxiliary
             {
                 if (!File.Exists(FilePath))
                 {
+                    File.AppendAllText(MMPU.BiliUserFile, "#本文件为BiliBili扫码登陆缓存，为登陆缓存cookie，不包含账号密码，请注意");
+                    //new Task(() =>
+                    //{
+                    //    //File.Create(MMPU.BiliUserFile);//创建INI文件
+                      
 
-                    new Task(() =>
-                    {
-                        //File.Create(MMPU.BiliUserFile);//创建INI文件
-                        File.AppendAllText(MMPU.BiliUserFile, "#本文件为BiliBili扫码登陆缓存，为登陆缓存cookie，不包含账号密码，请注意");
-
-                    }).Start();
+                    //}).Start();
                 }
             }
 

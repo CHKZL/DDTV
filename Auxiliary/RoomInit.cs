@@ -403,14 +403,14 @@ namespace Auxiliary
 
         public class RoomCadr
         {
-            public string Name { get; set; }
-            public string OfficialName { set; get; } = "";
-            public string RoomNumber { get; set; }
-            public string Types { get; set; } = "NU";
-            public bool status { get; set; } = false;
-            public bool VideoStatus { get; set; } = false;
-            public bool RemindStatus { get; set; } = false;
-            public bool LiveStatus { get; set; } = false;
+            public string Name { get; set; }//中文名
+            public string OfficialName { set; get; } = "";//官方频道名称
+            public string RoomNumber { get; set; }//直播间房间号
+            public string Types { get; set; } = "NU";//平台类型,现在默认bilibili，不要改成其他的
+            public bool status { get; set; } = false;//直播状态缓存，默认为false
+            public bool VideoStatus { get; set; } = false;//是否开播自动录制，默认为false
+            public bool RemindStatus { get; set; } = false;//是否开播气泡提示，默认false
+            public bool LiveStatus { get; set; } = false;//当前的直播状态，默认为false
 
         }
     }
