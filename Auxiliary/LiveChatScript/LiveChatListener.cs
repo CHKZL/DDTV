@@ -28,7 +28,7 @@ namespace Auxiliary.LiveChatScript
         private readonly byte[] m_ReceiveBuffer;
 
         private CancellationTokenSource m_innerRts;
-        private int TroomId = 0;
+        public int TroomId = 0;
 
         public LiveChatListener()
         {
@@ -221,6 +221,9 @@ namespace Auxiliary.LiveChatScript
                 case "ACTIVITY_BANNER_UPDATE_V2":
                     MessageReceived(this, new ActivityBannerEventArgs(obj));
                     break;
+                case "LiveP":
+                    MessageReceived(this, new LivePopularity(obj));
+                    break;
                 default:
                     //Debug.Log("Unknow\n"+obj);
                     MessageReceived(this, new MessageEventArgs(obj));
@@ -352,6 +355,7 @@ namespace Auxiliary.LiveChatScript
                         if (length == 4)
                         {
                             int 人气值 = buffer[3] + buffer[2] * 255 + buffer[1] * 255 * 255 + buffer[0] * 255 * 255 * 255;
+                            _parse("{\"cmd\":\"LiveP\",\"LiveP\":" + 人气值 + ",\"roomID\":" + TroomId + "}");
                         }
                         break;
                     }
@@ -418,10 +422,10 @@ namespace Auxiliary.LiveChatScript
             
             switch (protocol.Version)
             {
-                case 1:
+                case 1://弹幕数据
                     ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
                     break;
-                case 2:
+                case 2://心跳数据
                     {
                         var ms = new MemoryStream(buffer, 2, bodyLength - 2);
                         var deflate = new DeflateStream(ms, CompressionMode.Decompress);
@@ -444,6 +448,18 @@ namespace Auxiliary.LiveChatScript
                         deflate.Dispose();
                         break;
                     }
+                case 3://人气值
+                    ;
+                    break;
+                case 5://命令
+                    ;
+                    break;
+                case 7://认证信息
+                    ;
+                    break;
+                case 8://服务器心跳包
+                    ;
+                    break;
                 default:
                     ;
                     break;

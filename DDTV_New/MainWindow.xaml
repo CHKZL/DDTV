@@ -40,7 +40,7 @@
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
-        <Grid x:Name="直播层" >
+        <Grid x:Name="直播层"  Visibility="Collapsed">
 
             <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
                 <ListView.View>
@@ -72,7 +72,7 @@
                 <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
             </Grid>
         </Grid>
-        <Grid x:Name="设置层" Visibility="Collapsed">
+        <Grid x:Name="设置层">
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
@@ -111,6 +111,8 @@
             <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
             <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
+            <CheckBox x:Name="监控非VTB直播间使能按钮" Content="需要监控非VTB直播间(勾选后启动ws连接组，可以监控非VTB直播间状态，但播放窗口弹幕功能会失效，更改需重启生效该功能会尝试持续" Margin="27,381,10,112" Click="监控非VTB直播间使能按钮开关点击事件"/>
+            <Label Content="连接非常规接口，内存使用会激增，大约一个直播间10MB内存，非VTB房间信息需手动编辑RoomListConfig.json，有问题可以问我)" Margin="42,390,10,97" RenderTransformOrigin="0.508,0.821"/>
             <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="475,176,134,317" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
