@@ -24,15 +24,22 @@ namespace Auxiliary
     {
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
         public static bool 是否正在更新房间信息 = false;
+        public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
+        public static bool WS连接组是否已经启动 = false;
+        public static List<string> VTBROOMlist = new List<string>();
         public static void start()
         {
             Task.Run(async () =>
             {
                 InfoLog.InfoPrintf("启动房间信息本地缓存更新线程", InfoLog.InfoClass.Debug);
+                if(是否启动WS连接组)
+                {
+                    持续连接获取阿B房间信息类.初始化所有房间连接();
+                }
                 while (true)
                 {
                     try
-                    {
+                    {                  
                         周期更新B站房间状态();
                         await Task.Delay(MMPU.直播更新时间 * 1000);
                     }
@@ -49,24 +56,29 @@ namespace Auxiliary
             {
                 是否正在更新房间信息 = true;
                 InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
-
-
                 switch (MMPU.数据源)
                 {
                     case 0:
                         {
                             使用vtbsAPI更新房间状态();
+                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                            是否正在更新房间信息 = false;
                             break;
                         }
                     case 1:
                         {
                             使用B站API更新房间状态();
+                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
+                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                            是否正在更新房间信息 = false;
+                            break;
+                        }
+                    case 2:
+                        {
+                            是否正在更新房间信息 = false;
                             break;
                         }
                 }
-                InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
-                InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
-                是否正在更新房间信息 = false;
             }     
         }
         public static void 使用vtbsAPI更新房间状态()
@@ -76,15 +88,23 @@ namespace Auxiliary
                 JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living",8000));
                 foreach (var roomtask in RoomList)
                 {
-                    roomtask.直播状态 = false;
-                    if (JO.ToString().Contains(roomtask.房间号))
+                    if(!roomtask.名称.Contains("-NVTB"))
                     {
-                        roomtask.直播状态 = true;
+                        roomtask.直播状态 = false;
+                        if (JO.ToString().Contains(roomtask.房间号))
+                        {
+                            roomtask.直播状态 = true;
+                        }
+                        else
+                        {
+                            roomtask.直播状态 = false;
+                        }
                     }
                     else
                     {
-                        roomtask.直播状态 = false;
+                        ;
                     }
+
                 }
                 InfoLog.InfoPrintf("Vtbs数据加载成功", InfoLog.InfoClass.Debug);
             }
@@ -96,14 +116,21 @@ namespace Auxiliary
                     JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.TcpSend(Server.RequestCode.GET_LIVELSIT, "{}", true));
                     foreach (var roomtask in RoomList)
                     {
-                        roomtask.直播状态 = false;
-                        if (JO.ToString().Contains(roomtask.房间号))
+                        if (!roomtask.名称.Contains("-NVTB"))
                         {
-                            roomtask.直播状态 = true;
+                            roomtask.直播状态 = false;
+                            if (JO.ToString().Contains(roomtask.房间号))
+                            {
+                                roomtask.直播状态 = true;
+                            }
+                            else
+                            {
+                                roomtask.直播状态 = false;
+                            }
                         }
                         else
                         {
-                            roomtask.直播状态 = false;
+                            ;
                         }
                     }
                     InfoLog.InfoPrintf("备用数据源加载成功", InfoLog.InfoClass.Debug);
@@ -120,23 +147,88 @@ namespace Auxiliary
         {
             foreach (var roomtask in RoomList)
             {
-                RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
-                if (A != null)
+                if (!roomtask.名称.Contains("-NVTB"))
                 {
-                    for (int i = 0; i < RoomList.Count(); i++)
+                    RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
+                    if (A != null)
                     {
-                        if (RoomList[i].房间号 == A.房间号)
+                        for (int i = 0; i < RoomList.Count(); i++)
                         {
-                            RoomList[i].平台 = A.平台;
-                            RoomList[i].标题 = A.标题;
-                            RoomList[i].UID = A.UID;
-                            RoomList[i].直播开始时间 = A.直播开始时间;
-                            RoomList[i].直播状态 = A.直播状态;
-                            break;
+                            if (RoomList[i].房间号 == A.房间号)
+                            {
+                                RoomList[i].平台 = A.平台;
+                                RoomList[i].标题 = A.标题;
+                                RoomList[i].UID = A.UID;
+                                RoomList[i].直播开始时间 = A.直播开始时间;
+                                RoomList[i].直播状态 = A.直播状态;
+                                break;
+                            }
                         }
                     }
                 }
+                else
+                {
+                    ;
+                }
+               
                 Thread.Sleep(2000);
+            }
+        }
+        public class 持续连接获取阿B房间信息类
+        {
+            public static void 初始化所有房间连接()
+            {
+                if (!WS连接组是否已经启动)
+                {
+                    WS连接组是否已经启动 = true;
+
+                    foreach (var item in RoomList)
+                    {
+                        if (item.平台 == "bilibili"&&(item.原名.Contains("-NVTB")|| item.名称.Contains("-NVTB")))
+                        {
+                            item.liveChatListener = new LiveChatListener();
+                            item.liveChatListener.Connect(int.Parse(item.房间号));
+                            item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                        }
+                    }
+                }
+            }
+            private static void 直播间状态WS变化事件(object sender, MessageEventArgs e)
+            {
+                try
+                {
+                    switch (e)
+                    {
+                        case LivePopularity LiveP:
+                            foreach (var roomtask in RoomList)
+                            {
+                                if (roomtask.房间号 == LiveP.roomID.ToString())
+                                {
+                                    if (roomtask.房间号 == "14347962")
+                                    {
+
+                                        ;
+                                    }
+                                    if (LiveP.LiveP > 1)
+                                    {
+                                        roomtask.直播状态 = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        roomtask.直播状态 = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                catch (Exception)
+                {
+                }
             }
         }
         public class danmu
@@ -675,29 +767,7 @@ namespace Auxiliary
             [DllImport("kernel32")]
             public static extern int WritePrivateProfileString(string lpApplicationName, string lpKeyName, string lpString, string lpFileName);
         }
-    }
-    internal static class Extensions
-    {
-        internal static void WriteBE(this BinaryWriter writer, int value)
-        {
-            unsafe { SwapBytes((byte*)&value, 4); }
-            writer.Write(value);
-        }
-        internal static void WriteBE(this BinaryWriter writer, ushort value)
-        {
-            unsafe { SwapBytes((byte*)&value, 2); }
-            writer.Write(value);
-        }
-
-        internal static unsafe void SwapBytes(byte* ptr, int length)
-        {
-            for (int i = 0; i < length / 2; ++i)
-            {
-                byte b = *(ptr + i);
-                *(ptr + i) = *(ptr + length - i - 1);
-                *(ptr + length - i - 1) = b;
-            }
-        }
+        
     }
 
     public class WebClientto : WebClient

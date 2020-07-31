@@ -162,6 +162,7 @@
     <Compile Include="LiveChatScript\Extensions.cs" />
     <Compile Include="LiveChatScript\GiftMessageEventArgs.cs" />
     <Compile Include="LiveChatScript\LiveChatListener.cs" />
+    <Compile Include="LiveChatScript\LivePopularity.cs" />
     <Compile Include="LiveChatScript\MessageEventArgs.cs" />
     <Compile Include="LiveChatScript\WelcomeEventArgs.cs" />
     <Compile Include="MMPU.cs" />

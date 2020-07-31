@@ -272,7 +272,7 @@ namespace PlayW
             {
                 try
                 {
-                    listener.ConnectAsync(int.Parse(DD.DownIofo.房间_频道号));
+                    listener.Connect(int.Parse(DD.DownIofo.房间_频道号));
                     listener.MessageReceived += Listener_MessageReceived;
                 }
                 catch (Exception)

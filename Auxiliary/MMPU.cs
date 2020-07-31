@@ -128,6 +128,8 @@ namespace Auxiliary
                 MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
                 //数据源
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
+                //是否启动WS连接组
+                bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
 
@@ -480,7 +482,7 @@ namespace Auxiliary
                                             string name = item["name"][item["name"]["default"].ToString()].ToString();
                                             if (x["platform"].ToString() == "bilibili")
                                             {
-
+                                               
                                                 列表缓存.Add(new 列表加载缓存
                                                 {
                                                     编号 = A,

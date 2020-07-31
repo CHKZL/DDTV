@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Auxiliary.LiveChatScript;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +42,8 @@ namespace Auxiliary
             public string 原名 { set; get; }
             public string 平台 { set; get; }
             public string youtubeVideoId { set; get; }
-           
+            public LiveChatListener liveChatListener { set; get; }
+
         }
 
         public class RL
