@@ -99,15 +99,5 @@ WEB日志界面
 
 # 使用到的第三方组件
 * [BiliAccount](https://github.com/LeoChen98/BiliAccount)
-
-# 捐助
-### 捐助表示您对我这个项目的认可，也能激励我继续开发更多好的项目
-
-![生活](https://github.com/CHKZL/DDTV2/blob/master/DDTV_New/%E7%94%9F%E6%B4%BB.png)
-
-* 支付宝
-
-![支付宝](https://github.com/CHKZL/DDTV/blob/master/src/ZFB.png)
-* 微信
-
-![微信](https://github.com/CHKZL/DDTV/blob/master/src/WX.png)
+* [FFmpeg](https://github.com/FFmpeg/FFmpeg)
+* [vtbs.moe](https://github.com/dd-center/vtbs.moe)
