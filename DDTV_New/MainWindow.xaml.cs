@@ -283,6 +283,9 @@ namespace DDTV_New
                 默认音量值显示.Content = MMPU.默认音量;
                 修改默认音量.Value = MMPU.默认音量;
                 默认下载路径.Text = MMPU.下载储存目录;
+
+                
+
                 //读取字幕弹幕颜色
                 {
                     byte A2 = Convert.ToByte(MMPU.默认字幕颜色.Split(',')[1], 16);
@@ -1431,25 +1434,6 @@ namespace DDTV_New
                 MMPU.setFiles("ClipboardMonitoring", "0");
             }
         }
-        private void 监控非VTB直播间使能按钮开关点击事件(object sender, RoutedEventArgs e)
-        {
-            if (监控非VTB直播间使能按钮.IsChecked == true)
-            {
-                NewThreadTask.Run(() =>
-                {
-                    持续连接获取阿B房间信息类.初始化所有房间连接();
-                });
-              
-                bilibili.是否启动WS连接组 = true;
-                MMPU.setFiles("NotVTBStatus", "1");
-            }
-            else
-            {
-                bilibili.是否启动WS连接组 = false;
-                MMPU.setFiles("NotVTBStatus", "0");
-            }
-            MessageBox.Show("监控非VTB直播间状态使能发生变化，需手动重启DDTV生效");
-        }
         private void 修改最大直播并行数量确定按钮点击事件(object sender, RoutedEventArgs e)
         {
             MMPU.最大直播并行数量 = int.Parse(并行直播数量.Text);
@@ -1803,6 +1787,12 @@ namespace DDTV_New
             {
                 e.Cancel = true;
             }
+        }
+
+        private void 非VTB数据添加设置按钮事件(object sender, RoutedEventArgs e)
+        {
+            添加非VTB功能设置窗 A = new 添加非VTB功能设置窗();
+            A.ShowDialog();
         }
     }
 }

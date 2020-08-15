@@ -88,7 +88,7 @@ namespace Auxiliary
                 JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living",8000));
                 foreach (var roomtask in RoomList)
                 {
-                    if(!roomtask.名称.Contains("-NVTB"))
+                    if(!roomtask.名称.Contains("-NV"))
                     {
                         roomtask.直播状态 = false;
                         if (JO.ToString().Contains(roomtask.房间号))
@@ -116,7 +116,7 @@ namespace Auxiliary
                     JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.TcpSend(Server.RequestCode.GET_LIVELSIT, "{}", true));
                     foreach (var roomtask in RoomList)
                     {
-                        if (!roomtask.名称.Contains("-NVTB"))
+                        if (!roomtask.名称.Contains("-NV"))
                         {
                             roomtask.直播状态 = false;
                             if (JO.ToString().Contains(roomtask.房间号))
@@ -147,7 +147,7 @@ namespace Auxiliary
         {
             foreach (var roomtask in RoomList)
             {
-                if (!roomtask.名称.Contains("-NVTB"))
+                if (!roomtask.名称.Contains("-NV"))
                 {
                     RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
                     if (A != null)
@@ -166,11 +166,6 @@ namespace Auxiliary
                         }
                     }
                 }
-                else
-                {
-                    ;
-                }
-               
                 Thread.Sleep(2000);
             }
         }
@@ -184,7 +179,7 @@ namespace Auxiliary
 
                     foreach (var item in RoomList)
                     {
-                        if (item.平台 == "bilibili"&&(item.原名.Contains("-NVTB")|| item.名称.Contains("-NVTB")))
+                        if (item.平台 == "bilibili"&&(item.原名.Contains("-NV")|| item.名称.Contains("-NV")))
                         {
                             item.liveChatListener = new LiveChatListener();
                             item.liveChatListener.Connect(int.Parse(item.房间号));

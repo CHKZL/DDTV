@@ -180,6 +180,9 @@
     <Compile Include="window\主站视频播放选择窗.xaml.cs">
       <DependentUpon>主站视频播放选择窗.xaml</DependentUpon>
     </Compile>
+    <Compile Include="window\添加非VTB功能设置窗.xaml.cs">
+      <DependentUpon>添加非VTB功能设置窗.xaml</DependentUpon>
+    </Compile>
     <Compile Include="下载工具.xaml.cs">
       <DependentUpon>下载工具.xaml</DependentUpon>
     </Compile>
@@ -222,6 +225,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="window\主站视频播放选择窗.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="window\添加非VTB功能设置窗.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
