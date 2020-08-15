@@ -25,7 +25,7 @@ namespace PlayW
         {
             InitializeComponent();
         }
-        public string 内容 = "【测试内容123ABC】";
+        public string 内容 = "弹幕/字幕显示功能已启动";
         public Color 字体颜色 = (Color)ColorConverter.ConvertFromString("#FFFFFF");
         public Color 描边颜色 = Colors.Black;
         public int 字体大小 = 12;

@@ -28,6 +28,11 @@
 
 * 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["tmp"]文件夹内
 
+# 一些启动失败的解决办法
+
+* 有些系统环境下第一次启动会提示bilibili登陆相关初始化报错，无法启动，这种情况下把已经登录了的DDTV2中的【BiliUser.ini】文件夹复制到DDTVLiveRec目录下覆盖即可。
+
+# 运行状态和信息查询的WEB界面
 
 web服务端:  
 启动DDTVLiveRec后会自动启动内置的web服务端,提供了三个页面：  
@@ -36,10 +41,11 @@ web服务端:
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
 
 
-
-
-录制配置：RoomListConfig.json说明：
-格式和解析方式和DDTV一样，格式为若干个，releases发布的压缩包里附带了一个参考的文件。   
+# 房间配置文件的说明
+正常情况下，直接复制DDTV2中的【RoomListConfig.json】文件使用即可，如果有特殊需要需要修改，可以参照以下内容  
+  
+录制配置：RoomListConfig.json说明：  
+格式和解析方式和DDTV一样，releases发布的压缩包里附带了一个参考的文件。   
 房间配置文件格式为
 ```json
 {
@@ -53,7 +59,7 @@ web服务端:
             "LiveStatus": false
 }
 ```
-这样的内容组成，其中
+这样的若干个内容组成，其中
 * ["Name"]为翻译名称
 * ["OfficialName"]为官方名称
 * ["RoomNumber"]为BiliLive房间号

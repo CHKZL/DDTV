@@ -111,9 +111,8 @@
             <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
             <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
-            <CheckBox x:Name="监控非VTB直播间使能按钮" Content="需要监控非VTB直播间(勾选后启动ws连接组，可以监控非VTB直播间状态，但播放窗口弹幕功能会失效，更改需重启生效该功能会尝试持续" Margin="27,381,10,112" Click="监控非VTB直播间使能按钮开关点击事件"/>
-            <Label Content="连接非常规接口，内存使用会激增，大约一个直播间10MB内存，非VTB房间信息需手动编辑RoomListConfig.json，有问题可以问我)" Margin="42,390,10,97" RenderTransformOrigin="0.508,0.821"/>
-            <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="475,176,134,317" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
+            <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="578,137,31,356" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
+            <Button x:Name="非VTB数据添加设置按钮" Content="非VTB数据添加/设置" HorizontalAlignment="Left" Margin="612,411,0,0" VerticalAlignment="Top" Width="130" Click="非VTB数据添加设置按钮事件" Height="26"/>
         </Grid>
         <Grid x:Name="插件层" Visibility="Collapsed">
             <ListView x:Name="PluginC" Margin="8,47,12,26">
