@@ -770,6 +770,11 @@ namespace Auxiliary
         }
         public static void 储存文本(string data, string CurDir)
         {
+            //如果启动方式为LiveRec则直接退出，不更新配置文件
+            if(MMPU.启动模式==1)
+            {
+                return;
+            }
             //文件覆盖方式添加内容
             System.IO.StreamWriter file = new System.IO.StreamWriter(CurDir, false);
             //保存数据到文件
