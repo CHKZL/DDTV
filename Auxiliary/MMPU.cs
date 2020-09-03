@@ -64,7 +64,8 @@ namespace Auxiliary
         public static int 数据源 = 0;//0：vdb   1：B API
         public static bool 是否第一次使用DDTV = true;
         public static bool 是否有新版本 = true;
-       
+        public static string webServer默认监听IP = "0.0.0.0";
+
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
         /// <summary>
@@ -136,6 +137,8 @@ namespace Auxiliary
             }
             else if (模式 == 1)
             {
+                MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
+                
             }
             //转码功能使能
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
@@ -214,9 +217,8 @@ namespace Auxiliary
             //账号csrf
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
-                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
-                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
-                InfoLog.InfoPrintf("\r\n==========================================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n==========================================", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("\r\n===============================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n===============================", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
                 if (模式 == 1)
                 {
                     bilibili.BiliUser.登陆();
@@ -457,7 +459,7 @@ namespace Auxiliary
                                     roomHtml = 返回网页内容_GET("https://vdb.vtbs.moe/json/list.json",8000);
                                     InfoLog.InfoPrintf("网络房间缓存vtbs加载完成", InfoLog.InfoClass.Debug);
                                 }
-                                catch (Exception e1)
+                                catch (Exception)
                                 {
                                     try
                                     {
@@ -465,7 +467,7 @@ namespace Auxiliary
                                         roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
-                                    catch (Exception e2)
+                                    catch (Exception)
                                     {
                                         InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
                                         roomHtml = File.ReadAllText("AddList.json");
