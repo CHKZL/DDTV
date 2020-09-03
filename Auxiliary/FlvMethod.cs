@@ -104,15 +104,18 @@ namespace Auxiliary
                 
             }
         }
+        /// <summary>
+        /// 调用ffmpeg修复阿B的傻逼时间轴，顺便封装成MP4
+        /// </summary>
+        /// <param name="Filename">转码文件</param>
         public static void 转码(string Filename)
         {
             if (MMPU.转码功能使能)
             {
                 try
                 {
-                    Process process = new Process();
-
-                    process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";  // 这里也可以指定ffmpeg的绝对路径
+                    Process process = new Process();                   
+                    process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";  
                     process.StartInfo.Arguments = "-i " + Filename + " -vcodec copy -acodec copy " + Filename.Replace(".flv", "") + ".mp4";
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.CreateNoWindow = true;

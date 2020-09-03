@@ -21,7 +21,7 @@ namespace DDTVLiveRecWebServer
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls("http://0.0.0.0:11419");
+                    webBuilder.UseStartup<Startup>().UseUrls("http://"+Auxiliary.MMPU.webServerÄ¬ÈÏ¼àÌıIP+":11419");
                 });
     }
 }

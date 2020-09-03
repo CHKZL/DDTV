@@ -15,11 +15,12 @@ namespace DDTVLiveRec
            下载("14275133");
 
 #else
+            MMPU.配置文件初始化(1);
             new Task(() => {
                 DDTVLiveRecWebServer.Program.Main(new string[] { });
             }).Start();
-
-            MMPU.配置文件初始化(1);
+            
+            
 #endif
             new Task((() => 
             {
