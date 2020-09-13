@@ -49,16 +49,16 @@ namespace DDTVLiveRecWebServer
                 });
                 endpoints.MapGet("/file", async context =>
                 {
-                    if(!Directory.Exists("./tmp"))
+                    if(!Directory.Exists(Auxiliary.MMPU.缓存路径))
                     {
-                        Directory.CreateDirectory("./tmp");
+                        Directory.CreateDirectory(Auxiliary.MMPU.缓存路径);
                     }
                     string A = "当前录制文件夹文件列表:\r\n";
                     context.Response.ContentType = "text/plain; charset=utf-8";
-                    foreach (DirectoryInfo NextFolder1 in new DirectoryInfo("./tmp").GetDirectories())
+                    foreach (DirectoryInfo NextFolder1 in new DirectoryInfo(Auxiliary.MMPU.缓存路径).GetDirectories())
                     {
                         A = A + "\r\n" + NextFolder1.Name;
-                        foreach (FileInfo NextFolder2 in new DirectoryInfo("./tmp/" + NextFolder1.Name).GetFiles())
+                        foreach (FileInfo NextFolder2 in new DirectoryInfo(Auxiliary.MMPU.缓存路径 + NextFolder1.Name).GetFiles())
                         {
                             A = A + "\r\n　　" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + NextFolder2.Name;
                         }
