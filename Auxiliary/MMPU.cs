@@ -65,6 +65,7 @@ namespace Auxiliary
         public static bool 是否第一次使用DDTV = true;
         public static bool 是否有新版本 = true;
         public static string webServer默认监听IP = "0.0.0.0";
+        public static string 缓存路径 = "./tmp/";
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 

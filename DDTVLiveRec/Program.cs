@@ -46,7 +46,7 @@ namespace DDTVLiveRec
                 }
                 catch (Exception) { }
             })).Start();
-            MMPU.下载储存目录 = "./tmp/";
+            MMPU.下载储存目录 = MMPU.缓存路径;
             InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载必要提示);       
             while (true)
             {
