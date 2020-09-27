@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Auxiliary.LiveChatScript;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -20,6 +21,10 @@ namespace Auxiliary
         };
         public class DownIofoData
         {
+            public LiveChatListener 阿B直播流对象 = new LiveChatListener();
+            public StreamWriter 弹幕储存流;
+            public DateTime 弹幕录制基准时间 = DateTime.Now;
+          
             public WebClient WC { set; get; }
             public bool 下载状态 { set; get; } = false;
             public double 已下载大小bit { set; get; }
@@ -161,18 +166,45 @@ namespace Auxiliary
             DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             
             try
-            {
+            {    
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
+                if(MMPU.录制弹幕&& !DownIofo.继承.是否为继承对象)
+                {
+                    DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径 + ".txt");
+                    DownIofo.阿B直播流对象.Connect(int.Parse(DownIofo.房间_频道号));
+                    DownIofo.阿B直播流对象.MessageReceived += Listener_MessageReceived;
+                }
+               
             }
             catch (WebException)
             {
-                ;
-                //throw;
             }
             DownIofo.备注 = 开始后显示的备注;
             DownIofo.下载状态 = true;
             return DownIofo.文件保存路径;
         }
+        private void Listener_MessageReceived(object sender, MessageEventArgs e)
+        {
+            try
+            {
+                switch (e)
+                {
+                    case DanmuMessageEventArgs danmu:
+                        DateTime DT = DateTime.Now;
+                        TimeSpan interval = DT - DownIofo.弹幕录制基准时间;
+                        DownIofo.弹幕储存流.WriteLine("{0} {1} {2}", String.Format("{0, 14}", interval.ToString()) , String.Format("{0, 14}", danmu.UserName + "[" + danmu.UserId + "]:")  , danmu.Message);
+                        DownIofo.弹幕储存流.Flush();
+                        break;
+
+                }
+            }
+            catch (Exception EX)
+            {
+                ;
+            }
+        }
+
+
         public static int testNum = 0;
         public static Downloader 新建下载对象(string 平台, string 唯一码, string 标题, string GUID, string 下载地址, string 备注, bool 是否保存,string 主播名称,bool 是否为继承项目,string 继承项目的原始文件)
         {
@@ -188,6 +220,7 @@ namespace Auxiliary
                     Directory.CreateDirectory(保存路径);
                 }
                 保存路径 = 保存路径 + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
+                
             }
             else
             {
@@ -270,6 +303,7 @@ namespace Auxiliary
                 DownIofo.下载状态 = false;
                 DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                 DownIofo.备注 = "下载任务结束";
+              
                 // if (e.Error != null && e.Error.)
                 //Clipboard.SetDataObject(e.Error.Message);
 
@@ -280,7 +314,10 @@ namespace Auxiliary
                     {
                         DownIofo.备注 = "播放窗口关闭";
                         InfoLog.InfoPrintf("下载任务结束\n==============下载任务结束================\n主播名:" + DownIofo.主播名称 + "\n房间号:" + DownIofo.房间_频道号 + "\n标题:" + DownIofo.标题 + "\n开播时间:" + DownIofo.开始时间 + "\n结束时间:"+ DownIofo .结束时间+ "\n保存路径:" + DownIofo.文件保存路径 + "\n下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") + "\n结束原因:"+ DownIofo.备注 + "\n===============下载任务结束===============\n", InfoLog.InfoClass.下载必要提示);
-
+                        if (DownIofo.阿B直播流对象 != null && DownIofo.阿B直播流对象.startIn)
+                        {
+                            DownIofo.阿B直播流对象.Dispose();
+                        }
                         return;
                     }
                 }
@@ -306,6 +343,10 @@ namespace Auxiliary
                         FlvMethod.转码(DownIofo.文件保存路径);
                     }
                     InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 下播，录制完成", InfoLog.InfoClass.下载必要提示);
+                    if (DownIofo.阿B直播流对象 != null && DownIofo.阿B直播流对象.startIn)
+                    {
+                        DownIofo.阿B直播流对象.Dispose();
+                    }
                     return;
                 }
                 else
@@ -331,7 +372,9 @@ namespace Auxiliary
                                     Downloader 下载对象 = Downloader.新建下载对象(DownIofo.平台, DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号), "重连", DownIofo.是否保存, DownIofo.主播名称, true, DownIofo.文件保存路径);
                                     if (!下载对象.DownIofo.下载状态)
                                     {
-                                       
+                                        下载对象.DownIofo.弹幕录制基准时间 = DownIofo.弹幕录制基准时间;
+                                        下载对象.DownIofo.阿B直播流对象 = DownIofo.阿B直播流对象;
+                                        下载对象.DownIofo.弹幕储存流 = DownIofo.弹幕储存流;
                                         下载对象.DownIofo.下载状态 = false;
                                         下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
