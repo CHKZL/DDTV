@@ -29,7 +29,6 @@ namespace Auxiliary.LiveChatScript
 
         private CancellationTokenSource m_innerRts;
         public int TroomId = 0;
-        public bool startIn = false;
 
         public LiveChatListener()
         {
@@ -39,7 +38,6 @@ namespace Auxiliary.LiveChatScript
         public void Connect(int roomId)
         {
             TroomId = roomId;
-            startIn = true;
             ConnectAsync(roomId, null).Wait();
         }
 
