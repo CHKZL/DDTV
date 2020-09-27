@@ -92,8 +92,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\AxInterop.APlayer3Lib.dll</HintPath>
     </Reference>
-    <Reference Include="BiliAccount, Version=2.5.0.22, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BiliAccount.2.5.0.22\lib\net472\BiliAccount.dll</HintPath>
+    <Reference Include="BiliAccount, Version=2.3.4.18, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BiliAccount.2.3.4.18\lib\net472\BiliAccount.dll</HintPath>
     </Reference>
     <Reference Include="DynamicData, Version=6.14.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\DynamicData.6.14.14\lib\net461\DynamicData.dll</HintPath>
