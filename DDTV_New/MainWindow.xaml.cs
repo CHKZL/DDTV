@@ -319,34 +319,6 @@ namespace DDTV_New
                 {
                     播放缓冲时长.Text = MMPU.播放缓冲时长.ToString();
                 }
-                //并行直播数量
-                {
-                    并行直播数量.Text = MMPU.最大直播并行数量.ToString();
-                }
-                //转码使能按钮
-                {
-                    //MMPU.转码功能使能 = MMPU.getFiles("AutoTranscoding", "0") == "1" ? true : false;
-                    if (MMPU.转码功能使能)
-                    {
-                        转码使能按钮.IsChecked = true;
-                    }
-                    else
-                    {
-                        转码使能按钮.IsChecked = false;
-                    }
-                }
-                //录制弹幕按钮
-                {
-                    //MMPU.录制弹幕 = MMPU.getFiles("RecordDanmu", "0") == "1" ? true : false;
-                    if (MMPU.录制弹幕)
-                    {
-                        录制弹幕使能按钮.IsChecked = true;
-                    }
-                    else
-                    {
-                        录制弹幕使能按钮.IsChecked = false;
-                    }
-                }
             }
             //增加插件列表
             {
@@ -1296,16 +1268,8 @@ namespace DDTV_New
                 MessageBox.Show("未选择");
                 return;
             }
-            NewThreadTask.Run(runOnLocalThread =>
+            NewThreadTask.Run(() =>
             {
-                runOnLocalThread(() => {
-                    try
-                    {
-                        等待框.Visibility = Visibility.Visible;
-                    }
-                    catch (Exception) { }
-                });
-               
                 switch (MMPU.获取livelist平台和唯一码.平台(已选内容))
                 {
                     case "bilibili":
@@ -1368,21 +1332,9 @@ namespace DDTV_New
                     return;
                 }
                 Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true, MMPU.获取livelist平台和唯一码.名称(已选内容) + "-" + MMPU.获取livelist平台和唯一码.原名(已选内容), false, null);
-               
-                //MessageBox.Show("下载任务添加完成");
-               
-                    runOnLocalThread(() => {
-                        try
-                        {
-                            等待框.Visibility = Visibility.Collapsed;
-                        }
-                        catch (Exception)
-                        { }
-                    });
-                
-            }, this);
 
-           
+                MessageBox.Show("下载任务添加完成");
+            });
         }
 
         private void 显示下载队列按钮点击事件(object sender, RoutedEventArgs e)
@@ -1480,19 +1432,6 @@ namespace DDTV_New
             {
                 MMPU.剪贴板监听 = false;
                 MMPU.setFiles("ClipboardMonitoring", "0");
-            }
-        }
-        private void 录制弹幕按钮开关点击事件(object sender, RoutedEventArgs e)
-        {
-            if (录制弹幕使能按钮.IsChecked == true)
-            {
-                MMPU.录制弹幕 = true;
-                MMPU.setFiles("RecordDanmu", "1");
-            }
-            else
-            {
-                MMPU.录制弹幕 = false;
-                MMPU.setFiles("RecordDanmu", "0");
             }
         }
         private void 修改最大直播并行数量确定按钮点击事件(object sender, RoutedEventArgs e)
