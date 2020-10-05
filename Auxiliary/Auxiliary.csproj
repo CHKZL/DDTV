@@ -104,8 +104,8 @@
     <Reference Include="AWSSDK.Core, Version=3.3.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
       <HintPath>..\packages\AWSSDK.Core.3.5.1.6\lib\net45\AWSSDK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="BiliAccount, Version=2.5.0.22, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\BiliAccount.2.5.0.22\lib\net472\BiliAccount.dll</HintPath>
+    <Reference Include="BiliAccount, Version=2.5.1.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BiliAccount.2.5.1.23\lib\net472\BiliAccount.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
