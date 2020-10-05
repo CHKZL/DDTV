@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,7 +9,7 @@ namespace Auxiliary
 {
     public static class Server
     {
-        public static readonly string IP_ADDRESS = "39.98.207.17";
+        public static readonly IPAddress IP_ADDRESS = MMPU.根据URL获取IP地址("pro.ddtv.pro");
         public static readonly int PORT = 11433;
         public static readonly string PROJECT_ADDRESS = "https://github.com/CHKZL/DDTV2/releases/latest";
         public static class RequestCode
