@@ -90,9 +90,16 @@ namespace Auxiliary.LiveChatScript
                    Console.WriteLine("LiveChatListender cancelled.");
 #endif
                }
-               m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
-               m_client.Dispose();
-               m_innerRts.Dispose();
+               try
+               {
+                   m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+               }
+               catch (Exception)
+               {
+                   m_client.Dispose();
+                   m_innerRts.Dispose();
+               }
+              
            });
             _=_innerHeartbeat();
         }

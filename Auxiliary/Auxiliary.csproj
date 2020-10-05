@@ -149,6 +149,7 @@
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="bilibili.cs" />
     <Compile Include="BiliVideoInfo.cs" />
+    <Compile Include="danmu.cs" />
     <Compile Include="DataCache.cs" />
     <Compile Include="DDcenter\DdcClient.cs" />
     <Compile Include="CacheSystem.cs" />
