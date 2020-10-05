@@ -170,9 +170,10 @@ namespace Auxiliary
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
                 if(MMPU.录制弹幕&& !DownIofo.继承.是否为继承对象)
                 {
-                    DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径 + ".txt");
+                    DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径 + ".ass");
                     DownIofo.阿B直播流对象.Connect(int.Parse(DownIofo.房间_频道号));
                     DownIofo.阿B直播流对象.MessageReceived += Listener_MessageReceived;
+                    DownIofo.弹幕储存流.WriteLine(danmu.返回ASS字幕文件头(DownIofo.标题, DownIofo.房间_频道号, DownIofo.主播名称));
                 }
                
             }
@@ -192,7 +193,8 @@ namespace Auxiliary
                     case DanmuMessageEventArgs danmu:
                         DateTime DT = DateTime.Now;
                         TimeSpan interval = DT - DownIofo.弹幕录制基准时间;
-                        DownIofo.弹幕储存流.WriteLine("{0} {1} {2}", String.Format("{0, 14}", interval.ToString()) , String.Format("{0, 14}", danmu.UserName + "[" + danmu.UserId + "]:")  , danmu.Message);
+                        //DownIofo.弹幕储存流.WriteLine("{0} {1} {2}", String.Format("{0, 14}", interval.ToString()) , String.Format("{0, 14}", danmu.UserName + "[" + danmu.UserId + "]:")  , danmu.Message);
+                        DownIofo.弹幕储存流.WriteLine("Dialogue: 0,{0},{1},Fix,{2},20,20,2,,{3}", interval.ToString(), (interval.Seconds).ToString(), danmu.UserName + "[" + danmu.UserId + "]", danmu.Message);
                         DownIofo.弹幕储存流.Flush();
                         break;
 

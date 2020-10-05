@@ -802,6 +802,7 @@
     <Content Include="libvlc\win-x64\plugins\visualization\libgoom_plugin.dll" />
     <Content Include="libvlc\win-x64\plugins\visualization\libprojectm_plugin.dll" />
     <Content Include="libvlc\win-x64\plugins\visualization\libvisual_plugin.dll" />
+    <Resource Include="更新日志\2.0.4.1a.txt" />
     <Resource Include="更新日志\UP.txt" />
     <Resource Include="更新日志\2.0.3.3a.txt" />
   </ItemGroup>
