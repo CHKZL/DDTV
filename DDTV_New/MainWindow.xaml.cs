@@ -399,7 +399,7 @@ namespace DDTV_New
                 {
                     编号 = "5",
                     名称 = "BiliAccount",
-                    版本 = "2.2.0.20",
+                    版本 = "2.5.1.23",
                     是否加载 = "√",
                     说明 = "用于处理B站账号类的操作",
                     备注 = "基于MIT授权引用GITHUB @LeoChen98/BiliAccount"
@@ -1660,7 +1660,7 @@ namespace DDTV_New
                     {
                         runOnLocalThread(() => tcAOE直播列表.Items.Add(new { 名称 = "", 标题 = "当前没有在TwitCasting直播的VTB", 观看人数 = "", 直播开始时间 = "", 直播URL = "" }));
                     }
-                } catch (Exception e) { }
+                } catch (Exception) { }
 
                 runOnLocalThread(() =>
                 {

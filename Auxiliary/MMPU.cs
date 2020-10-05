@@ -28,8 +28,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.1a";
-        public static string[] 不检测的版本号 = {"2.0.3.5β"};
+        public static string 版本号 = "2.0.3.9a";
+        public static string[] 不检测的版本号 = {"2.0.3.3a"};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -324,7 +324,11 @@ namespace Auxiliary
             bilibili.BiliUser.Write(节点, 项目, 值, 路径);
             return null;
         }
-
+        public static IPAddress 根据URL获取IP地址(string URL)
+        {
+            IPAddress[] ipaddress = Dns.GetHostAddresses(URL);
+            return ipaddress[0];
+        }
 
         /// <summary>
         /// 
@@ -513,7 +517,7 @@ namespace Auxiliary
                                             //    A++;
                                             //}
                                         }
-                                        catch (Exception e)
+                                        catch (Exception)
                                         {
                                             是否正在缓存 = false;
                                             //throw;
@@ -521,7 +525,7 @@ namespace Auxiliary
                                     }
                                 }
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
                                 是否正在缓存 = false;
                             }
@@ -901,7 +905,7 @@ namespace Auxiliary
             {
                 string 回复内容 = "";
                 Socket tcpClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ipaddress = IPAddress.Parse(Server.IP_ADDRESS);
+                IPAddress ipaddress = Server.IP_ADDRESS;
                 EndPoint point = new IPEndPoint(ipaddress, Server.PORT);
                 tcpClient.Connect(point);//通过IP和端口号来定位一个所要连接的服务器端
                 tcpClient.Send(Encoding.UTF8.GetBytes(JSON发送拼接(code, msg)));
