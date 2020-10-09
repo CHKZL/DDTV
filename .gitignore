@@ -366,3 +366,12 @@ healthchecksdb
 /礼物播报
 /GiftSpeech
 /DDTV_New/更新日志
+/DDTV服务端_Core
+/DDTV服务端_Core
+/DDTV服务端_Core/数据库.cs
+/DDTV服务端_Core/TcpServer.cs
+/DDTV服务端_Core/SQL.cs
+/DDTV服务端_Core/Program.cs
+/DDTV服务端_Core/MMPU.cs
+/DDTV服务端_Core/DDTV服务端_Core.csproj
+/DDTV服务端_Core/DataCHK.cs
