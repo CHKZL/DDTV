@@ -171,7 +171,22 @@ namespace Auxiliary
                 DDcenter.DdcClient.Connect();
             }
             RoomInit.start();
+            DokiDoki(模式);
             return true;
+        }
+        public static void DokiDoki(int 模式)
+        {
+            new Thread(new ThreadStart(delegate {
+                while (true)
+                {
+                    try
+                    {
+                        MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true);
+                    }
+                    catch (Exception) { }
+                    Thread.Sleep(3600 * 1000);
+                }
+            })).Start();
         }
         public static void BiliUser配置文件初始化(int 模式)
         {
@@ -231,7 +246,19 @@ namespace Auxiliary
                         // break;
                     }
                 }
-
+            }
+            else
+            {
+                if (模式 == 0)
+                {
+                    if (!MMPU.加载网络房间方法.是否正在缓存)
+                    {
+                        new Task(() =>
+                        {
+                            加载网络房间方法.更新网络房间缓存();
+                        }).Start();
+                    }
+                }
             }
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
         }

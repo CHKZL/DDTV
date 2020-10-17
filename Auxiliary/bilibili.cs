@@ -570,7 +570,7 @@ namespace Auxiliary
                         名称 = item["uname"].ToString()
                     });
                 }
-                Thread.Sleep(100);
+               // Thread.Sleep(100);
                 pg++;
             }
             while (ps > 0);

@@ -1722,9 +1722,16 @@ namespace DDTV_New
             {
                 MessageBox.Show("=======================\n点击确定开始导入，在此期间请勿操作\n=======================");
             }
-
-            NewThreadTask.Run(() =>
+            NewThreadTask.Run(runOnLocalThread =>
             {
+                runOnLocalThread(()=> {
+                    try
+                    {
+                        等待框.Visibility = Visibility.Visible;
+                    }
+                    catch (Exception) { }
+                });
+              
                 int 增加的数量 = 0;
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox
@@ -1782,14 +1789,25 @@ namespace DDTV_New
                             RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
                         }
                     }
-                    Thread.Sleep(150);
+                    //Thread.Sleep(150);
                 }
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 InitializeRoomList(0, false, false);
-
-                MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，请多等待几秒");
-            });
+              
+                MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，加载完成后会自动更新界面");
+                runOnLocalThread(() => {
+                    try
+                    {
+                        等待框.Visibility = Visibility.Collapsed;
+                    }
+                    catch (Exception) { }
+                });
+            }, this);
+            //NewThreadTask.Run(() =>
+            //{
+              
+            //});
         }
 
         private void 播放本地视频文件按钮_Click(object sender, RoutedEventArgs e)
