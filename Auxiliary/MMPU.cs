@@ -170,6 +170,7 @@ namespace Auxiliary
             {
                 DDcenter.DdcClient.Connect();
             }
+            VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
             RoomInit.start();
             DokiDoki(模式);
             return true;
@@ -384,7 +385,6 @@ namespace Auxiliary
         }
         public static string 返回网页内容_GET(string url,int outTime)
         {
-
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Method = "GET";
@@ -606,7 +606,7 @@ namespace Auxiliary
                 spwatch.Stop();
                 return spwatch.Elapsed.TotalMilliseconds;
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
                 return -1;
