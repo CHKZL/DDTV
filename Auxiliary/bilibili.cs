@@ -85,7 +85,8 @@ namespace Auxiliary
         {
             try
             {
-                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET("https://api.vtbs.moe/v1/living",8000));
+                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url+"/v1/living",8000));
+                Console.WriteLine(VTBS.API.VTBS服务器CDN.VTBS_Url);
                 foreach (var roomtask in RoomList)
                 {
                     if(!roomtask.名称.Contains("-NV"))

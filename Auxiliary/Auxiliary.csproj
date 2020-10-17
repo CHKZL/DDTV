@@ -172,6 +172,7 @@
     <Compile Include="RoomInit.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="update.cs" />
+    <Compile Include="VTBS\API.cs" />
     <Compile Include="youtube.cs" />
     <Compile Include="外部API.cs" />
   </ItemGroup>
