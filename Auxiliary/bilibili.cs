@@ -24,7 +24,7 @@ namespace Auxiliary
     {
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
         public static bool 是否正在更新房间信息 = false;
-        public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
+        public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
         public static bool WS连接组是否已经启动 = false;
         public static List<string> VTBROOMlist = new List<string>();
         public static void start()
@@ -32,7 +32,8 @@ namespace Auxiliary
             Task.Run(async () =>
             {
                 InfoLog.InfoPrintf("启动房间信息本地缓存更新线程", InfoLog.InfoClass.Debug);
-                if(是否启动WS连接组)
+                是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
+                if (是否启动WS连接组)
                 {
                     持续连接获取阿B房间信息类.初始化所有房间连接();
                 }
@@ -67,6 +68,7 @@ namespace Auxiliary
                         }
                     case 1:
                         {
+                            //启动WS房间连接
                             使用B站API更新房间状态();
                             InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
                             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
@@ -78,7 +80,11 @@ namespace Auxiliary
                             是否正在更新房间信息 = false;
                             break;
                         }
+                    default:
+                        break;
+                   
                 }
+                是否正在更新房间信息 = false;
             }     
         }
         public static void 使用vtbsAPI更新房间状态()
@@ -170,6 +176,13 @@ namespace Auxiliary
                 Thread.Sleep(2000);
             }
         }
+        public static List<直播间状态> 已连接的直播间状态 = new List<直播间状态>();
+        public class 直播间状态
+        {
+            public int 房间号 { set; get; }
+            public int 心跳值 { set; get; }
+            public DateTime 心跳时间 { set; get; }
+        }
         public class 持续连接获取阿B房间信息类
         {
             public static void 初始化所有房间连接()
@@ -178,17 +191,57 @@ namespace Auxiliary
                 {
                     WS连接组是否已经启动 = true;
 
+                    new Task(()=> { 
+                    while(true)
+                        {
+                            int i = 1;
+                            foreach (var item in 已连接的直播间状态)
+                            {
+                                TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
+                                InfoLog.InfoPrintf(i+"　时间差:" + (int)ts.TotalSeconds + "　　　房间号:"+ item.房间号 + "　　心跳值:"+ item.心跳值 + "　　上次更新时间"+ item.心跳时间, InfoLog.InfoClass.Debug);
+                                i++;
+                            }
+                            Thread.Sleep(5000);
+                        }
+                    }).Start();
                     foreach (var item in RoomList)
                     {
-                        if (item.平台 == "bilibili"&&(item.原名.Contains("-NV")|| item.名称.Contains("-NV")))
+                        try
                         {
-                            item.liveChatListener = new LiveChatListener();
-                            item.liveChatListener.Connect(int.Parse(item.房间号));
-                            item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                            InfoLog.InfoPrintf("执行WS==================", InfoLog.InfoClass.Debug);
+                            if (MMPU.数据源 == 1)
+                            {
+                                if (item.平台 == "bilibili")
+                                {
+                                    item.liveChatListener = new LiveChatListener();
+                                    item.liveChatListener.Connect(int.Parse(item.房间号));
+                                    item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                                    已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
+                                    InfoLog.InfoPrintf("-ALL 添加监控房间：)"+ item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                }
+                            }
+                            else if (MMPU.数据源 == 0)
+                            {
+                                if (item.平台 == "bilibili" && (item.原名.Contains("-NV") || item.名称.Contains("-NV")))
+                                {
+                                    item.liveChatListener = new LiveChatListener();
+                                    item.liveChatListener.Connect(int.Parse(item.房间号));
+                                    item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                                    已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
+                                    InfoLog.InfoPrintf("-NV 添加监控房间："+ item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                }
+                            }
                         }
+                        catch (Exception)
+                        {
+
+   
+                        }
+                        Thread.Sleep(5000);
                     }
                 }
             }
+           
             private static void 直播间状态WS变化事件(object sender, MessageEventArgs e)
             {
                 try
@@ -196,15 +249,20 @@ namespace Auxiliary
                     switch (e)
                     {
                         case LivePopularity LiveP:
+                            foreach (var item in 已连接的直播间状态)
+                            {
+                                if (item.房间号 == LiveP.roomID)
+                                {
+                                    item.心跳值 = LiveP.LiveP;
+                                    item.心跳时间 = DateTime.Now;
+                                    InfoLog.InfoPrintf("更新心跳：" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                    break;
+                                }
+                            }
                             foreach (var roomtask in RoomList)
                             {
                                 if (roomtask.房间号 == LiveP.roomID.ToString())
                                 {
-                                    if (roomtask.房间号 == "14347962")
-                                    {
-
-                                        ;
-                                    }
                                     if (LiveP.LiveP > 1)
                                     {
                                         roomtask.直播状态 = true;

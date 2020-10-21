@@ -83,7 +83,7 @@ namespace Auxiliary
                 {
                     Debug = false,
                     下载必要提示 = true,
-                    杂项提示 = true,
+                    杂项提示 = false,
                     系统错误信息 = true,
                     输出到文件 = false
                 });

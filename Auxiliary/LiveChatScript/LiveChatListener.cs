@@ -38,9 +38,17 @@ namespace Auxiliary.LiveChatScript
 
         public void Connect(int roomId)
         {
-            TroomId = roomId;
-            startIn = true;
-            ConnectAsync(roomId, null).Wait();
+            try
+            {
+                TroomId = roomId;
+                startIn = true;
+                ConnectAsync(roomId, null).Wait();
+            }
+            catch (Exception)
+            {
+                ;
+             
+            }
         }
 
         public async Task ConnectAsync(int roomId, CancellationToken? cancellationToken = null)
@@ -49,7 +57,6 @@ namespace Auxiliary.LiveChatScript
             {
                 throw new ObjectDisposedException("");
             }
-
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
             try
@@ -87,7 +94,8 @@ namespace Auxiliary.LiveChatScript
                {
                    //POST-CANCEL
 #if DEBUG
-                   Console.WriteLine("LiveChatListender cancelled.");
+                   InfoLog.InfoPrintf("LiveChatListener连接断开，房间号:"+ realRoomId, InfoLog.InfoClass.Debug);
+                   //Console.WriteLine("LiveChatListender cancelled.");
 #endif
                }
                try
@@ -123,7 +131,8 @@ namespace Auxiliary.LiveChatScript
         private async Task _innerLoop()
         {
 #if DEBUG
-            Console.WriteLine("LiveChatListender start.");
+            InfoLog.InfoPrintf("LiveChatListener开始连接，房间号:" + TroomId, InfoLog.InfoClass.Debug);
+            //Console.WriteLine("LiveChatListender start.");
 #endif
             while (!m_innerRts.IsCancellationRequested)
             {
@@ -133,10 +142,19 @@ namespace Auxiliary.LiveChatScript
                     int length = 0;
                     do
                     {
-                         result = await m_client.ReceiveAsync(
-                             new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length), 
-                             m_innerRts.Token);
-                        length += result.Count;
+                        try
+                        {
+                            result = await m_client.ReceiveAsync(
+                          new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length),
+                          m_innerRts.Token);
+                            length += result.Count;
+                        }
+                        catch (Exception e)
+                        {
+                            string BBB = e.ToString();
+                            throw;
+                        }
+                      
                     }
                     while(!result.EndOfMessage);
 
@@ -211,7 +229,8 @@ namespace Auxiliary.LiveChatScript
             var obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             //Debug.Log(jsonBody);
             string cmd = (string)obj["cmd"];
-            Console.WriteLine(cmd);
+            InfoLog.InfoPrintf("LiveChatListener收到数据，类型为："+ cmd, InfoLog.InfoClass.Debug);
+            //Console.WriteLine(cmd);
             switch (cmd)
             {
                 case "DANMU_MSG":

@@ -88,11 +88,12 @@ namespace Auxiliary
                     {
                         if (ClasslBool.Debug)
                         {
-                           
-                            Console.WriteLine("\r\n ========= DebugBeginning =========");
-                            Console.WriteLine("[Debug] "+DateTime.Now.ToString("MM-dd HH:mm:ss")+": " + mess );
-                            Console.WriteLine("=========DebugEnd=========");
-                            A = "\r\n=========DebugBeginning=========" + "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess + "\r\n=========DebugEnd=========";
+
+                            Console.WriteLine("\r\n ========= DebugBeginning =========" +
+                                "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess +
+                                "\r\n=========DebugEnd=========");
+                                A = "=========DebugBeginning=========" + "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess + "\r\n=========DebugEnd=========";
+
                         }
                     }
                     break;
@@ -100,9 +101,10 @@ namespace Auxiliary
                     {
                         if (ClasslBool.系统错误信息)
                         {
-                            Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========");
-                            Console.WriteLine("[SysteErrorInfo]: " + mess);
-                            Console.WriteLine("=========SysteErrorInfoEnd=========");
+                            Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
+                                "\r\n[SysteErrorInfo]: " + mess+ 
+                                "\r\n=========SysteErrorInfoEnd=========");
+                           
                             A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
                            
                         }

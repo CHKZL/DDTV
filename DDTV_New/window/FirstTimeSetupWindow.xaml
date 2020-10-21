@@ -46,21 +46,24 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Margin="0 0 10 0">
                         <RadioButton x:Name="vtbsmoe单选按钮" GroupName="数据源选择组" Content="vtbs.moe API" FontSize="16" VerticalContentAlignment="Center" IsChecked="True"></RadioButton>
-                        <TextBlock Text="来自vtbs.moe，一个B站虚拟主播统计项目" FontSize="14" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
-                        <TextBlock Text="相比于直接请求bilibili，该API拥有更好的稳定性，且不会因过度调用而被bilibili暂停访问" FontSize="14" TextWrapping="Wrap"></TextBlock>
-                        <TextBlock Text="但为了项目的正常运转，需要本机作为DD@Home项目的一个节点，为他人请求数据提供帮助" FontSize="14" TextWrapping="Wrap"></TextBlock>
-                        <TextBlock Text="DDTV推荐使用此API" FontSize="14" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="　来自vtbs.moe，一个B站虚拟主播统计项目" FontSize="14" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
+                        <TextBlock Text="　相比于直接请求bilibili，该API拥有更好的稳定性，且不会因过度调用而被bilibili暂停访问" FontSize="14" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="　但为了项目的正常运转，需要本机作为DD@Home项目的一个节点，为他人请求数据提供帮助" FontSize="14" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="　DDTV推荐使用此API" FontSize="14" TextWrapping="Wrap"></TextBlock>
                     </StackPanel>
                     <StackPanel Grid.Column="1" Margin="10 0 0 0">
                         <RadioButton GroupName="数据源选择组" Content="bilibili API" FontSize="16" VerticalContentAlignment="Center"></RadioButton>
                         <TextBlock Text="传统的bilibili API" FontSize="14" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
+                        <!--<TextBlock Text="　使用bilibili官方的接口进行直播状态监控" FontSize="14" TextWrapping="Wrap"></TextBlock>
+                        <TextBlock Text="　为了保证连接成功率，每次启动DDTV后连接速度相较于VTBS方式会更慢(速度根据监控列表长度决定)" FontSize="14" TextWrapping="Wrap"></TextBlock>-->
                         <TextBlock Text="过度调用原始API有被bilibili暂停访问的风险" FontSize="14" TextWrapping="Wrap"></TextBlock>
+
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Grid>
         <!--登录bilibili-->
-        <Grid x:Name="登录bilibili层" Grid.Column="1" Margin="40" Visibility="Visible">
+        <Grid x:Name="登录bilibili层" Grid.Column="1" Margin="40" Visibility="Visible" >
             <TextBlock Text="登录bilibili" FontSize="40"></TextBlock>
             <StackPanel Margin="0 50 0 0">
                 <TextBlock Text="登录bilibili可以使用一键导入所有关注的VTB/VUP功能" FontSize="20" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>

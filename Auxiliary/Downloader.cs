@@ -371,7 +371,18 @@ namespace Auxiliary
                                         }
                                     }
                                    
-                                    Downloader 下载对象 = Downloader.新建下载对象(DownIofo.平台, DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号), "重连", DownIofo.是否保存, DownIofo.主播名称, true, DownIofo.文件保存路径);
+                                    Downloader 下载对象 = Downloader.新建下载对象(
+                                        DownIofo.平台,
+                                        DownIofo.房间_频道号,
+                                        bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号), 
+                                        Guid.NewGuid().ToString(),
+                                        bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号), 
+                                        "重连", 
+                                        DownIofo.是否保存,
+                                        DownIofo.主播名称, 
+                                        true,
+                                        DownIofo.文件保存路径
+                                        );
                                     if (!下载对象.DownIofo.下载状态)
                                     {
                                         下载对象.DownIofo.弹幕录制基准时间 = DownIofo.弹幕录制基准时间;
