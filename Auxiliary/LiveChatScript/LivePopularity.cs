@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Auxiliary.LiveChatScript
 {
-    class LivePopularity : MessageEventArgs
+    public class LivePopularity : MessageEventArgs
     {
         public int LiveP { get; set; }
         public int roomID { set; get; }
