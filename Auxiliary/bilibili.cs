@@ -92,7 +92,6 @@ namespace Auxiliary
                     string vtbs房间数据 = string.Empty;
                     try
                     {
-                        int C = int.Parse("AAA");
                         vtbs房间数据 = MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url + "/v1/short", 5000);
                     }
                     catch (Exception)
