@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BiliAccount" Version="2.5.0.22" />
+    <PackageReference Include="BiliAccount" Version="2.5.1.23" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.3.20214.6" />
   </ItemGroup>
 

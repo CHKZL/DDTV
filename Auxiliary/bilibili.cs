@@ -288,18 +288,26 @@ namespace Auxiliary
                     WS连接组是否已经启动 = true;
 
                     new Task(() =>
-                    {  
+                    {
+                        int TJ = 16;
                         while (true)
                         {
                             try
                             {
+                                
+                                if(TJ>15)
+                                {
+                                    InfoLog.InfoPrintf($":状态刷新，当前临时API监控房间数量:{RoomList.Count- 已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{已连接的直播间状态.Count}" , InfoLog.InfoClass.下载必要提示);
+                                    TJ = 0;
+                                }
+                                TJ++;
                                 int num = 1;
                                 string BB = string.Empty;
                                 foreach (var item in 已连接的直播间状态)
                                 {
                                     TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
                                     BB += "\r\n" + num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间;
-                                    Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
+                                    //Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
                                     num++;
                                 }
                                 InfoLog.InfoPrintf("wss连接状态:" + BB, InfoLog.InfoClass.Debug);

@@ -265,7 +265,7 @@ namespace DDTV_New
 
                     }
                 }
-            }, this, 4000);
+            }, this, 10000);
             //缩小功能
             {
                 MMPU.缩小功能 = int.Parse(MMPU.getFiles("Zoom", "0"));

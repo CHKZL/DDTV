@@ -44,7 +44,7 @@ namespace Auxiliary.VTBS
                 {
                     for(int i=0;i<num+1.0;i++)
                     {
-                        double T = MMPU.测试延迟(item.CDN_URL + "/meta/ping");
+                        double T = MMPU.测试延迟(item.CDN_URL + "/v1/vtbs");
                         double 延迟 = T > 0 ? T : 1000.0;
                         if(i!=0)
                         {
