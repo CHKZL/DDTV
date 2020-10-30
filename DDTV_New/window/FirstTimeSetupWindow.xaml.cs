@@ -167,7 +167,7 @@ namespace DDTV_New.window
                 JObject BB = bilibili.根据UID获取关注列表(MMPU.UID);
                 foreach (var 账号关注数据 in BB["data"])
                 {
-                    foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存)
+                    foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存1)
                     {
                         if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
                         {

@@ -56,7 +56,7 @@ namespace DDTV_New
                     JObject BB = bilibili.根据UID获取关注列表(MMPU.UID);
                     foreach (var 账号关注数据 in BB["data"])
                     {
-                        foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存)
+                        foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存1)
                         {
                             if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
                             {
@@ -66,7 +66,7 @@ namespace DDTV_New
                                     名称 = 网络房间数据.名称,
                                     官方名称 = 网络房间数据.官方名称,
                                     平台 = 网络房间数据.平台,
-                                    房间号 = null,
+                                    房间号 = 网络房间数据.roomId,
                                     编号 = 0
                                 });
                                 break;
@@ -75,11 +75,22 @@ namespace DDTV_New
                     }
                     foreach (var 符合条件的 in 符合条件的房间)
                     {
+                        bool BF = false;
                         if (!string.IsNullOrEmpty(符合条件的.UID))
                         {
-                            string 房间号 = bilibili.通过UID获取房间号(符合条件的.UID);
+                            string 房间号 = string.Empty;
+                            if (string.IsNullOrEmpty(符合条件的.房间号))
+                            {
+                                BF = true;
+                                房间号 = bilibili.通过UID获取房间号(符合条件的.UID);
 
-                            符合条件的.房间号 = 房间号;
+                                符合条件的.房间号 = 房间号;
+                            }
+                            else
+                            {
+                               房间号 = 符合条件的.房间号 ;
+                            }
+                            
                             bool 是否已经存在 = false;
                             foreach (var item in bilibili.RoomList)
                             {
@@ -99,7 +110,11 @@ namespace DDTV_New
                                 已经存在的数量++;
                             }
                         }
-                        Thread.Sleep(200);
+                        if(BF)
+                        {
+                            Thread.Sleep(200);
+                        }
+                        
                     }
                     string JOO = JsonConvert.SerializeObject(RB);
                     MMPU.储存文本(JOO, RoomConfigFile);
