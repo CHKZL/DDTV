@@ -81,7 +81,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -93,7 +93,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLiveRecLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -491,7 +491,7 @@ namespace Auxiliary
                                 string roomHtml = "";
                                 try
                                 {
-                                    roomHtml = 返回网页内容_GET("https://vdb.vtbs.moe/json/list.json",8000);
+                                    roomHtml = 返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url + "/v1/short", 8000);
                                     InfoLog.InfoPrintf("网络房间缓存vtbs加载完成", InfoLog.InfoClass.Debug);
                                 }
                                 catch (Exception)
@@ -499,60 +499,76 @@ namespace Auxiliary
                                     try
                                     {
                                         InfoLog.InfoPrintf("网络房间缓存vtbs加载失败", InfoLog.InfoClass.Debug);
-                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/list.json", 12000);
+                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/vtbsroomlist.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
                                     catch (Exception)
                                     {
                                         InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
-                                        roomHtml = File.ReadAllText("AddList.json");
+                                        roomHtml = File.ReadAllText("VtbsList.json");
                                     }
                                 }
-                                var result = JObject.Parse(roomHtml);
+                                JArray result = JArray.Parse(roomHtml);
                                 InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
-                                foreach (var item in result["vtbs"])
+                                foreach (var item in result)
                                 {
-                                    foreach (var x in item["accounts"])
+                                    if(int.Parse(item["roomid"].ToString())!=0)
                                     {
-                                        try
+                                        列表缓存.Add(new 列表加载缓存
                                         {
-                                            string name = item["name"][item["name"]["default"].ToString()].ToString();
-                                            if (x["platform"].ToString() == "bilibili")
-                                            {
-                                               
-                                                列表缓存.Add(new 列表加载缓存
-                                                {
-                                                    编号 = A,
-                                                    名称 = name,
-                                                    官方名称 = name,
-                                                    平台 = "bilibili",
-                                                    UID = x["id"].ToString(),
-                                                    类型 = x["type"].ToString()
-                                                });
-                                                A++;
-                                            }
-                                            //else if (x["platform"].ToString() == "youtube")
-                                            //{
-
-                                            //    列表缓存.Add(new 列表加载缓存
-                                            //    {
-                                            //        编号 = A,
-                                            //        名称 = name,
-                                            //        官方名称 = name,
-                                            //        平台 = "youtube",
-                                            //        UID = x["id"].ToString(),
-                                            //        类型 = x["type"].ToString()
-                                            //    });
-                                            //    A++;
-                                            //}
-                                        }
-                                        catch (Exception)
-                                        {
-                                            是否正在缓存 = false;
-                                            //throw;
-                                        }
+                                            编号 = A,
+                                            名称 = item["uname"].ToString(),
+                                            官方名称 = item["uname"].ToString(),
+                                            平台 = "bilibili",
+                                            UID = item["roomid"].ToString(),
+                                            类型 = "V"
+                                        });
+                                        A++;
                                     }
                                 }
+                                //foreach (var item in result["vtbs"])
+                                //{
+                                //    foreach (var x in item["accounts"])
+                                //    {
+                                //        try
+                                //        {
+                                //            string name = item["name"][item["name"]["default"].ToString()].ToString();
+                                //            if (x["platform"].ToString() == "bilibili")
+                                //            {
+                                               
+                                //                列表缓存.Add(new 列表加载缓存
+                                //                {
+                                //                    编号 = A,
+                                //                    名称 = name,
+                                //                    官方名称 = name,
+                                //                    平台 = "bilibili",
+                                //                    UID = x["id"].ToString(),
+                                //                    类型 = x["type"].ToString()
+                                //                });
+                                //                A++;
+                                //            }
+                                //            //else if (x["platform"].ToString() == "youtube")
+                                //            //{
+
+                                //            //    列表缓存.Add(new 列表加载缓存
+                                //            //    {
+                                //            //        编号 = A,
+                                //            //        名称 = name,
+                                //            //        官方名称 = name,
+                                //            //        平台 = "youtube",
+                                //            //        UID = x["id"].ToString(),
+                                //            //        类型 = x["type"].ToString()
+                                //            //    });
+                                //            //    A++;
+                                //            //}
+                                //        }
+                                //        catch (Exception)
+                                //        {
+                                //            是否正在缓存 = false;
+                                //            //throw;
+                                //        }
+                                //    }
+                                //}
                             }
                             catch (Exception)
                             {
