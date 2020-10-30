@@ -102,7 +102,10 @@ namespace Auxiliary
                     JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
                     foreach (var item in JO)
                     {
-                        VtbsRoomList.Add(new VtbsRoom() { mid = int.Parse(item["mid"].ToString()), room = int.Parse(item["roomid"].ToString()), name = item["uname"].ToString() });
+                        if (int.Parse(item["roomid"].ToString()) != 0)
+                        {
+                            VtbsRoomList.Add(new VtbsRoom() { mid = int.Parse(item["mid"].ToString()), room = int.Parse(item["roomid"].ToString()), name = item["uname"].ToString() });
+                        }
                     }
                     wss连接初始化准备已完成 = true;
                     break;
