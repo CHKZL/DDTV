@@ -241,7 +241,7 @@ namespace Auxiliary
                 if (模式 == 1)
                 {
                     bilibili.BiliUser.登陆();
-                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]或访问[http://本机IP:11419/login]使用B站客户端扫描二维码登陆", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]使用B站客户端扫描二维码登陆，或复制DDTV2的有效BiliUser.ini覆盖本地文件", InfoLog.InfoClass.下载必要提示);
 
                     while (string.IsNullOrEmpty(MMPU.Cookie))
                     {
