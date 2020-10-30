@@ -33,7 +33,7 @@ namespace DDTV_New.window
             选中内容展示.Content = "更新中";
             NewThreadTask.Run(runOnLocalThread =>
             {
-                if (MMPU.加载网络房间方法.列表缓存.Count < 1)
+                if (MMPU.加载网络房间方法.列表缓存1.Count < 1)
                 {
                     MessageBox.Show("网络缓存同步未完成，请稍后再试");
                     MMPU.加载网络房间方法.更新网络房间缓存();
@@ -42,7 +42,7 @@ namespace DDTV_New.window
                 runOnLocalThread(() =>
                 {
                     NetWorkRoomList.Items.Clear();
-                    foreach (var item in MMPU.加载网络房间方法.列表缓存)
+                    foreach (var item in MMPU.加载网络房间方法.列表缓存1)
                     {
                         NetWorkRoomList.Items.Add(new
                         {
@@ -114,7 +114,7 @@ namespace DDTV_New.window
             if (!string.IsNullOrEmpty(搜索内容))
             {
                 int B = 1;
-                foreach (var item in MMPU.加载网络房间方法.列表缓存)
+                foreach (var item in MMPU.加载网络房间方法.列表缓存1)
                 {
                     if (item.名称.Contains(搜索内容) || item.官方名称.Contains(搜索内容) || item.UID.Contains(搜索内容))
                     {

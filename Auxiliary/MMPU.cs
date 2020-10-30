@@ -472,7 +472,8 @@ namespace Auxiliary
         }
         public class 加载网络房间方法
         {
-            public static List<列表加载缓存> 列表缓存 = new List<列表加载缓存>();
+            public static List<列表加载缓存> 列表缓存1 = new List<列表加载缓存>();
+            public static List<列表加载缓存> 列表缓存2 = new List<列表加载缓存>();
             public static bool 是否正在缓存 = false;
             public static void 更新网络房间缓存()
             {
@@ -510,22 +511,29 @@ namespace Auxiliary
                                 }
                                 JArray result = JArray.Parse(roomHtml);
                                 InfoLog.InfoPrintf("网络房间缓存下载完成，开始预处理", InfoLog.InfoClass.Debug);
+                                列表缓存2.Clear();
                                 foreach (var item in result)
                                 {
                                     if(int.Parse(item["roomid"].ToString())!=0)
                                     {
-                                        列表缓存.Add(new 列表加载缓存
+                                        列表缓存2.Add(new 列表加载缓存
                                         {
                                             编号 = A,
+                                            roomId = item["roomid"].ToString(),
                                             名称 = item["uname"].ToString(),
                                             官方名称 = item["uname"].ToString(),
                                             平台 = "bilibili",
-                                            UID = item["roomid"].ToString(),
+                                            UID = item["mid"].ToString(),
                                             类型 = "V"
-                                        });
+                                        }) ;
                                         A++;
                                     }
+                                    else
+                                    {
+                                        ;
+                                    }
                                 }
+                                列表缓存1 = 列表缓存2;
                                 //foreach (var item in result["vtbs"])
                                 //{
                                 //    foreach (var x in item["accounts"])
@@ -535,7 +543,7 @@ namespace Auxiliary
                                 //            string name = item["name"][item["name"]["default"].ToString()].ToString();
                                 //            if (x["platform"].ToString() == "bilibili")
                                 //            {
-                                               
+
                                 //                列表缓存.Add(new 列表加载缓存
                                 //                {
                                 //                    编号 = A,
@@ -600,6 +608,7 @@ namespace Auxiliary
                 public string 平台 { set; get; }
                 public string UID { set; get; }
                 public string 类型 { set; get; }
+                public string roomId { set; get; }
             }
 
             public class 选中的网络房间
