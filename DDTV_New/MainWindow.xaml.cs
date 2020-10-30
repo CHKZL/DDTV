@@ -885,116 +885,144 @@ namespace DDTV_New
         }
         private void 直播表双击事件(object sender, MouseButtonEventArgs e)
         {
-            RoomInit.RoomInfo roomInfo = new RoomInfo();
-            System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
-            string 平台 = MMPU.获取livelist平台和唯一码.平台(LV.SelectedItems[0].ToString());
-            if (MMPU.当前直播窗口数量 >= MMPU.最大直播并行数量)
+            NewThreadTask.Run(runOnLocalThread =>
             {
-                if (平台 == "bilibili")
+                RoomInit.RoomInfo roomInfo = new RoomInfo();
+                System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
+                string 平台 = string.Empty;
+                runOnLocalThread(() => {
+                    平台 = MMPU.获取livelist平台和唯一码.平台(LV.SelectedItems[0].ToString());
+                });
+                
+                if (MMPU.当前直播窗口数量 >= MMPU.最大直播并行数量)
                 {
-                    MessageBox.Show("达到了设置的最大直播窗口数量,新建直播窗口失败");
-                    return;
-                }
-
-            }
-            try
-            {
-                等待框.Visibility = Visibility.Visible;
-            }
-            catch (Exception) { }
-
-
-            try
-            {
-                if (平台 == "bilibili")
-                {
-                    roomInfo = bilibili.GetRoomInfo(MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString()));
-                    if (!roomInfo.直播状态)
+                    if (平台 == "bilibili")
                     {
-                        MessageBox.Show("该房间未直播");
-                        try
-                        {
-                            等待框.Visibility = Visibility.Collapsed;
-                        }
-                        catch (Exception)
-                        {
-                        }
-
+                        MessageBox.Show("达到了设置的最大直播窗口数量,新建直播窗口失败");
                         return;
                     }
-                }
-            }
-            catch (Exception)
-            {
-                等待框.Visibility = Visibility.Collapsed;
-                return;
-            }
-            string 唯一码 = roomInfo.房间号;
-            string 标题 = roomInfo.标题;
-            try
-            {
-                switch (平台)
-                {
-                    case "bilibili":
-                        {
 
-                            string GUID = Guid.NewGuid().ToString();
-                            foreach (var item in bilibili.RoomList)
-                            {
-                                if (item.房间号 == 唯一码)
-                                {
-                                    item.标题 = roomInfo.标题;
-                                    标题 = item.标题;
-                                }
-                            }
-                            string 下载地址 = string.Empty;
+                }
+                try
+                {
+                    runOnLocalThread(() => {
+                        等待框.Visibility = Visibility.Visible;
+                    });
+                    
+                }
+                catch (Exception) { }
+
+
+                try
+                {
+                    if (平台 == "bilibili")
+                    {
+                        runOnLocalThread(() => {
+                            roomInfo = bilibili.GetRoomInfo(MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString()));
+                        });
+                        
+                        if (!roomInfo.直播状态)
+                        {
+                            MessageBox.Show("该房间未直播");
                             try
                             {
-                                下载地址 = bilibili.根据房间号获取房间信息.下载地址(唯一码);
+                                runOnLocalThread(() =>
+                                {
+                                    等待框.Visibility = Visibility.Collapsed;
+                                });
                             }
                             catch (Exception)
                             {
-                                MessageBox.Show("获取下载地址错误");
-                                return;
                             }
-                            Downloader 下载对象 = new Downloader
-                            {
-                                DownIofo = new Downloader.DownIofoData() { 平台 = 平台, 房间_频道号 = 唯一码, 标题 = 标题, 事件GUID = GUID, 下载地址 = 下载地址, 备注 = "视频播放缓存", 是否保存 = false, 继承 = new Downloader.继承() }
-                            };
-                            Task.Run(() =>
-                            {
-                                this.Dispatcher.Invoke(new Action(delegate
-                                {
-                                    打开直播列表(下载对象);
-                                    MMPU.当前直播窗口数量++;
-                                    try
-                                    {
-                                        等待框.Visibility = Visibility.Collapsed;
-                                    }
-                                    catch (Exception)
-                                    {
-                                    }
-
-                                }));
-                            });
-                            break;
+                            return;
                         }
-                    case "youtube":
-                        {
-                            Process.Start("https://www.youtube.com/channel/" + 唯一码 + "/live");
-                            break;
-                        }
-                    default:
-                        MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
-                        return;
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                错误窗 ERR = new 错误窗("新建播放窗口发生意外错误，请重试", "新建播放窗口发生意外错误，请重试\n" + ex.ToString());
-                ERR.ShowDialog();
-                return;
-            }
+                catch (Exception)
+                {
+                    runOnLocalThread(() => {
+                        等待框.Visibility = Visibility.Collapsed;
+                    });
+                    
+                    return;
+                }
+                string 唯一码 = roomInfo.房间号;
+                string 标题 = roomInfo.标题;
+                try
+                {
+                    switch (平台)
+                    {
+                        case "bilibili":
+                            {
+
+                                string GUID = Guid.NewGuid().ToString();
+                                foreach (var item in bilibili.RoomList)
+                                {
+                                    if (item.房间号 == 唯一码)
+                                    {
+                                        item.标题 = roomInfo.标题;
+                                        标题 = item.标题;
+                                    }
+                                }
+                                string 下载地址 = string.Empty;
+                                try
+                                {
+                                    下载地址 = bilibili.根据房间号获取房间信息.下载地址(唯一码);
+                                    if (string.IsNullOrEmpty(下载地址))
+                                    {
+                                        MessageBox.Show("房间未开播或已加密");
+                                        return;
+                                    }
+                                }
+                                catch (Exception)
+                                {
+                                    MessageBox.Show("获取下载地址错误");
+                                    return;
+                                }
+                                Downloader 下载对象 = new Downloader
+                                {
+                                    DownIofo = new Downloader.DownIofoData() { 平台 = 平台, 房间_频道号 = 唯一码, 标题 = 标题, 事件GUID = GUID, 下载地址 = 下载地址, 备注 = "视频播放缓存", 是否保存 = false, 继承 = new Downloader.继承() }
+                                };
+                                Task.Run(() =>
+                                {
+                                    this.Dispatcher.Invoke(new Action(delegate
+                                    {
+                                        runOnLocalThread(() => {
+                                            打开直播列表(下载对象);
+                                            try
+                                            {
+                                                等待框.Visibility = Visibility.Collapsed;
+                                            }
+                                            catch (Exception)
+                                            {
+                                            }
+                                        });
+                                        
+                                        MMPU.当前直播窗口数量++;
+                                        
+
+                                    }));
+                                });
+                                break;
+                            }
+                        case "youtube":
+                            {
+                                Process.Start("https://www.youtube.com/channel/" + 唯一码 + "/live");
+                                break;
+                            }
+                        default:
+                            MessageBox.Show("发现了与当前版本不支持的平台，请检查更新");
+                            return;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    错误窗 ERR = new 错误窗("新建播放窗口发生意外错误，请重试", "新建播放窗口发生意外错误，请重试\n" + ex.ToString());
+                    ERR.ShowDialog();
+                    return;
+                }
+            },this);
+           
         }
         public void 打开直播列表(Downloader DL)
         {
@@ -1059,58 +1087,61 @@ namespace DDTV_New
         {
             NewThreadTask.Run(() =>
             {
-                MMPU.当前直播窗口数量--;
-                switch (播放器版本)
+                try
                 {
-                    case 1:
-                        {
-                            PlayW.MainWindow p = (PlayW.MainWindow)sender;
-                            playList1.Remove(p);
-                            foreach (var item in MMPU.DownList)
+                    MMPU.当前直播窗口数量--;
+                    switch (播放器版本)
+                    {
+                        case 1:
                             {
-                                if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                                PlayW.MainWindow p = (PlayW.MainWindow)sender;
+                                playList1.Remove(p);
+                                foreach (var item in MMPU.DownList)
                                 {
-                                    item.DownIofo.WC.CancelAsync();
-                                    item.DownIofo.下载状态 = false;
-                                    item.DownIofo.备注 = "播放串口关闭，停止下载";
-                                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                    if (item.DownIofo.是否保存)
+                                    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
                                     {
-
+                                        item.DownIofo.WC.CancelAsync();
+                                        item.DownIofo.下载状态 = false;
+                                        item.DownIofo.备注 = "播放串口关闭，停止下载";
+                                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                        if (!item.DownIofo.是否保存)
+                                        {
+                                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                        }
+                                        break;
                                     }
-                                    else
-                                    {
-                                        MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
-                                    }
-                                    break;
                                 }
+                                break;
                             }
-                            break;
-                        }
-                    case 2:
-                        {
-                            //硬解播放器.Form1 p = (硬解播放器.Form1)sender;
-                            //playList2.Remove(p);
-                            //foreach (var item in MMPU.DownList)
-                            //{
-                            //    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
-                            //    {
-                            //        item.DownIofo.WC.CancelAsync();
-                            //        item.DownIofo.下载状态 = false;
-                            //        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                            //        if (item.DownIofo.是否保存)
-                            //        {
+                        case 2:
+                            {
+                                //硬解播放器.Form1 p = (硬解播放器.Form1)sender;
+                                //playList2.Remove(p);
+                                //foreach (var item in MMPU.DownList)
+                                //{
+                                //    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                                //    {
+                                //        item.DownIofo.WC.CancelAsync();
+                                //        item.DownIofo.下载状态 = false;
+                                //        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                //        if (item.DownIofo.是否保存)
+                                //        {
 
-                            //        }
-                            //        else
-                            //        {
-                            //            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
-                            //        }
-                            //        break;
-                            //    }
-                            //}
-                            break;
-                        }
+                                //        }
+                                //        else
+                                //        {
+                                //            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                //        }
+                                //        break;
+                                //    }
+                                //}
+                                break;
+                            }
+                    }
+                }
+                catch (Exception e)
+                {
+                    InfoLog.InfoPrintf("关闭播放窗口出现错误:"+e.ToString(), InfoLog.InfoClass.Debug);
                 }
             });
         }
@@ -1361,6 +1392,11 @@ namespace DDTV_New
                 try
                 {
                     下载地址 = bilibili.根据房间号获取房间信息.下载地址(MMPU.获取livelist平台和唯一码.唯一码(已选内容));
+                    if (string.IsNullOrEmpty(下载地址))
+                    {
+                        MessageBox.Show("房间未开播或已加密");
+                        return;
+                    }
                 }
                 catch (Exception)
                 {
@@ -1704,109 +1740,131 @@ namespace DDTV_New
 
         private void 一键导入账号关注VTB和VUP_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(MMPU.Cookie))
-            {
-                MessageBox.Show("请先登录");
-                return;
-            }
-            else if (MMPU.加载网络房间方法.列表缓存.Count < 1000)
-            {
-                MessageBox.Show("=======================\n房间列表数据后台加载中，请30秒后再试\n=======================");
-                if (!MMPU.加载网络房间方法.是否正在缓存)
-                {
-                    NewThreadTask.Run(() => MMPU.加载网络房间方法.更新网络房间缓存());
-                }    
-                return;
-            }
-            else
-            {
-                MessageBox.Show("=======================\n点击确定开始导入，在此期间请勿操作\n=======================");
-            }
-            NewThreadTask.Run(runOnLocalThread =>
-            {
-                runOnLocalThread(()=> {
-                    try
-                    {
-                        等待框.Visibility = Visibility.Visible;
-                    }
-                    catch (Exception) { }
-                });
-              
-                int 增加的数量 = 0;
-                RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
-                RoomBox RB = new RoomBox
-                {
-                    data = new List<RoomCadr>()
-                };
-                if (rlc.data != null)
-                {
-                    foreach (var item in rlc.data)
-                    {
-                        RB.data.Add(item);
-                    }
-                }
-                List<MMPU.加载网络房间方法.选中的网络房间> 符合条件的房间 = new List<MMPU.加载网络房间方法.选中的网络房间>();
-                JObject BB = bilibili.根据UID获取关注列表(MMPU.UID);
-                foreach (var 账号关注数据 in BB["data"])
-                {
-                    foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存)
-                    {
-                        if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
-                        {
-                            符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间()
-                            {
-                                UID = 网络房间数据.UID,
-                                名称 = 网络房间数据.名称,
-                                官方名称 = 网络房间数据.官方名称,
-                                平台 = 网络房间数据.平台,
-                                房间号 = null,
-                                编号 = 0
-                            });
-                            break;
-                        }
-                    }
-                }
+            增加监控列表 T = new 增加监控列表();
+            T.ShowDialog();
 
-                foreach (var 符合条件的 in 符合条件的房间)
-                {
-                    if (!string.IsNullOrEmpty(符合条件的.UID))
-                    {
-                        string 房间号 = 通过UID获取房间号(符合条件的.UID);
+            return;
+            MessageBox.Show("点击确定开始导入，此期间请勿关闭DDTV...请稍后.....");
 
-                        符合条件的.房间号 = 房间号;
-                        bool 是否已经存在 = false;
-                        foreach (var item in bilibili.RoomList)
-                        {
-                            if (item.房间号 == 房间号)
-                            {
-                                是否已经存在 = true;
-                                break;
-                            }
-                        }
-                        if (!是否已经存在 && !string.IsNullOrEmpty(房间号.Trim('0')))
-                        {
-                            增加的数量++;
-                            RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
-                        }
-                    }
-                    //Thread.Sleep(150);
-                }
-                string JOO = JsonConvert.SerializeObject(RB);
-                MMPU.储存文本(JOO, RoomConfigFile);
-                InitializeRoomList(0, false, false);
-              
-                MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，加载完成后会自动更新界面");
-                runOnLocalThread(() => {
-                    try
-                    {
-                        等待框.Visibility = Visibility.Collapsed;
-                    }
-                    catch (Exception) { }
-                });
-            }, this);
+            等待框.Visibility = Visibility.Visible;
+
+            AddList.导入VTBVUP((TEXT) =>
+            {
+                //增加房间提示信息.Content = $"导入成功！原有:{已经存在的数量}个，新增VTB/VUP数：{增加的数量}";
+                MessageBox.Show(TEXT);
+                等待框.Visibility = Visibility.Collapsed;
+            }, this,false);
+
+
+            //if (string.IsNullOrEmpty(MMPU.Cookie))
+            //{
+            //    MessageBox.Show("请先登录");
+            //    return;
+            //}
+            //else if (MMPU.加载网络房间方法.列表缓存.Count < 1000)
+            //{
+            //    MessageBox.Show("=======================\n房间列表数据后台加载中，请30秒后再试\n=======================");
+            //    if (!MMPU.加载网络房间方法.是否正在缓存)
+            //    {
+            //        NewThreadTask.Run(() => MMPU.加载网络房间方法.更新网络房间缓存());
+            //    }
+            //    return;
+            //}
+            //else
+            //{
+            //    MessageBox.Show("=======================\n点击确定开始导入，在此期间请勿操作\n=======================");
+            //}
+            //NewThreadTask.Run(runOnLocalThread =>
+            //{
+            //    runOnLocalThread(() =>
+            //    {
+            //        try
+            //        {
+            //            等待框.Visibility = Visibility.Visible;
+            //        }
+            //        catch (Exception) { }
+            //    });
+
+            //    int 增加的数量 = 0;
+            //    int 已经存在的数量 = 0;
+            //    RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+            //    RoomBox RB = new RoomBox
+            //    {
+            //        data = new List<RoomCadr>()
+            //    };
+            //    if (rlc.data != null)
+            //    {
+            //        foreach (var item in rlc.data)
+            //        {
+            //            RB.data.Add(item);
+            //        }
+            //    }
+            //    List<MMPU.加载网络房间方法.选中的网络房间> 符合条件的房间 = new List<MMPU.加载网络房间方法.选中的网络房间>();
+            //    JObject BB = bilibili.根据UID获取关注列表(MMPU.UID);
+            //    foreach (var 账号关注数据 in BB["data"])
+            //    {
+            //        foreach (var 网络房间数据 in MMPU.加载网络房间方法.列表缓存)
+            //        {
+            //            if (账号关注数据["UID"].ToString() == 网络房间数据.UID)
+            //            {
+            //                符合条件的房间.Add(new MMPU.加载网络房间方法.选中的网络房间()
+            //                {
+            //                    UID = 网络房间数据.UID,
+            //                    名称 = 网络房间数据.名称,
+            //                    官方名称 = 网络房间数据.官方名称,
+            //                    平台 = 网络房间数据.平台,
+            //                    房间号 = null,
+            //                    编号 = 0
+            //                });
+            //                break;
+            //            }
+            //        }
+            //    }
+            //    foreach (var 符合条件的 in 符合条件的房间)
+            //    {
+            //        if (!string.IsNullOrEmpty(符合条件的.UID))
+            //        {
+            //            string 房间号 = 通过UID获取房间号(符合条件的.UID);
+
+            //            符合条件的.房间号 = 房间号;
+            //            bool 是否已经存在 = false;
+            //            foreach (var item in bilibili.RoomList)
+            //            {
+            //                if (item.房间号 == 房间号)
+            //                {
+            //                    是否已经存在 = true;
+            //                    break;
+            //                }
+            //            }
+            //            if (!是否已经存在 && !string.IsNullOrEmpty(房间号.Trim('0')))
+            //            {
+            //                增加的数量++;
+            //                RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
+            //            }
+            //            else
+            //            {
+            //                已经存在的数量++;
+            //            }
+            //        }
+            //        Thread.Sleep(300);
+            //    }
+            //    string JOO = JsonConvert.SerializeObject(RB);
+            //    MMPU.储存文本(JOO, RoomConfigFile);
+            //    InitializeRoomList(0, false, false);
+
+            //    MessageBox.Show("导入完成，新导入" + 增加的数量 + "个,主窗口列表可能会有延迟，加载完成后会自动更新界面");
+            //    runOnLocalThread(() =>
+            //    {
+            //        try
+            //        {
+            //            等待框.Visibility = Visibility.Collapsed;
+            //        }
+            //        catch (Exception) { }
+            //    });
+            //}, this);
             //NewThreadTask.Run(() =>
             //{
-              
+
             //});
         }
 
@@ -1870,7 +1928,7 @@ namespace DDTV_New
 
         private void 非VTB数据添加设置按钮事件(object sender, RoutedEventArgs e)
         {
-            添加非VTB功能设置窗 A = new 添加非VTB功能设置窗();
+            增加监控列表 A = new 增加监控列表();
             A.ShowDialog();
         }
     }

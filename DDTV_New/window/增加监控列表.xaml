@@ -1,0 +1,38 @@
+﻿<Window x:Class="DDTV_New.window.增加监控列表"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DDTV_New.window"
+        mc:Ignorable="d"
+        Title="增加监控列表" Height="245" Width="640" MinWidth="640" MinHeight="245" MaxHeight="375" MaxWidth="450">
+    <Grid>
+        <Button Content="保存" HorizontalAlignment="Left" Margin="351,309,0,0" VerticalAlignment="Top" Width="79" Height="25" Click="Button_Click_1" Visibility="Collapsed"/>
+        <TabControl HorizontalAlignment="Left" Height="193" Margin="10,10,0,0" VerticalAlignment="Top" Width="608">
+            <TabItem Header="VTBS数据(B站关注列表V)一键导入">
+                <Grid Background="White">
+                    <Button Content="根据B站关注列表和VTBS数据一键导入VTB\VUP" HorizontalAlignment="Left" Margin="23,10,0,0" VerticalAlignment="Top" Width="559" Height="67" FontSize="22" Click="一键导入账号关注VTB和VUP_Click"/>
+                    <Label Content="如果导入缺少特定的房间号，那说明vtbs不存在该房间的数据，可以使用“手动添加房间号”的功能" HorizontalAlignment="Left" Margin="23,82,0,0" VerticalAlignment="Top" Height="24" Width="579"/>
+                    <Label Content="当然，如果您愿意到vtbs.moe提交新行的信息那当然更好啦(((感谢您为D国做出的贡献.jpg" HorizontalAlignment="Left" Margin="23,106,0,0" VerticalAlignment="Top" Height="29" Width="579"/>
+                    <Label x:Name="增加房间提示信息" Content="" HorizontalAlignment="Left" Margin="23,135,0,0" VerticalAlignment="Top" Height="29" Width="579" Foreground="Red"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="手动添加其他非V直播间">
+                <Grid Background="White">
+                    <Label Margin="204,4,-42,-79">
+                        <TextBlock TextWrapping="Wrap"
+Text="注意:&#xA;　　勾选后启动ws连接组，可以监控非VTB直播间状态。&#xA;　　更改需重启生效，该功能会尝试持续连接非常规接口。&#xA;　　添加后会自动在名称后增加'-NV'标识字样，请勿修改&#xA;　　添加后修改/删除需手动编辑RoomListConfig.json文件。&#xA;　　因为阿B防御机制，连接速度越为10秒一个房间，如果是vtbs有记录的房间，启动时会以vtbs数据作为补充，ws连接完成后会停止vtbs数据读取。&#xA;　　也就是说：启动后连接耗时=总列表长度*10秒。" Height="143" />
+                    </Label>
+                    <Label Content="名称(显示和录制生成的文件夹名称)" HorizontalAlignment="Left" Margin="6,18,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="名称" HorizontalAlignment="Left" Height="23" Margin="6,43,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+                    <Label Content="房间号(直播间的房间号)" HorizontalAlignment="Left" Margin="6,68,0,-14" VerticalAlignment="Top"/>
+                    <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="6,93,0,-37" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+                    <Button Content="添加" HorizontalAlignment="Left" Margin="6,121,0,-67" VerticalAlignment="Top" Width="81" Height="25" Click="Button_Click"/>
+                    <Label x:Name="提示" Content="" HorizontalAlignment="Left" Margin="8,144,0,-3" VerticalAlignment="Top" RenderTransformOrigin="0.23,0.392" Foreground="Red"/>
+                    <CheckBox x:Name="监控非VTB直播间使能按钮" Content="需要监控非VTB直播间(非VTBS数据来源)" Margin="204,144,-118,0" Click="监控非VTB直播间使能按钮开关点击事件" IsChecked="True" IsEnabled="False"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+</Window>

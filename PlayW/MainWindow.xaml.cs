@@ -505,7 +505,7 @@ namespace PlayW
                             InfoLog.InfoPrintf(DD.DownIofo.房间_频道号 + "房间:" + DD.DownIofo.主播名称 + " 下播放，录制完成", InfoLog.InfoClass.下载必要提示);
                             this.Dispatcher.Invoke(new Action(delegate
                             {
-                                提示文字.Content = "该房间/频道 直播停止..";
+                                提示文字.Content = "======该房间/频道 直播停止，请关闭播放窗口======";
                                 return;
                             }));
                         }

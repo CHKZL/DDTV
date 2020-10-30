@@ -83,6 +83,27 @@ namespace DDTVLiveRecWebServer
                         await context.Response.WriteAsync("<a>二维码加载失败，请稍等3秒后刷新网页,如多次失败，请查看控制台是否输出错误信息<a/>", System.Text.Encoding.UTF8);
                     }
                 });
+                endpoints.MapGet("/config", async context =>
+                {
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("访问以下链接以修改配置:<br/>(修改后请重启DDTVLiveRec生效)<br/>" +
+                        "<br/>打开弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOn" +
+                        "<br/>关闭弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOff");
+                });
+                endpoints.MapGet("/config-DanmuRecOn", async context =>
+                {
+                    Auxiliary.MMPU.录制弹幕 = true;
+                    Auxiliary.MMPU.setFiles("RecordDanmu", "1");
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("打开弹幕/礼物/舰队录制储存成功");
+                });
+                endpoints.MapGet("/config-DanmuRecOff", async context =>
+                {
+                    Auxiliary.MMPU.录制弹幕 = false;
+                    Auxiliary.MMPU.setFiles("RecordDanmu", "0");
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("关闭弹幕/礼物/舰队录制储存成功");
+                });
             });
         }
     }

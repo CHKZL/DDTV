@@ -23,6 +23,7 @@ namespace Auxiliary
         {
             public LiveChatListener 阿B直播流对象 = new LiveChatListener();
             public StreamWriter 弹幕储存流;
+            public StreamWriter 礼物储存流;
             public DateTime 弹幕录制基准时间 = DateTime.Now;
           
             public WebClient WC { set; get; }
@@ -74,12 +75,9 @@ namespace Auxiliary
             {
                 DownIofo.WC.Headers.Add("Cookie", MMPU.Cookie);
             }
-
             if (!Directory.Exists(GetDirectoryName(DownIofo.文件保存路径)))
             {
-
                 Directory.CreateDirectory(GetDirectoryName(DownIofo.文件保存路径));
-
             }
             // ReSharper restore AssignNullToNotNullAttribute
             DownIofo.备注 = "等待接收直播数据流";
@@ -135,6 +133,11 @@ namespace Auxiliary
                                         {
                                             break;
                                         }
+                                        else
+                                        {
+                                            DownIofo.备注 = "该房间未开播或已加密";
+                                            return null;
+                                        }
                                     }
                                 }
                                 else
@@ -159,27 +162,25 @@ namespace Auxiliary
                             {
                                 break;
                             }
-                    }
-                    
+                    }           
                 }
             }
-            DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-            
+            DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);   
             try
             {    
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
                 if(MMPU.录制弹幕&& !DownIofo.继承.是否为继承对象)
                 {
                     DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径 + ".ass");
+                    DownIofo.礼物储存流 = new StreamWriter(DownIofo.文件保存路径 + ".txt");
                     DownIofo.阿B直播流对象.Connect(int.Parse(DownIofo.房间_频道号));
+                    /*施工中(弹幕录制断流重连)*/
                     DownIofo.阿B直播流对象.MessageReceived += Listener_MessageReceived;
                     DownIofo.弹幕储存流.WriteLine(danmu.返回ASS字幕文件头(DownIofo.标题, DownIofo.房间_频道号, DownIofo.主播名称));
                 }
                
             }
-            catch (WebException)
-            {
-            }
+            catch (WebException){}
             DownIofo.备注 = 开始后显示的备注;
             DownIofo.下载状态 = true;
             return DownIofo.文件保存路径;
@@ -195,7 +196,19 @@ namespace Auxiliary
                         TimeSpan interval = DT - DownIofo.弹幕录制基准时间;
                         //DownIofo.弹幕储存流.WriteLine("{0} {1} {2}", String.Format("{0, 14}", interval.ToString()) , String.Format("{0, 14}", danmu.UserName + "[" + danmu.UserId + "]:")  , danmu.Message);
                         DownIofo.弹幕储存流.WriteLine("Dialogue: 0,{0},{1},Fix,{2},20,20,2,,{3}", interval.ToString(), (interval.Seconds).ToString(), danmu.UserName + "[" + danmu.UserId + "]", danmu.Message);
-                        DownIofo.弹幕储存流.Flush();
+                        DownIofo.弹幕储存流.Flush();//写入弹幕数据
+                        break;
+                    case SendGiftEventArgs gift:
+                        DownIofo.礼物储存流.WriteLine("收到来自{0}[{1}]的{2}个{3}礼物",gift.UserName, gift.UserId, gift.Amount, gift.GiftName);
+                        DownIofo.礼物储存流.Flush();//写入礼物数据
+                        break;
+                    case GuardBuyEventArgs guard:
+                        DownIofo.礼物储存流.WriteLine("增加舰队:{0}当上了{1}", guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督");
+                        DownIofo.礼物储存流.Flush();//写入舰队数据
+                        break;
+                    case WarningEventArg Warning:
+                        DownIofo.礼物储存流.WriteLine("{0}：被超管警告了，警告内容：{1}",DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),Warning.msg);
+                        DownIofo.礼物储存流.Flush();//写入超管警告内容
                         break;
 
                 }
@@ -269,8 +282,7 @@ namespace Auxiliary
                 主播名称 = 主播名称,
                 继承=new 继承() { 
                 是否为继承对象= 是否为继承项目,
-                继承的下载文件路径= 继承项目的原始文件,
-                
+                继承的下载文件路径= 继承项目的原始文件,            
                 }
             };
             if(!是否保存)
@@ -459,6 +471,16 @@ namespace Auxiliary
                                 InfoLog.InfoPrintf("该房间的配置文件发现了与当前版本不支持的平台，请检查文件配置或者检查更新", InfoLog.InfoClass.系统错误信息);
                                 return;
                         }
+                    }
+                    else
+                    {
+                        DownIofo.备注 = "直播停止，下载完成下载完成";
+                        InfoLog.InfoPrintf("下载任务结束\n==============下载任务结束================\n主播名:" + DownIofo.主播名称 + "\n房间号:" + DownIofo.房间_频道号 + "\n标题:" + DownIofo.标题 + "\n开播时间:" + DownIofo.开始时间 + "\n结束时间:" + DownIofo.结束时间 + "\n保存路径:" + DownIofo.文件保存路径 + "\n下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") + "\n结束原因:" + DownIofo.备注 + "\n===============下载任务结束===============\n", InfoLog.InfoClass.下载必要提示);
+                        if (DownIofo.阿B直播流对象 != null && DownIofo.阿B直播流对象.startIn)
+                        {
+                            DownIofo.阿B直播流对象.Dispose();
+                        }
+                        return;
                     }
                 }
             })).Start();

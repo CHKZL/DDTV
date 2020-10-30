@@ -28,8 +28,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.1a";
-        public static string[] 不检测的版本号 = {};
+        public static string 版本号 = "2.0.4.2a";
+        public static string[] 不检测的版本号 = {"2.0.4.1a"};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -61,7 +61,7 @@ namespace Auxiliary
         public static bool 剪贴板监听 = false;
         public static bool 录制弹幕 = false;
         public static bool DDC采集使能 = true;
-        public static int DDC采集间隔 = 1000;
+        public static int DDC采集间隔 = 60000;
         public static int 数据源 = 0;//0：vdb   1：B API
         public static bool 是否第一次使用DDTV = true;
         public static bool 是否有新版本 = true;
@@ -97,7 +97,7 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = true
+                    输出到文件 = false
                 });
                 启动模式 = 1;
             }
@@ -132,7 +132,8 @@ namespace Auxiliary
                 //数据源
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
                 //是否启动WS连接组
-                bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
+                bilibili.是否启动WS连接组 = true;
+                //bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
                 
@@ -303,10 +304,10 @@ namespace Auxiliary
         }
 
         /// <summary>
-        /// 读取配置文件
+        /// 读取配置文件(如果不存在该值，则生成该配置键值对)
         /// </summary>
         /// <param name="name">值名称</param>
-        /// <param name="V">默认值</param>
+        /// <param name="V">如果不存在该值默认填写的默认值</param>
         public static string 读取exe默认配置文件(string name, string V)
         {
             string A1 = V;
@@ -415,6 +416,7 @@ namespace Auxiliary
                 }
             }
             byte[] roomHtml = wc.DownloadData(url);
+            wc.Dispose();
             return Encoding.UTF8.GetString(roomHtml);
         }
         public static string 获取网页数据_下载视频用(string url, bool 解码)
@@ -926,6 +928,14 @@ namespace Auxiliary
         //    config.Save(ConfigurationSaveMode.Modified);
 
         //}
+
+        /// <summary>
+        /// 和服务器进行TCP通讯
+        /// </summary>
+        /// <param name="code">命令码</param>
+        /// <param name="msg">消息内容</param>
+        /// <param name="是否需要回复"></param>
+        /// <returns></returns>
         public static string TcpSend(int code, string msg, bool 是否需要回复)
         {
             try
@@ -1034,8 +1044,6 @@ namespace Auxiliary
             [SuppressMessage("ReSharper", "InconsistentNaming")]
             internal static class Ver
             {
-                public const string VER = "1.5.1";
-                public const string DATE = "(2019-3-1)";
                 public const string DESC = "修改API";
                 public static readonly string OS_VER = "(" + WinVer.SystemVersion.Major + "." + WinVer.SystemVersion.Minor + "." + WinVer.SystemVersion.Build + ")";
                 //ublic static readonly string UA = OS_VER + " AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
@@ -1043,15 +1051,15 @@ namespace Auxiliary
                 {
                     if (MMPU.启动模式 == 0)
                     {
-                        return OS_VER + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+                        return OS_VER + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4305.2 Safari/537.36";
                     }
                     else if (MMPU.启动模式 == 1)
                     {
-                        return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36";
+                        return "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4305.2 Safari/537.36";
                     }
                     else
                     {
-                        return "Mozilla/5.0 AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11";
+                        return "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4305.2 Safari/537.36";
                     }
                 }
             }

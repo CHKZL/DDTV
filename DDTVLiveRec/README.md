@@ -35,6 +35,7 @@ web服务端:
 [http://IP:11419/log]：DDTVLiveRec日志信息  
 [http://IP:11419/file]：DDTVLiveRec录制的文件列表  
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
+[http://IP:11419/config]：DDTVLiveRec的配置修改命令列表  
 
 
 

@@ -22,9 +22,9 @@ namespace DDTV_New.window
     /// <summary>
     /// 添加非VTB功能设置窗.xaml 的交互逻辑
     /// </summary>
-    public partial class 添加非VTB功能设置窗 : Window
+    public partial class 增加监控列表 : Window
     {
-        public 添加非VTB功能设置窗()
+        public 增加监控列表()
         {
             InitializeComponent();
             监控非VTB直播间使能按钮.IsChecked = 是否启动WS连接组;
@@ -38,11 +38,16 @@ namespace DDTV_New.window
             }
             else
             {
+                int roomId = 0;
                 try
                 {
-                    long roomId = long.Parse(唯一码.Text);
+                    roomId = int.Parse(唯一码.Text);
                 }
-                catch (Exception){}
+                catch (Exception){
+
+                    MessageBox.Show("输入的直播间房间号不符合房间号规则(数字)");
+                    return;
+                }
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox
                 {
@@ -64,6 +69,22 @@ namespace DDTV_New.window
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 提示.Content = 名称.Text + "-NV["+ 唯一码.Text + "]添加完成";
+                bilibili.已连接的直播间状态.Add(new 直播间状态() { 房间号= roomId });
+                
+                bilibili.RoomList.Add(new RoomInfo
+                {
+                    房间号 = roomId.ToString(),
+                    标题 = "",
+                    是否录制弹幕 = false,
+                    是否录制视频 = false,
+                    UID = "",
+                    直播开始时间 = "",
+                    名称 = 名称.Text + "-NV",
+                    直播状态 = false,
+                    原名 = 名称.Text + "-NV",
+                    是否提醒 = false,
+                    平台 = "bilibili"
+                });
                 名称.Text = "";
                 唯一码.Text = "";
             }                
@@ -83,8 +104,9 @@ namespace DDTV_New.window
             }
             else
             {
-                bilibili.是否启动WS连接组 = false;
-                MMPU.setFiles("NotVTBStatus", "0");
+
+                //bilibili.是否启动WS连接组 = false;
+                //MMPU.setFiles("NotVTBStatus", "0");
             }
             提示.Content = "监控非VTB直播间状态使能发生变化，需手动重启DDTV生效";
         }
@@ -93,6 +115,16 @@ namespace DDTV_New.window
         {
             MessageBox.Show("配置文件发生变化，请手动重启DDTV以加载新的配置");
             this.Close();
+        }
+
+        private void 一键导入账号关注VTB和VUP_Click(object sender, RoutedEventArgs e)
+        {
+            增加房间提示信息.Content = $"正在导入，此期间请勿关闭该窗口.速度会根据关注列表的长度有所变化(一个V大约2秒)...请稍后.....";
+            AddList.导入VTBVUP((TEXT) =>
+            {
+                增加房间提示信息.Content = TEXT;
+               
+            },this,false);
         }
     }
 }

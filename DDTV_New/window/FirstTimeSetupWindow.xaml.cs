@@ -122,12 +122,13 @@ namespace DDTV_New.window
                 {
                     上一步按钮.IsEnabled = false;
                     下一步按钮.IsEnabled = false;
-                    导入VTBVUP((增加的数量, 已经存在的数量) =>
+                    导入VTBVUP提示文本.Text = "正在导入关注列表里符合的VTB/VUP数据，速度会根据关注列表的长度有所变化(一个V大约2秒)　　　　　　　　　　　　　　　　　请勿关闭软件，请稍候……";
+                    AddList.导入VTBVUP((TEXT) =>
                     {
-                        导入VTBVUP提示文本.Text = $"导入成功！原有:{已经存在的数量}个，新增VTB/VUP数：{增加的数量}";
+                        导入VTBVUP提示文本.Text = $"{TEXT}";
                         上一步按钮.IsEnabled = true;
                         下一步按钮.IsEnabled = true;
-                    });
+                    }, this, true);
                 }
             }
         }
