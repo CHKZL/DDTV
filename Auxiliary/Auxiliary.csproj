@@ -165,6 +165,7 @@
     <Compile Include="LiveChatScript\LiveChatListener.cs" />
     <Compile Include="LiveChatScript\LivePopularity.cs" />
     <Compile Include="LiveChatScript\MessageEventArgs.cs" />
+    <Compile Include="LiveChatScript\WarningEventArg.cs" />
     <Compile Include="LiveChatScript\WelcomeEventArgs.cs" />
     <Compile Include="MMPU.cs" />
     <Compile Include="Program.cs" />

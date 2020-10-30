@@ -17,25 +17,56 @@ using System.Net.WebSockets;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
 using Auxiliary.LiveChatScript;
+using static Auxiliary.RoomInit;
 
 namespace Auxiliary
 {
     public class bilibili
     {
         public static List<RoomInit.RoomInfo> RoomList = new List<RoomInit.RoomInfo>();
-        public static bool 是否正在更新房间信息 = false;
-        public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
-        public static bool WS连接组是否已经启动 = false;
+        public static List<VtbsRoom> VtbsRoomList = new List<VtbsRoom>();
         public static List<string> VTBROOMlist = new List<string>();
+        public static List<string> WSokRoomList = new List<string>();
+        public static bool 是否正在更新房间信息 = false;
+        //public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
+        public static bool 是否启动WS连接组 = true;
+        public static bool WS连接组是否已经启动 = false;
+
+        public static bool wss连接初始化准备已完成 = false;
+  
+        public class VtbsRoom
+        {
+            public int mid { set; get; }
+            public int room { set; get; }
+            public string name { set; get; }
+        }
+
         public static void start()
         {
+
+            new Task(() => {
+                #region MyRegion
+                while (true)
+                {
+                    try
+                    {
+                        更新VTBS房间数据();
+                        Thread.Sleep(1000 * 60 * 60);
+                    }
+                    catch (Exception) { }
+                }
+                #endregion
+            }).Start();
+
             Task.Run(async () =>
             {
                 InfoLog.InfoPrintf("启动房间信息本地缓存更新线程", InfoLog.InfoClass.Debug);
-                是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
+                //是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
                 if (是否启动WS连接组)
                 {
-                    持续连接获取阿B房间信息类.初始化所有房间连接();
+                    new Task(()=> {
+                        持续连接获取阿B房间信息类.初始化所有房间连接();
+                    }).Start();
                 }
                 while (true)
                 {
@@ -50,6 +81,39 @@ namespace Auxiliary
                     }
                 }
             });
+        }
+        public static void 更新VTBS房间数据()
+        {
+            while (true)
+            {
+                try
+                {
+                   
+                    string vtbs房间数据 = string.Empty;
+                    try
+                    {
+                        int C = int.Parse("AAA");
+                        vtbs房间数据 = MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url + "/v1/short", 5000);
+                    }
+                    catch (Exception)
+                    {
+                        vtbs房间数据 = MMPU.TcpSend(Server.RequestCode.GET_VTBSROOMLIST, "{}", true);
+                    }
+
+                    JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
+                    foreach (var item in JO)
+                    {
+                        VtbsRoomList.Add(new VtbsRoom() { mid = int.Parse(item["mid"].ToString()), room = int.Parse(item["roomid"].ToString()), name = item["uname"].ToString() });
+                    }
+                    wss连接初始化准备已完成 = true;
+                    break;
+                }
+                catch (Exception)
+                {
+                }
+               
+                Thread.Sleep(5000);
+            }
         }
         public static void 周期更新B站房间状态()
         {
@@ -69,14 +133,15 @@ namespace Auxiliary
                     case 1:
                         {
                             //启动WS房间连接
-                            使用B站API更新房间状态();
-                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
-                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                         
                             是否正在更新房间信息 = false;
                             break;
                         }
                     case 2:
                         {
+                            使用B站API更新房间状态();
+                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
+                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
                             是否正在更新房间信息 = false;
                             break;
                         }
@@ -89,14 +154,40 @@ namespace Auxiliary
         }
         public static void 使用vtbsAPI更新房间状态()
         {
+            int C1 = 0;
+            int C2 = RoomList.Count;
             try
             {
-                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url+"/v1/living",8000));
-                Console.WriteLine(VTBS.API.VTBS服务器CDN.VTBS_Url);
-                foreach (var roomtask in RoomList)
+                while (!wss连接初始化准备已完成)
                 {
-                    if(!roomtask.名称.Contains("-NV"))
+                    Thread.Sleep(1000);
+                }
+                JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url+"/v1/living",8000));
+                
+                List<int> MTPlist = new List<int>();
+                foreach (var item in VtbsRoomList)
+                {
+                    MTPlist.Add(item.room);
+                }
+                List<RoomInit.RoomInfo> Vtbs存在的直播间 = new List<RoomInit.RoomInfo>();
+                List<RoomInit.RoomInfo> Vtbs不存在的直播间 = new List<RoomInit.RoomInfo>();
+                foreach (var item in RoomList)
+                {
+                    if (MTPlist.Contains(int.Parse(item.房间号)))
                     {
+                        Vtbs存在的直播间.Add(item);
+                    }
+                    else
+                    {
+                        Vtbs不存在的直播间.Add(item);
+                    }
+                }
+
+                foreach (var roomtask in Vtbs存在的直播间)
+                {
+                    if(!WSokRoomList.Contains(roomtask.房间号))
+                    {
+                        C1++;
                         roomtask.直播状态 = false;
                         if (JO.ToString().Contains(roomtask.房间号))
                         {
@@ -149,9 +240,11 @@ namespace Auxiliary
                 }
                
             }
+            InfoLog.InfoPrintf("使用VTBS数据库加载数据量:"+C1.ToString()+"/"+C2.ToString(), InfoLog.InfoClass.Debug);
         }
         public static void 使用B站API更新房间状态()
         {
+        
             foreach (var roomtask in RoomList)
             {
                 if (!roomtask.名称.Contains("-NV"))
@@ -176,6 +269,7 @@ namespace Auxiliary
                 Thread.Sleep(2000);
             }
         }
+
         public static List<直播间状态> 已连接的直播间状态 = new List<直播间状态>();
         public class 直播间状态
         {
@@ -191,52 +285,119 @@ namespace Auxiliary
                 {
                     WS连接组是否已经启动 = true;
 
-                    new Task(()=> { 
-                    while(true)
+                    new Task(() =>
+                    {  
+                        while (true)
                         {
-                            int i = 1;
-                            foreach (var item in 已连接的直播间状态)
+                            try
                             {
-                                TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
-                                InfoLog.InfoPrintf(i+"　时间差:" + (int)ts.TotalSeconds + "　　　房间号:"+ item.房间号 + "　　心跳值:"+ item.心跳值 + "　　上次更新时间"+ item.心跳时间, InfoLog.InfoClass.Debug);
-                                i++;
+                                int num = 1;
+                                string BB = string.Empty;
+                                foreach (var item in 已连接的直播间状态)
+                                {
+                                    TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
+                                    BB += "\r\n" + num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间;
+                                    Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
+                                    num++;
+                                }
+                                InfoLog.InfoPrintf("wss连接状态:" + BB, InfoLog.InfoClass.Debug);
+                                for (int i = 0; i < 已连接的直播间状态.Count; i++)
+                                {
+                                    TimeSpan ts = DateTime.Now.Subtract(已连接的直播间状态[i].心跳时间);
+                                    if ((int)ts.TotalSeconds < 0 || (int)ts.TotalSeconds > 80)
+                                    {
+                                        int 房间号 = 已连接的直播间状态[i].房间号;
+                                        已连接的直播间状态.Remove(已连接的直播间状态[i]);
+                                        foreach (var item2 in RoomList)
+                                        {
+                                            if (房间号 == int.Parse(item2.房间号))
+                                            {
+                                                if (item2.平台 == "bilibili")
+                                                {
+                                                    try
+                                                    {
+                                                        item2.liveChatListener.Dispose();
+                                                    }
+                                                    catch (Exception) { }
+                                                    item2.liveChatListener = new LiveChatListener();
+                                                    item2.liveChatListener.Connect(int.Parse(item2.房间号));
+                                                    item2.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                                                    已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item2.房间号) });
+                                                    WSokRoomList.Add(item2.房间号);
+                                                    InfoLog.InfoPrintf("-ALL 发起房间监控连接请求：)" + item2.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                                    Thread.Sleep(10000);
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                
                             }
-                            Thread.Sleep(5000);
+                            catch (Exception)
+                            {
+                            }
+                            Thread.Sleep(10000);
                         }
                     }).Start();
+                    while (!wss连接初始化准备已完成)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    List<int> MTPlist = new List<int>();
+                    foreach (var item in VtbsRoomList)
+                    {
+                        MTPlist.Add(item.room);
+                    }
+                    List<RoomInit.RoomInfo> Vtbs存在的直播间 = new List<RoomInit.RoomInfo>();
+                    List<RoomInit.RoomInfo> Vtbs不存在的直播间 = new List<RoomInit.RoomInfo>();
                     foreach (var item in RoomList)
+                    {
+                        if(MTPlist.Contains(int.Parse(item.房间号)))
+                        {
+                            Vtbs存在的直播间.Add(item);
+                        }
+                        else
+                        {
+                            Vtbs不存在的直播间.Add(item);
+                        }
+                    }
+                    foreach (var item in Vtbs不存在的直播间)
                     {
                         try
                         {
-                            InfoLog.InfoPrintf("执行WS==================", InfoLog.InfoClass.Debug);
-                            if (MMPU.数据源 == 1)
+                            InfoLog.InfoPrintf("LiveChatListener开始连接非VTBS监控范围内房间:" + item.房间号, InfoLog.InfoClass.Debug);
+                            if (item.平台 == "bilibili")
                             {
-                                if (item.平台 == "bilibili")
-                                {
-                                    item.liveChatListener = new LiveChatListener();
-                                    item.liveChatListener.Connect(int.Parse(item.房间号));
-                                    item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
-                                    已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
-                                    InfoLog.InfoPrintf("-ALL 添加监控房间：)"+ item.房间号.ToString(), InfoLog.InfoClass.Debug);
-                                }
+                                item.liveChatListener = new LiveChatListener();
+                                item.liveChatListener.Connect(int.Parse(item.房间号));
+                                item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                                已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
+                                WSokRoomList.Add(item.房间号);
+                                InfoLog.InfoPrintf("-ALL 发起房间监控连接请求：)" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
                             }
-                            else if (MMPU.数据源 == 0)
-                            {
-                                if (item.平台 == "bilibili" && (item.原名.Contains("-NV") || item.名称.Contains("-NV")))
-                                {
-                                    item.liveChatListener = new LiveChatListener();
-                                    item.liveChatListener.Connect(int.Parse(item.房间号));
-                                    item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
-                                    已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
-                                    InfoLog.InfoPrintf("-NV 添加监控房间："+ item.房间号.ToString(), InfoLog.InfoClass.Debug);
-                                }
-                            }
+                            Thread.Sleep(10000);
                         }
-                        catch (Exception)
+                        catch (Exception) { }
+                        Thread.Sleep(5000);
+                    }
+                    foreach (var item in Vtbs存在的直播间)
+                    {
+                        try
                         {
-
-   
+                            InfoLog.InfoPrintf("LiveChatListener开始连接常规V房间:"+ item.房间号, InfoLog.InfoClass.Debug);
+                            if (item.平台 == "bilibili")
+                            {
+                                item.liveChatListener = new LiveChatListener();
+                                item.liveChatListener.Connect(int.Parse(item.房间号));
+                                item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
+                                已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
+                                WSokRoomList.Add(item.房间号);
+                                InfoLog.InfoPrintf("-ALL 发起房间监控连接请求：)" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                            }
+                            Thread.Sleep(10000);
                         }
+                        catch (Exception){}
                         Thread.Sleep(5000);
                     }
                 }
@@ -255,7 +416,12 @@ namespace Auxiliary
                                 {
                                     item.心跳值 = LiveP.LiveP;
                                     item.心跳时间 = DateTime.Now;
-                                    InfoLog.InfoPrintf("更新心跳：" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                    //InfoLog.InfoPrintf("更新心跳：" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                    //if(!已连接的直播间状态.Contains(new 直播间状态() { 房间号 = item.房间号 }))
+                                    //{
+                                    //    已连接的直播间状态.Add(new 直播间状态() { 房间号 = item.房间号 });
+                                    //    InfoLog.InfoPrintf("-ALL 添加开始监控的房间：)" + item.房间号.ToString(), InfoLog.InfoClass.Debug);
+                                    //}
                                     break;
                                 }
                             }
@@ -362,7 +528,7 @@ namespace Auxiliary
                     { "fontsize", "25" },
                     { "mode", "1" },
                     { "msg", mess },
-                    { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1))).TotalSeconds.ToString() },
+                    { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
                     { "roomid", roomid },
                     { "csrf_token", MMPU.csrf },
                     { "csrf", MMPU.csrf }
@@ -419,7 +585,7 @@ namespace Auxiliary
             }
             try
             {
-                var result = JObject.Parse(roomHtml);
+                JObject result = JObject.Parse(roomHtml);
                 string roomId = result["data"]["roomid"].ToString();
                 //InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
                 DataCache.写缓存(CacheStr + uid, roomId);
@@ -436,8 +602,8 @@ namespace Auxiliary
         {
             public static bool 是否正在直播(string RoomId)
             {
-                var roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + RoomId;
-                var wc = new WebClient();
+                string roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + RoomId;
+                WebClient wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
                 wc.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
                 wc.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
@@ -468,8 +634,8 @@ namespace Auxiliary
                 //解析返回结果
                 try
                 {
-                    var roomJson = Encoding.UTF8.GetString(roomHtml);
-                    var result = JObject.Parse(roomJson);
+                    string roomJson = Encoding.UTF8.GetString(roomHtml);
+                    JObject result = JObject.Parse(roomJson);
                     DataCache.BilibiliApiCount++;
                     return result["data"]["live_status"].ToString() == "1" ? true : false;
                 }
@@ -477,8 +643,8 @@ namespace Auxiliary
                 {
                     try
                     {
-                        var roomJson = Encoding.UTF8.GetString(roomHtml);
-                        var result = JObject.Parse(roomJson);
+                        string roomJson = Encoding.UTF8.GetString(roomHtml);
+                        JObject result = JObject.Parse(roomJson);
                         DataCache.BilibiliApiCount++;
                         return result["data"]["live_status"].ToString() == "1" ? true : false;
                     }
@@ -559,6 +725,17 @@ namespace Auxiliary
                     if (!判断文件是否存在.判断(BBBC, "bilibili", roomid))
                     {
                         InfoLog.InfoPrintf("请求的开播房间当前推流数据为空，推测还未开播，等待数据流...：", InfoLog.InfoClass.Debug);
+                        try
+                        {
+                            if((JObject.Parse(resultString)["message"].ToString()=="房间已加密"))
+                            {
+                                InfoLog.InfoPrintf("房间已加密", InfoLog.InfoClass.下载必要提示);
+                                return "";
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
                         BBBC = (JObject.Parse(resultString)["data"]["durl"][1]["url"].ToString());
                     }
                     DataCache.BilibiliApiCount++;
@@ -566,7 +743,7 @@ namespace Auxiliary
                 }
                 catch (Exception e)
                 {
-                    InfoLog.InfoPrintf("视频流地址解析失败：" + e.Message, InfoLog.InfoClass.Debug);
+                    InfoLog.InfoPrintf("视频流地址解析失败：" + e.Message, InfoLog.InfoClass.系统错误信息);
                     return "";
                 }
             }
@@ -676,7 +853,7 @@ namespace Auxiliary
                         }
                     }
                 }
-                var roominfo = new RoomInit.RoomInfo
+                RoomInit.RoomInfo roominfo = new RoomInit.RoomInfo
                 {
                     房间号 = result["data"]["room_id"].ToString(),
                     标题 = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", ""),

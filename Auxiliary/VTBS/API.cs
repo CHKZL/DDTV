@@ -15,18 +15,20 @@ namespace Auxiliary.VTBS
         /// </summary>
         public class VTBS服务器CDN
         {
-            public static string VTBS_Url = "https://api.vtbs.moe";
-            public static string 根据CDN更新VTBS_Url()
+            public static string VTBS_Url = "https://api.tokyo.vtbs.moe";
+            public static void 根据CDN更新VTBS_Url()
             {
-                string CDN_Url = MMPU.返回网页内容("https://api.vtbs.moe/meta/cdn");
-                JArray JO = string.IsNullOrEmpty(CDN_Url) ? (JArray)JsonConvert.DeserializeObject("[]") : (JArray)JsonConvert.DeserializeObject(CDN_Url);
-                List<延迟对象> PING = new List<延迟对象>();
-                foreach (var item in JO)
-                {
-                    PING.Add(new 延迟对象() { CDN_URL = item.ToString() });
-                }
-                VTBS_Url = 返回延迟最低的连接(PING,5);
-                return VTBS_Url;
+                new Task(()=> {
+                    string CDN_Url = MMPU.返回网页内容("https://api.tokyo.vtbs.moe/meta/cdn");
+                    JArray JO = string.IsNullOrEmpty(CDN_Url) ? (JArray)JsonConvert.DeserializeObject("[]") : (JArray)JsonConvert.DeserializeObject(CDN_Url);
+                    List<延迟对象> PING = new List<延迟对象>();
+                    foreach (var item in JO)
+                    {
+                        PING.Add(new 延迟对象() { CDN_URL = item.ToString() });
+                    }
+                    VTBS_Url = 返回延迟最低的连接(PING, 5);
+                    InfoLog.InfoPrintf("获取到VTBS当前可用CDN为:" + VTBS_Url, InfoLog.InfoClass.Debug);
+                }).Start();
             }
             /// <summary>
             /// 返回延迟最低的连接

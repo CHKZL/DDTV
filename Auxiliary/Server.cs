@@ -11,8 +11,10 @@ namespace Auxiliary
     {
 #if true
         public static readonly IPAddress IP_ADDRESS = MMPU.根据URL获取IP地址("pro.ddtv.pro");
-#else
+#elif false
          public static readonly IPAddress IP_ADDRESS = MMPU.根据URL获取IP地址("api.ddtv.pro");
+#elif false
+        public static readonly IPAddress IP_ADDRESS = MMPU.根据URL获取IP地址("192.168.3.215");
 #endif
         public static readonly int PORT = 11433;
         public static readonly string PROJECT_ADDRESS = "https://github.com/CHKZL/DDTV2/releases/latest";
@@ -25,6 +27,7 @@ namespace Auxiliary
             public static readonly int GET_LATEST_VERSION_NUMBER = 20011;
             public static readonly int GET_UPDATE_ANNOUNCEMENT = 20012;
             public static readonly int GET_LIVELSIT = 20016;
+            public static readonly int GET_VTBSROOMLIST = 20017;
             public static readonly int GET_DDC_TIME_NUMBER = 30001;
             public static readonly int SET_DokiDoki_DDTV = 40001;
             public static readonly int SET_DokiDoki_DDTVLiveRec = 40002;

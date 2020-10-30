@@ -18,7 +18,7 @@ namespace Auxiliary.LiveChatScript
 
         public int vip { get; set; }
 
-        public int mock_effect { get; set; }
+        //public int mock_effect { get; set; }
 
         internal WelcomeEventArgs(JObject obj) : base(obj)
         {
@@ -26,7 +26,7 @@ namespace Auxiliary.LiveChatScript
             UserName = (string)obj["data"]["uname"];
             svip = (int)obj["data"]["svip"];
             vip = (int)obj["data"]["vip"];
-            mock_effect = (int)obj["data"]["mock_effect"];
+            //mock_effect = (int)obj["data"]["mock_effect"];
         }
     }
 }

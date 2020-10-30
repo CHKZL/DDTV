@@ -162,6 +162,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AddList.cs" />
     <Compile Include="Plugin\BilibiliAccount.cs" />
     <Compile Include="Utility\NewThreadTask.cs" />
     <Compile Include="UserControl1.xaml.cs">
@@ -180,8 +181,8 @@
     <Compile Include="window\主站视频播放选择窗.xaml.cs">
       <DependentUpon>主站视频播放选择窗.xaml</DependentUpon>
     </Compile>
-    <Compile Include="window\添加非VTB功能设置窗.xaml.cs">
-      <DependentUpon>添加非VTB功能设置窗.xaml</DependentUpon>
+    <Compile Include="window\增加监控列表.xaml.cs">
+      <DependentUpon>增加监控列表.xaml</DependentUpon>
     </Compile>
     <Compile Include="下载工具.xaml.cs">
       <DependentUpon>下载工具.xaml</DependentUpon>
@@ -228,7 +229,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="window\添加非VTB功能设置窗.xaml">
+    <Page Include="window\增加监控列表.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

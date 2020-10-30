@@ -59,25 +59,31 @@ namespace Auxiliary.LiveChatScript
             }
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
+            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId,30000);
+            JObject JO = (JObject)JsonConvert.DeserializeObject(BB);
             try
             {
-                await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(5000).Token);
+                //string CC = JO["data"]["host_list"][0]["host"].ToString();
+                await m_client.ConnectAsync(new Uri("wss://"+JO["data"]["host_list"][0]["host"].ToString()+"/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
+                //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
             }
             catch (Exception e)
             {
-                throw e;
+                InfoLog.InfoPrintf("WSS连接发生错误:" + e.ToString(), InfoLog.InfoClass.Debug);
+                //Console.WriteLine(e.ToString());
             }
 
             int realRoomId = roomId;//await _getRealRoomId(roomId);
-
+          
             await _sendObject(7, new
             {
                 uid = 0,
                 roomid = realRoomId,
                 protover = 2,
                 platform = "web",
-                clientver = "1.7.3"
-            });
+                clientver = "1.7.3",
+                key = JO["data"]["token"].ToString()
+            }) ; 
 
             _ = _innerLoop().ContinueWith((t) =>
            {
@@ -114,7 +120,13 @@ namespace Auxiliary.LiveChatScript
 
         public void Close()
         {
-            m_innerRts.Cancel();
+            try
+            {
+                m_innerRts.Cancel();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private bool _disposed = false;
@@ -226,10 +238,20 @@ namespace Auxiliary.LiveChatScript
 
         private void _parse(string jsonBody)
         {
-            var obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
+            
+            var obj =new JObject();
+            try
+            {
+                jsonBody = ReplaceString(jsonBody);
+                obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
+            }
+            catch (Exception e)
+            {
+                ;
+            }
             //Debug.Log(jsonBody);
             string cmd = (string)obj["cmd"];
-            InfoLog.InfoPrintf("LiveChatListener收到数据，类型为："+ cmd, InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf("LiveChatListener收到数据，类型为："+ cmd, InfoLog.InfoClass.杂项提示);
             //Console.WriteLine(cmd);
             switch (cmd)
             {
@@ -252,13 +274,40 @@ namespace Auxiliary.LiveChatScript
                 case "LiveP":
                     MessageReceived(this, new LivePopularity(obj));
                     break;
+                case "WARNING":
+                    MessageReceived(this, new WarningEventArg(obj));
+                    break;
                 default:
                     //Debug.Log("Unknow\n"+obj);
                     MessageReceived(this, new MessageEventArgs(obj));
                     break;
             }
         }
-
+        /// <summary>
+        ///   替换部分字符串
+        /// </summary>
+        /// <param name="sPassed">需要替换的字符串</param>
+        /// <returns></returns>
+        public static string ReplaceString(string JsonString)
+        {
+            if (JsonString == null) { return JsonString; }
+            if (JsonString.Contains("\\"))
+            {
+                JsonString = JsonString.Replace("\\", "\\\\");
+            }
+            //if (JsonString.Contains("\'"))
+            //{
+            //    JsonString = JsonString.Replace("\'", "\\\'");
+            //}
+            //if (JsonString.Contains("\""))
+            //{
+            //    JsonString = JsonString.Replace("\"", "\\\"");
+            //}
+            //去掉字符串的回车换行符
+            JsonString = Regex.Replace(JsonString, @"[\n\r]", "");
+            JsonString = JsonString.Trim();
+            return JsonString;
+        }
         private async Task _innerHeartbeat()
         {
             while (!m_innerRts.IsCancellationRequested)
