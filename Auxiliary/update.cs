@@ -31,7 +31,7 @@ namespace Auxiliary
                         缺少文件++;
                         Console.Write("\n□(进度:{2}/{3})检测到本地缺少的文件:{0}({1})开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
                         var wc = new WebClient();
-                        通过WC下载文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
+                        通过WC更新自动更新文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
                         Console.WriteLine("{0}下载成功", item.Name);
                     }
                     else
@@ -41,7 +41,7 @@ namespace Auxiliary
                             更新文件++;
                             Console.Write("\n◇(进度:{2}/{3}) {0}({1})和服务端比较有差异，需要更新，开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
                             var wc = new WebClient();
-                            通过WC下载文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
+                            通过WC更新自动更新文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
                             Console.WriteLine("{0}下载成功", item.Name);
                         }
                         else
@@ -57,7 +57,7 @@ namespace Auxiliary
               //  return true;
             }
         }
-        public static void 通过WC下载文件(string URL, string File)
+        public static void 通过WC更新自动更新文件(string URL, string File)
         {
             var wc = new WebClient();
             wc.Headers.Add("Referer: Update.ddtv.pro");

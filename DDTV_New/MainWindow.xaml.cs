@@ -482,7 +482,7 @@ namespace DDTV_New
                 }
             });
             CPT.TrySetApartmentState(ApartmentState.STA);
-            CPT.Start();
+            //CPT.Start();
             //CPT.Join();
 
             //版本号更新
@@ -504,6 +504,13 @@ namespace DDTV_New
                     runOnLocalThread(() => ViewModel.PushNotification = 动态推送内容);
                 }
             }, this, 3600 * 1000);
+            NewThreadTask.Run(()=> {
+
+                if (MMPU.启动模式 == 0)
+                {
+                    update.检查升级程序是否需要升级();
+                }
+            });
             //版本检查
             NewThreadTask.Run(() =>
             {
@@ -555,14 +562,7 @@ namespace DDTV_New
                                 Process.Start(Server.PROJECT_ADDRESS);
                             }
                         }
-                    }
-                    else
-                    {
-                        if (MMPU.启动模式 == 0)
-                        {   
-                            update.检查升级程序是否需要升级();
-                        }
-                    }
+                    }                   
                 }
             });
             //推送内容1
