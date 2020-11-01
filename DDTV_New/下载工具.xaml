@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDTV_New"
         mc:Ignorable="d"
-          Title="DDTV下载工具" Height="450" Width="1200">
+          Title="DDTV下载信息" Height="450" Width="1200">
     <Grid>
         <Grid x:Name="下载框">
-            <ListView x:Name="DownList" Margin="10,23,10,10" SelectionChanged="DownList_SelectionChanged" >
+            <ListView x:Name="DownList" Margin="10,23,10,27" SelectionChanged="DownList_SelectionChanged" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="编号" Width="40" DisplayMemberBinding="{Binding 编号}"/>
@@ -36,6 +36,7 @@
             </ListView>
             <Button Content="取消下载" HorizontalAlignment="Left" Margin="238,1,0,0" VerticalAlignment="Top" Width="75" Click="取消下载按钮点击事件"/>
             <Label x:Name="选择行" Content="选择行:" HorizontalAlignment="Left" Margin="318,-2,0,0" VerticalAlignment="Top"/>
+            <Label Content="要房间停止推流后才会录制完成，显示“下载中”的情况下请勿关闭DDTV，关闭会导致下载中的任务缓存清空。房间已经没有视频流但是还是显示“下载中”是该房间停止推流了但是未下播。请勿取消或关闭DDTV。" HorizontalAlignment="Left" Margin="10,394,0,0" VerticalAlignment="Top"/>
             <Button Content="清除下载列表已经完成\取消的项目" HorizontalAlignment="Left" Margin="10,2,0,0" VerticalAlignment="Top" Width="212" Click="清除列表按钮点击事件"/>
         </Grid>
     </Grid>
