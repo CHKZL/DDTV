@@ -23,15 +23,7 @@ namespace Auxiliary
             if(!File.Exists(path1))
             {
                 InfoLog.InfoPrintf("续录文件[" + path1 + "]文件不存在，不符合合并条件，文件合并取消", InfoLog.InfoClass.Debug);
-                if (File.Exists(path2))
-                {
-                    return path2;
-                }
-                else
-                {
-                    return null;
-                }
-
+                return null;
             }
             else if (!File.Exists(path2))
             {
@@ -47,7 +39,10 @@ namespace Auxiliary
             {
                 output = A.File1Url.Replace("_202", "⒂").Split('⒂')[0] + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
             }
-
+            if(File.Exists(output))
+            {
+                output.Replace(".flv","1.flv");
+            }
             using (FileStream fs1 = new FileStream(path1, FileMode.Open))
             using (FileStream fs2 = new FileStream(path2, FileMode.Open))
             //using (FileStream fs3 = new FileStream(path3, FileMode.Open))
@@ -73,8 +68,11 @@ namespace Auxiliary
                     fsMerge.Dispose();
                     try
                     {
-                        File.Delete(path1);
-                        File.Delete(path2);
+                        if(File.Exists(output))
+                        {
+                            File.Delete(path1);
+                            File.Delete(path2);
+                        }
                     }
                     catch (Exception)
                     {

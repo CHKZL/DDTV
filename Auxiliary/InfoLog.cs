@@ -41,11 +41,11 @@ namespace Auxiliary
             int 计数 = 1;
             int 完成数量 = 0;
             int 正在下载数量 = 0;
-            下载任务.Add(string.Format("<tr><td>序号</td><td>房间号</td><td>下载状态</td><td>已下载大小</td><td>备注</td><td>主播名称</td></td>"));
+            下载任务.Add(string.Format("<tr><td>序号</td><td>房间号</td><td>下载状态</td><td>已下载大小</td><td>备注</td><td>主播名称</td><td>开始时间</td><td>结束时间</td></td>"));
             foreach (var item in MMPU.DownList)
             {
                 
-                下载任务.Add(string.Format("<tr><td>"+ 计数 + "</td><td>"+ item.DownIofo.房间_频道号 + "</td><td>"+(item.DownIofo.备注.Contains("断开")? "■下载完成" : (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> "+ item.DownIofo.已下载大小str + "</td><td>"+ item.DownIofo.备注 + "</td><td>"+ item.DownIofo.主播名称 + "</td></td>"));
+                下载任务.Add(string.Format("<tr><td>"+ 计数 + "</td><td>"+ item.DownIofo.房间_频道号 + "</td><td>"+(item.DownIofo.备注.Contains("断开")? "■下载完成" : (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> "+ item.DownIofo.已下载大小str + "</td><td>"+ item.DownIofo.备注 + "</td><td>"+ item.DownIofo.主播名称 + "</td><td>" + MMPU.Unix转换为DateTime(item.DownIofo.开始时间.ToString()) + "</td><td>" + MMPU.Unix转换为DateTime(item.DownIofo.结束时间.ToString()) + "</td></td>"));
                 计数++;
                 if (item.DownIofo.下载状态)
                 {

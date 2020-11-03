@@ -93,6 +93,9 @@ namespace PlayW
                 弹幕输入窗口.Visibility = Visibility.Collapsed;
                 弹幕发送提示.Visibility = Visibility.Collapsed;
                 弹幕高CPU使用率警告.Visibility = Visibility.Collapsed;
+                发送弹幕按钮.Visibility = Visibility.Collapsed;
+                弹幕透明度.Visibility = Visibility.Collapsed;
+                字幕位置.Visibility = Visibility.Collapsed;
                 非win10提示.Visibility = Visibility.Visible;
             }
             else
