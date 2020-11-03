@@ -20,16 +20,18 @@ using System.Windows;
 using static Auxiliary.bilibili;
 
 namespace Auxiliary
-{
+{ 
     public class MMPU
     {
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
+        public static bool 弹幕显示使能=false;/*施工中()*/
+        public static bool 字幕显示使能 = false;/*施工中()*/
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.3a";
-        public static string[] 不检测的版本号 = {"2.0.4.1a"};
+        public static string 版本号 = "2.0.4.3b";
+        public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -241,7 +243,7 @@ namespace Auxiliary
                 if (模式 == 1)
                 {
                     bilibili.BiliUser.登陆();
-                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]使用B站客户端扫描二维码登陆，或复制DDTV2的有效BiliUser.ini覆盖本地文件", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]使用B站客户端扫描二维码登陆，或复制DDTV2的有效BiliUser.ini覆盖本地文件\r\n[======如果是linux系统，请检查几个文件的权限======]", InfoLog.InfoClass.下载必要提示);
 
                     while (string.IsNullOrEmpty(MMPU.Cookie))
                     {

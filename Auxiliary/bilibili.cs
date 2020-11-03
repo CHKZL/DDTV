@@ -297,7 +297,7 @@ namespace Auxiliary
                                 
                                 if(TJ>15)
                                 {
-                                    InfoLog.InfoPrintf($":状态刷新，当前临时API监控房间数量:{RoomList.Count- 已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{已连接的直播间状态.Count}" , InfoLog.InfoClass.下载必要提示);
+                                    InfoLog.InfoPrintf($"[DDTVLR心跳信息]当前临时API监控房间数量:{RoomList.Count- 已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{已连接的直播间状态.Count}" , InfoLog.InfoClass.下载必要提示);
                                     TJ = 0;
                                 }
                                 TJ++;
