@@ -347,6 +347,18 @@ namespace DDTV_New
                         录制弹幕使能按钮.IsChecked = false;
                     }
                 }
+                //开机自启动按钮
+                {
+                    //MMPU.录制弹幕 = MMPU.getFiles("RecordDanmu", "0") == "1" ? true : false;
+                    if (MMPU.开机自启动)
+                    {
+                        开机自启动按钮.IsChecked = true;
+                    }
+                    else
+                    {
+                        开机自启动按钮.IsChecked = false;
+                    }
+                }
             }
             //增加插件列表
             {
@@ -391,9 +403,9 @@ namespace DDTV_New
                     编号 = "4",
                     名称 = "弹幕录制工具",
                     版本 = "1.0.0.1",
-                    是否加载 = "X",
+                    是否加载 = "√",
                     说明 = "用于录制直播弹幕内容(工具箱内)",
-                    备注 = "调试中的功能，还没写完"
+                    备注 = ""
                 });
                 PluginC.Items.Add(new
                 {
@@ -420,6 +432,15 @@ namespace DDTV_New
                     版本 = "α",
                     是否加载 = "√",
                     说明 = "V圈大数据平台，提供DDTV运作所需的数据API接口",
+                    备注 = ""
+                });
+                PluginC.Items.Add(new
+                {
+                    编号 = "8",
+                    名称 = "DDTVLiveRec",
+                    版本 = MMPU.版本号,
+                    是否加载 = "√",
+                    说明 = "提供录制核心功能",
                     备注 = ""
                 });
             }
@@ -1102,7 +1123,7 @@ namespace DDTV_New
                                     {
                                         item.DownIofo.WC.CancelAsync();
                                         item.DownIofo.下载状态 = false;
-                                        item.DownIofo.备注 = "播放串口关闭，停止下载";
+                                        item.DownIofo.备注 = "播放窗口关闭，停止下载";
                                         item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         if (!item.DownIofo.是否保存)
                                         {
@@ -1341,7 +1362,7 @@ namespace DDTV_New
                 {
                     case "bilibili":
                         {
-                            if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容)))
+                            if (!bilibili.根据房间号获取房间信息.是否正在直播(MMPU.获取livelist平台和唯一码.唯一码(已选内容),false))
                             {
                                 MessageBox.Show("该房间当前未直播");
                                 return;
@@ -1382,8 +1403,12 @@ namespace DDTV_New
                 {
                     if (item.DownIofo.房间_频道号 == 唯一码 && item.DownIofo.结束时间 == 0)
                     {
-                        MessageBox.Show("该房间在下载列表中已存在!");
-                        return;
+                        if (item.DownIofo.是否保存)
+                        {
+                            MessageBox.Show("该房间在下载列表中已存在!");
+                            return;
+                        }
+                        break;
                     }
                 }
                 string GUID = Guid.NewGuid().ToString();
@@ -1404,7 +1429,10 @@ namespace DDTV_New
                     return;
                 }
                 Downloader 下载对象 = Downloader.新建下载对象(MMPU.获取livelist平台和唯一码.平台(已选内容), MMPU.获取livelist平台和唯一码.唯一码(已选内容), 标题, GUID, 下载地址, "手动下载任务", true, MMPU.获取livelist平台和唯一码.名称(已选内容) + "-" + MMPU.获取livelist平台和唯一码.原名(已选内容), false, null);
-               
+               if(下载对象==null)
+                {
+                    MessageBox.Show("已经存在该直播间的录制任务，本次下载请求已撤销");
+                }
                 //MessageBox.Show("下载任务添加完成");
                
                     runOnLocalThread(() => {
@@ -1930,6 +1958,27 @@ namespace DDTV_New
         {
             增加监控列表 A = new 增加监控列表();
             A.ShowDialog();
+        }
+
+        private void 开机自启动按钮开关点击事件(object sender, RoutedEventArgs e)
+        {
+            if (开机自启动按钮.IsChecked == true)
+            {
+              
+                MMPU.开机自启动 = true;
+                MMPU.setFiles("BootUp", "1");
+            }
+            else
+            {
+               
+                MMPU.开机自启动 = false;
+                MMPU.setFiles("BootUp", "0");
+            }
+        }
+
+        private void 修改房间信息按钮_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBox.Show("修改房间配置文件请使用DDTV文件夹里的【DDTVRoomConfig.exe】房间配置修改工具进行修改\r或者直接修改[RoomListConfig.json]文件\r修改前请关闭DDTV本体");
         }
     }
 }

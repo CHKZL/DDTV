@@ -131,7 +131,7 @@ namespace Auxiliary
                 var obj = new CachedObject<T>(_handler, id);
                 obj.TimeoutSec = _timeoutSec;
                 _objects.Add(id, obj);
-                DataCache.BilibiliApiCount++;
+                DataCache.CacheCount++;
                 return obj.Get();
             }
         }

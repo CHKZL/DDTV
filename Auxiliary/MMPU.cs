@@ -25,12 +25,12 @@ namespace Auxiliary
     {
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
-        public static bool 弹幕显示使能=false;/*施工中()*/
-        public static bool 字幕显示使能 = false;/*施工中()*/
+        public static bool 弹幕显示使能=false;
+        public static bool 字幕显示使能 = false;
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.3b";
+        public static string 版本号 = "2.0.4.5b";
         public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
@@ -53,7 +53,7 @@ namespace Auxiliary
         public static DateTime CookieEX = new DateTime();
         public static string UID = "";
         public static string BiliUserFile = "./BiliUser.ini";
-        public static int 播放缓冲时长 = 3;
+        public static int 播放缓冲时长 = 4;
         public static string AESKey = "rzqIzYmDQFqQmWfr";
         public static string AESVal = "itkIBBs5JdCLKqpP";
         public static bool 转码功能使能 = false;
@@ -61,14 +61,16 @@ namespace Auxiliary
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
         public static bool 剪贴板监听 = false;
-        public static bool 录制弹幕 = false;
+        public static bool 录制弹幕 = true;
         public static bool DDC采集使能 = true;
+        public static bool 开机自启动 = false;
         public static int DDC采集间隔 = 60000;
         public static int 数据源 = 0;//0：vdb   1：B API
         public static bool 是否第一次使用DDTV = true;
-        public static bool 是否有新版本 = true;
+        public static bool 是否有新版本 = false;
         public static string webServer默认监听IP = "0.0.0.0";
         public static string 缓存路径 = "./tmp/";
+        public static int 弹幕录制种类 = 2;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -99,7 +101,7 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = false
+                    输出到文件 = true
                 });
                 启动模式 = 1;
             }
@@ -138,7 +140,9 @@ namespace Auxiliary
                 //bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
-                
+                //第一次使用DDTV
+                MMPU.开机自启动 = MMPU.读取exe默认配置文件("BootUp", "0") == "0" ? false : true;
+
             }
             else if (模式 == 1)
             {
@@ -197,11 +201,20 @@ namespace Auxiliary
             //账号登陆cookie
             try
             {
-                MMPU.Cookie = string.IsNullOrEmpty(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile)) ? "" : Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
+                MMPU.Cookie = Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
+                if(!MMPU.Cookie.Contains("=")|| !MMPU.Cookie.Contains(";"))
+                {
+                    MMPU.Cookie = "";
+                    MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
+                    MMPU.csrf = null;
+                    MMPU.写ini配置文件("User", "csrf", "", MMPU.BiliUserFile);
+                }
             }
             catch (Exception)
             {
+                Console.WriteLine("读取cookie缓存错误");
                 MMPU.Cookie = "";
+                MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
             }
             //账号UID
             MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
@@ -222,10 +235,8 @@ namespace Auxiliary
                             MMPU.csrf = null;
                             MMPU.写ini配置文件("User", "csrf", "", MMPU.BiliUserFile);
                         }
-
                     }
                 }
-
             }
             catch (Exception)
             {
@@ -242,12 +253,20 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
                 if (模式 == 1)
                 {
-                    bilibili.BiliUser.登陆();
-                    InfoLog.InfoPrintf("\r\nB站账号登陆信息过期或无效,启动失败，请自行打开目录中的[BiliQR.png]使用B站客户端扫描二维码登陆，或复制DDTV2的有效BiliUser.ini覆盖本地文件\r\n[======如果是linux系统，请检查几个文件的权限======]", InfoLog.InfoClass.下载必要提示);
-
-                    while (string.IsNullOrEmpty(MMPU.Cookie))
+                    InfoLog.InfoPrintf("\r\n如果短信验证方式验证启动失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.下载必要提示);
+                    try
                     {
-                        // break;
+                        bilibili.BiliUser.登陆();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+                    while(string.IsNullOrEmpty(MMPU.Cookie))
+                    {
+                        InfoLog.InfoPrintf("\r\n登陆验证失败，请重启再次尝试登陆或复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.系统错误信息);
+                        //InfoLog.InfoPrintf("\r\n阿B登陆验证失败！！！请重启DDTVLiveRec进行登陆验证", InfoLog.InfoClass.下载必要提示);
+                        Thread.Sleep(10000);
                     }
                 }
             }
@@ -335,7 +354,13 @@ namespace Auxiliary
                 string text = File.ReadAllText(路径);
                 try
                 {
-                    string A1 = text.Replace(项目, "壹").Split('壹')[1].Split('\r')[0].Split('=')[1];
+                    string[] A2 = text.Replace(项目, "壹").Split('壹')[1].Split('\r')[0].Split('=');
+                    string A1 = string.Empty;
+                    for (int i =1;i< A2.Length;i++)
+                    {
+                        A1 +=A2[i];
+                    }
+                   
                     return A1;
                 }
                 catch (Exception)
@@ -350,10 +375,32 @@ namespace Auxiliary
             }
         }
 
-        public static string 写ini配置文件(string 节点, string 项目, string 值, string 路径)
+        public static void 写ini配置文件(string 节点, string 项目, string 值, string 路径)
         {
-            bilibili.BiliUser.Write(节点, 项目, 值, 路径);
-            return null;
+            if(MMPU.启动模式==0)
+            {
+                bilibili.BiliUser.Write(节点, 项目, 值, 路径);
+            }
+            else if (MMPU.启动模式 == 1)
+            {
+                string text = File.ReadAllText(路径);
+                if(!text.Contains("[User]"))
+                {
+                    text = "[User]\r\n" + text;
+                }
+                if (text.Contains(项目+"="))
+                {
+                    string B1 = 项目 + "=" + text.Replace(项目 + "=", "⒆").Split('⒆')[1].Replace("\r\n", "⒆").Split('⒆')[0];
+                    string BB = 项目 + "=" + 值;
+                    text = text.Replace(B1, BB);
+                }
+                else
+                {
+                    text = text + "\r\n" + 项目 + "=" + 值;
+                }
+                File.WriteAllText(路径, text);
+            }
+         
         }
         public static IPAddress 根据URL获取IP地址(string URL)
         {

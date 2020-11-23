@@ -83,7 +83,7 @@ namespace Auxiliary
             InitializeRoomList(0,false,false);
 
             bilibili.start();
-            youtube.start();
+            //youtube.start();
 
             Task.Run(async () =>
             {
@@ -95,16 +95,16 @@ namespace Auxiliary
                     await Task.Delay(5 * 1000).ConfigureAwait(false);
                 }
             });
-            Task.Run(async () =>
-            {
-                InfoLog.InfoPrintf("开始周期轮询youtube频道开播状态", InfoLog.InfoClass.Debug);
-                while (true)
-                {
-                    刷新youtube站房间列表();
-                    youtube房间信息更新次数++;
-                    await Task.Delay(5 * 1000).ConfigureAwait(false);
-                }
-            });
+            //Task.Run(async () =>
+            //{
+            //    InfoLog.InfoPrintf("开始周期轮询youtube频道开播状态", InfoLog.InfoClass.Debug);
+            //    while (true)
+            //    {
+            //        刷新youtube站房间列表();
+            //        youtube房间信息更新次数++;
+            //        await Task.Delay(5 * 1000).ConfigureAwait(false);
+            //    }
+            //});
         }
         private static void 刷新B站房间列表()
         {
@@ -148,7 +148,7 @@ namespace Auxiliary
                         {
                             if (B站更新刷新次数 > 5)
                             {
-                                MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制");
+                                MMPU.弹窗.Add(3000, "自动录制", 最新的状态.名称 + "/" + 最新的状态.原名 + "直播间状态发生了变化，也许是开播了");
 
                             }
                             if (MMPU.初始化后启动下载提示)
@@ -157,7 +157,7 @@ namespace Auxiliary
                                 MMPU.弹窗.Add(3000, "自动录制", "有关注的正在直播,根据配置列表开始自动录制");
                             }
 
-                            InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "开始直播了，开始自动录制", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "直播间状态发生了变化", InfoLog.InfoClass.下载必要提示);
                             //Console.WriteLine(最新的状态.名称);
                             new Task(() =>
                             {
@@ -167,7 +167,15 @@ namespace Auxiliary
                                     InfoLog.InfoPrintf("解析下载地址失败，一般是该房间未开播或已加密", InfoLog.InfoClass.下载必要提示);
                                     return;
                                 }
-                                Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), 下载地址, "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null).DownIofo.备注 = "新建自动录制任务..等待数据..";
+                                Downloader DLL =  Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), 下载地址, "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null);
+                                if(DLL!=null)
+                                {
+                                    if (string.IsNullOrEmpty(DLL.DownIofo.备注))
+                                    {
+                                        DLL.DownIofo.备注 = "新建自动录制任务..等待数据..";
+                                    }
+                                }
+                             
                             }).Start();
                         }
                         break;

@@ -16,8 +16,10 @@ using BiliAccount.Linq;
 using System.Net.WebSockets;
 using System.Text.RegularExpressions;
 using System.IO.Compression;
+using Microsoft.Extensions.Configuration.Ini;
 using Auxiliary.LiveChatScript;
 using static Auxiliary.RoomInit;
+using System.Security.Cryptography;
 
 namespace Auxiliary
 {
@@ -142,7 +144,7 @@ namespace Auxiliary
                     case 2:
                         {
                             使用B站API更新房间状态();
-                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.BilibiliApiCount, InfoLog.InfoClass.杂项提示);
+                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.杂项提示);
                             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
                             是否正在更新房间信息 = false;
                             break;
@@ -415,6 +417,7 @@ namespace Auxiliary
            
             private static void 直播间状态WS变化事件(object sender, MessageEventArgs e)
             {
+                string CacheStr = "byRoomIdgetLiveStatus";
                 try
                 {
                     switch (e)
@@ -441,11 +444,14 @@ namespace Auxiliary
                                 {
                                     if (LiveP.LiveP > 1)
                                     {
+                                      
+                                        DataCache.写缓存(CacheStr + LiveP.roomID, "1");
                                         roomtask.直播状态 = true;
                                         break;
                                     }
                                     else
                                     {
+                                        DataCache.写缓存(CacheStr + LiveP.roomID, "0");
                                         roomtask.直播状态 = false;
                                         break;
                                     }
@@ -610,8 +616,21 @@ namespace Auxiliary
         }
         public class 根据房间号获取房间信息
         {
-            public static bool 是否正在直播(string RoomId)
+            public static bool 是否正在直播(string RoomId,bool 强制刷新)
             {
+                string CacheStr = "byRoomIdgetLiveStatus";
+                
+                if (!强制刷新&&DataCache.读缓存(CacheStr + RoomId, 5, out string CacheData))
+                {
+                    if(CacheData=="1")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
                 string roomWebPageUrl = "https://api.live.bilibili.com/room/v1/Room/get_info?id=" + RoomId;
                 WebClient wc = new WebClient();
                 wc.Headers.Add("Accept: */*");
@@ -636,6 +655,7 @@ namespace Auxiliary
                     }
                     catch (Exception)
                     {
+                        DataCache.写缓存(CacheStr + RoomId, "0");
                         return false;
                     }
 
@@ -646,8 +666,18 @@ namespace Auxiliary
                 {
                     string roomJson = Encoding.UTF8.GetString(roomHtml);
                     JObject result = JObject.Parse(roomJson);
-                    DataCache.BilibiliApiCount++;
-                    return result["data"]["live_status"].ToString() == "1" ? true : false;
+                    DataCache.CacheCount++;
+                    if (result["data"]["live_status"].ToString() == "1")
+                    {
+                        DataCache.写缓存(CacheStr + RoomId, "1");
+                        return true;
+                    }
+                    else
+                    {
+                        DataCache.写缓存(CacheStr + RoomId, "0");
+                        return false;
+                    }
+                   
                 }
                 catch (Exception)
                 {
@@ -655,12 +685,21 @@ namespace Auxiliary
                     {
                         string roomJson = Encoding.UTF8.GetString(roomHtml);
                         JObject result = JObject.Parse(roomJson);
-                        DataCache.BilibiliApiCount++;
-                        return result["data"]["live_status"].ToString() == "1" ? true : false;
+                        DataCache.CacheCount++;
+                        if (result["data"]["live_status"].ToString() == "1")
+                        {
+                            DataCache.写缓存(CacheStr + RoomId, "1");
+                            return true;
+                        }
+                        else
+                        {
+                            DataCache.写缓存(CacheStr + RoomId, "0");
+                            return false;
+                        }
                     }
                     catch (Exception)
                     {
-
+                        DataCache.写缓存(CacheStr + RoomId, "0");
                         return false;
                     }
 
@@ -669,10 +708,15 @@ namespace Auxiliary
 
             public static string 获取标题(string roomID)
             {
+                string CacheStr = "byRoomIdgetRoomTitle";
+                if (DataCache.读缓存(CacheStr + roomID, 20, out string CacheData))
+                {
+                    return CacheData;
+                }
                 roomID = 获取真实房间号(roomID);
                 if (roomID == null)
                 {
-                    InfoLog.InfoPrintf("房间号获取错误", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("房间号获取错误", InfoLog.InfoClass.Debug);
                     return null;
                 }
 
@@ -692,6 +736,7 @@ namespace Auxiliary
                     JObject result = JObject.Parse(roomHtml);
                     string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
                     InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                    DataCache.写缓存(CacheStr + roomID, roomName);
                     return roomName;
                 }
                 catch (Exception e)
@@ -748,7 +793,7 @@ namespace Auxiliary
                         }
                         BBBC = (JObject.Parse(resultString)["data"]["durl"][1]["url"].ToString());
                     }
-                    DataCache.BilibiliApiCount++;
+                    DataCache.CacheCount++;
                     return BBBC;
                 }
                 catch (Exception e)
@@ -761,6 +806,16 @@ namespace Auxiliary
             public static string 获取真实房间号(string roomID)
             {
                 string CacheStr = "byROOMIDgetTRUEroomid";
+                try
+                {
+                    if(int.Parse(roomID)>10000)
+                    {
+                        DataCache.写缓存(CacheStr + roomID, roomID);
+                        return roomID;
+                    }
+                }
+                catch (Exception){}
+                
                 if (DataCache.读缓存(CacheStr + roomID, 0, out string CacheData))
                 {
                     return CacheData;
@@ -805,7 +860,7 @@ namespace Auxiliary
             do
             {
                 JObject JO = JObject.Parse(MMPU.使用WC获取网络内容("https://api.bilibili.com/x/relation/followings?vmid=" + UID + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp"));
-                DataCache.BilibiliApiCount++;
+                DataCache.CacheCount++;
                 ps = JO["data"]["list"].Count();
                 foreach (var item in JO["data"]["list"])
                 {
@@ -873,7 +928,7 @@ namespace Auxiliary
                     平台 = "bilibili"
                 };
                 InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
-                DataCache.BilibiliApiCount++;
+                DataCache.CacheCount++;
                 return roominfo;
             }
             catch (Exception e)
@@ -888,9 +943,50 @@ namespace Auxiliary
 
             public static void 登陆()
             {
-                ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                ByQRCode.LoginByQrCode("#FF000000","#FFFFFFFF",true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                
+                if(MMPU.启动模式==0)
+                {
+                    ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                    ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                }
+                else if(MMPU.启动模式==1)
+                {
+                    Console.WriteLine("配置引导方式:手机登陆");
+                    Console.Write("请输入手机号以验证短信验证码:");
+                    string tel = Console.ReadLine();
+                    BySMS.SendSMS(tel);
+                    Console.Write("请输入收到的验证码:");
+                    string code = Console.ReadLine();
+                    try
+                    {
+                        BiliUser.account = BySMS.Login(code, tel);
+                    }
+                    catch (Exception)
+                    {
+                        ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                        InfoLog.InfoPrintf("短信验证登陆失败，切换备用二维码扫码登陆方式， 请用阿B手机客户端扫描DDTVLiveRec目录中的[BiliQR.png]文件进行登陆", InfoLog.InfoClass.系统错误信息);
+                        return;
+                    }
+                   
+                    MMPU.UID = account.Uid;
+                    MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);
+                    foreach (var item in account.Cookies)
+                    {
+                        MMPU.Cookie = MMPU.Cookie + item + ";";
+                    }
+                    MMPU.CookieEX = account.Expires_Cookies;
+                    MMPU.csrf = account.CsrfToken;
+                    
+                    MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
+                    MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
+                    MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
+                    InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.下载必要提示);
+                }
+                
+                
             }
             private static void ByQRCode_QrCodeRefresh(Bitmap newQrCode)
             {
@@ -912,7 +1008,7 @@ namespace Auxiliary
                     }
                     MMPU.CookieEX = account.Expires_Cookies;
                     MMPU.csrf = account.CsrfToken;
-                    ;
+                    
                     MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
                     MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
                     MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
@@ -984,6 +1080,12 @@ namespace Auxiliary
                 return Write(section, key, null, filePath);
             }
 
+
+            public static void AAA()
+            {
+                         
+
+            }
             /// <summary>
             /// 为INI文件中指定的节点取得字符串
             /// </summary>

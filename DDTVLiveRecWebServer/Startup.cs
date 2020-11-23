@@ -69,7 +69,7 @@ namespace DDTVLiveRecWebServer
                 endpoints.MapGet("/list", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync(Auxiliary.InfoLog.DownloaderInfoPrintf(), System.Text.Encoding.UTF8);
+                    await context.Response.WriteAsync(Auxiliary.InfoLog.DownloaderInfoPrintf(0), System.Text.Encoding.UTF8);
                 });
                 endpoints.MapGet("/login", async context =>
                 {
@@ -82,6 +82,11 @@ namespace DDTVLiveRecWebServer
                     {
                         await context.Response.WriteAsync("<a>二维码加载失败，请稍等3秒后刷新网页,如多次失败，请查看控制台是否输出错误信息<a/>", System.Text.Encoding.UTF8);
                     }
+                });
+                endpoints.MapGet("/systeminfo", async context =>
+                {
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync(Auxiliary.InfoLog.GetSystemInfo());
                 });
                 endpoints.MapGet("/config", async context =>
                 {

@@ -30,7 +30,7 @@
         <Grid x:Name="欢迎使用层" Grid.Column="1" Margin="40" Visibility="Collapsed">
             <TextBlock Text="欢迎使用 DDTV!" FontSize="40"></TextBlock>
             <StackPanel Margin="0 50 0 0">
-                <TextBlock Text="这似乎是您第一次启动DDTV，在开启只属于您的DD Time前需要进行一些初始化设定" FontSize="20" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
+                <TextBlock Text="这似乎是您第一次启动DDTV，或者登陆信息已经失效，在开启只属于您的DD Time前需要进行一些初始化设定" FontSize="20" TextWrapping="Wrap" Margin="0 10 0 0"></TextBlock>
                 <TextBlock Text="请点击&quot;下一步&quot;" FontSize="20" Margin="0 10 0 0"></TextBlock>
             </StackPanel>
         </Grid>
