@@ -282,7 +282,7 @@ namespace PlayW
                 {
 
                 }
-                MMPU.DownList.Add(DD);
+                //MMPU.DownList.Add(DD);
                 if (DD.DownIofo.是否是播放任务)
                 {
                     DD.Start("缓冲视频中");
@@ -451,7 +451,7 @@ namespace PlayW
             {
                 case "bilibili":
                     {
-                        if (bilibili.根据房间号获取房间信息.是否正在直播(DD.DownIofo.房间_频道号))
+                        if (bilibili.根据房间号获取房间信息.是否正在直播(DD.DownIofo.房间_频道号,true))
                         {
 
                             new Task((() => 

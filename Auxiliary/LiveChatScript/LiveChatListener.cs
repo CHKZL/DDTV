@@ -113,7 +113,6 @@ namespace Auxiliary.LiveChatScript
                    m_client.Dispose();
                    m_innerRts.Dispose();
                }
-              
            });
             _=_innerHeartbeat();
         }
@@ -245,10 +244,7 @@ namespace Auxiliary.LiveChatScript
                 jsonBody = ReplaceString(jsonBody);
                 obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             }
-            catch (Exception e)
-            {
-                ;
-            }
+            catch (Exception){ return; }
             //Debug.Log(jsonBody);
             string cmd = (string)obj["cmd"];
             InfoLog.InfoPrintf("LiveChatListener收到数据，类型为："+ cmd, InfoLog.InfoClass.杂项提示);
@@ -278,10 +274,10 @@ namespace Auxiliary.LiveChatScript
                     MessageReceived(this, new WarningEventArg(obj));
                     break;
                 default:
-                    //Debug.Log("Unknow\n"+obj);
                     MessageReceived(this, new MessageEventArgs(obj));
                     break;
             }
+            return;
         }
         /// <summary>
         ///   替换部分字符串
@@ -470,27 +466,28 @@ namespace Auxiliary.LiveChatScript
         /// </summary>
         private void DepackDanmakuData(byte[] messages)
         {
-            var headerBuffer = new byte[16];
+            byte[] headerBuffer = new byte[16];
             //for (int i = 0; i < 16; i++)
             //{
             //    headerBuffer[i] = messages[i];
             //}
             Array.Copy(messages, 0, headerBuffer, 0, 16);
-            var protocol = new DanmakuProtocol(headerBuffer);
+            DanmakuProtocol protocol = new DanmakuProtocol(headerBuffer);
 
             //Debug.LogError(protocol.Version + "\\" + protocol.Operation);
             //
             if (protocol.PacketLength < 16)
             {
+                InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.杂项提示);
                 throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
             }
-            var bodyLength = protocol.PacketLength - 16;
+            int bodyLength = protocol.PacketLength - 16;
             if (bodyLength == 0)
             {
                 //continue;
                 return;
             }
-            var buffer = new byte[bodyLength];
+            byte[] buffer = new byte[bodyLength];
             //for (int i = 0; i < bodyLength; i++)
             //{
             //    buffer[i] = messages[i + 16];

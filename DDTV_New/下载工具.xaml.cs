@@ -79,7 +79,7 @@ namespace DDTV_New
                 {
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.下载状态 = false;
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                    Auxiliary.MMPU.DownList[选中的行].DownIofo.备注 = "用户取消";
+                    Auxiliary.MMPU.DownList[选中的行].DownIofo.备注 = "用户取消下载";
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.WC.CancelAsync();
                 }
             }

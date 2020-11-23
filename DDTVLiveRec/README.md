@@ -23,7 +23,7 @@
 
 启动准备:  
 1. 因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。 
-2. 把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLiveforx文件夹中，该文件是房间配置文件和bilibili登陆验证文件
+2. 把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件
 3. 启动DDTVLiveRec文件(win x64为DDTVLiveRec.exe)
 4. (DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
 
@@ -36,7 +36,7 @@ web服务端:
 [http://IP:11419/file]：DDTVLiveRec录制的文件列表  
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
 [http://IP:11419/config]：DDTVLiveRec的配置修改命令列表  
-
+[http://IP:11419/systeminfo]：DDTVLiveRec的系统总览页面
 
 
 
@@ -45,9 +45,9 @@ web服务端:
 房间配置文件格式为
 ```json
 {
-            "Name": "星街彗星",
-            "OfficialName": "星街すいせい",
-            "RoomNumber": "190577",
+            "Name": "绯赤艾莉欧",
+            "OfficialName": "緋赤エリオ",
+            "RoomNumber": "21396545",
             "Types": "bilibili",
             "status": false,
             "VideoStatus": false,
@@ -75,6 +75,8 @@ web服务端:
 主界面   
 ![运行界面](./软件图/主界面.png)    
 
+系统概况预览  
+![系统概况预览](./软件图/系统详情.png)   
 
 WEB下载状况查看界面   
 ![WEB下载状况查看界面](./软件图/下载信息界面.png)
@@ -82,8 +84,7 @@ WEB下载状况查看界面
 WEB文件列表界面   
 ![WEB文件列表界面](./软件图/下载文件信息列表.png)   
 
-WEB日志界面  
-![WEB日志界面](./软件图/日志信息界面.png)   
+
 
 
 ## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？

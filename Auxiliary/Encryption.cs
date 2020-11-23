@@ -62,6 +62,7 @@ namespace Auxiliary
         /// <returns></returns>  
         public static string AesStr(this string source, string keyVal, string ivVal)
         {
+            //return Base64(source);
             var encoding = Encoding.UTF8;
             byte[] btKey = keyVal.FormatByte(encoding);
             byte[] btIv = ivVal.FormatByte(encoding);
@@ -90,6 +91,17 @@ namespace Auxiliary
         /// <returns></returns>  
         public static string UnAesStr(this string source, string keyVal, string ivVal)
         {
+            int len = source.Length % 4;
+            if(len!=0)
+            {
+                string B1 = string.Empty;
+                for (int i = 0; i < (4- len); i++)
+                {
+                    B1 += "=";
+                }
+                source += B1;
+            }
+            //return UnBase64(source);
             var encoding = Encoding.UTF8;
             byte[] btKey = keyVal.FormatByte(encoding);
             byte[] btIv = ivVal.FormatByte(encoding);
@@ -119,7 +131,8 @@ namespace Auxiliary
         public static string Base64(this string source)
         {
             var btArray = Encoding.UTF8.GetBytes(source);
-            return Convert.ToBase64String(btArray, 0, btArray.Length);
+            string BB = Convert.ToBase64String(btArray, 0, btArray.Length);
+            return BB;
         }
 
         /// <summary>
@@ -129,8 +142,15 @@ namespace Auxiliary
         /// <returns></returns>
         public static string UnBase64(this string source)
         {
-            var btArray = Convert.FromBase64String(source);
-            return Encoding.UTF8.GetString(btArray);
+            try
+            {
+                var btArray = Convert.FromBase64String(source);
+                return Encoding.UTF8.GetString(btArray);
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         #endregion

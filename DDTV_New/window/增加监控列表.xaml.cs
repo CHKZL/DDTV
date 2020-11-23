@@ -42,6 +42,14 @@ namespace DDTV_New.window
                 try
                 {
                     roomId = int.Parse(唯一码.Text);
+                    if (roomId < 10000)
+                    { 
+                        string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(roomId.ToString());
+                        if(!string.IsNullOrEmpty(roomDD))
+                        {
+                            roomId = int.Parse(roomDD);
+                        }
+                    }
                 }
                 catch (Exception){
 

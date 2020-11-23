@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDTV_New"
         mc:Ignorable="d"
-          Title="DDTV下载信息" Height="450" Width="1200">
+          Title="DDTV下载信息" Height="465.283" Width="1200">
     <Grid>
         <Grid x:Name="下载框">
-            <ListView x:Name="DownList" Margin="10,23,10,27" SelectionChanged="DownList_SelectionChanged" >
+            <ListView x:Name="DownList" Margin="10,23,10,40" SelectionChanged="DownList_SelectionChanged" >
                 <ListView.View>
                     <GridView>
                         <GridViewColumn Header="编号" Width="40" DisplayMemberBinding="{Binding 编号}"/>
