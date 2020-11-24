@@ -88,9 +88,15 @@ namespace Auxiliary
         {
             while (true)
             {
+                int 完整错误次数 = 0;
                 try
                 {
-                   
+                   if(完整错误次数>=5)
+                    {
+                        InfoLog.InfoPrintf($"----------【重要】----------\r\n多次尝试获取服务器RoomList缓存失败，切换为纯WSS连接模式，该模式下初始化连接速度较慢，大约20连接一个房间\r\n----------【重要】----------", InfoLog.InfoClass.下载必要提示);
+                        wss连接初始化准备已完成 = true;
+                        return;
+                    }
                     string vtbs房间数据 = string.Empty;
                     try
                     {
@@ -98,10 +104,12 @@ namespace Auxiliary
                     }
                     catch (Exception)
                     {
-                        vtbs房间数据 = MMPU.TcpSend(Server.RequestCode.GET_VTBSROOMLIST, "{}", true);
+                        InfoLog.InfoPrintf($"通过原始数据源更新VTBS房间数据失败，切换到备用DDTV服务器获取", InfoLog.InfoClass.Debug);
+                        vtbs房间数据 = MMPU.TcpSend(Server.RequestCode.GET_VTBSROOMLIST, "{}", true, 1500);
                     }
 
                     JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
+                    InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
                     foreach (var item in JO)
                     {
                         if (int.Parse(item["roomid"].ToString()) != 0)
@@ -109,11 +117,14 @@ namespace Auxiliary
                             VtbsRoomList.Add(new VtbsRoom() { mid = int.Parse(item["mid"].ToString()), room = int.Parse(item["roomid"].ToString()), name = item["uname"].ToString() });
                         }
                     }
+                    InfoLog.InfoPrintf($"VTBS数据数据准备完成", InfoLog.InfoClass.Debug);
                     wss连接初始化准备已完成 = true;
                     break;
                 }
-                catch (Exception)
+                catch (Exception )
                 {
+                    完整错误次数++;
+                    InfoLog.InfoPrintf($"VTBS获取RoomList失败，再次重试，已重试次数{完整错误次数}/5", InfoLog.InfoClass.Debug);
                 }
                
                 Thread.Sleep(5000);
@@ -215,7 +226,7 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("Vtbs数据加载失败，使用备用数据源开始获取", InfoLog.InfoClass.Debug);
                 try
                 {   
-                    JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.TcpSend(Server.RequestCode.GET_LIVELSIT, "{}", true));
+                    JArray JO = (JArray)JsonConvert.DeserializeObject(MMPU.TcpSend(Server.RequestCode.GET_LIVELSIT, "{}", true,200));
                     foreach (var roomtask in RoomList)
                     {
                         if (!roomtask.名称.Contains("-NV"))
@@ -354,15 +365,19 @@ namespace Auxiliary
                     }).Start();
                     while (!wss连接初始化准备已完成)
                     {
-                        Thread.Sleep(1000);
+                        InfoLog.InfoPrintf("连接初始化准备未完成3秒后重试", InfoLog.InfoClass.Debug);
+                        Thread.Sleep(3000);     
                     }
+                    InfoLog.InfoPrintf("wss连接初始化准备已完成", InfoLog.InfoClass.Debug);
                     List<int> MTPlist = new List<int>();
+                    InfoLog.InfoPrintf($"wss连接初始化准备已完成,列表长度:{VtbsRoomList.Count}", InfoLog.InfoClass.Debug);
                     foreach (var item in VtbsRoomList)
                     {
                         MTPlist.Add(item.room);
                     }
                     List<RoomInit.RoomInfo> Vtbs存在的直播间 = new List<RoomInit.RoomInfo>();
                     List<RoomInit.RoomInfo> Vtbs不存在的直播间 = new List<RoomInit.RoomInfo>();
+                    InfoLog.InfoPrintf($"生成双边队列临时API房间列表数:{Vtbs存在的直播间.Count},优先连接组数:{Vtbs不存在的直播间.Count}", InfoLog.InfoClass.Debug);
                     foreach (var item in RoomList)
                     {
                         if(MTPlist.Contains(int.Parse(item.房间号)))
@@ -381,7 +396,7 @@ namespace Auxiliary
                             InfoLog.InfoPrintf("LiveChatListener开始连接非VTBS监控范围内房间:" + item.房间号, InfoLog.InfoClass.Debug);
                             if (item.平台 == "bilibili")
                             {
-                                item.liveChatListener = new LiveChatListener();
+                                item.liveChatListener = new LiveChatListener(); 
                                 item.liveChatListener.Connect(int.Parse(item.房间号));
                                 item.liveChatListener.MessageReceived += 直播间状态WS变化事件;
                                 已连接的直播间状态.Add(new 直播间状态() { 房间号 = int.Parse(item.房间号) });
@@ -834,11 +849,11 @@ namespace Auxiliary
                 try
                 {
                     JObject result = JObject.Parse(roomHtml);
-                    string live_status = result["data"]["live_status"].ToString();
-                    if (live_status != "1")
-                    {
-                        return "-1";
-                    }
+                    //string live_status = result["data"]["live_status"].ToString();
+                    //if (live_status != "1")
+                    //{
+                    //    return "-1";
+                    //}
                     string roomid = result["data"]["room_id"].ToString();
                     DataCache.写缓存(CacheStr + roomID, roomid);
                     return roomid;
