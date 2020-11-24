@@ -42,7 +42,7 @@ namespace DDTV_New.window
                 try
                 {
                     roomId = int.Parse(唯一码.Text);
-                    if (roomId < 10000)
+                    if (roomId < 10001)
                     { 
                         string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(roomId.ToString());
                         if(!string.IsNullOrEmpty(roomDD))
@@ -73,7 +73,7 @@ namespace DDTV_New.window
                         RB.data.Add(item);
                     }
                 }
-                RB.data.Add(new RoomCadr() { Name = 名称.Text + "-NV", OfficialName = 名称.Text + "-NV", RoomNumber = 唯一码.Text });
+                RB.data.Add(new RoomCadr() { Name = 名称.Text + "-NV", OfficialName = 名称.Text + "-NV", RoomNumber = roomId.ToString() });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 提示.Content = 名称.Text + "-NV["+ 唯一码.Text + "]添加完成";

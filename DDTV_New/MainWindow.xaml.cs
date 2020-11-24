@@ -57,7 +57,7 @@ namespace DDTV_New
 
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
-
+          
             ViewModel = new MainViewModel();
 
             this.WhenActivated(disposable =>
@@ -515,13 +515,13 @@ namespace DDTV_New
             NewThreadTask.Loop(runOnLocalThread =>
             {
                 bool 动态推送1开关 = MMPU.TcpSend(
-                        Server.RequestCode.GET_TOGGLE_DYNAMIC_NOTIFICATION, "{}", true)
+                        Server.RequestCode.GET_TOGGLE_DYNAMIC_NOTIFICATION, "{}", true,50)
                         == "1" ? true : false;
 
                 if (动态推送1开关)
                 {
                     string 动态推送内容 = MMPU.TcpSend(
-                            Server.RequestCode.GET_DYNAMIC_NOTIFICATION, "{}", true);
+                            Server.RequestCode.GET_DYNAMIC_NOTIFICATION, "{}", true, 50);
                     runOnLocalThread(() => ViewModel.PushNotification = 动态推送内容);
                 }
             }, this, 3600 * 1000);
@@ -536,7 +536,7 @@ namespace DDTV_New
             NewThreadTask.Run(() =>
             {
                 string 服务器版本号 = MMPU.TcpSend(
-                    Server.RequestCode.GET_LATEST_VERSION_NUMBER, "{}", true);
+                    Server.RequestCode.GET_LATEST_VERSION_NUMBER, "{}", true, 50);
 
                 if (!string.IsNullOrEmpty(服务器版本号))
                 {
@@ -552,7 +552,7 @@ namespace DDTV_New
                     {
                         MessageBoxResult dr = MessageBox.Show(
                             "检测到版本更新,更新公告:\n"
-                                + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true)
+                                + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100)
                                 + "\n\n点击确定启动自动更新，点击取消忽略",
                             "有新版本",
                             MessageBoxButton.OKCancel,
@@ -590,7 +590,7 @@ namespace DDTV_New
             NewThreadTask.Run(runOnLocalThread =>
             {
                 string 推送内容1text = MMPU.TcpSend(
-                    Server.RequestCode.GET_PUSH_NOTIFICATION_1, "{}", true);
+                    Server.RequestCode.GET_PUSH_NOTIFICATION_1, "{}", true, 100);
                 if (推送内容1text.Length > 0)
                 {
                     runOnLocalThread(() => ViewModel.Announcement = 推送内容1text);

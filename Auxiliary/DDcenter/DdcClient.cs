@@ -19,7 +19,7 @@ namespace Auxiliary.DDcenter
             {
                 try
                 {
-                    MMPU.DDC采集间隔 = int.Parse(MMPU.TcpSend(30001, "{}", true));
+                    MMPU.DDC采集间隔 = int.Parse(MMPU.TcpSend(30001, "{}", true,50));
                 }
                 catch (Exception)
                 {

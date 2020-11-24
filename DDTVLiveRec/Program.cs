@@ -1,4 +1,6 @@
 ﻿using Auxiliary;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Drawing;
 using System.IO;
@@ -15,19 +17,19 @@ namespace DDTVLiveRec
            下载("14275133");
 
 #else
-            Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
+            Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();         
             MMPU.配置文件初始化(1);
             new Task(() => {
                 DDTVLiveRecWebServer.Program.Main(new string[] { });
             }).Start();
-            
-            
+
+
 #endif
-            new Task(() => 
+            new Task(() =>
             {
                 try
                 {
-                    string 服务器版本号 = MMPU.TcpSend(20013, "{}", true);
+                    string 服务器版本号 = MMPU.TcpSend(20013, "{}", true,50);
                     if (!string.IsNullOrEmpty(服务器版本号))
                     {
                         bool 检测状态 = true;
@@ -41,7 +43,7 @@ namespace DDTVLiveRec
                         if (MMPU.版本号 != 服务器版本号 && 检测状态)
                         {
                             MMPU.是否有新版本 = true;
-                            InfoLog.InfoPrintf("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20014, "{}", true) + "\n\n", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf("检测到版本更新,更新公告:\n" + MMPU.TcpSend(20014, "{}", true,100) + "\n\n", InfoLog.InfoClass.下载必要提示);
                             //Console.ReadKey();
                         }
                     }

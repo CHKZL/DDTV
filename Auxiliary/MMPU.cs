@@ -31,7 +31,7 @@ namespace Auxiliary
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
         public static string 版本号 = "2.0.4.5b";
-        public static string[] 不检测的版本号 = {};
+        public static string[] 不检测的版本号 = {"2.0.4.3b"};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -97,7 +97,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLiveRecLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -189,7 +189,7 @@ namespace Auxiliary
                 {
                     try
                     {
-                        MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true);
+                        MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true,50);
                     }
                     catch (Exception) { }
                     Thread.Sleep(3600 * 1000);
@@ -1010,19 +1010,21 @@ namespace Auxiliary
         /// <param name="msg">消息内容</param>
         /// <param name="是否需要回复"></param>
         /// <returns></returns>
-        public static string TcpSend(int code, string msg, bool 是否需要回复)
+        public static string TcpSend(int code, string msg, bool 是否需要回复,int 等待时间)
         {
             try
             {
                 string 回复内容 = "";
                 Socket tcpClient = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                tcpClient.ReceiveBufferSize = 1024 * 1024 * 8;
                 IPAddress ipaddress = Server.IP_ADDRESS;
                 EndPoint point = new IPEndPoint(ipaddress, Server.PORT);
                 tcpClient.Connect(point);//通过IP和端口号来定位一个所要连接的服务器端
                 tcpClient.Send(Encoding.UTF8.GetBytes(JSON发送拼接(code, msg)));
                 if (是否需要回复)
                 {
-                    byte[] buffer = new byte[1024 * 1024];
+                    byte[] buffer = new byte[1024 * 1024 * 8];
+                    Thread.Sleep(等待时间);
                     tcpClient.Receive(buffer);
                     string 收到的数据 = Encoding.UTF8.GetString(buffer).Trim('\0');
                     回复内容 = 收到的数据;
@@ -1032,6 +1034,13 @@ namespace Auxiliary
                     回复内容 = null;
                 }
                 tcpClient.Close();
+                try
+                {
+                    tcpClient.Dispose();
+                }
+                catch (Exception)
+                {
+                }
                 return 回复内容;
             }
             catch (Exception)

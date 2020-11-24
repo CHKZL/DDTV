@@ -142,7 +142,7 @@ namespace DDTV_New
                 NewThreadTask.Run(() =>
                 {
                     MMPU.TcpSend(Server.RequestCode.GET_NEW_MEMBER_LIST_CONTENT,
-                        JsonConvert.SerializeObject(NEWV), true);
+                        JsonConvert.SerializeObject(NEWV), true,50);
                 });
 
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
@@ -183,7 +183,7 @@ namespace DDTV_New
                 NewThreadTask.Run(() =>
                 {
                     MMPU.TcpSend(Server.RequestCode.GET_NEW_MEMBER_LIST_CONTENT,
-                        JsonConvert.SerializeObject(NEWV), true);
+                        JsonConvert.SerializeObject(NEWV), true,50);
                 });
 
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
