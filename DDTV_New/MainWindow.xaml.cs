@@ -910,11 +910,21 @@ namespace DDTV_New
             {
                 RoomInit.RoomInfo roomInfo = new RoomInfo();
                 System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
+                try
+                {
+                    string TEST1 = LV.SelectedItems[0].ToString();
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("选中的列表位置信息为空");
+                    return;
+                }
                 string 平台 = string.Empty;
-                runOnLocalThread(() => {
+                runOnLocalThread(() =>
+                {
                     平台 = MMPU.获取livelist平台和唯一码.平台(LV.SelectedItems[0].ToString());
                 });
-                
+
                 if (MMPU.当前直播窗口数量 >= MMPU.最大直播并行数量)
                 {
                     if (平台 == "bilibili")
