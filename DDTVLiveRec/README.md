@@ -19,15 +19,16 @@
 
 # 使用说明
     
-有三个版本，其中linux_x64是给64位系统的linux使用，如云服务器上的各种64位Linux发行版本，如CnetOS,Ubuntu等，linux_arm为给树莓派、路由器等ARM设备使用    
+DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境已经安装.NET5的运行时(.NET5.0 runtime)
+如未安装不能启动，请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行运行时的安装后运行DDTVLiveRec
 
 启动准备:  
-1. 因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。 
-2. 把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件
-3. 启动DDTVLiveRec文件(win x64为DDTVLiveRec.exe)
-4. (DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
+1.因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。
+2.把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件
+3.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动
+4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
 
-* 录制的视频文件在对应的DDTVLive_for_linux文件夹中的["tmp"]文件夹内
+* 录制的视频文件在文件夹中的["tmp"]文件夹内
 
 
 web服务端:  
