@@ -42,6 +42,7 @@ namespace Auxiliary
                     else
                     {
                         InfoLog.InfoPrintf("命中缓存，但数据已过期，返回false:" + key, InfoLog.InfoClass.Debug);
+                        return false;
                     }
                 }
                 return false;

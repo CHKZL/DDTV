@@ -109,7 +109,7 @@ namespace Auxiliary
                     }
 
                     JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
-                    InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
+                    //InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
                     foreach (var item in JO)
                     {
                         if (int.Parse(item["roomid"].ToString()) != 0)
@@ -497,7 +497,7 @@ namespace Auxiliary
                 string url = @"http://api.live.bilibili.com/ajax/msg";
                 List<danmuA> 返回的弹幕数据 = new List<danmuA>();
                 WebClient webClient = new WebClient();
-                webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36");
+                webClient.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36");
                 webClient.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
                 if (!string.IsNullOrEmpty(MMPU.Cookie))
                 {
