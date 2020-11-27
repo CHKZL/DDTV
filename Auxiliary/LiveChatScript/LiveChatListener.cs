@@ -28,7 +28,7 @@ namespace Auxiliary.LiveChatScript
         private readonly byte[] m_ReceiveBuffer;
 
         private CancellationTokenSource m_innerRts;
-        public int TroomId = 0;
+        private int TroomId = 0;
         public bool startIn = false;
 
         public LiveChatListener()
