@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DDTVLiveRec": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

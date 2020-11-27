@@ -19,12 +19,14 @@ namespace Auxiliary
         public static FileStream InfoInitFS;
         public static StreamWriter InfoInitSW;
         public static InfoClasslBool ClasslBool = new InfoClasslBool();
+        //public static EventLog eventLog = new EventLog() {Source= "DDTV_LOG" };
         public class InfoClasslBool
         {
             public bool Debug { set; get; } = false;
             public bool 系统错误信息 { set; get; } = false;
             public bool 杂项提示 { set; get; } = false;
             public bool 下载必要提示 { set; get; } = false;
+            public bool 写入到系统日志 { set; get; } = false;
             public bool 输出到文件 { set; get; } = false;
         }
         public enum InfoClass
@@ -32,7 +34,8 @@ namespace Auxiliary
             Debug = 0,
             系统错误信息 = 1,
             杂项提示 = 2,
-            下载必要提示 = 3
+            下载必要提示 = 3,
+            写入系统日志 = 4
         }
         /// <summary>
         /// 返回下载列表HTML字符串
@@ -100,72 +103,97 @@ namespace Auxiliary
         }
         public static void InfoInit(string LogFile, InfoClasslBool InfoLvevlBool)
         {
-            if (!Directory.Exists("./LOG"))
+            try
             {
-                Directory.CreateDirectory("./LOG");
+                if (!Directory.Exists("./LOG"))
+                {
+                    Directory.CreateDirectory("./LOG");
+                }
+                LogFile = "./LOG/" + LogFile;
+                if (File.Exists(LogFile))
+                {
+                    File.Move(LogFile, LogFile + ".backup_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                }
+                InfoInitFS = new FileStream(LogFile, FileMode.Append);
+                InfoInitSW = new StreamWriter(InfoInitFS);
+                ClasslBool = InfoLvevlBool;
             }
-            LogFile = "./LOG/" + LogFile;
-            if (File.Exists(LogFile))
+            catch (Exception e)
             {
-                File.Move(LogFile, LogFile + ".backup_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                //eventLog.WriteEntry($"运行日志写入出现致命错误2，该错误可能是由于硬盘IO问题导致，错误内容:{e}", EventLogEntryType.Error);
             }
-            InfoInitFS = new FileStream(LogFile, FileMode.Append);
-            InfoInitSW = new StreamWriter(InfoInitFS);
-            ClasslBool = InfoLvevlBool;
         }
         public static void InfoPrintf(string mess, InfoClass Class)
         {
-            string A = "";
-            switch (Class)
+            try
             {
-                case InfoClass.Debug:
-                    {
-                        if (ClasslBool.Debug)
+                string A = "";
+                switch (Class)
+                {
+                    case InfoClass.Debug:
                         {
+                            if (ClasslBool.Debug)
+                            {
 
-                            Console.WriteLine("\r\n ========= DebugBeginning =========" +
-                                "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess +
-                                "\r\n=========DebugEnd=========");
-                            A = "=========DebugBeginning=========" + "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess + "\r\n=========DebugEnd=========";
+                                Console.WriteLine("\r\n ========= DebugBeginning =========" +
+                                    "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess +
+                                    "\r\n=========DebugEnd=========");
+                                A = "=========DebugBeginning=========" + "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess + "\r\n=========DebugEnd=========";
 
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.系统错误信息:
-                    {
-                        if (ClasslBool.系统错误信息)
+                        break;
+                    case InfoClass.系统错误信息:
                         {
-                            Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
-                                "\r\n[SysteErrorInfo]: " + mess +
-                                "\r\n=========SysteErrorInfoEnd=========");
+                            if (ClasslBool.系统错误信息)
+                            {
+                                Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
+                                    "\r\n[SysteErrorInfo]: " + mess +
+                                    "\r\n=========SysteErrorInfoEnd=========");
 
-                            A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
+                                A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
 
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.杂项提示:
-                    {
-                        if (ClasslBool.杂项提示)
+                        break;
+                    case InfoClass.杂项提示:
                         {
-                            Console.WriteLine("[Info]: " + mess);
-                            A = "\r\n[Info]: " + mess;
+                            if (ClasslBool.杂项提示)
+                            {
+                                Console.WriteLine("[Info]: " + mess);
+                                A = "\r\n[Info]: " + mess;
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.下载必要提示:
-                    {
-                        if (ClasslBool.下载必要提示)
+                        break;
+                    case InfoClass.下载必要提示:
                         {
-                            Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                            A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            if (ClasslBool.下载必要提示)
+                            {
+                                Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            }
                         }
-                    }
-                    break;
+                        break;
+                    case InfoClass.写入系统日志:
+                        {
+                            if (ClasslBool.写入到系统日志)
+                            {
+                                Console.WriteLine("[写入系统日志的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[写入系统日志的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                //eventLog.WriteEntry($"DDTV运行消息:{mess}", EventLogEntryType.Information);
+                            }
+                        }
+                        break;
+                }
+                if (ClasslBool.输出到文件 && A.Length > 2)
+                {
+                    OutToFile(A);
+                }
             }
-            if (ClasslBool.输出到文件 && A.Length > 2)
+            catch (Exception e)
             {
-                OutToFile(A);
+                
+                //eventLog.WriteEntry($"运行日志写入出现致命错误1，该错误可能是由于硬盘IO问题导致，错误内容:{e}", EventLogEntryType.Error);
             }
         }
         public static void OutToFile(string str)

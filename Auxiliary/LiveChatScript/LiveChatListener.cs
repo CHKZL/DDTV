@@ -81,7 +81,7 @@ namespace Auxiliary.LiveChatScript
                 roomid = realRoomId,
                 protover = 2,
                 platform = "web",
-                clientver = "1.7.3",
+                clientver = "1.7.2",
                 key = JO["data"]["token"].ToString()
             }) ; 
 

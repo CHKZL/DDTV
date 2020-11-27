@@ -150,6 +150,7 @@ namespace DDTV_New
                 }
             }
             this.Show();
+            //InfoLog.InfoPrintf($"这是一条测试信息，测试写入消息到系统日志", InfoLog.InfoClass.写入系统日志);
         }
 
         /// <summary>
@@ -910,15 +911,15 @@ namespace DDTV_New
             {
                 RoomInit.RoomInfo roomInfo = new RoomInfo();
                 System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
-                try
-                {
-                    string TEST1 = LV.SelectedItems[0].ToString();
-                }
-                catch (Exception)
-                {
-                    MessageBox.Show("选中的列表位置信息为空");
-                    return;
-                }
+                //try
+                //{
+                //    string TEST1 = LV.SelectedItems[0].ToString();
+                //}
+                //catch (Exception)
+                //{
+                //    MessageBox.Show("选中的列表位置信息为空");
+                //    return;
+                //}
                 string 平台 = string.Empty;
                 runOnLocalThread(() =>
                 {
