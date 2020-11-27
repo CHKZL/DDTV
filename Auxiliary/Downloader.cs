@@ -582,8 +582,11 @@ namespace Auxiliary
                     DownIofo.下载状态 = false;
                     DownIofo.备注 = "录制任务意外终止，已新建续命任务";
 
-                    下载结束提醒("录制任务意外终止，已新建续命任务",true);
-                    Downloader 下载对象 = Downloader.新建下载对象(
+                    下载结束提醒("录制任务意外终止，已新建续命任务", true);
+                    Downloader 下载对象 = new Downloader();
+                    try
+                    {
+                        下载对象 = Downloader.新建下载对象(
                                                                DownIofo.平台,
                                                                DownIofo.房间_频道号,
                                                                bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号),
@@ -595,6 +598,24 @@ namespace Auxiliary
                                                                false,
                                                                DownIofo.文件保存路径
                                                                );
+                    }
+                    catch (Exception)
+                    {
+                        try
+                        {
+                            下载对象.DownIofo.备注 = "新建续下载对象出现异常，放弃新建任务";
+                            下载结束提醒(true);
+
+                            下载对象.DownIofo.下载状态 = false;
+                            下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                            下载对象.DownIofo.WC.CancelAsync();
+                            MMPU.DownList.Remove(下载对象);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
                 }
             })).Start();
         }
