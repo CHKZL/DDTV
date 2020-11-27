@@ -109,7 +109,7 @@ namespace Auxiliary
                     }
 
                     JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
-                    InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
+                    //InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
                     foreach (var item in JO)
                     {
                         if (int.Parse(item["roomid"].ToString()) != 0)
