@@ -423,7 +423,14 @@ namespace Auxiliary
             req.ContentType = "application/x-www-form-urlencoded";
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = MMPU.UA.Ver.UA();
-           // req.Timeout = 5000;
+            if (url.Contains("bilibili"))
+            {
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    req.CookieContainer = 转化GET_cookie(MMPU.Cookie);
+                }
+            }
+            // req.Timeout = 5000;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();
             //获取响应内容  
@@ -441,6 +448,13 @@ namespace Auxiliary
             req.ContentType = "application/x-www-form-urlencoded";
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = MMPU.UA.Ver.UA();
+            //if (url.Contains("bilibili"))
+            //{
+            //    if (!string.IsNullOrEmpty(MMPU.Cookie))
+            //    {
+            //        req.CookieContainer = 转化GET_cookie(MMPU.Cookie);
+            //    }
+            //}
             req.Timeout = outTime;
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();
@@ -450,6 +464,24 @@ namespace Auxiliary
                 result = reader.ReadToEnd();
             }
             return result;
+        }
+        public static CookieContainer 转化GET_cookie(string cookie)
+        {
+            CookieContainer CK = new CookieContainer { MaxCookieSize = 4096, PerDomainCapacity = 50 };
+
+            string[] cook = cookie.Replace(" ", "").Split(';');
+            for (int i = 0; i < cook.Length; i++)
+            {
+                try
+                {
+                    CK.Add(new Cookie(cook[i].Split('=')[0], cook[i].Split('=')[1].Replace(",", "%2C")) { Domain = "live.bilibili.com" });
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+            return CK;
         }
         public static string 使用WC获取网络内容(string url)
         {
@@ -482,6 +514,13 @@ namespace Auxiliary
             rq.Headers.Add("Sec-Fetch-User: ?1");
             rq.Headers.Add("Upgrade-Insecure-Requests: 1");
             rq.Headers.Add("Cache-Control: max-age=0");
+            //if (url.Contains("bilibili"))
+            //{
+            //    if (!string.IsNullOrEmpty(MMPU.Cookie))
+            //    {
+            //        rq.CookieContainer = 转化GET_cookie(MMPU.Cookie);
+            //    }
+            //}
             //rq.Host = "www.bilibili.com";
             rq.UserAgent = MMPU.UA.Ver.UA();
             if (解码)
@@ -1083,6 +1122,13 @@ namespace Auxiliary
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
+            if (url.Contains("bilibili"))
+            {
+                if (!string.IsNullOrEmpty(MMPU.Cookie))
+                {
+                    req.CookieContainer = 转化GET_cookie(MMPU.Cookie);
+                }
+            }
             #region 添加Post 参数  
             StringBuilder builder = new StringBuilder();
             int i = 0;
