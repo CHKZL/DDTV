@@ -97,7 +97,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLiveRecLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = true,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
