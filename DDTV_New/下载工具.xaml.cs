@@ -30,10 +30,10 @@ namespace DDTV_New
             NewThreadTask.Loop(runOnLocalThread =>
             {
                 //更新下载队列
-                int i = 1;
-                runOnLocalThread(() => DownList.Items.Clear());
+                int i = 1;      
                 try
                 {
+                    runOnLocalThread(() => DownList.Items.Clear());
                     foreach (var item in Auxiliary.MMPU.DownList)
                     {
                         runOnLocalThread(() =>
