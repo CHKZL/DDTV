@@ -872,7 +872,7 @@ namespace Auxiliary
                             return;
                         }
                         i++;
-                        Thread.Sleep(500);
+                        Thread.Sleep(100);
                     }
                 }
                 catch (Exception)
