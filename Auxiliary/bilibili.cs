@@ -970,8 +970,16 @@ namespace Auxiliary
                     Console.WriteLine("配置引导方式:手机登陆");
                     Console.Write("请输入手机号以验证短信验证码:");
                     string tel = Console.ReadLine();
-                    BySMS.SendSMS(tel);
-                    Console.Write("请输入收到的验证码:");
+                    try
+                    {
+                        BySMS.SendSMS(tel);
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine($"短信验证登陆失败，请求验证码错误，错误原因:{e.Message}\r\n登陆验证失败，请重启再次尝试登陆或复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
+                        return;
+                    }
+                    Console.Write("验证短信请求已发送，请输入收到的验证码:");
                     string code = Console.ReadLine();
                     try
                     {
@@ -979,11 +987,20 @@ namespace Auxiliary
                     }
                     catch (Exception)
                     {
-                        ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                        InfoLog.InfoPrintf("短信验证登陆失败，切换备用二维码扫码登陆方式， 请用阿B手机客户端扫描DDTVLiveRec目录中的[BiliQR.png]文件进行登陆", InfoLog.InfoClass.系统错误信息);
-                        return;
+                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                        {
+                            ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                            ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                            ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                            InfoLog.InfoPrintf("短信验证登陆失败，切换备用二维码扫码登陆方式， 请用阿B手机客户端扫描DDTVLiveRec目录中的[BiliQR.png]文件进行登陆", InfoLog.InfoClass.系统错误信息);
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("登陆验证失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
+                            return;
+                        }
+                       
                     }
                    
                     MMPU.UID = account.Uid;
