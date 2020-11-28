@@ -264,7 +264,7 @@ namespace Auxiliary
                     }
                     while(string.IsNullOrEmpty(MMPU.Cookie))
                     {
-                        InfoLog.InfoPrintf("\r\n登陆验证失败，请重启再次尝试登陆或复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.系统错误信息);
+                        InfoLog.InfoPrintf("\r\n请根据登陆验证提示操作", InfoLog.InfoClass.系统错误信息);
                         //InfoLog.InfoPrintf("\r\n阿B登陆验证失败！！！请重启DDTVLiveRec进行登陆验证", InfoLog.InfoClass.下载必要提示);
                         Thread.Sleep(10000);
                     }
@@ -354,7 +354,9 @@ namespace Auxiliary
                 string text = File.ReadAllText(路径);
                 try
                 {
-                    string[] A2 = text.Replace(项目, "壹").Split('壹')[1].Split('\r')[0].Split('=');
+                    text = text.Replace("\r\n", "\r").Replace("\n","\r");
+
+                    string[] A2 = text.Replace("\n","").Replace(项目, "壹").Split('壹')[1].Split('\r')[0].Split('=');
                     string A1 = string.Empty;
                     for (int i =1;i< A2.Length;i++)
                     {
