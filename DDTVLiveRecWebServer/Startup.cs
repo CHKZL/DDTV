@@ -93,7 +93,9 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "text/html; charset=utf-8";
                     await context.Response.WriteAsync("访问以下链接以修改配置:<br/>(修改后请重启DDTVLiveRec生效)<br/>" +
                         "<br/>打开弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOn" +
-                        "<br/>关闭弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOff");
+                        "<br/>关闭弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOff" +
+                        "<br/>打开DEBUG模式 IP:11419/config-DebugOn" +
+                        "<br/>关闭DEBUG模式 IP:11419/config-DebugOff");
                 });
                 endpoints.MapGet("/config-DanmuRecOn", async context =>
                 {
@@ -108,6 +110,19 @@ namespace DDTVLiveRecWebServer
                     Auxiliary.MMPU.setFiles("RecordDanmu", "0");
                     context.Response.ContentType = "text/html; charset=utf-8";
                     await context.Response.WriteAsync("关闭弹幕/礼物/舰队录制储存成功");
+                });
+                endpoints.MapGet("/config-DebugOn", async context =>
+                {
+                    Auxiliary.InfoLog.ClasslBool.Debug = true;
+                    Auxiliary.InfoLog.ClasslBool.输出到文件 = true;
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("Debug模式启动，该模式下会在log文件和终端输出大量log信息，请注意文件体积，重启默认关闭debug模式");
+                });
+                endpoints.MapGet("/config-DebugOff", async context =>
+                {
+                    Auxiliary.InfoLog.ClasslBool.Debug = false;
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync("Debug模式已关闭");
                 });
             });
         }
