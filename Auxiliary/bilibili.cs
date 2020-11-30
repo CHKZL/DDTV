@@ -821,20 +821,20 @@ namespace Auxiliary
             public static string 获取真实房间号(string roomID)
             {
                 string CacheStr = "byROOMIDgetTRUEroomid";
+                 
+                if (DataCache.读缓存(CacheStr + roomID, 0, out string CacheData))
+                {
+                    return CacheData;
+                }
                 try
                 {
-                    if(int.Parse(roomID)>10000)
+                    if (int.Parse(roomID) > 10000)
                     {
                         DataCache.写缓存(CacheStr + roomID, roomID);
                         return roomID;
                     }
                 }
-                catch (Exception){}
-                
-                if (DataCache.读缓存(CacheStr + roomID, 0, out string CacheData))
-                {
-                    return CacheData;
-                }
+                catch (Exception) { }
                 string roomHtml;
                 try
                 {
