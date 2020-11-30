@@ -180,9 +180,7 @@ namespace Auxiliary
             //TODO:(施工中)增加配置文件，默认隐藏系统信息
             string BB = "<meta http-equiv=\"refresh\" content=\"5\"><html><body>";
             BB += $"系统时间{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
-
-            int 下载中 = 0;
-            int 下载完成 = 0;
+            int 下载中 = 0, 下载完成 = 0;
             foreach (var item in MMPU.DownList)
             {
                 if (item.DownIofo.下载状态)
@@ -190,7 +188,6 @@ namespace Auxiliary
                 else
                     下载完成++;
             }
-
             BB += "　　　此页面每5秒自动刷新一次<br/><br/>【DDTVLiveRec信息】";
             var proc = Process.GetCurrentProcess();
             var mem = proc.WorkingSet64;
@@ -199,38 +196,24 @@ namespace Auxiliary
             if(MMPU.是否有新版本)
             {
                 BB += "<br/>检测到云端有新版本。如需更新，请上github或到" +
-                    "<a target=\"_blank\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=uwgF9uM9BvSWcHWZu460S6tVcVH1N_YP&jump_from=webapi\"><img border=\"0\" src=\"//pub.idqqimg.com/wpa/images/group.png\" alt=\"每天都是单推的一天\" title=\"每天都是单推的一天\"></a>" +
-                    "群共享下载";
+                    "<a target=\"_blank\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=uwgF9uM9BvSWcHWZu460S6tVcVH1N_YP&jump_from=webapi\"><img border=\"0\" src=\"//pub.idqqimg.com/wpa/images/group.png\" alt=\"每天都是单推的一天\" title=\"每天都是单推的一天\"></a>群共享下载";
             }
             BB += $"<br/><br/>---运行状态---<br/>下载中:{下载中}个  下载完成:{下载完成}个";
             BB += $"<br/>当前临时API监控房间数量:{bilibili.RoomList.Count - bilibili.已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{bilibili.已连接的直播间状态.Count}";
             BB += $"<br/>当前进程已使用内存：{String.Format("{0:N2}", mem / 1024.0 / 1024.0)}MB,CPU运行时间：{cpu.TotalMilliseconds}";
             BB += $"<br/>当前进程物理内存量：{ String.Format("{0:N2}", Environment.WorkingSet / 1204.0 / 1024.0)}MB";
-
             BB += "<br/><br/>--系统运行平台--";
             BB += "<br/>运行框架：" + RuntimeInformation.FrameworkDescription;
             BB += "<br/>操作系统：" + RuntimeInformation.OSDescription;
             BB += "<br/>操作系统版本：" + Environment.OSVersion.ToString();
             BB += "<br/>平台架构：" + RuntimeInformation.OSArchitecture;
-            //
             BB += "<br/><br/>";
             BB += "<br/>-- 运行环境 --";
-            //  <-- Keep this information secure! -->
-            //BB += "<br/>机器名称: " + Environment.MachineName;
-            //BB += "<br/>用户网络域名：" + Environment.UserDomainName;
-            //  <-- Keep this information secure! -->
             string[] drives = Environment.GetLogicalDrives();
-            //BB += "<br/>系统目录：" + Environment.SystemDirectory;
-
             BB += $"<br/>系统已运行时间：{ Environment.TickCount / 1000}秒";
-            //  <-- Keep this information secure! -->
             BB += "<br/>是否在交互模式中运行：" + Environment.UserInteractive;
-            //  <-- Keep this information secure! -->
             BB += "<br/>当前关联用户名：" + Environment.UserName;
             BB += "<br/>Web程序核心框架版本：" + Environment.Version.ToString();
-
-
-
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 BB += $"<br/><br/>---Windows信息---";
@@ -238,7 +221,6 @@ namespace Auxiliary
                 BB += $"<br/>程序运行路径：{currentDirectory}";
                 //string HDBB = "<table border=\"5\"><tr><td>盘符</td><td>类型</td><td>文件系统</td><td>总容量</td><td>剩余容量</td></td>";
                 //List<WindowsInfo.HDDInfo> B2 = WindowsInfo.获取硬盘剩余空间(currentDirectory.Split(':')[0]);
-
                 //foreach (var item in B2)
                 //{
                 //    HDBB += $"<tr><td>{item.盘符}</td><td>{item.类型}</td><td>{item.文件系统}</td><td>{Downloader.转换下载大小数据格式(item.容量)}</td><td>{Downloader.转换下载大小数据格式(item.剩余)}</td></td>";
@@ -246,7 +228,6 @@ namespace Auxiliary
                 //BB += $"<br/>"+HDBB;
                 //BB += $"<br/><br/>---Linux信息---<br/>当前环境为OSPlatform.Windows，不获执行Linux查询";
             }
-
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 //List<LinuxInfo.HDDInfo> HHDIN = LinuxInfo.ServerConfig.读取硬盘信息();
