@@ -177,6 +177,7 @@ namespace Auxiliary
 
         public static string GetSystemInfo()
         {
+            //TODO:(施工中)增加配置文件，默认隐藏系统信息
             string BB = "<meta http-equiv=\"refresh\" content=\"5\"><html><body>";
             BB += $"系统时间{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
 

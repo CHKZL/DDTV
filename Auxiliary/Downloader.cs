@@ -19,6 +19,9 @@ namespace Auxiliary
         {
             继承 = new 继承()
         };
+        /// <summary>
+        /// 关闭直播流和弹幕储存流
+        /// </summary>
         public void Clear()
         {
             DownIofo.下载状态 = false;
@@ -238,7 +241,9 @@ namespace Auxiliary
                                 }
                             case 2:
                                 {
-                                    DownIofo.弹幕储存流.WriteLine($"<d p=\"{interval.TotalSeconds},1,25,16777215,{(MMPU.获取时间戳() / 1000)},0,{danmu.UserId},0\">{danmu.Message}</d>");
+                                    DownIofo.弹幕储存流.WriteLine($"<d p=\"{interval.TotalSeconds},1,25,16777215,{(MMPU.获取时间戳() / 1000)},0,{danmu.UserId},0\">" +
+                                        $"{danmu.Message.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("&", "&amp;")}</d>");
+
                                     break;
                                 }
                         }
@@ -399,10 +404,6 @@ namespace Auxiliary
                         {
                             DownIofo.备注 = "播放窗口关闭";
                             下载结束提醒(true);
-                            if (DownIofo.阿B直播流对象 != null && DownIofo.阿B直播流对象.startIn)
-                            {
-                                DownIofo.阿B直播流对象.Dispose();
-                            }
                             DownIofo.下载状态 = false;
                             return;
                         }
@@ -431,10 +432,6 @@ namespace Auxiliary
                             FlvMethod.转码(DownIofo.文件保存路径);
                         }
                         InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 下播，录制完成", InfoLog.InfoClass.下载必要提示);
-                        if (DownIofo.阿B直播流对象 != null && DownIofo.阿B直播流对象.startIn)
-                        {
-                            DownIofo.阿B直播流对象.Dispose();
-                        }
                         foreach (var item in RoomInit.bilibili房间主表)
                         {
                             if (item.唯一码 == DownIofo.房间_频道号)
@@ -628,6 +625,7 @@ namespace Auxiliary
                     DownIofo.弹幕储存流.WriteLine("</i>");
                     DownIofo.弹幕储存流.Flush();//写入弹幕数据
                 }
+                Clear();
             }
             catch (Exception) { }
             InfoLog.InfoPrintf($"\n=============={提醒标题}================\n" +
@@ -644,12 +642,13 @@ namespace Auxiliary
         public void 下载结束提醒(bool 是否结束弹幕录制)
         {
             try
-            {
+            {  
                 if (是否结束弹幕录制 && MMPU.录制弹幕 && MMPU.弹幕录制种类 == 2)
                 {
                     DownIofo.弹幕储存流.WriteLine("</i>");
                     DownIofo.弹幕储存流.Flush();//写入弹幕数据
                 }
+                Clear();
             }
             catch (Exception) { }
             InfoLog.InfoPrintf($"\n==============下载任务结束================\n" +

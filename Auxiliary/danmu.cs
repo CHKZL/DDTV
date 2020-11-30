@@ -14,13 +14,14 @@ namespace Auxiliary
             {
                 case 2:
                     {
-                        return "<?xmlversion=\"1.0\"encoding=\"UTF-8\"?><i>" +
+                        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+                            "\r\n<i>" +
                             "\r\n<chatserver>chat.bilibili.com</chatserver>" +
                             "\r\n<chatid>0</chatid>" +
                             "\r\n<mission>0</mission>" +
                             "\r\n<maxlimit>2147483647</maxlimit>" +
                             "\r\n<state>0</state>" +
-                            "\r\n<APP>DDTV</APP>" +
+                            $"\r\n<app>DDTV{MMPU.版本号}</app>" +
                             $"\r\n<real_name>{name}</real_name>" +
                             $"\r\n<roomid>{roomId}</roomid>" +
                             $"\r\n<title>{Title}</title>" +
