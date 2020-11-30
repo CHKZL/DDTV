@@ -22,27 +22,30 @@ namespace Auxiliary
         /// <summary>
         /// 关闭直播流和弹幕储存流
         /// </summary>
-        public void Clear()
+        public void Clear(bool 续命模式)
         {
             DownIofo.下载状态 = false;
-            try
+            if(!续命模式)
             {
-                DownIofo.阿B直播流对象.Dispose();
-                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间直播流对象回收完成", InfoLog.InfoClass.Debug);
+                try
+                {
+                    DownIofo.阿B直播流对象.Dispose();
+                    InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间直播流对象回收完成", InfoLog.InfoClass.Debug);
+                }
+                catch (Exception) { }
+                try
+                {
+                    DownIofo.弹幕储存流.Dispose();
+                    InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间弹幕储存流对象回收完成", InfoLog.InfoClass.Debug);
+                }
+                catch (Exception) { }
+                try
+                {
+                    DownIofo.礼物储存流.Dispose();
+                    InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间礼物储存流对象回收完成", InfoLog.InfoClass.Debug);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
-            try
-            {
-                DownIofo.弹幕储存流.Dispose();
-                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间弹幕储存流对象回收完成", InfoLog.InfoClass.Debug);
-            }
-            catch (Exception) { }
-            try
-            {
-                DownIofo.礼物储存流.Dispose();
-                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}房间礼物储存流对象回收完成", InfoLog.InfoClass.Debug);
-            }
-            catch (Exception) { }
             try
             {
                 DownIofo.WC.Dispose();
@@ -206,7 +209,7 @@ namespace Auxiliary
                 MMPU.DownList.Add(this);
                 if (MMPU.录制弹幕 && !DownIofo.继承.是否为继承对象)
                 {
-                    DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径 + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
+                    DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径.Substring(0, DownIofo.文件保存路径.Length-4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
                     DownIofo.礼物储存流 = new StreamWriter(DownIofo.文件保存路径 + ".txt");
                     DownIofo.阿B直播流对象.Connect(int.Parse(DownIofo.房间_频道号));
                     DownIofo.阿B直播流对象.MessageReceived += Listener_MessageReceived;
@@ -402,9 +405,9 @@ namespace Auxiliary
                         DownIofo.备注 = "用户取消，停止下载";
                         if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
                         {
-                            DownIofo.备注 = "播放窗口关闭";
-                            下载结束提醒(true);
+                            DownIofo.备注 = "播放窗口关闭";           
                             DownIofo.下载状态 = false;
+                            下载结束提醒(true);
                             return;
                         }
                     }
@@ -413,7 +416,7 @@ namespace Auxiliary
 
                         DownIofo.下载状态 = false;
                         DownIofo.备注 = "下载完成,直播间已关闭";
-                        下载结束提醒(true);
+                        
                         
                         if (DownIofo.继承 == null)
                         {
@@ -441,6 +444,7 @@ namespace Auxiliary
                             }
                         }
                         DownIofo.下载状态 = false;
+                        下载结束提醒(true);
                         return;
                     }
                     else
@@ -480,6 +484,7 @@ namespace Auxiliary
                                             下载对象.DownIofo.弹幕录制基准时间 = DownIofo.弹幕录制基准时间;
                                             下载对象.DownIofo.阿B直播流对象 = DownIofo.阿B直播流对象;
                                             下载对象.DownIofo.弹幕储存流 = DownIofo.弹幕储存流;
+                                            下载对象.DownIofo.礼物储存流 = DownIofo.礼物储存流;
                                             下载对象.DownIofo.下载状态 = false;
                                             下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
@@ -504,11 +509,11 @@ namespace Auxiliary
                                                 FlvMethod.转码(DownIofo.文件保存路径);
                                             }
                                             DownIofo.备注 = "推流断开，已新建续下任务";
-                                            下载结束提醒(false);
                                             下载对象.DownIofo.下载状态 = false;
                                             下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             DownIofo.下载状态 = false;
                                             DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                            下载结束提醒(false);
                                             return;
                                         }
                                         new Task((() =>
@@ -526,7 +531,7 @@ namespace Auxiliary
                                                 {
                                                     下载对象.DownIofo.备注 = "停止直播";
                                                     DownIofo.备注 = "直播停止，下载完成下载完成";
-                                                    下载结束提醒(true);
+                                                    
                                                     
                                                     下载对象.DownIofo.下载状态 = false;
                                                     下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -534,6 +539,7 @@ namespace Auxiliary
                                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                     下载对象.DownIofo.WC.CancelAsync();
                                                     MMPU.DownList.Remove(下载对象);
+                                                    下载结束提醒(true);
                                                     return;
                                                 }
                                             }
@@ -562,6 +568,7 @@ namespace Auxiliary
                                     DownIofo.下载状态 = false;
                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                     InfoLog.InfoPrintf("该房间的配置文件发现了与当前版本不支持的平台，请检查文件配置或者检查更新", InfoLog.InfoClass.系统错误信息);
+                                    //下载结束提醒(false);
                                     return;
                             }
                         }
@@ -578,8 +585,7 @@ namespace Auxiliary
                 {
                     DownIofo.下载状态 = false;
                     DownIofo.备注 = "录制任务意外终止，已新建续命任务";
-
-                    下载结束提醒("录制任务意外终止，已新建续命任务", true);
+                    下载结束提醒(true, "录制任务意外终止，已新建续命任务");
                     Downloader 下载对象 = new Downloader();
                     try
                     {
@@ -602,7 +608,6 @@ namespace Auxiliary
                         {
                             下载对象.DownIofo.备注 = "新建续下载对象出现异常，放弃新建任务";
                             下载结束提醒(true);
-
                             下载对象.DownIofo.下载状态 = false;
                             下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             下载对象.DownIofo.WC.CancelAsync();
@@ -616,16 +621,25 @@ namespace Auxiliary
                 }
             })).Start();
         }
-        public void 下载结束提醒(string 提醒标题, bool 是否结束弹幕录制)
+        public void 下载结束提醒( bool 是否结束弹幕录制, string 提醒标题 = "下载任务结束")
         {
             try
             {
                 if (是否结束弹幕录制 && MMPU.录制弹幕 && MMPU.弹幕录制种类 == 2)
                 {
-                    DownIofo.弹幕储存流.WriteLine("</i>");
-                    DownIofo.弹幕储存流.Flush();//写入弹幕数据
+                    try
+                    {
+                        DownIofo.弹幕储存流.WriteLine("</i>");
+                        DownIofo.弹幕储存流.Flush();//写入弹幕数据
+                    }
+                    catch (Exception)
+                    { }
+                    Clear(false);
                 }
-                Clear();
+               else
+                {
+                    Clear(true);
+                }
             }
             catch (Exception) { }
             InfoLog.InfoPrintf($"\n=============={提醒标题}================\n" +
@@ -638,29 +652,6 @@ namespace Auxiliary
                                $"\n下载任务类型:{(DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
                                $"\n结束原因:{DownIofo.备注}" +
                                $"\n==============={提醒标题}===============\n", InfoLog.InfoClass.下载必要提示);
-        }
-        public void 下载结束提醒(bool 是否结束弹幕录制)
-        {
-            try
-            {  
-                if (是否结束弹幕录制 && MMPU.录制弹幕 && MMPU.弹幕录制种类 == 2)
-                {
-                    DownIofo.弹幕储存流.WriteLine("</i>");
-                    DownIofo.弹幕储存流.Flush();//写入弹幕数据
-                }
-                Clear();
-            }
-            catch (Exception) { }
-            InfoLog.InfoPrintf($"\n==============下载任务结束================\n" +
-                               $"主播名:{DownIofo.主播名称}" +
-                               $"\n房间号:{DownIofo.房间_频道号}" +
-                               $"\n标题:{DownIofo.标题}" +
-                               $"\n开播时间:{MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString())}" +
-                               $"\n结束时间:{MMPU.Unix转换为DateTime(DownIofo.结束时间.ToString())}" +
-                               $"\n保存路径:{DownIofo.文件保存路径}" +
-                               $"\n下载任务类型:{(DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
-                               $"\n结束原因:{DownIofo.备注}" +
-                               $"\n===============下载任务结束===============\n", InfoLog.InfoClass.下载必要提示);
         }
         public static string 下载完成合并FLV(string File1, string File2, bool 是否直播结束)
         {
