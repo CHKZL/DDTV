@@ -53,12 +53,17 @@ namespace DDTV_New
 
         public MainWindow()
         {
-            
-
+            //DDTV主窗口启动
             InitializeComponent();
             this.Title = "DDTV2.0主窗口";
-          
-            ViewModel = new MainViewModel();
+            //if (MMPU.系统内核版本 < 10)
+            //{
+            //    MessageBox.Show($"启动失败，无法在该系统环境下运行");
+            //    InfoLog.InfoPrintf("不是WIN10，拒绝系统调用，调用关闭程序，退出", InfoLog.InfoClass.系统错误信息);
+            //    DDTV关闭事件();
+            //    return;
+            //}
+                ViewModel = new MainViewModel();
 
             this.WhenActivated(disposable =>
             {
