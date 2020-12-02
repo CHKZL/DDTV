@@ -24,9 +24,10 @@ namespace DDTV_New.window
     /// </summary>
     public partial class 增加监控列表 : Window
     {
-        public 增加监控列表()
+        public 增加监控列表(int 所选页=0)
         {
             InitializeComponent();
+            选项卡.SelectedIndex = 所选页;
             监控非VTB直播间使能按钮.IsChecked = 是否启动WS连接组;
         }
 
@@ -102,21 +103,21 @@ namespace DDTV_New.window
         {
             if (监控非VTB直播间使能按钮.IsChecked == true)
             {
-                NewThreadTask.Run(() =>
-                {
-                    持续连接获取阿B房间信息类.初始化所有房间连接();
-                });
+                //NewThreadTask.Run(() =>
+                //{
+                //    持续连接获取阿B房间信息类.初始化所有房间连接();
+                //});
 
                 bilibili.是否启动WS连接组 = true;
                 MMPU.setFiles("NotVTBStatus", "1");
             }
             else
             {
-
-                //bilibili.是否启动WS连接组 = false;
-                //MMPU.setFiles("NotVTBStatus", "0");
+                bilibili.是否启动WS连接组 = false;
+                MMPU.setFiles("NotVTBStatus", "0");
             }
             提示.Content = "监控非VTB直播间状态使能发生变化，需手动重启DDTV生效";
+            MessageBox.Show("!!重要功能更改!!\r需手动重启DDTV生效，重要配置变化，不重启可能会出现未知错误");
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

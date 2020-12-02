@@ -71,6 +71,8 @@ namespace Auxiliary
         public static string webServer默认监听IP = "0.0.0.0";
         public static string 缓存路径 = "./tmp/";
         public static int 弹幕录制种类 = 2;
+        public static int wss连接错误的次数 = 0;
+        public static bool 已经提示wss连接错误 = false;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -136,8 +138,7 @@ namespace Auxiliary
                 //数据源
                 MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
                 //是否启动WS连接组
-                bilibili.是否启动WS连接组 = true;
-                //bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
+                bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
                 //第一次使用DDTV

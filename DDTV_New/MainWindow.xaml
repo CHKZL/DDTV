@@ -11,8 +11,9 @@
 
     <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown">
         <Grid x:Name="bk">
+
             <Image x:Name="W" Source="res\img\w.png" Margin="0,-2,0,2" Width="800" Height="515"/>
-            <Label Content="双击列表内容开始播放" HorizontalAlignment="Left" Margin="664,485,0,0" VerticalAlignment="Top"/>
+
 
         </Grid>
         <Grid x:Name="home" Width="800" Height="515" Visibility="Collapsed" >
@@ -41,7 +42,7 @@
             <Image Margin="742,283,8,182" Source="res/ico/关于.png" Stretch="Fill" Width="50" Height="50" MouseLeftButtonDown="关于_按钮事件"/>
             <Label Content="关于" HorizontalAlignment="Left" Margin="750,328,0,0" VerticalAlignment="Top" Foreground="#FF4B4B4B"/>
         </Grid>
-        <Grid x:Name="直播层">
+        <Grid x:Name="直播层" Visibility="Collapsed">
 
             <ListView x:Name="LiveList" HorizontalAlignment="Left" Height="442" Margin="10,47,0,0" VerticalAlignment="Top" Width="698" SelectionChanged="直播表单击事件" MouseDoubleClick="直播表双击事件">
                 <ListView.View>
@@ -73,8 +74,9 @@
                 <Label Content="正在初始化房间列表......" VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
             </Grid>
             <Button x:Name="修改房间信息按钮" Content="修改房间信息" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="修改房间信息按钮_Click"/>
+            <Label Content="双击列表内容开始播放" HorizontalAlignment="Left" Margin="664,485,0,0" VerticalAlignment="Top"/>
         </Grid>
-        <Grid x:Name="设置层" Visibility="Collapsed">
+        <Grid x:Name="设置层">
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
@@ -235,7 +237,7 @@
             <Image Source="res/ico/close.png" Name="exit" Stretch="Fill" Width="30" Height="30" Margin="760,5,10,480" MouseLeftButtonDown="关闭按钮_Click"/>
             <Image Source="res/ico/unfold.png" Name="最小化" Stretch="Fill" Width="30" Height="30" Margin="725,5,45,480" MouseLeftButtonDown="最小化按钮_Click"/>
             <Label x:Name="版本更新通知" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="183" VerticalContentAlignment="Center" Foreground="Black" Margin="486,484,131,0" />
-
+            <Label x:Name="全局提示" Content="" HorizontalAlignment="Left" Margin="181,6,0,0" VerticalAlignment="Top" Foreground="Red" Width="525" Visibility="Collapsed"/>
         </Grid>
         <Grid x:Name="等待框" Background="#B2636363" Visibility="Collapsed" >
             <Label Content="执行操作中...." VerticalAlignment="Center" HorizontalAlignment="Center" Height="515" Width="800" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="White" FontSize="40" />
