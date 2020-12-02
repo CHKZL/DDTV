@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -244,9 +245,10 @@ namespace Auxiliary
                                 }
                             case 2:
                                 {
+                                    string 弹幕 = danmu.Message.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("&", "&amp;");
+                                    弹幕 = Regex.Replace(弹幕, @"[\x00-\x08\x0B\x0C\x0E-\x1F]", "");
                                     DownIofo.弹幕储存流.WriteLine($"<d p=\"{interval.TotalSeconds},1,25,16777215,{(MMPU.获取时间戳() / 1000)},0,{danmu.UserId},0\">" +
-                                        $"{danmu.Message.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("&", "&amp;")}</d>");
-
+                                        $"{弹幕}</d>");
                                     break;
                                 }
                         }

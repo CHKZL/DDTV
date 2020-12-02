@@ -90,9 +90,16 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("开始周期轮询bilibili房间开播状态", InfoLog.InfoClass.Debug);
                 while (true)
                 {
-                    刷新B站房间列表();
-                    bilibili房间信息更新次数++;
-                    await Task.Delay(5 * 1000).ConfigureAwait(false);
+                    try
+                    {
+                        刷新B站房间列表();
+                        bilibili房间信息更新次数++;
+                        await Task.Delay(5 * 1000).ConfigureAwait(false);
+                    }
+                    catch (Exception e)
+                    {
+                        InfoLog.InfoPrintf($"在常规主线程B2中发生严重错误，错误堆栈内容:\n{e}",InfoLog.InfoClass.系统错误信息);
+                    }
                 }
             });
             //Task.Run(async () =>

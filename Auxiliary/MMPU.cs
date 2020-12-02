@@ -73,6 +73,7 @@ namespace Auxiliary
         public static int 弹幕录制种类 = 2;
         public static int wss连接错误的次数 = 0;
         public static bool 已经提示wss连接错误 = false;
+        public static bool Debug模式 = false;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
 
@@ -83,15 +84,16 @@ namespace Auxiliary
         public static bool 配置文件初始化(int 模式)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
+            Debug模式 = MMPU.读取exe默认配置文件("DebugMod", "0") == "0" ? false : true;
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = Debug模式,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = false
+                    输出到文件 = Debug模式
                 });
                 启动模式 = 0;
             }
@@ -99,7 +101,7 @@ namespace Auxiliary
             {
                 InfoLog.InfoInit("./DDTVLiveRecLog.out", new InfoLog.InfoClasslBool()
                 {
-                    Debug = false,
+                    Debug = Debug模式,
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
@@ -136,19 +138,18 @@ namespace Auxiliary
                 //剪切板监听
                 MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
                 //数据源
-                MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
-                //是否启动WS连接组
-                bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;        
+                MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));                 
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
                 //第一次使用DDTV
                 MMPU.开机自启动 = MMPU.读取exe默认配置文件("BootUp", "0") == "0" ? false : true;
-
             }
             else if (模式 == 1)
             {
                 MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");                
             }
+            //是否启动WS连接组
+            bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
             //转码功能使能
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             //检查配置文件
