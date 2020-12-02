@@ -302,12 +302,16 @@ namespace Auxiliary
 
                     new Task(() =>
                     {
+                        MMPU.wss连接错误的次数 = 0;
                         int TJ = 16;
                         while (true)
                         {
                             try
                             {
-                                
+                                if(MMPU.wss连接错误的次数 >3)
+                                {
+                                    InfoLog.InfoPrintf($"网络状态不佳，多次尝试保持房间监控长连接失败，请关闭非VTBS数据来源房间监控，因为多次被阿B服务器拒绝连接，部分房间状态监控更新已停止", InfoLog.InfoClass.系统错误信息);
+                                }
                                 if(TJ>15)
                                 {
                                     InfoLog.InfoPrintf($"[DDTVLR心跳信息]当前临时API监控房间数量:{RoomList.Count- 已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{已连接的直播间状态.Count}" , InfoLog.InfoClass.下载必要提示);
@@ -329,6 +333,7 @@ namespace Auxiliary
                                     TimeSpan ts = DateTime.Now.Subtract(已连接的直播间状态[i].心跳时间);
                                     if ((int)ts.TotalSeconds < 0 || (int)ts.TotalSeconds > 80)
                                     {
+                                        MMPU.wss连接错误的次数++;
                                         int 房间号 = 已连接的直播间状态[i].房间号;
                                         已连接的直播间状态.Remove(已连接的直播间状态[i]);
                                         foreach (var item2 in RoomList)
@@ -462,13 +467,13 @@ namespace Auxiliary
                                       
                                         DataCache.写缓存(CacheStr + LiveP.roomID, "1");
                                         roomtask.直播状态 = true;
-                                        break;
+                                        return;
                                     }
                                     else
                                     {
                                         DataCache.写缓存(CacheStr + LiveP.roomID, "0");
                                         roomtask.直播状态 = false;
-                                        break;
+                                        return;
                                     }
                                 }
                             }
