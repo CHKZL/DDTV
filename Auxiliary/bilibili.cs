@@ -690,6 +690,11 @@ namespace Auxiliary
                     if (result["data"]["live_status"].ToString() == "1")
                     {
                         DataCache.写缓存(CacheStr + RoomId, "1");
+                        string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
+                        InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                        DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
+                        string roomid = result["data"]["room_id"].ToString();
+                        DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
                         return true;
                     }
                     else
@@ -709,6 +714,11 @@ namespace Auxiliary
                         if (result["data"]["live_status"].ToString() == "1")
                         {
                             DataCache.写缓存(CacheStr + RoomId, "1");
+                            string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
+                            InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                            DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
+                            string roomid = result["data"]["room_id"].ToString();
+                            DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
                             return true;
                         }
                         else
