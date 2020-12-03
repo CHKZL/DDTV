@@ -58,7 +58,7 @@ namespace Auxiliary
         /// <param name="key">写入的键名</param>
         /// <param name="value">写入的值</param>
         /// <param name="TS"></param>
-        public static void 写缓存(string key,string value)
+        public static void 写缓存(string key,string value="")
         {
             try
             {
@@ -75,7 +75,7 @@ namespace Auxiliary
             }
             catch (Exception ex)
             {
-                InfoLog.InfoPrintf($"写缓存异常:{ex}", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf($"写缓存异常:{ex.ToString()}", InfoLog.InfoClass.Debug);
             }
         }  
     }
