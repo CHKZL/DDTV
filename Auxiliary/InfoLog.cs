@@ -170,7 +170,6 @@ namespace Auxiliary
         }
         public static void OutToFile(string str)
         {
-
             InfoInitSW.WriteLine(str);
             InfoInitSW.Flush();
         }
