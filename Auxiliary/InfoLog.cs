@@ -177,7 +177,6 @@ namespace Auxiliary
 
         public static string GetSystemInfo()
         {
-            //TODO:(施工中)增加配置文件，默认隐藏系统信息
             string BB = "<meta http-equiv=\"refresh\" content=\"5\"><html><body>";
             BB += $"系统时间{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}";
             int 下载中 = 0, 下载完成 = 0;
@@ -202,18 +201,25 @@ namespace Auxiliary
             BB += $"<br/>当前临时API监控房间数量:{bilibili.RoomList.Count - bilibili.已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{bilibili.已连接的直播间状态.Count}";
             BB += $"<br/>当前进程已使用内存：{String.Format("{0:N2}", mem / 1024.0 / 1024.0)}MB,CPU运行时间：{cpu.TotalMilliseconds}";
             BB += $"<br/>当前进程物理内存量：{ String.Format("{0:N2}", Environment.WorkingSet / 1204.0 / 1024.0)}MB";
-            BB += "<br/><br/>--系统运行平台--";
-            BB += "<br/>运行框架：" + RuntimeInformation.FrameworkDescription;
-            BB += "<br/>操作系统：" + RuntimeInformation.OSDescription;
-            BB += "<br/>操作系统版本：" + Environment.OSVersion.ToString();
-            BB += "<br/>平台架构：" + RuntimeInformation.OSArchitecture;
+            try
+            {
+                BB += "<br/><br/>--系统运行平台--";
+                BB += "<br/>运行框架：" + RuntimeInformation.FrameworkDescription;
+                BB += "<br/>操作系统：" + RuntimeInformation.OSDescription;
+                BB += "<br/>操作系统版本：" + Environment.OSVersion.ToString();
+                BB += "<br/>平台架构：" + RuntimeInformation.OSArchitecture;
+            }
+            catch (Exception){}
             BB += "<br/><br/>";
-            BB += "<br/>-- 运行环境 --";
-            string[] drives = Environment.GetLogicalDrives();
-            BB += $"<br/>系统已运行时间：{ Environment.TickCount / 1000}秒";
-            BB += "<br/>是否在交互模式中运行：" + Environment.UserInteractive;
-            BB += "<br/>当前关联用户名：" + Environment.UserName;
-            BB += "<br/>Web程序核心框架版本：" + Environment.Version.ToString();
+            try
+            {
+                BB += "<br/>-- 运行环境 --";
+                BB += $"<br/>系统已运行时间：{ Environment.TickCount / 1000}秒";
+                BB += "<br/>是否在交互模式中运行：" + Environment.UserInteractive;
+                BB += "<br/>当前关联用户名：" + Environment.UserName;
+                BB += "<br/>Web程序核心框架版本：" + Environment.Version.ToString();
+            }
+            catch (Exception){}
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 BB += $"<br/><br/>---Windows信息---";
