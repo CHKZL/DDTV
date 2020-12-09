@@ -70,7 +70,7 @@ namespace Auxiliary
                     缓存创建时间[key]= DateTime.Now;
                 else
                     缓存创建时间.Add(key, DateTime.Now);     
-                InfoLog.InfoPrintf("缓存未命中,缓存数据:" + key + "|" + value, InfoLog.InfoClass.Debug);
+                //InfoLog.InfoPrintf("缓存未命中,缓存数据:" + key + "|" + value, InfoLog.InfoClass.Debug);
                 DataCache.CacheCount++;
             }
             catch (Exception ex)

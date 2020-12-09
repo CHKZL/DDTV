@@ -323,17 +323,29 @@ namespace Auxiliary
                                 foreach (var item in 已连接的直播间状态)
                                 {
                                     TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
-                                    BB += "\r\n" + num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间;
-                                    //Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
-                                    num++;
+                                    if((int)ts.TotalSeconds>30|| (int)ts.TotalSeconds<-1)
+                                    {
+                                        BB += "\r\n" + num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间;
+                                        //Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
+                                        num++;
+                                    }
+                                   
                                 }
-                                InfoLog.InfoPrintf("wss连接状态:" + BB, InfoLog.InfoClass.Debug);
+                                if (!string.IsNullOrEmpty(BB))
+                                {
+                                    InfoLog.InfoPrintf("wss连接状态:" + BB, InfoLog.InfoClass.Debug);
+                                }
+                                bool TEST_T1 = true;
                                 for (int i = 0; i < 已连接的直播间状态.Count; i++)
                                 {
                                     TimeSpan ts = DateTime.Now.Subtract(已连接的直播间状态[i].心跳时间);
-                                    if ((int)ts.TotalSeconds < 0 || (int)ts.TotalSeconds > 80)
+                                    if ((int)ts.TotalSeconds < 0 || (int)ts.TotalSeconds > 100)
                                     {
-                                        MMPU.wss连接错误的次数++;
+                                        if (TEST_T1)
+                                        {
+                                            MMPU.wss连接错误的次数++;
+                                            TEST_T1 = false;
+                                        }
                                         int 房间号 = 已连接的直播间状态[i].房间号;
                                         已连接的直播间状态.Remove(已连接的直播间状态[i]);
                                         foreach (var item2 in RoomList)
@@ -382,7 +394,7 @@ namespace Auxiliary
                     }
                     List<RoomInit.RoomInfo> Vtbs存在的直播间 = new List<RoomInit.RoomInfo>();
                     List<RoomInit.RoomInfo> Vtbs不存在的直播间 = new List<RoomInit.RoomInfo>();
-                    InfoLog.InfoPrintf($"生成双边队列临时API房间列表数:{Vtbs存在的直播间.Count},优先连接组数:{Vtbs不存在的直播间.Count}", InfoLog.InfoClass.Debug);
+                    
                     foreach (var item in RoomList)
                     {
                         if(MTPlist.Contains(int.Parse(item.房间号)))
@@ -394,6 +406,7 @@ namespace Auxiliary
                             Vtbs不存在的直播间.Add(item);
                         }
                     }
+                    InfoLog.InfoPrintf($"生成双边队列临时API房间列表数:{Vtbs存在的直播间.Count},优先连接组数:{Vtbs不存在的直播间.Count}", InfoLog.InfoClass.Debug);
                     foreach (var item in Vtbs不存在的直播间)
                     {
                         try
