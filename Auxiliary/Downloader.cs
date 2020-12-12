@@ -31,7 +31,6 @@ namespace Auxiliary
             {
                 try
                 {
-                    DOL.阿B直播流对象.Close();
                     DOL.阿B直播流对象.Dispose();
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间直播流对象回收完成", InfoLog.InfoClass.Debug);
                 }
@@ -128,7 +127,7 @@ namespace Auxiliary
                 switch (DownIofo.平台)
                 {
                     case "bilibili":
-                        if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
+                        if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
                         {
                             InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,下载任务结束", InfoLog.InfoClass.下载必要提示);
                             DownIofo.下载状态 = false;
@@ -157,7 +156,7 @@ namespace Auxiliary
                     {
                         case "bilibili":
                             {
-                                if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
+                                if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
                                 {
 
                                     a++;
@@ -417,7 +416,7 @@ namespace Auxiliary
                             return;
                         }
                     }
-                    else if (e.Cancelled == false && !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
+                    else if (e.Cancelled == false && !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
                     {
 
                         DownIofo.下载状态 = false;
@@ -455,7 +454,7 @@ namespace Auxiliary
                     }
                     else
                     {
-                        if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true) && DownIofo.是否保存)
+                        if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false) && DownIofo.是否保存)
                         {
                             DownIofo.备注 = "下载流中断，检测到房间仍为开播状态，新建续下任务。";
                             DownIofo.下载状态 = false;
@@ -533,7 +532,7 @@ namespace Auxiliary
                                                     //下载对象.DownIofo.下载状态 = true;
                                                     return;
                                                 }
-                                                if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
+                                                if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
                                                 {
                                                     下载对象.DownIofo.备注 = "停止直播";
                                                     DownIofo.备注 = "直播停止，下载完成下载完成";
