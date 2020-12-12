@@ -25,6 +25,7 @@ namespace Auxiliary
             public bool 系统错误信息 { set; get; } = false;
             public bool 杂项提示 { set; get; } = false;
             public bool 下载必要提示 { set; get; } = false;
+            public bool 没啥价值的消息 { set; get; } = false;
             public bool 输出到文件 { set; get; } = false;
         }
         public enum InfoClass
@@ -32,7 +33,8 @@ namespace Auxiliary
             Debug = 0,
             系统错误信息 = 1,
             杂项提示 = 2,
-            下载必要提示 = 3
+            下载必要提示 = 3,
+            没啥价值的消息 = 4
         }
         /// <summary>
         /// 返回下载列表HTML字符串
@@ -159,6 +161,15 @@ namespace Auxiliary
                         {
                             Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
                             A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                        }
+                    }
+                    break;
+                case InfoClass.没啥价值的消息:
+                    {
+                        if (ClasslBool.没啥价值的消息)
+                        {
+                            Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                            A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
                         }
                     }
                     break;

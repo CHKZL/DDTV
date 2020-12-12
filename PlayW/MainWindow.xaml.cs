@@ -114,7 +114,7 @@ namespace PlayW
                 try
                 {
                     Play_STOP();
-                    listener.Close();
+                    //listener.Close();
                     listener.Dispose();
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
