@@ -135,13 +135,13 @@ namespace Auxiliary
             if(!是否正在更新房间信息)
             {
                 是否正在更新房间信息 = true;
-                InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.没啥价值的消息);
                 switch (MMPU.数据源)
                 {
                     case 0:
                         {
                             使用vtbsAPI更新房间状态();
-                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.没啥价值的消息);
                             是否正在更新房间信息 = false;
                             break;
                         }
@@ -219,7 +219,7 @@ namespace Auxiliary
                     }
 
                 }
-                InfoLog.InfoPrintf("Vtbs数据加载成功", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf("Vtbs数据更新成功", InfoLog.InfoClass.没啥价值的消息);
             }
             catch (Exception e)
             {
@@ -255,6 +255,7 @@ namespace Auxiliary
                 }
                
             }
+            if(C1!=0)
             InfoLog.InfoPrintf("使用VTBS数据库加载数据量:"+C1.ToString()+"/"+C2.ToString(), InfoLog.InfoClass.Debug);
         }
         public static void 使用B站API更新房间状态()
@@ -308,13 +309,21 @@ namespace Auxiliary
                         {
                             try
                             {
-                                if(MMPU.wss连接错误的次数 >3)
+                                if(MMPU.wss连接错误的次数 >5)
                                 {
                                     InfoLog.InfoPrintf($"网络状态不佳，多次尝试保持房间监控长连接失败，请关闭非VTBS数据来源房间监控，因为多次被阿B服务器拒绝连接，部分房间状态监控更新已停止", InfoLog.InfoClass.系统错误信息);
                                 }
                                 if(TJ>15)
                                 {
-                                    InfoLog.InfoPrintf($"[DDTVLR心跳信息]当前临时API监控房间数量:{RoomList.Count- 已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{已连接的直播间状态.Count}" , InfoLog.InfoClass.下载必要提示);
+                                    int 下载中 = 0;
+                                    foreach (var item in MMPU.DownList)
+                                    {
+                                        if (item.DownIofo.下载状态)
+                                        {
+                                            下载中++;
+                                        }
+                                    }
+                                    InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count- 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中" , InfoLog.InfoClass.下载必要提示);
                                     TJ = 0;
                                 }
                                 TJ++;
@@ -323,7 +332,7 @@ namespace Auxiliary
                                 foreach (var item in 已连接的直播间状态)
                                 {
                                     TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
-                                    if((int)ts.TotalSeconds>30|| (int)ts.TotalSeconds<-1)
+                                    if((int)ts.TotalSeconds>50|| (int)ts.TotalSeconds<-1)
                                     {
                                         BB += "\r\n" + num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间;
                                         //Console.WriteLine(num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间);
@@ -335,16 +344,18 @@ namespace Auxiliary
                                 {
                                     InfoLog.InfoPrintf("wss连接状态:" + BB, InfoLog.InfoClass.Debug);
                                 }
-                                bool TEST_T1 = true;
+                                bool WSS循环标志位 = true;
+                                bool WSS重置标志位 = true;
                                 for (int i = 0; i < 已连接的直播间状态.Count; i++)
                                 {
                                     TimeSpan ts = DateTime.Now.Subtract(已连接的直播间状态[i].心跳时间);
                                     if ((int)ts.TotalSeconds < 0 || (int)ts.TotalSeconds > 100)
                                     {
-                                        if (TEST_T1)
+                                        WSS重置标志位 = false;
+                                        if (WSS循环标志位)
                                         {
                                             MMPU.wss连接错误的次数++;
-                                            TEST_T1 = false;
+                                            WSS循环标志位 = false;
                                         }
                                         int 房间号 = 已连接的直播间状态[i].房间号;
                                         已连接的直播间状态.Remove(已连接的直播间状态[i]);
@@ -372,7 +383,10 @@ namespace Auxiliary
                                         }
                                     }
                                 }
-                                
+                                if(WSS重置标志位)
+                                {
+                                    MMPU.wss连接错误的次数--;
+                                }
                             }
                             catch (Exception)
                             {

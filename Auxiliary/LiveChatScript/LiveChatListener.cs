@@ -25,7 +25,7 @@ namespace Auxiliary.LiveChatScript
 
         public event EventHandler<MessageEventArgs> MessageReceived;
 
-        private readonly byte[] m_ReceiveBuffer;
+        private static byte[] m_ReceiveBuffer;
 
         private CancellationTokenSource m_innerRts;
         private int TroomId = 0;
@@ -46,8 +46,6 @@ namespace Auxiliary.LiveChatScript
             }
             catch (Exception)
             {
-                ;
-             
             }
         }
 
@@ -124,7 +122,39 @@ namespace Auxiliary.LiveChatScript
                 m_innerRts.Cancel();
             }
             catch (Exception)
+            {}
+            try
             {
+                m_client.Dispose();
+                InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收完成:", InfoLog.InfoClass.Debug);
+            }
+            catch (Exception) {
+                InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，ClientWebSocket对象回收失败:", InfoLog.InfoClass.Debug);
+            }
+            try
+            {
+                m_innerRts.Dispose();
+                InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收完成:", InfoLog.InfoClass.Debug);
+            }
+            catch (Exception) {
+                InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收失败:", InfoLog.InfoClass.Debug);
+            }
+            try
+            {
+                InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收完成:", InfoLog.InfoClass.Debug);
+            }
+            catch (Exception)
+            {
+                InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收失败:", InfoLog.InfoClass.Debug);
+            }
+            try
+            {
+                m_ReceiveBuffer = null;
+            }
+            catch (Exception)
+            {
+
+                //throw;
             }
         }
 

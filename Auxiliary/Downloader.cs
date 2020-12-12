@@ -25,23 +25,27 @@ namespace Auxiliary
         /// </summary>
         public void Clear(bool 续命模式, DownIofoData DOL)
         {
-            DownIofo.下载状态 = false;
+            DOL.备注 = "下载任务结束";
+            DOL.下载状态 = false;
             if(!续命模式)
             {
                 try
                 {
+                    DOL.阿B直播流对象.Close();
                     DOL.阿B直播流对象.Dispose();
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间直播流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
                 try
                 {
+                    DOL.弹幕储存流.Close();
                     DOL.弹幕储存流.Dispose();
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间弹幕储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
                 try
                 {
+                    DOL.礼物储存流.Close();
                     DOL.礼物储存流.Dispose();
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间礼物储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
@@ -515,7 +519,7 @@ namespace Auxiliary
                                             下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             DownIofo.下载状态 = false;
                                             DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                            下载结束提醒(false, "下载任务结束", 下载对象.DownIofo);
+                                            下载结束提醒(true, "下载任务结束", 下载对象.DownIofo);
                                             return;
                                         }
                                         new Task((() =>
@@ -541,7 +545,7 @@ namespace Auxiliary
                                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                     下载对象.DownIofo.WC.CancelAsync();
                                                     MMPU.DownList.Remove(下载对象);
-                                                    下载结束提醒(true, "下载任务结束", DownIofo);
+                                                    下载结束提醒(true, "下载任务结束", 下载对象.DownIofo);
                                                     return;
                                                 }
                                             }
@@ -631,16 +635,16 @@ namespace Auxiliary
                 {
                     try
                     {
-                        DOL.弹幕储存流.WriteLine("</i>");
+                        DOL.弹幕储存流.WriteLine("</i>");        
                         DOL.弹幕储存流.Flush();//写入弹幕数据
                     }
                     catch (Exception)
                     { }
-                    Clear(false, DOL);
-                    if(DOL!=DownIofo)
+                    if (DOL != DownIofo)
                     {
                         Clear(false, DownIofo);
                     }
+                    Clear(false, DOL); 
                 }
                else
                 {
