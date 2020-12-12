@@ -28,8 +28,7 @@ namespace Auxiliary
         {
             data = null;
             try
-            {
-               
+            {             
                 if (DataCache.缓存创建时间.TryGetValue(key, out DateTime Cache))
                 {
                     TimeSpan TS = DateTime.Now - Cache;
@@ -42,6 +41,7 @@ namespace Auxiliary
                     else
                     {
                         InfoLog.InfoPrintf("命中缓存，但数据已过期，返回false:" + key, InfoLog.InfoClass.Debug);
+                        return false;
                     }
                 }
                 return false;

@@ -57,7 +57,7 @@ namespace Auxiliary.LiveChatScript
             }
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
-            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId,30000);
+            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId,20000);
             JObject JO = (JObject)JsonConvert.DeserializeObject(BB);
             try
             {
@@ -137,14 +137,6 @@ namespace Auxiliary.LiveChatScript
                 InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收完成:", InfoLog.InfoClass.Debug);
             }
             catch (Exception) {
-                InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收失败:", InfoLog.InfoClass.Debug);
-            }
-            try
-            {
-                InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收完成:", InfoLog.InfoClass.Debug);
-            }
-            catch (Exception)
-            {
                 InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，CancellationTokenSource对象回收失败:", InfoLog.InfoClass.Debug);
             }
             try

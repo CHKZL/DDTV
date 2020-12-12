@@ -292,6 +292,7 @@ namespace Auxiliary
             public int 房间号 { set; get; }
             public int 心跳值 { set; get; }
             public DateTime 心跳时间 { set; get; }
+            public string 连接服务器地址 { set; get; }
         }
         public class 持续连接获取阿B房间信息类
         {
@@ -368,6 +369,7 @@ namespace Auxiliary
                                                     try
                                                     {
                                                         item2.liveChatListener.Dispose();
+                                                        item2.liveChatListener.MessageReceived -= 直播间状态WS变化事件;
                                                     }
                                                     catch (Exception) { }
                                                     item2.liveChatListener = new LiveChatListener();
@@ -667,7 +669,7 @@ namespace Auxiliary
             {
                 string CacheStr = "byRoomIdgetLiveStatus";
                 
-                if (!强制刷新&&DataCache.读缓存(CacheStr + RoomId, 5, out string CacheData))
+                if (!强制刷新&&DataCache.读缓存(CacheStr + RoomId, 3, out string CacheData))
                 {
                     if(CacheData=="1")
                     {
@@ -718,7 +720,7 @@ namespace Auxiliary
                     {
                         DataCache.写缓存(CacheStr + RoomId, "1");
                         string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
-                        InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                        //InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
                         DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
                         string roomid = result["data"]["room_id"].ToString();
                         DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
@@ -742,7 +744,7 @@ namespace Auxiliary
                         {
                             DataCache.写缓存(CacheStr + RoomId, "1");
                             string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
-                            InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
+                            //InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
                             DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
                             string roomid = result["data"]["room_id"].ToString();
                             DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
