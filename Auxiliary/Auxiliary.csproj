@@ -226,6 +226,7 @@
     <Compile Include="LiveChatScript\ActivityBannerEventArgs.cs" />
     <Compile Include="LiveChatScript\BEBitConverter.cs" />
     <Compile Include="LiveChatScript\DanmuMessageEventArgs.cs" />
+    <Compile Include="LiveChatScript\DDTV_EvenntArg.cs" />
     <Compile Include="LiveChatScript\Extensions.cs" />
     <Compile Include="LiveChatScript\GiftMessageEventArgs.cs" />
     <Compile Include="LiveChatScript\LiveChatListener.cs" />

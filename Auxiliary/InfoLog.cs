@@ -36,6 +36,20 @@ namespace Auxiliary
             下载必要提示 = 3,
             没啥价值的消息 = 4
         }
+        public static string 返回WSS连接状态列表()
+        {
+            string 返回字符串 = string.Empty;
+            返回字符串 += "<meta http-equiv=\"refresh\" content=\"5\"><html><head><title>%title%</title></head><body>";
+            int num = 0;
+            foreach (var item in bilibili.已连接的直播间状态)
+            {
+                num++;
+                TimeSpan ts = DateTime.Now.Subtract(item.心跳时间);
+                返回字符串 += "<br/>"+ num + "　时间差:" + (int)ts.TotalSeconds + "　　　房间号:" + item.房间号 + "　　心跳值:" + item.心跳值 + "　　上次更新时间" + item.心跳时间 + "    服务器:" + item.连接服务器地址;
+            }
+            返回字符串 = (返回字符串 + "</body></html>").Replace("%title%", "WSS连接状态");
+            return 返回字符串;
+        }
         /// <summary>
         /// 返回下载列表HTML字符串
         /// </summary>
@@ -374,7 +388,7 @@ namespace Auxiliary
                             }
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                     }
                     return networkInfo;
@@ -499,7 +513,7 @@ namespace Auxiliary
                                 process.WaitForExit(50000);
                             }
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
 
                         }

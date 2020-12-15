@@ -129,7 +129,7 @@ namespace Auxiliary
                     case "bilibili":
                         if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
                         {
-                            InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,下载任务结束", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载必要提示);
                             DownIofo.下载状态 = false;
                             DownIofo.备注 = "该房间未直播";
                             DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -272,9 +272,8 @@ namespace Auxiliary
 
                 }
             }
-            catch (Exception EX)
+            catch (Exception)
             {
-                ;
             }
         }
         public static Downloader 新建下载对象(string 平台, string 唯一码, string 标题, string GUID, string 下载地址, string 备注, bool 是否保存, string 主播名称, bool 是否为继承项目, string 继承项目的原始文件)
@@ -287,7 +286,7 @@ namespace Auxiliary
                     {
                         if (item.DownIofo.下载状态 && item.DownIofo.是否保存)
                         {
-                            InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\r房间号:{唯一码}\r主播名称:{主播名称}\r标题:{标题}", InfoLog.InfoClass.Debug);
+                            InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\n房间号:{唯一码}\r主播名称:{主播名称}\r标题:{标题}", InfoLog.InfoClass.下载必要提示);
                             return null;
                         }
                         else

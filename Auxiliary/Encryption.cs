@@ -147,7 +147,7 @@ namespace Auxiliary
                 var btArray = Convert.FromBase64String(source);
                 return Encoding.UTF8.GetString(btArray);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return null;
             }

@@ -155,6 +155,42 @@ namespace DDTV_New
                 }
             }
             this.Show();
+            new Task(()=> {
+                int i = 0;
+            while(true)
+                {
+                    try
+                    {
+                        if (是否启动WS连接组 && Vtbs存在的直播间.Count != 0 && Vtbs不存在的直播间.Count != 0)
+                        {
+                            if (Vtbs不存在的直播间.Count > 5)
+                            {
+                                i++;
+                                if(i>1)
+                                {
+                                    break;
+                                }
+                                MessageBoxResult dr = MessageBox.Show("检测到监控列表中，非VTBS数据数据库房间的数量大于5个，可能会造成未知的错误，推荐关闭非VTBS的WSS连接方式或减少次类型的房间\r点击确定跳转关闭WSS连接窗口，点击取消本次忽略该提醒，下次启动DDTV前不会再次提示", "警告", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                                if (dr == MessageBoxResult.OK)
+                                {
+                                    InfoLog.InfoPrintf("推荐非VTBS连接房间数小于5，检测到目前数量大于5，大概率会造成连接错误，请注意。", InfoLog.InfoClass.系统错误信息);
+                                    增加监控列表 A = new 增加监控列表(1);
+                                    A.ShowDialog();
+                                }
+                                else
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    Thread.Sleep(1000);
+                }
+            }).Start();
         }
 
         /// <summary>
@@ -251,25 +287,25 @@ namespace DDTV_New
                     MMPU.是否能连接404 = false;
                     runOnLocalThread(() => ViewModel.ServerDelayYoutube = -1.0);
                 }
-                {
-                    double vdb延迟 = MMPU.测试延迟("https://vtbs.moe/");
-                    if (vdb延迟 > 0)
-                    {
-                        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
-                        超时次数 = 0;
-                        MMPU.数据源 = 0;
-                    }
-                    else
-                    {
-                        超时次数++;
-                        if (超时次数 > 5)
-                        {
-                            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
-                            MMPU.数据源 = 1;
-                        }
+                //{
+                //    double vdb延迟 = MMPU.测试延迟("https://vtbs.moe/");
+                //    if (vdb延迟 > 0)
+                //    {
+                //        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
+                //        超时次数 = 0;
+                //        MMPU.数据源 = 0;
+                //    }
+                //    else
+                //    {
+                //        超时次数++;
+                //        if (超时次数 > 5)
+                //        {
+                //            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
+                //            MMPU.数据源 = 1;
+                //        }
 
-                    }
-                }
+                //    }
+                //}
             }, this, 10000);
             //缩小功能
             {
