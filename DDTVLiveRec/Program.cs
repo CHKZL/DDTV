@@ -13,18 +13,12 @@ namespace DDTVLiveRec
     {
         static void Main(string[] args)
         {
-#if false
-           下载("14275133");
 
-#else
             Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();         
             MMPU.配置文件初始化(1);
             new Task(() => {
                 DDTVLiveRecWebServer.Program.Main(new string[] { });
             }).Start();
-
-
-#endif
             new Task(() =>
             {
                 try

@@ -27,9 +27,10 @@ namespace Auxiliary.LiveChatScript
 
         private static byte[] m_ReceiveBuffer;
 
-        private CancellationTokenSource m_innerRts;
+        public CancellationTokenSource m_innerRts;
         private int TroomId = 0;
         public bool startIn = false;
+        public string wss_S="";
 
         public LiveChatListener()
         {
@@ -57,12 +58,25 @@ namespace Auxiliary.LiveChatScript
             }
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
-            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId,20000);
+            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId, 20000);
             JObject JO = (JObject)JsonConvert.DeserializeObject(BB);
             try
             {
-                //string CC = JO["data"]["host_list"][0]["host"].ToString();
-                await m_client.ConnectAsync(new Uri("wss://"+JO["data"]["host_list"][0]["host"].ToString()+"/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
+                foreach (var item in JO["data"]["host_list"])
+                {
+                    if (!bilibili.已经使用的服务器组.Contains(item["host"].ToString()))
+                    {
+                        wss_S = item["host"].ToString();
+                        bilibili.已经使用的服务器组.Add(wss_S);
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(wss_S))
+                {
+                    wss_S = JO["data"]["host_list"][1]["host"].ToString();
+                    bilibili.已经使用的服务器组.Add(wss_S);
+                }
+                await m_client.ConnectAsync(new Uri("wss://" + wss_S + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
             }
             catch (Exception e)
@@ -72,7 +86,7 @@ namespace Auxiliary.LiveChatScript
             }
 
             int realRoomId = roomId;//await _getRealRoomId(roomId);
-          
+
             await _sendObject(7, new
             {
                 uid = 0,
@@ -80,8 +94,9 @@ namespace Auxiliary.LiveChatScript
                 protover = 2,
                 platform = "web",
                 clientver = "1.7.3",
+                type = "1",
                 key = JO["data"]["token"].ToString()
-            }) ; 
+            });
 
             _ = _innerLoop().ContinueWith((t) =>
            {
@@ -97,10 +112,8 @@ namespace Auxiliary.LiveChatScript
                else
                {
                    //POST-CANCEL
-#if DEBUG
                    InfoLog.InfoPrintf("LiveChatListener连接断开，房间号:"+ realRoomId, InfoLog.InfoClass.Debug);
                    //Console.WriteLine("LiveChatListender cancelled.");
-#endif
                }
                try
                {
@@ -108,8 +121,7 @@ namespace Auxiliary.LiveChatScript
                }
                catch (Exception)
                {
-                   m_client.Dispose();
-                   m_innerRts.Dispose();
+                   Dispose();
                }
            });
             _=_innerHeartbeat();
@@ -117,6 +129,13 @@ namespace Auxiliary.LiveChatScript
 
         public void Close()
         {
+
+            try
+            {
+                bilibili.已经使用的服务器组.Remove(wss_S);
+            }
+            catch (Exception)
+            { }
             try
             {
                 m_innerRts.Cancel();
@@ -186,14 +205,10 @@ namespace Auxiliary.LiveChatScript
                         {
                             string BBB = e.ToString();
                             throw;
-                        }
-                      
+                        }        
                     }
                     while(!result.EndOfMessage);
-
-                    //=========fuckbilibili==========
                     DepackDanmakuData(m_ReceiveBuffer);
-                    //===============================
 
                     #region 已失效[弃用]
                     //var segments = _depack(new ArraySegment<byte>(m_ReceiveBuffer, 0, length));
@@ -269,7 +284,8 @@ namespace Auxiliary.LiveChatScript
             catch (Exception){ return; }
             //Debug.Log(jsonBody);
             string cmd = (string)obj["cmd"];
-            InfoLog.InfoPrintf("LiveChatListener收到数据，类型为："+ cmd, InfoLog.InfoClass.杂项提示);
+            if (cmd != "DDTV_T1")
+                InfoLog.InfoPrintf("LiveChatListener收到数据，类型为：" + cmd, InfoLog.InfoClass.杂项提示);
             //Console.WriteLine(cmd);
             switch (cmd)
             {
@@ -294,6 +310,27 @@ namespace Auxiliary.LiveChatScript
                     break;
                 case "WARNING":
                     MessageReceived(this, new WarningEventArg(obj));
+                    break;
+                case "INTERACT_WORD":
+                   //互动词，暂时不知道作用
+                    break;
+                case "PANEL":
+                    //小时榜信息更新
+                    break;
+                case "ONLINE_RANK_COUNT":
+                    //不知道是什么“在线等级计数”
+                    break;
+                case "ONLINE_RANK_V2":
+                    //不知道是啥
+                    break;
+                case "ROOM_BANNER":
+                    //房间横幅信息，应该就是置顶的那个跳转
+                    break;
+                case "COMBO_SEND":
+                    //礼物combo
+                    break;
+                case "DDTV_T1":
+                    MessageReceived(this, new DDTV_EvenntArg(obj));
                     break;
                 default:
                     MessageReceived(this, new MessageEventArgs(obj));
@@ -333,8 +370,8 @@ namespace Auxiliary.LiveChatScript
                 try
                 {
                     //UnityEngine.Debug.Log("heartbeat");
-                    await _sendBinary(2, System.Text.Encoding.UTF8.GetBytes("[object Object]"));
-                    await Task.Delay(30 * 1000, m_innerRts.Token);
+                    await _sendBinary(2, Encoding.UTF8.GetBytes("[object Object]"));
+                    await Task.Delay(25 * 1000, m_innerRts.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -342,7 +379,7 @@ namespace Auxiliary.LiveChatScript
                 }
                 catch (Exception e)
                 {
-                    throw e;
+                    string A = e.ToString();
                 }
             }
         }
@@ -445,6 +482,11 @@ namespace Auxiliary.LiveChatScript
         {
             switch (opt)
             {
+                case 99:
+                    {
+                        _parse("{\"cmd\":\"DDTV_T1\",\"T1\":1,\"roomID\":" + TroomId + "}");
+                        break;
+                    }
                 case 3:
                     {
                         if (length == 4)
@@ -461,6 +503,7 @@ namespace Auxiliary.LiveChatScript
                             string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
                             jsonBody = Regex.Unescape(jsonBody);
                             _parse(jsonBody);
+                            _parse("{\"cmd\":\"DDTV_T1\",\"T1\":1,\"roomID\":" + TroomId + "}");
                             //Debug.Log(jsonBody);
                             //ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
                         }
@@ -500,8 +543,11 @@ namespace Auxiliary.LiveChatScript
             //
             if (protocol.PacketLength < 16)
             {
-                InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.杂项提示);
-                throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
+                //InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf($@"{TroomId}房间收到协议PacketLength长度小于16，作为观测包更新心跳时间处理", InfoLog.InfoClass.Debug);
+                ProcessDanmakuData(99,null,0);
+                //throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
+                return;
             }
             int bodyLength = protocol.PacketLength - 16;
             if (bodyLength == 0)
@@ -518,10 +564,10 @@ namespace Auxiliary.LiveChatScript
             
             switch (protocol.Version)
             {
-                case 1://弹幕数据
+                case 1:
                     ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
                     break;
-                case 2://心跳数据
+                case 2:
                     {
                         var ms = new MemoryStream(buffer, 2, bodyLength - 2);
                         var deflate = new DeflateStream(ms, CompressionMode.Decompress);
@@ -544,16 +590,16 @@ namespace Auxiliary.LiveChatScript
                         deflate.Dispose();
                         break;
                     }
-                case 3://人气值
+                case 3:
                     ;
                     break;
-                case 5://命令
+                case 5:
                     ;
                     break;
-                case 7://认证信息
+                case 7:
                     ;
                     break;
-                case 8://服务器心跳包
+                case 8:
                     ;
                     break;
                 default:
