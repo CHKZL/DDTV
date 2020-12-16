@@ -77,6 +77,7 @@ namespace Auxiliary.LiveChatScript
                     bilibili.已经使用的服务器组.Add(wss_S);
                 }
                 await m_client.ConnectAsync(new Uri("wss://" + wss_S + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
+                
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
             }
             catch (Exception e)
@@ -289,7 +290,7 @@ namespace Auxiliary.LiveChatScript
             //Console.WriteLine(cmd);
             switch (cmd)
             {
-                case "DANMU_MSG":
+                case "DANMU_MSG"://弹幕信息
                     MessageReceived(this, new DanmuMessageEventArgs(obj));
                     break;
                 case "SEND_GIFT":
@@ -311,6 +312,12 @@ namespace Auxiliary.LiveChatScript
                 case "WARNING":
                     MessageReceived(this, new WarningEventArg(obj));
                     break;
+                case "LIVE":
+                    MessageReceived(this, new LiveEventArgs(obj));
+                    break;
+                case "PREPARING":
+                    MessageReceived(this, new PreparingpEventArgs(obj));
+                    break;
                 case "INTERACT_WORD":
                    //互动词，暂时不知道作用
                     break;
@@ -324,7 +331,7 @@ namespace Auxiliary.LiveChatScript
                     //不知道是啥
                     break;
                 case "ROOM_BANNER":
-                    //房间横幅信息，应该就是置顶的那个跳转
+                    //房间横幅信息，应该就是置顶的那个跳转广告
                     break;
                 case "COMBO_SEND":
                     //礼物combo
@@ -521,6 +528,11 @@ namespace Auxiliary.LiveChatScript
                         break;
                     }
                 default:
+                    if (TroomId == 21446992)
+                    {
+                        string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
+                        jsonBody = Regex.Unescape(jsonBody);
+                    }
                     ;
                     break;
             }
@@ -531,6 +543,7 @@ namespace Auxiliary.LiveChatScript
         /// </summary>
         private void DepackDanmakuData(byte[] messages)
         {
+           
             byte[] headerBuffer = new byte[16];
             //for (int i = 0; i < 16; i++)
             //{
@@ -543,7 +556,9 @@ namespace Auxiliary.LiveChatScript
             //
             if (protocol.PacketLength < 16)
             {
-                //InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.Debug);
+                if (TroomId == 21446992)
+                    ;
+                InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.Debug);
                 InfoLog.InfoPrintf($@"{TroomId}房间收到协议PacketLength长度小于16，作为观测包更新心跳时间处理", InfoLog.InfoClass.Debug);
                 ProcessDanmakuData(99,null,0);
                 //throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");

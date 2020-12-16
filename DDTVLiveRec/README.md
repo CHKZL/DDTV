@@ -19,14 +19,14 @@
 
 # 使用说明
     
-DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境已经安装.NET5的运行时(.NET5.0 runtime)
-如未安装不能启动，请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行运行时的安装后运行DDTVLiveRec
+　　DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境已经安装.NET5的运行时(.NET5.0 runtime)  
+如未安装不能启动，请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行运行时的安装，或者直接[下载.NET5.0运行时](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.1-windows-x64-installer)进行安装，然后运行DDTVLiveRec
 
 启动准备:  
-1.因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。
-2.把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件
-3.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动
-4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
+　　1.因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。  
+　　2.把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件  
+　　3.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动  
+　　4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
 
 * 录制的视频文件在文件夹中的["tmp"]文件夹内
 
@@ -42,7 +42,8 @@ web服务端:
 
 
 # 录制配置：RoomListConfig.json说明：
-格式和解析方式和DDTV一样，格式为json字符串，releases发布的压缩包里附带了一个参考的文件。   
+　　格式和解析方式和DDTV一样，格式为json字符串，releases发布的压缩包里附带了一个参考的文件。  
+　　【重要】默认只支持[VTBS](https://vtbs.moe/)有记录的房间监控，如果有未记录的V，到vtbs提交新的V即可。如需监控非V的房间，需要打开配置文件中的NV选项(NotVTBStatus)，切连接的非V房间推荐不要超过5个，因为阿B的服务器限制，可能造成未知错误。 
 房间配置文件格式为
 ```json
 {

@@ -155,41 +155,44 @@ namespace DDTV_New
                 }
             }
             this.Show();
-            new Task(()=> {
-                int i = 0;
-            while(true)
-                {
-                    try
-                    {
-                        if (是否启动WS连接组 && Vtbs存在的直播间.Count != 0 && Vtbs不存在的直播间.Count != 0)
-                        {
-                            if (Vtbs不存在的直播间.Count > 5)
-                            {
-                                i++;
-                                if(i>1)
-                                {
-                                    break;
-                                }
-                                MessageBoxResult dr = MessageBox.Show("检测到监控列表中，非VTBS数据数据库房间的数量大于5个，可能会造成未知的错误，推荐关闭非VTBS的WSS连接方式或减少次类型的房间\r点击确定跳转关闭WSS连接窗口，点击取消本次忽略该提醒，下次启动DDTV前不会再次提示", "警告", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
-                                if (dr == MessageBoxResult.OK)
-                                {
-                                    InfoLog.InfoPrintf("推荐非VTBS连接房间数小于5，检测到目前数量大于5，大概率会造成连接错误，请注意。", InfoLog.InfoClass.系统错误信息);
-                                    增加监控列表 A = new 增加监控列表(1);
-                                    A.ShowDialog();
-                                }
-                                else
-                                {
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
+            NewThreadTask.Run(runOnLocalThread =>
+             {
+                 int i = 0;
+                 while (true)
+                 {
+                     try
+                     {
+                         if (是否启动WSS连接组 && Vtbs不存在的直播间.Count > 5)
+                         {
+                             i++;
+                             if (i > 1)
+                             {
+                                 break;
+                             }
+                             runOnLocalThread(() =>
+                             {
+                                 MessageBoxResult dr = MessageBox.Show("检测到监控列表中，非VTBS数据数据库房间的数量大于5个，可能会造成未知的错误，推荐关闭非VTBS的WSS连接方式或减少次类型的房间\r点击确定跳转关闭WSS连接窗口，点击取消本次忽略该提醒，下次启动DDTV前不会再次提示", "警告", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
+                                 if (dr == MessageBoxResult.OK)
+                                 {
+                                     InfoLog.InfoPrintf("推荐非VTBS连接房间数小于5，检测到目前数量大于5，大概率会造成连接错误，请注意。", InfoLog.InfoClass.系统错误信息);
+                                     增加监控列表 A = new 增加监控列表(1);
+                                     A.ShowDialog();
+                                 }
+                             });
+                             
+                         }
+                     }
+                     catch (Exception e)
+                     {
 
-                    }
-                    Thread.Sleep(1000);
-                }
+                     }
+                     Thread.Sleep(1000);
+                 }
+
+             }, this);
+            new Task(() =>
+            {
+
             }).Start();
         }
 
@@ -1620,8 +1623,18 @@ namespace DDTV_New
         {
             if (录制弹幕使能按钮.IsChecked == true)
             {
-                MMPU.录制弹幕 = true;
-                MMPU.setFiles("RecordDanmu", "1");
+                MessageBoxResult dr = MessageBox.Show("该功能可能会导致房间监控失效，并且由于是因为阿B的服务器接口限制问题，暂时无法修复\n如果必须录制，推荐监控列表中就放目标房间，不要放置其他房间\n\n确定要进行弹幕录制吗？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                if (dr == MessageBoxResult.Yes)
+                {
+                    MMPU.录制弹幕 = true;
+                    MMPU.setFiles("RecordDanmu", "1");
+                }
+                else if (dr == MessageBoxResult.No)
+                {
+                    录制弹幕使能按钮.IsChecked = false;
+                    MMPU.录制弹幕 = false;
+                    MMPU.setFiles("RecordDanmu", "0");
+                }          
             }
             else
             {
@@ -1631,7 +1644,15 @@ namespace DDTV_New
         }
         private void 修改最大直播并行数量确定按钮点击事件(object sender, RoutedEventArgs e)
         {
-            MMPU.最大直播并行数量 = int.Parse(并行直播数量.Text);
+            try
+            {
+                MMPU.最大直播并行数量 = int.Parse(并行直播数量.Text);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("并行直播数量输入框内容不是数字");
+                return;
+            }
             MMPU.setFiles("PlayNum", 并行直播数量.Text);
             MessageBox.Show("修改成功");
         }

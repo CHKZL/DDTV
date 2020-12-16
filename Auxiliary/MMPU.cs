@@ -30,8 +30,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.6β-1";
-        public static string[] 不检测的版本号 = { "2.0.4.5c" };
+        public static string 版本号 = "2.0.4.6a";
+        public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -150,13 +150,19 @@ namespace Auxiliary
                 MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");                
             }
             //是否启动WS连接组
-            bilibili.是否启动WS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
+            bilibili.是否启动WSS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
             //转码功能使能
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             //检查配置文件
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
             //检查弹幕录制配置
             MMPU.录制弹幕 = MMPU.读取exe默认配置文件("RecordDanmu", "0") == "1" ? true : false;
+            if (MMPU.读取exe默认配置文件("DT1", "0") == "0" ? true : false)
+            {
+                MMPU.录制弹幕 = false;
+                MMPU.setFiles("DT1", "1");
+            }
+            
             //房间配置文件
             RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
             //房间配置文件

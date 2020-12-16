@@ -28,7 +28,7 @@ namespace DDTV_New.window
         {
             InitializeComponent();
             选项卡.SelectedIndex = 所选页;
-            监控非VTB直播间使能按钮.IsChecked = 是否启动WS连接组;
+            监控非VTB直播间使能按钮.IsChecked = 是否启动WSS连接组;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -108,12 +108,12 @@ namespace DDTV_New.window
                 //    持续连接获取阿B房间信息类.初始化所有房间连接();
                 //});
 
-                bilibili.是否启动WS连接组 = true;
+                bilibili.是否启动WSS连接组 = true;
                 MMPU.setFiles("NotVTBStatus", "1");
             }
             else
             {
-                bilibili.是否启动WS连接组 = false;
+                bilibili.是否启动WSS连接组 = false;
                 MMPU.setFiles("NotVTBStatus", "0");
             }
             提示.Content = "监控非VTB直播间状态使能发生变化，需手动重启DDTV生效";
