@@ -378,3 +378,4 @@ healthchecksdb
 /DDTVLiveRecService
 /bilibili直播间监控服务端
 /DDTVRoomConfig
+/.dockerignore
