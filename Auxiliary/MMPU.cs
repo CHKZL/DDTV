@@ -69,6 +69,7 @@ namespace Auxiliary
         public static bool 是否第一次使用DDTV = true;
         public static bool 是否有新版本 = false;
         public static string webServer默认监听IP = "0.0.0.0";
+        public static string webServer默认监听端口 = "11419";
         public static string 缓存路径 = "./tmp/";
         public static int 弹幕录制种类 = 2;
         public static int wss连接错误的次数 = 0;
@@ -147,7 +148,8 @@ namespace Auxiliary
             }
             else if (模式 == 1)
             {
-                MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");                
+                MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
+                MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
             }
             //是否启动WS连接组
             bilibili.是否启动WSS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
