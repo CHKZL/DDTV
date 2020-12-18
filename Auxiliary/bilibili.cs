@@ -836,6 +836,14 @@ namespace Auxiliary
                     }
                     else
                     {
+                        foreach (var roomtask in RoomList)
+                        {
+                            if (roomtask.房间号 == RoomId)
+                            {
+                                roomtask.直播状态 = false;
+                                break;
+                            }
+                        }
                         DataCache.写缓存(CacheStr + RoomId, "0");
                         return false;
                     }
@@ -860,6 +868,14 @@ namespace Auxiliary
                         }
                         else
                         {
+                            foreach (var roomtask in RoomList)
+                            {
+                                if (roomtask.房间号 == RoomId)
+                                {
+                                    roomtask.直播状态 = false;
+                                    break;
+                                }
+                            }
                             DataCache.写缓存(CacheStr + RoomId, "0");
                             return false;
                         }

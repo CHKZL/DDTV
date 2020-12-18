@@ -127,7 +127,7 @@ namespace Auxiliary
                 switch (DownIofo.平台)
                 {
                     case "bilibili":
-                        if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
+                        if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                         {
                             InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载必要提示);
                             DownIofo.下载状态 = false;
@@ -156,7 +156,7 @@ namespace Auxiliary
                     {
                         case "bilibili":
                             {
-                                if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
+                                if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                                 {
 
                                     a++;
@@ -210,7 +210,7 @@ namespace Auxiliary
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
                 InfoLog.InfoPrintf(DownIofo.主播名称 + "开始直播，建立下载任务\n==============建立下载任务================\n主播名:" + DownIofo.主播名称 + "\n房间号:" + DownIofo.房间_频道号 + "\n标题:" + DownIofo.标题 + "\n开播时间:" + MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString()) + "\n保存路径:" + DownIofo.文件保存路径 + "\n下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") + "\n===============建立下载任务===============\n", InfoLog.InfoClass.下载必要提示);
-                MMPU.DownList.Add(this);
+               
                 if (MMPU.录制弹幕 && !DownIofo.继承.是否为继承对象)
                 {
                     DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径.Substring(0, DownIofo.文件保存路径.Length-4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
@@ -354,6 +354,7 @@ namespace Auxiliary
             下载对象.DownIofo = new Downloader.DownIofoData
             {
                 平台 = 平台,
+                下载状态 = true,
                 房间_频道号 = 唯一码,
                 文件保存路径 = 保存路径,
                 事件GUID = GUID,
@@ -368,6 +369,7 @@ namespace Auxiliary
                     继承的下载文件路径 = 继承项目的原始文件,
                 }
             };
+            MMPU.DownList.Add(下载对象);
             if (!是否保存)
             {
                 int 随机值 = new Random().Next(1000, 9999);
@@ -387,8 +389,6 @@ namespace Auxiliary
             var bytes = e.BytesReceived;
             DownIofo.已下载大小bit = bytes;
             DownIofo.已下载大小str = 转换下载大小数据格式(bytes);
-
-            //DownUpdate?.Invoke(this, EventArgs.Empty);
         }
         // public event EventHandler<EventArgs> DownUpdate;
         // public event EventHandler<EventArgs> DownOk;
@@ -415,7 +415,7 @@ namespace Auxiliary
                             return;
                         }
                     }
-                    else if (e.Cancelled == false && !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
+                    else if (e.Cancelled == false && !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                     {
 
                         DownIofo.下载状态 = false;
@@ -453,10 +453,10 @@ namespace Auxiliary
                     }
                     else
                     {
-                        if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false) && DownIofo.是否保存)
+                        if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true) && DownIofo.是否保存)
                         {
                             DownIofo.备注 = "下载流中断，检测到房间仍为开播状态，新建续下任务。";
-                            DownIofo.下载状态 = false;
+                            DownIofo.下载状态 = true;
                             DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             switch (DownIofo.平台)
                             {
@@ -531,7 +531,7 @@ namespace Auxiliary
                                                     //下载对象.DownIofo.下载状态 = true;
                                                     return;
                                                 }
-                                                if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,false))
+                                                if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                                                 {
                                                     下载对象.DownIofo.备注 = "停止直播";
                                                     DownIofo.备注 = "直播停止，下载完成下载完成";
