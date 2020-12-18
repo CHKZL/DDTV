@@ -164,9 +164,9 @@ namespace Auxiliary
                 MMPU.录制弹幕 = false;
                 MMPU.setFiles("DT1", "1");
             }
-            
+
             //房间配置文件
-            RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
+                RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
             //直播表刷新默认间隔
