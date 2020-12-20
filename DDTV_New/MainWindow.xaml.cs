@@ -290,25 +290,25 @@ namespace DDTV_New
                     MMPU.是否能连接404 = false;
                     runOnLocalThread(() => ViewModel.ServerDelayYoutube = -1.0);
                 }
-                //{
-                //    double vdb延迟 = MMPU.测试延迟("https://vtbs.moe/");
-                //    if (vdb延迟 > 0)
-                //    {
-                //        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
-                //        超时次数 = 0;
-                //        MMPU.数据源 = 0;
-                //    }
-                //    else
-                //    {
-                //        超时次数++;
-                //        if (超时次数 > 5)
-                //        {
-                //            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
-                //            MMPU.数据源 = 1;
-                //        }
+                {
+                    double vdb延迟 = MMPU.测试延迟(Auxiliary.VTBS.API.VTBS服务器CDN.VTBS_Url+ "/v1/vtbs");
+                    if (vdb延迟 > 0)
+                    {
+                        runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
+                        超时次数 = 0;
+                        MMPU.数据源 = 0;
+                    }
+                    else
+                    {
+                        超时次数++;
+                        if (超时次数 > 5)
+                        {
+                            runOnLocalThread(() => ViewModel.serverVdb = -2.0);
+                            MMPU.数据源 = 1;
+                        }
 
-                //    }
-                //}
+                    }
+                }
             }, this, 10000);
             //缩小功能
             {
