@@ -174,7 +174,7 @@ namespace Auxiliary
                                     InfoLog.InfoPrintf("解析下载地址失败，一般是该房间未开播或已加密", InfoLog.InfoClass.下载必要提示);
                                     return;
                                 }
-                                Downloader DLL =  Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), 下载地址, "自动录制", true, 最新的状态.名称 + "-" + 最新的状态.原名, false, null);
+                                Downloader DLL =  Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), 下载地址, "自动录制", true, 最新的状态.名称, false, null);
                                 if(DLL!=null)
                                 {
                                     if (string.IsNullOrEmpty(DLL.DownIofo.备注))

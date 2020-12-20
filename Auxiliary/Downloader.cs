@@ -176,6 +176,7 @@ namespace Auxiliary
                                         else
                                         {
                                             DownIofo.备注 = "该房间未开播/推流或已加密";
+                                            Thread.Sleep(30000);
                                             //return null;
                                         }
                                     }
@@ -405,7 +406,7 @@ namespace Auxiliary
                     DownIofo.备注 = "下载任务结束";                 
                     if (e.Cancelled)
                     {
-                        DownIofo.备注 = "用户取消，停止下载";
+                      
                         if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
                         {
                             DownIofo.备注 = "播放窗口关闭";           
@@ -413,6 +414,9 @@ namespace Auxiliary
                             下载结束提醒(true, "下载任务结束",DownIofo);
                             return;
                         }
+                        DownIofo.备注 = "用户取消，停止下载";
+                        DownIofo.下载状态 = false;
+                        下载结束提醒(true, "下载任务结束", DownIofo);
                     }
                     else if (!e.Cancelled&& !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                     {

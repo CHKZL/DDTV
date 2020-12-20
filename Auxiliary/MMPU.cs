@@ -31,8 +31,8 @@ namespace Auxiliary
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
         //"内部功能评测版GD-1001(2.0.4.6a分支)";
-        public static string 版本号 = "2.0.4.6c";
-        public static string[] 不检测的版本号 = {};
+        public static string 版本号 = "内部功能评测版GD-1002(2.0.4.6c分支)";
+        public static string[] 不检测的版本号 = {"2.0.4.6c"};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -91,7 +91,7 @@ namespace Auxiliary
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
             Debug模式 = MMPU.读取exe默认配置文件("DebugMod", "1") == "0" ? false : true;
             Debug输出到文件 = MMPU.读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
-            Debug打印到终端 = MMPU.读取exe默认配置文件("DebugFile", "0") == "0" ? false : true;
+            Debug打印到终端 = MMPU.读取exe默认配置文件("DebugCmd", "0") == "0" ? false : true;
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
@@ -198,14 +198,70 @@ namespace Auxiliary
             DokiDoki(模式);
             return true;
         }
+        /// <summary>
+        /// 心跳和检测网络环境变动
+        /// </summary>
+        /// <param name="模式"></param>
         public static void DokiDoki(int 模式)
         {
+            
             new Thread(new ThreadStart(delegate {
                 while (true)
                 {
                     try
                     {
-                        MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true,50);
+                       MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true,100);
+                    }
+                    catch (Exception) { }
+                    Thread.Sleep(3600 * 1000);
+                }
+            })).Start();
+            string LIP = string.Empty;
+            int Num = 0;
+            new Thread(new ThreadStart(delegate {
+                while (true)
+                {
+                    Num++;
+                    try
+                    {
+                      
+                        string NIP = MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true, 50);
+                        if (Num > 10)
+                        {
+                            if (LIP != NIP&& IsCorrectIP(LIP)&& IsCorrectIP(NIP))
+                            {
+                                InfoLog.InfoPrintf($"■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■\n检测到系统网络中断，多个DDTV录制中的线程抛出无法处理的异常\n这个错误是由于网络环境变化引起的，不是由DDTV引起的，一般是由于光猫、路由器重启或者电信重新拨号引起的，DDTV无法处理该异常\n网络中断若干时间且外网地址由\n{LIP}变化为{NIP}，网络错误前的任务将冻结任务建立新的续命任务，恢复后新建立的任务正常录制\n■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■", InfoLog.InfoClass.系统错误信息);
+                                try
+                                {
+                                    foreach (var item in Auxiliary.MMPU.DownList)
+                                    {
+                                        try
+                                        {
+                                            if (item.DownIofo.下载状态)
+                                            {
+                                                item.DownIofo.WC.CancelAsync();
+                                                new Task(() =>
+                                                {
+                                                    Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "网络环境变化，新建续命任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
+                                                }).Start();
+                                            }
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            InfoLog.InfoPrintf($"网络环境发生变化造成未知错误:{e.ToString()}", InfoLog.InfoClass.系统错误信息);
+                                        }
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    InfoLog.InfoPrintf($"网络环境发生变化造成未知错误:{e.ToString()}", InfoLog.InfoClass.系统错误信息);
+                                }
+                            }
+                        }
+                        if(!string.IsNullOrEmpty(NIP))
+                        {
+                            LIP = NIP;
+                        }            
                     }
                     catch (Exception) { }
                     Thread.Sleep(3600 * 1000);
@@ -1212,6 +1268,15 @@ namespace Auxiliary
                 result = reader.ReadToEnd();
             }
             return result;
+        }
+        /// <summary>
+        /// 验证字符串是否为IP
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
+        public static bool IsCorrectIP(string ip)
+        {
+            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
 
         public class UA
