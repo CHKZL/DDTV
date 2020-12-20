@@ -138,11 +138,8 @@ namespace Auxiliary
                     {
                         if (ClasslBool.Debug)
                         {
-
-                            Console.WriteLine("\r\n ========= DebugBeginning =========" +
-                                "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess +
-                                "\r\n=========DebugEnd=========");
-                            A = "=========DebugBeginning=========" + "\r\n[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess + "\r\n=========DebugEnd=========";
+                            Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                            A = "[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
 
                         }
                     }

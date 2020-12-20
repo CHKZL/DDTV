@@ -16,7 +16,7 @@ namespace Auxiliary
         public static int CacheCount = 0;
         private static Dictionary<string, string> 缓存队列 = new Dictionary<string, string>();
         private static Dictionary<string, DateTime> 缓存创建时间 = new Dictionary<string, DateTime>();
-
+        private static bool 缓存锁 = false;
         /// <summary>
         /// 读缓存
         /// </summary>
