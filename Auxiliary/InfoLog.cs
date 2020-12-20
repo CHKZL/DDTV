@@ -131,14 +131,17 @@ namespace Auxiliary
         }
         public static void InfoPrintf(string mess, InfoClass Class)
         {
-            string A = "";
+            string A = string.Empty;
             switch (Class)
             {
                 case InfoClass.Debug:
                     {
                         if (ClasslBool.Debug)
                         {
-                            Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                            if(MMPU.Debug打印到终端)
+                            {
+                                Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                            }
                             A = "[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
 
                         }

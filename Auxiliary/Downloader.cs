@@ -93,6 +93,7 @@ namespace Auxiliary
         }
         public string Start(string 开始后显示的备注)
         {
+            MMPU.DownList.Add(this);
             int a = 0;
             DownIofo.WC = new WebClient();
             DownIofo.WC.Headers.Add("Accept: */*");
@@ -210,7 +211,7 @@ namespace Auxiliary
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
                 InfoLog.InfoPrintf(DownIofo.主播名称 + "开始直播，建立下载任务\n==============建立下载任务================\n主播名:" + DownIofo.主播名称 + "\n房间号:" + DownIofo.房间_频道号 + "\n标题:" + DownIofo.标题 + "\n开播时间:" + MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString()) + "\n保存路径:" + DownIofo.文件保存路径 + "\n下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") + "\n===============建立下载任务===============\n", InfoLog.InfoClass.下载必要提示);
-               
+                
                 if (MMPU.录制弹幕 && !DownIofo.继承.是否为继承对象)
                 {
                     DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径.Substring(0, DownIofo.文件保存路径.Length-4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
@@ -369,7 +370,7 @@ namespace Auxiliary
                     继承的下载文件路径 = 继承项目的原始文件,
                 }
             };
-            MMPU.DownList.Add(下载对象);
+            
             if (!是否保存)
             {
                 int 随机值 = new Random().Next(1000, 9999);
