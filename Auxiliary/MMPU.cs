@@ -76,6 +76,8 @@ namespace Auxiliary
         public static int wss连接错误的次数 = 0;
         public static bool 已经提示wss连接错误 = false;
         public static bool Debug模式 = false;
+        public static bool Debug输出到文件 = false;
+        public static bool Debug打印到终端 = false;
         public static bool 强制WSS连接模式 = false;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
@@ -87,7 +89,9 @@ namespace Auxiliary
         public static bool 配置文件初始化(int 模式)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
-            Debug模式 = MMPU.读取exe默认配置文件("DebugMod", "0") == "0" ? false : true;
+            Debug模式 = MMPU.读取exe默认配置文件("DebugMod", "1") == "0" ? false : true;
+            Debug输出到文件 = MMPU.读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
+            Debug打印到终端 = MMPU.读取exe默认配置文件("DebugFile", "0") == "0" ? false : true;
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
@@ -96,7 +100,7 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = Debug模式
+                    输出到文件 = Debug输出到文件
                 });
                 启动模式 = 0;
             }
@@ -108,7 +112,7 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = true
+                    输出到文件 = Debug输出到文件
                 });
                 启动模式 = 1;
             }
