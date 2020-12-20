@@ -122,7 +122,6 @@ namespace Auxiliary
                     process.StartInfo.RedirectStandardError = true;
                     process.ErrorDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的信息
                     DateTime beginTime = DateTime.Now;
-
                     process.Start();
                     process.BeginErrorReadLine();   // 开始异步读取
                     process.Exited += Process_Exited;

@@ -33,6 +33,7 @@ namespace Auxiliary
             public static readonly int GET_DDC_TIME_NUMBER = 30001;
             public static readonly int SET_DokiDoki_DDTV = 40001;
             public static readonly int SET_DokiDoki_DDTVLiveRec = 40002;
+            public static readonly int SET_GETIP = 50001;
         }
     }
 }
