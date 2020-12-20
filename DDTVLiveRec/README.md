@@ -19,8 +19,8 @@
 
 # 使用说明
     
-　　DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境已经安装.NET5的运行时(.NET5.0 runtime)  
-如未安装不能启动，请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行运行时的安装，或者直接[下载.NET5.0运行时](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.1-windows-x64-installer)进行安装，然后运行DDTVLiveRec
+　　DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境已经安装ASP.NET5的运行时(ASP.NET Core Runtime 5.0.0)  
+如未安装不能启动，请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行运行时的安装，或者直接[下载ASP.NET5.0运行时](https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.0-windows-x64-installer)进行安装，然后运行DDTVLiveRec
 
 启动准备:  
 　　1.因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。  
