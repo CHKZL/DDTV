@@ -102,8 +102,10 @@ namespace DDTV_New.window
         {
             //写配置文件
             MMPU.setFiles("IsFirstTimeUsing", "0");
-            MMPU.setFiles("DataSource", _数据源.ToString());
-            MMPU.数据源 = _数据源;
+            //MMPU.setFiles("DataSource", _数据源.ToString());
+            //MMPU.数据源 = _数据源;
+            MMPU.setFiles("DataSource", "0");
+            MMPU.数据源 = 0;
             MMPU.是否第一次使用DDTV = false;
            
             //关闭此窗口
