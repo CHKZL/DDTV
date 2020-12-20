@@ -31,8 +31,8 @@ namespace Auxiliary
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
         //"内部功能评测版GD-1001(2.0.4.6a分支)";
-        public static string 版本号 = "2.0.4.6b";
-        public static string[] 不检测的版本号 = { "2.0.4.6a" };
+        public static string 版本号 = "2.0.4.6c";
+        public static string[] 不检测的版本号 = {};
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
