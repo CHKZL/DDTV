@@ -218,7 +218,7 @@ namespace Auxiliary
             BB += $"<br/>当前DDTVLiveRec核心版本：{MMPU.版本号}";
             if(MMPU.是否有新版本)
             {
-                BB += "<br/>检测到云端有新版本。如需更新，请上github或到" +
+                BB += "<br/>检测到云端有新版本。如需更新，请上github或加307156949" +
                     "<a target=\"_blank\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=uwgF9uM9BvSWcHWZu460S6tVcVH1N_YP&jump_from=webapi\"><img border=\"0\" src=\"//pub.idqqimg.com/wpa/images/group.png\" alt=\"每天都是单推的一天\" title=\"每天都是单推的一天\"></a>群共享下载";
             }
             BB += $"<br/><br/>---运行状态---<br/>下载中:{下载中}个  下载完成:{下载完成}个";

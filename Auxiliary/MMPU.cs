@@ -79,8 +79,10 @@ namespace Auxiliary
         public static bool Debug输出到文件 = false;
         public static bool Debug打印到终端 = false;
         public static bool 强制WSS连接模式 = false;
+        public static int 心跳打印间隔 = 180;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
+        public static bool 网络环境变动监听 = true;//0：DDTV,1：DDTVLive
 
         /// <summary>
         /// 配置文件初始化
@@ -89,9 +91,11 @@ namespace Auxiliary
         public static bool 配置文件初始化(int 模式)
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12; //加上这一句
-            Debug模式 = MMPU.读取exe默认配置文件("DebugMod", "1") == "0" ? false : true;
-            Debug输出到文件 = MMPU.读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
-            Debug打印到终端 = MMPU.读取exe默认配置文件("DebugCmd", "0") == "0" ? false : true;
+            Debug模式 = 读取exe默认配置文件("DebugMod", "1") == "0" ? false : true;
+            Debug输出到文件 = 读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
+            Debug打印到终端 = 读取exe默认配置文件("DebugCmd", "0") == "0" ? false : true;
+            心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "180"));
+            网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "1") == "0" ? false : true;
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
@@ -196,6 +200,7 @@ namespace Auxiliary
             VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
             RoomInit.start();
             DokiDoki(模式);
+            Downloader.轮询检查下载任务();
             return true;
         }
         /// <summary>
@@ -204,7 +209,7 @@ namespace Auxiliary
         /// <param name="模式"></param>
         public static void DokiDoki(int 模式)
         {
-            
+            ///心跳检查
             new Thread(new ThreadStart(delegate {
                 while (true)
                 {
@@ -217,16 +222,22 @@ namespace Auxiliary
                 }
             })).Start();
             string LIP = string.Empty;
+            try
+            {
+                LIP = MMPU.TcpSend(Server.RequestCode.GET_IP, "{}", true, 50);
+            }
+            catch (Exception){}
             int Num = 0;
+            ///网络状态检查
             new Thread(new ThreadStart(delegate {
-                while (true)
+                while (网络环境变动监听)
                 {
                     Num++;
                     try
                     {
                       
-                        string NIP = MMPU.TcpSend(模式 == 0 ? Server.RequestCode.SET_DokiDoki_DDTV : Server.RequestCode.SET_DokiDoki_DDTVLiveRec, "{}", true, 50);
-                        if (Num > 10)
+                        string NIP = MMPU.TcpSend(Server.RequestCode.GET_IP, "{}", true, 50);
+                        if (Num > 3)
                         {
                             if (LIP != NIP&& IsCorrectIP(LIP)&& IsCorrectIP(NIP))
                             {
@@ -264,9 +275,28 @@ namespace Auxiliary
                         }            
                     }
                     catch (Exception) { }
-                    Thread.Sleep(3600 * 1000);
+                    Thread.Sleep(30 * 1000);
                 }
             })).Start();
+            new Task(()=> { 
+            while(true)
+                {
+                    try
+                    {
+                        int 下载中 = 0;
+                        foreach (var item in DownList)
+                        {
+                            if (item.DownIofo.下载状态)
+                            {
+                                下载中++;
+                            }
+                        }
+                        InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count - 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中", InfoLog.InfoClass.下载必要提示);
+                    }
+                    catch (Exception){}
+                    Thread.Sleep(60*1000);
+                }
+            }).Start();
         }
         public static void BiliUser配置文件初始化(int 模式)
         {
@@ -1151,7 +1181,7 @@ namespace Auxiliary
         /// <param name="msg">消息内容</param>
         /// <param name="是否需要回复"></param>
         /// <returns></returns>
-        public static string TcpSend(int code, string msg, bool 是否需要回复,int 等待时间)
+        public static string TcpSend(int code, string msg, bool 是否需要回复,int 等待时间,int 超时时间 = 0)
         {
             try
             {
@@ -1160,6 +1190,7 @@ namespace Auxiliary
                 tcpClient.ReceiveBufferSize = 1024 * 1024 * 8;
                 IPAddress ipaddress = Server.IP_ADDRESS;
                 EndPoint point = new IPEndPoint(ipaddress, Server.PORT);
+                tcpClient.SendTimeout = 超时时间;
                 tcpClient.Connect(point);//通过IP和端口号来定位一个所要连接的服务器端
                 tcpClient.Send(Encoding.UTF8.GetBytes(JSON发送拼接(code, msg)));
                 if (是否需要回复)
@@ -1276,7 +1307,11 @@ namespace Auxiliary
         /// <returns></returns>
         public static bool IsCorrectIP(string ip)
         {
-            return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+            bool b = Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
+            if (b)
+                return b;
+            else
+                return b;
         }
 
         public class UA
