@@ -28,12 +28,14 @@ namespace Auxiliary
             public static readonly int GET_DYNAMIC_NOTIFICATION = 20010;
             public static readonly int GET_LATEST_VERSION_NUMBER = 20011;
             public static readonly int GET_UPDATE_ANNOUNCEMENT = 20012;
+            public static readonly int GET_VER = 20013;
+            public static readonly int GET_VERTEXT = 20014;
             public static readonly int GET_LIVELSIT = 20016;
             public static readonly int GET_VTBSROOMLIST = 20017;
             public static readonly int GET_DDC_TIME_NUMBER = 30001;
             public static readonly int SET_DokiDoki_DDTV = 40001;
             public static readonly int SET_DokiDoki_DDTVLiveRec = 40002;
-            public static readonly int SET_GETIP = 50001;
+            public static readonly int GET_IP = 50001;
         }
     }
 }

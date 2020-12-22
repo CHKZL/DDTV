@@ -277,13 +277,15 @@ namespace Auxiliary
                 }
                 catch (Exception)
                 {
-                    InfoLog.InfoPrintf("备用缓存数据加载失败，使用原生阿Bapi开始获取开始获取", InfoLog.InfoClass.Debug);
-                    使用B站API更新房间状态();
-                }
-               
+                    if(!string.IsNullOrEmpty(MMPU.TcpSend(Server.RequestCode.GET_IP, "{}", true, 50)))
+                    {
+                        InfoLog.InfoPrintf("备用缓存数据加载失败，使用原生阿Bapi开始获取开始获取", InfoLog.InfoClass.Debug);
+                        使用B站API更新房间状态();
+                    }
+                }        
             }
-            if(C1!=0)
-            InfoLog.InfoPrintf("使用VTBS数据库加载数据量:"+C1.ToString()+"/"+C2.ToString(), InfoLog.InfoClass.Debug);
+            //if(C1!=0)
+            //InfoLog.InfoPrintf("使用VTBS数据库加载数据量:"+C1.ToString()+"/"+C2.ToString(), InfoLog.InfoClass.Debug);
         }
         public static void 使用B站API更新房间状态()
         {

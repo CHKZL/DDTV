@@ -23,7 +23,7 @@ namespace Auxiliary
         /// <summary>
         /// 关闭直播流和弹幕储存流
         /// </summary>
-        public void Clear(bool 续命模式, DownIofoData DOL)
+        public static void Clear(bool 续命模式, DownIofoData DOL)
         {
             DOL.备注 = "下载任务结束";
             DOL.下载状态 = false;
@@ -66,6 +66,8 @@ namespace Auxiliary
 
             public WebClient WC { set; get; }
             public bool 下载状态 { set; get; } = false;
+            public int 最后连接时间 { set; get; } = 0;
+            public bool 网络超时 { set; get; } = false;
             public double 已下载大小bit { set; get; }
             public string 已下载大小str { set; get; }
             public string 文件保存路径 { set; get; }
@@ -91,8 +93,58 @@ namespace Auxiliary
             public string 继承的下载文件路径 { set; get; } = null;
             public string 合并后的文件路径 { set; get; } = null;
         }
+        public static bool 轮询检查下载任务开关 = true;
+        public static void 轮询检查下载任务()
+        {
+            new Task(()=> {
+                while (true)
+                {
+                    while (轮询检查下载任务开关)
+                    {
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(MMPU.TcpSend(Server.RequestCode.GET_IP, "{}", true, 50, 5000)))
+                            {
+                                下载任务状态检测();
+                            }
+                            else
+                            {
+
+                            }
+                        }
+                        catch (Exception)
+                        { }
+                        Thread.Sleep(60 * 1000);
+                    }
+                    Thread.Sleep(500);
+                }
+            }).Start();
+        }
+        public static void 下载任务状态检测()
+        {
+            foreach (var item in MMPU.DownList)
+            {
+                if(item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>120)
+                {
+                    InfoLog.InfoPrintf(item.DownIofo.房间_频道号 + "下载状态异常，重置下载任务", InfoLog.InfoClass.下载必要提示);
+                    item.DownIofo.网络超时 = true;
+                    item.DownIofo.备注 = "下载状态异常，重置下载任务";
+                    Clear(true, item.DownIofo);
+                    item.DownIofo.下载状态 = false;
+                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                    item.DownIofo.WC.CancelAsync();
+                    new Task(() =>
+                    {
+                        Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
+                    }).Start();
+                }
+            }
+        }
+
+
         public string Start(string 开始后显示的备注)
         {
+            DownIofo.开始时间 = Gettime();
             MMPU.DownList.Add(this);
             int a = 0;
             DownIofo.WC = new WebClient();
@@ -386,9 +438,15 @@ namespace Auxiliary
 
             return 下载对象;
         }
+        public static int Gettime()
+        {
+            int time = (int)(DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds;
+            return time;
+        }
         private void 下载过程中事件(object sender, DownloadProgressChangedEventArgs e)
         {
             var bytes = e.BytesReceived;
+            DownIofo.最后连接时间 = Gettime();
             DownIofo.已下载大小bit = bytes;
             DownIofo.已下载大小str = 转换下载大小数据格式(bytes);
         }
@@ -404,7 +462,7 @@ namespace Auxiliary
                     //DownIofo.下载状态 = true;
                     DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     DownIofo.备注 = "下载任务结束";                 
-                    if (e.Cancelled)
+                    if (e.Cancelled&&!DownIofo.网络超时)
                     {
                       
                         if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
