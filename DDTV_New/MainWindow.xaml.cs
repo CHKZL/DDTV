@@ -1197,7 +1197,7 @@ namespace DDTV_New
                                         item.DownIofo.WC.CancelAsync();
                                         item.DownIofo.下载状态 = false;
                                         item.DownIofo.备注 = "播放窗口关闭，停止下载";
-                                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         if (!item.DownIofo.是否保存)
                                         {
                                             MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
@@ -1217,7 +1217,7 @@ namespace DDTV_New
                                 //    {
                                 //        item.DownIofo.WC.CancelAsync();
                                 //        item.DownIofo.下载状态 = false;
-                                //        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                //        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                 //        if (item.DownIofo.是否保存)
                                 //        {
 
