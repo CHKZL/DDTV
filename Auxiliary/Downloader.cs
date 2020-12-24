@@ -114,7 +114,7 @@ namespace Auxiliary
                         }
                         catch (Exception)
                         { }
-                        Thread.Sleep(60 * 1000);
+                        Thread.Sleep(30 * 1000);
                     }
                     Thread.Sleep(500);
                 }
@@ -124,14 +124,14 @@ namespace Auxiliary
         {
             foreach (var item in MMPU.DownList)
             {
-                if(item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>120)
+                if(item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>60)
                 {
                     InfoLog.InfoPrintf(item.DownIofo.房间_频道号 + "下载状态异常，重置下载任务", InfoLog.InfoClass.下载必要提示);
                     item.DownIofo.网络超时 = true;
                     item.DownIofo.备注 = "下载状态异常，重置下载任务";
                     Clear(true, item.DownIofo);
                     item.DownIofo.下载状态 = false;
-                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     item.DownIofo.WC.CancelAsync();
                     new Task(() =>
                     {
@@ -185,7 +185,7 @@ namespace Auxiliary
                             InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载必要提示);
                             DownIofo.下载状态 = false;
                             DownIofo.备注 = "该房间未直播";
-                            DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                            DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             return null;
                         }
                         break;
@@ -193,7 +193,7 @@ namespace Auxiliary
                         break;
                     default:
                         DownIofo.下载状态 = false;
-                        DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                        DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                         DownIofo.备注 = "不支持的平台";
                         return null;
                 }
@@ -238,7 +238,7 @@ namespace Auxiliary
                                     InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间未直播，下载任务取消", InfoLog.InfoClass.下载必要提示);
                                     DownIofo.下载状态 = false;
                                     DownIofo.备注 = "该房间未直播";
-                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                     if (DownIofo.继承.是否为继承对象)
                                     {
                                         //MMPU.弹窗.Add(3000, "重连任务取消", DownIofo.房间_频道号 + "，该房间未直播");
@@ -259,7 +259,7 @@ namespace Auxiliary
                     }
                 }
             }
-            DownIofo.开始时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            DownIofo.开始时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             try
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
@@ -460,7 +460,7 @@ namespace Auxiliary
                 try
                 {
                     //DownIofo.下载状态 = true;
-                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     DownIofo.备注 = "下载任务结束";                 
                     if (e.Cancelled&&!DownIofo.网络超时)
                     {
@@ -514,7 +514,7 @@ namespace Auxiliary
                         if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true) && DownIofo.是否保存)
                         {
                             DownIofo.备注 = "下载流中断，检测到房间仍为开播状态，新建续下任务。";
-                            DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                            DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             switch (DownIofo.平台)
                             {
                                 case "bilibili":
@@ -547,7 +547,7 @@ namespace Auxiliary
                                             重连下载对象.DownIofo.弹幕储存流 = DownIofo.弹幕储存流;
                                             重连下载对象.DownIofo.礼物储存流 = DownIofo.礼物储存流;
                                             重连下载对象.DownIofo.下载状态 = false;
-                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             重连下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
                                             foreach (var item in RoomInit.bilibili房间主表)
                                             {
@@ -571,9 +571,9 @@ namespace Auxiliary
                                             }
                                             DownIofo.备注 = "服务器主动断开连接，直播结束";
                                             重连下载对象.DownIofo.下载状态 = false;
-                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             DownIofo.下载状态 = false;
-                                            DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                            DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                             下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
                                             return;
                                         }
@@ -585,7 +585,7 @@ namespace Auxiliary
                                                 if (重连下载对象.DownIofo.已下载大小bit > 1000)
                                                 {
                                                     DownIofo.下载状态 = false;
-                                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                     下载结束提醒(true, "下载任务结束", DownIofo);
                                                     重连下载对象.DownIofo.备注 = "完成重连，正在续命..";
                                                     //下载对象.DownIofo.下载状态 = true;
@@ -596,9 +596,9 @@ namespace Auxiliary
                                                     重连下载对象.DownIofo.备注 = "停止直播";
                                                     DownIofo.备注 = "直播停止，下载完成下载完成";    
                                                     重连下载对象.DownIofo.下载状态 = false;
-                                                    重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                    重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                     DownIofo.下载状态 = false;
-                                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                     重连下载对象.DownIofo.WC.CancelAsync();
                                                     MMPU.DownList.Remove(重连下载对象);
                                                     下载结束提醒(true, "下载任务结束", DownIofo);
@@ -613,7 +613,7 @@ namespace Auxiliary
                                 default:
                                     DownIofo.备注 = "不受支持的平台";
                                     DownIofo.下载状态 = false;
-                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                     InfoLog.InfoPrintf("该房间的配置文件发现了与当前版本不支持的平台，请检查文件配置或者检查更新", InfoLog.InfoClass.系统错误信息);
                                     //下载结束提醒(false);
                                     return;
@@ -628,7 +628,7 @@ namespace Auxiliary
                         }
                     }
                     DownIofo.下载状态 = false;
-                    DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                    DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     DownIofo.备注 = "下载任务结束";
                 }
                 catch (Exception)
@@ -659,7 +659,7 @@ namespace Auxiliary
                             下载对象.DownIofo.备注 = "新建续下载对象出现异常，放弃新建任务";
                             下载结束提醒(true,"下载任务结束", DownIofo);
                             下载对象.DownIofo.下载状态 = false;
-                            下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                            下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             下载对象.DownIofo.WC.CancelAsync();
                             MMPU.DownList.Remove(下载对象);
                         }

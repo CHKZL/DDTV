@@ -82,7 +82,7 @@ namespace Auxiliary
         public static int 心跳打印间隔 = 180;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
-        public static bool 网络环境变动监听 = true;//0：DDTV,1：DDTVLive
+        public static bool 网络环境变动监听 = false;
 
         /// <summary>
         /// 配置文件初始化
@@ -95,7 +95,7 @@ namespace Auxiliary
             Debug输出到文件 = 读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
             Debug打印到终端 = 读取exe默认配置文件("DebugCmd", "0") == "0" ? false : true;
             心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "180"));
-            网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "1") == "0" ? false : true;
+            网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
             if (模式 == 0)
             {
                 InfoLog.InfoInit("./DDTVLog.out", new InfoLog.InfoClasslBool()
@@ -1045,8 +1045,8 @@ namespace Auxiliary
         /// <returns></returns>    
         public static DateTime Unix转换为DateTime(string timeStamp)
         {
-            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-            long lTime = long.Parse(timeStamp + "0000000");
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToUniversalTime(new DateTime(1970, 1, 1));
+            long lTime = long.Parse(timeStamp + "0000000")+(288000000000);
             TimeSpan toNow = new TimeSpan(lTime);
             return dtStart.Add(toNow);
         }

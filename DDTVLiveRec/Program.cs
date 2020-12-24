@@ -21,28 +21,31 @@ namespace DDTVLiveRec
             }).Start();
             new Task(() =>
             {
-                try
+                while (true)
                 {
-                    string 服务器版本号 = MMPU.TcpSend(Server.RequestCode.GET_VER, "{}", true, 50);
-                    if (!string.IsNullOrEmpty(服务器版本号))
+                    try
                     {
-                        bool 检测状态 = true;
-                        foreach (var item in MMPU.不检测的版本号)
+                        string 服务器版本号 = MMPU.TcpSend(Server.RequestCode.GET_VER, "{}", true, 50);
+                        if (!string.IsNullOrEmpty(服务器版本号))
                         {
-                            if (服务器版本号 == item)
+                            bool 检测状态 = true;
+                            foreach (var item in MMPU.不检测的版本号)
                             {
-                                检测状态 = false;
+                                if (服务器版本号 == item)
+                                {
+                                    检测状态 = false;
+                                }
+                            }
+                            if (MMPU.版本号 != 服务器版本号 && 检测状态)
+                            {
+                                MMPU.是否有新版本 = true;
+                                InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.TcpSend(Server.RequestCode.GET_VERTEXT, "{}", true, 100) + "\n\n", InfoLog.InfoClass.下载必要提示);
                             }
                         }
-                        if (MMPU.版本号 != 服务器版本号 && 检测状态)
-                        {
-                            MMPU.是否有新版本 = true;
-                            InfoLog.InfoPrintf("检测到版本更新,更新公告:\n" + MMPU.TcpSend(Server.RequestCode.GET_VERTEXT, "{}", true, 100) + "\n\n", InfoLog.InfoClass.下载必要提示);
-                            //Console.ReadKey();
-                        }
                     }
+                    catch (Exception) { }
+                    Thread.Sleep(3600*1000);
                 }
-                catch (Exception) { }
             }).Start();
             MMPU.缓存路径 = MMPU.下载储存目录;
             InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载必要提示);
