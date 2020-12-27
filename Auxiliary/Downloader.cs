@@ -25,7 +25,7 @@ namespace Auxiliary
         /// </summary>
         public static void Clear(bool 续命模式, DownIofoData DOL)
         {
-            DOL.备注 = "下载任务结束";
+            //DOL.备注 = "下载任务结束";
             DOL.下载状态 = false;
             if(!续命模式)
             {
@@ -71,6 +71,7 @@ namespace Auxiliary
             public double 已下载大小bit { set; get; }
             public string 已下载大小str { set; get; }
             public string 文件保存路径 { set; get; }
+            
             public string 事件GUID { set; get; }
             public string 备注 { set; get; }
             public int 开始时间 { set; get; }
@@ -90,6 +91,7 @@ namespace Auxiliary
         public class 继承
         {
             public bool 是否为继承对象 { set; get; } = false;
+            public List<string> 待合并文件列表 { set; get; } = new List<string>();
             public string 继承的下载文件路径 { set; get; } = null;
             public string 合并后的文件路径 { set; get; } = null;
         }
@@ -124,7 +126,7 @@ namespace Auxiliary
         {
             foreach (var item in MMPU.DownList)
             {
-                if(item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>60)
+                if(!item.DownIofo.网络超时&& item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>60)
                 {
                     InfoLog.InfoPrintf(item.DownIofo.房间_频道号 + "下载状态异常，重置下载任务", InfoLog.InfoClass.下载必要提示);
                     item.DownIofo.网络超时 = true;
@@ -185,7 +187,9 @@ namespace Auxiliary
                             InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载必要提示);
                             DownIofo.下载状态 = false;
                             DownIofo.备注 = "该房间未直播";
+                            
                             DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                            MMPU.DownList.Remove(this);
                             return null;
                         }
                         break;
@@ -195,6 +199,7 @@ namespace Auxiliary
                         DownIofo.下载状态 = false;
                         DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                         DownIofo.备注 = "不支持的平台";
+                        MMPU.DownList.Remove(this);
                         return null;
                 }
 
@@ -227,7 +232,7 @@ namespace Auxiliary
                                         }
                                         else
                                         {
-                                            DownIofo.备注 = "该房间未开播/推流或已加密";
+                                            DownIofo.备注 = "该房间或未推流/直播完成/已加密";
                                             Thread.Sleep(30000);
                                             //return null;
                                         }
@@ -239,6 +244,7 @@ namespace Auxiliary
                                     DownIofo.下载状态 = false;
                                     DownIofo.备注 = "该房间未直播";
                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                    MMPU.DownList.Remove(this);
                                     if (DownIofo.继承.是否为继承对象)
                                     {
                                         //MMPU.弹窗.Add(3000, "重连任务取消", DownIofo.房间_频道号 + "，该房间未直播");
@@ -330,23 +336,16 @@ namespace Auxiliary
             {
             }
         }
-        public static Downloader 新建下载对象(string 平台, string 唯一码, string 标题, string GUID, string 下载地址, string 备注, bool 是否保存, string 主播名称, bool 是否为继承项目, string 继承项目的原始文件)
+        public static Downloader 新建下载对象(string 平台, string 唯一码, string 标题, string GUID, string 下载地址, string 备注, bool 是否保存, string 主播名称, bool 是否为继承项目, string 继承项目的原始文件,DownIofoData 继承的项目 = null)
         {
             foreach (var item in MMPU.DownList)
             {
                 if (item.DownIofo.房间_频道号 == 唯一码)
                 {
-                    if (!是否为继承项目&&是否保存)
+                    if (item.DownIofo.下载状态 && item.DownIofo.是否保存 && 是否保存)
                     {
-                        if (item.DownIofo.下载状态 && item.DownIofo.是否保存)
-                        {
-                            InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\n房间号:{唯一码}\r主播名称:{主播名称}\r标题:{标题}", InfoLog.InfoClass.下载必要提示);
-                            return null;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\n房间号:{唯一码}\r主播名称:{主播名称}\r标题:{标题}", InfoLog.InfoClass.下载必要提示);
+                        return null;
                     }
                     else
                     {
@@ -423,7 +422,10 @@ namespace Auxiliary
                     继承的下载文件路径 = 继承项目的原始文件,
                 }
             };
-            
+            if(继承的项目!=null)
+            {
+                下载对象.DownIofo.继承.待合并文件列表 = 继承的项目.继承.待合并文件列表;
+            }
             if (!是否保存)
             {
                 int 随机值 = new Random().Next(1000, 9999);
@@ -459,7 +461,7 @@ namespace Auxiliary
             {
                 try
                 {
-                    //DownIofo.下载状态 = true;
+                    DownIofo.下载状态 = false;
                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     DownIofo.备注 = "下载任务结束";                 
                     if (e.Cancelled&&!DownIofo.网络超时)
@@ -486,7 +488,7 @@ namespace Auxiliary
                         }
                         if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                         {
-                            DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, true);
+                            DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
                             if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
                             {
                                 DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
@@ -513,6 +515,7 @@ namespace Auxiliary
                     {
                         if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true) && DownIofo.是否保存)
                         {
+                            DownIofo.网络超时 = true;
                             DownIofo.备注 = "下载流中断，检测到房间仍为开播状态，新建续下任务。";
                             DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                             switch (DownIofo.平台)
@@ -521,11 +524,18 @@ namespace Auxiliary
                                     {
                                         if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                                         {
-                                            DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, false);
-                                            if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
+                                            //DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, false);
+                                            if(DownIofo.继承.待合并文件列表.Count==0)
                                             {
-                                                DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
+                                                DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
+                                                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.继承.继承的下载文件路径}", InfoLog.InfoClass.下载必要提示);
                                             }
+                                            DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
+                                            InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.文件保存路径}", InfoLog.InfoClass.下载必要提示);
+                                            //if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
+                                            //{
+                                            //    DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
+                                            //}
                                         }
                                         DownIofo.下载状态 = false;
                                         Downloader 重连下载对象 = Downloader.新建下载对象(
@@ -538,43 +548,48 @@ namespace Auxiliary
                                             DownIofo.是否保存,
                                             DownIofo.主播名称,
                                             true,
-                                            DownIofo.文件保存路径
+                                            DownIofo.文件保存路径,
+                                            DownIofo
                                             );
                                         if (!重连下载对象.DownIofo.下载状态)
                                         {
-                                            重连下载对象.DownIofo.弹幕录制基准时间 = DownIofo.弹幕录制基准时间;
-                                            重连下载对象.DownIofo.阿B直播流对象 = DownIofo.阿B直播流对象;
-                                            重连下载对象.DownIofo.弹幕储存流 = DownIofo.弹幕储存流;
-                                            重连下载对象.DownIofo.礼物储存流 = DownIofo.礼物储存流;
-                                            重连下载对象.DownIofo.下载状态 = false;
-                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                            重连下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
-                                            foreach (var item in RoomInit.bilibili房间主表)
+                                            try
                                             {
-                                                if (item.唯一码 == DownIofo.房间_频道号)
+                                                重连下载对象.DownIofo.弹幕录制基准时间 = DownIofo.弹幕录制基准时间;
+                                                重连下载对象.DownIofo.阿B直播流对象 = DownIofo.阿B直播流对象;
+                                                重连下载对象.DownIofo.弹幕储存流 = DownIofo.弹幕储存流;
+                                                重连下载对象.DownIofo.礼物储存流 = DownIofo.礼物储存流;
+                                                重连下载对象.DownIofo.下载状态 = false;
+                                                重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                重连下载对象.DownIofo.备注 = "服务器主动断开连接，直播结束";
+                                                foreach (var item in RoomInit.bilibili房间主表)
                                                 {
-                                                    item.直播状态 = false;
-                                                    break;
+                                                    if (item.唯一码 == DownIofo.房间_频道号)
+                                                    {
+                                                        item.直播状态 = false;
+                                                        break;
+                                                    }
                                                 }
-                                            }
-                                            if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
-                                            {
-                                                DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, true);
-                                                if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
+                                                if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                                                 {
-                                                    DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
+                                                    DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
+                                                    if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
+                                                    {
+                                                        DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
+                                                    }
                                                 }
+                                                else if (!DownIofo.是否是播放任务)
+                                                {
+                                                    FlvMethod.转码(DownIofo.文件保存路径);
+                                                }
+                                                DownIofo.备注 = "服务器主动断开连接，直播结束";
+                                                重连下载对象.DownIofo.下载状态 = false;
+                                                重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                DownIofo.下载状态 = false;
+                                                DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                                                下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
                                             }
-                                            else if (!DownIofo.是否是播放任务)
-                                            {
-                                                FlvMethod.转码(DownIofo.文件保存路径);
-                                            }
-                                            DownIofo.备注 = "服务器主动断开连接，直播结束";
-                                            重连下载对象.DownIofo.下载状态 = false;
-                                            重连下载对象.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                            DownIofo.下载状态 = false;
-                                            DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                            下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
+                                            catch (Exception){}
                                             return;
                                         }
                                         new Task((() =>
@@ -582,7 +597,7 @@ namespace Auxiliary
                                             while (true)
                                             {
                                                 Thread.Sleep(10000);
-                                                if (重连下载对象.DownIofo.已下载大小bit > 1000)
+                                                if (重连下载对象.DownIofo.已下载大小bit > 5000)
                                                 {
                                                     DownIofo.下载状态 = false;
                                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -631,14 +646,16 @@ namespace Auxiliary
                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                     DownIofo.备注 = "下载任务结束";
                 }
-                catch (Exception)
+                catch (Exception ES)
                 {
+                    InfoLog.InfoPrintf($"录制任务意外终止:\n{ES.ToString()}", InfoLog.InfoClass.系统错误信息);
                     DownIofo.下载状态 = false;
                     DownIofo.备注 = "录制任务意外终止，已新建续命任务";
                     下载结束提醒(true, "录制任务意外终止，已新建续命任务", DownIofo);
                     Downloader 下载对象 = new Downloader();
                     try
                     {
+                        DownIofo.下载状态 = false;
                         下载对象 = Downloader.新建下载对象(
                                                                DownIofo.平台,
                                                                DownIofo.房间_频道号,
@@ -707,14 +724,30 @@ namespace Auxiliary
                                $"\n结束原因:{DOL.备注}" +
                                $"\n==============={提醒标题}===============\n", InfoLog.InfoClass.下载必要提示);
         }
-        public static string 下载完成合并FLV(string File1, string File2, bool 是否直播结束)
+        public static string 下载完成合并FLV(DownIofoData downIofo, bool 是否直播结束)
         {
-            FlvMethod.Flv A = new FlvMethod.Flv()
+            string filename = string.Empty;
+            if (downIofo.继承.待合并文件列表.Count>1)
             {
-                File1Url = File1,
-                File2Url = File2
-            };
-            return FlvMethod.FlvSum(A, 是否直播结束);
+                filename = downIofo.继承.待合并文件列表[0];
+                for (int i = 0; i< downIofo.继承.待合并文件列表.Count-1; i++)
+                {
+                    FlvMethod.Flv A = new FlvMethod.Flv()
+                    {
+                        File1Url = filename,
+                        File2Url = downIofo.继承.待合并文件列表[i+1]
+                    };
+                    string BB = FlvMethod.FlvSum(A, 是否直播结束);
+                    if(string.IsNullOrEmpty(BB))
+                    {
+                        InfoLog.InfoPrintf($"{downIofo.房间_频道号}:{downIofo.主播名称}因为网络连接不稳定，无法获取文件头，放弃合并该flv",InfoLog.InfoClass.下载必要提示);
+                        return filename;
+                    }
+                    filename = BB;
+                }
+             
+            }
+            return filename;
         }
         public static string 转换下载大小数据格式(double size)
         {

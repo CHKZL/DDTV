@@ -33,7 +33,12 @@ namespace Auxiliary
             String output;
             if (是否直播结束)
             {
-                output = A.File1Url.Replace("_202", "⒂").Split('⒂')[0] + ".flv";
+                string file = A.File1Url.Replace("_202", "⒂").Split('⒂')[0];
+                if(file.Substring(file.Length-4,4)==".flv")
+                {
+                    file = file.Substring(0, file.Length - 4);
+                }
+                output = file + ".flv";
             }
             else
             {
