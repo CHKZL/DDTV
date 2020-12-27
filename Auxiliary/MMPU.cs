@@ -250,6 +250,7 @@ namespace Auxiliary
                                         {
                                             if (item.DownIofo.下载状态)
                                             {
+                                                item.DownIofo.下载状态 = false;
                                                 item.DownIofo.WC.CancelAsync();
                                                 new Task(() =>
                                                 {
