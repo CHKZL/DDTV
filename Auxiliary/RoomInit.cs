@@ -315,38 +315,6 @@ namespace Auxiliary
         /// <param name="R">是否是删除操作</param>
         public static void InitializeRoomList(int roomId, bool Rem,bool Rst)
         {
-            //if(Rst)
-            //{
-            //    首次启动 = true;
-            //    foreach (var BWSitem in biliWebSocket)
-            //    {
-            //        BWSitem.listener.Close();
-            //        BWSitem.listener.Dispose();
-            //        biliWebSocket.Remove(BWSitem);
-            //    }
-            //}
-            //if (roomId > 0)
-            //{
-            //    if(!Rem)
-            //    {
-            //        BiliWebSocket BWS = new BiliWebSocket();
-            //        BWS.WebSocket(roomId);
-            //        biliWebSocket.Add(BWS);
-            //    }
-            //    else
-            //    {
-            //        foreach (var item in biliWebSocket)
-            //        {
-            //            if(item.room_id==roomId)
-            //            {
-            //                item.listener.Close();
-            //                item.listener.Dispose();
-            //                biliWebSocket.Remove(item);
-            //                break;
-            //            }
-            //        }
-            //    }       
-            //}
             InfoLog.InfoPrintf("开始刷新本地房间列表", InfoLog.InfoClass.Debug);
             var rlc = new RoomBox();
             try
