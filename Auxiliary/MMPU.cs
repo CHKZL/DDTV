@@ -31,8 +31,8 @@ namespace Auxiliary
         public static int 直播更新时间 = 60;
         public static string 下载储存目录 = "";
         //"内部功能评测版GD-1001(2.0.4.6a分支)";
-        public static string 版本号 = "内部功能评测版GD-1002(2.0.4.6c分支)";
-        public static string[] 不检测的版本号 = {"2.0.4.6c"};
+        public static string 版本号 = "开发功能评估版GD-2004(基于2.0.4.7a分支)";
+        public static string[] 不检测的版本号 = { "2.0.4.7a" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -198,7 +198,14 @@ namespace Auxiliary
                 DDcenter.DdcClient.Connect();
             }
             VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
-            RoomInit.start();
+            try
+            {
+                RoomInit.start();
+            }
+            catch (Exception e)
+            {
+                InfoLog.InfoPrintf($"房间配置文件加载过程中发生错误，文件格式不符合要求，请检查文件内容。错误堆栈:\n{e.ToString()}", InfoLog.InfoClass.系统错误信息);
+            }
             DokiDoki(模式);
             Downloader.轮询检查下载任务();
             return true;

@@ -312,9 +312,11 @@ namespace Auxiliary.LiveChatScript
                 case "WARNING":
                     MessageReceived(this, new WarningEventArg(obj));
                     break;
+                    //开播心跳
                 case "LIVE":
                     MessageReceived(this, new LiveEventArgs(obj));
                     break;
+                    //下播心跳
                 case "PREPARING":
                     MessageReceived(this, new PreparingpEventArgs(obj));
                     break;
