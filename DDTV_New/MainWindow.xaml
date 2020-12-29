@@ -237,7 +237,7 @@
                 <RowDefinition Height="59*"/>
                 <RowDefinition Height="456*"/>
             </Grid.RowDefinitions>
-            <Image x:Name="logo" Source="res/img/ddtv_logo.png" Margin="27,11,643,13" Width="130" Height="35" />
+            <Image x:Name="logo" Source="res/img/ddtv_logo.png" Margin="8,6,662,18" Width="130" Height="35" />
             <Image Source="res/ico/close.png" Name="exit" Stretch="Fill" Width="30" Height="30" Margin="760,5,10,24" MouseLeftButtonDown="关闭按钮_Click"/>
             <Image Source="res/ico/unfold.png" Name="最小化" Stretch="Fill" Width="30" Height="30" Margin="725,5,45,24" MouseLeftButtonDown="最小化按钮_Click"/>
             <Label x:Name="版本更新通知" Content="" VerticalAlignment="Center" HorizontalAlignment="Center" Height="31" Width="183" VerticalContentAlignment="Center" Foreground="Black" Margin="486,425,131,0" Grid.Row="1" />
