@@ -137,6 +137,11 @@ namespace Auxiliary
                     item.DownIofo.WC.CancelAsync();
                     new Task(() =>
                     {
+                        string 标题 = bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题);
+                        if(string.IsNullOrEmpty(标题))
+                        {
+                            标题 = $"重置下载任务{DateTime.Now.ToString("yyyyMMddHHmmssfff")}{new Random().Next(10000,99999)}";
+                        }
                         Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
                     }).Start();
                 }
@@ -340,6 +345,7 @@ namespace Auxiliary
         {
             foreach (var item in MMPU.DownList)
             {
+                下载状态异常，重置下载任务
                 if (item.DownIofo.房间_频道号 == 唯一码)
                 {
                     if (item.DownIofo.下载状态 && item.DownIofo.是否保存 && 是否保存)
