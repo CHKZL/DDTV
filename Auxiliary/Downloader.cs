@@ -353,6 +353,10 @@ namespace Auxiliary
                     }
                 }
             }
+            if(string.IsNullOrEmpty(标题))
+            {
+                标题 = $"V{new Random().Next(10000,99999)}";
+            }
             Downloader 下载对象 = new Downloader();
             下载对象.DownIofo.继承 = new 继承();
             string 缓存路径 = MMPU.缓存路径;
