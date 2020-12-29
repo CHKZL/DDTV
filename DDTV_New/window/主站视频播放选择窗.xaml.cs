@@ -78,7 +78,7 @@ namespace DDTV_New.window
                             }
                         }
                     }
-                    JObject JO = JObject.Parse(MMPU.使用WC获取网络内容("https://api.bilibili.com/x/player/playurl?bvid=" + BVID + "&cid=" + cid + "&otype=json"));
+                    JObject JO = JObject.Parse(MMPU.使用WC获取网络内容("https://api.bilibili.com/x/player/playurl?bvid=" + BVID + "&cid=" + cid + "&type=json"));
                     if (JO["code"].ToString() == "0")
                     {
                         dlurl = JO["data"]["durl"][0]["url"].ToString();

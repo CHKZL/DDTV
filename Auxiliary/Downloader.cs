@@ -345,7 +345,6 @@ namespace Auxiliary
         {
             foreach (var item in MMPU.DownList)
             {
-                下载状态异常，重置下载任务
                 if (item.DownIofo.房间_频道号 == 唯一码)
                 {
                     if (item.DownIofo.下载状态 && item.DownIofo.是否保存 && 是否保存)
