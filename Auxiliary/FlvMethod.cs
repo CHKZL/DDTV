@@ -65,7 +65,7 @@ namespace Auxiliary
             }
             if(File.Exists(output))
             {
-                output.Replace(".flv","1.flv");
+                output.Replace(".flv", new Random().Next(1000, 9999) + ".flv");
             }
             using (FileStream fs1 = new FileStream(path1, FileMode.Open))
             using (FileStream fs2 = new FileStream(path2, FileMode.Open))

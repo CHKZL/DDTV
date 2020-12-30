@@ -23,12 +23,10 @@ namespace Auxiliary
 { 
     public class MMPU
     {
-        public static bool 开发模式 = false;
+        public static bool 开发模式 = true;
         public static string[] 开发更改 = new string[] 
         {
-        "修复因为阿B接口连接超时获取标题失败导致的文件名为空的错误",
-        "增加配置文件初始化时房间配置文件错误的提示",
-        "增加开发模式和相关功能"
+        "当前和主线保持一致",
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
