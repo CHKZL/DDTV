@@ -156,7 +156,7 @@ namespace DDTV_New.window
                         }
                         else
                         {
-                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径, "关闭播放窗口，删除LiveCache缓存文件");
                         }
                         break;
                     }

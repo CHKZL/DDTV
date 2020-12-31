@@ -805,7 +805,7 @@ namespace DDTV_New
                     FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
                     foreach (var item in files)
                     {
-                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name);
+                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name,"DDTV关闭清空LiveCache缓存文件");
                     }
                 }
                 catch (Exception) { }
@@ -1200,7 +1200,7 @@ namespace DDTV_New
                                         item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                         if (!item.DownIofo.是否保存)
                                         {
-                                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径);
+                                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径,"关闭播放窗口，删除LiveCache缓存文件");
                                         }
                                         break;
                                     }

@@ -462,7 +462,7 @@ namespace PlayW
                                 DD.DownIofo.下载状态 = false;
                                 DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                 Downloader 下载对象 = Downloader.新建下载对象(DD.DownIofo.平台, DD.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(DD.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(DD.DownIofo.房间_频道号), "播放缓冲重连", false, DD.DownIofo.主播名称, false, null);
-                                MMPU.文件删除委托(DD.DownIofo.文件保存路径);
+                                MMPU.文件删除委托(DD.DownIofo.文件保存路径, "刷新播放窗口，删除LiveCache过期的缓存文件");
                                 DD = 下载对象;
                                 for (int i = 0; i < MMPU.播放缓冲时长; i++)
                                 {
