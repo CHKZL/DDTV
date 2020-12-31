@@ -36,10 +36,10 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "text/plain; charset=utf-8";
                     if (File.Exists("./LOG/DDTVLiveRecLog.out"))
                     {
-                        File.Delete("./LOG/DDTVLiveRecLog.out.bak");
+                        Auxiliary.MMPU.文件删除委托("./LOG/DDTVLiveRecLog.out.bak", "生成新的log文件1，删除老旧log文件");
                         File.Copy("./LOG/DDTVLiveRecLog.out", "./LOG/DDTVLiveRecLog.out.bak");
                         await context.Response.WriteAsync(File.ReadAllText("./LOG/DDTVLiveRecLog.out.bak", System.Text.Encoding.UTF8));
-                        File.Delete("./LOG/DDTVLiveRecLog.out.bak");
+                        Auxiliary.MMPU.文件删除委托("./LOG/DDTVLiveRecLog.out.bak", "生成新的log文件2，删除老旧log文件");
                         return;
                     }
                     else

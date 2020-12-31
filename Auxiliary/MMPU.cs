@@ -985,7 +985,7 @@ namespace Auxiliary
                 SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
             }
         }
-        public static void 文件删除委托(string file)
+        public static void 文件删除委托(string file, string 任务来源)
         {
 
             new Task((() => 
@@ -1001,11 +1001,12 @@ namespace Auxiliary
                         }
                         if (!文件是否正在被使用(file))
                         {
+                            InfoLog.InfoPrintf($"收到文件删除委托任务，来自:{任务来源}，删除文件:{file}", InfoLog.InfoClass.下载必要提示);
                             File.Delete(file);
                             return;
                         }
                         i++;
-                        Thread.Sleep(100);
+                        Thread.Sleep(200);
                     }
                 }
                 catch (Exception)

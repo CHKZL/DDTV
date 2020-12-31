@@ -92,10 +92,14 @@ namespace Auxiliary
                     fsMerge.Dispose();
                     try
                     {
-                        if(File.Exists(output))
+                        if(File.Exists(output)&&(new FileInfo(output).Length>0))
                         {
-                            File.Delete(path1);
-                            File.Delete(path2);
+                            MMPU.文件删除委托(path1,"FLV合并任务");
+                            MMPU.文件删除委托(path2, "FLV合并任务");
+                        }
+                        else
+                        {
+                            InfoLog.InfoPrintf("检测到输出的录制文件不存在或文件大小为0字节，放弃删除老旧文件", InfoLog.InfoClass.下载必要提示);
                         }
                     }
                     catch (Exception)

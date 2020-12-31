@@ -36,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTVRoomConfig", "DDTVRoomC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "主站视频下载工具", "主站视频下载工具\主站视频下载工具.csproj", "{C58A5BB6-E276-4A3D-B99B-2F9A92F37BA5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flv合并转码工具", "flv合并转码工具\flv合并转码工具.csproj", "{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -214,6 +216,18 @@ Global
 		{C58A5BB6-E276-4A3D-B99B-2F9A92F37BA5}.Release|x64.Build.0 = Release|Any CPU
 		{C58A5BB6-E276-4A3D-B99B-2F9A92F37BA5}.Release|x86.ActiveCfg = Release|Any CPU
 		{C58A5BB6-E276-4A3D-B99B-2F9A92F37BA5}.Release|x86.Build.0 = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|x64.Build.0 = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Debug|x86.Build.0 = Debug|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x64.ActiveCfg = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x64.Build.0 = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x86.ActiveCfg = Release|Any CPU
+		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
