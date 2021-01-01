@@ -483,12 +483,14 @@ namespace Auxiliary
                             下载结束提醒(true, "下载任务结束",DownIofo);
                             return;
                         }
+                        DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                         DownIofo.备注 = "用户取消，停止下载";
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
                     }
                     else if (!e.Cancelled&& !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                     {
+                        DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                         DownIofo.下载状态 = false;
                         DownIofo.备注 = "下载完成,直播间已关闭";             
                         if (DownIofo.继承 == null)
@@ -736,16 +738,20 @@ namespace Auxiliary
         public static string 下载完成合并FLV(DownIofoData downIofo, bool 是否直播结束)
         {
             string filename = string.Empty;
+            List<string> DelFileList = new List<string>();
             if (downIofo.继承.待合并文件列表.Count>1)
             {
                 filename = downIofo.继承.待合并文件列表[0];
+               
                 for (int i = 0; i< downIofo.继承.待合并文件列表.Count-1; i++)
                 {
+                    DelFileList.Add(downIofo.继承.待合并文件列表[i + 1]);
                     FlvMethod.Flv A = new FlvMethod.Flv()
                     {
                         File1Url = filename,
                         File2Url = downIofo.继承.待合并文件列表[i+1]
                     };
+                    DelFileList.Add(filename);
                     string BB = FlvMethod.FlvSum(A, 是否直播结束);
                     if(string.IsNullOrEmpty(BB))
                     {
@@ -754,7 +760,10 @@ namespace Auxiliary
                     }
                     filename = BB;
                 }
-             
+            }
+            foreach (var item in DelFileList)
+            {
+                MMPU.文件删除委托(item, "FLV合并任务");
             }
             return filename;
         }

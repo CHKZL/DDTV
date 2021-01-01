@@ -968,11 +968,20 @@ namespace DDTV_New
         }
         private void 直播表双击事件(object sender, MouseButtonEventArgs e)
         {
+           
             NewThreadTask.Run(runOnLocalThread =>
             {
-                RoomInit.RoomInfo roomInfo = new RoomInfo();
+                InfoLog.InfoPrintf("用户双击直播列表事件触发", InfoLog.InfoClass.Debug);
                 System.Windows.Controls.ListView LV = (System.Windows.Controls.ListView)sender;
+                RoomInit.RoomInfo roomInfo = new RoomInfo();
+                try
+                {
+                    InfoLog.InfoPrintf($"用户双击直播列表：双击房间号{MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString())}", InfoLog.InfoClass.Debug);
+                }
+                catch (Exception){}
                
+                
+              
                 string 平台 = string.Empty;
                 runOnLocalThread(() =>
                 {
