@@ -124,11 +124,21 @@ namespace Auxiliary
                     }
                     catch (Exception)
                     {
+                        //InfoLog.InfoPrintf($"{vtbs房间数据}", InfoLog.InfoClass.Debug);
                         InfoLog.InfoPrintf($"通过原始数据源更新VTBS房间数据失败，切换到备用DDTV服务器获取", InfoLog.InfoClass.Debug);
                         vtbs房间数据 = MMPU.TcpSend(Server.RequestCode.GET_VTBSROOMLIST, "{}", true, 1500);
                     }
+                    JArray JO = new JArray();
 
-                    JArray JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
+                    try
+                    {
+                       // InfoLog.InfoPrintf($"{vtbs房间数据}", InfoLog.InfoClass.Debug);
+                        JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
+                    }
+                    catch (Exception e)
+                    {
+                        InfoLog.InfoPrintf($"房间配置文件序列化失败，堆栈:{e.ToString()}", InfoLog.InfoClass.Debug);
+                    }
                     //InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
                     foreach (var item in JO)
                     {

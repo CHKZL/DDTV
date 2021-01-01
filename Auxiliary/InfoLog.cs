@@ -121,9 +121,20 @@ namespace Auxiliary
                 Directory.CreateDirectory("./LOG");
             }
             LogFile = "./LOG/" + LogFile;
+            string LogFileBak = "";
             if (File.Exists(LogFile))
             {
-                File.Move(LogFile, LogFile + ".backup_" + DateTime.Now.ToString("yyyyMMddHHmmssfff"));
+                LogFileBak = LogFile + ".backup_" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+                File.Move(LogFile, LogFileBak);
+            }
+            string[] filelist = Directory.GetFiles("./LOG");
+            foreach (var item in filelist)
+            {
+                string name = item.Replace("\\", "/");
+                if (name != LogFile && name != LogFileBak)
+                {
+                    MMPU.文件删除委托(item, "历史陈旧log日志删除");
+                }
             }
             InfoInitFS = new FileStream(LogFile, FileMode.Append);
             InfoInitSW = new StreamWriter(InfoInitFS);
