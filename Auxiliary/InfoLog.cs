@@ -242,6 +242,7 @@ namespace Auxiliary
             {
                 BB += "<br/>检测到云端有新版本。如需更新，请上github或加307156949" +
                     "<a target=\"_blank\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=uwgF9uM9BvSWcHWZu460S6tVcVH1N_YP&jump_from=webapi\"><img border=\"0\" src=\"//pub.idqqimg.com/wpa/images/group.png\" alt=\"每天都是单推的一天\" title=\"每天都是单推的一天\"></a>群共享下载";
+                BB += $"<br/><br/>更新公告:{MMPU.更新公告.Replace("\r", "<br/>")}<br/><br/>";
             }
             BB += $"<br/><br/>---运行状态---<br/>下载中:{下载中}个  下载完成:{下载完成}个";
             BB += $"<br/>当前临时API监控房间数量:{bilibili.RoomList.Count - bilibili.已连接的直播间状态.Count},稳定WSS长连接监控房间数量:{bilibili.已连接的直播间状态.Count}";
