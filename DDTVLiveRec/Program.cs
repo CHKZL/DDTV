@@ -38,6 +38,7 @@ namespace DDTVLiveRec
                             }
                             if (MMPU.版本号 != 服务器版本号 && 检测状态)
                             {
+                                MMPU.更新公告 = MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100);
                                 MMPU.是否有新版本 = true;
                                 InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.TcpSend(Server.RequestCode.GET_VERTEXT, "{}", true, 100) + "\n\n", InfoLog.InfoClass.下载必要提示);
                             }

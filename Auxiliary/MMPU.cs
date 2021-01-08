@@ -74,6 +74,7 @@ namespace Auxiliary
         public static int 数据源 = 0;//0：vdb   1：B API
         public static bool 是否第一次使用DDTV = true;
         public static bool 是否有新版本 = false;
+        public static string 更新公告 = "";
         public static string webServer默认监听IP = "0.0.0.0";
         public static string webServer默认监听端口 = "11419";
         public static string 缓存路径 = "./tmp/";
