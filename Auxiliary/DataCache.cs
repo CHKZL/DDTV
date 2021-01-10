@@ -17,6 +17,15 @@ namespace Auxiliary
         private static Dictionary<string, string> 缓存队列 = new Dictionary<string, string>();
         private static Dictionary<string, DateTime> 缓存创建时间 = new Dictionary<string, DateTime>();
         private static bool 缓存锁 = false;
+
+        public class 缓存头
+        {
+            public static string 房间标题="byRoomIdgetRoomTitle";
+            public static string 真实房间号 = "byROOMIDgetTRUEroomid";
+            public static string 直播状态 = "byRoomIdgetLiveStatus";
+            public static string 通过UID获取房间号 = "byUIDgetROOMID";
+            public static string 通过房间号获取UID = "byROOMIDgetUID";
+        }
         /// <summary>
         /// 读缓存
         /// </summary>
@@ -27,28 +36,39 @@ namespace Auxiliary
         public static bool 读缓存(string key, double ExTime, out string data)
         {
             data = null;
+            Dictionary<string, string> 缓存缓存队列 = 缓存队列;
+            Dictionary<string, DateTime> 缓存缓存创建时间 = 缓存创建时间;
             try
-            {             
-                if (DataCache.缓存创建时间.TryGetValue(key, out DateTime Cache))
+            {
+               
+                if (缓存缓存创建时间.TryGetValue(key, out DateTime Cache))
                 {
                     TimeSpan TS = DateTime.Now - Cache;
-                    if ((TS.TotalSeconds < ExTime || ExTime == 0) && DataCache.缓存队列.TryGetValue(key, out string CacheData))
+                    if ((TS.TotalSeconds < ExTime || ExTime == 0) && 缓存缓存队列.TryGetValue(key, out string CacheData))
                     {
                         data = CacheData;
                         InfoLog.InfoPrintf("缓存命中,读取数据:" + key + "|" + CacheData, InfoLog.InfoClass.Debug);
+                        缓存缓存队列.Clear();
+                        缓存缓存创建时间.Clear();
                         return true;
                     }
                     else
                     {
                         InfoLog.InfoPrintf("命中缓存，但数据已过期，返回false:" + key, InfoLog.InfoClass.Debug);
+                        缓存缓存队列.Clear();
+                        缓存缓存创建时间.Clear();
                         return false;
                     }
                 }
+                缓存缓存队列.Clear();
+                缓存缓存创建时间.Clear();
                 return false;
             }
             catch (Exception ex)
             {
                 InfoLog.InfoPrintf($"读缓存异常:{ex}", InfoLog.InfoClass.Debug);
+                缓存缓存队列.Clear();
+                缓存缓存创建时间.Clear();
                 return false;
             }
         }

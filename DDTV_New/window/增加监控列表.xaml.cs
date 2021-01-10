@@ -74,7 +74,18 @@ namespace DDTV_New.window
                         RB.data.Add(item);
                     }
                 }
-                RB.data.Add(new RoomCadr() { Name = 名称.Text + "-NV", OfficialName = 名称.Text + "-NV", RoomNumber = roomId.ToString() });
+                long UID = 0;
+                if(DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + roomId, 0, out string GETUID))
+                {
+                    try
+                    {
+                        UID = long.Parse(GETUID);
+                    }
+                    catch (Exception){}
+                }
+                
+               
+                RB.data.Add(new RoomCadr() { Name = 名称.Text + "-NV", OfficialName = 名称.Text + "-NV", RoomNumber = roomId.ToString(),UID= UID });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
                 提示.Content = 名称.Text + "-NV["+ 唯一码.Text + "]添加完成";
@@ -86,7 +97,7 @@ namespace DDTV_New.window
                     标题 = "",
                     是否录制弹幕 = false,
                     是否录制视频 = false,
-                    UID = "",
+                    UID = UID.ToString(),
                     直播开始时间 = "",
                     名称 = 名称.Text + "-NV",
                     直播状态 = false,

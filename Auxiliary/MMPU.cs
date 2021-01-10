@@ -33,7 +33,7 @@ namespace Auxiliary
         public static bool 弹幕显示使能=false;
         public static bool 字幕显示使能 = false;
         public static string 直播缓存目录 = "";
-        public static int 直播更新时间 = 60;
+        public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
         public static string 版本号 = "2.0.4.8.2021.b";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
@@ -87,7 +87,7 @@ namespace Auxiliary
         public static bool 强制WSS连接模式 = false;
         public static int 心跳打印间隔 = 180;
 
-        public static int 启动模式 = 0;//0：DDTV,1：DDTVLive
+        public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
 
         /// <summary>
@@ -153,12 +153,9 @@ namespace Auxiliary
                 //播放窗口默认宽度
                 MMPU.播放器默认宽度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
                 //剪切板监听
-                MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
-                //数据源
-                MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));                 
+                MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;                             
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
-                //第一次使用DDTV
                 MMPU.开机自启动 = MMPU.读取exe默认配置文件("BootUp", "0") == "0" ? false : true;
             }
             else if (模式 == 1)
@@ -166,6 +163,8 @@ namespace Auxiliary
                 MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
                 MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
             }
+            //数据源
+            MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
             //是否启动WS连接组
             bilibili.是否启动WSS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
             //转码功能使能
@@ -174,14 +173,11 @@ namespace Auxiliary
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
             //检查弹幕录制配置
             MMPU.录制弹幕 = MMPU.读取exe默认配置文件("RecordDanmu", "0") == "1" ? true : false;
-            if (MMPU.读取exe默认配置文件("DT1", "0") == "0" ? true : false)
-            {
-                MMPU.录制弹幕 = false;
-                MMPU.setFiles("DT1", "1");
-            }
+           
+           
 
             //房间配置文件
-                RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
+            RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
             //直播表刷新默认间隔
@@ -189,9 +185,18 @@ namespace Auxiliary
 
 
             //直播更新时间
-            MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "40"));
-
-           
+            MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "20"));
+            if (MMPU.读取exe默认配置文件("DT1", "0") == "0" ? true : false)
+            {
+                MMPU.录制弹幕 = false;
+                MMPU.setFiles("DT1", "1");
+            }
+            if (MMPU.读取exe默认配置文件("DT2", "0") == "0" ? true : false)
+            {
+                MMPU.直播更新时间 = 20;
+                MMPU.setFiles("RoomTime", "20");
+                MMPU.setFiles("DT1", "1");
+            }
             #endregion
             InfoLog.InfoPrintf("通用配置加载完成", InfoLog.InfoClass.Debug);
 
@@ -557,6 +562,35 @@ namespace Auxiliary
                 result = reader.ReadToEnd();
             }
             return result;
+        }
+
+        public static string 返回网页内容_POST_JSON(string url, string jsonParam, string encode)
+        {
+            string strURL = url;
+            HttpWebRequest request;
+            request = (HttpWebRequest)WebRequest.Create(strURL);
+            request.Method = "POST";
+            request.ContentType = "application/json;charset=" + encode.ToUpper();
+            string paraUrlCoded = jsonParam;
+            byte[] payload;
+            payload = Encoding.GetEncoding(encode.ToUpper()).GetBytes(paraUrlCoded);
+            request.ContentLength = payload.Length;
+            Stream writer = request.GetRequestStream();
+            writer.Write(payload, 0, payload.Length);
+            writer.Close();
+            System.Net.HttpWebResponse response;
+            response = (System.Net.HttpWebResponse)request.GetResponse();
+            System.IO.Stream s;
+            s = response.GetResponseStream();
+            string StrDate = "";
+            string strValue = "";
+            StreamReader Reader = new StreamReader(s, Encoding.GetEncoding(encode.ToUpper()));
+            while ((StrDate = Reader.ReadLine()) != null)
+            {
+                strValue += StrDate + "\r\n";
+            }
+            return strValue;
+
         }
         public static string 返回网页内容_GET(string url,int outTime)
         {
@@ -1068,11 +1102,12 @@ namespace Auxiliary
         public static void 储存文本(string data, string CurDir)
         {
             //如果启动方式为LiveRec则直接退出，不更新配置文件
-            if(MMPU.启动模式==1)
+            if (MMPU.启动模式 == 1)
             {
                 return;
             }
             //文件覆盖方式添加内容
+            InfoLog.InfoPrintf($"文件变化:{CurDir}文件收到储存请求，文件更新，更新文件信息长度:{data.Length}", InfoLog.InfoClass.Debug);
             System.IO.StreamWriter file = new System.IO.StreamWriter(CurDir, false);
             //保存数据到文件
             file.Write(data);
@@ -1257,7 +1292,7 @@ namespace Auxiliary
             return "{\"code\":\"" + code + "\",\"msg\":\"" + msg.Replace("\"", "\\\"") + "\"}";
         }
         /// <summary>
-        /// 指定Post地址和添加cookis使用Get 方式获取网页返回内容  
+        /// 指定Post地址和添加cookis使用Post方式获取网页返回内容  
         /// </summary>  
         /// <param name="url">请求后台地址</param>  
         /// <param name="dic">Post表参数</param>
@@ -1384,17 +1419,6 @@ namespace Auxiliary
                 [DllImport("Kernel32")]
                 public static extern IntPtr GetProcAddress(IntPtr handle, string funcname);
             }
-        }
-
-        public class SQL中间件数据格式
-        {
-            public string SQL { set; get; }
-            public List<SQL数据对> code { set; get; }
-        }
-        public class SQL数据对
-        {
-            public string name { set; get; }
-            public string val { set; get; }
         }
     }
 }

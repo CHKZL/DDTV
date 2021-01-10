@@ -40,7 +40,7 @@ namespace Auxiliary.DDcenter
             public static int 采集次数 = 0;
             public async void WebSocket()
             {
-                if (MMPU.启动模式 == 1)
+                if (MMPU.启动模式 == 1|| MMPU.数据源==1)
                 {
                     InfoLog.InfoPrintf("环境不满足启动DDC采集，取消DDC上传任务", InfoLog.InfoClass.Debug);
                     return;
