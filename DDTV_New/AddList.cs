@@ -103,7 +103,13 @@ namespace DDTV_New
                             if (!是否已经存在 && !string.IsNullOrEmpty(房间号.Trim('0')))
                             {
                                 增加的数量++;
-                                RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false });
+                                long UIDD = 0;
+                                try
+                                {
+                                    UIDD = long.Parse(符合条件的.UID);
+                                }
+                                catch (Exception){}
+                                RB.data.Add(new RoomCadr { Name = 符合条件的.名称, RoomNumber = 符合条件的.房间号, Types = 符合条件的.平台, RemindStatus = false, status = false, VideoStatus = false, OfficialName = 符合条件的.官方名称, LiveStatus = false,UID= UIDD });
                             }
                             else
                             {

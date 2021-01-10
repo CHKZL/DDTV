@@ -91,7 +91,15 @@ namespace DDTVLiveRecWebServer
                 endpoints.MapGet("/systeminfo", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync(Auxiliary.InfoLog.GetSystemInfo());
+                    if(Auxiliary.MMPU.启动模式==1)
+                    {
+                        await context.Response.WriteAsync(Auxiliary.InfoLog.GetSystemInfo());
+                    }
+                    else if (Auxiliary.MMPU.启动模式 == 2)
+                    {
+
+                    }
+                    
                 });
                 endpoints.MapGet("/config", async context =>
                 {

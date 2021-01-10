@@ -296,7 +296,7 @@ namespace DDTV_New
                     {
                         runOnLocalThread(() => ViewModel.serverVdb = vdb延迟);
                         超时次数 = 0;
-                        MMPU.数据源 = 0;
+                        //MMPU.数据源 = 0;
                     }
                     else
                     {
@@ -304,7 +304,7 @@ namespace DDTV_New
                         if (超时次数 > 5)
                         {
                             runOnLocalThread(() => ViewModel.serverVdb = -2.0);
-                            MMPU.数据源 = 1;
+                            //MMPU.数据源 = 1;
                         }
 
                     }

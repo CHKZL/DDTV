@@ -35,6 +35,7 @@ namespace Auxiliary
             public string 房间号 { set; get; }
             public string 标题 { set; get; }
             public bool 直播状态 { set; get; }
+            public bool 轮播状态 { set; get; }
             public string UID { set; get; }
             public string 直播开始时间 { set; get; }
             public bool 是否录制视频 { set; get; }
@@ -359,7 +360,7 @@ namespace Auxiliary
                         标题 = "",
                         是否录制弹幕 = item.VideoStatus,
                         是否录制视频 = item.VideoStatus,
-                        UID = "",
+                        UID = item.UID.ToString(),
                         直播开始时间 = "",
                         名称 = item.Name,
                         直播状态 = item.LiveStatus,
@@ -381,7 +382,7 @@ namespace Auxiliary
                         标题 = "",
                         是否录制弹幕 = item.VideoStatus,
                         是否录制视频 = item.VideoStatus,
-                        UID = "",
+                        UID = item.UID.ToString(),
                         直播开始时间 = "",
                         名称 = item.Name,
                         直播状态 = item.LiveStatus,
@@ -412,6 +413,7 @@ namespace Auxiliary
             public string Name { get; set; }//中文名
             public string OfficialName { set; get; } = "";//官方频道名称
             public string RoomNumber { get; set; }//直播间房间号
+            public long UID { set; get; } = 0;
             public string Types { get; set; } = "bilibili";//平台类型,现在默认bilibili，不要改成其他的
             public bool status { get; set; } = false;//直播状态缓存，默认为false
             public bool VideoStatus { get; set; } = false;//是否开播自动录制，默认为false

@@ -73,7 +73,7 @@ namespace Auxiliary
                     catch (Exception)
                     {
                     }
-                    Thread.Sleep(1000);
+                    Thread.Sleep(5000);
                 }
             }).Start();
             Task.Run(async () =>
@@ -103,6 +103,7 @@ namespace Auxiliary
         public static void 更新VTBS房间数据()
         {
             int 完整错误次数 = 0;
+          
             while (true)
             {
                 try
@@ -140,15 +141,83 @@ namespace Auxiliary
                         InfoLog.InfoPrintf($"房间配置文件序列化失败，堆栈:{e.ToString()}", InfoLog.InfoClass.Debug);
                     }
                     //InfoLog.InfoPrintf($"获取VTBS房间数据完成:{JO}", InfoLog.InfoClass.Debug);
+                    RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+                    bool 是否需要保存房间配置文件 = false;
                     foreach (var item in JO)
                     {
                         if (int.Parse(item["roomid"].ToString()) != 0)
                         {
                             VtbsRoomList.Add(new VtbsRoom() { mid = int.Parse(item["mid"].ToString()), room = int.Parse(item["roomid"].ToString()), name = item["uname"].ToString() });
+                            if (!DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + item["roomid"].ToString(), 0, out string GETUID))
+                            {
+                                DataCache.写缓存(DataCache.缓存头.通过房间号获取UID + item["roomid"].ToString(), item["mid"].ToString());
+                            }
+                            if (!DataCache.读缓存(DataCache.缓存头.通过UID获取房间号 + item["mid"].ToString(), 0, out string GETROOMID))
+                            {
+                                DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + item["mid"].ToString(), item["roomid"].ToString());
+                            }
+                            foreach (var ROOMCONFIG in rlc.data)
+                            {
+                                if(item["roomid"].ToString()== ROOMCONFIG.RoomNumber)
+                                {
+                                    try
+                                    {
+                                        if (ROOMCONFIG.UID != long.Parse(item["mid"].ToString()))
+                                        {
+                                            ROOMCONFIG.UID = long.Parse(item["mid"].ToString());
+                                            是否需要保存房间配置文件 = true;
+                                            foreach (var BILI in RoomList)
+                                            {
+                                                if(BILI.房间号== ROOMCONFIG.RoomNumber)
+                                                {
+                                                    BILI.UID = item["mid"].ToString();
+                                                    break;
+                                                }
+                                            }
+                                            break;
+                                        }
+                                    }
+                                    catch (Exception){}
+                                }
+                            }
                         }
                     }
                     InfoLog.InfoPrintf($"VTBS数据数据准备完成", InfoLog.InfoClass.Debug);
                     wss连接初始化准备已完成 = true;
+                    foreach (var BILI in RoomList)
+                    {
+                        if(string.IsNullOrEmpty(BILI.UID)|| BILI.UID=="0")
+                        {
+                            string UID = 根据房间号获取房间信息.通过房间号获取UID(BILI.房间号);
+                            BILI.UID = UID;
+                            是否需要保存房间配置文件 = true;
+                        }
+                    }
+                    foreach (var ROOMCONFIG in rlc.data)
+                    {
+                        if (string.IsNullOrEmpty(ROOMCONFIG.UID.ToString()) || ROOMCONFIG.UID.ToString() == "0")
+                        {
+                            string UID = 根据房间号获取房间信息.通过房间号获取UID(ROOMCONFIG.RoomNumber);
+                            try
+                            {
+                                ROOMCONFIG.UID = long.Parse(UID);
+                            }
+                            catch (Exception){}
+                            是否需要保存房间配置文件 = true;
+                        }
+                    }
+                    if (是否需要保存房间配置文件)
+                    {
+                        string JOO = JsonConvert.SerializeObject(rlc);
+                        InfoLog.InfoPrintf($"文件变化:{RoomConfigFile}文件收到储存请求，文件更新，更新文件信息长度:{JOO.Length}", InfoLog.InfoClass.Debug);
+                        StreamWriter file = new System.IO.StreamWriter(RoomConfigFile, false);
+                        //保存数据到文件
+                        file.Write(JOO);
+                        //关闭文件
+                        file.Close();
+                        //释放对象
+                        file.Dispose();
+                    }
                     break;
                 }
                 catch (Exception e)
@@ -170,21 +239,23 @@ namespace Auxiliary
                 {
                     case 0:
                         {
-                            使用vtbsAPI更新房间状态();
-                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.没啥价值的消息);
+                            使用B站API更新房间状态();
+                            //
+                            InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
                             是否正在更新房间信息 = false;
                             break;
                         }
                     case 1:
                         {
                             //启动WS房间连接
-                         
+                            使用B站API更新房间状态();
+                            InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
                             是否正在更新房间信息 = false;
                             break;
                         }
                     case 2:
                         {
-                            使用B站API更新房间状态();
+                            使用vtbsAPI更新房间状态();
                             InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.杂项提示);
                             InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
                             是否正在更新房间信息 = false;
@@ -299,29 +370,44 @@ namespace Auxiliary
         }
         public static void 使用B站API更新房间状态()
         {
-        
-            foreach (var roomtask in RoomList)
+            List<long> UID = new List<long>();
+            foreach (var item in RoomList)
             {
-                if (!roomtask.名称.Contains("-NV"))
+                if (!string.IsNullOrEmpty(item.UID) && item.UID != "0")
                 {
-                    RoomInit.RoomInfo A = GetRoomInfo(roomtask.房间号);
-                    if (A != null)
+                    long UU = 0;
+                    try
                     {
-                        for (int i = 0; i < RoomList.Count(); i++)
-                        {
-                            if (RoomList[i].房间号 == A.房间号)
-                            {
-                                RoomList[i].平台 = A.平台;
-                                RoomList[i].标题 = A.标题;
-                                RoomList[i].UID = A.UID;
-                                RoomList[i].直播开始时间 = A.直播开始时间;
-                                RoomList[i].直播状态 = A.直播状态;
-                                break;
-                            }
-                        }
+                        UU = long.Parse(item.UID);
+                    }
+                    catch (Exception) { }
+                    UID.Add(UU);
+                }
+            }
+            JObject JO = 获取多房间直播状态(UID);
+            foreach (var item in RoomList)
+            {
+                try
+                {
+                    int 状态 = (int)JO["data"][item.UID]["live_status"];
+                    
+                    if (状态 == 0)
+                    {
+                        item.直播状态 = false;
+                        item.轮播状态 = false;
+                    }
+                    else if (状态 == 1)
+                    {
+                        item.直播状态 = true;
+                        item.轮播状态 = false;
+                    }
+                    else if (状态 == 2)
+                    {
+                        item.直播状态 = false;
+                        item.轮播状态 = true;
                     }
                 }
-                Thread.Sleep(2000);
+                catch (Exception){ }
             }
         }
 
@@ -534,7 +620,6 @@ namespace Auxiliary
            
             private static void 直播间状态WS变化事件(object sender, MessageEventArgs e)
             {
-                string CacheStr = "byRoomIdgetLiveStatus";
                 try
                 {
                     switch (e)
@@ -552,7 +637,7 @@ namespace Auxiliary
                                         {
                                             if (roomtask.房间号 == liveEventArgs.roomID.ToString())
                                             {
-                                                DataCache.写缓存(CacheStr + liveEventArgs.roomID, "1");
+                                                DataCache.写缓存(DataCache.缓存头.直播状态 + liveEventArgs.roomID, "1");
                                                 roomtask.直播状态 = true;
                                                 return;
                                             }
@@ -575,7 +660,7 @@ namespace Auxiliary
                                         {
                                             if (roomtask.房间号 == preparingpEventArgs.roomID.ToString())
                                             {
-                                                DataCache.写缓存(CacheStr + preparingpEventArgs.roomID, "0");
+                                                DataCache.写缓存(DataCache.缓存头.直播状态 + preparingpEventArgs.roomID, "0");
                                                 roomtask.直播状态 = false;
                                                 return;
                                             }
@@ -751,8 +836,7 @@ namespace Auxiliary
         }
         public static string 通过UID获取房间号(string uid)
         {
-            string CacheStr = "byUIDgetROOMID";
-            if (DataCache.读缓存(CacheStr + uid, 0, out string CacheData))
+            if (DataCache.读缓存(DataCache.缓存头.通过UID获取房间号 + uid, 0, out string CacheData))
             {
                 return CacheData;
             }
@@ -773,7 +857,11 @@ namespace Auxiliary
                 JObject result = JObject.Parse(roomHtml);
                 string roomId = result["data"]["roomid"].ToString();
                 //InfoLog.InfoPrintf("根据UID获取到房间号:" + roomId, InfoLog.InfoClass.Debug);
-                DataCache.写缓存(CacheStr + uid, roomId);
+                if (!DataCache.读缓存(DataCache.缓存头.通过房间号获取UID+ roomId, 0, out string GETUID))
+                {
+                    DataCache.写缓存(DataCache.缓存头.通过房间号获取UID + roomId, uid);
+                }
+                DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + uid, roomId);
                 return roomId;
             }
             catch (Exception e)
@@ -781,15 +869,38 @@ namespace Auxiliary
                 InfoLog.InfoPrintf(uid + " 通过UID获取房间号:" + e.Message, InfoLog.InfoClass.Debug);
                 return null;
             }
-
+        }
+        public static JObject 获取多房间直播状态(List<long> UIDList)
+        {
+            string LT = "";
+            if(UIDList.Count>0)
+            {
+                LT = "{\"uids\":[" + UIDList[0];
+                if (UIDList.Count > 1)
+                {
+                    for (int i = 1; i < UIDList.Count; i++)
+                    {
+                        if (UIDList[i] != 0)
+                        {
+                            LT += "," + UIDList[i];
+                        }
+                    }  
+                }
+                LT += "]}";
+                JObject JO = (JObject)JsonConvert.DeserializeObject(MMPU.返回网页内容_POST_JSON("https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids", LT, "UTF-8"));
+                return JO;
+            }
+            else
+            {
+                return null;
+            }
         }
         public class 根据房间号获取房间信息
         {
             public static bool 是否正在直播(string RoomId,bool 强制刷新)
             {
-                string CacheStr = "byRoomIdgetLiveStatus";
                 
-                if (!强制刷新&&DataCache.读缓存(CacheStr + RoomId, 3, out string CacheData))
+                if (!强制刷新&&DataCache.读缓存(DataCache.缓存头.直播状态 + RoomId, 3, out string CacheData))
                 {
                     if(CacheData=="1")
                     {
@@ -824,7 +935,7 @@ namespace Auxiliary
                     }
                     catch (Exception)
                     {
-                        DataCache.写缓存(CacheStr + RoomId, "0");
+                        DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "0");
                         return false;
                     }
 
@@ -838,12 +949,12 @@ namespace Auxiliary
                     DataCache.CacheCount++;
                     if (result["data"]["live_status"].ToString() == "1")
                     {
-                        DataCache.写缓存(CacheStr + RoomId, "1");
+                        DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "1");
                         string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
                         //InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
-                        DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
+                        DataCache.写缓存(DataCache.缓存头.房间标题 + RoomId, roomName);
                         string roomid = result["data"]["room_id"].ToString();
-                        DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
+                        DataCache.写缓存(DataCache.缓存头.真实房间号 + RoomId, roomid);
                         return true;
                     }
                     else
@@ -856,7 +967,7 @@ namespace Auxiliary
                         //        break;
                         //    }
                         //}
-                        DataCache.写缓存(CacheStr + RoomId, "0");
+                        DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "0");
                         return false;
                     }
                    
@@ -870,12 +981,12 @@ namespace Auxiliary
                         DataCache.CacheCount++;
                         if (result["data"]["live_status"].ToString() == "1")
                         {
-                            DataCache.写缓存(CacheStr + RoomId, "1");
+                            DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "1");
                             string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
                             //InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
-                            DataCache.写缓存("byRoomIdgetRoomTitle" + RoomId, roomName);
+                            DataCache.写缓存(DataCache.缓存头.房间标题 + RoomId, roomName);
                             string roomid = result["data"]["room_id"].ToString();
-                            DataCache.写缓存("byROOMIDgetTRUEroomid" + RoomId, roomid);
+                            DataCache.写缓存(DataCache.缓存头.真实房间号 + RoomId, roomid);
                             return true;
                         }
                         else
@@ -888,13 +999,13 @@ namespace Auxiliary
                             //        break;
                             //    }
                             //}
-                            DataCache.写缓存(CacheStr + RoomId, "0");
+                            DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "0");
                             return false;
                         }
                     }
                     catch (Exception)
                     {
-                        DataCache.写缓存(CacheStr + RoomId, "0");
+                        DataCache.写缓存(DataCache.缓存头.直播状态 + RoomId, "0");
                         return false;
                     }
 
@@ -903,8 +1014,7 @@ namespace Auxiliary
 
             public static string 获取标题(string roomID)
             {
-                string CacheStr = "byRoomIdgetRoomTitle";
-                if (DataCache.读缓存(CacheStr + roomID, 20, out string CacheData))
+                if (DataCache.读缓存(DataCache.缓存头.房间标题 + roomID, 20, out string CacheData))
                 {
                     return CacheData;
                 }
@@ -931,7 +1041,7 @@ namespace Auxiliary
                     JObject result = JObject.Parse(roomHtml);
                     string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
                     InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
-                    DataCache.写缓存(CacheStr + roomID, roomName);
+                    DataCache.写缓存(DataCache.缓存头.房间标题 + roomID, roomName);
                     return roomName;
                 }
                 catch (Exception e)
@@ -1000,9 +1110,7 @@ namespace Auxiliary
 
             public static string 获取真实房间号(string roomID)
             {
-                string CacheStr = "byROOMIDgetTRUEroomid";
-                 
-                if (DataCache.读缓存(CacheStr + roomID, 0, out string CacheData))
+                if (DataCache.读缓存(DataCache.缓存头.真实房间号 + roomID, 0, out string CacheData))
                 {
                     return CacheData;
                 }
@@ -1010,7 +1118,7 @@ namespace Auxiliary
                 {
                     if (int.Parse(roomID) > 10000)
                     {
-                        DataCache.写缓存(CacheStr + roomID, roomID);
+                        DataCache.写缓存(DataCache.缓存头.真实房间号 + roomID, roomID);
                         return roomID;
                     }
                 }
@@ -1035,8 +1143,58 @@ namespace Auxiliary
                     //    return "-1";
                     //}
                     string roomid = result["data"]["room_id"].ToString();
-                    DataCache.写缓存(CacheStr + roomID, roomid);
+                    DataCache.写缓存(DataCache.缓存头.真实房间号 + roomID, roomid);
+                    if (!DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), 0, out string GETUID))
+                    {
+                        DataCache.写缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), result["data"]["uid"].ToString());
+                    }
+                    if (!DataCache.读缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), 0, out string GETROOMID))
+                    {
+                        DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), result["data"]["room_id"].ToString());
+                    }
+                    
                     return roomid;
+                }
+                catch
+                {
+                    return roomID;
+                }
+            }
+            public static string 通过房间号获取UID(string roomID)
+            {
+                if (DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + roomID, 0, out string CacheData))
+                {
+                    return CacheData;
+                }
+                string roomHtml;
+                try
+                {
+                    roomHtml = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + roomID);
+                }
+                catch (Exception e)
+                {
+                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.Debug);
+                    return null;
+                }
+                //从返回结果中提取真实房间号
+                try
+                {
+                    JObject result = JObject.Parse(roomHtml);
+                    //string live_status = result["data"]["live_status"].ToString();
+                    //if (live_status != "1")
+                    //{
+                    //    return "-1";
+                    //}
+                    string UID = result["data"]["uid"].ToString();
+                    if (!DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), 0, out string GETUID))
+                    {
+                        DataCache.写缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), result["data"]["uid"].ToString());
+                    }
+                    if (!DataCache.读缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), 0, out string GETROOMID))
+                    {
+                        DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), result["data"]["room_id"].ToString());
+                    }
+                    return UID;
                 }
                 catch
                 {
@@ -1122,6 +1280,14 @@ namespace Auxiliary
                     直播开始时间 = result["data"]["live_time"].ToString(),
                     平台 = "bilibili"
                 };
+                if (!DataCache.读缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), 0, out string GETUID))
+                {
+                    DataCache.写缓存(DataCache.缓存头.通过房间号获取UID + result["data"]["room_id"].ToString(), result["data"]["uid"].ToString());
+                }
+                if (!DataCache.读缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), 0, out string GETROOMID))
+                {
+                    DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + result["data"]["uid"].ToString(), result["data"]["room_id"].ToString());
+                }
                 InfoLog.InfoPrintf("获取到房间信息:" + roominfo.UID + " " + (roominfo.直播状态 ? "已开播" : "未开播") + " " + (roominfo.直播状态 ? "开播时间:" + roominfo.直播开始时间 : ""), InfoLog.InfoClass.Debug);
                 DataCache.CacheCount++;
                 return roominfo;
