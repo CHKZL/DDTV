@@ -36,31 +36,31 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "text/plain; charset=utf-8";
                     if (File.Exists("./LOG/DDTVLiveRecLog.out"))
                     {
-                        Auxiliary.MMPU.ÎÄ¼şÉ¾³ıÎ¯ÍĞ("./LOG/DDTVLiveRecLog.out.bak", "Éú³ÉĞÂµÄlogÎÄ¼ş1£¬É¾³ıÀÏ¾ÉlogÎÄ¼ş");
+                        Auxiliary.MMPU.æ–‡ä»¶åˆ é™¤å§”æ‰˜("./LOG/DDTVLiveRecLog.out.bak", "ç”Ÿæˆæ–°çš„logæ–‡ä»¶1ï¼Œåˆ é™¤è€æ—§logæ–‡ä»¶");
                         File.Copy("./LOG/DDTVLiveRecLog.out", "./LOG/DDTVLiveRecLog.out.bak");
                         await context.Response.WriteAsync(File.ReadAllText("./LOG/DDTVLiveRecLog.out.bak", System.Text.Encoding.UTF8));
-                        Auxiliary.MMPU.ÎÄ¼şÉ¾³ıÎ¯ÍĞ("./LOG/DDTVLiveRecLog.out.bak", "Éú³ÉĞÂµÄlogÎÄ¼ş2£¬É¾³ıÀÏ¾ÉlogÎÄ¼ş");
+                        Auxiliary.MMPU.æ–‡ä»¶åˆ é™¤å§”æ‰˜("./LOG/DDTVLiveRecLog.out.bak", "ç”Ÿæˆæ–°çš„logæ–‡ä»¶2ï¼Œåˆ é™¤è€æ—§logæ–‡ä»¶");
                         return;
                     }
                     else
                     {
-                        await context.Response.WriteAsync("Ã»ÓĞ»ñÈ¡µ½ÈÕÖ¾ÎÄ¼ş£¬ÇëÈ·ÈÏDDTVLiveÕıÔÚÔËĞĞ");
+                        await context.Response.WriteAsync("æ²¡æœ‰è·å–åˆ°æ—¥å¿—æ–‡ä»¶ï¼Œè¯·ç¡®è®¤DDTVLiveæ­£åœ¨è¿è¡Œ");
                     }
                 });
                 endpoints.MapGet("/file", async context =>
                 {
-                    if(!Directory.Exists(Auxiliary.MMPU.»º´æÂ·¾¶))
+                    if(!Directory.Exists(Auxiliary.MMPU.ç¼“å­˜è·¯å¾„))
                     {
-                        Directory.CreateDirectory(Auxiliary.MMPU.»º´æÂ·¾¶);
+                        Directory.CreateDirectory(Auxiliary.MMPU.ç¼“å­˜è·¯å¾„);
                     }
-                    string A = "µ±Ç°Â¼ÖÆÎÄ¼ş¼ĞÎÄ¼şÁĞ±í:\r\n";
+                    string A = "å½“å‰å½•åˆ¶æ–‡ä»¶å¤¹æ–‡ä»¶åˆ—è¡¨:\r\n";
                     context.Response.ContentType = "text/plain; charset=utf-8";
-                    foreach (DirectoryInfo NextFolder1 in new DirectoryInfo(Auxiliary.MMPU.»º´æÂ·¾¶).GetDirectories())
+                    foreach (DirectoryInfo NextFolder1 in new DirectoryInfo(Auxiliary.MMPU.ç¼“å­˜è·¯å¾„).GetDirectories())
                     {
                         A = A + "\r\n" + NextFolder1.Name;
-                        foreach (FileInfo NextFolder2 in new DirectoryInfo(Auxiliary.MMPU.»º´æÂ·¾¶ + NextFolder1.Name).GetFiles())
+                        foreach (FileInfo NextFolder2 in new DirectoryInfo(Auxiliary.MMPU.ç¼“å­˜è·¯å¾„ + NextFolder1.Name).GetFiles())
                         {
-                            A = A + "\r\n¡¡¡¡" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + NextFolder2.Name;
+                            A = A + "\r\nã€€ã€€" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + NextFolder2.Name;
                         }
                         A = A + "\r\n";
                     }
@@ -74,7 +74,7 @@ namespace DDTVLiveRecWebServer
                 endpoints.MapGet("/wssinfo", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync(Auxiliary.InfoLog.·µ»ØWSSÁ¬½Ó×´Ì¬ÁĞ±í(), System.Text.Encoding.UTF8);
+                    await context.Response.WriteAsync(Auxiliary.InfoLog.è¿”å›WSSè¿æ¥çŠ¶æ€åˆ—è¡¨(), System.Text.Encoding.UTF8);
                 });
                 //endpoints.MapGet("/login", async context =>
                 //{
@@ -85,17 +85,17 @@ namespace DDTVLiveRecWebServer
                 //    }
                 //   else
                 //    {
-                //        await context.Response.WriteAsync("<a>¶şÎ¬Âë¼ÓÔØÊ§°Ü£¬ÇëÉÔµÈ3ÃëºóË¢ĞÂÍøÒ³,Èç¶à´ÎÊ§°Ü£¬Çë²é¿´¿ØÖÆÌ¨ÊÇ·ñÊä³ö´íÎóĞÅÏ¢<a/>", System.Text.Encoding.UTF8);
+                //        await context.Response.WriteAsync("<a>äºŒç»´ç åŠ è½½å¤±è´¥ï¼Œè¯·ç¨ç­‰3ç§’ååˆ·æ–°ç½‘é¡µ,å¦‚å¤šæ¬¡å¤±è´¥ï¼Œè¯·æŸ¥çœ‹æ§åˆ¶å°æ˜¯å¦è¾“å‡ºé”™è¯¯ä¿¡æ¯<a/>", System.Text.Encoding.UTF8);
                 //    }
                 //});
                 endpoints.MapGet("/systeminfo", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    if(Auxiliary.MMPU.Æô¶¯Ä£Ê½==1)
+                    if(Auxiliary.MMPU.å¯åŠ¨æ¨¡å¼==1)
                     {
                         await context.Response.WriteAsync(Auxiliary.InfoLog.GetSystemInfo());
                     }
-                    else if (Auxiliary.MMPU.Æô¶¯Ä£Ê½ == 2)
+                    else if (Auxiliary.MMPU.å¯åŠ¨æ¨¡å¼ == 2)
                     {
 
                     }
@@ -104,38 +104,38 @@ namespace DDTVLiveRecWebServer
                 endpoints.MapGet("/config", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync("·ÃÎÊÒÔÏÂÁ´½ÓÒÔĞŞ¸ÄÅäÖÃ:<br/>(ĞŞ¸ÄºóÇëÖØÆôDDTVLiveRecÉúĞ§)<br/>" +
-                        "<br/>´ò¿ªµ¯Ä»/ÀñÎï/½¢¶ÓÂ¼ÖÆ´¢´æIP:11419/config-DanmuRecOn" +
-                        "<br/>¹Ø±Õµ¯Ä»/ÀñÎï/½¢¶ÓÂ¼ÖÆ´¢´æIP:11419/config-DanmuRecOff" +
-                        "<br/>´ò¿ªDEBUGÄ£Ê½ IP:11419/config-DebugOn" +
-                        "<br/>¹Ø±ÕDEBUGÄ£Ê½ IP:11419/config-DebugOff");
+                    await context.Response.WriteAsync("è®¿é—®ä»¥ä¸‹é“¾æ¥ä»¥ä¿®æ”¹é…ç½®:<br/>(ä¿®æ”¹åè¯·é‡å¯DDTVLiveRecç”Ÿæ•ˆ)<br/>" +
+                        "<br/>æ‰“å¼€å¼¹å¹•/ç¤¼ç‰©/èˆ°é˜Ÿå½•åˆ¶å‚¨å­˜IP:11419/config-DanmuRecOn" +
+                        "<br/>å…³é—­å¼¹å¹•/ç¤¼ç‰©/èˆ°é˜Ÿå½•åˆ¶å‚¨å­˜IP:11419/config-DanmuRecOff" +
+                        "<br/>æ‰“å¼€DEBUGæ¨¡å¼ IP:11419/config-DebugOn" +
+                        "<br/>å…³é—­DEBUGæ¨¡å¼ IP:11419/config-DebugOff");
                 });
                 endpoints.MapGet("/config-DanmuRecOn", async context =>
                 {
-                    Auxiliary.MMPU.Â¼ÖÆµ¯Ä» = true;
+                    Auxiliary.MMPU.å½•åˆ¶å¼¹å¹• = true;
                     Auxiliary.MMPU.setFiles("RecordDanmu", "1");
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync("´ò¿ªµ¯Ä»/ÀñÎï/½¢¶ÓÂ¼ÖÆ´¢´æ³É¹¦");
+                    await context.Response.WriteAsync("æ‰“å¼€å¼¹å¹•/ç¤¼ç‰©/èˆ°é˜Ÿå½•åˆ¶å‚¨å­˜æˆåŠŸ");
                 });
                 endpoints.MapGet("/config-DanmuRecOff", async context =>
                 {
-                    Auxiliary.MMPU.Â¼ÖÆµ¯Ä» = false;
+                    Auxiliary.MMPU.å½•åˆ¶å¼¹å¹• = false;
                     Auxiliary.MMPU.setFiles("RecordDanmu", "0");
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync("¹Ø±Õµ¯Ä»/ÀñÎï/½¢¶ÓÂ¼ÖÆ´¢´æ³É¹¦");
+                    await context.Response.WriteAsync("å…³é—­å¼¹å¹•/ç¤¼ç‰©/èˆ°é˜Ÿå½•åˆ¶å‚¨å­˜æˆåŠŸ");
                 });
                 endpoints.MapGet("/config-DebugOn", async context =>
                 {
                     Auxiliary.InfoLog.ClasslBool.Debug = true;
-                    Auxiliary.InfoLog.ClasslBool.Êä³öµ½ÎÄ¼ş = true;
+                    Auxiliary.InfoLog.ClasslBool.è¾“å‡ºåˆ°æ–‡ä»¶ = true;
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync("DebugÄ£Ê½Æô¶¯£¬¸ÃÄ£Ê½ÏÂ»áÔÚlogÎÄ¼şºÍÖÕ¶ËÊä³ö´óÁ¿logĞÅÏ¢£¬Çë×¢ÒâÎÄ¼şÌå»ı£¬ÖØÆôÄ¬ÈÏ¹Ø±ÕdebugÄ£Ê½");
+                    await context.Response.WriteAsync("Debugæ¨¡å¼å¯åŠ¨ï¼Œè¯¥æ¨¡å¼ä¸‹ä¼šåœ¨logæ–‡ä»¶å’Œç»ˆç«¯è¾“å‡ºå¤§é‡logä¿¡æ¯ï¼Œè¯·æ³¨æ„æ–‡ä»¶ä½“ç§¯ï¼Œé‡å¯é»˜è®¤å…³é—­debugæ¨¡å¼");
                 });
                 endpoints.MapGet("/config-DebugOff", async context =>
                 {
                     Auxiliary.InfoLog.ClasslBool.Debug = false;
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    await context.Response.WriteAsync("DebugÄ£Ê½ÒÑ¹Ø±Õ");
+                    await context.Response.WriteAsync("Debugæ¨¡å¼å·²å…³é—­");
                 });
             });
         }
