@@ -235,35 +235,41 @@ namespace Auxiliary
             {
                 是否正在更新房间信息 = true;
                 InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.没啥价值的消息);
-                switch (MMPU.数据源)
+                try
                 {
-                    case 0:
-                        {
-                            使用B站API更新房间状态();
-                            //
-                            InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
-                            是否正在更新房间信息 = false;
+                    switch (MMPU.数据源)
+                    {
+                        case 0:
+                            {
+                                使用B站API更新房间状态();
+                                //
+                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
+                                是否正在更新房间信息 = false;
+                                break;
+                            }
+                        case 1:
+                            {
+                                //启动WS房间连接
+                                使用B站API更新房间状态();
+                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
+                                是否正在更新房间信息 = false;
+                                break;
+                            }
+                        case 2:
+                            {
+                                使用vtbsAPI更新房间状态();
+                                InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.杂项提示);
+                                InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
+                                是否正在更新房间信息 = false;
+                                break;
+                            }
+                        default:
                             break;
-                        }
-                    case 1:
-                        {
-                            //启动WS房间连接
-                            使用B站API更新房间状态();
-                            InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
-                            是否正在更新房间信息 = false;
-                            break;
-                        }
-                    case 2:
-                        {
-                            使用vtbsAPI更新房间状态();
-                            InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.杂项提示);
-                            InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
-                            是否正在更新房间信息 = false;
-                            break;
-                        }
-                    default:
-                        break;
-                   
+
+                    }
+                }
+                catch (Exception){
+                    是否正在更新房间信息 = false;
                 }
                 是否正在更新房间信息 = false;
             }     
@@ -407,7 +413,9 @@ namespace Auxiliary
                         item.轮播状态 = true;
                     }
                 }
-                catch (Exception){ }
+                catch (Exception e){
+                    ;
+                }
             }
         }
 
