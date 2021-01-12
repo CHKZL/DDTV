@@ -160,7 +160,6 @@ namespace Auxiliary
             DownIofo.WC.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
             DownIofo.WC.DownloadFileCompleted += 下载完成事件;
             DownIofo.WC.DownloadProgressChanged += 下载过程中事件;
-            // rq.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             DownIofo.WC.Headers.Add("Accept-Encoding: gzip, deflate, br");
             DownIofo.WC.Headers.Add("Cache-Control: max-age=0");
             DownIofo.WC.Headers.Add("Sec-Fetch-Mode: navigate");
@@ -221,7 +220,6 @@ namespace Auxiliary
                             {
                                 if (bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                                 {
-
                                     a++;
                                     if (判断文件是否存在.判断(DownIofo.下载地址, DownIofo.平台, DownIofo.房间_频道号))
                                     {
@@ -237,7 +235,7 @@ namespace Auxiliary
                                         }
                                         else
                                         {
-                                            DownIofo.备注 = "该房间或未推流/直播完成/已加密";
+                                            DownIofo.备注 = "等待房间推流...";
                                             Thread.Sleep(30000);
                                             //return null;
                                         }

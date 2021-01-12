@@ -23,10 +23,18 @@ namespace Auxiliary
 { 
     public class MMPU
     {
-        public static bool 开发模式 = false;
+        public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
         {
-            ""
+            "增加检测到新版本后，在WEB的systeminfo界面显示显示新版本更新提示和更新公告内容",
+            "增加一种阿B原生API房间直播状态轮询机制；" ,
+            "房间配置文件增加对于UID的配置缓存；" ,
+            "优化缓存系统的格式和统一缓存头标识；" ,
+            "缩短直播状态的状态机轮询默认时间；" ,
+            "增加轮播状态的识别防止误判；" ,
+            "增加混合模式API获取机制和对应的欢迎界面；" ,
+            "增加默认数据源状态标识“2”，并默认选择；" ,
+            "优化房间监控状态机，消除房间状态区别壁垒，所有房间均可随意路数监控"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -35,9 +43,9 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.4.8.2021.b";
+        public static string 版本号 = "2.0.5.0a";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
-        public static string[] 不检测的版本号 = { "2.0.4.8.2021" };
+        public static string[] 不检测的版本号 = { "2.0.4.8.2021.b" };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -100,8 +108,8 @@ namespace Auxiliary
             Debug模式 = 读取exe默认配置文件("DebugMod", "1") == "0" ? false : true;
             Debug输出到文件 = 读取exe默认配置文件("DebugFile", "1") == "0" ? false : true;
             Debug打印到终端 = 读取exe默认配置文件("DebugCmd", "0") == "0" ? false : true;
-            心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "180"));
-            网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
+            
+          
             if (模式 == 0)
             {
                 InfoLog.InfoInit("DDTVLog.out", new InfoLog.InfoClasslBool()
@@ -127,65 +135,97 @@ namespace Auxiliary
                 启动模式 = 1;
             }
             InfoLog.InfoPrintf("消息系统初始化完成", InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf($"配置文件初始化任务[Debug模式]:{Debug模式}", InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf($"配置文件初始化任务[Debug输出到文件]:{Debug输出到文件}", InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf($"配置文件初始化任务[Debug打印到终端]:{Debug打印到终端}", InfoLog.InfoClass.Debug);
+            心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "180"));
+            InfoLog.InfoPrintf($"配置文件初始化任务[心跳打印间隔]:{心跳打印间隔}", InfoLog.InfoClass.Debug);
+            网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
+            InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
+
             #region 配置文件设置
             if (模式 == 0)
             {
                 //默认音量
                 MMPU.默认音量 = int.Parse(MMPU.读取exe默认配置文件("DefaultVolume", "50"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[默认音量]:{默认音量}", InfoLog.InfoClass.Debug);
                 //缩小功能
                 MMPU.缩小功能 = int.Parse(MMPU.读取exe默认配置文件("Zoom", "1"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[缩小功能]:{缩小功能}", InfoLog.InfoClass.Debug);
                 //最大直播并行数量
                 MMPU.最大直播并行数量 = int.Parse(MMPU.读取exe默认配置文件("PlayNum", "5"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[最大直播并行数量]:{最大直播并行数量}", InfoLog.InfoClass.Debug);
                 //默认弹幕颜色
                 MMPU.默认弹幕颜色 = MMPU.读取exe默认配置文件("DanMuColor", "0xFF,0x00,0x00,0x00");
+                InfoLog.InfoPrintf($"配置文件初始化任务[默认弹幕颜色]:{默认弹幕颜色}", InfoLog.InfoClass.Debug);
                 //默认字幕颜色
                 MMPU.默认字幕颜色 = MMPU.读取exe默认配置文件("ZiMuColor", "0xFF,0x00,0x00,0x00");
+                InfoLog.InfoPrintf($"配置文件初始化任务[默认字幕颜色]:{默认字幕颜色}", InfoLog.InfoClass.Debug);
                 //默认字幕大小
                 MMPU.默认字幕大小 = int.Parse(MMPU.读取exe默认配置文件("ZiMuSize", "24"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[默认字幕大小]:{默认字幕大小}", InfoLog.InfoClass.Debug);
                 //默认弹幕大小
                 MMPU.默认弹幕大小 = int.Parse(MMPU.读取exe默认配置文件("DanMuSize", "20"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[默认弹幕大小]:{默认弹幕大小}", InfoLog.InfoClass.Debug);
                 //默认弹幕大小
                 MMPU.播放缓冲时长 = int.Parse(MMPU.读取exe默认配置文件("BufferDuration", "3"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[播放缓冲时长]:{播放缓冲时长}", InfoLog.InfoClass.Debug);
                 //直播缓存目录
                 MMPU.直播缓存目录 = MMPU.读取exe默认配置文件("Livefile", "./tmp/LiveCache/");
+                InfoLog.InfoPrintf($"配置文件初始化任务[直播缓存目录]:{直播缓存目录}", InfoLog.InfoClass.Debug);
                 //播放窗口默认高度
                 MMPU.播放器默认高度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowH", "450"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[播放器默认高度]:{播放器默认高度}", InfoLog.InfoClass.Debug);
                 //播放窗口默认宽度
                 MMPU.播放器默认宽度 = int.Parse(MMPU.读取exe默认配置文件("PlayWindowW", "800"));
+                InfoLog.InfoPrintf($"配置文件初始化任务[播放器默认宽度]:{播放器默认宽度}", InfoLog.InfoClass.Debug);
                 //剪切板监听
-                MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;                             
+                MMPU.剪贴板监听 = MMPU.读取exe默认配置文件("ClipboardMonitoring", "0") == "0" ? false : true;
+                InfoLog.InfoPrintf($"配置文件初始化任务[剪贴板监听]:{剪贴板监听}", InfoLog.InfoClass.Debug);
                 //第一次使用DDTV
                 MMPU.是否第一次使用DDTV = MMPU.读取exe默认配置文件("IsFirstTimeUsing", "1") == "0" ? false :true;
+                InfoLog.InfoPrintf($"配置文件初始化任务[是否第一次使用DDTV]:{是否第一次使用DDTV}", InfoLog.InfoClass.Debug);
                 MMPU.开机自启动 = MMPU.读取exe默认配置文件("BootUp", "0") == "0" ? false : true;
+                InfoLog.InfoPrintf($"配置文件初始化任务[开机自启动]:{开机自启动}", InfoLog.InfoClass.Debug);
             }
             else if (模式 == 1)
             {
                 MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
+                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
                 MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
+                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
+            InfoLog.InfoPrintf($"配置文件初始化任务[数据源]:{数据源}", InfoLog.InfoClass.Debug);
             //是否启动WS连接组
             bilibili.是否启动WSS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
+            InfoLog.InfoPrintf($"配置文件初始化任务[是否启动WSS连接组]:{是否启动WSS连接组}", InfoLog.InfoClass.Debug);
             //转码功能使能
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
+            InfoLog.InfoPrintf($"配置文件初始化任务[转码功能使能]:{转码功能使能}", InfoLog.InfoClass.Debug);
             //检查配置文件
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
             //检查弹幕录制配置
             MMPU.录制弹幕 = MMPU.读取exe默认配置文件("RecordDanmu", "0") == "1" ? true : false;
-           
-           
+            InfoLog.InfoPrintf($"配置文件初始化任务[录制弹幕]:{录制弹幕}", InfoLog.InfoClass.Debug);
+
+
 
             //房间配置文件
             RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
+            InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
+            InfoLog.InfoPrintf($"配置文件初始化任务[下载储存目录]:{下载储存目录}", InfoLog.InfoClass.Debug);
             //直播表刷新默认间隔
             MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
+            InfoLog.InfoPrintf($"配置文件初始化任务[直播列表刷新间隔]:{直播列表刷新间隔}", InfoLog.InfoClass.Debug);
 
 
             //直播更新时间
             MMPU.直播更新时间 = int.Parse(MMPU.读取exe默认配置文件("RoomTime", "20"));
+            InfoLog.InfoPrintf($"配置文件初始化任务[直播更新时间]:{直播更新时间}", InfoLog.InfoClass.Debug);
             if (MMPU.读取exe默认配置文件("DT1", "0") == "0" ? true : false)
             {
                 MMPU.录制弹幕 = false;
@@ -323,7 +363,8 @@ namespace Auxiliary
             try
             {
                 MMPU.Cookie = Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
-                if(!MMPU.Cookie.Contains("=")|| !MMPU.Cookie.Contains(";"))
+                InfoLog.InfoPrintf($"配置文件初始化任务[Cookie]:{Cookie}", InfoLog.InfoClass.Debug);
+                if (!MMPU.Cookie.Contains("=")|| !MMPU.Cookie.Contains(";"))
                 {
                     MMPU.Cookie = "";
                     MMPU.写ini配置文件("User", "Cookie", "", MMPU.BiliUserFile);
@@ -339,12 +380,14 @@ namespace Auxiliary
             }
             //账号UID
             MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
+            InfoLog.InfoPrintf($"配置文件初始化任务[UID]:{UID}", InfoLog.InfoClass.Debug);
             //账号登陆cookie的有效期
             try
             {
                 if (!string.IsNullOrEmpty(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile)))
-                {
+                { 
                     MMPU.CookieEX = DateTime.Parse(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile));
+                    InfoLog.InfoPrintf($"配置文件初始化任务[CookieEX]:{CookieEX}", InfoLog.InfoClass.Debug);
                     if (DateTime.Compare(DateTime.Now, MMPU.CookieEX) > 0)
                     {
                         MMPU.Cookie = "";
@@ -405,6 +448,7 @@ namespace Auxiliary
                 }
             }
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
+            InfoLog.InfoPrintf($"配置文件初始化任务[csrf]:{csrf}", InfoLog.InfoClass.Debug);
         }
         public static void 修改默认音量设置(int A)
         {

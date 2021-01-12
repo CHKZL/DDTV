@@ -290,25 +290,31 @@ namespace Auxiliary.LiveChatScript
             //Console.WriteLine(cmd);
             switch (cmd)
             {
-                case "DANMU_MSG"://弹幕信息
+                //弹幕信息
+                case "DANMU_MSG":
                     MessageReceived(this, new DanmuMessageEventArgs(obj));
                     break;
+                    
                 case "SEND_GIFT":
                     MessageReceived(this, new SendGiftEventArgs(obj));
                     break;
+                    //舰组信息
                 case "GUARD_BUY":
                     //Debug.Log("guraddd\n"+obj);
                     MessageReceived(this, new GuardBuyEventArgs(obj));
                     break;
+                    //欢迎
                 case "WELCOME":
                     MessageReceived(this, new WelcomeEventArgs(obj));
                     break;
                 case "ACTIVITY_BANNER_UPDATE_V2":
                     MessageReceived(this, new ActivityBannerEventArgs(obj));
                     break;
+                    //从来不准的心跳数据
                 case "LiveP":
                     MessageReceived(this, new LivePopularity(obj));
                     break;
+                    //管理员警告
                 case "WARNING":
                     MessageReceived(this, new WarningEventArg(obj));
                     break;

@@ -976,7 +976,10 @@ namespace DDTV_New
                 RoomInit.RoomInfo roomInfo = new RoomInfo();
                 try
                 {
-                    InfoLog.InfoPrintf($"用户双击直播列表：双击房间号{MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString())}", InfoLog.InfoClass.Debug);
+                    runOnLocalThread(() => {
+                        InfoLog.InfoPrintf($"用户双击直播列表：双击房间号{MMPU.获取livelist平台和唯一码.唯一码(LV.SelectedItems[0].ToString())}", InfoLog.InfoClass.Debug);
+                    });
+                    
                 }
                 catch (Exception){}
                
