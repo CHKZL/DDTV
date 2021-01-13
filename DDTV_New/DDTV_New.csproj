@@ -126,6 +126,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Configuration.ConfigurationManager">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.5.0.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
     <Reference Include="System.Reactive, Version=4.4.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.4.4.1\lib\net46\System.Reactive.dll</HintPath>
     </Reference>
@@ -436,7 +439,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="libffmpeg\ffmpeg.exe" />
-    <Content Include="libffmpeg\youtube-dl.exe" />
     <Content Include="libvlc\win-x64\libvlc.dll" />
     <Content Include="libvlc\win-x64\libvlccore.dll" />
     <Content Include="libvlc\win-x64\plugins\access\libaccess_concat_plugin.dll" />
@@ -804,9 +806,6 @@
     <Content Include="libvlc\win-x64\plugins\visualization\libprojectm_plugin.dll" />
     <Content Include="libvlc\win-x64\plugins\visualization\libvisual_plugin.dll" />
     <Resource Include="res\img\sdm.png" />
-    <Resource Include="更新日志\2.0.4.3b.txt" />
-    <Resource Include="更新日志\2.0.4.3a.txt" />
-    <Resource Include="更新日志\2.0.4.1a.txt" />
     <Resource Include="更新日志\UP.txt" />
     <Resource Include="更新日志\2.0.3.3a.txt" />
   </ItemGroup>
