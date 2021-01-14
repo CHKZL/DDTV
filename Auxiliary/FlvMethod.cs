@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -125,14 +126,22 @@ namespace Auxiliary
             {
                 try
                 {
-                    Process process = new Process();                   
-                    process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";  
+                    Process process = new Process();
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";
+                    }
+                    else
+                    {
+                        process.StartInfo.FileName = "ffmpeg";
+                    }
                     process.StartInfo.Arguments = "-i " + Filename + " -vcodec copy -acodec copy " + Filename.Replace(".flv", "") + ".mp4";
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardInput = true;
                     process.StartInfo.RedirectStandardError = true;
+                    process.EnableRaisingEvents = true;
                     process.ErrorDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的信息
                     DateTime beginTime = DateTime.Now;
                     process.Start();
