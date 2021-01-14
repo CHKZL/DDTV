@@ -736,10 +736,12 @@ namespace Auxiliary
         public static string 下载完成合并FLV(DownIofoData downIofo, bool 是否直播结束)
         {
             string filename = string.Empty;
+            string mergedFilename = string.Empty;
             List<string> DelFileList = new List<string>();
             if (downIofo.继承.待合并文件列表.Count>1)
             {
                 filename = downIofo.继承.待合并文件列表[0];
+                mergedFilename = filename.Replace(".flv", "合并.flv");
                
                 for (int i = 0; i< downIofo.继承.待合并文件列表.Count-1; i++)
                 {
@@ -754,7 +756,8 @@ namespace Auxiliary
                     if(string.IsNullOrEmpty(BB))
                     {
                         InfoLog.InfoPrintf($"{downIofo.房间_频道号}:{downIofo.主播名称}因为网络连接不稳定，无法获取文件头，放弃合并该flv",InfoLog.InfoClass.下载必要提示);
-                        return filename;
+                        System.IO.File.Move(filename, mergedFilename);
+                        return mergedFilename;
                     }
                     filename = BB;
                 }
@@ -763,7 +766,8 @@ namespace Auxiliary
             {
                 MMPU.文件删除委托(item, "FLV合并任务");
             }
-            return filename;
+            System.IO.File.Move(filename, mergedFilename);
+            return mergedFilename;
         }
         public static string 转换下载大小数据格式(double size)
         {
