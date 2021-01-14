@@ -45,7 +45,27 @@ web服务端:
 [http://IP:11419/config]：DDTVLiveRec的配置修改命令列表  
 [http://IP:11419/systeminfo]：DDTVLiveRec的系统总览页面
 
+使用Docker启动:
 
+1. 构建Docker镜像：
+
+```bash
+docker build -f DDTVLiveRec/Dockerfile -t ddtv:latest .
+```
+
+2. 运行Docker：
+
+```bash
+docker run -d \
+    --restart always \
+    -p 11419:11419 \
+    -v ${CONFIG_DIR}/BiliUser.ini:/DDTVLiveRec/BiliUser.ini \
+    -v ${CONFIG_DIR}/DDTVLiveRec.dll.config:/DDTVLiveRec/DDTVLiveRec.dll.config \
+    -v ${CONFIG_DIR}/RoomListConfig.json:/DDTVLiveRec/RoomListConfig.json \
+    -v ${DOWNLOAD_DIR}:/DDTVLiveRec/tmp \
+    --name ddtv \
+    ddtv:latest
+```
 
 # 录制配置：RoomListConfig.json说明：
 　　格式和解析方式和DDTV一样，格式为json字符串，releases发布的压缩包里附带了一个参考的文件。  
