@@ -45,7 +45,7 @@ web服务端:
 [http://IP:11419/config]：DDTVLiveRec的配置修改命令列表  
 [http://IP:11419/systeminfo]：DDTVLiveRec的系统总览页面
 
-使用Docker启动:
+如果使用Docker构建:
 
 1. 构建Docker镜像：
 
