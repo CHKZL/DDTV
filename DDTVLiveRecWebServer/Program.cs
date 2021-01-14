@@ -13,7 +13,7 @@ namespace DDTVLiveRecWebServer
     {
         public static void Main(string[] args)
         {
-            Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer启动成功，开始监听{Auxiliary.MMPU.webServer默认监听端口}端口", Auxiliary.InfoLog.InfoClass.下载必要提示);
+            Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer鍚姩鎴愬姛锛屽紑濮嬬洃鍚瑊Auxiliary.MMPU.webServer榛樿鐩戝惉绔彛}绔彛", Auxiliary.InfoLog.InfoClass.涓嬭浇蹇呰鎻愮ず);
             CreateHostBuilder(args).Build().Run();     
         }
 
@@ -21,7 +21,7 @@ namespace DDTVLiveRecWebServer
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>().UseUrls("http://"+Auxiliary.MMPU.webServer默认监听IP+":"+ Auxiliary.MMPU.webServer默认监听端口);
+                    webBuilder.UseStartup<Startup>().UseUrls("http://"+Auxiliary.MMPU.webServer榛樿鐩戝惉IP+":"+ Auxiliary.MMPU.webServer榛樿鐩戝惉绔彛);
                 });
     }
 }
