@@ -1,0 +1,26 @@
+name: DDTVLiveRec
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '5.0.x'
+    - name: Restore dependencies
+      run: cd DDTVLiveRec && dotnet restore
+    - name: Build
+      run: cd DDTVLiveRec && dotnet build --no-restore
