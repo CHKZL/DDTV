@@ -26,6 +26,7 @@ namespace Auxiliary
         public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
         {
+            "增加了在DDTVLiveRec文件列表查看页可以直接播放对应视频的功能",
             "增加检测到新版本后，在WEB的systeminfo界面显示显示新版本更新提示和更新公告内容",
             "增加一种阿B原生API房间直播状态轮询机制；" ,
             "房间配置文件增加对于UID的配置缓存；" ,
@@ -217,6 +218,10 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
+            if(Directory.Exists("./tmp"))
+            {
+                Directory.CreateDirectory("./tmp");
+            }
             InfoLog.InfoPrintf($"配置文件初始化任务[下载储存目录]:{下载储存目录}", InfoLog.InfoClass.Debug);
             //直播表刷新默认间隔
             MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
