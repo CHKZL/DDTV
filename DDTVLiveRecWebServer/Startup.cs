@@ -87,7 +87,7 @@ namespace DDTVLiveRecWebServer
                     string FileUrl = context.Request.Query["FileUrl"];
                     if(!string.IsNullOrEmpty(FileUrl))
                     {
-                        FileUrl= FileUrl.Replace("ddtvfuhaojia", "+").Replace("ddtvfuhaokongge", " ").Replace("ddtvfuhaxiegango", "/").Replace("ddtvfuhaowenhao", "?").Replace("ddtvfuhaobaifenhao", "%").Replace("ddtvfuhaojinhao", "#").Replace("ddtvfuhaoand", "&").Replace("ddtvfuhaobaifenhao", "%");
+                        FileUrl= FileUrl.Replace("ddtvfuhaojia", "%2B").Replace("ddtvfuhaokongge", "%20").Replace("ddtvfuhaxiegango", "%2F").Replace("ddtvfuhaowenhao", "%3F").Replace("ddtvfuhaobaifenhao", "%25").Replace("ddtvfuhaojinhao", "%23").Replace("ddtvfuhaoand", "%26").Replace("ddtvfuhaobaifenhao", "%3D");
                     }
                     string Title = context.Request.Query["Title"];
                     string Prompt = context.Request.Query["Prompt"];
