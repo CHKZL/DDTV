@@ -22,6 +22,7 @@ namespace DDTVLiveRecWebServer
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>().UseUrls("http://"+Auxiliary.MMPU.webServer默认监听IP+":"+ Auxiliary.MMPU.webServer默认监听端口);
+                    //webBuilder.UseStartup<Startup>();
                 });
     }
 }
