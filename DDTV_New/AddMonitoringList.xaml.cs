@@ -122,7 +122,7 @@ namespace DDTV_New
                     {
                         if (item.唯一码 == 唯一码.Text)
                         {
-                            MessageBox.Show("已存在相同的房间号!\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
+                            MessageBox.Show("已存在相同的房间号!\r\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
                             return;
                         }
                     }
@@ -133,7 +133,7 @@ namespace DDTV_New
                     {
                         if (item.唯一码 == 唯一码.Text)
                         {
-                            MessageBox.Show("已存在相同的房间号!\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
+                            MessageBox.Show("已存在相同的房间号!\r\n" + item.名称 + " " + item.平台 + " " + item.唯一码);
                             return;
                         }
                     }

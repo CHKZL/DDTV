@@ -95,6 +95,8 @@ namespace Auxiliary
         public static bool Debug打印到终端 = 开发模式 ? true : false;
         public static bool 强制WSS连接模式 = false;
         public static int 心跳打印间隔 = 180;
+        public static string webadmin验证字符串 = "";
+        public static string webghost验证字符串 = "";
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
@@ -195,6 +197,8 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
                 MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
+                MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", Guid.NewGuid().ToString("X"));
+                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", Guid.NewGuid().ToString("X"));
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
@@ -210,9 +214,6 @@ namespace Auxiliary
             //检查弹幕录制配置
             MMPU.录制弹幕 = MMPU.读取exe默认配置文件("RecordDanmu", "0") == "1" ? true : false;
             InfoLog.InfoPrintf($"配置文件初始化任务[录制弹幕]:{录制弹幕}", InfoLog.InfoClass.Debug);
-
-
-
             //房间配置文件
             RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
             InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
