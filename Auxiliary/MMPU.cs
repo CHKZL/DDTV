@@ -368,7 +368,7 @@ namespace Auxiliary
             try
             {
                 MMPU.Cookie = Encryption.UnAesStr(MMPU.读ini配置文件("User", "Cookie", MMPU.BiliUserFile), MMPU.AESKey, MMPU.AESVal);
-                InfoLog.InfoPrintf($"配置文件初始化任务[Cookie]:{Cookie}", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf($"配置文件初始化任务[Cookie]敏感信息，隐藏内容，信息长度:{Cookie.Length}", InfoLog.InfoClass.Debug);
                 if (!MMPU.Cookie.Contains("=")|| !MMPU.Cookie.Contains(";"))
                 {
                     MMPU.Cookie = "";
@@ -385,14 +385,14 @@ namespace Auxiliary
             }
             //账号UID
             MMPU.UID = MMPU.读ini配置文件("User", "UID", MMPU.BiliUserFile); //string.IsNullOrEmpty(MMPU.读取exe默认配置文件("UID", "")) ? null : MMPU.读取exe默认配置文件("UID", "");
-            InfoLog.InfoPrintf($"配置文件初始化任务[UID]:{UID}", InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf($"配置文件初始化任务[UID]敏感信息，隐藏内容，信息长度:{UID.Length}", InfoLog.InfoClass.Debug);
             //账号登陆cookie的有效期
             try
             {
                 if (!string.IsNullOrEmpty(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile)))
                 { 
                     MMPU.CookieEX = DateTime.Parse(MMPU.读ini配置文件("User", "CookieEX", MMPU.BiliUserFile));
-                    InfoLog.InfoPrintf($"配置文件初始化任务[CookieEX]:{CookieEX}", InfoLog.InfoClass.Debug);
+                    InfoLog.InfoPrintf($"配置文件初始化任务[CookieEX]敏感信息，隐藏内容", InfoLog.InfoClass.Debug);
                     if (DateTime.Compare(DateTime.Now, MMPU.CookieEX) > 0)
                     {
                         MMPU.Cookie = "";
@@ -453,7 +453,7 @@ namespace Auxiliary
                 }
             }
             MMPU.csrf = MMPU.读ini配置文件("User", "csrf", MMPU.BiliUserFile);
-            InfoLog.InfoPrintf($"配置文件初始化任务[csrf]:{csrf}", InfoLog.InfoClass.Debug);
+            InfoLog.InfoPrintf($"配置文件初始化任务[csrf]敏感信息，隐藏内容，信息长度:{csrf.Length}", InfoLog.InfoClass.Debug);
         }
         public static void 修改默认音量设置(int A)
         {
