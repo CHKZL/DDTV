@@ -153,7 +153,7 @@ namespace Auxiliary
                             {
                                 Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
                             }
-                            A = "[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
+                            A = "\r\n[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
 
                         }
                     }
