@@ -156,29 +156,36 @@ namespace Auxiliary
                             {
                                 DataCache.写缓存(DataCache.缓存头.通过UID获取房间号 + item["mid"].ToString(), item["roomid"].ToString());
                             }
-                            foreach (var ROOMCONFIG in rlc.data)
+                            if (rlc.data != null)
                             {
-                                if(item["roomid"].ToString()== ROOMCONFIG.RoomNumber)
+                                foreach (var ROOMCONFIG in rlc.data)
                                 {
-                                    try
+                                    if (item["roomid"].ToString() == ROOMCONFIG.RoomNumber)
                                     {
-                                        if (ROOMCONFIG.UID != long.Parse(item["mid"].ToString()))
+                                        try
                                         {
-                                            ROOMCONFIG.UID = long.Parse(item["mid"].ToString());
-                                            是否需要保存房间配置文件 = true;
-                                            foreach (var BILI in RoomList)
+                                            if (ROOMCONFIG.UID != long.Parse(item["mid"].ToString()))
                                             {
-                                                if(BILI.房间号== ROOMCONFIG.RoomNumber)
+                                                ROOMCONFIG.UID = long.Parse(item["mid"].ToString());
+                                                是否需要保存房间配置文件 = true;
+                                                foreach (var BILI in RoomList)
                                                 {
-                                                    BILI.UID = item["mid"].ToString();
-                                                    break;
+                                                    if (BILI.房间号 == ROOMCONFIG.RoomNumber)
+                                                    {
+                                                        BILI.UID = item["mid"].ToString();
+                                                        break;
+                                                    }
                                                 }
+                                                break;
                                             }
-                                            break;
                                         }
+                                        catch (Exception) { }
                                     }
-                                    catch (Exception){}
                                 }
+                            }
+                            else
+                            {
+                                break;
                             }
                         }
                     }
@@ -193,37 +200,45 @@ namespace Auxiliary
                             是否需要保存房间配置文件 = true;
                         }
                     }
-                    foreach (var ROOMCONFIG in rlc.data)
+                    if (rlc.data != null)
                     {
-                        if (string.IsNullOrEmpty(ROOMCONFIG.UID.ToString()) || ROOMCONFIG.UID.ToString() == "0")
+                        foreach (var ROOMCONFIG in rlc.data)
                         {
-                            string UID = 根据房间号获取房间信息.通过房间号获取UID(ROOMCONFIG.RoomNumber);
-                            try
+                            if (string.IsNullOrEmpty(ROOMCONFIG.UID.ToString()) || ROOMCONFIG.UID.ToString() == "0")
                             {
-                                ROOMCONFIG.UID = long.Parse(UID);
+                                string UID = 根据房间号获取房间信息.通过房间号获取UID(ROOMCONFIG.RoomNumber);
+                                try
+                                {
+                                    ROOMCONFIG.UID = long.Parse(UID);
+                                }
+                                catch (Exception) { }
+                                是否需要保存房间配置文件 = true;
                             }
-                            catch (Exception){}
-                            是否需要保存房间配置文件 = true;
                         }
+                        if (是否需要保存房间配置文件)
+                        {
+                            string JOO = JsonConvert.SerializeObject(rlc);
+                            InfoLog.InfoPrintf($"文件变化:{RoomConfigFile}文件收到储存请求，文件更新，更新文件信息长度:{JOO.Length}", InfoLog.InfoClass.Debug);
+                            StreamWriter file = new System.IO.StreamWriter(RoomConfigFile, false);
+                            //保存数据到文件
+                            file.Write(JOO);
+                            //关闭文件
+                            file.Close();
+                            //释放对象
+                            file.Dispose();
+                        }
+                        break;
                     }
-                    if (是否需要保存房间配置文件)
+                    else
                     {
-                        string JOO = JsonConvert.SerializeObject(rlc);
-                        InfoLog.InfoPrintf($"文件变化:{RoomConfigFile}文件收到储存请求，文件更新，更新文件信息长度:{JOO.Length}", InfoLog.InfoClass.Debug);
-                        StreamWriter file = new System.IO.StreamWriter(RoomConfigFile, false);
-                        //保存数据到文件
-                        file.Write(JOO);
-                        //关闭文件
-                        file.Close();
-                        //释放对象
-                        file.Dispose();
+                        break;
                     }
-                    break;
+                   
                 }
                 catch (Exception e)
                 {
                     完整错误次数++;
-                    InfoLog.InfoPrintf($"VTBS获取RoomList失败，再次重试，已重试次数{完整错误次数}/5,错误堆栈:\n{e.ToString()}", InfoLog.InfoClass.Debug);
+                    InfoLog.InfoPrintf($"VTBS获取RoomList失败，再次重试，已重试次数{完整错误次数}/5,错误堆栈:\r\n{e.ToString()}", InfoLog.InfoClass.Debug);
                 }
                
                 Thread.Sleep(5000);

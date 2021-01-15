@@ -595,9 +595,9 @@ namespace DDTV_New
                     if (MMPU.版本号 != 服务器版本号 && 检测状态)
                     {
                         MessageBoxResult dr = MessageBox.Show(
-                            "检测到版本更新,更新公告:\n"
+                            "检测到版本更新,更新公告:\r\n"
                                 + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100)
-                                + "\n\n点击确定启动自动更新，点击取消忽略",
+                                + "\r\n\r\n点击确定启动自动更新，点击取消忽略",
                             "有新版本",
                             MessageBoxButton.OKCancel,
                             MessageBoxImage.Question);
@@ -901,7 +901,7 @@ namespace DDTV_New
                 if (LV.Items.Count != 0)
                 {
                     已选内容 = LV.SelectedItems[0].ToString();
-                    选中内容1.Content = MMPU.获取livelist平台和唯一码.平台(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.唯一码(已选内容) + "\n" + MMPU.获取livelist平台和唯一码.名称(已选内容);
+                    选中内容1.Content = MMPU.获取livelist平台和唯一码.平台(已选内容) + "\r\n" + MMPU.获取livelist平台和唯一码.唯一码(已选内容) + "\r\n" + MMPU.获取livelist平台和唯一码.名称(已选内容);
                 }
             }
             catch (Exception) { }
@@ -912,7 +912,7 @@ namespace DDTV_New
             try
             {
                 MessageBoxResult dr = MessageBox.Show(
-            "现在DDTV主数据源来自vdb.vtbs.moe，点击确定跳转vtbs网页提交新的数据\r\r提交后等待平台后台同步完成一键导入即可导入新的监控列表\r\rvtbs.moe是一个V圈的分布式DD大数据平台，可以查询直播人气、舰队、V圈宏观经济、直播状态、视频势数据、风云榜等数据\n\nDDTV客户端安装在后台也回把直播数据统计发送到vtbs，帮助vtbs.moe持续运行",
+            "现在DDTV主数据源来自vdb.vtbs.moe，点击确定跳转vtbs网页提交新的数据\r\r提交后等待平台后台同步完成一键导入即可导入新的监控列表\r\rvtbs.moe是一个V圈的分布式DD大数据平台，可以查询直播人气、舰队、V圈宏观经济、直播状态、视频势数据、风云榜等数据\r\n\r\nDDTV客户端安装在后台也回把直播数据统计发送到vtbs，帮助vtbs.moe持续运行",
             "添加新的监控",
             MessageBoxButton.OKCancel,
             MessageBoxImage.Question);
@@ -1123,7 +1123,7 @@ namespace DDTV_New
                 }
                 catch (Exception ex)
                 {
-                    错误窗 ERR = new 错误窗("新建播放窗口发生意外错误，请重试", "新建播放窗口发生意外错误，请重试\n" + ex.ToString());
+                    错误窗 ERR = new 错误窗("新建播放窗口发生意外错误，请重试", "新建播放窗口发生意外错误，请重试\r\n" + ex.ToString());
                     ERR.ShowDialog();
                     return;
                 }
@@ -1635,7 +1635,7 @@ namespace DDTV_New
         {
             if (录制弹幕使能按钮.IsChecked == true)
             {
-                MessageBoxResult dr = MessageBox.Show("该功能可能会导致房间监控失效，并且由于是因为阿B的服务器接口限制问题，暂时无法修复\n如果必须录制，推荐监控列表中就放目标房间，不要放置其他房间\n\n确定要进行弹幕录制吗？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                MessageBoxResult dr = MessageBox.Show("该功能可能会导致房间监控失效，并且由于是因为阿B的服务器接口限制问题，暂时无法修复\r\n如果必须录制，推荐监控列表中就放目标房间，不要放置其他房间\r\n\r\n确定要进行弹幕录制吗？", "警告", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (dr == MessageBoxResult.Yes)
                 {
                     MMPU.录制弹幕 = true;

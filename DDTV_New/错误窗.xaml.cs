@@ -23,7 +23,7 @@ namespace DDTV_New
         {
             InitializeComponent();
             this.Title = 标题;
-            错误内容.AppendText("\n"+内容);
+            错误内容.AppendText("\r\n"+内容);
         }
     }
 }
