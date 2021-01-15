@@ -80,8 +80,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/file", async context =>
@@ -109,8 +108,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 string 播放路径 = "";
@@ -187,8 +185,8 @@ namespace DDTVLiveRecWebServer
                 endpoints.MapGet("/LoginErrer", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
-                    string OUTTEST = "使用WEB端需要验证，验证请访问:<br/>http://IP:"+ Auxiliary.MMPU.webServer默认监听端口+ "/login?ACC=这里填写验证码<br/><br/><br/>注:验证码是DDTVLiveRec.dll.config文件里的[WebAuthenticationGhostPasswrod]和[WebAuthenticationAadminPassword]的value<br/><br/>[WebAuthenticationGhostPasswrod]为游客验证，只能查看/file界面和进行播放预览<br/>[WebAuthenticationAadminPassword]是全功能管理员验证<br/><br/>两个值都能自行修改，修改后请重启DDTVLiveRec";
-                    await context.Response.WriteAsync("验证未通过！<br/><br/>" + OUTTEST, System.Text.Encoding.UTF8);
+                    string OUTTEST = "<br/><br/><br/>使用WEB端需要验证，验证请访问:<br/>http://IP:" + Auxiliary.MMPU.webServer默认监听端口+ "/login?ACC=这里填写验证码<br/><br/><br/>注:验证码是DDTVLiveRec.dll.config文件里的[WebAuthenticationGhostPasswrod]和[WebAuthenticationAadminPassword]的value<br/><br/>[WebAuthenticationGhostPasswrod]为游客验证，只能查看/file界面和进行播放预览<br/>[WebAuthenticationAadminPassword]是全功能管理员验证<br/><br/>两个值都能自行修改，修改后请重启DDTVLiveRec";
+                    await context.Response.WriteAsync("<H1>权限验证失败!!!</H1><br/><br/>" + OUTTEST, System.Text.Encoding.UTF8);
                 });
                 endpoints.MapGet("/list", async context =>
                 {
@@ -199,8 +197,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/wssinfo", async context =>
@@ -212,8 +209,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/systeminfo", async context =>
@@ -238,8 +234,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/config", async context =>
@@ -255,8 +250,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
 
                 });
@@ -271,8 +265,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/config-DanmuRecOff", async context =>
@@ -286,8 +279,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/config-DebugOn", async context =>
@@ -301,8 +293,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/config-DebugOff", async context =>
@@ -315,8 +306,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
                 endpoints.MapGet("/", async context =>
@@ -338,8 +328,7 @@ namespace DDTVLiveRecWebServer
                     }
                     else
                     {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        context.Response.Redirect("LoginErrer");
                     }
                 });
             });

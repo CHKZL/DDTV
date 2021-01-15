@@ -197,8 +197,8 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
                 MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
-                MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", Guid.NewGuid().ToString("X"));
-                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", Guid.NewGuid().ToString("X"));
+                MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", Guid.NewGuid().ToString("N"));
+                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", Guid.NewGuid().ToString("N"));
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
