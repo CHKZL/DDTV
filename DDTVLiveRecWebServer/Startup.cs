@@ -129,7 +129,7 @@ namespace DDTVLiveRecWebServer
                         {
                             Prompt = "这是在播放录制的FLV视频,因为阿B本身推流时间轴和推流方编码设置等因素影响，可能会出现：无法加载视频、无法拖动时间轴、无法显示总时长的问题";
                         }
-                        string fileText = File.ReadAllText("./play.html", System.Text.Encoding.UTF8);
+                        string fileText = Properties.Resources.PlayHtml; //File.ReadAllText("./play.html", System.Text.Encoding.UTF8);
                         fileText = fileText.Replace("%这是标题%", Title);
                         fileText = fileText.Replace("%D这是提示%", Prompt);
                         fileText = fileText.Replace("%播放路径%", FileUrl);
