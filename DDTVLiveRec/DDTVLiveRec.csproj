@@ -22,6 +22,10 @@
     <Folder Include="tmp\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="**\*.html" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
