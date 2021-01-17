@@ -78,5 +78,25 @@ namespace DDTVLiveRecWebServer.Properties {
                 return ResourceManager.GetString("loginHtml", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   查找类似 &lt;!DOCTYPE html&gt;
+        ///&lt;html&gt;
+        ///
+        ///&lt;head&gt;
+        ///    &lt;meta content=&quot;text/html; charset=utf-8&quot; http-equiv=&quot;Content-Type&quot;&gt;
+        ///    &lt;title&gt;%这是标题%&lt;/title&gt;
+        ///    &lt;style&gt;
+        ///        /**
+        ///         * Skipped minification because the original files appears to be already minified.
+        ///         * Do NOT use SRI with dynamically generated files! More information: https://www.jsdelivr.com/using-sri-with-dynamic-files
+        ///         */
+        ///        .chimee-container container{position:relative;display:block;width:100%;height:100%}.chimee-container vide [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        /// </summary>
+        public static string PlayHtml {
+            get {
+                return ResourceManager.GetString("PlayHtml", resourceCulture);
+            }
+        }
     }
 }
