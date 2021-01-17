@@ -25,17 +25,18 @@ namespace Auxiliary
     {
         public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
-        {
+        { 
+            "增加新的房间监控代码和逻辑，所有房间均可监控，不限制数量了",
             "增加了在DDTVLiveRec文件列表查看页可以直接播放对应视频的功能",
+            "增加了web服务的鉴权功能",
+            "增加了web服务的登陆页面(血压升高版UI)",
             "增加检测到新版本后，在WEB的systeminfo界面显示显示新版本更新提示和更新公告内容",
-            "增加一种阿B原生API房间直播状态轮询机制；" ,
+            "增加一种阿B原生API房间直播状态轮询机制；" ,     
+            "增加轮播状态的识别防止误判；" ,
+            "增加混合模式API获取机制和对应的欢迎界面；",
             "房间配置文件增加对于UID的配置缓存；" ,
             "优化缓存系统的格式和统一缓存头标识；" ,
             "缩短直播状态的状态机轮询默认时间；" ,
-            "增加轮播状态的识别防止误判；" ,
-            "增加混合模式API获取机制和对应的欢迎界面；" ,
-            "增加默认数据源状态标识“2”，并默认选择；" ,
-            "优化房间监控状态机，消除房间状态区别壁垒，所有房间均可随意路数监控"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -197,8 +198,9 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
                 MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
-                MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", Guid.NewGuid().ToString("N"));
-                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", Guid.NewGuid().ToString("N"));
+                MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", "admin");
+                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", "ghost");
+                MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationCode", "DDTVLiveRec");
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
