@@ -5,22 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDTV_New.window"
         mc:Ignorable="d"
-        Title="增加监控列表" Height="245" Width="640" MinWidth="640" MinHeight="245" MaxHeight="375" MaxWidth="450">
+        Title="增加监控列表" Height="218.095" Width="300" MinWidth="300" MinHeight="245" MaxHeight="375" MaxWidth="450">
     <Grid>
         <Button Content="保存" HorizontalAlignment="Left" Margin="351,309,0,0" VerticalAlignment="Top" Width="79" Height="25" Click="Button_Click_1" Visibility="Collapsed"/>
-        <TabControl x:Name="选项卡" HorizontalAlignment="Left" Height="193" Margin="10,10,0,0" VerticalAlignment="Top" Width="608">
-            <TabItem Header="VTBS数据(B站关注列表V)一键导入">
+        <TabControl x:Name="选项卡" Margin="10,10,14,11">
+            <TabItem Header="VTBS(关注列表)导入">
                 <Grid Background="White">
-                    <Button Content="根据B站关注列表和VTBS数据一键导入VTB\VUP" HorizontalAlignment="Left" Margin="23,10,0,0" VerticalAlignment="Top" Width="559" Height="67" FontSize="22" Click="一键导入账号关注VTB和VUP_Click"/>
-                    <Label Content="如果导入缺少特定的房间号，那说明vtbs不存在该房间的数据，可以使用“手动添加房间号”的功能" HorizontalAlignment="Left" Margin="23,82,0,0" VerticalAlignment="Top" Height="24" Width="579"/>
-                    <Label Content="当然，如果您愿意到vtbs.moe提交新行的信息那当然更好啦(((感谢您为D国做出的贡献.jpg" HorizontalAlignment="Left" Margin="23,106,0,0" VerticalAlignment="Top" Height="29" Width="579"/>
-                    <Label x:Name="增加房间提示信息" Content="" HorizontalAlignment="Left" Margin="23,135,0,0" VerticalAlignment="Top" Height="29" Width="579" Foreground="Red"/>
+                    <Button Content="B站关注列表和VTBS数据一键导入" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="242" Height="55" FontSize="12" Click="一键导入账号关注VTB和VUP_Click"/>
+                    <Label Content="　　如果导入缺少房间，那说明vtbs没有记录," HorizontalAlignment="Left" Margin="4,70,0,0" VerticalAlignment="Top" Height="24" Width="253"/>
+                    <Label Content="可以使用【手动添加直播间】的功能" HorizontalAlignment="Left" Margin="4,94,0,0" VerticalAlignment="Top" Height="24" Width="253"/>
+                    <Label x:Name="增加房间提示信息" Content="" HorizontalAlignment="Left" Margin="0,118,0,0" VerticalAlignment="Top" Height="29" Width="110" Foreground="Red"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="手动添加其他非V直播间\启动非VTBS记录房间监控">
+            <TabItem Header="手动添加直播间" >
                 <Grid Background="White">
                     <Label Margin="204,0,-42,-75">
-                        <TextBlock TextWrapping="Wrap"
+                        <TextBlock Visibility="Collapsed" TextWrapping="Wrap"
 Text="注意:&#xA;　　勾选后启动WSS连接组，可以监控非VTB直播间状态。&#xA;　　更改需重启生效，该功能会尝试持续连接非常规接口。&#xA;　　添加后会自动在名称后增加'-NV'标识字样，请勿修改&#xA;　　因为阿B防御机制，连接速度越为15秒一个房间也就是说：启动后连接耗时=总列表长度*10秒。&#xA;　　【警告】通过该功能添加的房间最多5个，更多的房间会导致错误，&#xA;因为阿B的服务器限制造成的，在找到解决办法前无法更改&#xA;【如网络质量差开启此功能会造成所有房间监控失败，届时请关闭该功能】" Height="143" Width="397" />
                     </Label>
                     <Label Content="名称(显示和录制生成的文件夹名称)" HorizontalAlignment="Left" Margin="6,18,0,0" VerticalAlignment="Top"/>
@@ -29,7 +29,7 @@ Text="注意:&#xA;　　勾选后启动WSS连接组，可以监控非VTB直播�
                     <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="6,93,0,-37" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
                     <Button Content="添加" HorizontalAlignment="Left" Margin="6,121,0,-67" VerticalAlignment="Top" Width="81" Height="25" Click="Button_Click"/>
                     <Label x:Name="提示" Content="" HorizontalAlignment="Left" Margin="8,144,0,-3" VerticalAlignment="Top" RenderTransformOrigin="0.23,0.392" Foreground="Red"/>
-                    <CheckBox x:Name="监控非VTB直播间使能按钮" Content="打开WSS连接，监控非VTB直播间(非VTBS数据来源)" Margin="204,144,0,0" Click="监控非VTB直播间使能按钮开关点击事件" IsChecked="True"/>
+                    <CheckBox x:Name="监控非VTB直播间使能按钮" Content="打开WSS连接，监控非VTB直播间(非VTBS数据来源)" Margin="204,144,0,0" Click="监控非VTB直播间使能按钮开关点击事件" IsChecked="True" Visibility="Collapsed"/>
                 </Grid>
             </TabItem>
         </TabControl>

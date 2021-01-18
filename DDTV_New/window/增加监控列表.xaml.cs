@@ -139,10 +139,17 @@ namespace DDTV_New.window
 
         private void 一键导入账号关注VTB和VUP_Click(object sender, RoutedEventArgs e)
         {
-            增加房间提示信息.Content = $"正在导入，此期间请勿关闭该窗口.速度会根据关注列表的长度有所变化(一个V大约2秒)...请稍后.....";
+            增加房间提示信息.Content = $"正在导入，请勿关闭该窗口，请稍后";
             AddList.导入VTBVUP((TEXT) =>
             {
-                增加房间提示信息.Content = TEXT;
+                try
+                {
+                    增加房间提示信息.Content = "导入完成,新增:"+TEXT.Split('：')[TEXT.Split('：').Length - 1]+"个";
+                }
+                catch (Exception)
+                {
+                    增加房间提示信息.Content = "导入完成";
+                }
                
             },this,false);
         }
