@@ -1074,7 +1074,6 @@ namespace Auxiliary
         }
         public static void 文件删除委托(string file, string 任务来源)
         {
-
             new Task((() => 
             {
                 int i = 0;
@@ -1093,31 +1092,59 @@ namespace Auxiliary
                             return;
                         }
                         i++;
-                        Thread.Sleep(200);
+                        Thread.Sleep(500);
                     }
                 }
                 catch (Exception)
                 {
+                    return;
                 }
             })).Start();
 
         }
-        public static bool 文件是否正在被使用(string fileName)
-        {
-            bool inUse = true;
-            try
-            {
-                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
-                FileShare.None);
-                fs.Close();
-                inUse = false;
-            }
-            catch
-            {
 
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr _lopen(string lpPathName, int iReadWrite);
+        [DllImport("kernel32.dll")]
+        public static extern bool CloseHandle(IntPtr hObject);
+        public const int OF_READWRITE = 2;
+        public const int OF_SHARE_DENY_NONE = 0x40;
+        public static readonly IntPtr HFILE_ERROR = new IntPtr(-1);
+        /// <summary>
+        /// 文件是否被打开
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool 文件是否正在被使用(string path)
+        {
+            if (!File.Exists(path))
+            {
+                return false;
             }
-            return inUse;//true表示正在使用,false没有使用
+            IntPtr vHandle = _lopen(path, OF_READWRITE | OF_SHARE_DENY_NONE);//windows Api上面有定义扩展方法
+            if (vHandle == HFILE_ERROR)
+            {
+                return true;
+            }
+            CloseHandle(vHandle);
+            return false;
         }
+        //public static bool 文件是否正在被使用(string fileName)
+        //{
+        //    bool inUse = true;
+        //    try
+        //    {
+        //        FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
+        //        FileShare.None);
+        //        fs.Close();
+        //        inUse = false;
+        //    }
+        //    catch
+        //    {
+
+        //    }
+        //    return inUse;//true表示正在使用,false没有使用
+        //}
         /// <summary>
         /// 获得13位的时间戳
         /// </summary>
