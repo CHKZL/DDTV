@@ -265,8 +265,11 @@ namespace PlayW
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             string A = System.IO.Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "libvlc", /*IntPtr.Size == 4 ?*/ "win-x64" /*: "win-x64"*/);
-            this.VlcControl.SourceProvider.CreatePlayer(new DirectoryInfo(A));
-            
+            var options = new string[]
+            {
+                " --avcodec-hw=dxva2",
+            };
+            this.VlcControl.SourceProvider.CreatePlayer(new DirectoryInfo(A), options);
             this.Dispatcher.Invoke(new Action(delegate
             {
                 提示框.Visibility = Visibility.Visible;

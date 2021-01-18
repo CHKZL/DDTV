@@ -58,11 +58,11 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button Content="同步\添加" HorizontalAlignment="Left" Margin="715,405,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
-            <Button Content="录制选中房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
-            <Button Content="修改录制状态" HorizontalAlignment="Left" Margin="716,245,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
-            <Button Content="修改提醒状态" HorizontalAlignment="Left" Margin="717,276,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
-            <Button Content="打开vtbs页面" HorizontalAlignment="Left" Margin="715,381,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>
+            <Button Content="添加房间" HorizontalAlignment="Left" Margin="715,405,0,0" VerticalAlignment="Top" Width="76" Click="一键导入账号关注VTB和VUP_Click"/>
+            <Button Content="手动录该房间" HorizontalAlignment="Left" Margin="714,135,0,0" VerticalAlignment="Top" Width="76" Click="录制按钮点击事件"/>
+            <Button Content="设置自动录制" HorizontalAlignment="Left" Margin="716,245,0,0" VerticalAlignment="Top" Width="76" Click="修改录制状态点击事件"/>
+            <Button Content="设置开播提醒" HorizontalAlignment="Left" Margin="717,276,0,0" VerticalAlignment="Top" Width="76" Click="修改提醒状态点击事件"/>
+            <!--<Button Content="打开vtbs页面" HorizontalAlignment="Left" Margin="715,381,0,0" VerticalAlignment="Top" Width="76" Click="添加直播列表按钮点击事件"/>-->
             <Button Content="修改" HorizontalAlignment="Left" Margin="714,389,0,0" VerticalAlignment="Top" Width="76" Click="修改直播列表按钮点击事件" Visibility="Collapsed"/>
             <Button Content="删除" HorizontalAlignment="Left" Margin="714,354,0,0" VerticalAlignment="Top" Width="76" Click="直播列表删除按钮点击事件" Visibility="Collapsed"/>
             <Button Content="查看下载队列" HorizontalAlignment="Left" Margin="716,49,0,0" VerticalAlignment="Top" Width="75" Click="显示下载队列按钮点击事件"/>

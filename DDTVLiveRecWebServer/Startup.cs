@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
@@ -19,6 +20,10 @@ namespace DDTVLiveRecWebServer
     {
         public static string 返回标签内容 = "<a href=\"./systeminfo\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
         public static string 验证KEY预设 = "DDTVLiveRec";
+        public static string MDtoHTML(string MD)
+        {
+            return CommonMark.CommonMarkConverter.Convert(MD);
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
@@ -44,7 +49,7 @@ namespace DDTVLiveRecWebServer
             app.UseCors();
             app.UseFileServer(new FileServerOptions()//直接开启文件目录访问和文件访问
             {
-                EnableDirectoryBrowsing = false,//开启目录访问
+                EnableDirectoryBrowsing = false,//权限目录访问
                 FileProvider = new PhysicalFileProvider(Environment.CurrentDirectory + @"/tmp"),
                 RequestPath = new PathString("/tmp")
             });
@@ -58,8 +63,17 @@ namespace DDTVLiveRecWebServer
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapGet("/test", async context =>
+                {
+
+                    context.Response.ContentType = "text/html; charset=utf-8";
+                    await context.Response.WriteAsync(MDtoHTML("* 就是一个测试页，你看咩啊？"), System.Text.Encoding.UTF8);
+
+                });
                 endpoints.MapGet("/log", async context =>
                 {
+                    //str:markdown文本
+
                     if (ACCAsync(context, 验证KEY预设) >= 2)
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
@@ -145,7 +159,7 @@ namespace DDTVLiveRecWebServer
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
                     string html = Properties.Resources.loginHtml;
-                    await context.Response.WriteAsync(html, System.Text.Encoding.UTF8);
+                    await context.Response.WriteAsync(MDtoHTML(html), System.Text.Encoding.UTF8);
                 });
                 endpoints.MapGet("/loginACC", async context =>
                 {
