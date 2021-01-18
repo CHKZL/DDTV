@@ -22,6 +22,9 @@ using System.Windows.Forms;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using Auxiliary.LiveChatScript;
+using LibVLCSharp.WPF;
+using LibVLCSharp.Shared;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace PlayW
 {
@@ -39,7 +42,9 @@ namespace PlayW
         public int 刷新次数 = 0;
         private bool 是否已经连接弹幕 = false;
         LiveChatListener listener = new LiveChatListener();
-   
+        private static LibVLC _libVLC;
+        private static MediaPlayer _mediaPlayer;
+
 
 
         /// <summary>
@@ -56,6 +61,12 @@ namespace PlayW
         public MainWindow(Downloader DL, int 默认音量, SolidColorBrush 弹幕颜色, SolidColorBrush 字幕颜色, int 弹幕大小, int 字幕大小, int 宽度, int 高度)
         {
             InitializeComponent();
+            Core.Initialize();
+            _libVLC = new LibVLC();
+            _mediaPlayer = new MediaPlayer(_libVLC);
+
+            VLCV.Loaded += (sender, e) => VLCV.MediaPlayer = _mediaPlayer;
+
             this.Width = 宽度;
             this.Height = 高度;
             窗口是否打开 = true;
@@ -117,6 +128,7 @@ namespace PlayW
                     Play_STOP();
                     //listener.Close();
                     listener.Dispose();
+                    VLCV.MediaPlayer.Stop();
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
                 catch (Exception)
@@ -130,48 +142,60 @@ namespace PlayW
         #region 播放控件事件
         public void Play_STOP()
         {
-            //Aplayer.Close();
-            new Task((() => 
+            new Task((() =>
             {
-                try
+                this.Dispatcher.Invoke(new Action(delegate
                 {
-                    if (VlcControl.SourceProvider.MediaPlayer != null)
+                    try
                     {
-                        this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                        if (VLCV.MediaPlayer.IsPlaying)
+                        {
+                            VLCV.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                        }
                     }
-                }
-                catch (Exception)
-                {
-                }
+                    catch (Exception)
+                    {
+                    }
+                }));
             })).Start();
-
         }
         public void Play_SETVolume(int a)
         {
-            if (VlcControl.SourceProvider.MediaPlayer != null)
+            this.Dispatcher.Invoke(new Action(delegate
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = a;
-            }
-
-            // Aplayer.SetVolume(a);
+                if (VLCV.MediaPlayer.IsPlaying)
+                {
+                    VLCV.MediaPlayer.Volume = a;
+                }
+            }));
         }
         public void Play_Play()
         {
-            if (VlcControl.SourceProvider.MediaPlayer != null)
+            this.Dispatcher.Invoke(new Action(delegate
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Play();
-            }
-
-            //Aplayer.Play();
+                if (VLCV.MediaPlayer.IsPlaying)
+                {
+                    VLCV.MediaPlayer.Play();
+                }
+            }));
         }
         public void Play_Open(string A)
         {
-            if (VlcControl.SourceProvider.MediaPlayer != null) 
+            this.Dispatcher.Invoke(new Action(delegate
             {
-                this.VlcControl.SourceProvider.MediaPlayer.Play(new FileInfo(A));
-            }
-
-            // Aplayer.Open(A);
+                try
+                {
+                    if (!VLCV.MediaPlayer.IsPlaying)
+                    {
+                        using (var media = new Media(_libVLC, A))
+                            VLCV.MediaPlayer.Play(media);
+                    }
+                }
+                catch (Exception e)
+                {
+                    ;
+                }
+            })); 
         }
         #endregion
         public void 增加字幕(string A)
@@ -264,12 +288,15 @@ namespace PlayW
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            string A = System.IO.Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "libvlc", /*IntPtr.Size == 4 ?*/ "win-x64" /*: "win-x64"*/);
-            var options = new string[]
-            {
-                " --avcodec-hw=dxva2",
-            };
-            this.VlcControl.SourceProvider.CreatePlayer(new DirectoryInfo(A), options);
+            //string A = System.IO.Path.Combine(new FileInfo(Assembly.GetEntryAssembly().Location).DirectoryName, "libvlc", /*IntPtr.Size == 4 ?*/ "win-x64" /*: "win-x64"*/);
+            //var options = new string[]
+            //{
+            //    " --avcodec-hw=dxva2",
+            //};
+            //// this.VlcControl.SourceProvider.CreatePlayer(new DirectoryInfo(A), options);
+            ///
+           
+
             this.Dispatcher.Invoke(new Action(delegate
             {
                 提示框.Visibility = Visibility.Visible;
@@ -289,7 +316,7 @@ namespace PlayW
                     DD.Start("直播观看缓冲进行中");
                     DD.DownIofo.备注 = "直播观看缓冲进行中";
                 }
-              
+
                 Thread.Sleep(MMPU.播放缓冲时长 * 1000);
                 this.Dispatcher.Invoke(new Action(delegate
                 {
@@ -302,25 +329,27 @@ namespace PlayW
                         try
                         {
                             Play_SETVolume((int)音量.Value);
-                            //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
+
+                            this.VLCV.MediaPlayer.Volume = (int)音量.Value;
                         }
                         catch (Exception)
                         {
                         }
-                    }));
 
-                    // Aplayer.Open(DD.DownIofo.文件保存路径);
-                    // this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.文件保存路径));
-                    this.VlcControl.SourceProvider.MediaPlayer.EndReached += 播放到达结尾触发事件; ;
-                    Play_Open(DD.DownIofo.文件保存路径);
-                    //Aplayer.OnStateChanged += 播放到达结尾触发事件;  
+
+                        // Aplayer.Open(DD.DownIofo.文件保存路径);
+                        // this.VlcControl.SourceProvider.MediaPlayer.Play(new Uri(DD.DownIofo.文件保存路径));
+                        this.VLCV.MediaPlayer.EndReached += 播放到达结尾触发事件; ;
+                        Play_Open(DD.DownIofo.文件保存路径);
+                        //Aplayer.OnStateChanged += 播放到达结尾触发事件;  
+                    }));
                     播放状态 = true;
                     if (DD.DownIofo.平台 == "bilibili")
                     {
                         //获取弹幕();
                     }
                 }
-                catch (Exception )
+                catch (Exception ex)
                 {
                     ;
                 }
@@ -424,11 +453,11 @@ namespace PlayW
                 }
             })).Start();
         }
-        private void 播放到达结尾触发事件(object sender, Vlc.DotNet.Core.VlcMediaPlayerEndReachedEventArgs e)// AxAPlayer3Lib._IPlayerEvents_OnStateChangedEvent e)
+        private void 播放到达结尾触发事件(object sender, EventArgs e)// AxAPlayer3Lib._IPlayerEvents_OnStateChangedEvent e)
         {
             if (播放状态)
             {
-                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）",false);
+                刷新播放("直播源推流停止或卡顿，正在尝试重连(或延长设置里“默认缓冲时长”的时间）", false);
             }
         }
         /// <summary>
@@ -699,7 +728,13 @@ namespace PlayW
         }
         private void VlcControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
+            try
+            {
+                this.DragMove();
+            }
+            catch (Exception)
+            {
+            }
         }
 
         private void Image_MouseLeftButtonDown_1(object sender, MouseButtonEventArgs e)
@@ -716,11 +751,11 @@ namespace PlayW
                 {
                     try
                     {
-                        if (this.VlcControl.SourceProvider.MediaPlayer != null)
+                        if (this.VLCV.MediaPlayer.IsPlaying)
                         {
-                            this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
+                            this.VLCV.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                         }
-                        this.VlcControl.Dispose();
+                        this.VLCV.Dispose();
                     }
                     catch (Exception)
                     {
