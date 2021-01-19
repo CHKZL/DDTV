@@ -1167,7 +1167,11 @@ namespace DDTV_New
         }
         public void 界面排序(string GUID)
         {
-            if(playList1.Count==1)
+            int 屏幕高度 = Screen.PrimaryScreen.Bounds.Height;
+            int 屏幕宽度 = Screen.PrimaryScreen.Bounds.Width;
+
+            
+            if (playList1.Count==1)
             {
                if(playList1[0].窗口是否打开)
                 {
@@ -1176,15 +1180,97 @@ namespace DDTV_New
             }
             else if (playList1.Count>1&& playList1.Count<5)
             {
-
+                List<int[]> 窗口坐标4 = new List<int[]>();
+                窗口坐标4.Add(new int[] { 0, 0 });
+                窗口坐标4.Add(new int[] { 屏幕宽度 / 2, 0 });
+                窗口坐标4.Add(new int[] { 0, 屏幕高度 / 2 });
+                窗口坐标4.Add(new int[] { 屏幕宽度 / 2, 屏幕高度 / 2 });
+                for (int i =0;i<4;i++)
+                {
+                    if(i>= playList1.Count)
+                    {
+                        break;
+                    }
+                    if (playList1[i].窗口是否打开)
+                    {
+                        playList1[i].设置窗口信息(new SetWindow.窗口信息() { 
+                        宽度= (屏幕宽度 / 2),
+                        高度= (屏幕高度 / 2),
+                        X坐标= 窗口坐标4[i][0],
+                        Y坐标= 窗口坐标4[i][1]
+                        });
+                       
+                    }
+                }
             }
             else if (playList1.Count > 4 && playList1.Count < 10)
             {
+                List<int[]> 窗口坐标9 = new List<int[]>();
+                窗口坐标9.Add(new int[] { 0, 0 });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3), 0 });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3)+(屏幕宽度 / 3), 0 });
+                窗口坐标9.Add(new int[] { 0, (屏幕高度 / 3) });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3), 屏幕高度 / 3 });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3)+ (屏幕宽度 / 3), 屏幕高度 / 3 });
+                窗口坐标9.Add(new int[] { 0, (屏幕高度 / 3)+ (屏幕高度 / 3) });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3), (屏幕高度 / 3) + (屏幕高度 / 3) });
+                窗口坐标9.Add(new int[] { (屏幕宽度 / 3) + (屏幕宽度 / 3), (屏幕高度 / 3)+ (屏幕高度 / 3) });
+                for (int i = 0; i < 9; i++)
+                {
+                    if (i >= playList1.Count)
+                    {
+                        break;
+                    }
+                    if (playList1[i].窗口是否打开)
+                    {
+                        playList1[i].设置窗口信息(new SetWindow.窗口信息()
+                        {
+                            宽度 = (屏幕宽度 / 3),
+                            高度 = (屏幕高度 / 3),
+                            X坐标 = 窗口坐标9[i][0],
+                            Y坐标 = 窗口坐标9[i][1]
+                        });
 
+                    }
+                }
             }
             else if (playList1.Count > 9)
             {
+                List<int[]> 窗口坐标16 = new List<int[]>();
+                窗口坐标16.Add(new int[] { 0, 0 });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4), 0 });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4), 0 });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4) + (屏幕宽度 / 4), 0 });
+                窗口坐标16.Add(new int[] { 0, (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4), 屏幕高度 / 4 });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4), 屏幕高度 / 4 });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4)+ (屏幕宽度 / 4), 屏幕高度 / 4 });
+                窗口坐标16.Add(new int[] { 0, (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4) + (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { 0, (屏幕高度 / 4) + (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) + (屏幕高度 / 4) });
+                窗口坐标16.Add(new int[] { (屏幕宽度 / 4) + (屏幕宽度 / 4) + (屏幕宽度 / 4), (屏幕高度 / 4) + (屏幕高度 / 4) + (屏幕高度 / 4) });
+                for (int i = 0; i < 16; i++)
+                {
+                    if (i >= playList1.Count)
+                    {
+                        break;
+                    }
+                    if (playList1[i].窗口是否打开)
+                    {
+                        playList1[i].设置窗口信息(new SetWindow.窗口信息()
+                        {
+                            宽度 = (屏幕宽度 / 4),
+                            高度 = (屏幕高度 / 4),
+                            X坐标 = 窗口坐标16[i][0],
+                            Y坐标 = 窗口坐标16[i][1]
+                        });
 
+                    }
+                }
             }
         }
         private void 老板键事件(object sender, EventArgs e)
