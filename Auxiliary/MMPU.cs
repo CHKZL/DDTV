@@ -824,23 +824,29 @@ namespace Auxiliary
                                 列表缓存2.Clear();
                                 foreach (var item in result)
                                 {
-                                    if(int.Parse(item["roomid"].ToString())!=0)
+                                    try
                                     {
-                                        列表缓存2.Add(new 列表加载缓存
+                                        if (int.Parse(item["roomid"].ToString()) != 0)
                                         {
-                                            编号 = A,
-                                            roomId = item["roomid"].ToString(),
-                                            名称 = item["uname"].ToString(),
-                                            官方名称 = item["uname"].ToString(),
-                                            平台 = "bilibili",
-                                            UID = item["mid"].ToString(),
-                                            类型 = "V"
-                                        }) ;
-                                        A++;
+                                            列表缓存2.Add(new 列表加载缓存
+                                            {
+                                                编号 = A,
+                                                roomId = item["roomid"].ToString(),
+                                                名称 = item["uname"].ToString(),
+                                                官方名称 = item["uname"].ToString(),
+                                                平台 = "bilibili",
+                                                UID = item["mid"].ToString(),
+                                                类型 = "V"
+                                            });
+                                            A++;
+                                        }
+                                        else
+                                        {
+                                            ;
+                                        }
                                     }
-                                    else
+                                    catch (Exception)
                                     {
-                                        ;
                                     }
                                 }
                                 列表缓存1 = 列表缓存2;
@@ -888,7 +894,7 @@ namespace Auxiliary
                                 //    }
                                 //}
                             }
-                            catch (Exception)
+                            catch (Exception E)
                             {
                                 是否正在缓存 = false;
                             }
