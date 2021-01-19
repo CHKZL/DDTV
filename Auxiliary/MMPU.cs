@@ -1062,6 +1062,20 @@ namespace Auxiliary
                 SetProcessWorkingSetSize(System.Diagnostics.Process.GetCurrentProcess().Handle, -1, -1);
             }
         }
+        public static void 清空播放缓存()
+        {
+            new Thread(new ThreadStart(delegate {
+                try
+                {
+                    FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
+                    foreach (var item in files)
+                    {
+                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name, "启动/关闭DDTV清空LiveCache缓存文件");
+                    }
+                }
+                catch (Exception) { }
+            })).Start();
+        }
         public static void 文件删除委托(string file, string 任务来源)
         {
             new Task((() => 

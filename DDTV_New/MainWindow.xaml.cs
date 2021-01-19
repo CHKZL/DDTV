@@ -799,19 +799,8 @@ namespace DDTV_New
         }
         public static void DDTV关闭事件()
         {
-            NewThreadTask.Run(() =>
-            {
-                try
-                {
-                    FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
-                    foreach (var item in files)
-                    {
-                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name,"DDTV关闭清空LiveCache缓存文件");
-                    }
-                }
-                catch (Exception) { }
-                Environment.Exit(0);
-            });
+            MMPU.清空播放缓存();
+            Environment.Exit(0);
         }
         NotifyIcon notifyIcon;
         private void 最小化按钮_Click(object sender, MouseButtonEventArgs e)
