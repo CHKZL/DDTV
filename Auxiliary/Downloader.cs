@@ -70,8 +70,7 @@ namespace Auxiliary
             public bool 网络超时 { set; get; } = false;
             public double 已下载大小bit { set; get; }
             public string 已下载大小str { set; get; }
-            public string 文件保存路径 { set; get; }
-            
+            public string 文件保存路径 { set; get; }          
             public string 事件GUID { set; get; }
             public string 备注 { set; get; }
             public int 开始时间 { set; get; }
@@ -666,17 +665,17 @@ namespace Auxiliary
                     {
                         DownIofo.下载状态 = false;
                         下载对象 = Downloader.新建下载对象(
-                                                               DownIofo.平台,
-                                                               DownIofo.房间_频道号,
-                                                               bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号),
-                                                               Guid.NewGuid().ToString(),
-                                                               bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号),
-                                                               "前一个下载出现异常，新建下载",
-                                                               DownIofo.是否保存,
-                                                               DownIofo.主播名称,
-                                                               false,
-                                                               DownIofo.文件保存路径
-                                                               );
+                            DownIofo.平台,
+                            DownIofo.房间_频道号,
+                            bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号),
+                            Guid.NewGuid().ToString(),
+                            bilibili.根据房间号获取房间信息.下载地址(DownIofo.房间_频道号),
+                            "前一个下载出现异常，新建下载",
+                            DownIofo.是否保存,
+                            DownIofo.主播名称,
+                            false,
+                            DownIofo.文件保存路径
+                            );
                     }
                     catch (Exception)
                     {

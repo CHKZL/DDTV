@@ -34,17 +34,17 @@ namespace PlayW
     public partial class MainWindow : Window
     {
         public Downloader DD { set; get; }
-        public bool 播放状态 = false;
-        public bilibili.danmu DM = new bilibili.danmu();
-        public bool 弹幕使能 = false;
-        public bool 字幕使能 = false;
+        private bool 播放状态 = false;
+        private bilibili.danmu DM = new bilibili.danmu();
+        private bool 弹幕使能 = false;
+        private bool 字幕使能 = false;
         public bool 窗口是否打开 = false;
-        public int 刷新次数 = 0;
+        private int 刷新次数 = 0;
         private bool 是否已经连接弹幕 = false;
         LiveChatListener listener = new LiveChatListener();
         private static LibVLC _libVLC;
         private static MediaPlayer _mediaPlayer;
-
+        private SetWindow.窗口信息 窗口信息 = new SetWindow.窗口信息();
 
 
         /// <summary>
@@ -64,11 +64,22 @@ namespace PlayW
             Core.Initialize();
             _libVLC = new LibVLC();
             _mediaPlayer = new MediaPlayer(_libVLC);
-
             VLCV.Loaded += (sender, e) => VLCV.MediaPlayer = _mediaPlayer;
-
             this.Width = 宽度;
             this.Height = 高度;
+
+            this.Title = DL.DownIofo.标题;
+            窗口信息 = new SetWindow.窗口信息()
+            {
+                GUID = Guid.NewGuid().ToString(),
+                X坐标 = this.Left,
+                Y坐标 = this.Top,
+                宽度 = this.Width,
+                高度 = this.Height,
+                标题 = this.Title
+            };
+            
+            
             窗口是否打开 = true;
             音量.Value = 默认音量;
             this.Closed += 关闭窗口事件;
@@ -83,7 +94,7 @@ namespace PlayW
             弹幕.字体大小 = 弹幕大小;
             DD.DownIofo.文件保存路径 =   "./tmp/LiveCache/" + DL.DownIofo.标题 + DL.DownIofo.事件GUID + "_" + 刷新次数 + ".flv";
             DD.DownIofo.继承 = new Downloader.继承();
-            this.Title = DL.DownIofo.标题;
+           
             设置框.Visibility = Visibility.Collapsed;
             关闭框.Visibility = Visibility.Collapsed;
             if (MMPU.第一次打开播放窗口)
@@ -116,8 +127,77 @@ namespace PlayW
             }
 
         }
+        private void 更新窗口信息()
+        {
+            try
+            {
+                窗口信息.X坐标 = this.Left;
+                窗口信息.Y坐标 = this.Top;
+                窗口信息.宽度 = this.Width;
+                窗口信息.高度 = this.Height;
+                窗口信息.标题 = this.Title;
+            }
+            catch (Exception){}
+        }
+        public SetWindow.窗口信息 获取窗口信息()
+        {
+            更新窗口信息();
+            SetWindow.窗口信息 SW = new SetWindow.窗口信息()
+            {
+                X坐标 = this.Left,
+                Y坐标 = this.Top,
+                宽度 = this.Width,
+                高度 = this.Height,
+                标题=窗口信息.标题,
+                GUID=窗口信息.GUID     
+            };
+            return SW;
+        }
+        public bool 设置窗口信息(SetWindow.窗口信息 SW)
+        {
+            try
+            {
+                if (SW.X坐标 > 0)
+                {
+                    this.Left = SW.X坐标;
+                }
+                if (SW.Y坐标 > 0)
+                {
+                    this.Top = SW.Y坐标;
+                }
+                if (SW.宽度 > 0)
+                {
+                    this.Width = SW.宽度;
+                }
+                if (SW.高度 > 0)
+                {
+                    this.Height = SW.高度;
+                }
+                if (!string.IsNullOrEmpty(SW.标题))
+                {
+                    this.Title = SW.标题;
+                }
 
-
+                if (this.Height != LastHeight)
+                {
+                    this.Width = this.Height * 1.75;
+                }
+                else
+                {
+                    this.Height = this.Width / 1.75;
+                }
+                //LastWidth = (int)this.Width;
+                LastHeight = (int)this.Height;
+                更新窗口信息();
+                return true;
+            }
+            catch (Exception)
+            {
+                更新窗口信息();
+                return false;
+            }
+        }
+        
         private void 关闭窗口事件(object sender, EventArgs e)
         {
             播放状态 = false;
@@ -198,7 +278,7 @@ namespace PlayW
             })); 
         }
         #endregion
-        public void 增加字幕(string A)
+        private void 增加字幕(string A)
         {
             int 显示的字幕数 = 3;
             int Len = 0;
@@ -241,7 +321,7 @@ namespace PlayW
                 }
             }));
         }
-        public void 增加弹幕(string A)
+        private void 增加弹幕(string A)
         {
             int 显示的弹幕数 = 30;
             int Len = 0;
@@ -693,26 +773,7 @@ namespace PlayW
             //全屏回车
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
             {
-                if (this.WindowState == WindowState.Normal)
-                {
-                    this.WindowState = WindowState.Maximized;
-                }
-                else if (this.WindowState == WindowState.Maximized)
-                {
-                    this.WindowState = WindowState.Normal;
-                }
-                if (字幕.字幕位置 != (int)this.Width / 100 * (int)字幕位置.Value)
-                {
-                    字幕.字幕位置 = (int)this.Width / 100 * (int)字幕位置.Value;
-                    if (字幕.FontSize > 50)
-                    {
-                        字幕.FontSize = 1;
-                    }
-                    else
-                    {
-                        字幕.FontSize++;
-                    }
-                }
+                设置全屏();
             }
             //F5刷新
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
@@ -724,6 +785,29 @@ namespace PlayW
                     刷新播放("检测到F5按下,刷新中..",true);
                 }).Start();
 
+            }
+        }
+        public void 设置全屏()
+        {
+            if (this.WindowState == WindowState.Normal)
+            {
+                this.WindowState = WindowState.Maximized;
+            }
+            else if (this.WindowState == WindowState.Maximized)
+            {
+                this.WindowState = WindowState.Normal;
+            }
+            if (字幕.字幕位置 != (int)this.Width / 100 * (int)字幕位置.Value)
+            {
+                字幕.字幕位置 = (int)this.Width / 100 * (int)字幕位置.Value;
+                if (字幕.FontSize > 50)
+                {
+                    字幕.FontSize = 1;
+                }
+                else
+                {
+                    字幕.FontSize++;
+                }
             }
         }
         private void VlcControl_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -993,6 +1077,13 @@ namespace PlayW
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             关闭窗口();
+        }
+
+        public delegate void 播放窗口自动排序委托(string playbool);
+        public event 播放窗口自动排序委托 播放窗口自动排序事件; 
+        private void 播放窗口自动排列按钮_Click(object sender, RoutedEventArgs e)
+        {
+            播放窗口自动排序事件(窗口信息.GUID);
         }
     }
 }

@@ -26,17 +26,7 @@ namespace Auxiliary
         public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
         { 
-            "增加新的房间监控代码和逻辑，所有房间均可监控，不限制数量了",
-            "增加了在DDTVLiveRec文件列表查看页可以直接播放对应视频的功能",
-            "增加了web服务的鉴权功能",
-            "增加了web服务的登陆页面(血压升高版UI)",
-            "增加检测到新版本后，在WEB的systeminfo界面显示显示新版本更新提示和更新公告内容",
-            "增加一种阿B原生API房间直播状态轮询机制；" ,     
-            "增加轮播状态的识别防止误判；" ,
-            "增加混合模式API获取机制和对应的欢迎界面；",
-            "房间配置文件增加对于UID的配置缓存；" ,
-            "优化缓存系统的格式和统一缓存头标识；" ,
-            "缩短直播状态的状态机轮询默认时间；" ,
+            "当前没有更新内容"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -307,7 +297,7 @@ namespace Auxiliary
                         {
                             if (LIP != NIP&& IsCorrectIP(LIP)&& IsCorrectIP(NIP))
                             {
-                                InfoLog.InfoPrintf($"■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■\n检测到系统网络中断，多个DDTV录制中的线程抛出无法处理的异常\n这个错误是由于网络环境变化引起的，不是由DDTV引起的，一般是由于光猫、路由器重启或者电信重新拨号引起的，DDTV无法处理该异常\n网络中断若干时间且外网地址由\n{LIP}变化为{NIP}，网络错误前的任务将冻结任务建立新的续命任务，恢复后新建立的任务正常录制\n■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■", InfoLog.InfoClass.系统错误信息);
+                                InfoLog.InfoPrintf($"■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■\n检测到系统网络中断，多个DDTV录制中的线程抛出无法处理的异常\n这个错误是由于网络环境变化引起的，不是由DDTV引起的，一般是由于光猫、路由器重启或者宽带重新拨号引起的，DDTV无法处理该异常\n网络中断若干时间且外网地址由\n{LIP}变化为{NIP}，网络错误前的任务将冻结任务建立新的续命任务，恢复后新建立的任务正常录制\n■■■■■■■■■■■■■■■■■■■■■■■■■■■ERROR!错误警告！■■■■■■■■■■■■■■■■■■■■■■■■■■■", InfoLog.InfoClass.系统错误信息);
                                 try
                                 {
                                     foreach (var item in Auxiliary.MMPU.DownList)
