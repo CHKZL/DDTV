@@ -157,11 +157,11 @@ namespace PlayW
         {
             try
             {
-                if (SW.X坐标 > 0)
+                if (SW.X坐标 >= 0)
                 {
                     this.Left = SW.X坐标;
                 }
-                if (SW.Y坐标 > 0)
+                if (SW.Y坐标 >= 0)
                 {
                     this.Top = SW.Y坐标;
                 }
@@ -178,15 +178,15 @@ namespace PlayW
                     this.Title = SW.标题;
                 }
 
-                if (this.Height != LastHeight)
-                {
-                    this.Width = this.Height * 1.75;
-                }
-                else
+                //if (this.Height != LastHeight)
+                //{
+                //    this.Width = this.Height * 1.75;
+                //}
+                if (this.Width != LastWidth)
                 {
                     this.Height = this.Width / 1.75;
                 }
-                //LastWidth = (int)this.Width;
+                LastWidth = (int)this.Width;
                 LastHeight = (int)this.Height;
                 更新窗口信息();
                 return true;
@@ -696,7 +696,7 @@ namespace PlayW
             }
         }
 
-        // private int LastWidth;
+        private int LastWidth;
         private int LastHeight;
         protected override void OnSourceInitialized(EventArgs e)
         {
@@ -718,11 +718,11 @@ namespace PlayW
                         {
                             this.Width = this.Height * 1.75;
                         }
-                        else
+                        if (this.Width != LastWidth)
                         {
                             this.Height = this.Width / 1.75;
                         }
-                        //LastWidth = (int)this.Width;
+                        LastWidth = (int)this.Width;
                         LastHeight = (int)this.Height;
                         break;
                     }
