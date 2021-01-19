@@ -14,7 +14,7 @@
                     <Button Content="B站关注列表和VTBS数据一键导入" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="242" Height="55" FontSize="12" Click="一键导入账号关注VTB和VUP_Click"/>
                     <Label Content="　　如果导入缺少房间，那说明vtbs没有记录," HorizontalAlignment="Left" Margin="4,70,0,0" VerticalAlignment="Top" Height="24" Width="253"/>
                     <Label Content="可以使用【手动添加直播间】的功能" HorizontalAlignment="Left" Margin="4,94,0,0" VerticalAlignment="Top" Height="24" Width="253"/>
-                    <Label x:Name="增加房间提示信息" Content="" HorizontalAlignment="Left" Margin="0,118,0,0" VerticalAlignment="Top" Height="29" Width="110" Foreground="Red"/>
+                    <Label x:Name="增加房间提示信息" Content="" HorizontalAlignment="Left" Margin="0,118,0,0" VerticalAlignment="Top" Height="29" Width="252" Foreground="Red"/>
                 </Grid>
             </TabItem>
             <TabItem Header="手动添加直播间" >
