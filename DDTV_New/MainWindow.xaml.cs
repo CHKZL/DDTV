@@ -642,6 +642,7 @@ namespace DDTV_New
             }, this);
 
         }
+
         private void 刷新房间列表UI(Action<Action> runOnLocalThread)
         {
             if (!MMPU.已经提示wss连接错误 && MMPU.wss连接错误的次数 > 3)
@@ -1132,14 +1133,6 @@ namespace DDTV_New
         }
         public void 打开直播列表(Downloader DL)
         {
-            //System.Diagnostics.Process p = new System.Diagnostics.Process();
-            //p.StartInfo.FileName = @"D:\Program Files (x86)\Pure Codec\x64\PotPlayerMini64.exe";//需要启动的程序名       
-            //p.StartInfo.Arguments = " \""+DL.DownIofo.下载地址+"\"";//启动参数       
-            //p.Start();//启动       
-
-            //return;
-
-
             if (DL != null)
             {
                 DL.DownIofo.播放状态 = true;
@@ -1149,6 +1142,7 @@ namespace DDTV_New
                     case 1:
                         {
                             PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.播放器默认宽度, MMPU.播放器默认高度);
+                            PlayWindow.播放窗口自动排序事件 += new PlayW.MainWindow.播放窗口自动排序委托(界面排序);
                             PlayWindow.Closed += 播放窗口退出事件;
                             PlayWindow.Show();
                             PlayWindow.BossKey += 老板键事件;
@@ -1164,11 +1158,6 @@ namespace DDTV_New
                             break;
                         }
                 }
-                // PlayW.MainWindow PlayWindow = new PlayW.MainWindow(DL, MMPU.默认音量, 弹幕颜色, 字幕颜色, MMPU.默认弹幕大小, MMPU.默认字幕大小, MMPU.PlayWindowW, MMPU.PlayWindowH);
-
-
-
-                // MMPU.ClearMemory();
             }
             else
             {
@@ -1176,7 +1165,28 @@ namespace DDTV_New
                 return;
             }
         }
+        public void 界面排序(string GUID)
+        {
+            if(playList1.Count==1)
+            {
+               if(playList1[0].窗口是否打开)
+                {
+                    playList1[0].设置全屏();
+                }
+            }
+            else if (playList1.Count>1&& playList1.Count<5)
+            {
 
+            }
+            else if (playList1.Count > 4 && playList1.Count < 10)
+            {
+
+            }
+            else if (playList1.Count > 9)
+            {
+
+            }
+        }
         private void 老板键事件(object sender, EventArgs e)
         {
             this.WindowState = WindowState.Minimized;
@@ -2083,5 +2093,6 @@ namespace DDTV_New
         {
             MessageBox.Show("修改房间配置文件请使用DDTV文件夹里的【DDTVRoomConfig.exe】房间配置修改工具进行修改\r或者直接修改[RoomListConfig.json]文件\r修改前请关闭DDTV本体");
         }
+        
     }
 }

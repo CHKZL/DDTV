@@ -8,8 +8,8 @@
         Title="播放器" Height="720" Width="1280" Loaded="Window_Loaded"
          KeyDown="MainWindows_Keydown" WindowStyle="None"  Closing="Window_Closing">
 
-    <vlc:VideoView x:Name="VLCV" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="鼠标滚轮事件">
-        <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="鼠标滚轮事件">
+    <vlc:VideoView x:Name="VLCV" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="鼠标滚轮事件" KeyDown="MainWindows_Keydown">
+        <Grid MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="鼠标滚轮事件" KeyDown="MainWindows_Keydown">
             <!--<vlc:VlcControl x:Name="VlcControl" MouseLeftButtonDown="VlcControl_MouseLeftButtonDown" />-->
             <Grid x:Name="鼠标操作" Background="#02FFFFFF" RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>
@@ -54,7 +54,7 @@
                     <Slider x:Name="弹幕透明度" Margin="81,-52,0,70" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="146" Maximum="1" SmallChange="0.01" MouseMove="弹幕透明度_MouseMove" Value="0.7" LargeChange="0.5" TickFrequency="0.01" />
                     <Label Content="弹幕透明度:" Margin="0,0,0,65" Foreground="White" FontSize="13" HorizontalAlignment="Left" Width="81" Height="31" VerticalAlignment="Bottom"/>
                     <Label Content="音量:" Margin="0,0,0,3" Foreground="White" FontSize="16" HorizontalAlignment="Left" Width="81" Height="31" VerticalAlignment="Bottom"/>
-
+                    <Button x:Name="播放窗口自动排列按钮" Content="一键播放窗口自动排列" HorizontalAlignment="Right" Height="25" Margin="0,0,197,5" VerticalAlignment="Bottom" Width="140" Click="播放窗口自动排列按钮_Click"/>
                 </Grid>
                 <Label Content="显示/隐藏设置窗口→" Margin="0,0,30,3" Foreground="White" FontSize="16" HorizontalAlignment="Right" Width="162" Height="31" VerticalAlignment="Bottom"/>
                 <Label x:Name="非win10提示"  Content="检测到非WIN10系统,禁用弹幕/字幕功能" Margin="0,0,942,132" Foreground="White" FontSize="16" HorizontalAlignment="Right" Width="320" Height="32" VerticalAlignment="Bottom"/>
