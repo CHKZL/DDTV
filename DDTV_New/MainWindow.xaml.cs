@@ -1283,21 +1283,28 @@ namespace DDTV_New
                             {
                                 PlayW.MainWindow p = (PlayW.MainWindow)sender;
                                 playList1.Remove(p);
-                                foreach (var item in MMPU.DownList)
+                                try
                                 {
-                                    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
-                                    {
-                                        item.DownIofo.WC.CancelAsync();
-                                        item.DownIofo.下载状态 = false;
-                                        item.DownIofo.备注 = "播放窗口关闭，停止下载";
-                                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                        if (!item.DownIofo.是否保存)
-                                        {
-                                            MMPU.文件删除委托(p.DD.DownIofo.文件保存路径,"关闭播放窗口，删除LiveCache缓存文件");
-                                        }
-                                        break;
-                                    }
+                                    p.DD.DownIofo.WC.DownloadProgressChanged += 下载窗口已经关闭时回收下载对象;
+                                    p.DD.DownIofo.WC.CancelAsync();
+                                    p.DD.DownIofo.下载状态 = false;
+                                    p.DD.DownIofo.备注 = "播放窗口关闭，停止下载";
+                                    p.DD.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                 }
+                                catch (Exception) { }
+                                if (!p.DD.DownIofo.是否保存)
+                                {
+                                    MMPU.文件删除委托(p.DD.DownIofo.文件保存路径, "关闭播放窗口，删除LiveCache缓存文件");
+                                }
+                                //foreach (var item in MMPU.DownList)
+                                //{
+                                //    if (item.DownIofo.事件GUID == p.DD.DownIofo.事件GUID)
+                                //    {
+                                       
+                                       
+                                //        break;
+                                //    }
+                                //}
                                 break;
                             }
                         case 2:
@@ -1331,6 +1338,12 @@ namespace DDTV_New
                     InfoLog.InfoPrintf("关闭播放窗口出现错误:"+e.ToString(), InfoLog.InfoClass.Debug);
                 }
             });
+        }
+
+        private void 下载窗口已经关闭时回收下载对象(object sender, DownloadProgressChangedEventArgs e)
+        {
+            WebClient WC = (WebClient)sender;
+            WC.CancelAsync();
         }
 
         private void 直播列表删除按钮点击事件(object sender, RoutedEventArgs e)

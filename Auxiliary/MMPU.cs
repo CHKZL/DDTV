@@ -853,13 +853,23 @@ namespace Auxiliary
                                     try
                                     {
                                         InfoLog.InfoPrintf("网络房间缓存vtbs加载失败", InfoLog.InfoClass.Debug);
-                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/vtbsroomlist.json", 12000);
+                                        roomHtml = 返回网页内容_GET("https://raw.githubusercontent.com/CHKZL/DDTV2/master/Auxiliary/DDcenter/VtbsList.json", 12000);
                                         InfoLog.InfoPrintf("网络房间缓存github加载完成", InfoLog.InfoClass.Debug);
                                     }
                                     catch (Exception)
-                                    {
-                                        InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
-                                        roomHtml = File.ReadAllText("VtbsList.json");
+                                    {            
+                                        try
+                                        {
+                                            InfoLog.InfoPrintf("网络房间缓存github加载失败", InfoLog.InfoClass.Debug);
+                                            roomHtml = TcpSend(Server.RequestCode.GET_VTBSROOMLIST, "{}", true, 1500);
+                                            InfoLog.InfoPrintf("DDTV服务器加载房间缓存成功", InfoLog.InfoClass.Debug);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            InfoLog.InfoPrintf("DDTV服务器加载房间缓存失败", InfoLog.InfoClass.Debug);
+                                            roomHtml = File.ReadAllText("VtbsList.json");
+                                            InfoLog.InfoPrintf("本地文件缓存加载房间缓存成功", InfoLog.InfoClass.Debug);
+                                        }
                                     }
                                 }
                                 JArray result = JArray.Parse(roomHtml);
