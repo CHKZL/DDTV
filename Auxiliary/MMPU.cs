@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using static Auxiliary.bilibili;
+using System.Drawing;
 
 namespace Auxiliary
 { 
@@ -1502,7 +1503,29 @@ namespace Auxiliary
             else
                 return b;
         }
-
+        ///获取当前系统的dpi数值
+        public static void SystemDpi(out int x, out int y)
+        {
+            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+            {
+                x = (int)g.DpiX;
+                y = (int)g.DpiY;
+                g.Dispose();
+            }
+        }
+        ///根据当前系统dpi数值匹配 当前系统的桌面缩放比例
+        public static double Scaling(int DpiIndex)
+        {
+            switch (DpiIndex)
+            {
+                case 96: return 1;
+                case 120: return 1.25;
+                case 144: return 1.5;
+                case 168: return 1.75;
+                case 192: return 2;
+            }
+            return 1;
+        }
         public class UA
         {
             [SuppressMessage("ReSharper", "InconsistentNaming")]
