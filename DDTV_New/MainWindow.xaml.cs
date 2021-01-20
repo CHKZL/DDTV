@@ -24,6 +24,9 @@ using DDTV_New.Utility;
 using System.Diagnostics;
 using DDTV_New.window;
 using System.Configuration;
+using System.Drawing;
+using System.Windows.Interop;
+using Color = System.Windows.Media.Color;
 
 namespace DDTV_New
 {
@@ -1156,8 +1159,10 @@ namespace DDTV_New
         }
         public void 界面排序(string GUID)
         {
-            int 屏幕高度 = Screen.PrimaryScreen.Bounds.Height;
-            int 屏幕宽度 = Screen.PrimaryScreen.Bounds.Width;
+            Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixRatio = currentGraphics.DpiX / 96;
+            int 屏幕高度 = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Height/ dpixRatio);
+            int 屏幕宽度 = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Width/ dpixRatio);
 
             
             if (playList1.Count==1)
