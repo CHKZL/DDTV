@@ -217,7 +217,8 @@ namespace PlayW
 
                     try
                     {
-                        _mediaPlayer.Dispose();
+                        //不能回收这玩意，回收了最后启动的一个实例就会挂掉，奇了个怪
+                        //_mediaPlayer.Dispose();
                     }
                     catch (Exception) { }
                     try
@@ -229,7 +230,7 @@ namespace PlayW
                     {
                         VLCV.Dispose();
                     }
-                    catch (Exception){}
+                    catch (Exception) { }
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
                 catch (Exception)
