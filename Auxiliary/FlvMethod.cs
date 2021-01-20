@@ -92,20 +92,20 @@ namespace Auxiliary
                     fs2.Dispose();
                     fsMerge.Close();
                     fsMerge.Dispose();
-                    if (是否直播结束)
-                    {
-                        try
-                        {
-                            转码(output);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    }
-                    else
-                    {
-                        GC.Collect();
-                    }
+                    //if (是否直播结束)
+                    //{
+                    //    try
+                    //    {
+                    //        转码(output);
+                    //    }
+                    //    catch (Exception)
+                    //    {
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    GC.Collect();
+                    //}
                     return output;
                 }
                 else

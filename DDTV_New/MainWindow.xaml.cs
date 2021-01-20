@@ -189,11 +189,7 @@ namespace DDTV_New
                      Thread.Sleep(1000);
                  }
 
-             }, this);
-            new Task(() =>
-            {
-
-            }).Start();
+             }, this);       
         }
 
         /// <summary>
@@ -650,8 +646,8 @@ namespace DDTV_New
                 MMPU.已经提示wss连接错误 = !MMPU.已经提示wss连接错误;
                 InfoLog.InfoPrintf($"网络状态不佳，多次尝试保持房间监控长连接失败，请关闭非VTBS数据来源房间监控，因为多次被阿B服务器拒绝连接，部分房间状态监控更新已停止", InfoLog.InfoClass.系统错误信息);
                 runOnLocalThread(() => {
-                    MMPU.弹窗.Add(30000,"网络连接失败/网络质量差", "网络状态不佳，多次尝试保持房间监控长连接失败，请关闭非VTBS数据来源房间监控，因为多次被阿B服务器拒绝连接，部分房间状态监控更新已停止。");
-                    全局提示.Content = $"多次尝试连接阿B服务器均失败，网络状态不佳，部分房间监控已停止。点击我去关闭非VTBS数据源房间监控";
+                    //MMPU.弹窗.Add(30000,"网络连接失败/网络质量差", "网络状态不佳，多次尝试保持房间监控长连接失败，请关闭非VTBS数据来源房间监控，因为多次被阿B服务器拒绝连接，部分房间状态监控更新已停止。");
+                    //全局提示.Content = $"多次尝试连接阿B服务器均失败，网络状态不佳，部分房间监控已停止。点击我去关闭非VTBS数据源房间监控";
                     全局提示.Visibility = Visibility.Visible;
                     全局提示.MouseDown += 全局提示_MouseDown;
                 });
@@ -832,11 +828,11 @@ namespace DDTV_New
             {
                 BalloonTipText = "DDTV已启动", //设置程序启动时显示的文本
                 Text = "DDTV",//最小化到托盘时，鼠标点击时显示的文本
-                Icon = DDTV_New.Properties.Resources.DDTV,//程序图标
+                Icon = Properties.Resources.DDTV,//程序图标
                 Visible = true
             };
             notifyIcon.MouseDoubleClick += OnNotifyIconDoubleClick;
-            this.notifyIcon.ShowBalloonTip(1000);
+            this.notifyIcon.ShowBalloonTip(3000);
         }
         private void OnNotifyIconDoubleClick(object sender, EventArgs e)
         {
