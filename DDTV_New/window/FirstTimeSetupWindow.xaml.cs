@@ -124,7 +124,7 @@ namespace DDTV_New.window
                 {
                     上一步按钮.IsEnabled = false;
                     下一步按钮.IsEnabled = false;
-                    导入VTBVUP提示文本.Text = "正在导入关注列表里符合的VTB/VUP数据，速度会根据关注列表的长度有所变化(一个V大约2秒)　　　　　　　　　　　　　　　　　请勿关闭软件，请稍候……";
+                    导入VTBVUP提示文本.Text = "正在导入关注列表里符合的VTB/VUP数据，速度会根据关注列表的长度有所变化(大约10秒200个)　　　　　　　　　　　　　　　　　请勿关闭软件，请稍候……";
                     AddList.导入VTBVUP((TEXT) =>
                     {
                         导入VTBVUP提示文本.Text = $"{TEXT}";
