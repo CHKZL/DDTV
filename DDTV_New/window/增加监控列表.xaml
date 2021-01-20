@@ -23,12 +23,12 @@
                         <TextBlock Visibility="Collapsed" TextWrapping="Wrap"
 Text="注意:&#xA;　　勾选后启动WSS连接组，可以监控非VTB直播间状态。&#xA;　　更改需重启生效，该功能会尝试持续连接非常规接口。&#xA;　　添加后会自动在名称后增加'-NV'标识字样，请勿修改&#xA;　　因为阿B防御机制，连接速度越为15秒一个房间也就是说：启动后连接耗时=总列表长度*10秒。&#xA;　　【警告】通过该功能添加的房间最多5个，更多的房间会导致错误，&#xA;因为阿B的服务器限制造成的，在找到解决办法前无法更改&#xA;【如网络质量差开启此功能会造成所有房间监控失败，届时请关闭该功能】" Height="143" Width="397" />
                     </Label>
-                    <Label Content="名称(显示和录制生成的文件夹名称)" HorizontalAlignment="Left" Margin="6,18,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="名称" HorizontalAlignment="Left" Height="23" Margin="6,43,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
-                    <Label Content="房间号(直播间的房间号)" HorizontalAlignment="Left" Margin="6,68,0,-14" VerticalAlignment="Top"/>
-                    <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="6,93,0,-37" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
-                    <Button Content="添加" HorizontalAlignment="Left" Margin="6,121,0,-67" VerticalAlignment="Top" Width="81" Height="25" Click="Button_Click"/>
-                    <Label x:Name="提示" Content="" HorizontalAlignment="Left" Margin="8,144,0,-3" VerticalAlignment="Top" RenderTransformOrigin="0.23,0.392" Foreground="Red"/>
+                    <Label Content="名称(显示和录制生成的文件夹名称)" HorizontalAlignment="Left" Margin="6,8,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="名称" HorizontalAlignment="Left" Height="23" Margin="6,33,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+                    <Label Content="房间号(直播间的房间号)" HorizontalAlignment="Left" Margin="6,58,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="唯一码" HorizontalAlignment="Left" Height="23" Margin="6,83,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="197"/>
+                    <Button Content="添加" HorizontalAlignment="Left" Margin="6,111,0,0" VerticalAlignment="Top" Width="81" Height="25" Click="Button_Click"/>
+                    <Label x:Name="提示" Content="" HorizontalAlignment="Left" Margin="6,131,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.23,0.392" Foreground="Red"/>
                     <CheckBox x:Name="监控非VTB直播间使能按钮" Content="打开WSS连接，监控非VTB直播间(非VTBS数据来源)" Margin="204,144,0,0" Click="监控非VTB直播间使能按钮开关点击事件" IsChecked="True" Visibility="Collapsed"/>
                 </Grid>
             </TabItem>
