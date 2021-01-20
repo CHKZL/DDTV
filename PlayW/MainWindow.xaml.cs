@@ -250,7 +250,7 @@ namespace PlayW
                 {
                     try
                     {
-                        if (窗口是否打开 && VLCV.MediaPlayer.IsPlaying)
+                        if (VLCV.MediaPlayer.IsPlaying)
                         {
                             VLCV.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                         }
@@ -290,7 +290,15 @@ namespace PlayW
                     if (窗口是否打开&&!VLCV.MediaPlayer.IsPlaying)
                     {
                         using (var media = new Media(_libVLC, A))
-                            VLCV.MediaPlayer.Play(media);
+                            do
+                            {
+
+                            } while (!VLCV.MediaPlayer.Play(media));
+                        do
+                        {
+                            Play_SETVolume((int)音量.Value);
+                        } while (!VLCV.MediaPlayer.IsPlaying);
+                        
                     }
                 }
                 catch (Exception e)
