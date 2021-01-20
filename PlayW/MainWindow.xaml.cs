@@ -208,7 +208,28 @@ namespace PlayW
                     Play_STOP();
                     //listener.Close();
                     listener.Dispose();
-                    VLCV.MediaPlayer.Stop();
+
+                    try
+                    {
+                        VLCV.MediaPlayer.Dispose();
+                    }
+                    catch (Exception) { }
+
+                    try
+                    {
+                        _mediaPlayer.Dispose();
+                    }
+                    catch (Exception) { }
+                    try
+                    {
+                        _libVLC.Dispose();
+                    }
+                    catch (Exception) { }
+                    try
+                    {
+                        VLCV.Dispose();
+                    }
+                    catch (Exception){}
                     //this.VlcControl.SourceProvider.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                 }
                 catch (Exception)
@@ -228,7 +249,7 @@ namespace PlayW
                 {
                     try
                     {
-                        if (VLCV.MediaPlayer.IsPlaying)
+                        if (窗口是否打开 && VLCV.MediaPlayer.IsPlaying)
                         {
                             VLCV.MediaPlayer.Stop();//这里要开线程处理，不然会阻塞播放
                         }
@@ -243,7 +264,7 @@ namespace PlayW
         {
             this.Dispatcher.Invoke(new Action(delegate
             {
-                if (VLCV.MediaPlayer.IsPlaying)
+                if (窗口是否打开 && VLCV.MediaPlayer.IsPlaying)
                 {
                     VLCV.MediaPlayer.Volume = a;
                 }
@@ -253,7 +274,7 @@ namespace PlayW
         {
             this.Dispatcher.Invoke(new Action(delegate
             {
-                if (VLCV.MediaPlayer.IsPlaying)
+                if (窗口是否打开 && VLCV.MediaPlayer.IsPlaying)
                 {
                     VLCV.MediaPlayer.Play();
                 }
@@ -265,7 +286,7 @@ namespace PlayW
             {
                 try
                 {
-                    if (!VLCV.MediaPlayer.IsPlaying)
+                    if (窗口是否打开&&!VLCV.MediaPlayer.IsPlaying)
                     {
                         using (var media = new Media(_libVLC, A))
                             VLCV.MediaPlayer.Play(media);
@@ -404,13 +425,15 @@ namespace PlayW
                 }));
                 try
                 {
+                    if(!窗口是否打开)
+                    {
+                        return;
+                    }
                     this.Dispatcher.Invoke(new Action(delegate
                     {
                         try
                         {
                             Play_SETVolume((int)音量.Value);
-
-                            this.VLCV.MediaPlayer.Volume = (int)音量.Value;
                         }
                         catch (Exception)
                         {
