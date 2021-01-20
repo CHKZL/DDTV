@@ -43,16 +43,15 @@ namespace DDTV_New.window
                 try
                 {
                     roomId = int.Parse(唯一码.Text);
-                    if (roomId < 10001)
-                    { 
-                        string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(roomId.ToString());
-                        if(!string.IsNullOrEmpty(roomDD))
-                        {
-                            roomId = int.Parse(roomDD);
-                        }
+
+                    string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(roomId.ToString());
+                    if (!string.IsNullOrEmpty(roomDD))
+                    {
+                        roomId = int.Parse(roomDD);
                     }
                 }
-                catch (Exception){
+                catch (Exception)
+                {
 
                     MessageBox.Show("输入的直播间房间号不符合房间号规则(数字)");
                     return;
@@ -83,7 +82,14 @@ namespace DDTV_New.window
                     }
                     catch (Exception){}
                 }
-                
+                if(UID<1)
+                {
+                    try
+                    {
+                        UID = long.Parse(bilibili.根据房间号获取房间信息.通过房间号获取UID(roomId.ToString()));
+                    }
+                    catch (Exception){}
+                }
                
                 RB.data.Add(new RoomCadr() { Name = 名称.Text , OfficialName = 名称.Text , RoomNumber = roomId.ToString(),UID= UID });
                 string JOO = JsonConvert.SerializeObject(RB);

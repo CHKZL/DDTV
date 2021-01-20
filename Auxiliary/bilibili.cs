@@ -411,11 +411,6 @@ namespace Auxiliary
             {
                 try
                 {
-                    if(item.UID== "408490081")
-                    {
-                        ;
-                    }
-
                     int 状态 = (int)JO["data"][item.UID]["live_status"];
                     
                     if (状态 == 0)
