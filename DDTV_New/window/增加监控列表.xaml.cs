@@ -85,10 +85,10 @@ namespace DDTV_New.window
                 }
                 
                
-                RB.data.Add(new RoomCadr() { Name = 名称.Text + "-NV", OfficialName = 名称.Text + "-NV", RoomNumber = roomId.ToString(),UID= UID });
+                RB.data.Add(new RoomCadr() { Name = 名称.Text , OfficialName = 名称.Text , RoomNumber = roomId.ToString(),UID= UID });
                 string JOO = JsonConvert.SerializeObject(RB);
                 MMPU.储存文本(JOO, RoomConfigFile);
-                提示.Content = 名称.Text + "-NV["+ 唯一码.Text + "]添加完成";
+                提示.Content = 名称.Text + "["+ 唯一码.Text + "]添加完成";
                 bilibili.已连接的直播间状态.Add(new 直播间状态() { 房间号= roomId });
                 
                 bilibili.RoomList.Add(new RoomInfo
@@ -99,9 +99,9 @@ namespace DDTV_New.window
                     是否录制视频 = false,
                     UID = UID.ToString(),
                     直播开始时间 = "",
-                    名称 = 名称.Text + "-NV",
+                    名称 = 名称.Text ,
                     直播状态 = false,
-                    原名 = 名称.Text + "-NV",
+                    原名 = 名称.Text ,
                     是否提醒 = false,
                     平台 = "bilibili"
                 });

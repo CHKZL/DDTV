@@ -92,6 +92,8 @@ namespace Auxiliary
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
 
+        public static List<string> DeleteFileList = new List<string>();
+
         /// <summary>
         /// 配置文件初始化
         /// </summary>
@@ -181,6 +183,7 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[是否第一次使用DDTV]:{是否第一次使用DDTV}", InfoLog.InfoClass.Debug);
                 MMPU.开机自启动 = MMPU.读取exe默认配置文件("BootUp", "0") == "0" ? false : true;
                 InfoLog.InfoPrintf($"配置文件初始化任务[开机自启动]:{开机自启动}", InfoLog.InfoClass.Debug);
+                清空播放缓存();
             }
             else if (模式 == 1)
             {
@@ -256,8 +259,48 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"房间配置文件加载过程中发生错误，文件格式不符合要求，请检查文件内容。错误堆栈:\n{e.ToString()}", InfoLog.InfoClass.系统错误信息);
             }
             DokiDoki(模式);
+            文件删除后台委托();
             Downloader.轮询检查下载任务();
             return true;
+        }
+        public static void 文件删除后台委托()
+        {
+            new Thread(new ThreadStart(delegate
+            {
+                while (true)
+                {
+                    try
+                    {
+                       DEL: if(DeleteFileList.Count>0)
+                        {
+                            foreach (var item in DeleteFileList)
+                            {
+                                if (File.Exists(item))
+                                {
+                                    if (!文件是否正在被使用(item))
+                                    {
+                                        try
+                                        {
+                                            File.Delete(item);
+                                            InfoLog.InfoPrintf($"后台文件处理池{item}删除委托完成", InfoLog.InfoClass.Debug);
+                                            DeleteFileList.Remove(item);
+                                            goto DEL;
+                                        }
+                                        catch (Exception) { }  
+                                    }
+                                }
+                                else
+                                {
+                                    DeleteFileList.Remove(item);
+                                    goto DEL;
+                                } 
+                            }
+                        }
+                    }
+                    catch (Exception) { }
+                    Thread.Sleep(5000);
+                }
+            })).Start();
         }
         /// <summary>
         /// 心跳和检测网络环境变动
@@ -1073,10 +1116,13 @@ namespace Auxiliary
             new Thread(new ThreadStart(delegate {
                 try
                 {
-                    FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
-                    foreach (var item in files)
+                    if (Directory.Exists("./tmp/LiveCache/"))
                     {
-                        MMPU.文件删除委托("./tmp/LiveCache/" + item.Name, "启动/关闭DDTV清空LiveCache缓存文件");
+                        FileInfo[] files = new DirectoryInfo("./tmp/LiveCache/").GetFiles();
+                        foreach (var item in files)
+                        {
+                            MMPU.文件删除委托("./tmp/LiveCache/" + item.Name, "启动/关闭DDTV清空LiveCache缓存文件");
+                        }
                     }
                 }
                 catch (Exception) { }
@@ -1086,23 +1132,21 @@ namespace Auxiliary
         {
             new Task((() => 
             {
-                int i = 0;
                 try
                 {
                     while (true)
                     {
-                        if (i > 10)
-                        {
-                            return;
-                        }
                         if (!文件是否正在被使用(file))
                         {
-                            InfoLog.InfoPrintf($"收到文件删除委托任务，来自:{任务来源}，删除文件:{file}", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf($"收到文件删除委托任务，来自:{任务来源}，删除文件:{file}", InfoLog.InfoClass.Debug);
                             File.Delete(file);
                             return;
                         }
-                        i++;
-                        Thread.Sleep(500);
+                        else
+                        {
+                            InfoLog.InfoPrintf($"来自:{任务来源}的文件:{file}删除委托失败，文件还在使用中，已将删除任务委托给后台文件处理池", InfoLog.InfoClass.Debug);
+                            DeleteFileList.Add(file);
+                        }
                     }
                 }
                 catch (Exception)
@@ -1113,31 +1157,27 @@ namespace Auxiliary
 
         }
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr _lopen(string lpPathName, int iReadWrite);
-        [DllImport("kernel32.dll")]
-        public static extern bool CloseHandle(IntPtr hObject);
-        public const int OF_READWRITE = 2;
-        public const int OF_SHARE_DENY_NONE = 0x40;
-        public static readonly IntPtr HFILE_ERROR = new IntPtr(-1);
+
         /// <summary>
         /// 文件是否被打开
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public static bool 文件是否正在被使用(string path)
+        public static bool 文件是否正在被使用(string fileName)
         {
-            if (!File.Exists(path))
+            bool inUse = true;
+            try
             {
-                return false;
+                FileStream fs = new FileStream(fileName, FileMode.Open, FileAccess.Read,
+                FileShare.None);
+                fs.Close();
+                inUse = false;
             }
-            IntPtr vHandle = _lopen(path, OF_READWRITE | OF_SHARE_DENY_NONE);//windows Api上面有定义扩展方法
-            if (vHandle == HFILE_ERROR)
+            catch
             {
-                return true;
+
             }
-            CloseHandle(vHandle);
-            return false;
+            return inUse;//true表示正在使用,false没有使用
         }
         //public static bool 文件是否正在被使用(string fileName)
         //{
