@@ -35,7 +35,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.5.0c";
+        public static string 版本号 = "2.0.5.0d";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
         public static string[] 不检测的版本号 = { };
         public static bool 第一次打开播放窗口 = true;
