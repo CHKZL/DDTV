@@ -1140,23 +1140,24 @@ namespace Auxiliary
         }
         public static void 文件删除委托(string file, string 任务来源)
         {
-            new Task((() =>
+            new Task((() => 
             {
                 try
                 {
-
-                    if (!文件是否正在被使用(file))
+                    while (true)
                     {
-                        InfoLog.InfoPrintf($"收到文件删除委托任务，来自:{任务来源}，删除文件:{file}", InfoLog.InfoClass.Debug);
-                        File.Delete(file);
-                        return;
+                        if (!文件是否正在被使用(file))
+                        {
+                            InfoLog.InfoPrintf($"收到文件删除委托任务，来自:{任务来源}，删除文件:{file}", InfoLog.InfoClass.Debug);
+                            File.Delete(file);
+                            return;
+                        }
+                        else
+                        {
+                            InfoLog.InfoPrintf($"来自:{任务来源}的文件:{file}删除委托失败，文件还在使用中，已将删除任务委托给后台文件处理池", InfoLog.InfoClass.Debug);
+                            DeleteFileList.Add(file);
+                        }
                     }
-                    else
-                    {
-                        InfoLog.InfoPrintf($"来自:{任务来源}的文件:{file}删除委托失败，文件还在使用中，已将删除任务委托给后台文件处理池", InfoLog.InfoClass.Debug);
-                        DeleteFileList.Add(file);
-                    }
-
                 }
                 catch (Exception)
                 {
