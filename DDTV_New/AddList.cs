@@ -125,6 +125,7 @@ namespace DDTV_New
                     string JOO = JsonConvert.SerializeObject(RB);
                     MMPU.储存文本(JOO, RoomConfigFile);
                     InitializeRoomList(0, false, false);
+
                     runOnLocalThread(() =>
                     {
                         callback("导入成功！原有:"+ 已经存在的数量 + "个，新增VTB/VUP数："+ 增加的数量);
