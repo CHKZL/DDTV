@@ -412,7 +412,6 @@ namespace Auxiliary
                 try
                 {
                     int 状态 = (int)JO["data"][item.UID]["live_status"];
-                    
                     if (状态 == 0)
                     {
                         item.直播状态 = false;
