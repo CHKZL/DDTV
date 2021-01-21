@@ -996,10 +996,11 @@ namespace Auxiliary
         {
             try
             {
-                WebClient wcl = new WebClient();
+                NewWebClient myWebClient = new NewWebClient(1 * 1000);
+                //wcl.Timeout = 1000;
                 Stopwatch spwatch = new Stopwatch();
                 spwatch.Start();
-                byte[] resultBytes = wcl.DownloadData(new Uri(Url));
+                byte[] resultBytes = myWebClient.DownloadData(new Uri(Url));
                 spwatch.Stop();
                 return spwatch.Elapsed.TotalMilliseconds;
             }
@@ -1007,6 +1008,42 @@ namespace Auxiliary
             {
 
                 return -1;
+            }
+        }
+        public class NewWebClient : WebClient
+        {
+            private int _timeout;
+
+            /// <summary>
+            /// 超时时间(毫秒)
+            /// </summary>
+            public int Timeout
+            {
+                get
+                {
+                    return _timeout;
+                }
+                set
+                {
+                    _timeout = value;
+                }
+            }
+
+            public NewWebClient()
+            {
+                this._timeout = 60000;
+            }
+
+            public NewWebClient(int timeout)
+            {
+                this._timeout = timeout;
+            }
+
+            protected override WebRequest GetWebRequest(Uri address)
+            {
+                var result = base.GetWebRequest(address);
+                result.Timeout = this._timeout;
+                return result;
             }
         }
         public class 弹窗提示

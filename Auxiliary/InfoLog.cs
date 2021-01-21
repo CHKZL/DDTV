@@ -142,66 +142,73 @@ namespace Auxiliary
         }
         public static void InfoPrintf(string mess, InfoClass Class)
         {
-            string A = string.Empty;
-            switch (Class)
+            try
             {
-                case InfoClass.Debug:
-                    {
-                        if (ClasslBool.Debug)
+                string A = string.Empty;
+                switch (Class)
+                {
+                    case InfoClass.Debug:
                         {
-                            if(MMPU.Debug打印到终端)
+                            if (ClasslBool.Debug)
                             {
-                                Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                                if (MMPU.Debug打印到终端)
+                                {
+                                    Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                                }
+                                A = "\r\n[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
+
                             }
-                            A = "\r\n[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
+                        }
+                        break;
+                    case InfoClass.系统错误信息:
+                        {
+                            if (ClasslBool.系统错误信息)
+                            {
+                                Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
+                                    "\r\n[SysteErrorInfo]: " + mess +
+                                    "\r\n=========SysteErrorInfoEnd=========");
 
-                        }
-                    }
-                    break;
-                case InfoClass.系统错误信息:
-                    {
-                        if (ClasslBool.系统错误信息)
-                        {
-                            Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
-                                "\r\n[SysteErrorInfo]: " + mess +
-                                "\r\n=========SysteErrorInfoEnd=========");
+                                A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
 
-                            A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
-
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.杂项提示:
-                    {
-                        if (ClasslBool.杂项提示)
+                        break;
+                    case InfoClass.杂项提示:
                         {
-                            Console.WriteLine("[Info]: " + mess);
-                            A = "\r\n[Info]: " + mess;
+                            if (ClasslBool.杂项提示)
+                            {
+                                Console.WriteLine("[Info]: " + mess);
+                                A = "\r\n[Info]: " + mess;
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.下载必要提示:
-                    {
-                        if (ClasslBool.下载必要提示)
+                        break;
+                    case InfoClass.下载必要提示:
                         {
-                            Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                            A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            if (ClasslBool.下载必要提示)
+                            {
+                                Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            }
                         }
-                    }
-                    break;
-                case InfoClass.没啥价值的消息:
-                    {
-                        if (ClasslBool.没啥价值的消息)
+                        break;
+                    case InfoClass.没啥价值的消息:
                         {
-                            Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                            A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            if (ClasslBool.没啥价值的消息)
+                            {
+                                Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            }
                         }
-                    }
-                    break;
+                        break;
+                }
+                if (ClasslBool.输出到文件 && A.Length > 2)
+                {
+                    OutToFile(A);
+                }
             }
-            if (ClasslBool.输出到文件 && A.Length > 2)
+            catch (Exception e)
             {
-                OutToFile(A);
+                Console.WriteLine("消息推送系统发生致命错误:\r\n" + e.ToString());
             }
         }
         public static void OutToFile(string str)

@@ -15,11 +15,22 @@ namespace Auxiliary.VTBS
         /// </summary>
         public class VTBS服务器CDN
         {
-            public static string VTBS_Url = "https://api.tokyo.vtbs.moe";
+            public static string VTBS_Url = "https://api.vtbs.moe";
             public static void 根据CDN更新VTBS_Url()
             {
                 new Task(()=> {
-                    string CDN_Url = MMPU.返回网页内容("https://api.tokyo.vtbs.moe/meta/cdn");
+                    string CDN_Url = "";
+                    try
+                    {
+                        CDN_Url = MMPU.返回网页内容("https://api.vtbs.moe/meta/cdn");
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    if(string.IsNullOrEmpty(CDN_Url))
+                    {
+                        CDN_Url = MMPU.返回网页内容("https://api.tokyo.vtbs.moe/meta/cdn");
+                    }
                     JArray JO = string.IsNullOrEmpty(CDN_Url) ? (JArray)JsonConvert.DeserializeObject("[]") : (JArray)JsonConvert.DeserializeObject(CDN_Url);
                     List<延迟对象> PING = new List<延迟对象>();
                     foreach (var item in JO)
@@ -45,7 +56,7 @@ namespace Auxiliary.VTBS
                     for(int i=0;i<num+1.0;i++)
                     {
                         double T = MMPU.测试延迟(item.CDN_URL + "/v1/vtbs");
-                        double 延迟 = T > 0 ? T : 1000.0;
+                        double 延迟 = T > 0 ? T : 10000.0;
                         if(i!=0)
                         {
                             item.延迟总计数 += 延迟;

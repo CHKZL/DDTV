@@ -16,7 +16,7 @@
 
 
         </Grid>
-        <Grid x:Name="home" Width="800" Height="515" Visibility="Collapsed" >
+        <Grid x:Name="home" Width="800" Height="515"  >
             <Image Source="res/img/home_ba.png" Stretch="Fill" Width="800" Height="515" Margin="0,-30,0,30"/>
             <Image Margin="317,127,283,188" Source="res/ico/right.png" Stretch="Fill"/>
             <Label x:Name="TabTextLabel" Margin="142,98,140,377" VerticalAlignment="Center" Height="40" HorizontalAlignment="Center" Width="518" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" FontSize="24"/>
@@ -76,7 +76,7 @@
             <Button x:Name="修改房间信息按钮" Content="修改房间信息" HorizontalAlignment="Left" Margin="714,470,0,0" VerticalAlignment="Top" Width="76" Click="修改房间信息按钮_Click"/>
             <Label Content="双击列表内容开始播放" HorizontalAlignment="Left" Margin="664,485,0,0" VerticalAlignment="Top"/>
         </Grid>
-        <Grid x:Name="设置层">
+        <Grid x:Name="设置层" Visibility="Collapsed">
             <Label Content="播放窗口默认音量" Margin="25,71,657,416" RenderTransformOrigin="0.508,0.821"/>
             <Label x:Name="默认音量值显示" Content="100" Margin="392,72,378,417" RenderTransformOrigin="0.508,0.821" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <TextBox x:Name="默认下载路径" Margin="143,99,237,390" Text="AAAA" VerticalContentAlignment="Center" IsEnabled="False" />
