@@ -18,7 +18,8 @@ namespace DDTVLiveRecWebServer
 {
     public class Startup
     {
-        public static string 返回标签内容 = "<a href=\"./systeminfo\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
+        public static string 返回标签内容 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
+        public static string 配置修改标签 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
         public static string 验证KEY预设 = "DDTVLiveRec";
         public static string MDtoHTML(string MD)
         {
@@ -141,7 +142,7 @@ namespace DDTVLiveRecWebServer
 
                         if (string.IsNullOrEmpty(Prompt))
                         {
-                            Prompt = "这是在播放录制的FLV视频,因为阿B本身推流时间轴和推流方编码设置等因素影响，可能会出现：无法加载视频、无法拖动时间轴、无法显示总时长的问题";
+                            Prompt = "因为阿B本身推流时间轴和推流方编码设置等因素影响，可能会出现：无法加载视频、无法拖动时间轴、无法显示总时长的问题<br/>(注：默认录制文件夹为./tmp，如果修改了录制文件夹路径，则不支持在线播放，问就是因为UseFileServer安全限制，不能用相对路径)";
                         }
                         string fileText = File.ReadAllText("./play.html", System.Text.Encoding.UTF8);
                         fileText = fileText.Replace("%这是标题%", Title);
@@ -192,7 +193,7 @@ namespace DDTVLiveRecWebServer
                         case 2:
                             {
                                 LoginInputCookie(context, KEY);
-                                context.Response.Redirect("systeminfo");
+                                context.Response.Redirect("/");
                                 break;
                             }
                         default:
@@ -232,41 +233,29 @@ namespace DDTVLiveRecWebServer
                         context.Response.Redirect("LoginErrer");
                     }
                 });
-                endpoints.MapGet("/systeminfo", async context =>
-                {
-                    if (ACCAsync(context, 验证KEY预设) >= 2)
-                    {
-                        context.Response.ContentType = "text/html; charset=utf-8";
-                        string 跳转url = "<a href=\"./list\"><input type=\"button\" value='下载详情'></a>   " +
-                        "<a href =\"./file\"><input type=\"button\" value='下载文件列表'></a>   " +
-                        "<a href =\"./log\"><input type=\"button\" value='日志'></a>   " +
-                        "<a href =\"./config\"><input type=\"button\" value='可修改配置'></a>   " +
-                        "<a href =\"./wssinfo\"><input type=\"button\" value='特殊wss连接列表'></a>   " +
-                        "<br/><br/>";
-                        if (Auxiliary.MMPU.启动模式 == 1)
-                        {
-                            await context.Response.WriteAsync(跳转url + Auxiliary.InfoLog.GetSystemInfo());
-                        }
-                        else if (Auxiliary.MMPU.启动模式 == 2)
-                        {
-
-                        }
-                    }
-                    else
-                    {
-                        context.Response.Redirect("LoginErrer");
-                    }
-                });
+                
                 endpoints.MapGet("/config", async context =>
                 {
                     if (ACCAsync(context, 验证KEY预设) >= 2)
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync(返回标签内容 + "访问以下链接以修改配置:<br/>(修改后请重启DDTVLiveRec生效)<br/>" +
+                        string HTML = 返回标签内容;
+                        string command = context.Request.Query["command"];
+                        switch (command)
+                        {
+                            case "":
+                                {
+                                    break;
+                                }
+                            default:
+                                HTML += "访问以下链接以修改配置:<br/>(修改后请重启DDTVLiveRec生效)<br/>" +
                             "<br/>打开弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOn" +
                             "<br/>关闭弹幕/礼物/舰队录制储存IP:11419/config-DanmuRecOff" +
                             "<br/>打开DEBUG模式 IP:11419/config-DebugOn" +
-                            "<br/>关闭DEBUG模式 IP:11419/config-DebugOff");
+                            "<br/>关闭DEBUG模式 IP:11419/config-DebugOff";
+                                break;
+                        }
+                        await context.Response.WriteAsync(HTML);
                     }
                     else
                     {
@@ -337,8 +326,8 @@ namespace DDTVLiveRecWebServer
                         string 跳转url = "<a href=\"./list\"><input type=\"button\" value='下载详情'></a>   " +
                         "<a href =\"./file\"><input type=\"button\" value='下载文件列表'></a>   " +
                         "<a href =\"./log\"><input type=\"button\" value='日志'></a>   " +
-                        "<a href =\"./config\"><input type=\"button\" value='可修改配置'></a>   " +
-                        "<a href =\"./wssinfo\"><input type=\"button\" value='特殊wss连接列表'></a>   " +
+                        //"<a href =\"./config\"><input type=\"button\" value='可修改配置'></a>   " +
+                        //"<a href =\"./wssinfo\"><input type=\"button\" value='特殊wss连接列表'></a>   " +
                         "<br/><br/>";
                         if (Auxiliary.MMPU.启动模式 == 1)
                         {
