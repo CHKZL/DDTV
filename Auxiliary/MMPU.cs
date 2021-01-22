@@ -135,7 +135,7 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[Debug模式]:{Debug模式}", InfoLog.InfoClass.Debug);
             InfoLog.InfoPrintf($"配置文件初始化任务[Debug输出到文件]:{Debug输出到文件}", InfoLog.InfoClass.Debug);
             InfoLog.InfoPrintf($"配置文件初始化任务[Debug打印到终端]:{Debug打印到终端}", InfoLog.InfoClass.Debug);
-            心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "180"));
+            心跳打印间隔 = int.Parse(读取exe默认配置文件("DokiDoki", "300"));
             InfoLog.InfoPrintf($"配置文件初始化任务[心跳打印间隔]:{心跳打印间隔}", InfoLog.InfoClass.Debug);
             网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
             InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
@@ -395,7 +395,7 @@ namespace Auxiliary
                         InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count - 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中", InfoLog.InfoClass.下载必要提示);
                     }
                     catch (Exception){}
-                    Thread.Sleep(60*1000);
+                    Thread.Sleep(心跳打印间隔 * 1000);
                 }
             }).Start();
         }
