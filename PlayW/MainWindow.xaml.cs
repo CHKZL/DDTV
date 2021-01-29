@@ -269,6 +269,7 @@ namespace PlayW
                 {
                     VLCV.MediaPlayer.Volume = a;
                 }
+                首页焦点.Focus();
             }));
         }
         public void Play_Play()
@@ -818,9 +819,33 @@ namespace PlayW
                 }).Start();
 
             }
+            首页焦点.Focus();
         }
+        public static string GetNowTimeSpanSec(DateTime _time)
+        {
+            DateTime now = DateTime.UtcNow;
+            now = now.AddHours(9);
+
+            TimeSpan ts = now.Subtract(_time);
+
+            int sec = (int)ts.TotalSeconds;
+
+
+            return sec.ToString();
+        }
+        public static DateTime 全屏操作的时间 = DateTime.UtcNow;
         public void 设置全屏()
         {
+            TimeSpan ts = DateTime.UtcNow.Subtract(全屏操作的时间);
+            if(ts.TotalMilliseconds>500)
+            {
+                全屏操作的时间 = DateTime.UtcNow;
+            }
+            else
+            {
+                return;
+            }
+            
             if (this.WindowState == WindowState.Normal)
             {
                 this.WindowState = WindowState.Maximized;
