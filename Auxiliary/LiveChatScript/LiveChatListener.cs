@@ -58,10 +58,11 @@ namespace Auxiliary.LiveChatScript
             }
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
-            string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId, 20000);
-            JObject JO = (JObject)JsonConvert.DeserializeObject(BB);
+            JObject JO = new JObject();
             try
             {
+                string BB = MMPU.返回网页内容_GET("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + roomId, 20000);
+                JO = (JObject)JsonConvert.DeserializeObject(BB);
                 foreach (var item in JO["data"]["host_list"])
                 {
                     if (!bilibili.已经使用的服务器组.Contains(item["host"].ToString()))
@@ -77,7 +78,7 @@ namespace Auxiliary.LiveChatScript
                     bilibili.已经使用的服务器组.Add(wss_S);
                 }
                 await m_client.ConnectAsync(new Uri("wss://" + wss_S + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
-                
+
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
             }
             catch (Exception e)

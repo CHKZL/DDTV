@@ -1095,11 +1095,8 @@ namespace DDTV_New
                                             catch (Exception)
                                             {
                                             }
-                                        });
-                                        
+                                        });                                     
                                         MMPU.当前直播窗口数量++;
-                                        
-
                                     }));
                                 });
                                 break;
