@@ -22,7 +22,7 @@
                 </Grid.RenderTransform>
 
             </Grid>
-            <CheckBox x:Name="首页焦点" Margin="-55,0,830,424"/>
+            <CheckBox x:Name="首页焦点" Margin="-42,-24,0,0" HorizontalAlignment="Left" Width="44" Height="27" VerticalAlignment="Top"/>
             <Grid x:Name="弹幕框" Visibility="Collapsed">
                 <local:字幕描边控件 x:Name="弹幕"  IsEnabled="False"></local:字幕描边控件>
                 <!--<TextBox x:Name="弹幕" Background="{x:Null}" BorderBrush="{x:Null}" SelectionBrush="{x:Null}" Foreground="#FFFFAE00" FontSize="16" IsEnabled="False" SelectionOpacity="0.8" FontWeight="Bold"/>-->
