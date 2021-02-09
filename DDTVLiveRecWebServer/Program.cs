@@ -44,6 +44,6 @@ namespace DDTVLiveRecWebServer
               {
                   i.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2($"./{Auxiliary.MMPU.webServer_pfx证书名称}", Auxiliary.MMPU.webServer_pfx证书密码);
               });
-          }).UseStartup<Startup>().UseUrls("http://" + Auxiliary.MMPU.webServer默认监听IP + ":" + Auxiliary.MMPU.webServer默认监听端口);
+          }).UseStartup<Startup>().UseUrls("https://" + Auxiliary.MMPU.webServer默认监听IP + ":" + Auxiliary.MMPU.webServer默认监听端口);
     }
 }
