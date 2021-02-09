@@ -78,6 +78,8 @@ namespace Auxiliary
         public static string 更新公告 = "";
         public static string webServer默认监听IP = "0.0.0.0";
         public static string webServer默认监听端口 = "11419";
+        public static string webServer_pfx证书名称 = "";
+        public static string webServer_pfx证书密码 = "";
         public static string 缓存路径 = "./tmp/";
         public static int 弹幕录制种类 = 2;
         public static int wss连接错误的次数 = 0;
@@ -195,6 +197,17 @@ namespace Auxiliary
                 MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", "admin");
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", "ghost");
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationCode", "DDTVLiveRec");
+                MMPU.webServer_pfx证书名称 = MMPU.读取exe默认配置文件("sslName", "");
+                MMPU.webServer_pfx证书密码 = MMPU.读取exe默认配置文件("sllPssword", "");
+                if (!string.IsNullOrEmpty(webServer_pfx证书名称) && !string.IsNullOrEmpty(webServer_pfx证书密码))
+                {
+                    InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:{webServer_pfx证书名称}", InfoLog.InfoClass.Debug);
+                }
+                else
+                {
+                    InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
+                }
+                
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));

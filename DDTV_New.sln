@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_New", "DDTV_New\DDTV_N
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_TCP服务端", "DDTV_TCP服务端\DDTV_TCP服务端.csproj", "{57E5E800-6355-489F-9C1C-B9D10F1570AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auxiliary", "Auxiliary\Auxiliary.csproj", "{B9797A7B-D297-4BBA-B54F-13C366CDDE49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auxiliary", "Auxiliary\Auxiliary.csproj", "{B9797A7B-D297-4BBA-B54F-13C366CDDE49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayW", "PlayW\PlayW.csproj", "{81E4256F-71E7-48A8-89B6-DE2DDF68FA0C}"
 EndProject
@@ -36,7 +36,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTVRoomConfig", "DDTVRoomC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "主站视频下载工具", "主站视频下载工具\主站视频下载工具.csproj", "{C58A5BB6-E276-4A3D-B99B-2F9A92F37BA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "flv合并转码工具", "flv合并转码工具\flv合并转码工具.csproj", "{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "flv合并转码工具", "flv合并转码工具\flv合并转码工具.csproj", "{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD_Phone", "DD_Phone\DD_Phone.csproj", "{C12559B9-4AAC-48CD-B088-1CD6E60916BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -228,6 +230,24 @@ Global
 		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x64.Build.0 = Release|Any CPU
 		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x86.ActiveCfg = Release|Any CPU
 		{60BDBCBA-A65D-4C7A-B773-B901AA9B359C}.Release|x86.Build.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x64.Build.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x86.Build.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Debug|x86.Deploy.0 = Debug|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x64.ActiveCfg = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x64.Build.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x64.Deploy.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x86.ActiveCfg = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x86.Build.0 = Release|Any CPU
+		{C12559B9-4AAC-48CD-B088-1CD6E60916BA}.Release|x86.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

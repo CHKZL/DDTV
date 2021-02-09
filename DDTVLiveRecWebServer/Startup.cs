@@ -41,13 +41,20 @@ namespace DDTVLiveRecWebServer
                 option.Cookie.HttpOnly = true;//设置存储用户登录信息（用户Token信息）的Cookie，无法通过客户端浏览器脚本(如JavaScript等)访问到
                                               //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;//设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
             });
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = int.Parse(Auxiliary.MMPU.webServer默认监听端口);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors();
+
             app.UseFileServer(new FileServerOptions()//直接开启文件目录访问和文件访问
             {
                 EnableDirectoryBrowsing = false,//权限目录访问
@@ -148,6 +155,7 @@ namespace DDTVLiveRecWebServer
                         fileText = fileText.Replace("%这是标题%", Title);
                         fileText = fileText.Replace("%D这是提示%", Prompt);
                         fileText = fileText.Replace("%播放路径%", FileUrl);
+                        fileText = fileText.Replace("%这是文件地址%", FileUrl);
                         await context.Response.WriteAsync(fileText, System.Text.Encoding.UTF8);
                     }
                     else
