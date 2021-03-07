@@ -19,6 +19,5 @@ COPY --from=builder /src/DDTVLiveRec/bin/Release/net5.0/publish/ /DDTVLiveRec/
 EXPOSE 11419
 VOLUME /DDTVLiveRec/tmp
 VOLUME /DDTVLiveRec/BiliUser.ini
-VOLUME /DDTVLiveRec/DDTVLiveRec.dll.config
 VOLUME /DDTVLiveRec/RoomListConfig.json
 ENTRYPOINT ["dotnet", "DDTVLiveRec.dll"]
