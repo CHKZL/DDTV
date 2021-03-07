@@ -91,6 +91,7 @@ namespace Auxiliary
         public static int 心跳打印间隔 = 180;
         public static string webadmin验证字符串 = "";
         public static string webghost验证字符串 = "";
+        public static bool 是否启用SSL = false;
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
@@ -201,11 +202,13 @@ namespace Auxiliary
                 MMPU.webServer_pfx证书密码 = MMPU.读取exe默认配置文件("sllPssword", "");
                 if (!string.IsNullOrEmpty(webServer_pfx证书名称) && !string.IsNullOrEmpty(webServer_pfx证书密码))
                 {
+                    是否启用SSL = true;
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:{webServer_pfx证书名称}", InfoLog.InfoClass.Debug);
                     InfoLog.InfoPrintf($"======检测到SSL证书=======\r\n\r\n请使用[https://本设备IP或域名:" + webServer默认监听端口+ "]进行访问\r\n\r\n======检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
                 else
                 {
+                    是否启用SSL = false;
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
                     InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
