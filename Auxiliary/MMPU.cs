@@ -202,12 +202,12 @@ namespace Auxiliary
                 if (!string.IsNullOrEmpty(webServer_pfx证书名称) && !string.IsNullOrEmpty(webServer_pfx证书密码))
                 {
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:{webServer_pfx证书名称}", InfoLog.InfoClass.Debug);
-                    InfoLog.InfoPrintf($"======检测到SSL连接=======\r\n\r\n请使用[https://本设备IP或域名:" + webServer默认监听端口+ "]进行访问\r\n\r\n======检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf($"======检测到SSL证书=======\r\n\r\n请使用[https://本设备IP或域名:" + webServer默认监听端口+ "]进行访问\r\n\r\n======检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
                 else
                 {
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
-                    InfoLog.InfoPrintf($"======未检测到SSL连接=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
                 
             }
