@@ -18,7 +18,8 @@ namespace DDTVLiveRecWebServer
         public static void Main(string[] args)
         {
             Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer启动成功，开始监听{Auxiliary.MMPU.webServer默认监听端口}端口", Auxiliary.InfoLog.InfoClass.下载必要提示);
-            if (!string.IsNullOrEmpty(Auxiliary.MMPU.webServer_pfx证书名称) && !string.IsNullOrEmpty(Auxiliary.MMPU.webServer_pfx证书密码))
+
+            if (Auxiliary.MMPU.是否启用SSL)
             {
                 SSL证书方式启动(args).Build().Run();
             }
