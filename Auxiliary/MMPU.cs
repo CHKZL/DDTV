@@ -199,7 +199,7 @@ namespace Auxiliary
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", "ghost");
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationCode", "DDTVLiveRec");
                 MMPU.webServer_pfx证书名称 = MMPU.读取exe默认配置文件("sslName", "");
-                MMPU.webServer_pfx证书密码 = MMPU.读取exe默认配置文件("sllPssword", "");
+                MMPU.webServer_pfx证书密码 = MMPU.读取exe默认配置文件("sslPssword", "");
                 if (!string.IsNullOrEmpty(webServer_pfx证书名称) && !string.IsNullOrEmpty(webServer_pfx证书密码))
                 {
                     是否启用SSL = true;
