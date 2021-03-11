@@ -110,7 +110,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="DDcenter\list.json" />
     <None Include="DDcenter\vtbsroomlist.json" />
   </ItemGroup>
 </Project>
