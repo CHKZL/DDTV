@@ -38,12 +38,12 @@ DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境�
 
 
 web服务端:  
-启动DDTVLiveRec后会自动启动内置的web服务端,提供了三个页面：  
+启动DDTVLiveRec后会自动启动内置的web服务端,提供了几个页面：  
+[http://IP:11419]：DDTVLiveRec的系统总览页面  
 [http://IP:11419/log]：DDTVLiveRec日志信息  
 [http://IP:11419/file]：DDTVLiveRec录制的文件列表  
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
-[http://IP:11419/config]：DDTVLiveRec的配置修改命令列表  
-[http://IP:11419/systeminfo]：DDTVLiveRec的系统总览页面
+
 
 ### 如果使用Docker构建:
 
