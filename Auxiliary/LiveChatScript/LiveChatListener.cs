@@ -537,12 +537,6 @@ namespace Auxiliary.LiveChatScript
                         break;
                     }
                 default:
-                    if (TroomId == 21446992)
-                    {
-                        string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
-                        jsonBody = Regex.Unescape(jsonBody);
-                    }
-                    ;
                     break;
             }
         }
@@ -565,11 +559,9 @@ namespace Auxiliary.LiveChatScript
             //
             if (protocol.PacketLength < 16)
             {
-                if (TroomId == 21446992)
-                    ;
                 InfoLog.InfoPrintf($@"协议失败: (L:{protocol.PacketLength})", InfoLog.InfoClass.Debug);
                 InfoLog.InfoPrintf($@"{TroomId}房间收到协议PacketLength长度小于16，作为观测包更新心跳时间处理", InfoLog.InfoClass.Debug);
-                ProcessDanmakuData(99,null,0);
+                ProcessDanmakuData(99, null, 0);
                 //throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
                 return;
             }
