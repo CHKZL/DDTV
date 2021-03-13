@@ -767,6 +767,9 @@ namespace Auxiliary
         }
         public static string 转换下载大小数据格式(double size)
         {
+            if (size < 0) {
+                return "未知";
+            }
             if (size <= 1024)
             {
                 return size.ToString("F2") + "B";

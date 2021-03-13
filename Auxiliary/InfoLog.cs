@@ -306,7 +306,14 @@ namespace Auxiliary
                 //    BB += $"<br/>容量:{item.Size} 已使用:{item.Used} 剩余空间:{item.Avail}  使用率:{item.Usage}";
                 //}
                 LinuxInfo.MemInfo Men = LinuxInfo.ServerConfig.读取内存信息();
-                BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available.Split(' ')[0]) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total.Split(' ')[0]) * 1024.0)}</body></html>";
+                if (Men.Available is null) {
+                    Men.Available = "-1";
+                }
+                if (Men.Total is null)
+                {
+                    Men.Total = "-1";
+                }
+                BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
             BB += InfoLog.DownloaderInfoPrintf(1);
             return BB;
@@ -514,13 +521,13 @@ namespace Auxiliary
                         {
                             count++;
                             var tt = item.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            memInfo.Total = tt[1].Trim();
+                            memInfo.Total = tt[1].Trim().Split(' ')[0];
                         }
                         else if (item.StartsWith("MemAvailable:"))
                         {
                             count++;
                             var tt = item.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
-                            memInfo.Available = tt[1].Trim();
+                            memInfo.Available = tt[1].Trim().Split(' ')[0];
                         }
                         if (count >= 2) break;
                     }
