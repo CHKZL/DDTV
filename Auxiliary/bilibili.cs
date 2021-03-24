@@ -52,6 +52,7 @@ namespace Auxiliary
                 {
                     try
                     {
+                       
                         更新VTBS房间数据();
                         Thread.Sleep(1000 * 60 * 60);
                     }
@@ -117,8 +118,9 @@ namespace Auxiliary
                     string vtbs房间数据 = string.Empty;
                     try
                     {
+
                         vtbs房间数据 = MMPU.返回网页内容_GET(VTBS.API.VTBS服务器CDN.VTBS_Url + "/v1/short", 3000);
-                        if(string.IsNullOrEmpty(vtbs房间数据))
+                        if (string.IsNullOrEmpty(vtbs房间数据))
                         {
                             int a = int.Parse("A");
                         }
@@ -135,6 +137,7 @@ namespace Auxiliary
                     {
                        // InfoLog.InfoPrintf($"{vtbs房间数据}", InfoLog.InfoClass.Debug);
                         JO = (JArray)JsonConvert.DeserializeObject(vtbs房间数据);
+
                     }
                     catch (Exception e)
                     {
@@ -200,6 +203,7 @@ namespace Auxiliary
                             是否需要保存房间配置文件 = true;
                         }
                     }
+                   
                     if (rlc.data != null)
                     {
                         foreach (var ROOMCONFIG in rlc.data)
@@ -349,6 +353,7 @@ namespace Auxiliary
 
                 }
                 InfoLog.InfoPrintf("Vtbs数据更新成功", InfoLog.InfoClass.没啥价值的消息);
+                VTBS.API.VTBS服务器CDN.更新vtbs房间直播状态完成 = true;
             }
             catch (Exception)
             {
@@ -376,6 +381,7 @@ namespace Auxiliary
                         }
                     }
                     InfoLog.InfoPrintf("备用数据源加载成功", InfoLog.InfoClass.Debug);
+                    VTBS.API.VTBS服务器CDN.更新vtbs房间直播状态完成 = true;
                 }
                 catch (Exception)
                 {

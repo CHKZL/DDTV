@@ -15,7 +15,9 @@ namespace Auxiliary.VTBS
         /// </summary>
         public class VTBS服务器CDN
         {
-            public static string VTBS_Url = "https://api.vtbs.moe";
+            public static bool 更新CDN完成 = false;
+            public static bool 更新vtbs房间直播状态完成 = false;
+            public static string VTBS_Url = "https://api.tokyo.vtbs.moe";
             public static void 根据CDN更新VTBS_Url()
             {
                 new Task(()=> {
@@ -38,6 +40,7 @@ namespace Auxiliary.VTBS
                         PING.Add(new 延迟对象() { CDN_URL = item.ToString() });
                     }
                     VTBS_Url = 返回延迟最低的连接(PING, 5);
+                    更新CDN完成 = true;
                     InfoLog.InfoPrintf("获取到VTBS当前可用CDN为:" + VTBS_Url, InfoLog.InfoClass.Debug);
                 }).Start();
             }

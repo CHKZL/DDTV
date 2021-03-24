@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Auxiliary
@@ -114,6 +115,7 @@ namespace Auxiliary
             //    }
             //});
         }
+        public static bool 首次房间列表刷新 = true;
         private static void 刷新B站房间列表()
         {
             if (!MMPU.是否能连接阿B)
@@ -138,13 +140,19 @@ namespace Auxiliary
                 }
                 A--;
             }
+         
+           
             foreach (var 最新的状态 in bilibili.RoomList)
             {
                 foreach (var 之前的状态 in 之前的bilibili房间主表状态)
                 {
-
+                    
                     if (之前的状态.唯一码 == 最新的状态.房间号)
                     {
+                        if (首次房间列表刷新)
+                        {
+                            之前的状态.直播状态 = false;
+                        }                    
                         if (B站更新刷新次数 > 5)
                         {
                             if (之前的状态.直播状态 == false && 最新的状态.直播状态 == true && 之前的状态.是否提醒)
@@ -208,6 +216,11 @@ namespace Auxiliary
                 int B = 之前的bilibili房间主表状态.Count();
                 临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名 });
             }
+            if(之前的bilibili房间主表状态.Count!=0)
+            {
+                首次房间列表刷新 = false;
+            }
+           
             bilibili房间主表.Clear();
             foreach (var item in 临时主表)
             {
