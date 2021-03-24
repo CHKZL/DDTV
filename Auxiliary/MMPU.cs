@@ -1023,7 +1023,7 @@ namespace Auxiliary
         {
             try
             {
-                NewWebClient myWebClient = new NewWebClient(1 * 1000);
+                NewWebClient myWebClient = new NewWebClient(1 * 800);
                 //wcl.Timeout = 1000;
                 Stopwatch spwatch = new Stopwatch();
                 spwatch.Start();
