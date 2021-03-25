@@ -234,7 +234,7 @@ namespace Auxiliary
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
             CheckPath(ref MMPU.下载储存目录);
-            if (Directory.Exists("./tmp"))
+            if (!Directory.Exists("./tmp"))
             {
                 Directory.CreateDirectory("./tmp");
             }
