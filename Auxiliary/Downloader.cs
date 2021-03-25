@@ -366,7 +366,7 @@ namespace Auxiliary
             if (MMPU.下载储存目录 == 缓存路径)
             {
                 保存路径 = 缓存路径 + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/";
-                if (!Directory.Exists(保存路径))//如果不存在就创建文件夹
+                if (Directory.Exists(保存路径))//如果不存在就创建文件夹
                 {
                     Directory.CreateDirectory(保存路径);
                 }
@@ -496,20 +496,6 @@ namespace Auxiliary
                         }
                         if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                         {
-                            /*
-                             * 暂时解决【续下任务进行时OBS未结束推流，直接从b站直播间关闭直播，导致无法正常合并最后一个文件】的错误
-                             * 解决方法：如果该文件不在列表中，则把该文件加入到列表里
-                             * 需后续对该bug完整修复
-                             */
-                            if (!DownIofo.继承.待合并文件列表.Exists(p => p == DownIofo.继承.继承的下载文件路径)) 
-                            {
-                                if (DownIofo.继承.待合并文件列表.Last() == DownIofo.文件保存路径)
-                                {
-                                    DownIofo.继承.待合并文件列表.RemoveAt(DownIofo.继承.待合并文件列表.Count - 1);
-                                }
-                                DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
-                            }
                             DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
                             if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
                             {
@@ -595,23 +581,7 @@ namespace Auxiliary
                                                 }
                                                 if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                                                 {
-                                                    if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
-                                                    {
-                                                        /*
-                                                         * 暂时解决【续下任务进行时OBS未结束推流，直接从b站直播间关闭直播，导致无法正常合并最后一个文件】的错误
-                                                         * 解决方法：如果该文件不在列表中，则把该文件加入到列表里
-                                                         * 需后续对该bug完整修复
-                                                         */
-                                                        if (!DownIofo.继承.待合并文件列表.Exists(p => p == DownIofo.继承.继承的下载文件路径))
-                                                        {
-                                                            if (DownIofo.继承.待合并文件列表.Last() == DownIofo.文件保存路径)
-                                                            {
-                                                                DownIofo.继承.待合并文件列表.RemoveAt(DownIofo.继承.待合并文件列表.Count - 1);
-                                                            }
-                                                            DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                                            DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
-                                                        }
-                                                        DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
+                                                    DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
                                                     if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
                                                     {
                                                         DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
