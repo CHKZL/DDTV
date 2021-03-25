@@ -233,7 +233,8 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
             //房间配置文件
             MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
-            if(Directory.Exists("./tmp"))
+            CheckPath(ref MMPU.下载储存目录);
+            if (Directory.Exists("./tmp"))
             {
                 Directory.CreateDirectory("./tmp");
             }
@@ -1642,6 +1643,16 @@ namespace Auxiliary
                 [DllImport("Kernel32")]
                 public static extern IntPtr GetProcAddress(IntPtr handle, string funcname);
             }
+        }
+        /// <summary>
+        /// 检查路径末尾分隔符并修正
+        /// </summary>
+        /// <param name="x">待检查修改路径</param>
+        /// <returns>无返回</returns>
+        private static void CheckPath(ref string x)
+        {
+            if (x.Substring(x.Length - 1, 1) != "/" && x.Substring(x.Length - 1, 1) != "\\") x += '/';
+            return;
         }
     }
 }
