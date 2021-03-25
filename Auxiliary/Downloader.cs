@@ -366,7 +366,7 @@ namespace Auxiliary
             if (MMPU.下载储存目录 == 缓存路径)
             {
                 保存路径 = 缓存路径 + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/";
-                if (Directory.Exists(保存路径))//如果不存在就创建文件夹
+                if (!Directory.Exists(保存路径))//如果不存在就创建文件夹
                 {
                     Directory.CreateDirectory(保存路径);
                 }
