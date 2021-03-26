@@ -806,7 +806,14 @@ namespace PlayW
             //全屏回车
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
             {
-                设置全屏();
+                if (弹幕输入窗口.IsFocused)
+                {
+                    弹幕发送按钮事件();
+                }
+                else
+                {
+                    设置全屏();
+                }
             }
             //F5刷新
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
@@ -819,7 +826,10 @@ namespace PlayW
                 }).Start();
 
             }
-            首页焦点.Focus();
+            if (!弹幕输入窗口.IsFocused)
+            {
+                首页焦点.Focus();
+            }
         }
         public static DateTime 全屏操作的时间 = DateTime.UtcNow;
         public void 设置全屏()
@@ -966,6 +976,7 @@ namespace PlayW
             try
             {
                 this.DragMove();
+                首页焦点.Focus();
             }
             catch (Exception)
             {
@@ -1106,6 +1117,10 @@ namespace PlayW
 
 
         private void 发送弹幕按钮_Click(object sender, RoutedEventArgs e)
+        {
+            弹幕发送按钮事件();
+        }
+        private void 弹幕发送按钮事件()
         {
             if (!string.IsNullOrEmpty(弹幕输入窗口.Text) && 弹幕输入窗口.Text.Length < 20)
             {
