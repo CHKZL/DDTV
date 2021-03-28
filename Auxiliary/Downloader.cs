@@ -496,23 +496,6 @@ namespace Auxiliary
                         }
                         if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                         {
-                            /*
-                             * 暂时解决【续下任务进行时OBS未结束推流，直接从b站直播间关闭直播，导致无法正常合并最后一个文件】的错误
-                             * 解决方法：如果该文件不在列表中，则把该文件加入到列表里
-                             * 需后续对该bug完整修复
-                             */
-                            if (!DownIofo.继承.待合并文件列表.Exists(p => p == DownIofo.继承.继承的下载文件路径))
-                            {
-                                if (DownIofo.继承.待合并文件列表.Last() == DownIofo.文件保存路径)
-                                {
-                                    DownIofo.继承.待合并文件列表.RemoveAt(DownIofo.继承.待合并文件列表.Count - 1);
-                                }
-                                DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
-                            }
-                            /*
-                             * 修复结束
-                             */
                             DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
                             if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
                             {
@@ -548,23 +531,13 @@ namespace Auxiliary
                             {
                                 case "bilibili":
                                     {
-                                        if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
+                                        if (!DownIofo.是否是播放任务)
                                         {
-                                            //DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, false);
-                                            if(DownIofo.继承.待合并文件列表.Count==0)
-                                            {
-                                                DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.继承.继承的下载文件路径}", InfoLog.InfoClass.下载必要提示);
-                                            }
                                             DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                                             InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.文件保存路径}", InfoLog.InfoClass.下载必要提示);
-                                            //if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
-                                            //{
-                                            //    DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
-                                            //}
                                         }
                                         DownIofo.下载状态 = false;
-                                        Downloader 重连下载对象 = Downloader.新建下载对象(
+                                       Downloader 重连下载对象 = Downloader.新建下载对象(
                                             DownIofo.平台,
                                             DownIofo.房间_频道号,
                                             bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号),
@@ -598,23 +571,6 @@ namespace Auxiliary
                                                 }
                                                 if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
                                                 {
-                                                    /*
-                                                     * 暂时解决【续下任务进行时OBS未结束推流，直接从b站直播间关闭直播，导致无法正常合并最后一个文件】的错误
-                                                     * 解决方法：如果该文件不在列表中，则把该文件加入到列表里
-                                                     * 需后续对该bug完整修复
-                                                     */
-                                                    if (!DownIofo.继承.待合并文件列表.Exists(p => p == DownIofo.继承.继承的下载文件路径))
-                                                    {
-                                                        if (DownIofo.继承.待合并文件列表.Last() == DownIofo.文件保存路径)
-                                                        {
-                                                            DownIofo.继承.待合并文件列表.RemoveAt(DownIofo.继承.待合并文件列表.Count - 1);
-                                                        }
-                                                        DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                                        DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
-                                                    }
-                                                    /*
-                                                     * 修复结束
-                                                     */
                                                     DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo, true);
                                                     if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
                                                     {
