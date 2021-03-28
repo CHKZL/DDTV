@@ -531,23 +531,13 @@ namespace Auxiliary
                             {
                                 case "bilibili":
                                     {
-                                        if (DownIofo.继承.是否为继承对象 && !DownIofo.是否是播放任务)
+                                        if (!DownIofo.是否是播放任务)
                                         {
-                                            //DownIofo.继承.合并后的文件路径 = 下载完成合并FLV(DownIofo.继承.继承的下载文件路径, DownIofo.文件保存路径, false);
-                                            if(DownIofo.继承.待合并文件列表.Count==0)
-                                            {
-                                                DownIofo.继承.待合并文件列表.Add(DownIofo.继承.继承的下载文件路径);
-                                                InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.继承.继承的下载文件路径}", InfoLog.InfoClass.下载必要提示);
-                                            }
                                             DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                                             InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.文件保存路径}", InfoLog.InfoClass.下载必要提示);
-                                            //if (!string.IsNullOrEmpty(DownIofo.继承.合并后的文件路径))
-                                            //{
-                                            //    DownIofo.文件保存路径 = DownIofo.继承.合并后的文件路径;
-                                            //}
                                         }
                                         DownIofo.下载状态 = false;
-                                        Downloader 重连下载对象 = Downloader.新建下载对象(
+                                       Downloader 重连下载对象 = Downloader.新建下载对象(
                                             DownIofo.平台,
                                             DownIofo.房间_频道号,
                                             bilibili.根据房间号获取房间信息.获取标题(DownIofo.房间_频道号),
