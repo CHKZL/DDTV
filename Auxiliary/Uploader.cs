@@ -46,6 +46,7 @@ namespace Auxiliary
             downIofo = dinfo;
             Init();
             if (!MMPU.enableUpload) return;
+            bool lastStatus = false;
             try
             {
                 for (int i = 1; i <= MMPU.UploadOrder.Count; i++)
@@ -54,23 +55,23 @@ namespace Auxiliary
                     {
                         case "OneDrive":
                             OneDrive oneDrive = new OneDrive(MMPU.oneDriveConfig);
-                            oneDrive.UploadToOneDrive(downIofo, file, MMPU.oneDrivePath + path);
+                            lastStatus=oneDrive.UploadToOneDrive(downIofo, file, MMPU.oneDrivePath + path);
                             oneDrive = null;
                             GC.Collect();
                             break;
                         case "Cos":
                             Cos cos = new Cos(MMPU.cosConfig);
-                            cos.UploadToCos(downIofo, file, MMPU.cosPath + path);
+                            lastStatus=cos.UploadToCos(downIofo, file, MMPU.cosPath + path);
                             cos = null;
                             GC.Collect();
                             break;
                         default:
                             break;
                     }
-                }
-                if (MMPU.deleteAfterUpload == "1" && System.IO.File.Exists(file))
-                {
-                    System.IO.File.Delete(file);
+                    if (MMPU.deleteAfterUpload == "1"&&lastStatus&&System.IO.File.Exists(file))
+                    {
+                        System.IO.File.Delete(file);
+                    }
                 }
             }
             catch (Exception)
@@ -87,7 +88,7 @@ namespace Auxiliary
                 times = 1;
                 result = false;
             }
-            internal void UploadToCos(DownIofoData downIofo, string localFile, string remotePath)
+            internal bool UploadToCos(DownIofoData downIofo, string localFile, string remotePath)
             {
                 try
                 {
@@ -145,7 +146,7 @@ namespace Auxiliary
                                            $"\r\n网盘类型:{type}" +
                                            $"\r\n==============={type}上传成功===============\r\n", InfoLog.InfoClass.上传必要提示);
                         downIofo.备注 = $"{type}上传成功";
-                        return;
+                        return true;
                     }
                     InfoLog.InfoPrintf($"\r\n=============={type}上传失败================\r\n" +
                                                $"主播名:{downIofo.主播名称}" +
@@ -160,6 +161,7 @@ namespace Auxiliary
                 }
                 catch (Exception)
                 { }
+                return false;
             }
 
             private static void Process_Exited(object sender, EventArgs e)
@@ -206,7 +208,7 @@ namespace Auxiliary
                 times = 1;
                 result = false;
             }
-            internal void UploadToOneDrive(DownIofoData downIofo, string localFile, string remotePath)
+            internal bool UploadToOneDrive(DownIofoData downIofo, string localFile, string remotePath)
             {
                 try
                 {
@@ -261,7 +263,7 @@ namespace Auxiliary
                                                $"\r\n网盘类型:{type}" +
                                                $"\r\n==============={type}上传成功===============\r\n", InfoLog.InfoClass.上传必要提示);
                             downIofo.备注 = $"{type}上传成功";
-                            return;
+                            return true;
                         }
                     }
                     InfoLog.InfoPrintf($"\r\n=============={type}上传失败================\r\n" +
@@ -277,6 +279,7 @@ namespace Auxiliary
                 }
                 catch (Exception)
                 { }
+                return false;
             }
 
             private static void Process_Exited(object sender, EventArgs e)
