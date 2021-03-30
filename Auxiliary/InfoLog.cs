@@ -25,6 +25,7 @@ namespace Auxiliary
             public bool 系统错误信息 { set; get; } = false;
             public bool 杂项提示 { set; get; } = false;
             public bool 下载必要提示 { set; get; } = false;
+            public bool 上传必要提示 { set; get; } = false;
             public bool 没啥价值的消息 { set; get; } = false;
             public bool 输出到文件 { set; get; } = false;
         }
@@ -34,7 +35,8 @@ namespace Auxiliary
             系统错误信息 = 1,
             杂项提示 = 2,
             下载必要提示 = 3,
-            没啥价值的消息 = 4
+            没啥价值的消息 = 4,
+            上传必要提示 = 5
         }
         public static string 返回WSS连接状态列表()
         {
@@ -197,6 +199,15 @@ namespace Auxiliary
                             {
                                 Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
                                 A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            }
+                        }
+                        break;
+                    case InfoClass.上传必要提示:
+                        {
+                            if (ClasslBool.上传必要提示)
+                            {
+                                Console.WriteLine("[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
                             }
                         }
                         break;
