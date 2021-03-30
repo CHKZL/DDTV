@@ -129,7 +129,8 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = Debug输出到文件
+                    输出到文件 = Debug输出到文件,
+                    上传必要提示 = true
                 });
                 启动模式 = 0;
             }
@@ -141,7 +142,8 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = Debug输出到文件
+                    输出到文件 = Debug输出到文件,
+                    上传必要提示 = true
                 });
                 启动模式 = 1;
             }
