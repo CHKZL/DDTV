@@ -99,6 +99,7 @@ namespace Auxiliary
         public static List<string> DeleteFileList = new List<string>();
 
         //上传配置属性
+        public static bool enableUpload = false;
         public static string enableOneDrive = "";
         public static string oneDriveConfig = "";
         public static string oneDrivePath = "";
@@ -106,6 +107,7 @@ namespace Auxiliary
         public static string cosConfig = "";
         public static string cosPath = "";
         public static Dictionary<int, string> UploadOrder = new Dictionary<int, string>();
+        public static string deleteAfterUpload = "";
 
         /// <summary>
         /// 配置文件初始化
@@ -153,6 +155,8 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
 
             #region 上传配置初始化
+            deleteAfterUpload = 读取exe默认配置文件("DeleteAfterUpload", "0");
+            InfoLog.InfoPrintf($"配置文件初始化任务[DeleteAfterUpload]:{deleteAfterUpload}", InfoLog.InfoClass.Debug);
             //OneDrive初始化
             enableOneDrive = 读取exe默认配置文件("EnableOneDrive", "0");
             InfoLog.InfoPrintf($"配置文件初始化任务[EnableOneDrive]:{enableOneDrive}", InfoLog.InfoClass.Debug);
@@ -167,6 +171,7 @@ namespace Auxiliary
                     InfoLog.InfoPrintf($"OneDrive的顺序出现重复，请检查是否有其他项目设定为{enableOneDrive}", InfoLog.InfoClass.系统错误信息);
                     Process.GetCurrentProcess().Kill();
                 }
+                enableUpload = true;
                 InfoLog.InfoPrintf($"已检测到OneDrive上传任务，上传顺序为{enableOneDrive}", InfoLog.InfoClass.上传必要提示);
                 oneDriveConfig = 读取exe默认配置文件("OneDriveConfig", "");
                 InfoLog.InfoPrintf($"配置文件初始化任务[oneDriveConfig]:{oneDriveConfig}", InfoLog.InfoClass.Debug);
@@ -188,6 +193,7 @@ namespace Auxiliary
                     InfoLog.InfoPrintf($"Cos的顺序出现重复，请检查是否有其他项目设定为{enableCos}", InfoLog.InfoClass.系统错误信息);
                     Process.GetCurrentProcess().Kill();
                 }
+                enableUpload = true;
                 InfoLog.InfoPrintf($"已检测到Cos上传任务，上传顺序为{enableCos}", InfoLog.InfoClass.上传必要提示);
                 cosConfig = 读取exe默认配置文件("CosConfig", "/root/.cos.config");
                 InfoLog.InfoPrintf($"配置文件初始化任务[CosConfig]:{cosConfig}", InfoLog.InfoClass.Debug);

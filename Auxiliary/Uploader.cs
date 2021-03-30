@@ -45,6 +45,7 @@ namespace Auxiliary
         {
             downIofo = dinfo;
             Init();
+            if (!MMPU.enableUpload) return;
             try
             {
                 for (int i = 1; i <= MMPU.UploadOrder.Count; i++)
@@ -67,7 +68,7 @@ namespace Auxiliary
                             break;
                     }
                 }
-                if (System.IO.File.Exists(file))
+                if (MMPU.deleteAfterUpload == "1" && System.IO.File.Exists(file))
                 {
                     System.IO.File.Delete(file);
                 }
