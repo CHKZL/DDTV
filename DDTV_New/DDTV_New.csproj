@@ -437,6 +437,7 @@
     <Resource Include="更新日志\2.0.3.1a.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="ddtv_logo.png" />
     <Content Include="libffmpeg\ffmpeg.exe" />
     <Content Include="libvlc\win-x64\libvlc.dll" />
     <Content Include="libvlc\win-x64\libvlccore.dll" />
