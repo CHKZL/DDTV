@@ -68,8 +68,7 @@ docker run -d \
 ```
 
 # 录制配置：RoomListConfig.json说明：
-　　格式和解析方式和DDTV一样，格式为json字符串，releases发布的压缩包里附带了一个参考的文件。  
-　　【重要】默认只支持[VTBS](https://vtbs.moe/)有记录的房间监控，如果有未记录的V，到vtbs提交新的V即可。如需监控非V的房间，需要打开配置文件中的NV选项(NotVTBStatus)，切连接的非V房间推荐不要超过5个，因为阿B的服务器限制，可能造成未知错误。 
+格式和解析方式和DDTV一样，格式为json字符串，releases发布的压缩包里附带了一个参考的文件。  
 房间配置文件格式为
 ```json
 {
