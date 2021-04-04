@@ -153,7 +153,7 @@ namespace Auxiliary.Upload
                         {
                             UploadPart(i, partSize, uploadInfo.srcFile);
                             int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
-                            string content = $"{i}/{partNum} | {i / partNum * 100}% |Time: {passTime}s | Remain: {passTime / i * partNum - passTime}s";
+                            string content = $"{i}/{partNum} | {Math.Floor((double)(i) / partNum * 100)}% |Time: {passTime}s | Remain: {passTime * partNum / i - passTime}s";
                             InfoLog.InfoPrintf($"Cos: {content}", InfoLog.InfoClass.上传必要提示);
                             uploadInfo.status["Cos"].comments = content;
                         }

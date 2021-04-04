@@ -120,7 +120,7 @@ namespace Auxiliary
         /// <summary>
         /// 返回上传列表HTML字符串
         /// </summary>
-        /// <param name="Mode">0为全体,1为下载中,2为已完成</param>
+        /// <param name="Mode">0为全体,1为上传中,2为已完成</param>
         /// <returns></returns>
         public static string UploaderInfoPrintf(int Mode)
         {
@@ -445,6 +445,7 @@ namespace Auxiliary
                 BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
             BB += InfoLog.DownloaderInfoPrintf(1);
+            BB += InfoLog.UploaderInfoPrintf(1);
             return BB;
         }
         public class WindowsInfo
