@@ -116,6 +116,124 @@ namespace Auxiliary
             
             return 返回字符串;
         }
+
+        /// <summary>
+        /// 返回上传列表HTML字符串
+        /// </summary>
+        /// <param name="Mode">0为全体,1为下载中,2为已完成</param>
+        /// <returns></returns>
+        public static string UploaderInfoPrintf(int Mode)
+        {
+            string @return = string.Empty;
+            int cnt = 0;
+            int finished = 0;
+            int uploading = 0;
+
+            Func<int,string> getStatus = code =>
+            {
+                string statusText="";
+                switch(code)
+                {
+                    case 0:
+                        statusText = "■上传成功";
+                        break;
+                    case -1:
+                        statusText = "×上传失败";
+                        break;
+                    default:
+                        statusText = $"□第{code}次上传";
+                        break;
+                }
+                return statusText;
+            };
+
+            if (Mode == 0)
+            {
+                @return += "<meta http-equiv=\"refresh\" content=\"5\"><html><head><title>%title%</title><meta charset=\"utfhttps://minigame.qq.com/gameinfo/10075.html#-8\"></head><body>";
+            }
+            List<string> uploadList = new List<string>();
+            uploadList.Add(string.Format("<table border=\"5\">" +
+                "<tr><th>序号</th>" +
+                "<th>主播名称</th>" +
+                "<th>文件名</th>" +
+                "<th>上传目标</th>" +
+                "<th>上传状态</th>" +
+                "<th>备注</th>" +
+                "<th>开始时间</th>" +
+                "<th>结束时间</th></tr>"));
+
+            foreach (var file in Upload.Uploader.UploadList)
+            {
+                foreach (var item in file.status)
+                {
+                    cnt++;
+                    var upTask = item.Value;
+                    string startTime = MMPU.Unix转换为DateTime(upTask.startTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss");
+                    string endTime = upTask.endTime > 0 ? MMPU.Unix转换为DateTime(upTask.endTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss") : "";
+
+                    if (Mode == 0)
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    else if (Mode == 1 && upTask.statusCode!=0 && upTask.statusCode != -1)
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    else if (Mode == 2 && (upTask.statusCode == 0 || upTask.statusCode == -1))
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    if (upTask.statusCode != 0 && upTask.statusCode != -1)
+                    {
+                        uploading++;
+                    }
+                    else
+                    {
+                        finished++;
+                    }
+                }
+            }
+
+            for (int i = 0; i < uploadList.Count; i++)
+            {
+                @return += uploadList[i];
+            }
+            switch (Mode)
+            {
+                case 0:
+                    @return = (@return + "</table></body></html>").Replace("%title%", "正在上传:" + uploading + " 已经完成:" + finished);
+                    break;
+                case 1:
+                    @return = @return + "</table>";
+                    break;
+                case 2:
+                    @return = @return + "</table>";
+                    break;
+            }
+            return @return;
+        }
+
         public static void InfoInit(string LogFile, InfoClasslBool InfoLvevlBool)
         {
             if (!Directory.Exists("./LOG"))
