@@ -97,17 +97,7 @@ namespace Auxiliary
         public static bool 网络环境变动监听 = false;
 
         public static List<string> DeleteFileList = new List<string>();
-
-        //上传配置属性
-        public static bool enableUpload = false;
-        public static string enableOneDrive = "";
-        public static string oneDriveConfig = "";
-        public static string oneDrivePath = "";
-        public static string enableCos = "";
-        public static string cosConfig = "";
-        public static string cosPath = "";
-        public static Dictionary<int, string> UploadOrder = new Dictionary<int, string>();
-        public static string deleteAfterUpload = "";
+        
 
         /// <summary>
         /// 配置文件初始化
@@ -156,54 +146,7 @@ namespace Auxiliary
             网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
             InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
 
-            #region 上传配置初始化
-            deleteAfterUpload = 读取exe默认配置文件("DeleteAfterUpload", "0");
-            InfoLog.InfoPrintf($"配置文件初始化任务[DeleteAfterUpload]:{deleteAfterUpload}", InfoLog.InfoClass.Debug);
-            //OneDrive初始化
-            enableOneDrive = 读取exe默认配置文件("EnableOneDrive", "0");
-            InfoLog.InfoPrintf($"配置文件初始化任务[EnableOneDrive]:{enableOneDrive}", InfoLog.InfoClass.Debug);
-            if (enableOneDrive != "0")
-            {
-                try
-                {
-                    UploadOrder.Add(int.Parse(enableOneDrive), "OneDrive");
-                }
-                catch (System.ArgumentException)
-                {
-                    InfoLog.InfoPrintf($"OneDrive的顺序出现重复，请检查是否有其他项目设定为{enableOneDrive}", InfoLog.InfoClass.系统错误信息);
-                    Process.GetCurrentProcess().Kill();
-                }
-                enableUpload = true;
-                InfoLog.InfoPrintf($"已检测到OneDrive上传任务，上传顺序为{enableOneDrive}", InfoLog.InfoClass.上传必要提示);
-                oneDriveConfig = 读取exe默认配置文件("OneDriveConfig", "");
-                InfoLog.InfoPrintf($"配置文件初始化任务[oneDriveConfig]:{oneDriveConfig}", InfoLog.InfoClass.Debug);
-                oneDrivePath = 读取exe默认配置文件("OneDrivePath", "/");
-                CheckPath(ref oneDrivePath);
-                InfoLog.InfoPrintf($"配置文件初始化任务[oneDrivePath]:{oneDrivePath}", InfoLog.InfoClass.Debug);
-            }
-            //Cos初始化
-            enableCos = 读取exe默认配置文件("EnableCos", "0");
-            InfoLog.InfoPrintf($"配置文件初始化任务[EnableCos]:{enableCos}", InfoLog.InfoClass.Debug);
-            if (enableCos != "0")
-            {
-                try
-                {
-                    UploadOrder.Add(int.Parse(enableCos), "Cos");
-                }
-                catch (System.ArgumentException)
-                {
-                    InfoLog.InfoPrintf($"Cos的顺序出现重复，请检查是否有其他项目设定为{enableCos}", InfoLog.InfoClass.系统错误信息);
-                    Process.GetCurrentProcess().Kill();
-                }
-                enableUpload = true;
-                InfoLog.InfoPrintf($"已检测到Cos上传任务，上传顺序为{enableCos}", InfoLog.InfoClass.上传必要提示);
-                cosConfig = 读取exe默认配置文件("CosConfig", "/root/.cos.config");
-                InfoLog.InfoPrintf($"配置文件初始化任务[CosConfig]:{cosConfig}", InfoLog.InfoClass.Debug);
-                cosPath = 读取exe默认配置文件("CosPath", "/");
-                CheckPath(ref cosPath);
-                InfoLog.InfoPrintf($"配置文件初始化任务[CosPath]:{cosPath}", InfoLog.InfoClass.Debug);
-            }
-            #endregion
+            Upload.Uploader.InitUpload();//初始化上传配置
 
             #region 配置文件设置
             if (模式 == 0)
@@ -1711,7 +1654,7 @@ namespace Auxiliary
         /// </summary>
         /// <param name="x">待检查修改路径</param>
         /// <returns>无返回</returns>
-        private static void CheckPath(ref string x)
+        public static void CheckPath(ref string x)
         {
             if (x.Substring(x.Length - 1, 1) != "/" && x.Substring(x.Length - 1, 1) != "\\") x += '/';
             return;
