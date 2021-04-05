@@ -66,7 +66,7 @@ namespace Auxiliary.Upload
             Process P = (Process)sender;
             if (P.ExitCode != 0)
             {
-                throw new OneDriveException("fail to upload");
+                throw new UploadFailure("fail to upload");
             }
         }
     }
