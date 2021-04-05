@@ -9,10 +9,4 @@ namespace Auxiliary.Upload
         public UploadFailure(string message) : base(message) { }
         public UploadFailure(string message, Exception inner) : base(message, inner) { }
     }
-
-    public class OneDriveException : ApplicationException
-    {
-        public OneDriveException(string message) : base(message) { }
-        public OneDriveException(string message, Exception inner) : base(message, inner) { }
-    }
 }
