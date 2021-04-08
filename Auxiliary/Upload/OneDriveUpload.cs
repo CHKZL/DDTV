@@ -10,6 +10,7 @@ namespace Auxiliary.Upload
     class OneDriveUpload
     {
         private string configFile { set; get; }
+        private int exitCode;
         /// <summary>
         /// 初始化OneDrive Upload
         /// </summary>
@@ -46,28 +47,23 @@ namespace Auxiliary.Upload
                 string stringResults = e.Data;
                 if (stringResults == "" || stringResults == null) return;
                 uploadInfo.status["OneDrive"].comments = System.Text.RegularExpressions.Regex.Replace(stringResults, @"(.*\[)(.*)(\].*)", "$2");
-                if (DateTime.Now - showTime > new TimeSpan(0, 5, 0)) //5min更新一次log
-                {
-                    InfoLog.InfoPrintf($"Onedrive: {stringResults}", InfoLog.InfoClass.上传必要提示);
-                }
+                InfoLog.InfoPrintf($"Onedrive: {stringResults}", InfoLog.InfoClass.上传必要提示);
                 
             };  // 捕捉的信息
-
-            proc.Start();
-            proc.BeginOutputReadLine();   // 开始异步读取
-            proc.Exited += Process_Exited;
-            proc.WaitForExit();
-            proc.Close();
-            GC.Collect();
+                proc.Start();
+                proc.BeginOutputReadLine();   // 开始异步读取
+                proc.Exited += Process_Exited;
+                proc.WaitForExit();
+                proc.Close();
+                GC.Collect();
+            if (exitCode != 0)
+                throw new UploadFailure("fail to upload");
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
             Process P = (Process)sender;
-            if (P.ExitCode != 0)
-            {
-                throw new UploadFailure("fail to upload");
-            }
+            exitCode = P.ExitCode;
         }
     }
 }
