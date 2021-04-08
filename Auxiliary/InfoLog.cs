@@ -444,8 +444,8 @@ namespace Auxiliary
                 }
                 BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
-            BB += InfoLog.DownloaderInfoPrintf(1);
-            BB += InfoLog.UploaderInfoPrintf(1);
+            BB += "<hr/>---下载任务---<br/>" + InfoLog.DownloaderInfoPrintf(1);
+            BB += "<br/>---上传任务---<br/>" + InfoLog.UploaderInfoPrintf(1);
             return BB;
         }
         public class WindowsInfo
