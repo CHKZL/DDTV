@@ -103,7 +103,7 @@ namespace Auxiliary.Upload
                     uploadInfo.status[uploadInfo.type].statusCode = 0;
                     break;
                 }
-                catch (Exception)
+                catch (UploadFailure)
                 {
                     if (uploadInfo.retries == Uploader.RETRY_MAX_TIMES)
                     {
@@ -121,8 +121,7 @@ namespace Auxiliary.Upload
                                        $"\r\n==============={uploadInfo.type}上传失败===============\r\n", InfoLog.InfoClass.上传必要提示);
                         uploadInfo.status[uploadInfo.type].comments = $"上传失败";
                         uploadInfo.status[uploadInfo.type].statusCode = -1;
-                        throw new UploadFailure($"{uploadInfo.type} upload fail");
-                        //break;
+                        break;
                     }
                     else
                     {
