@@ -11,8 +11,8 @@ namespace Auxiliary.Upload
     {
         //上传配置属性
         public static bool enableUpload { set; get; } = false;
-        public static int RETRY_MAX_TIMES { get; } = 3;//重试次数
-        public static int RETRY_WAITING_TIME { get; } = 10;//重试等待时间
+        public static int RETRY_MAX_TIMES { get; } = 5;//重试次数
+        public static int RETRY_WAITING_TIME { get; } = 60;//重试等待时间
         //OneDrive
         public static string enableOneDrive { set; get; } = "";
         public static string oneDriveConfig { set; get; } = "";
