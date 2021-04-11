@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
 using static Auxiliary.Downloader;
 
 
@@ -29,35 +25,22 @@ namespace Auxiliary.Upload
             new Task(() =>
             {
                 if (!Uploader.enableUpload) return;
-                bool lastStatus = false;
-                int cnt = 0;
                 foreach (var item in Uploader.UploadOrder)
                 {
-                    cnt++;
-                    try
+                    uploadInfo.type = item.Value;
+                    switch (uploadInfo.type)
                     {
-                        uploadInfo.type = item.Value;
-                        switch (uploadInfo.type)
-                        {
-                            case "OneDrive":
-                                Upload(new OneDriveUpload().doUpload);
-                                break;
-                            case "Cos":
-                                Upload(new CosUpload().doUpload);
-                                break;
-                            default:
-                                break;
-                        }
-                        if (cnt == Uploader.UploadOrder.Count)
-                            lastStatus = true;
-                    }
-                    catch(UploadFailure)
-                    {
-                        if (cnt == Uploader.UploadOrder.Count)
-                            lastStatus = false;
+                        case "OneDrive":
+                            Upload(new OneDriveUpload().doUpload);
+                            break;
+                        case "Cos":
+                            Upload(new CosUpload().doUpload);
+                            break;
+                        default:
+                            break;
                     }
                 }
-                if (Uploader.deleteAfterUpload == "1" && lastStatus && System.IO.File.Exists(uploadInfo.srcFile))
+                if (Uploader.deleteAfterUpload == "1" && uploadInfo.status[uploadInfo.type].statusCode == 0 && System.IO.File.Exists(uploadInfo.srcFile))
                 {
                     System.IO.File.Delete(uploadInfo.srcFile);
                 }
@@ -69,7 +52,7 @@ namespace Auxiliary.Upload
             uploadInfo.retries = 1;
             UploadStatus uploadStatus = new UploadStatus();
             uploadInfo.status.Add(uploadInfo.type, uploadStatus);
-            
+
             InfoLog.InfoPrintf($"\r\n==============建立{uploadInfo.type}上传任务================\r\n" +
                           $"主播名:{uploadInfo.streamerName}" +
                           $"\r\n标题:{uploadInfo.streamTitle}" +
@@ -167,7 +150,7 @@ namespace Auxiliary.Upload
             public int statusCode { set; get; }//-1：上传失败 0:上传成功 其他：上传次数
             public string comments { set; get; }
 
-            public UploadStatus ()
+            public UploadStatus()
             {
                 startTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                 endTime = -1;
