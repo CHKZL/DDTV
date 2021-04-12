@@ -44,8 +44,7 @@ web服务端:
 [http://IP:11419/file]：DDTVLiveRec录制的文件列表  
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
 
-
-### 如果使用Docker构建:
+# 如果使用Docker构建:
 
 1. 构建Docker镜像：
 
@@ -97,6 +96,22 @@ docker run -d \
 使用DDTVLiveRec需要注意的为["Name"]["OfficialName"]["RoomNumber"]["VideoStatus"]  
 
 ### 一定要确保符合参考文件的JSON文件格式！！！
+
+# 启用自动转码
+在**DDTVLiveRec.dll.config**文件中，将[AutoTranscoding]的值改为1，也就是
+```ini
+<add key="AutoTranscoding" value="1" />
+```   
+（注:如果没有DDTVLiveRec.dll.config文件，请先运行一次DDTVLiveRec，会自动生成该文件）  
+<br/>
+请注意！自动转码会**消耗大量CPU资源**，CPU资源不够可能会**导致不断重连、断播、网络连接失败等故障！！**  
+请注意！自动转码会**消耗大量CPU资源**，CPU资源不够可能会**导致不断重连、断播、网络连接失败等故障！！**  
+请注意！自动转码会**消耗大量CPU资源**，CPU资源不够可能会**导致不断重连、断播、网络连接失败等故障！！**  
+
+## windows
+>在根目录中建立**libffmpeg**文件夹，将DDTV本地中对应的[ffmpeg.exe]文件给复制到该目录  
+(也就是和DDTVLiveRec执行文件的相对路径为：[./libffmpeg/ffmpeg.exe])
+<br/>
 
 # 运行界面
 主界面   
