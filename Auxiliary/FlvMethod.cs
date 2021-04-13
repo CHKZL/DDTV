@@ -179,7 +179,7 @@ namespace Auxiliary
 
         private static void Output(object sender, DataReceivedEventArgs e)
         {
-            InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.Debug);
+            //InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.Debug);
            // Console.WriteLine(e.Data);
         }
 

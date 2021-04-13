@@ -19,7 +19,6 @@ namespace DDTVLiveRecWebServer
     public class Startup
     {
         public static string 返回标签内容 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
-        public static string 配置修改标签 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
         public static string 验证KEY预设 = "DDTVLiveRec";
         public static string MDtoHTML(string MD)
         {
@@ -120,14 +119,28 @@ namespace DDTVLiveRecWebServer
                         context.Response.ContentType = "text/html; charset=utf-8";
                         foreach (DirectoryInfo NextFolder1 in new DirectoryInfo(Auxiliary.MMPU.缓存路径).GetDirectories())
                         {
+                            bool 换行 = false;
                             A = A + "<br/>" + NextFolder1.Name;
                             foreach (FileInfo NextFolder2 in new DirectoryInfo(Auxiliary.MMPU.缓存路径 + NextFolder1.Name).GetFiles())
                             {
-                                string FileUrl = Auxiliary.MMPU.缓存路径 + NextFolder1.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao") + "/" + NextFolder2.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao");
-                                FileUrl = FileUrl;
-                                A = A + "<br/>&nbsp;&nbsp;" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + "<a href=\"./play?FileUrl=" + FileUrl + "&Title=" + NextFolder2.Name + "\" target=\"_blank\">" + NextFolder2.Name + "</a>";
+                                if (Auxiliary.MMPU.转码功能使能)
+                                {
+                                    if(NextFolder2.Name.Substring(NextFolder2.Name.Length - 4, 4) != ".flv")
+                                    {
+                                        换行 = true;
+                                        string FileUrl = Auxiliary.MMPU.缓存路径 + NextFolder1.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao") + "/" + NextFolder2.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao");
+                                        A = A + "<br/>&nbsp;&nbsp;" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + "<a href=\"./play?FileUrl=" + FileUrl + "&Title=" + NextFolder2.Name + "\" target=\"_blank\">" + NextFolder2.Name + "</a>";
+                                    }
+                                }
+                                else
+                                {
+                                    换行 = true;
+                                    string FileUrl = Auxiliary.MMPU.缓存路径 + NextFolder1.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao") + "/" + NextFolder2.Name.Replace("+", "ddtvfuhaojia").Replace(" ", "ddtvfuhaokongge").Replace("/", "ddtvfuhaoxiegang").Replace("?", "ddtvfuhaowenhao").Replace("%", "ddtvfuhaobaifenhao").Replace("#", "ddtvfuhaojinhao").Replace("&", "ddtvfuhaoand").Replace("%", "ddtvfuhaobaifenhao");
+                                    A = A + "<br/>&nbsp;&nbsp;" + Math.Ceiling(NextFolder2.Length / 1024.0 / 1024.0) + " MB |" + "<a href=\"./play?FileUrl=" + FileUrl + "&Title=" + NextFolder2.Name + "\" target=\"_blank\">" + NextFolder2.Name + "</a>";
+                                }
                             }
-                            A = A + "<br/>";
+                            if (换行)
+                                A = A + "<br/>";
                         }
                         await context.Response.WriteAsync(返回标签内容 + A, System.Text.Encoding.UTF8);
                     }
@@ -307,7 +320,7 @@ namespace DDTVLiveRecWebServer
                     if (ACCAsync(context, 验证KEY预设) >= 2)
                     {
                         Auxiliary.InfoLog.ClasslBool.Debug = true;
-                        Auxiliary.InfoLog.ClasslBool.输出到文件 = true;
+                        Auxiliary.InfoLog.ClasslBool.是否将日志输出到文件 = true;
                         context.Response.ContentType = "text/html; charset=utf-8";
                         await context.Response.WriteAsync(返回标签内容 + "Debug模式启动，该模式下会在log文件和终端输出大量log信息，请注意文件体积，重启默认关闭debug模式");
                     }
@@ -337,6 +350,7 @@ namespace DDTVLiveRecWebServer
                         string 跳转url = "<a href=\"./list\"><input type=\"button\" value='下载详情'></a>   " +
                         "<a href =\"./file\"><input type=\"button\" value='下载文件列表'></a>   " +
                         "<a href =\"./log\"><input type=\"button\" value='日志'></a>   " +
+                        "<a href =\"./roomlist\"><input type=\"button\" value='房间配置'></a>   " +
                         //"<a href =\"./config\"><input type=\"button\" value='可修改配置'></a>   " +
                         //"<a href =\"./wssinfo\"><input type=\"button\" value='特殊wss连接列表'></a>   " +
                         "<br/><br/>";
