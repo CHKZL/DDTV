@@ -517,6 +517,13 @@ namespace Auxiliary
                         }
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
+                        try
+                        {
+                            DownIofo.WC.Dispose();
+                        }
+                        catch (Exception)
+                        {
+                        }
                         return;
                     }
                     else
@@ -587,6 +594,7 @@ namespace Auxiliary
                                                 DownIofo.下载状态 = false;
                                                 DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                 下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
+                                                DownIofo.WC.Dispose();
                                             }
                                             catch (Exception){}
                                             return;

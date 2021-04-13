@@ -26,7 +26,7 @@ namespace Auxiliary
             public bool 杂项提示 { set; get; } = false;
             public bool 下载必要提示 { set; get; } = false;
             public bool 没啥价值的消息 { set; get; } = false;
-            public bool 输出到文件 { set; get; } = false;
+            public bool 是否将日志输出到文件 { set; get; } = false;
         }
         public enum InfoClass
         {
@@ -63,10 +63,10 @@ namespace Auxiliary
             int 正在下载数量 = 0;
             if(模式==0)
             {
-                返回字符串 += "<meta http-equiv=\"refresh\" content=\"5\"><html><head><title>%title%</title><meta charset=\"utfhttps://minigame.qq.com/gameinfo/10075.html#-8\"></head><body>";
+                返回字符串 += "<meta http-equiv=\"refresh\" content=\"5\"><html><head><title>%title%</title><meta charset=\"utf-8\"></head><body>";
             }
             List<string> 下载任务 = new List<string>();
-            下载任务.Add(string.Format("<table border=\"5\"><tr><td>序号</td><td>房间号</td><td>下载状态</td><td>已下载大小</td><td>备注</td><td>主播名称</td><td>开始时间</td><td>结束时间</td></td>"));
+            下载任务.Add(string.Format("<table border=\"5\"><tr><td>序号</td><td>房间号</td><td>下载状态</td><td>已下载大小</td><td>备注</td><td>主播名称</td><td>开始时间</td><td>结束时间</td></tr>"));
 
             foreach (var item in MMPU.DownList)
             {
@@ -74,15 +74,15 @@ namespace Auxiliary
                 string 结束时间 = item.DownIofo.结束时间 > 0 ? MMPU.Unix转换为DateTime(item.DownIofo.结束时间.ToString()).ToString("yyyy/MM/dd HH:mm:ss") : "";
                 if(模式==0)
                 {
-                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></td>");
+                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></tr>");
                 }
                 else if(模式==1 && item.DownIofo.下载状态)
                 {
-                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></td>");
+                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></tr>");
                 }
                 else if (模式 == 2 && !item.DownIofo.下载状态)
                 {
-                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></td>");
+                    下载任务.Add(string.Format("<tr><td>" + 计数 + "</td><td>" + item.DownIofo.房间_频道号 + "</td><td>" + (item.DownIofo.下载状态 ? "□正在下载" : "■下载完成")) + "</td><td> " + item.DownIofo.已下载大小str + "</td><td>" + item.DownIofo.备注 + "</td><td>" + item.DownIofo.主播名称 + "</td><td>" + 开始时间 + "</td><td>" + 结束时间 + "</td></tr>");
                 }
                 计数++;
                 if (item.DownIofo.下载状态)
@@ -201,7 +201,7 @@ namespace Auxiliary
                         }
                         break;
                 }
-                if (ClasslBool.输出到文件 && A.Length > 2)
+                if (ClasslBool.是否将日志输出到文件 && A.Length > 2)
                 {
                     OutToFile(A);
                 }
