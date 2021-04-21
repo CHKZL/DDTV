@@ -26,8 +26,8 @@ namespace Auxiliary
     {
         public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
-        { 
-            "当前没有更新内容"
+        {
+            "增加转码完成后自动删除原始flv文件的功能和对应的配置文件"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -38,7 +38,7 @@ namespace Auxiliary
         public static string 下载储存目录 = "";
         public static string 版本号 = "2.0.5.1c";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
-        public static string[] 不检测的版本号 = { "2.0.5.1b" };
+        public static string[] 不检测的版本号 = { };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -64,6 +64,7 @@ namespace Auxiliary
         public static string AESKey = "rzqIzYmDQFqQmWfr";
         public static string AESVal = "itkIBBs5JdCLKqpP";
         public static bool 转码功能使能 = false;
+        public static bool 转码后自动删除文件 = false;
         public static string 房间状态MD5值 = string.Empty;
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
@@ -225,9 +226,11 @@ namespace Auxiliary
             //是否启动WS连接组
             bilibili.是否启动WSS连接组 = MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "0" ? false : true;
             InfoLog.InfoPrintf($"配置文件初始化任务[是否启动WSS连接组]:{是否启动WSS连接组}", InfoLog.InfoClass.Debug);
-            //转码功能使能
+            //转码功能使能和转码后删除文件
             MMPU.转码功能使能 = MMPU.读取exe默认配置文件("AutoTranscoding", "0") == "1" ? true : false;
             InfoLog.InfoPrintf($"配置文件初始化任务[转码功能使能]:{转码功能使能}", InfoLog.InfoClass.Debug);
+            MMPU.转码后自动删除文件 = MMPU.读取exe默认配置文件("AutoTranscodingDelFile", "0") == "1" ? true : false;
+            InfoLog.InfoPrintf($"配置文件初始化任务[转码后自动删除文件]:{转码后自动删除文件}", InfoLog.InfoClass.Debug);
             //检查配置文件
             bilibili.BiliUser.CheckPath(MMPU.BiliUserFile);
             //检查弹幕录制配置
@@ -288,7 +291,7 @@ namespace Auxiliary
             Downloader.轮询检查下载任务();
             return true;
         }
-        public static void 文件删除后台委托()
+        private static void 文件删除后台委托()
         {
             new Thread(new ThreadStart(delegate
             {
