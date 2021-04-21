@@ -126,7 +126,7 @@ namespace Auxiliary
             {
                 try
                 {
-                    Process process = new Process();
+                    ProcessPuls process = new ProcessPuls();
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";
@@ -148,6 +148,7 @@ namespace Auxiliary
                     process.BeginErrorReadLine();   // 开始异步读取
                     process.Exited += Process_Exited;
                     GC.Collect();
+                   
                 }
                 catch (Exception)
                 {
@@ -159,11 +160,21 @@ namespace Auxiliary
             }
            
         }
+        public class ProcessPuls : Process
+        {
+            public string OriginalVideoFilename = "";
+            public string NewVideoFilename = "";
 
+        }
         private static void Process_Exited(object sender, EventArgs e)
         {
-            Process P = (Process)sender;
+            ProcessPuls P = (ProcessPuls)sender;
             InfoLog.InfoPrintf("转码任务完成:"+P.StartInfo.Arguments, InfoLog.InfoClass.下载必要提示);
+            if(MMPU.转码后自动删除文件)
+            {
+                MMPU.文件删除委托(P.OriginalVideoFilename, "转码完成自动，删除原始文件");
+            }
+ 
         }
 
         private static void Output(object sender, DataReceivedEventArgs e)
