@@ -11,6 +11,7 @@ namespace Auxiliary.Upload
     {
         //上传配置属性
         public static bool enableUpload { set; get; } = false;//开启上传
+        private static bool CheckEnableUpload { set; get; } = false;//检测配置文件中是否成功配置上传
         public static int RETRY_MAX_TIMES { get; } = 5;//重试次数
         public static int RETRY_WAITING_TIME { get; } = 60;//重试等待时间
         //OneDrive
@@ -60,6 +61,7 @@ namespace Auxiliary.Upload
                     InitOneDrive();
                     InitCos();
 
+                    enableUpload &= CheckEnableUpload; //配置文件中EnableUpload开启 且 至少成功配置一个上传目标
                     UploadOrder = UploadOrderTemp.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
                 }
                 catch (System.ArgumentException)
@@ -82,7 +84,7 @@ namespace Auxiliary.Upload
             if (enableOneDrive != "0")
             {
                 UploadOrderTemp.Add(int.Parse(enableOneDrive), "OneDrive");
-                enableUpload = true;
+                CheckEnableUpload = true;
                 InfoLog.InfoPrintf($"已检测到OneDrive上传任务，上传顺序为{enableOneDrive}", InfoLog.InfoClass.上传必要提示);
 
                 oneDriveConfig = MMPU.读取exe默认配置文件("OneDriveConfig", "");
@@ -103,7 +105,7 @@ namespace Auxiliary.Upload
             if (enableCos != "0")
             {
                 UploadOrderTemp.Add(int.Parse(enableCos), "Cos");
-                enableUpload = true;
+                CheckEnableUpload = true;
                 InfoLog.InfoPrintf($"已检测到Cos上传任务，上传顺序为{enableCos}", InfoLog.InfoClass.上传必要提示);
 
                 cosSecretId = MMPU.读取exe默认配置文件("CosSecretId", "");
