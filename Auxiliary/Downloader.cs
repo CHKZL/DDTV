@@ -143,6 +143,9 @@ namespace Auxiliary
                         }
                         Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
                     }).Start();
+
+                    Upload.UploadTask uploadTask = new Upload.UploadTask(item.DownIofo);
+                    uploadTask.UploadVideo();
                 }
             }
         }
@@ -472,18 +475,20 @@ namespace Auxiliary
                     DownIofo.备注 = "下载任务结束";                 
                     if (e.Cancelled&&!DownIofo.网络超时)
                     {
-                      
+                        Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
                         if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
                         {
                             DownIofo.备注 = "播放窗口关闭";           
                             DownIofo.下载状态 = false;
                             下载结束提醒(true, "下载任务结束",DownIofo);
+                            uploadTask.UploadVideo();
                             return;
                         }
                         DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                         DownIofo.备注 = "用户取消，停止下载";
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
+                        uploadTask.UploadVideo();
                     }
                     else if (!e.Cancelled&& !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                     {
@@ -517,6 +522,9 @@ namespace Auxiliary
                         }
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
+                        Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
+                        uploadTask.UploadVideo();
+
                         return;
                     }
                     else
@@ -587,6 +595,8 @@ namespace Auxiliary
                                                 DownIofo.下载状态 = false;
                                                 DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                 下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
+                                                Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
+                                                uploadTask.UploadVideo();
                                             }
                                             catch (Exception){}
                                             return;

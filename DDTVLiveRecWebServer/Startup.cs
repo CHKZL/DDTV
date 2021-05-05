@@ -21,6 +21,7 @@ namespace DDTVLiveRecWebServer
         public static string 返回标签内容 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
         public static string 配置修改标签 = "<a href=\"./\"><input type=\"button\" value='返回概况页'></a><br/><br/>";
         public static string 验证KEY预设 = "DDTVLiveRec";
+        string mobileAdaptationHeader = "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=10.0, user-scalable=yes\" />";
         public static string MDtoHTML(string MD)
         {
             return CommonMark.CommonMarkConverter.Convert(MD);
@@ -92,9 +93,14 @@ namespace DDTVLiveRecWebServer
                         {
                             Auxiliary.MMPU.文件删除委托("./LOG/DDTVLiveRecLog.out.bak", "生成新的log文件1，删除老旧log文件");
                             File.Copy("./LOG/DDTVLiveRecLog.out", "./LOG/DDTVLiveRecLog.out.bak");
-                            string fileText = File.ReadAllText("./LOG/DDTVLiveRecLog.out.bak", System.Text.Encoding.UTF8);
-                            fileText = fileText.Replace("\r\n", "<br/>").Replace(" ", "&nbsp;");
-                            await context.Response.WriteAsync(返回标签内容 + fileText);
+                            string fileText = "";
+                            foreach (var line in File.ReadLines("./LOG/DDTVLiveRecLog.out.bak", System.Text.Encoding.UTF8).Reverse())//log倒序输出
+                            {
+                                if (line == "") continue;
+                                fileText = fileText + "<br/>" + line;
+                            }
+                            fileText = fileText.Replace(" ", "&nbsp;");
+                            await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + fileText);
                             Auxiliary.MMPU.文件删除委托("./LOG/DDTVLiveRecLog.out.bak", "生成新的log文件2，删除老旧log文件");
                             return;
                         }
@@ -129,7 +135,7 @@ namespace DDTVLiveRecWebServer
                             }
                             A = A + "<br/>";
                         }
-                        await context.Response.WriteAsync(返回标签内容 + A, System.Text.Encoding.UTF8);
+                        await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + A, System.Text.Encoding.UTF8);
                     }
                     else
                     {
@@ -159,19 +165,19 @@ namespace DDTVLiveRecWebServer
                         fileText = fileText.Replace("%D这是提示%", Prompt);
                         fileText = fileText.Replace("%播放路径%", FileUrl);
                         fileText = fileText.Replace("%这是文件地址%", FileUrl);
-                        await context.Response.WriteAsync(fileText, System.Text.Encoding.UTF8);
+                        await context.Response.WriteAsync(mobileAdaptationHeader+fileText, System.Text.Encoding.UTF8);
                     }
                     else
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync("权限验证未通过", System.Text.Encoding.UTF8);
+                        await context.Response.WriteAsync(mobileAdaptationHeader+"权限验证未通过", System.Text.Encoding.UTF8);
                     }
                 });
                 endpoints.MapGet("/login", async context =>
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
                     string html = Properties.Resources.loginHtml;
-                    await context.Response.WriteAsync(MDtoHTML(html), System.Text.Encoding.UTF8);
+                    await context.Response.WriteAsync(mobileAdaptationHeader+MDtoHTML(html), System.Text.Encoding.UTF8);
                 });
                 endpoints.MapGet("/loginACC", async context =>
                 {
@@ -218,14 +224,31 @@ namespace DDTVLiveRecWebServer
                 {
                     context.Response.ContentType = "text/html; charset=utf-8";
                     string OUTTEST = "<br/>使用WEB端需要验证，验证请访问:<br/><a href=\"./login\"><input type=\"button\" value='鉴权登陆页'></a>";
-                    await context.Response.WriteAsync("<H1>权限验证失败!!!</H1>" + OUTTEST, System.Text.Encoding.UTF8);
+                    await context.Response.WriteAsync(mobileAdaptationHeader+"<H1>权限验证失败!!!</H1>" + OUTTEST, System.Text.Encoding.UTF8);
                 });
+                
+                endpoints.MapGet("/upload", async context =>
+                {
+                    if (ACCAsync(context, 验证KEY预设) >= 2)
+                    {
+                        context.Response.ContentType = "text/html; charset=utf-8";
+                        if (Auxiliary.Upload.Uploader.enableUpload == true)
+                            await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + Auxiliary.InfoLog.UploaderInfoPrintf(0), System.Text.Encoding.UTF8);
+                        else
+                            await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + "未开启上传功能", System.Text.Encoding.UTF8);
+                    }
+                    else
+                    {
+                        context.Response.Redirect("LoginErrer");
+                    }
+                });
+
                 endpoints.MapGet("/list", async context =>
                 {
                     if (ACCAsync(context, 验证KEY预设) >= 2)
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync(返回标签内容 + Auxiliary.InfoLog.DownloaderInfoPrintf(0), System.Text.Encoding.UTF8);
+                        await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + Auxiliary.InfoLog.DownloaderInfoPrintf(0), System.Text.Encoding.UTF8);
                     }
                     else
                     {
@@ -237,7 +260,7 @@ namespace DDTVLiveRecWebServer
                     if (ACCAsync(context, 验证KEY预设) >= 2)
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
-                        await context.Response.WriteAsync(返回标签内容 + Auxiliary.InfoLog.返回WSS连接状态列表(), System.Text.Encoding.UTF8);
+                        await context.Response.WriteAsync(mobileAdaptationHeader+返回标签内容 + Auxiliary.InfoLog.返回WSS连接状态列表(), System.Text.Encoding.UTF8);
                     }
                     else
                     {
@@ -335,6 +358,7 @@ namespace DDTVLiveRecWebServer
                     {
                         context.Response.ContentType = "text/html; charset=utf-8";
                         string 跳转url = "<a href=\"./list\"><input type=\"button\" value='下载详情'></a>   " +
+                        "<a href =\"./upload\"><input type=\"button\" value='上传详情'></a>   " +
                         "<a href =\"./file\"><input type=\"button\" value='下载文件列表'></a>   " +
                         "<a href =\"./log\"><input type=\"button\" value='日志'></a>   " +
                         //"<a href =\"./config\"><input type=\"button\" value='可修改配置'></a>   " +
@@ -342,7 +366,7 @@ namespace DDTVLiveRecWebServer
                         "<br/><br/>";
                         if (Auxiliary.MMPU.启动模式 == 1)
                         {
-                            await context.Response.WriteAsync(跳转url + Auxiliary.InfoLog.GetSystemInfo());
+                            await context.Response.WriteAsync(mobileAdaptationHeader+跳转url + Auxiliary.InfoLog.GetSystemInfo());
                         }
 
                     }
