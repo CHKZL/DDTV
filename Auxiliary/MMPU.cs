@@ -98,6 +98,7 @@ namespace Auxiliary
         public static bool 网络环境变动监听 = false;
 
         public static List<string> DeleteFileList = new List<string>();
+        
 
         /// <summary>
         /// 配置文件初始化
@@ -119,7 +120,8 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = Debug输出到文件
+                    输出到文件 = Debug输出到文件,
+                    上传必要提示 = true
                 });
                 启动模式 = 0;
             }
@@ -131,7 +133,8 @@ namespace Auxiliary
                     下载必要提示 = true,
                     杂项提示 = false,
                     系统错误信息 = true,
-                    输出到文件 = Debug输出到文件
+                    输出到文件 = Debug输出到文件,
+                    上传必要提示 = true
                 });
                 启动模式 = 1;
             }
@@ -143,6 +146,8 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[心跳打印间隔]:{心跳打印间隔}", InfoLog.InfoClass.Debug);
             网络环境变动监听 = 读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
             InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
+
+            Upload.Uploader.InitUpload();//初始化上传配置
 
             #region 配置文件设置
             if (模式 == 0)
@@ -1652,7 +1657,7 @@ namespace Auxiliary
         /// </summary>
         /// <param name="x">待检查修改路径</param>
         /// <returns>无返回</returns>
-        private static void CheckPath(ref string x)
+        public static void CheckPath(ref string x)
         {
             if (x.Substring(x.Length - 1, 1) != "/" && x.Substring(x.Length - 1, 1) != "\\") x += '/';
             return;
