@@ -10,7 +10,7 @@ namespace Auxiliary.Upload
     public static class Uploader
     {
         //上传配置属性
-        public static bool enableUpload { set; get; } = false;
+        public static bool enableUpload { set; get; } = false;//开启上传
         public static int RETRY_MAX_TIMES { get; } = 5;//重试次数
         public static int RETRY_WAITING_TIME { get; } = 60;//重试等待时间
         //OneDrive
@@ -40,19 +40,34 @@ namespace Auxiliary.Upload
         {
             try
             {
-                deleteAfterUpload = MMPU.读取exe默认配置文件("DeleteAfterUpload", "0");
-                InfoLog.InfoPrintf($"配置文件初始化任务[DeleteAfterUpload]:{deleteAfterUpload}", InfoLog.InfoClass.Debug);
-                
-                InitOneDrive();
-                InitCos();
-
-                UploadOrder = UploadOrderTemp.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+                enableUpload = MMPU.读取exe默认配置文件("EnableUpload", "0") == "1" ? true : false;
+                InfoLog.InfoPrintf($"配置文件初始化任务[EnableUpload]:{enableUpload}", InfoLog.InfoClass.Debug);
             }
-            catch (System.ArgumentException)
+            catch
             {
-                InfoLog.InfoPrintf($"上传顺序出现重复，已自动关闭上传", InfoLog.InfoClass.系统错误信息);
                 enableUpload = false;
+                deleteAfterUpload = "0";
+                InfoLog.InfoPrintf($"上传模块初始化错误，已关闭自动上传", InfoLog.InfoClass.系统错误信息);
                 return;
+            }
+            if (enableUpload)
+            {
+                try
+                {
+                    deleteAfterUpload = MMPU.读取exe默认配置文件("DeleteAfterUpload", "0");
+                    InfoLog.InfoPrintf($"配置文件初始化任务[DeleteAfterUpload]:{deleteAfterUpload}", InfoLog.InfoClass.Debug);
+
+                    InitOneDrive();
+                    InitCos();
+
+                    UploadOrder = UploadOrderTemp.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
+                }
+                catch (System.ArgumentException)
+                {
+                    InfoLog.InfoPrintf($"上传顺序出现重复，已自动关闭上传", InfoLog.InfoClass.系统错误信息);
+                    enableUpload = false;
+                    return;
+                }
             }
 
         }
