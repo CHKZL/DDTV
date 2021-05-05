@@ -153,14 +153,15 @@ namespace Auxiliary
             }
             List<string> uploadList = new List<string>();
             uploadList.Add(string.Format("<table border=\"5\">" +
-                "<tr><th>序号</th>" +
-                "<th>主播名称</th>" +
-                "<th>文件名</th>" +
-                "<th>上传目标</th>" +
-                "<th>上传状态</th>" +
-                "<th>备注</th>" +
-                "<th>开始时间</th>" +
-                "<th>结束时间</th></tr>"));
+                "<tr><td>序号</td>" +
+                "<td>主播名称</td>" +
+                "<td>文件名</td>" +
+                "<td>文件大小</td>" +
+                "<td>上传目标</td>" +
+                "<td>上传状态</td>" +
+                "<td>备注</td>" +
+                "<td>开始时间</td>" +
+                "<td>结束时间</td></tr>"));
 
             foreach (var file in Upload.Uploader.UploadList)
             {
@@ -176,6 +177,7 @@ namespace Auxiliary
                         uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
                             file.streamerName + "</td><td>" +
                             file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
                             item.Key + "</td><td>" +
                             getStatus(upTask.statusCode) + "</td><td>" +
                             upTask.comments + "</td><td>" +
@@ -187,6 +189,7 @@ namespace Auxiliary
                         uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
                             file.streamerName + "</td><td>" +
                             file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
                             item.Key + "</td><td>" +
                             getStatus(upTask.statusCode) + "</td><td>" +
                             upTask.comments + "</td><td>" +
@@ -198,6 +201,7 @@ namespace Auxiliary
                         uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
                             file.streamerName + "</td><td>" +
                             file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
                             item.Key + "</td><td>" +
                             getStatus(upTask.statusCode) + "</td><td>" +
                             upTask.comments + "</td><td>" +
