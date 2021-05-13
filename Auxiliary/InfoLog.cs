@@ -25,6 +25,7 @@ namespace Auxiliary
             public bool 系统错误信息 { set; get; } = false;
             public bool 杂项提示 { set; get; } = false;
             public bool 下载必要提示 { set; get; } = false;
+            public bool 上传必要提示 { set; get; } = false;
             public bool 没啥价值的消息 { set; get; } = false;
             public bool 是否将日志输出到文件 { set; get; } = false;
         }
@@ -34,7 +35,8 @@ namespace Auxiliary
             系统错误信息 = 1,
             杂项提示 = 2,
             下载必要提示 = 3,
-            没啥价值的消息 = 4
+            没啥价值的消息 = 4,
+            上传必要提示 = 5
         }
         public static string 返回WSS连接状态列表()
         {
@@ -114,6 +116,128 @@ namespace Auxiliary
             
             return 返回字符串;
         }
+
+        /// <summary>
+        /// 返回上传列表HTML字符串
+        /// </summary>
+        /// <param name="Mode">0为全体,1为上传中,2为已完成</param>
+        /// <returns></returns>
+        public static string UploaderInfoPrintf(int Mode)
+        {
+            string @return = string.Empty;
+            int cnt = 0;
+            int finished = 0;
+            int uploading = 0;
+
+            Func<int,string> getStatus = code =>
+            {
+                string statusText="";
+                switch(code)
+                {
+                    case 0:
+                        statusText = "■上传成功";
+                        break;
+                    case -1:
+                        statusText = "×上传失败";
+                        break;
+                    default:
+                        statusText = $"□第{code}次上传";
+                        break;
+                }
+                return statusText;
+            };
+
+            if (Mode == 0)
+            {
+                @return += "<meta http-equiv=\"refresh\" content=\"5\"><html><head><title>%title%</title><meta charset=\"utfhttps://minigame.qq.com/gameinfo/10075.html#-8\"></head><body>";
+            }
+            List<string> uploadList = new List<string>();
+            uploadList.Add(string.Format("<table border=\"5\">" +
+                "<tr><td>序号</td>" +
+                "<td>主播名称</td>" +
+                "<td>文件名</td>" +
+                "<td>文件大小</td>" +
+                "<td>上传目标</td>" +
+                "<td>上传状态</td>" +
+                "<td>备注</td>" +
+                "<td>开始时间</td>" +
+                "<td>结束时间</td></tr>"));
+
+            foreach (var file in Upload.Uploader.UploadList)
+            {
+                foreach (var item in file.status)
+                {
+                    cnt++;
+                    var upTask = item.Value;
+                    string startTime = MMPU.Unix转换为DateTime(upTask.startTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss");
+                    string endTime = upTask.endTime > 0 ? MMPU.Unix转换为DateTime(upTask.endTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss") : "";
+
+                    if (Mode == 0)
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    else if (Mode == 1 && upTask.statusCode!=0 && upTask.statusCode != -1)
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    else if (Mode == 2 && (upTask.statusCode == 0 || upTask.statusCode == -1))
+                    {
+                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                            file.streamerName + "</td><td>" +
+                            file.fileName + "</td><td>" +
+                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
+                            item.Key + "</td><td>" +
+                            getStatus(upTask.statusCode) + "</td><td>" +
+                            upTask.comments + "</td><td>" +
+                            startTime + "</td><td>" +
+                            endTime + "</td></td>"));
+                    }
+                    if (upTask.statusCode != 0 && upTask.statusCode != -1)
+                    {
+                        uploading++;
+                    }
+                    else
+                    {
+                        finished++;
+                    }
+                }
+            }
+
+            for (int i = 0; i < uploadList.Count; i++)
+            {
+                @return += uploadList[i];
+            }
+            switch (Mode)
+            {
+                case 0:
+                    @return = (@return + "</table></body></html>").Replace("%title%", "正在上传:" + uploading + " 已经完成:" + finished);
+                    break;
+                case 1:
+                    @return = @return + "</table>";
+                    break;
+                case 2:
+                    @return = @return + "</table>";
+                    break;
+            }
+            return @return;
+        }
+
         public static void InfoInit(string LogFile, InfoClasslBool InfoLvevlBool)
         {
             if (!Directory.Exists("./LOG"))
@@ -197,6 +321,15 @@ namespace Auxiliary
                             {
                                 Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
                                 A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                            }
+                        }
+                        break;
+                    case InfoClass.上传必要提示:
+                        {
+                            if (ClasslBool.上传必要提示)
+                            {
+                                Console.WriteLine("[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
                             }
                         }
                         break;
@@ -315,7 +448,8 @@ namespace Auxiliary
                 }
                 BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
-            BB += InfoLog.DownloaderInfoPrintf(1);
+            BB += "<hr/>---下载任务---<br/>" + InfoLog.DownloaderInfoPrintf(1);
+            BB += "<br/>---上传任务---<br/>" + InfoLog.UploaderInfoPrintf(1);
             return BB;
         }
         public class WindowsInfo

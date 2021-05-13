@@ -136,8 +136,49 @@ WEB下载状况查看界面
 WEB文件列表界面   
 ![WEB文件列表界面](./软件图/下载文件信息列表.png)   
 
+<details>
 
+<summary><h1>DDTVLiveRec上传模块使用说明</h1></summary>
 
+## 0 基本设置  
+配置文件：DDTVLiveRec.dll.config  
+- DeleteAfterUpload  
+  上传后删除源文件：1删除 2保留  
+  只有当最后一个上传任务成功后 才会执行删除操作
+
+- Enablexxx  
+  开启xxx上传并设置顺序  
+  当为0时不上传至此目标，其他数字为上传的次序
+
+- xxxPath  
+  上传至xxx的目录，默认为$/$根目标  
+  该目录下会根据直播间进行分类，每个文件夹下根据直播时间再分类
+## 1 OneDrive
+1. 软件安装 安装OneDriveUploader  
+https://github.com/MoeClub/OneList/tree/master/OneDriveUploader
+
+    - Windows用户下载i386(32位)/amd64(64位)中的可执行文件到DDTVLiveRec.exe的同级目录下  
+    - Linux用户
+        ```sh
+        wget https://raw.githubusercontent.com/MoeClub/OneList/master/OneDriveUploader/amd64/linux/OneDriveUploader -P /usr/local/bin/
+        chmod +x /usr/local/bin/OneDriveUploader
+        ```
+2. 配置  
+   根据github上的说明，先初始化配置文件  
+   再在DDTVLiveRec.dll.config 中将生成的auth.json位置填入$OneDriveConfig$  
+
+## 2 腾讯Cos对象存储
+1. 申请腾讯云API
+2. 配置文件中填写相关信息  
+   - CosSecretId API中的ID
+   - CosSecretKey API中的Key
+   - CosRegion 存储桶所在区域，格式为 xx-xxxx
+   - CosBucket 存储桶名称，格式为 bucketname-appid
+
+没有你的上传目标？试试自己添加吧！
+[相关文档](./Upload.md)
+
+</details><br>
 
 ## 写给不会使用gayhub的：怎么下载？？？怎么下载？？？怎么下载？？？
 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓点击跳转下载页面↓↓↓↓↓↓↓↓↓↓↓↓↓↓  
