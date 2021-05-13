@@ -367,7 +367,7 @@ namespace Auxiliary
             var mem = proc.WorkingSet64;
             var cpu = proc.TotalProcessorTime;
             BB += "<br/>当前DDTVLiveRec核心版本：" + (MMPU.开发模式 ? MMPU.开发版本号 : MMPU.版本号);
-            if(MMPU.开发模式)
+            if (MMPU.开发模式)
             {
                 BB += $"<br/>当前为开发模式，该开发版本和主流版本({MMPU.版本号})有如下修改<br/>";
                 int i = 1;
@@ -378,7 +378,7 @@ namespace Auxiliary
                 }
                 BB += $"<br/><br/>(如以上修改内容对你现在所遇到的问题对你有所帮助，请联系我，我将把开发版本编译一个正常工作的版本发送给你)<br/>";
             }
-            if(MMPU.是否有新版本)
+            if (MMPU.是否有新版本)
             {
                 BB += "<br/>检测到云端有新版本。如需更新，请上github或加307156949" +
                     "<a target=\"_blank\" href=\"https://qm.qq.com/cgi-bin/qm/qr?k=uwgF9uM9BvSWcHWZu460S6tVcVH1N_YP&jump_from=webapi\"><img border=\"0\" src=\"//pub.idqqimg.com/wpa/images/group.png\" alt=\"每天都是单推的一天\" title=\"每天都是单推的一天\"></a>群共享下载";
@@ -396,7 +396,7 @@ namespace Auxiliary
                 BB += "<br/>操作系统版本：" + Environment.OSVersion.ToString();
                 BB += "<br/>平台架构：" + RuntimeInformation.OSArchitecture;
             }
-            catch (Exception){}
+            catch (Exception) { }
             BB += "<br/><br/>";
             try
             {
@@ -406,7 +406,7 @@ namespace Auxiliary
                 BB += "<br/>当前关联用户名：" + Environment.UserName;
                 BB += "<br/>Web程序核心框架版本：" + Environment.Version.ToString();
             }
-            catch (Exception){}
+            catch (Exception) { }
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 BB += $"<br/><br/>---Windows信息---";
@@ -439,7 +439,8 @@ namespace Auxiliary
                 //    BB += $"<br/>容量:{item.Size} 已使用:{item.Used} 剩余空间:{item.Avail}  使用率:{item.Usage}";
                 //}
                 LinuxInfo.MemInfo Men = LinuxInfo.ServerConfig.读取内存信息();
-                if (Men.Available is null) {
+                if (Men.Available is null)
+                {
                     Men.Available = "-1";
                 }
                 if (Men.Total is null)
@@ -449,7 +450,10 @@ namespace Auxiliary
                 BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
             BB += "<hr/>---下载任务---<br/>" + InfoLog.DownloaderInfoPrintf(1);
-            BB += "<br/>---上传任务---<br/>" + InfoLog.UploaderInfoPrintf(1);
+            if (Upload.Uploader.enableUpload)
+            {
+                BB += "<br/>---上传任务---<br/>" + InfoLog.UploaderInfoPrintf(1);
+            }
             return BB;
         }
         public class WindowsInfo
