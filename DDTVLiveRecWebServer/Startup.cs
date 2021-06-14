@@ -93,7 +93,7 @@ namespace DDTVLiveRecWebServer
                             Auxiliary.MMPU.文件删除委托("./LOG/DDTVLiveRecLog.out.bak", "生成新的log文件1，删除老旧log文件");
                             File.Copy("./LOG/DDTVLiveRecLog.out", "./LOG/DDTVLiveRecLog.out.bak");
                             string fileText = "";
-                            foreach (var line in File.ReadLines("./LOG/DDTVLiveRecLog.out.bak", System.Text.Encoding.UTF8).Reverse())//log倒序输出
+                            foreach (var line in File.ReadLines("./LOG/DDTVLiveRecLog.out", System.Text.Encoding.UTF8).Reverse())//log倒序输出
                             {
                                 if (line == "") continue;
                                 fileText = fileText + "<br/>" + line;
@@ -173,12 +173,19 @@ namespace DDTVLiveRecWebServer
                         {
                             Prompt = "因为阿B本身推流时间轴和推流方编码设置等因素影响，可能会出现：无法加载视频、无法拖动时间轴、无法显示总时长的问题<br/>(注：默认录制文件夹为./tmp，如果修改了录制文件夹路径，则不支持在线播放，问就是因为UseFileServer安全限制，不能用相对路径)";
                         }
-                        string fileText = File.ReadAllText("./play.html", System.Text.Encoding.UTF8);
-                        fileText = fileText.Replace("%这是标题%", Title);
-                        fileText = fileText.Replace("%D这是提示%", Prompt);
-                        fileText = fileText.Replace("%播放路径%", FileUrl);
-                        fileText = fileText.Replace("%这是文件地址%", FileUrl);
-                        await context.Response.WriteAsync(mobileAdaptationHeader+fileText, System.Text.Encoding.UTF8);
+                        if(File.Exists("./play.html"))
+                        {
+                            string fileText = File.ReadAllText("./play.html", System.Text.Encoding.UTF8);
+                            fileText = fileText.Replace("%这是标题%", Title);
+                            fileText = fileText.Replace("%D这是提示%", Prompt);
+                            fileText = fileText.Replace("%播放路径%", FileUrl);
+                            fileText = fileText.Replace("%这是文件地址%", FileUrl);
+                            await context.Response.WriteAsync(mobileAdaptationHeader + fileText, System.Text.Encoding.UTF8);
+                        }
+                        else
+                        {
+                            await context.Response.WriteAsync(mobileAdaptationHeader +"播放解析文件不存在，请确认目录下有[play.html]文件；该文件包含播放视频所需的布局文件以及MP4解析脚本", System.Text.Encoding.UTF8);
+                        }
                     }
                     else
                     {

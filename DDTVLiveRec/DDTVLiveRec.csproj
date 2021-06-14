@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="%2a%2a\**" />
+    <EmbeddedResource Remove="%2a%2a\**" />
+    <None Remove="%2a%2a\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BiliAccount" Version="2.5.1.23" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
@@ -15,15 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Auxiliary\Auxiliary.csproj" />
     <ProjectReference Include="..\DDTVLiveRecWebServer\DDTVLiveRecWebServer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="LOG\" />
-    <Folder Include="tmp\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="**\*.html" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
