@@ -57,9 +57,11 @@ namespace Auxiliary.Upload
                         switch (uploadInfo.type)//根据不同上传目标执行不同上传函数
                         {
                             case "OneDrive":
+                                InfoLog.InfoPrintf("OneDrive上传任务已提交", InfoLog.InfoClass.下载必要提示);
                                 Upload(new OneDriveUpload().doUpload);
                                 break;
                             case "Cos":
+                                InfoLog.InfoPrintf("Cos上传任务已提交", InfoLog.InfoClass.下载必要提示);
                                 Upload(new CosUpload().doUpload);
                                 break;
                             default:

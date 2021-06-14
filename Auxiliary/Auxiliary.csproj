@@ -107,7 +107,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
     <PackageReference Include="System.Management" Version="4.7.0" />
-    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.17" />
+    <PackageReference Include="Tencent.QCloud.Cos.Sdk" Version="5.4.19" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

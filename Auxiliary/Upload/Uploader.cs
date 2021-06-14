@@ -57,14 +57,12 @@ namespace Auxiliary.Upload
                 {
                     deleteAfterUpload = MMPU.读取exe默认配置文件("DeleteAfterUpload", "0");
                     InfoLog.InfoPrintf($"配置文件初始化任务[DeleteAfterUpload]:{deleteAfterUpload}", InfoLog.InfoClass.Debug);
-
                     InitOneDrive();
                     InitCos();
-
                     enableUpload &= CheckEnableUpload; //配置文件中EnableUpload开启 且 至少成功配置一个上传目标
                     UploadOrder = UploadOrderTemp.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
                 }
-                catch (System.ArgumentException)
+                catch (ArgumentException)
                 {
                     InfoLog.InfoPrintf($"上传顺序出现重复，已自动关闭上传", InfoLog.InfoClass.系统错误信息);
                     enableUpload = false;
