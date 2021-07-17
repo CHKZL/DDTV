@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -21,12 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Auxiliary\Auxiliary.csproj" />
     <ProjectReference Include="..\DDTVLiveRecWebServer\DDTVLiveRecWebServer.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="play.html">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

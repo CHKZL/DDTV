@@ -96,7 +96,6 @@ namespace Auxiliary
                     完成数量++;
                 }
             }
-
             for (int i = 0; i < 下载任务.Count; i++)
             {
                 返回字符串 += 下载任务[i];
@@ -392,14 +391,19 @@ namespace Auxiliary
             {
                 BB += "<br/><br/>--系统运行平台--";
                 BB += "<br/>运行框架：" + RuntimeInformation.FrameworkDescription;
+              
                 BB += "<br/>操作系统：" + RuntimeInformation.OSDescription;
                 BB += "<br/>操作系统版本：" + Environment.OSVersion.ToString();
                 BB += "<br/>平台架构：" + RuntimeInformation.OSArchitecture;
+                BB += "<br/>当前Coer运行框架：" + RuntimeInformation.ProcessArchitecture;
+
+
             }
             catch (Exception) { }
             BB += "<br/><br/>";
             try
             {
+                
                 BB += "<br/>-- 运行环境 --";
                 BB += $"<br/>系统已运行时间：{ Environment.TickCount / 1000}秒";
                 BB += "<br/>是否在交互模式中运行：" + Environment.UserInteractive;

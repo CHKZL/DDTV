@@ -11,6 +11,9 @@ namespace Auxiliary
 {
     public static class Encryption
     {
+        #region MD5加解
+
+        
         /// <summary>
         /// MD5加密
         /// </summary>
@@ -31,7 +34,7 @@ namespace Auxiliary
         {
             return string.IsNullOrEmpty(salt) ? source.Md532() : (source + "[" + salt + "]").Md532();
         }
-
+        #endregion
         #region 16MD5
         /// <summary>
         /// 获取16位md5加密
@@ -154,7 +157,25 @@ namespace Auxiliary
         }
 
         #endregion
-
+        #region SHA1
+        /// <summary>
+        /// 对字符串进行SHA1加密
+        /// </summary>
+        /// <param name="strIN">需要加密的字符串</param>
+        /// <returns>密文</returns>
+        public static string SHA1_Encrypt(string Source_String)
+        {
+            byte[] StrRes = Encoding.UTF8.GetBytes(Source_String);
+            HashAlgorithm iSHA = new SHA1CryptoServiceProvider();
+            StrRes = iSHA.ComputeHash(StrRes);
+            StringBuilder EnText = new StringBuilder();
+            foreach (byte iByte in StrRes)
+            {
+                EnText.AppendFormat("{0:x2}", iByte);
+            }
+            return EnText.ToString().ToUpper();
+        }
+        #endregion
         #region 内部方法
 
         /// <summary>
@@ -182,6 +203,7 @@ namespace Auxiliary
             return hashStr.Bytes2Str();
         }
         #endregion
+
 
         #region 机器码(仅用于区分设备使用，不会储存，而且加盐单向加密)
         public class 机器码

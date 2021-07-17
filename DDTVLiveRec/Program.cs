@@ -16,12 +16,16 @@ namespace DDTVLiveRec
         static void Main(string[] args)
         {
             Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
+            //启动DDTV.CORE核心
             MMPU.配置文件初始化(1);
+
             new Task(() =>
             {
+                //启动WEB服务
                 DDTVLiveRecWebServer.Program.Main(new string[] { });
             }).Start();
 
+            #region 检查更新
             new Task(() =>
             {
                 while (true)
@@ -48,7 +52,7 @@ namespace DDTVLiveRec
                         }
                     }
                     catch (Exception) { }
-                    Thread.Sleep(3600*1000);
+                    Thread.Sleep(3600 * 1000);
                 }
             }).Start();
             MMPU.缓存路径 = MMPU.下载储存目录;
@@ -58,6 +62,7 @@ namespace DDTVLiveRec
                 Thread.Sleep(10);
 
             }
+            #endregion
         }
     }
 }
