@@ -93,7 +93,11 @@ namespace Auxiliary
         public static string webadmin验证字符串 = "";
         public static string webghost验证字符串 = "";
         public static bool 是否启用SSL = false;
+        public static string WebUserName = "";
+        public static string WebPassword = "";
         public static string ApiToken = "";
+        public static string WebToken = "";
+       
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
@@ -219,7 +223,10 @@ namespace Auxiliary
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
                     InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
-                MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810AAAAAA");
+                MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810A");
+                MMPU.WebToken = MMPU.读取exe默认配置文件("WebToken", "1145141919810B");
+                MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", "ami");
+                MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", "ddtv");
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));

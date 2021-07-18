@@ -92,12 +92,43 @@ namespace DDTVLiveRecWebServer
                 #region API接口
                 endpoints.MapPost("/api/system_info", async context =>
                 {
-                    Dictionary<string, string> Form = new Dictionary<string, string>();
-                    foreach (var item in context.Request.Form)
-                    {
-                        Form.Add(item.Key, item.Value);
-                    }
-                    await context.Response.WriteAsync(API.SystemInfo.Web(Form));
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.system_info.Web(context));
+                });
+                endpoints.MapPost("/api/system_config", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.system_config.Web(context));
+                });
+                endpoints.MapPost("/api/rec_processing_list", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.rec_processing_list.Web(context));
+                });
+                endpoints.MapPost("/api/rec_all_list", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.rec_all_list.Web(context));
+                });
+                endpoints.MapPost("/api/rec_info", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.rec_info.Web(context));
+                });
+                endpoints.MapPost("/api/rec_cancel", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.rec_cancel.Web(context));
+                });
+                endpoints.MapPost("/api/room_add", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.room_add.Web(context));
+                });
+                endpoints.MapPost("/api/room_delete", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.room_delete.Web(context));
                 });
                 #endregion
                 #region 历史请求(已废弃)，废弃时间2021-07-17
