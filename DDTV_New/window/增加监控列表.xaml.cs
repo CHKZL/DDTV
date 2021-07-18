@@ -65,9 +65,9 @@ namespace DDTV_New.window
                 {
                     foreach (var item in rlc.data)
                     {
-                        if(item.RoomNumber==唯一码.Text)
+                        if(item.RoomNumber== roomId.ToString())
                         {
-                            提示.Content = "配置文件中已有改房间号存在!";
+                            提示.Content = "配置文件中已有该房间号存在!";
                             return;
                         }
                         RB.data.Add(item);
