@@ -4,7 +4,7 @@
 
 ## 请求流程
 ### 流程图如下:
-
+![API请求流程图](./API.png)
 ### 例:/api/room_delete接口
 >- Request:
 >```text
