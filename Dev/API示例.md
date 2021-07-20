@@ -61,19 +61,19 @@
 ## 已实现的API列表
 |方式|名称|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|
-|POST|system_info|获取系统运行情况|0|
-|POST|system_config|查看当前配置文件|0|
-|POST|rec_processing_list|获取当前录制中的队列简报|0|
-|POST|rec_all_list|获取所有下载任务的队列简报|0|
-|POST|rec_info|根据录制任务GUID获取任务详情|1|
-|POST|rec_cancel|根据录制任务GUID取消相应任务|2|
-|POST|room_add|增加配置文件中监听的房间|4|
-|POST|room_delete|删除配置文件中监听的房间|1|
-|POST|room_status|修改房间的自动录制开关配置|2|
-|POST|room_list|获取当前房间配置列表总览|0|
-|POST|file_lists|获取当前录制文件夹中的所有文件的列表|0|
-|POST|file_delete|删除某个录制完成的文件|3|
-|POST|file_range|根据房间号获得相关录制文件|1|
+|POST|system_info|[获取系统运行情况](./API示例.md#post-apirec_cancel-根据录制任务guid取消相应任务)|0|
+|POST|system_config|[查看当前配置文件](./API示例.md#post-system_config-查看当前配置文件)|0|
+|POST|rec_processing_list|[获取当前录制中的队列简报](./API示例.md#post-rec_processing_list-获取当前录制中的队列简报)|0|
+|POST|rec_all_list|[获取所有下载任务的队列简报](./API示例.md#post-rec_all_list-获取所有下载任务的队列简报)|0|
+|POST|rec_info|[根据录制任务GUID获取任务详情](./API示例.md#post-rec_info-根据录制任务GUID获取任务详情)|1|
+|POST|rec_cancel|[根据录制任务GUID取消相应任务](./API示例.md#post-rec_cancel-根据录制任务GUID取消相应任务)|2|
+|POST|room_add|[增加配置文件中监听的房间](./API示例.md#post-room_add-增加配置文件中监听的房间)|4|
+|POST|room_delete|[删除配置文件中监听的房间](./API示例.md#post-room_delete-删除配置文件中监听的房间)|1|
+|POST|room_status|[修改房间的自动录制开关配置](./API示例.md#post-room_status-修改房间的自动录制开关配置)|2|
+|POST|room_list|[获取当前房间配置列表总览](./API示例.md#post-room_list-获取当前房间配置列表总览)|0|
+|POST|file_lists|[获取当前录制文件夹中的所有文件的列表](./API示例.md#post-file_lists-获取当前录制文件夹中的所有文件的列表)|0|
+|POST|file_delete|[删除某个录制完成的文件](./API示例.md#post-file_delete-删除某个录制完成的文件)|3|
+|POST|file_range|[根据房间号获得相关录制文件](./API示例.md#post-file_range-根据房间号获得相关录制文件)|1|
 
 - 私有变量  
 
