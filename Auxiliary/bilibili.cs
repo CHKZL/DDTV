@@ -31,7 +31,7 @@ namespace Auxiliary
         public static List<string> WSokRoomList = new List<string>();
         public static bool 是否正在更新房间信息 = false;
         //public static bool 是否启动WS连接组 = MMPU.读取exe默认配置文件("DataSource", "0") == "1" ? true : MMPU.读取exe默认配置文件("NotVTBStatus", "0") == "1";
-        public static bool 是否启动WSS连接组 = true;
+        public static bool 是否启动WSS连接组 = false;
         public static bool WS连接组是否已经启动 = false;
         public static List<string> 已经使用的服务器组 = new List<string>();
         public static bool wss连接初始化准备已完成 = false;

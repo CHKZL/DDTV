@@ -10,13 +10,13 @@ namespace DDTVLiveRecWebServer.API
     {
         public static string Web(HttpContext context)
         {
-            bool 鉴权预处理结果 = true;
+            bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
                 context.Request.Form["GUID"]
             }){
                 if(string.IsNullOrEmpty(item))
                 {
-                    鉴权预处理结果 = false;
+                    鉴权预处理结果 = true;
                     break;
                 }
             };
@@ -32,7 +32,8 @@ namespace DDTVLiveRecWebServer.API
                 {
                     if(context.Request.Form["GUID"]==item.DownIofo.事件GUID)
                     {
-                         Package.Add(item.DownIofo);
+                        Package.Add(item.DownIofo);
+                        Package[Package.Count - 1].WC = null;
                     }
                    
                 }

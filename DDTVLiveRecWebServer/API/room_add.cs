@@ -11,7 +11,7 @@ namespace DDTVLiveRecWebServer.API
     {
         public static string Web(HttpContext context)
         {
-            bool 鉴权预处理结果 = true;
+            bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
                 context.Request.Form["Name"],
                 context.Request.Form["OfficialName"],
@@ -21,7 +21,7 @@ namespace DDTVLiveRecWebServer.API
             {
                 if (string.IsNullOrEmpty(item))
                 {
-                    鉴权预处理结果 = false;
+                    鉴权预处理结果 = true;
                     break;
                 }
             };
@@ -86,18 +86,20 @@ namespace DDTVLiveRecWebServer.API
                     }
                     catch (Exception) { }
                 }
-                RB.data.Add(new RoomCadr() { Name = context.Request.Form["Name"], OfficialName = context.Request.Form["OfficialName"], RoomNumber = roomId.ToString(), UID = UID });
+                string CA = context.Request.Form["RecStatus"];
+                bool 是否录制 = bool.Parse(CA);
+                RB.data.Add(new RoomCadr() { Name = context.Request.Form["Name"], OfficialName = context.Request.Form["OfficialName"], RoomNumber = roomId.ToString(), UID = UID,VideoStatus= 是否录制 });
                 string JOO = JsonConvert.SerializeObject(RB);
-                MMPU.储存文本(JOO, RoomConfigFile);
+                MMPU.储存文本(JOO, RoomConfigFile,true);
 
                 bilibili.已连接的直播间状态.Add(new bilibili.直播间状态() { 房间号 = roomId });
-
+               
                 bilibili.RoomList.Add(new RoomInfo
                 {
                     房间号 = roomId.ToString(),
                     标题 = "",
                     是否录制弹幕 = false,
-                    是否录制视频 = bool.Parse(context.Request.Form["RecStatus"]),
+                    是否录制视频 = 是否录制,
                     UID = UID.ToString(),
                     直播开始时间 = "",
                     名称 = context.Request.Form["Name"],

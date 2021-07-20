@@ -11,14 +11,14 @@ namespace DDTVLiveRecWebServer.API
     {
         public static string Web(HttpContext context)
         {
-            bool 鉴权预处理结果 = true;
+            bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
-                context.Request.Form["RooId"]
+                context.Request.Form["RoomId"]
             })
             {
                 if (string.IsNullOrEmpty(item))
                 {
-                    鉴权预处理结果 = false;
+                    鉴权预处理结果 = true;
                     break;
                 }
             };
@@ -47,22 +47,36 @@ namespace DDTVLiveRecWebServer.API
                     }});
                 }
                 var rlc2 = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
+                bool okn = false;
                 foreach (var item in rlc2.data)
                 {
                     if (item.RoomNumber == roomId.ToString())
                     {
+                        okn = true;
                         rlc2.data.Remove(item);
                         break;
                     }
                 }
                 string JOO = JsonConvert.SerializeObject(rlc2);
-                MMPU.储存文本(JOO, RoomConfigFile);
+                MMPU.储存文本(JOO, RoomConfigFile,true);
                 InitializeRoomList(roomId, true, false);
-                return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                if(okn)
+                {
+                    return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
                     {
                         result=true,
                         messge="删除完成"
                     }});
+                }
+                else
+                {
+                    return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                    {
+                        result=false,
+                        messge="配置文件中没有该房间号"
+                    }});
+                }
+               
             }
         }
         private class Messge : ReturnInfoPackage.Messge<roominfo>
