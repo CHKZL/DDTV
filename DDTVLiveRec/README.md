@@ -16,6 +16,7 @@
 * 在网页直接查看运行状态\日志\下载文件列表
 * 登陆买票后可以录制付费直播内容
 * 在录制的同时储存弹幕信息为ass文件
+* API操作
   
 有任何问题和需要增加的功能欢迎加群：307156949直接说  
 <br/>
@@ -46,6 +47,10 @@ web服务端:
 [http://IP:11419/file]：DDTVLiveRec录制的文件列表  
 [http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
 <br/>
+
+# API 说明文档
+
+[https://github.com/CHKZL/DDTV2/blob/master/Dev/API%E7%A4%BA%E4%BE%8B.md]：API说明文档
 
 # 如果使用Docker构建:
 
