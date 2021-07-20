@@ -61,7 +61,7 @@
 ## 已实现的API列表
 |方式|名称|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|
-|POST|system_info|[获取系统运行情况](./API示例.md#post-apirec_cancel-根据录制任务guid取消相应任务)|0|
+|POST|system_info|[获取系统运行情况](./API示例.md#post-system_info-获取系统运行情况)|0|
 |POST|system_config|[查看当前配置文件](./API示例.md#post-system_config-查看当前配置文件)|0|
 |POST|rec_processing_list|[获取当前录制中的队列简报](./API示例.md#post-rec_processing_list-获取当前录制中的队列简报)|0|
 |POST|rec_all_list|[获取所有下载任务的队列简报](./API示例.md#post-rec_all_list-获取所有下载任务的队列简报)|0|
