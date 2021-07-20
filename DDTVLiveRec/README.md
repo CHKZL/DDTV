@@ -50,7 +50,7 @@ web服务端:
 
 # API 说明文档
 
-[https://github.com/CHKZL/DDTV2/blob/master/Dev/API%E7%A4%BA%E4%BE%8B.md]：API说明文档
+* [点击查看API文档](https://github.com/CHKZL/DDTV2/blob/master/Dev/API%E7%A4%BA%E4%BE%8B.md)
 
 # 如果使用Docker构建:
 
