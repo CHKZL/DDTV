@@ -10,13 +10,19 @@ namespace DDTVLiveRecWebServer.API
     {
         public static string InfoPkak<T>(鉴权.Authentication.鉴权返回结果 _, List<T> Package)
         {
-            return JsonConvert.SerializeObject(new Messge<T>()
+            int PackageCount = 0;
+            if (Package!=null)
+            {
+                PackageCount = Package.Count;
+            }
+            string B = JsonConvert.SerializeObject(new Messge<T>()
             {
                 messge = _.鉴权返回消息,
                 result = _.鉴权结果,
                 Package = Package,
-                queue= Package.Count
+                queue = PackageCount
             });
+            return B;
         }
         public class Messge<T>
         {

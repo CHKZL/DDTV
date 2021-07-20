@@ -88,8 +88,14 @@ namespace DDTVLiveRecWebServer
                     await context.Response.WriteAsync(MDtoHTML("* 就是一个测试页，你看咩啊？"), System.Text.Encoding.UTF8);
 
                 });
-               
+
                 #region API接口
+                endpoints.MapPost("/api/weblogin", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.WebLogin.Web(context));
+                });
+
                 endpoints.MapPost("/api/system_info", async context =>
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";
@@ -129,6 +135,31 @@ namespace DDTVLiveRecWebServer
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.room_delete.Web(context));
+                });
+                endpoints.MapPost("/api/room_status", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.room_status.Web(context));
+                });
+                endpoints.MapPost("/api/room_list", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.room_list.Web(context));
+                });
+                endpoints.MapPost("/api/file_lists", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.file_lists.Web(context));
+                });
+                endpoints.MapPost("/api/file_range", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.file_range.Web(context));
+                });
+                endpoints.MapPost("/api/file_delete", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.file_delete.Web(context));
                 });
                 #endregion
                 #region 历史请求(已废弃)，废弃时间2021-07-17

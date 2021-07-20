@@ -157,6 +157,7 @@ namespace Auxiliary
             MMPU.DownList.Add(this);
             int a = 0;
             DownIofo.WC = new WebClient();
+            DownIofo.WC.Encoding = Encoding.UTF8;
             DownIofo.WC.Headers.Add("Accept: */*");
             DownIofo.WC.Headers.Add("User-Agent: " + MMPU.UA.Ver.UA());
             DownIofo.WC.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");

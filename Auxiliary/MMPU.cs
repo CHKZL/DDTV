@@ -96,7 +96,7 @@ namespace Auxiliary
         public static string WebUserName = "";
         public static string WebPassword = "";
         public static string ApiToken = "";
-        public static string WebToken = "";
+        public static string WebToken = Guid.NewGuid().ToString();
        
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
@@ -224,7 +224,6 @@ namespace Auxiliary
                     InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
                 }
                 MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810A");
-                MMPU.WebToken = MMPU.读取exe默认配置文件("WebToken", "1145141919810B");
                 MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", "ami");
                 MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", "ddtv");
             }
@@ -1317,10 +1316,10 @@ namespace Auxiliary
             TimeSpan toNow = new TimeSpan(lTime);
             return dtStart.Add(toNow);
         }
-        public static void 储存文本(string data, string CurDir)
+        public static void 储存文本(string data, string CurDir,bool api =false)
         {
             //如果启动方式为LiveRec则直接退出，不更新配置文件
-            if (MMPU.启动模式 == 1)
+            if (MMPU.启动模式 == 1 && api == false)
             {
                 return;
             }

@@ -14,7 +14,7 @@ namespace DDTVLiveRecWebServer.API
     {
         public static string Web(HttpContext context)
         {
-            bool 鉴权预处理结果 = true;
+            bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
                 context.Request.Form["RoomId"],
                 context.Request.Form["RecStatus"]
@@ -22,7 +22,7 @@ namespace DDTVLiveRecWebServer.API
             {
                 if (string.IsNullOrEmpty(item))
                 {
-                    鉴权预处理结果 = false;
+                    鉴权预处理结果 = true;
                     break;
                 }
             };
@@ -84,7 +84,7 @@ namespace DDTVLiveRecWebServer.API
                 }
                 //RoomInit.根据唯一码获取直播状态(房间表[i].唯一码)
                 string JOO = JsonConvert.SerializeObject(new RoomBox() { data = data });
-                MMPU.储存文本(JOO, RoomConfigFile);
+                MMPU.储存文本(JOO, RoomConfigFile,true);
                 InitializeRoomList(0, false, false);
                 return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
                     {
