@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="hLZUvJtOtJVjxeYtELMs" name="API设计">
-        <mxGraphModel dx="1656" dy="974" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="483" dy="812" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -58,7 +58,7 @@
                     <mxGeometry x="257" y="140" width="120" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="普通API列表" style="shape=table;html=1;whiteSpace=wrap;startSize=30;container=1;collapsible=0;childLayout=tableLayout;fixedRows=1;rowLines=0;fontStyle=1;align=center;fontSize=25;" parent="1" vertex="1">
-                    <mxGeometry x="442" y="450" width="504" height="510" as="geometry"/>
+                    <mxGeometry x="442" y="450" width="504" height="510.29166666666663" as="geometry"/>
                 </mxCell>
                 <mxCell id="22" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=none;top=0;left=0;bottom=1;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="21" vertex="1">
                     <mxGeometry y="30" width="504" height="30" as="geometry"/>
@@ -240,7 +240,7 @@
                 <mxCell id="173" value="0" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" parent="157" vertex="1">
                     <mxGeometry x="410" width="94" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="204" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#60a917;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#2D7600;fontColor=#ffffff;" parent="21" vertex="1">
+                <mxCell id="204" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#008a00;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#005700;fontColor=#ffffff;" parent="21" vertex="1">
                     <mxGeometry y="390" width="504" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="205" value="POST" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;" parent="204" vertex="1">
@@ -255,7 +255,7 @@
                 <mxCell id="208" value="0" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" parent="204" vertex="1">
                     <mxGeometry x="410" width="94" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="209" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#60a917;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#2D7600;fontColor=#ffffff;" parent="21" vertex="1">
+                <mxCell id="209" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#008a00;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#005700;fontColor=#ffffff;" parent="21" vertex="1">
                     <mxGeometry y="420" width="504" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="210" value="POST" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;" parent="209" vertex="1">
@@ -270,7 +270,7 @@
                 <mxCell id="213" value="3" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;align=left;spacingLeft=6;overflow=hidden;" parent="209" vertex="1">
                     <mxGeometry x="410" width="94" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="214" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#60a917;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#2D7600;fontColor=#ffffff;" parent="21" vertex="1">
+                <mxCell id="214" value="" style="shape=partialRectangle;html=1;whiteSpace=wrap;collapsible=0;dropTarget=0;pointerEvents=0;fillColor=#008a00;top=0;left=0;bottom=0;right=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;strokeColor=#005700;fontColor=#ffffff;" parent="21" vertex="1">
                     <mxGeometry y="450" width="504" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="215" value="POST" style="shape=partialRectangle;html=1;whiteSpace=wrap;connectable=0;fillColor=none;top=0;left=0;bottom=0;right=0;overflow=hidden;" parent="214" vertex="1">
@@ -392,6 +392,71 @@
                 </mxCell>
                 <mxCell id="245" value="DDTVCore_API设计" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=38;" parent="1" vertex="1">
                     <mxGeometry x="377" y="30" width="400" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="246" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="247" target="249">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="247" value="开始请求某个接口" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1651" y="380" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="248" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="249" target="251">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="249" value="拼接公共变量字符串&lt;br&gt;(如Time和接口名之类的)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1794" y="380" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="250" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="251" target="263">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="251" value="公共变量后面再加上该接口特有的私有变量得到原始变量集字符串" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1932" y="380" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="252" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="253" target="255">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="2278" y="486"/>
+                            <mxPoint x="1691" y="486"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="253" value="使用SHA1散列加密字符串的到签名sig" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="2218" y="380" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="265" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="255" target="264">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="255" value="把sig附带post请求一起发送到API接口" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1651" y="532" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="256" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" target="259" source="264">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2216" y="705" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="257" value="不合法" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="256">
+                    <mxGeometry x="0.149" y="2" relative="1" as="geometry">
+                        <mxPoint x="-2" y="-6" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="258" value="合法" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" target="260" source="264">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="2305" y="763.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="259" value="返回错误信息" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1839" y="658" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="260" value="返回API请求内容" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="2052" y="532" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="262" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="263" target="253">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="263" value="对原始变量集字符串进行排序，排序结果根据变量名称的字母顺序排列，得到加密字符串" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="2074" y="371" width="120" height="78" as="geometry"/>
+                </mxCell>
+                <mxCell id="264" value="服务器重复客户端签名流程&lt;br&gt;检验sig是否合法" style="rhombus;whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="1">
+                    <mxGeometry x="1810" y="503.5" width="178" height="117" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

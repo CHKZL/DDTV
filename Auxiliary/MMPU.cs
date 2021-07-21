@@ -36,7 +36,7 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.5.1d";
+        public static string 版本号 = "2.0.6.1-Dev";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
         public static string[] 不检测的版本号 = { "2.0.5.1c" };
         public static bool 第一次打开播放窗口 = true;
@@ -493,10 +493,10 @@ namespace Auxiliary
                 InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
                 if (模式 == 1)
                 {
-                    InfoLog.InfoPrintf("\r\n如果短信验证方式验证启动失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.下载必要提示);
+                    //InfoLog.InfoPrintf("\r\n如果短信验证方式验证启动失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.下载必要提示);
                     try
                     {
-                        bilibili.BiliUser.登陆();
+                        BiliUser.登陆();
                     }
                     catch (Exception e)
                     {
