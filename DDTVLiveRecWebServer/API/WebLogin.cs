@@ -69,8 +69,17 @@ namespace DDTVLiveRecWebServer.API
         }
         private class login
         { 
+            /// <summary>
+            /// 消息
+            /// </summary>
             public string messge { set; get; }
+            /// <summary>
+            /// 是否成功
+            /// </summary>
             public bool result { set; get; }
+            /// <summary>
+            /// 如果成功返回webtoken
+            /// </summary>
             public string WebToken { set; get; } = null;
         }
     }

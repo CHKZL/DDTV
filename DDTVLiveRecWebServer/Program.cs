@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System.Threading;
 
 namespace DDTVLiveRecWebServer
 {
@@ -17,6 +18,10 @@ namespace DDTVLiveRecWebServer
 
         public static void Main(string[] args)
         {
+            while(Auxiliary.MMPU.webServer默认监听端口==null|| Auxiliary.MMPU.webServer默认监听IP==null)
+            {
+                Thread.Sleep(50);
+            }
             Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer启动成功，开始监听{Auxiliary.MMPU.webServer默认监听端口}端口", Auxiliary.InfoLog.InfoClass.下载必要提示);
 
             if (Auxiliary.MMPU.是否启用SSL)

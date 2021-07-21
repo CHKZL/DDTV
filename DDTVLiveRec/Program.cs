@@ -16,8 +16,13 @@ namespace DDTVLiveRec
         static void Main(string[] args)
         {
             Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
-            //启动DDTV.CORE核心
-            MMPU.配置文件初始化(1);
+            
+            new Task(() =>
+            {
+                //启动DDTV.CORE核心
+                MMPU.配置文件初始化(1);
+            }).Start();
+           
 
             new Task(() =>
             {

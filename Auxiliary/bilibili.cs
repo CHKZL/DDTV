@@ -1342,55 +1342,68 @@ namespace Auxiliary
                 }
                 else if(MMPU.启动模式==1)
                 {
-                    Console.WriteLine("配置引导方式:手机登陆");
-                    Console.Write("请输入手机号以验证短信验证码:");
-                    string tel = Console.ReadLine();
-                    try
+                    ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                    ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                    string URL = "";
+                    if (MMPU.是否启用SSL)
                     {
-                        BySMS.SendSMS(tel);
+                        URL = "https://" + MMPU.webServer默认监听IP + ":" + MMPU.webServer默认监听端口 + "/loginQR";
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Console.WriteLine($"短信验证登陆失败，请求验证码错误，错误原因:{e.Message}\r\n登陆验证失败，请重启再次尝试登陆或复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
-                        return;
+                        URL = "http://" + MMPU.webServer默认监听IP + ":" + MMPU.webServer默认监听端口 + "/loginQR";
                     }
-                    Console.Write("验证短信请求已发送，请输入收到的验证码:");
-                    string code = Console.ReadLine();
-                    try
-                    {
-                        BiliUser.account = BySMS.Login(code, tel);
-                    }
-                    catch (Exception)
-                    {
-                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                        {
-                            ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                            ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                            ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                            InfoLog.InfoPrintf("短信验证登陆失败，切换备用二维码扫码登陆方式， 请用阿B手机客户端扫描DDTVLiveRec目录中的[BiliQR.png]文件进行登陆", InfoLog.InfoClass.系统错误信息);
-                            return;
-                        }
-                        else
-                        {
-                            Console.WriteLine("登陆验证失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
-                            return;
-                        }
-                       
-                    }
-                   
-                    MMPU.UID = account.Uid;
-                    MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);
-                    foreach (var item in account.Cookies)
-                    {
-                        MMPU.Cookie = MMPU.Cookie + item + ";";
-                    }
-                    MMPU.CookieEX = account.Expires_Cookies;
-                    MMPU.csrf = account.CsrfToken;
-                    
-                    MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
-                    MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
-                    MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
-                    InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("请用阿B手机客户端扫描["+ URL + "]进行登陆", InfoLog.InfoClass.系统错误信息);
+                    //Console.WriteLine("配置引导方式:手机登陆");
+                    //Console.Write("请输入手机号以验证短信验证码:");
+                    //string tel = Console.ReadLine();
+                    //try
+                    //{
+                    //    BySMS.SendSMS(tel);
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    Console.WriteLine($"短信验证登陆失败，请求验证码错误，错误原因:{e.Message}\r\n登陆验证失败，请重启再次尝试登陆或复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
+                    //    return;
+                    //}
+                    //Console.Write("验证短信请求已发送，请输入收到的验证码:");
+                    //string code = Console.ReadLine();
+                    //try
+                    //{
+                    //    BiliUser.account = BySMS.Login(code, tel);
+                    //}
+                    //catch (Exception)
+                    //{
+                    //    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    //    {
+                    //        ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                    //        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                    //        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                    //        InfoLog.InfoPrintf("短信验证登陆失败，切换备用二维码扫码登陆方式， 请用阿B手机客户端扫描DDTVLiveRec目录中的[BiliQR.png]文件进行登陆", InfoLog.InfoClass.系统错误信息);
+                    //        return;
+                    //    }
+                    //    else
+                    //    {
+                    //        Console.WriteLine("登陆验证失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]");
+                    //        return;
+                    //    }
+
+                    //}
+
+                    //MMPU.UID = account.Uid;
+                    //MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);
+                    //foreach (var item in account.Cookies)
+                    //{
+                    //    MMPU.Cookie = MMPU.Cookie + item + ";";
+                    //}
+                    //MMPU.CookieEX = account.Expires_Cookies;
+                    //MMPU.csrf = account.CsrfToken;
+
+                    //MMPU.写ini配置文件("User", "csrf", MMPU.csrf, MMPU.BiliUserFile);
+                    //MMPU.写ini配置文件("User", "Cookie", Encryption.AesStr(MMPU.Cookie, MMPU.AESKey, MMPU.AESVal), MMPU.BiliUserFile);
+                    //MMPU.写ini配置文件("User", "CookieEX", MMPU.CookieEX.ToString("yyyy-MM-dd HH:mm:ss"), MMPU.BiliUserFile);
+                    //InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.下载必要提示);
                 }
                 
                 
