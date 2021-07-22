@@ -1345,16 +1345,7 @@ namespace Auxiliary
                     ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                     ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                     ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                    string URL = "";
-                    if (MMPU.是否启用SSL)
-                    {
-                        URL = "https://" + MMPU.webServer默认监听IP + ":" + MMPU.webServer默认监听端口 + "/loginQR";
-                    }
-                    else
-                    {
-                        URL = "http://" + MMPU.webServer默认监听IP + ":" + MMPU.webServer默认监听端口 + "/loginQR";
-                    }
-                    InfoLog.InfoPrintf("请用阿B手机客户端扫描["+ URL + "]进行登陆", InfoLog.InfoClass.系统错误信息);
+                   
                     //Console.WriteLine("配置引导方式:手机登陆");
                     //Console.Write("请输入手机号以验证短信验证码:");
                     //string tel = Console.ReadLine();

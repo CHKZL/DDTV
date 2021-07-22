@@ -275,8 +275,26 @@ namespace Auxiliary
             try
             {
                 DownIofo.WC.DownloadFileTaskAsync(new Uri(DownIofo.下载地址), DownIofo.文件保存路径);
-                InfoLog.InfoPrintf(DownIofo.主播名称 + "开始直播，建立下载任务\r\n==============建立下载任务================\r\n主播名:" + DownIofo.主播名称 + "\r\n房间号:" + DownIofo.房间_频道号 + "\r\n标题:" + DownIofo.标题 + "\r\n开播时间:" + MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString()) + "\r\n保存路径:" + DownIofo.文件保存路径 + "\r\n下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") + "\r\n===============建立下载任务===============\r\n", InfoLog.InfoClass.下载必要提示);
-                
+                InfoLog.InfoPrintf(DownIofo.主播名称 +
+                    "开始直播，建立下载任务\r\n" +
+                    "==============建立下载任务================\r\n" +
+                    "主播名:" + DownIofo.主播名称 + "\r\n" +
+                    "房间号:" + DownIofo.房间_频道号 + "\r\n" +
+                    "标题:" + DownIofo.标题 + "\r\n" +
+                    "开播时间:" + MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString()) + "\r\n" +
+                    "保存路径:" + DownIofo.文件保存路径 + "\r\n" +
+                    "下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") +
+                    "\r\n===============建立下载任务===============\r\n",
+                    InfoLog.InfoClass.下载必要提示);
+                Webhook.Webhook.开播hook(new Webhook.Webhook.开播Info() 
+                {
+                    GUID=DownIofo.事件GUID,
+                    Name=DownIofo.主播名称,
+                    RoomId=DownIofo.房间_频道号,
+                    StartTime = MMPU.Unix转换为DateTime(DownIofo.开始时间.ToString()),
+                    TaskType= DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务",
+                    Title=DownIofo.标题
+                });
                 if (MMPU.录制弹幕 && !DownIofo.继承.是否为继承对象)
                 {
                     DownIofo.弹幕储存流 = new StreamWriter(DownIofo.文件保存路径.Substring(0, DownIofo.文件保存路径.Length-4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
@@ -733,6 +751,18 @@ namespace Auxiliary
                                $"\r\n下载任务类型:{(DOL.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
                                $"\r\n结束原因:{DOL.备注}" +
                                $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载必要提示);
+            Webhook.Webhook.下播hook(new Webhook.Webhook.下播Info()
+            {
+                GUID = DOL.事件GUID,
+                Name = DOL.主播名称,
+                RoomId = DOL.房间_频道号,
+                StartTime = MMPU.Unix转换为DateTime(DOL.开始时间.ToString()),
+                EndTime= MMPU.Unix转换为DateTime(DOL.结束时间.ToString()),
+                TaskType = DOL.继承.是否为继承对象 ? "续下任务" : "新建下载任务",
+                Title = DOL.标题,
+                Reason= DOL.备注,
+                SavePath= DOL.文件保存路径
+            });
         }
         public static string 下载完成合并FLV(DownIofoData downIofo, bool 是否直播结束)
         {

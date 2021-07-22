@@ -97,7 +97,9 @@ namespace Auxiliary
         public static string WebPassword = "";
         public static string ApiToken = "";
         public static string WebToken = Guid.NewGuid().ToString();
-       
+        public static string WebhookUrl = "";
+        public static bool WebhookEnable = false;
+
 
         public static int 启动模式 = 0;//0：DDTV,1：DDTVLive,2：DDTV服务器
         public static bool 网络环境变动监听 = false;
@@ -226,6 +228,8 @@ namespace Auxiliary
                 MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810A");
                 MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", "ami");
                 MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", "ddtv");
+                MMPU.WebhookUrl = MMPU.读取exe默认配置文件("WebhookUrl", "");
+                MMPU.WebhookEnable = MMPU.读取exe默认配置文件("WebhookEnable", "0") == "0" ? false : true;
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
@@ -490,7 +494,7 @@ namespace Auxiliary
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
                 InfoLog.InfoPrintf("\r\n===============================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n===============================", InfoLog.InfoClass.下载必要提示);
-                InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
+                //InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
                 if (模式 == 1)
                 {
                     //InfoLog.InfoPrintf("\r\n如果短信验证方式验证启动失败，请复制DDTV2本体中有效BiliUser.ini覆盖本地文件后重启DDTVLiveRec\r\n[======如果是非windows系统，请检查文件权限======]", InfoLog.InfoClass.下载必要提示);
@@ -504,7 +508,16 @@ namespace Auxiliary
                     }
                     while(string.IsNullOrEmpty(MMPU.Cookie))
                     {
-                        InfoLog.InfoPrintf("\r\n请根据登陆验证提示操作", InfoLog.InfoClass.系统错误信息);
+                        string URL = "";
+                        if (MMPU.是否启用SSL)
+                        {
+                            URL = "https://本设备IP或域名:" + MMPU.webServer默认监听端口 + "/loginqr";
+                        }
+                        else
+                        {
+                            URL = "http://本设备IP或域名:" + MMPU.webServer默认监听端口 + "/loginqr";
+                        }
+                        InfoLog.InfoPrintf("请用阿B手机客户端扫描[" + URL + "]进行登陆", InfoLog.InfoClass.系统错误信息);
                         //InfoLog.InfoPrintf("\r\n阿B登陆验证失败！！！请重启DDTVLiveRec进行登陆验证", InfoLog.InfoClass.下载必要提示);
                         Thread.Sleep(10000);
                     }
