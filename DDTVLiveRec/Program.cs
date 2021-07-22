@@ -15,6 +15,7 @@ namespace DDTVLiveRec
     {
         static void Main(string[] args)
         {
+            
             Auxiliary.VTBS.API.VTBS服务器CDN.根据CDN更新VTBS_Url();
             
             new Task(() =>

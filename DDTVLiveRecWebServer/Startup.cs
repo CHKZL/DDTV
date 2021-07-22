@@ -167,6 +167,11 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.file_delete.Web(context));
                 });
+                endpoints.MapPost("/webhooktest", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync("{\"mgessg\":\"嗯？\"}");
+                });
                 #endregion
                 #region 历史请求(已废弃)，废弃时间2021-07-17
                 //endpoints.MapGet("/log", async context =>

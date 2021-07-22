@@ -14,7 +14,7 @@ namespace DDTVLiveRecWebServer
 {
     public class Program
     {
-        private static IConfigurationRoot ConfigRoot;
+        //private static IConfigurationRoot ConfigRoot;
 
         public static void Main(string[] args)
         {
