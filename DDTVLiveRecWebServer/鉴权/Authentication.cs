@@ -9,19 +9,51 @@ namespace DDTVLiveRecWebServer.鉴权
     {
         public static 鉴权返回结果 API接口鉴权(HttpContext context, string cmd, bool 是否缺少关键参数 = false)
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();         
-            foreach (var item in context.Request.Form)
-            {
-                dic.Add(item.Key, item.Value);
-                if (string.IsNullOrEmpty(item.Value))
+            
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            //try
+            //{
+            //    context.Request.Form.Count();
+                foreach (var item in context.Request.Form)
                 {
-                    return new 鉴权返回结果()
+                    dic.Add(item.Key, item.Value);
+                    if (string.IsNullOrEmpty(item.Value))
                     {
-                        鉴权结果 = false,
-                        鉴权返回消息 = "参数不能为空"
-                    };
+                        return new 鉴权返回结果()
+                        {
+                            鉴权结果 = false,
+                            鉴权返回消息 = "参数不能为空"
+                        };
+                    }
                 }
-            }
+            //}
+            //catch (Exception)
+            //{
+            //}
+           
+            //if(context.Request.Query.Count>0)
+            //{
+            //    foreach (var item in context.Request.Query)
+            //    {
+            //        dic.Add(item.Key, item.Value);
+            //        if (string.IsNullOrEmpty(item.Value))
+            //        {
+            //            return new 鉴权返回结果()
+            //            {
+            //                鉴权结果 = false,
+            //                鉴权返回消息 = "参数不能为空"
+            //            };
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    return new 鉴权返回结果()
+            //    {
+            //        鉴权结果 = false,
+            //        鉴权返回消息 = "参数不能为空"
+            //    };
+            //}
             if (!dic.ContainsKey("sig") || !dic.ContainsKey("time") || !dic.ContainsKey("cmd") || !dic.ContainsKey("ver") || 是否缺少关键参数)
             {
                 return new 鉴权返回结果()

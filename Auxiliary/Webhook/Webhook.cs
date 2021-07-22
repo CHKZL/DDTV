@@ -16,7 +16,7 @@ namespace Auxiliary.Webhook
                 post P = new post()
                 {
                     jsonParam = JsonConvert.SerializeObject(Info),
-                    cmd="开播"
+                    cmd= "LIVE"
                 };            
                 do
                 {
@@ -25,7 +25,7 @@ namespace Auxiliary.Webhook
                         InfoLog.InfoPrintf($"WebHook——{P.cmd}信息发送失败，重试三次均超时，放弃该hook请求；(配置的webhook地址为:{MMPU.WebhookUrl})", InfoLog.InfoClass.下载必要提示);
                         break;
                     }
-                    P.hookpost();
+                    P.hookpost(Info);
                 } while (!P.是否成功);
             }
         }
@@ -46,7 +46,7 @@ namespace Auxiliary.Webhook
                 post P = new post()
                 {
                     jsonParam = JsonConvert.SerializeObject(Info),
-                    cmd = "下播"
+                    cmd = "PREPARING"
                 };
                 do
                 {
@@ -55,7 +55,7 @@ namespace Auxiliary.Webhook
                         InfoLog.InfoPrintf($"WebHook——{P.cmd}信息发送失败，重试三次均超时，放弃该hook请求；(配置的webhook地址为:{MMPU.WebhookUrl})", InfoLog.InfoClass.下载必要提示);
                         break;
                     }
-                    P.hookpost();
+                    P.hookpost(Info);
                 } while (!P.是否成功);
             }
         }
@@ -73,17 +73,22 @@ namespace Auxiliary.Webhook
         }
         private class post
         {
+            
             public int 尝试次数 = 0;
             public bool 是否成功 { set; get; } = false;
             public string jsonParam { set; get; } = "";
             public string cmd { set; get; }
-            public class mess
+            
+            public class mess<T>
             {
                 public string cmd { set; get; }
-                public string messge { set; get; }
-                
+                public T messge { set; get; }
+                public string Ver { set; get; } = "v1"; 
+                public DateTime hookTime { set; get; }
+
+
             }
-            public void hookpost()
+            public void hookpost<T>(T CL)
             {
                 try
                 {
@@ -92,9 +97,11 @@ namespace Auxiliary.Webhook
                     request.Method = "POST";
                     request.ContentType = "application/json; charset=UTF-8";
                     request.UserAgent = $"DDTVCore/{MMPU.版本号}";
-                    string paraUrlCoded = JsonConvert.SerializeObject(new mess() { 
-                        cmd=cmd,
-                        messge=jsonParam
+                    string paraUrlCoded = JsonConvert.SerializeObject(new mess<T>()
+                    {
+                        cmd = cmd,
+                        messge = CL,
+                        hookTime = DateTime.Now
                     });
                     byte[] payload;
                     payload = Encoding.UTF8.GetBytes(paraUrlCoded);
@@ -107,7 +114,7 @@ namespace Auxiliary.Webhook
                     if ((int)resp.StatusCode >= 200 && (int)resp.StatusCode < 300)
                     {
                         是否成功 = true;
-                        InfoLog.InfoPrintf($"WebHook——{P.cmd}信息发送完成", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"WebHook——{cmd}信息发送完成", InfoLog.InfoClass.下载必要提示);
                     }
                     else
                     {
