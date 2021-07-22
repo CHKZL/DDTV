@@ -24,13 +24,17 @@ namespace DDTVLiveRecWebServer
             {
                 //如果鉴权失败，返回未经授权的提示
                 await context.ChallengeAsync();
+                return;
             }
-           
+            else
+            {
+                //鉴权通过，并且文件存在，则返回文件流
+                await _next(context);
+            }
 
-            //如果鉴权通过，但是文件权限不足或者不存在时返回ForbidAsync
-            await context.ForbidAsync();
-            //鉴权通过，并且文件存在，则返回文件流
-            await _next(context);
+            ////如果鉴权通过，但是文件权限不足或者不存在时返回ForbidAsync
+            //await context.ForbidAsync();
+           
         }
     }
 }

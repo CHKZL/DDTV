@@ -60,11 +60,24 @@ namespace DDTVLiveRecWebServer
             }
             app.UseRouting();
             app.UseCors();
-
+            if(!Directory.Exists("./static"))
+            {
+                Directory.CreateDirectory("./static");
+            }
+            app.UseFileServer(new FileServerOptions()//直接开启文件目录访问和文件访问
+            {
+                EnableDirectoryBrowsing = false,//权限目录访问
+                FileProvider = new PhysicalFileProvider(Environment.CurrentDirectory + @"/static"),
+                RequestPath = new PathString("/static")
+            });
             app.UseWhen(
              c => c.Request.Path.Value.Contains("tmp"),
              _ => _.UseMiddleware<AuthorizeStaticFilesMiddleware>()
              );
+            if (!Directory.Exists("./tmp"))
+            {
+                Directory.CreateDirectory("./tmp");
+            }
             app.UseFileServer(new FileServerOptions()//直接开启文件目录访问和文件访问
             {
                 EnableDirectoryBrowsing = false,//权限目录访问
