@@ -71,7 +71,7 @@ namespace Auxiliary.Webhook
             public string SavePath { set; get; }
             public string Reason { set; get; }
         }
-        private class post
+        internal class post
         {
             
             public int 尝试次数 = 0;

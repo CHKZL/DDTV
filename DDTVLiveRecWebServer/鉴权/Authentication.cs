@@ -82,7 +82,7 @@ namespace DDTVLiveRecWebServer.鉴权
             int NowTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time) || NowTime < Time - 300 || Time + 300 > NowTime)
             {
-                if (Time != 2345678)
+               // if (Time != 2345678)
                 {
                     return new 鉴权返回结果()
                     {

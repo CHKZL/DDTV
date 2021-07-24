@@ -14,11 +14,11 @@ namespace DDTVLiveRecWebServer
 {
     public class Program
     {
-        //private static IConfigurationRoot ConfigRoot;
+        private static IConfigurationRoot ConfigRoot;
 
         public static void Main(string[] args)
         {
-            while(Auxiliary.MMPU.webServer默认监听端口==null|| Auxiliary.MMPU.webServer默认监听IP==null)
+            while(!Auxiliary.MMPU.webServer初始化状态)
             {
                 Thread.Sleep(50);
             }

@@ -36,7 +36,8 @@ namespace Auxiliary
             杂项提示 = 2,
             下载必要提示 = 3,
             没啥价值的消息 = 4,
-            上传必要提示 = 5
+            上传必要提示 = 5,
+            系统强提醒=6,
         }
         public static string 返回WSS连接状态列表()
         {
@@ -330,6 +331,15 @@ namespace Auxiliary
                                 Console.WriteLine("[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
                                 A = "\r\n[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
                             }
+                        }
+                        break;
+                    case InfoClass.系统强提醒:
+                        {
+                            Console.WriteLine("\r\n ========= 系统提示 =========" +
+                                   "\r\n[系统提示]: " + mess +
+                                   "\r\n========= 系统提示 =========");
+
+                            A = "\r\n=========系统提示=========" + "\r\n[系统提示]: " + mess + "\r\n=========系统提示=========";
                         }
                         break;
                 }

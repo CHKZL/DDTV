@@ -61,19 +61,20 @@
 ## 已实现的API列表
 |方式|名称|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|
-|POST|system_info|[获取系统运行情况](./API示例.md#post-apisystem_info-获取系统运行情况)|0|
-|POST|system_config|[查看当前配置文件](./API示例.md#post-apisystem_config-查看当前配置文件)|0|
-|POST|rec_processing_list|[获取当前录制中的队列简报](./API示例.md#post-apirec_processing_list-获取当前录制中的队列简报)|0|
-|POST|rec_all_list|[获取所有下载任务的队列简报](./API示例.md#post-apirec_all_list-获取所有下载任务的队列简报)|0|
-|POST|rec_info|[根据录制任务GUID获取任务详情](./API示例.md#post-apirec_info-根据录制任务GUID获取任务详情)|1|
-|POST|rec_cancel|[根据录制任务GUID取消相应任务](./API示例.md#post-apirec_cancel-根据录制任务GUID取消相应任务)|2|
-|POST|room_add|[增加配置文件中监听的房间](./API示例.md#post-apiroom_add-增加配置文件中监听的房间)|4|
-|POST|room_delete|[删除配置文件中监听的房间](./API示例.md#post-apiroom_delete-删除配置文件中监听的房间)|1|
-|POST|room_status|[修改房间的自动录制开关配置](./API示例.md#post-apiroom_status-修改房间的自动录制开关配置)|2|
-|POST|room_list|[获取当前房间配置列表总览](./API示例.md#post-apiroom_list-获取当前房间配置列表总览)|0|
-|POST|file_lists|[获取当前录制文件夹中的所有文件的列表](./API示例.md#post-apifile_lists-获取当前录制文件夹中的所有文件的列表)|0|
-|POST|file_delete|[删除某个录制完成的文件](./API示例.md#post-apifile_delete-删除某个录制完成的文件)|3|
-|POST|file_range|[根据房间号获得相关录制文件](./API示例.md#post-apifile_range-根据房间号获得相关录制文件)|1|
+|POST|system_info|[获取系统运行情况](./API示例.md#post-apisystem_info)|0|
+|POST|system_config|[查看当前配置文件](./API示例.md#post-apisystem_config)|0|
+|POST|system_update|[检查更新](./API示例.md#post-update)|0|
+|POST|rec_processing_list|[获取当前录制中的队列简报](./API示例.md#post-apirec_processing_list)|0|
+|POST|rec_all_list|[获取所有下载任务的队列简报](./API示例.md#post-apirec_all_list)|0|
+|POST|rec_info|[根据录制任务GUID获取任务详情](./API示例.md#post-apirec_info)|1|
+|POST|rec_cancel|[根据录制任务GUID取消相应任务](./API示例.md#post-apirec_cancel)|2|
+|POST|room_add|[增加配置文件中监听的房间](./API示例.md#post-apiroom_add)|4|
+|POST|room_delete|[删除配置文件中监听的房间](./API示例.md#post-apiroom_delete)|1|
+|POST|room_status|[修改房间的自动录制开关配置](./API示例.md#post-apiroom_status)|2|
+|POST|room_list|[获取当前房间配置列表总览](./API示例.md#post-apiroom_list)|0|
+|POST|file_lists|[获取当前录制文件夹中的所有文件的列表](./API示例.md#post-apifile_lists)|0|
+|POST|file_delete|[删除某个录制完成的文件](./API示例.md#post-apifile_delete)|3|
+|POST|file_range|[根据房间号获得相关录制文件](./API示例.md#post-apifile_range)|1|
 
 
 
@@ -85,7 +86,8 @@
 |cmd|string|是|请求的API接口的接口名称(如:system_info)|
 |sig|string|是|其他变量排序后按照规则拼接过后使用SHA1散列后得到的签名|
 
-## `POST /api/system_info` 获取系统运行情况
+## `POST /api/system_info`
+## 获取系统运行情况
 
 - 私有变量  
 
@@ -132,6 +134,7 @@ path: http://127.0.0.1:11419/api/system_info
             },
             "Ver_Info": {
                 "IsNewVer": false,
+                "NewVer":null,
                 "Update_Log": null
             }
         }
@@ -139,7 +142,8 @@ path: http://127.0.0.1:11419/api/system_info
 }
 ```
 
-## `POST /api/system_config` 查看当前配置文件
+## `POST /api/system_config`
+## 查看当前配置文件
 - 私有变量  
 
 无
@@ -197,7 +201,45 @@ path: http://127.0.0.1:11419/api/system_config
 }
 ```
 
-## `POST /api/rec_processing_list` 获取当前录制中的队列简报
+
+## `POST /api/update`
+## 检查有无更新
+- 私有变量  
+
+无
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/api/update
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"update",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "var":2
+}
+```
+- Response:
+```json
+{
+    "result": true,
+    "messge": "成功",
+    "queue": 1,
+    "Package": [
+       {
+           "IsNewVer":false,
+           "NewVer":null,
+           "Update_Log":null
+       }
+    ]
+}
+```
+
+
+## `POST /api/rec_processing_list`
+## 获取当前录制中的队列简报
 - 私有变量  
 
 无
@@ -235,7 +277,8 @@ path: http://127.0.0.1:11419/api/rec_processing_list
 }
 ```
 
-## `POST /api/rec_all_list` 获取所有下载任务的队列简报
+## `POST /api/rec_all_list`
+## 获取所有下载任务的队列简报
 - 私有变量  
 
 无
@@ -274,7 +317,8 @@ path: http://127.0.0.1:11419/api/rec_all_list
 ```
 
 
-## `POST /api/rec_info` 根据录制任务GUID获取任务详情
+## `POST /api/rec_info`
+## 根据录制任务GUID获取任务详情
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -344,7 +388,8 @@ path: http://127.0.0.1:11419/api/rec_info
 }
 ```
 
-## `POST /api/rec_cancel` 根据录制任务GUID取消相应任务
+## `POST /api/rec_cancel`
+## 根据录制任务GUID取消相应任务
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -416,7 +461,8 @@ path: http://127.0.0.1:11419/api/rec_cancel
 }
 ```
 
-## `POST /api/room_add` 增加配置文件中监听的房间
+## `POST /api/room_add`
+## 增加配置文件中监听的房间
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -468,7 +514,8 @@ path: http://127.0.0.1:11419/api/room_add
 
 
 
-## `POST /api/room_delete` 删除配置文件中监听的房间
+## `POST /api/room_delete`
+## 删除配置文件中监听的房间
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -505,7 +552,8 @@ path: http://127.0.0.1:11419/api/room_delete
 ```
 
 
-## `POST /api/room_status` 修改房间的自动录制开关配置
+## `POST /api/room_status`
+## 修改房间的自动录制开关配置
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -543,7 +591,8 @@ path: http://127.0.0.1:11419/api/room_status
 }
 ```
 
-## `POST /api/room_list` 获取当前房间配置列表总览
+## `POST /api/room_list`
+## 获取当前房间配置列表总览
 - 私有变量  
 
 无  
@@ -583,7 +632,8 @@ path: http://127.0.0.1:11419/api/room_list
 ```
 
 
-## `POST /api/file_lists` 获取当前录制文件夹中的所有文件的列表
+## `POST /api/file_lists`
+## 获取当前录制文件夹中的所有文件的列表
 - 私有变量  
 
 无  
@@ -635,7 +685,8 @@ path: http://127.0.0.1:11419/api/file_lists
 ```
 
 
-## `POST /api/file_delete` 删除某个录制完成的文件
+## `POST /api/file_delete`
+## 删除某个录制完成的文件
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -676,7 +727,8 @@ path: http://127.0.0.1:11419/api/file_delete
 ```
 
 
-## `POST /api/file_range` 根据房间号获得相关录制文件
+## `POST /api/file_range`
+## 根据房间号获得相关录制文件
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
