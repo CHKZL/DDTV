@@ -27,7 +27,10 @@ namespace Auxiliary
         public static bool 开发模式 = 读取exe默认配置文件("DevelopmentModel", "0") == "1" ? true : false;
         public static string[] 开发更改 = new string[] 
         {
-            "增加转码完成后自动删除原始flv文件的功能和对应的配置文件"
+            "增加转码完成后自动删除原始flv文件的功能和对应的配置文件",
+            "增加自动上传功能(腾讯云Cos和onedirev)",
+            "增加API接口支持，具体API支持请查看页面[https://github.com/CHKZL/DDTV2/blob/master/Dev/API-Doc.md]",
+            "增加了Webhook功能"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -37,8 +40,11 @@ namespace Auxiliary
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
         public static string 版本号 = "2.0.6.1-Dev";
+        public static string 检测到的新版本号 = "";
         public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
-        public static string[] 不检测的版本号 = { "2.0.5.1c" };
+        public static string[] 不检测的版本号 = { 
+            "2.0.5.1c" 
+        };
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -81,6 +87,7 @@ namespace Auxiliary
         public static string webServer默认监听端口 = "11419";
         public static string webServer_pfx证书名称 = "";
         public static string webServer_pfx证书密码 = "";
+        public static bool webServer初始化状态 = false;
         public static string 缓存路径 = "./tmp/";
         public static int 弹幕录制种类 = 2;
         public static int wss连接错误的次数 = 0;
@@ -155,7 +162,14 @@ namespace Auxiliary
             InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{网络环境变动监听}", InfoLog.InfoClass.Debug);
 
             Upload.Uploader.InitUpload();//初始化上传配置
-
+            //下载/缓存路径设置
+            MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
+            CheckPath(ref MMPU.下载储存目录);
+            if (!Directory.Exists("./tmp"))
+            {
+                Directory.CreateDirectory("./tmp");
+            }
+            InfoLog.InfoPrintf($"配置文件初始化任务[下载储存目录]:{下载储存目录}", InfoLog.InfoClass.Debug);
             #region 配置文件设置
             if (模式 == 0)
             {
@@ -204,10 +218,7 @@ namespace Auxiliary
             }
             else if (模式 == 1)
             {
-                MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
-                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
-                MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
-                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
+               
                 MMPU.webadmin验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationAadminPassword", "admin");
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationGhostPasswrod", "ghost");
                 MMPU.webghost验证字符串 = MMPU.读取exe默认配置文件("WebAuthenticationCode", "DDTVLiveRec");
@@ -230,6 +241,12 @@ namespace Auxiliary
                 MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", "ddtv");
                 MMPU.WebhookUrl = MMPU.读取exe默认配置文件("WebhookUrl", "");
                 MMPU.WebhookEnable = MMPU.读取exe默认配置文件("WebhookEnable", "0") == "0" ? false : true;
+                MMPU.缓存路径 = MMPU.下载储存目录;
+                MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
+                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{webServer默认监听IP}", InfoLog.InfoClass.Debug);
+                MMPU.webServer默认监听端口 = MMPU.读取exe默认配置文件("Port", "11419");
+                InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听端口]:{webServer默认监听端口}", InfoLog.InfoClass.Debug);
+                Auxiliary.MMPU.webServer初始化状态 = true;
             }
             //数据源
             MMPU.数据源 = int.Parse(MMPU.读取exe默认配置文件("DataSource", "0"));
@@ -250,14 +267,7 @@ namespace Auxiliary
             //房间配置文件
             RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
             InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
-            //房间配置文件
-            MMPU.下载储存目录 = MMPU.读取exe默认配置文件("file", "./tmp/");
-            CheckPath(ref MMPU.下载储存目录);
-            if (!Directory.Exists("./tmp"))
-            {
-                Directory.CreateDirectory("./tmp");
-            }
-            InfoLog.InfoPrintf($"配置文件初始化任务[下载储存目录]:{下载储存目录}", InfoLog.InfoClass.Debug);
+           
             //直播表刷新默认间隔
             MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
             InfoLog.InfoPrintf($"配置文件初始化任务[直播列表刷新间隔]:{直播列表刷新间隔}", InfoLog.InfoClass.Debug);
@@ -1619,7 +1629,7 @@ namespace Auxiliary
         public class UA
         {
             [SuppressMessage("ReSharper", "InconsistentNaming")]
-            internal static class Ver
+            public static class Ver
             {
                 public const string DESC = "修改API";
                 public static readonly string OS_VER = "(" + WinVer.SystemVersion.Major + "." + WinVer.SystemVersion.Minor + "." + WinVer.SystemVersion.Build + ")";

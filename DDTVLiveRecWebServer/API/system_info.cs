@@ -53,6 +53,7 @@ namespace DDTVLiveRecWebServer.API
                     Ver_Info = new Ver_Info()
                     {
                         IsNewVer = Auxiliary.MMPU.是否有新版本,
+                        NewVer= Auxiliary.MMPU.是否有新版本 ? Auxiliary.MMPU.检测到的新版本号 : null,
                         Update_Log = Auxiliary.MMPU.是否有新版本 ? Auxiliary.MMPU.更新公告 : null,
                     }
                 };
@@ -145,6 +146,10 @@ namespace DDTVLiveRecWebServer.API
             /// 是否有新版本
             /// </summary>
             public bool IsNewVer { set; get; }
+            /// <summary>
+            /// 新版本号
+            /// </summary>
+            public string NewVer { get; set; }
             /// <summary>
             /// 更新日志
             /// </summary>

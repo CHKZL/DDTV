@@ -479,6 +479,7 @@ namespace Auxiliary
             DownIofo.最后连接时间 = Gettime();
             DownIofo.已下载大小bit = bytes;
             DownIofo.已下载大小str = 转换下载大小数据格式(bytes);
+            //e.UserState
         }
         // public event EventHandler<EventArgs> DownUpdate;
         // public event EventHandler<EventArgs> DownOk;
