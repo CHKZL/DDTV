@@ -81,7 +81,7 @@
 ## 已实现的特殊API接口
 |方式|名称|返回内容|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|:--:|
-|POST|file_steam|Flie|[获取播放文件](./API-Doc.md#post-$FilePath$)|2|
+|POST|file_steam|Flie|[获取播放文件](./API-Doc.md#post-file_path)|2|
 
 ## `POST /api/system_info`
 ## 获取系统运行情况
@@ -816,7 +816,7 @@ path: http://127.0.0.1:11419/api/upload_list
 ```
 
 
-## `POST /$FilePath$`
+## `POST /$file_path$`
 ## 获取播放文件
 
 - 私有变量  
