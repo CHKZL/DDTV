@@ -58,25 +58,30 @@
 |ver|int|是|接口的版本类型，当前只开放2。(1为DDTV服务端内部使用的WEB接口，规则不同)|
 
 
-## 已实现的API列表
-|方式|名称|解释|私有变量数量|
-|:--:|:--:|:--:|:--:|
-|POST|system_info|[获取系统运行情况](./API-Doc.md#post-apisystem_info)|0|
-|POST|system_config|[查看当前配置文件](./API-Doc.md#post-apisystem_config)|0|
-|POST|system_update|[检查更新](./API-Doc.md#post-apiupdate)|0|
-|POST|rec_processing_list|[获取当前录制中的队列简报](./API-Doc.md#post-apirec_processing_list)|0|
-|POST|rec_all_list|[获取所有下载任务的队列简报](./API-Doc.md#post-apirec_all_list)|0|
-|POST|rec_info|[根据录制任务GUID获取任务详情](./API-Doc.md#post-apirec_info)|1|
-|POST|rec_cancel|[根据录制任务GUID取消相应任务](./API-Doc.md#post-apirec_cancel)|2|
-|POST|room_add|[增加配置文件中监听的房间](./API-Doc.md#post-apiroom_add)|4|
-|POST|room_delete|[删除配置文件中监听的房间](./API-Doc.md#post-apiroom_delete)|1|
-|POST|room_status|[修改房间的自动录制开关配置](./API-Doc.md#post-apiroom_status)|2|
-|POST|room_list|[获取当前房间配置列表总览](./API-Doc.md#post-apiroom_list)|0|
-|POST|file_lists|[获取当前录制文件夹中的所有文件的列表](./API-Doc.md#post-apifile_lists)|0|
-|POST|file_delete|[删除某个录制完成的文件](./API-Doc.md#post-apifile_delete)|3|
-|POST|file_range|[根据房间号获得相关录制文件](./API-Doc.md#post-apifile_range)|1|
-|POST|upload_list|[获取上传任务信息列表](./API-Doc.md#post-apiupload_list)|0|
+## 已实现的通用API列表
+|方式|名称|返回内容|解释|私有变量数量|
+|:--:|:--:|:--:|:--:|:--:|
+|POST|system_info|JSON|[获取系统运行情况](./API-Doc.md#post-apisystem_info)|0|
+|POST|system_config|JSON|[查看当前配置文件](./API-Doc.md#post-apisystem_config)|0|
+|POST|system_update|JSON|[检查更新](./API-Doc.md#post-apiupdate)|0|
+|POST|rec_processing_list|JSON|[获取当前录制中的队列简报](./API-Doc.md#post-apirec_processing_list)|0|
+|POST|rec_all_list|JSON|[获取所有下载任务的队列简报](./API-Doc.md#post-apirec_all_list)|0|
+|POST|rec_info|JSON|[根据录制任务GUID获取任务详情](./API-Doc.md#post-apirec_info)|1|
+|POST|rec_cancel|JSON|[根据录制任务GUID取消相应任务](./API-Doc.md#post-apirec_cancel)|2|
+|POST|room_add|JSON|[增加配置文件中监听的房间](./API-Doc.md#post-apiroom_add)|4|
+|POST|room_delete|JSON|[删除配置文件中监听的房间](./API-Doc.md#post-apiroom_delete)|1|
+|POST|room_status|JSON|[修改房间的自动录制开关配置](./API-Doc.md#post-apiroom_status)|2|
+|POST|room_list|JSON|[获取当前房间配置列表总览](./API-Doc.md#post-apiroom_list)|0|
+|POST|file_lists|JSON|[获取当前录制文件夹中的所有文件的列表](./API-Doc.md#post-apifile_lists)|0|
+|POST|file_delete|JSON|[删除某个录制完成的文件](./API-Doc.md#post-apifile_delete)|3|
+|POST|file_range|JSON|[根据房间号获得相关录制文件](./API-Doc.md#post-apifile_range)|1|
+|POST|upload_list|JSON|[获取上传任务信息列表](./API-Doc.md#post-apiupload_list)|0|
 
+
+## 已实现的特殊API接口
+|方式|名称|返回内容|解释|私有变量数量|
+|:--:|:--:|:--:|:--:|:--:|
+|POST|file_steam|Flie|[获取播放文件](./API-Doc.md#post-$FilePath$)|2|
 
 ## `POST /api/system_info`
 ## 获取系统运行情况
@@ -808,4 +813,36 @@ path: http://127.0.0.1:11419/api/upload_list
         }
     ]
 }
+```
+
+
+## `POST /$FilePath$`
+## 获取播放文件
+
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|Directory|string|是|录制文件夹名称|
+|File|string|是|媒体文件名称|
+
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/tmp/bilibili_蒂蒂媞薇_21446992/测试直播.mp4
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"file_steam",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "var":2,
+    "Directory":"bilibili_蒂蒂媞薇_21446992",
+    "File":"测试直播.mp4"
+}
+```
+- Response:
+```C#
+File
 ```
