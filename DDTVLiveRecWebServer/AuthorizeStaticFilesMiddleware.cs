@@ -18,8 +18,20 @@ namespace DDTVLiveRecWebServer
 
         public async Task Invoke(HttpContext context)
         {
+            bool 鉴权预处理结果 = false;
+            foreach (var item in new List<string>() {
+                context.Request.Form["Directory"],
+                context.Request.Form["File"],
+            })
+            {
+                if (string.IsNullOrEmpty(item))
+                {
+                    鉴权预处理结果 = true;
+                    break;
+                }
+            };
+            var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_steam", 鉴权预处理结果 ? true : false);
             //var WEBAPI请求文件 = context.Request.Headers["FileSig"].FirstOrDefault();
-            var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_steam");
             if (!鉴权结果.鉴权结果)
             {
                 //如果鉴权失败，返回未经授权的提示
