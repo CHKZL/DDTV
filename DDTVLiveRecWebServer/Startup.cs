@@ -178,6 +178,11 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.file_delete.Web(context));
                 });
+                endpoints.MapPost("/api/upload_list", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.upload_list.Web(context));
+                });
                 #endregion
 
                 #region webhook

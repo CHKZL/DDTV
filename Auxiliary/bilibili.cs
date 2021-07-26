@@ -1344,10 +1344,15 @@ namespace Auxiliary
                 {
                     ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                     ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                   
+                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF",false).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                    //Console.BackgroundColor = ConsoleColor.Black;
+                    //Console.ForegroundColor = ConsoleColor.White;
+                    //Console.Write("  ");
+                    //Console.ResetColor();
                     //Console.WriteLine("配置引导方式:手机登陆");
                     //Console.Write("请输入手机号以验证短信验证码:");
+
+
                     //string tel = Console.ReadLine();
                     //try
                     //{

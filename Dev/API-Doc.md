@@ -63,7 +63,7 @@
 |:--:|:--:|:--:|:--:|
 |POST|system_info|[获取系统运行情况](./API-Doc.md#post-apisystem_info)|0|
 |POST|system_config|[查看当前配置文件](./API-Doc.md#post-apisystem_config)|0|
-|POST|system_update|[检查更新](./API-Doc.md#post-update)|0|
+|POST|system_update|[检查更新](./API-Doc.md#post-apiupdate)|0|
 |POST|rec_processing_list|[获取当前录制中的队列简报](./API-Doc.md#post-apirec_processing_list)|0|
 |POST|rec_all_list|[获取所有下载任务的队列简报](./API-Doc.md#post-apirec_all_list)|0|
 |POST|rec_info|[根据录制任务GUID获取任务详情](./API-Doc.md#post-apirec_info)|1|
@@ -75,10 +75,10 @@
 |POST|file_lists|[获取当前录制文件夹中的所有文件的列表](./API-Doc.md#post-apifile_lists)|0|
 |POST|file_delete|[删除某个录制完成的文件](./API-Doc.md#post-apifile_delete)|3|
 |POST|file_range|[根据房间号获得相关录制文件](./API-Doc.md#post-apifile_range)|1|
+|POST|upload_list|[获取上传任务信息列表](./API-Doc.md#post-apiupload_list)|0|
 
 
-
-- 私有变量  
+- 公共变量  
 
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
@@ -782,3 +782,38 @@ path: http://127.0.0.1:11419/api/file_range
 }
 ```
 
+
+## `POST /api/upload_list`
+## 获取上传任务信息列表
+
+- 私有变量  
+
+无
+
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/api/upload_list
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"upload_list",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "var":2
+}
+```
+- Response:
+```json
+{
+    "result": true,
+    "messge": "成功",
+    "queue": 1,
+    "Package": [
+        {
+            //根据实际情况自行解析即可
+        }
+    ]
+}
+```
