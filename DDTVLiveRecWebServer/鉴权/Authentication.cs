@@ -9,28 +9,41 @@ namespace DDTVLiveRecWebServer.鉴权
     {
         public static 鉴权返回结果 API接口鉴权(HttpContext context, string cmd, bool 是否缺少关键参数 = false)
         {
-            
+
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            //try
-            //{
-            //    context.Request.Form.Count();
-                foreach (var item in context.Request.Form)
+            if (context.Request.ContentType == "POST")
+            {
+                try
                 {
-                    dic.Add(item.Key, item.Value);
-                    if (string.IsNullOrEmpty(item.Value))
+                    //    context.Request.Form.Count();
+                    foreach (var item in context.Request.Form)
                     {
-                        return new 鉴权返回结果()
+                        dic.Add(item.Key, item.Value);
+                        if (string.IsNullOrEmpty(item.Value))
                         {
-                            鉴权结果 = false,
-                            鉴权返回消息 = "参数不能为空"
-                        };
+                            return new 鉴权返回结果()
+                            {
+                                鉴权结果 = false,
+                                鉴权返回消息 = "参数不能为空"
+                            };
+                        }
                     }
                 }
-            //}
-            //catch (Exception)
-            //{
-            //}
-           
+                catch (Exception)
+                {
+                    return new 鉴权返回结果()
+                    {
+                        鉴权结果 = false,
+                        鉴权返回消息 = "缺少必要参数"
+                    };
+                }
+            }
+            else if (context.Request.ContentType == "GET")
+            {
+
+            }
+
+
             //if(context.Request.Query.Count>0)
             //{
             //    foreach (var item in context.Request.Query)
@@ -82,7 +95,7 @@ namespace DDTVLiveRecWebServer.鉴权
             int NowTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time) || NowTime < Time - 300 || Time + 300 > NowTime)
             {
-               // if (Time != 2345678)
+                // if (Time != 2345678)
                 {
                     return new 鉴权返回结果()
                     {

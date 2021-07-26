@@ -78,14 +78,6 @@
 |POST|upload_list|[获取上传任务信息列表](./API-Doc.md#post-apiupload_list)|0|
 
 
-- 公共变量  
-
-|参数名|格式|是否必须|解释|
-|:--:|:--:|:--:|--|
-|time|int|是|请求发出时的UTC时间戳，单位为秒，和服务器时间300秒以内的为有效请求(如:1626508097)|
-|cmd|string|是|请求的API接口的接口名称(如:system_info)|
-|sig|string|是|其他变量排序后按照规则拼接过后使用SHA1散列后得到的签名|
-
 ## `POST /api/system_info`
 ## 获取系统运行情况
 
