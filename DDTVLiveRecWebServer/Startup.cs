@@ -123,6 +123,16 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.system_config.Web(context));
                 });
+                endpoints.MapPost("/api/system_update", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.system_update.Web(context));
+                });
+                endpoints.MapPost("/api/system_log", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.system_log.Web(context));
+                });
                 endpoints.MapPost("/api/rec_processing_list", async context =>
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";

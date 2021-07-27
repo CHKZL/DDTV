@@ -18,15 +18,16 @@ namespace DDTVLiveRecWebServer
 
         public static void Main(string[] args)
         {
-            while(!Auxiliary.MMPU.webServer初始化状态)
+            while (!Auxiliary.MMPU.webServer初始化状态)
             {
                 Thread.Sleep(50);
             }
-            Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer启动成功，开始监听{Auxiliary.MMPU.webServer默认监听端口}端口", Auxiliary.InfoLog.InfoClass.下载必要提示);
+            Auxiliary.InfoLog.InfoPrintf($"DDTVLiveRecWebServer启动成功，开始监听{Auxiliary.MMPU.webServer默认监听端口}端口", Auxiliary.InfoLog.InfoClass.下载系统信息);
 
             if (Auxiliary.MMPU.是否启用SSL)
             {
                 SSL证书方式启动(args).Build().Run();
+                
             }
             else
             {
@@ -50,6 +51,6 @@ namespace DDTVLiveRecWebServer
               {
                   i.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2($"./{Auxiliary.MMPU.webServer_pfx证书名称}", Auxiliary.MMPU.webServer_pfx证书密码);
               });
-          }).UseStartup<Startup>().UseUrls("https://" + Auxiliary.MMPU.webServer默认监听IP + ":" + Auxiliary.MMPU.webServer默认监听端口);
+          }).UseStartup<Startup>().UseUrls("https://" + Auxiliary.MMPU.webServer默认监听IP + ":" + Auxiliary.MMPU.webServer默认监听端口, "http://" + Auxiliary.MMPU.webServer默认监听IP + ":80");
     }
 }

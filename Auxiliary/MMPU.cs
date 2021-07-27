@@ -228,13 +228,13 @@ namespace Auxiliary
                 {
                     是否启用SSL = true;
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:{webServer_pfx证书名称}", InfoLog.InfoClass.Debug);
-                    InfoLog.InfoPrintf($"======检测到SSL证书=======\r\n\r\n请使用[https://本设备IP或域名:" + webServer默认监听端口+ "]进行访问\r\n\r\n======检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf($"======检测到SSL证书=======\r\n\r\n请使用[https://本设备IP或域名:" + webServer默认监听端口+ "]进行访问\r\n\r\n======检测到SSL连接=======", InfoLog.InfoClass.下载系统信息);
                 }
                 else
                 {
                     是否启用SSL = false;
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
-                    InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载系统信息);
                 }
                 MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810A");
                 MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", "ami");
@@ -440,7 +440,7 @@ namespace Auxiliary
                                 下载中++;
                             }
                         }
-                        InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count - 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count - 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中", InfoLog.InfoClass.下载系统信息);
                     }
                     catch (Exception){}
                     Thread.Sleep(心跳打印间隔 * 1000);
@@ -503,7 +503,7 @@ namespace Auxiliary
             //账号csrf
             if (string.IsNullOrEmpty(MMPU.Cookie))
             {
-                InfoLog.InfoPrintf("\r\n===============================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n===============================", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("\r\n===============================\r\nbilibili账号cookie为空或已过期，请更新BiliUser.ini信息\r\n===============================", InfoLog.InfoClass.下载系统信息);
                 //InfoLog.InfoPrintf("\r\n==============\r\nBiliUser.ini文件无效，请使用DDTV本体登陆成功后把DDTV本体里的BiliUser.ini文件覆盖无效的文件\r\n==============", InfoLog.InfoClass.下载必要提示);
                 if (模式 == 1)
                 {
@@ -1167,7 +1167,7 @@ namespace Auxiliary
                                 {
 
                                 }
-                                InfoLog.InfoPrintf("判断文件存在", InfoLog.InfoClass.杂项提示);
+                                InfoLog.InfoPrintf("判断文件存在", InfoLog.InfoClass.进程一般信息);
                                 return true;
                             }
                         case "主站视频":
@@ -1187,7 +1187,7 @@ namespace Auxiliary
                 //}
                 catch (Exception )
                 {
-                    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.杂项提示);
+                    InfoLog.InfoPrintf("判断文件不存在", InfoLog.InfoClass.进程一般信息);
                     return false;
                     //if (E.Message.Contains("404"))
                     //{

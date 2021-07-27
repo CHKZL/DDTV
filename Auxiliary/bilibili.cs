@@ -111,7 +111,7 @@ namespace Auxiliary
                 {
                    if(完整错误次数>=5)
                     {
-                        InfoLog.InfoPrintf($"----------【重要】----------\r\n多次尝试获取服务器RoomList缓存失败，切换为纯WSS连接模式，该模式下初始化连接速度较慢，大约20连接一个房间\r\n----------【重要】----------", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"----------【重要】----------\r\n多次尝试获取服务器RoomList缓存失败，切换为纯WSS连接模式，该模式下初始化连接速度较慢，大约20连接一个房间\r\n----------【重要】----------", InfoLog.InfoClass.下载系统信息);
                         wss连接初始化准备已完成 = true;
                         return;
                     }
@@ -253,7 +253,7 @@ namespace Auxiliary
             if(!是否正在更新房间信息)
             {
                 是否正在更新房间信息 = true;
-                InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.没啥价值的消息);
+                InfoLog.InfoPrintf("本地房间状态缓存更新开始", InfoLog.InfoClass.系统一般信息);
                 try
                 {
                     switch (MMPU.数据源)
@@ -262,7 +262,7 @@ namespace Auxiliary
                             {
                                 使用B站API更新房间状态();
                                 //
-                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
+                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.系统一般信息);
                                 是否正在更新房间信息 = false;
                                 break;
                             }
@@ -270,14 +270,14 @@ namespace Auxiliary
                             {
                                 //启动WS房间连接
                                 使用B站API更新房间状态();
-                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.没啥价值的消息);
+                                InfoLog.InfoPrintf($"数据源{MMPU.数据源}更新房间状态结束", InfoLog.InfoClass.系统一般信息);
                                 是否正在更新房间信息 = false;
                                 break;
                             }
                         case 2:
                             {
                                 使用vtbsAPI更新房间状态();
-                                InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.杂项提示);
+                                InfoLog.InfoPrintf("当前阿B API调用次数为:" + DataCache.CacheCount, InfoLog.InfoClass.进程一般信息);
                                 InfoLog.InfoPrintf("本地房间状态更新结束", InfoLog.InfoClass.Debug);
                                 是否正在更新房间信息 = false;
                                 break;
@@ -352,7 +352,7 @@ namespace Auxiliary
                     }
 
                 }
-                InfoLog.InfoPrintf("Vtbs数据更新成功", InfoLog.InfoClass.没啥价值的消息);
+                InfoLog.InfoPrintf("Vtbs数据更新成功", InfoLog.InfoClass.系统一般信息);
                 VTBS.API.VTBS服务器CDN.更新vtbs房间直播状态完成 = true;
             }
             catch (Exception)
@@ -478,7 +478,7 @@ namespace Auxiliary
                                             下载中++;
                                         }
                                     }
-                                    InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count- 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中" , InfoLog.InfoClass.下载必要提示);
+                                    InfoLog.InfoPrintf($"[DDTVLR心跳信息]临时API监控房间数:{RoomList.Count- 已连接的直播间状态.Count},WSS长连接数:{已连接的直播间状态.Count},{下载中}个下载中" , InfoLog.InfoClass.下载系统信息);
                                     TJ = 0;
                                 }
                                 TJ++;
@@ -1061,7 +1061,7 @@ namespace Auxiliary
                 }
                 catch (Exception e)
                 {
-                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf(roomID + "获取房间信息失败:" + e.Message, InfoLog.InfoClass.下载系统信息);
                     return null;
                 }
                 //解析结果
@@ -1118,7 +1118,7 @@ namespace Auxiliary
                         {
                             if((JObject.Parse(resultString)["message"].ToString()=="房间已加密"))
                             {
-                                InfoLog.InfoPrintf("房间已加密", InfoLog.InfoClass.下载必要提示);
+                                InfoLog.InfoPrintf("房间已加密", InfoLog.InfoClass.下载系统信息);
                                 return "";
                             }
                         }
@@ -1414,7 +1414,7 @@ namespace Auxiliary
                 if (status == ByQRCode.QrCodeStatus.Success)
                 {
                     BiliUser.account = account;
-                    InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.杂项提示);
+                    InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.进程一般信息);
                     //MessageBox.Show("UID:"+account.Uid+",登陆成功");
                     MMPU.UID = account.Uid;
                     MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);

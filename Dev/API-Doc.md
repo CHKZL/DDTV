@@ -25,6 +25,7 @@
 >```json
 >{
 >    "result": true,
+>    "code":0,
 >    "messge": "成功",
 >    "queue": 1,
 >    "Package": [
@@ -35,18 +36,28 @@
 >    ]
 >}
 >```
->其中计算sig所使用的加密字符串是：  
-把所有请求参数拼接，并且加上token值过后，对key进行排序后拼接得到加密字符串  
+* Request内容解释：  
+计算sig所使用的加密字符串是把所有请求参数拼接，并且加上token值过后，对key进行排序后拼接得到加密字符串  
 【cmd=room_delete&RoomId=21706862&time=2345678&token=1145141919810A&ver=2】  
 对该字符串进行SHA1加密全部转换成大写字母后便得到sig值  
-2B96810325EB0FE263A91FAA71592033377DF543  
-
+【2B96810325EB0FE263A91FAA71592033377DF543】 
 ## 注意事项:
 >加密字符串拼接时公共变量sig不参与  
 在拼接加密字符串时应加上变量token，但应当注意，token不应当随请求一起提交，仅在本地参与  
 加密字符串拼接，键值对之间用&分割(如："code=system_info&time=1234567")  
 加密中编码以UTF-8为准  
 加密得到的sig在发送时转换成大写  
+
+## 返回内容格式
+
+|键名|格式|是否会为Null|解释|
+|:--:|:--:|:--:|--|
+|result|int|否|鉴权的结果|
+|code|int|否|请求返回的状态码(具体内容参照[返回结果状态码列表]()|
+|messge|string|否|关于请求结果的说明文字内容|
+|queue|int|否|Package的List长度|
+|Package|List\<T>|是|返回的接口具体内容，如果鉴权失败或者本身列表为空则是Null|
+
 
 ## 公共变量
 
@@ -64,6 +75,7 @@
 |POST|system_info|JSON|[获取系统运行情况](./API-Doc.md#post-apisystem_info)|0|
 |POST|system_config|JSON|[查看当前配置文件](./API-Doc.md#post-apisystem_config)|0|
 |POST|system_update|JSON|[检查更新](./API-Doc.md#post-apiupdate)|0|
+|POST|system_log|JSON|[获取系统运行日志](./API-Doc.md#post-apisystem_log)|0|
 |POST|rec_processing_list|JSON|[获取当前录制中的队列简报](./API-Doc.md#post-apirec_processing_list)|0|
 |POST|rec_all_list|JSON|[获取所有下载任务的队列简报](./API-Doc.md#post-apirec_all_list)|0|
 |POST|rec_info|JSON|[根据录制任务GUID获取任务详情](./API-Doc.md#post-apirec_info)|1|
@@ -82,6 +94,16 @@
 |方式|名称|返回内容|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|:--:|
 |POST|file_steam|Flie|[获取播放文件](./API-Doc.md#post-file_path)|2|
+
+## 返回结果状态码列表
+|值|含义|
+|:--:|:--:|
+|-1|请求错误|
+|1001|请求成功|
+|1002|鉴权失败|
+
+
+# 接口详情
 
 ## `POST /api/system_info`
 ## 获取系统运行情况
@@ -108,6 +130,7 @@ path: http://127.0.0.1:11419/api/system_info
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -162,6 +185,7 @@ path: http://127.0.0.1:11419/api/system_config
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 60,
     "Package": [
@@ -199,7 +223,7 @@ path: http://127.0.0.1:11419/api/system_config
 ```
 
 
-## `POST /api/update`
+## `POST /api/system_update`
 ## 检查有无更新
 - 私有变量  
 
@@ -207,13 +231,13 @@ path: http://127.0.0.1:11419/api/system_config
 - Request:
 ```text
 method: POST
-path: http://127.0.0.1:11419/api/update
+path: http://127.0.0.1:11419/api/system_update
 ```
 ```json
 "form-data":
 {
     "time":2345678,
-    "cmd":"update",
+    "cmd":"system_update",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "var":2
 }
@@ -222,6 +246,7 @@ path: http://127.0.0.1:11419/api/update
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -232,6 +257,61 @@ path: http://127.0.0.1:11419/api/update
        }
     ]
 }
+```
+
+
+## `POST /api/system_log`
+## 获取系统运行日志
+- 私有变量  
+
+无
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/api/system_log
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"system_log",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "var":2
+}
+```
+- Response:
+```json
+{
+    "result": true,
+    "code":0,
+    "messge": "成功",
+    "queue": 1,
+    "Package": [
+       {
+           "Time":2021-07-27 14:14:15,
+           "Type":1,
+           "LogMsg":"log测试信息1，这是一条系统错误信息信息"
+       },
+       {
+           "Time":2021-07-27 14:14:15,
+           "Type":0,
+           "LogMsg":"log测试信息2，这是一条DEbug消息"
+       }
+    ]
+}
+```
+* logType枚举信息
+```C#
+public enum InfoClass
+        {
+            Debug = 0,
+            系统错误信息 = 1,
+            进程一般信息 = 2,
+            下载系统信息 = 3,
+            系统一般信息 = 4,
+            上传系统信息 = 5,
+            系统强制信息=6,
+        }
 ```
 
 
@@ -258,6 +338,7 @@ path: http://127.0.0.1:11419/api/rec_processing_list
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -297,6 +378,7 @@ path: http://127.0.0.1:11419/api/rec_all_list
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -341,6 +423,7 @@ path: http://127.0.0.1:11419/api/rec_info
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -414,6 +497,7 @@ path: http://127.0.0.1:11419/api/rec_cancel
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "删除成功",
     "queue": 1,
     "Package": [
@@ -491,6 +575,7 @@ path: http://127.0.0.1:11419/api/room_add
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -501,14 +586,6 @@ path: http://127.0.0.1:11419/api/room_add
     ]
 }
 ```
-
-
-
-
-
-
-
-
 
 
 ## `POST /api/room_delete`
@@ -537,6 +614,7 @@ path: http://127.0.0.1:11419/api/room_delete
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -577,6 +655,7 @@ path: http://127.0.0.1:11419/api/room_status
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -612,6 +691,7 @@ path: http://127.0.0.1:11419/api/room_list
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -653,6 +733,7 @@ path: http://127.0.0.1:11419/api/file_lists
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 3,
     "Package": [
@@ -712,6 +793,7 @@ path: http://127.0.0.1:11419/api/file_delete
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [
@@ -751,6 +833,7 @@ path: http://127.0.0.1:11419/api/file_range
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 3,
     "Package": [
@@ -805,6 +888,7 @@ path: http://127.0.0.1:11419/api/upload_list
 ```json
 {
     "result": true,
+    "code":0,
     "messge": "成功",
     "queue": 1,
     "Package": [

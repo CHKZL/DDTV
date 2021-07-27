@@ -127,7 +127,7 @@ namespace Auxiliary
             {
                 if(!item.DownIofo.网络超时&& item.DownIofo.下载状态&&item.DownIofo.已下载大小bit>10000&& item.DownIofo.最后连接时间!=0&& Gettime()-item.DownIofo.最后连接时间>60)
                 {
-                    InfoLog.InfoPrintf(item.DownIofo.房间_频道号 + "下载状态异常，重置下载任务", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf(item.DownIofo.房间_频道号 + "下载状态异常，重置下载任务", InfoLog.InfoClass.下载系统信息);
                     item.DownIofo.网络超时 = true;
                     item.DownIofo.备注 = "下载状态异常，重置下载任务";
                     Clear(true, item.DownIofo);
@@ -191,7 +191,7 @@ namespace Auxiliary
                     case "bilibili":
                         if (!bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                         {
-                            InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间直播状态为False,取消建立新的下载任务", InfoLog.InfoClass.下载系统信息);
                             DownIofo.下载状态 = false;
                             DownIofo.备注 = "该房间未直播";
                             
@@ -246,7 +246,7 @@ namespace Auxiliary
                                 }
                                 else
                                 {
-                                    InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间未直播，下载任务取消", InfoLog.InfoClass.下载必要提示);
+                                    InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 房间未直播，下载任务取消", InfoLog.InfoClass.下载系统信息);
                                     DownIofo.下载状态 = false;
                                     DownIofo.备注 = "该房间未直播";
                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
@@ -285,7 +285,7 @@ namespace Auxiliary
                     "保存路径:" + DownIofo.文件保存路径 + "\r\n" +
                     "下载任务类型:" + (DownIofo.继承.是否为继承对象 ? "续下任务" : "新建下载任务") +
                     "\r\n===============建立下载任务===============\r\n",
-                    InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoClass.下载系统信息);
                 Webhook.Webhook.开播hook(new Webhook.Webhook.开播Info() 
                 {
                     GUID=DownIofo.事件GUID,
@@ -368,7 +368,7 @@ namespace Auxiliary
                 {
                     if (item.DownIofo.下载状态 && item.DownIofo.是否保存 && 是否保存)
                     {
-                        InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\r\n房间号:{唯一码}\r\n主播名称:{主播名称}\r\n标题:{标题}", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"新建任务冲突，放弃新建任务，任务内容:\r\n房间号:{唯一码}\r\n主播名称:{主播名称}\r\n标题:{标题}", InfoLog.InfoClass.下载系统信息);
                         return null;
                     }
                     else
@@ -531,7 +531,7 @@ namespace Auxiliary
                         {
                             FlvMethod.转码(DownIofo.文件保存路径);
                         }
-                        InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 下播，录制完成", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 下播，录制完成", InfoLog.InfoClass.下载系统信息);
                         foreach (var item in RoomInit.bilibili房间主表)
                         {
                             if (item.唯一码 == DownIofo.房间_频道号)
@@ -562,7 +562,7 @@ namespace Auxiliary
                                         if (!DownIofo.是否是播放任务)
                                         {
                                             DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
-                                            InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.文件保存路径}", InfoLog.InfoClass.下载必要提示);
+                                            InfoLog.InfoPrintf($"{DownIofo.房间_频道号}:{DownIofo.主播名称}下载任务续下，历史文件加入待合并文件列表:{DownIofo.文件保存路径}", InfoLog.InfoClass.下载系统信息);
                                         }
                                         DownIofo.下载状态 = false;
                                        Downloader 重连下载对象 = Downloader.新建下载对象(
@@ -751,7 +751,7 @@ namespace Auxiliary
                                $"\r\n保存路径:{DOL.文件保存路径}" +
                                $"\r\n下载任务类型:{(DOL.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
                                $"\r\n结束原因:{DOL.备注}" +
-                               $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载必要提示);
+                               $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载系统信息);
             Webhook.Webhook.下播hook(new Webhook.Webhook.下播Info()
             {
                 GUID = DOL.事件GUID,
@@ -785,7 +785,7 @@ namespace Auxiliary
                     string BB = FlvMethod.FlvSum(A, 是否直播结束);
                     if(string.IsNullOrEmpty(BB))
                     {
-                        InfoLog.InfoPrintf($"{downIofo.房间_频道号}:{downIofo.主播名称}因为网络连接不稳定，无法获取文件头，放弃合并该flv",InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"{downIofo.房间_频道号}:{downIofo.主播名称}因为网络连接不稳定，无法获取文件头，放弃合并该flv",InfoLog.InfoClass.下载系统信息);
                         return filename;
                     }
                     filename = BB;
