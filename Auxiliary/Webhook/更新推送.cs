@@ -20,7 +20,7 @@ namespace Auxiliary.Webhook
                 {
                     if (P.尝试次数 > 3)
                     {
-                        InfoLog.InfoPrintf($"WebHook——{P.cmd}信息发送失败，重试三次均超时，放弃该hook请求；(配置的webhook地址为:{MMPU.WebhookUrl})", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf($"WebHook——{P.cmd}信息发送失败，重试三次均超时，放弃该hook请求；(配置的webhook地址为:{MMPU.WebhookUrl})", InfoLog.InfoClass.下载系统信息);
                         break;
                     }
                     P.hookpost(Info);

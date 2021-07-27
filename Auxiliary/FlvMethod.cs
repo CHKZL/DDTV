@@ -80,13 +80,13 @@ namespace Auxiliary
                     if (IsSuitableToMerge(GetFLVFileInfo(fs1), GetFLVFileInfo(fs2)) == false
                         )//|| IsSuitableToMerge(GetFLVFileInfo(fs1), GetFLVFileInfo(fs3)) == false)
                     {
-                        InfoLog.InfoPrintf("1该视频不适合合并，放弃合并", InfoLog.InfoClass.下载必要提示);
+                        InfoLog.InfoPrintf("1该视频不适合合并，放弃合并", InfoLog.InfoClass.下载系统信息);
                         return null;
                     }
                     int time = Merge(fs1, fsMerge, true, 0);
                     time = Merge(fs2, fsMerge, false, time);
                     //time = Merge(fs3, fsMerge, false, time);
-                    InfoLog.InfoPrintf("续录文件[" + output + "]合并完成", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("续录文件[" + output + "]合并完成", InfoLog.InfoClass.下载系统信息);
                     fs1.Close();
                     fs1.Dispose();
                     fs2.Close();
@@ -111,7 +111,7 @@ namespace Auxiliary
                 }
                 else
                 {
-                    InfoLog.InfoPrintf("2该视频不适合合并，放弃合并", InfoLog.InfoClass.下载必要提示);
+                    InfoLog.InfoPrintf("2该视频不适合合并，放弃合并", InfoLog.InfoClass.下载系统信息);
                     return null;
                 }
                
@@ -170,7 +170,7 @@ namespace Auxiliary
         private static void Process_Exited(object sender, EventArgs e)
         {
             ProcessPuls P = (ProcessPuls)sender;
-            InfoLog.InfoPrintf("转码任务完成:"+P.StartInfo.Arguments, InfoLog.InfoClass.下载必要提示);
+            InfoLog.InfoPrintf("转码任务完成:"+P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
             if(MMPU.转码后自动删除文件)
             {
                 MMPU.文件删除委托(P.OriginalVideoFilename, "转码完成自动，删除原始文件");

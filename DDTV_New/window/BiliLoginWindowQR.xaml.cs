@@ -44,7 +44,7 @@ namespace DDTV_New.window
             {
 
                 bilibili.BiliUser.account = account;
-                InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.杂项提示);
+                InfoLog.InfoPrintf("UID:" + account.Uid + ",登陆成功", InfoLog.InfoClass.进程一般信息);
                 //MessageBox.Show("UID:"+account.Uid+",登陆成功");
                 MMPU.UID = account.Uid;
                 MMPU.写ini配置文件("User", "UID", MMPU.UID, MMPU.BiliUserFile);

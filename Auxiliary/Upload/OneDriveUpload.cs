@@ -47,7 +47,7 @@ namespace Auxiliary.Upload
                 string stringResults = e.Data;
                 if (stringResults == "" || stringResults == null) return;
                 uploadInfo.status["OneDrive"].comments = System.Text.RegularExpressions.Regex.Replace(stringResults, @"(.*\[)(.*)(\].*)", "$2");
-                InfoLog.InfoPrintf($"Onedrive: {stringResults}", InfoLog.InfoClass.上传必要提示);
+                InfoLog.InfoPrintf($"Onedrive: {stringResults}", InfoLog.InfoClass.上传系统信息);
                 
             };  // 捕捉的信息
                 proc.Start();

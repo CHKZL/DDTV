@@ -55,7 +55,7 @@ namespace DDTVLiveRec
                                 MMPU.检测到的新版本号 = 服务器版本号;
                                 MMPU.更新公告 = MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100);
                                 MMPU.是否有新版本 = true;
-                                InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.下载必要提示);
+                                InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.下载系统信息);
                                 if (!是否已发送过webhook)
                                 {
                                     Auxiliary.Webhook.更新推送.更新提示(new Auxiliary.Webhook.更新推送.更新Info()
@@ -84,7 +84,7 @@ namespace DDTVLiveRec
                     {                  
                         if(MMPU.是否有新版本)
                         {
-                            InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.系统强提醒);
+                            InfoLog.InfoPrintf("检测到版本更新,更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.系统强制信息 );
                         }
                     }
                     catch (Exception)
@@ -105,7 +105,7 @@ namespace DDTVLiveRec
             }).Start();
             #endregion
 
-            InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载必要提示);
+            InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载系统信息);
             while (true)
             {
                 Thread.Sleep(10);

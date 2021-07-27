@@ -57,11 +57,11 @@ namespace Auxiliary.Upload
                         switch (uploadInfo.type)//根据不同上传目标执行不同上传函数
                         {
                             case "OneDrive":
-                                InfoLog.InfoPrintf("OneDrive上传任务已提交", InfoLog.InfoClass.下载必要提示);
+                                InfoLog.InfoPrintf("OneDrive上传任务已提交", InfoLog.InfoClass.下载系统信息);
                                 Upload(new OneDriveUpload().doUpload);
                                 break;
                             case "Cos":
-                                InfoLog.InfoPrintf("Cos上传任务已提交", InfoLog.InfoClass.下载必要提示);
+                                InfoLog.InfoPrintf("Cos上传任务已提交", InfoLog.InfoClass.下载系统信息);
                                 Upload(new CosUpload().doUpload);
                                 break;
                             default:
@@ -94,18 +94,18 @@ namespace Auxiliary.Upload
                           $"\r\n上传路径:{uploadInfo.remotePath}" +
                           $"\r\n网盘类型:{uploadInfo.type}" +
                           $"\r\n开始时间：{MMPU.Unix转换为DateTime(uploadInfo.status[uploadInfo.type].startTime.ToString())}" +
-                          $"\r\n===============建立{uploadInfo.type}上传任务===============\r\n", InfoLog.InfoClass.上传必要提示);
+                          $"\r\n===============建立{uploadInfo.type}上传任务===============\r\n", InfoLog.InfoClass.上传系统信息);
             uploadInfo.status[uploadInfo.type].comments = "建立上传任务";
             uploadInfo.status[uploadInfo.type].statusCode = 1;//第一次上传
             while (true)//失败后重试，达到最大次数后退出
             {
                 try
                 {
-                    InfoLog.InfoPrintf($"{uploadInfo.type}:开始第{uploadInfo.retries}次上传", InfoLog.InfoClass.上传必要提示);
+                    InfoLog.InfoPrintf($"{uploadInfo.type}:开始第{uploadInfo.retries}次上传", InfoLog.InfoClass.上传系统信息);
                     uploadInfo.status[uploadInfo.type].comments = $"开始第{uploadInfo.retries}次上传";
                     uploadInfo.status[uploadInfo.type].statusCode = uploadInfo.retries;//第n次上传
                     @do(uploadInfo);//执行指定目标的上传函数，失败则异常被捕获
-                    InfoLog.InfoPrintf($"{uploadInfo.type}:上传完毕", InfoLog.InfoClass.上传必要提示);
+                    InfoLog.InfoPrintf($"{uploadInfo.type}:上传完毕", InfoLog.InfoClass.上传系统信息);
                     uploadInfo.status[uploadInfo.type].endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);//更新结束时间
                     InfoLog.InfoPrintf($"\r\n=============={uploadInfo.type}上传成功================\r\n" +
                                        $"主播名:{uploadInfo.streamerName}" +
@@ -115,7 +115,7 @@ namespace Auxiliary.Upload
                                        $"\r\n网盘类型:{uploadInfo.type}" +
                                        $"\r\n开始时间：{MMPU.Unix转换为DateTime(uploadInfo.status[uploadInfo.type].startTime.ToString())}" +
                                        $"\r\n结束时间：{MMPU.Unix转换为DateTime(uploadInfo.status[uploadInfo.type].endTime.ToString())}" +
-                                       $"\r\n==============={uploadInfo.type}上传成功===============\r\n", InfoLog.InfoClass.上传必要提示);
+                                       $"\r\n==============={uploadInfo.type}上传成功===============\r\n", InfoLog.InfoClass.上传系统信息);
                     uploadInfo.status[uploadInfo.type].comments = $"上传成功";
                     uploadInfo.status[uploadInfo.type].statusCode = 0;//上传成功
                     break;//成功则退出
@@ -124,7 +124,7 @@ namespace Auxiliary.Upload
                 {
                     if (uploadInfo.retries == Uploader.RETRY_MAX_TIMES)//最后一次上传
                     {
-                        InfoLog.InfoPrintf($"{uploadInfo.type}:第{uploadInfo.retries}/{Uploader.RETRY_MAX_TIMES}次{uploadInfo.type}上传失败", InfoLog.InfoClass.上传必要提示);
+                        InfoLog.InfoPrintf($"{uploadInfo.type}:第{uploadInfo.retries}/{Uploader.RETRY_MAX_TIMES}次{uploadInfo.type}上传失败", InfoLog.InfoClass.上传系统信息);
                         uploadInfo.status[uploadInfo.type].endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
 
                         InfoLog.InfoPrintf($"\r\n=============={uploadInfo.type}上传失败================\r\n" +
@@ -135,14 +135,14 @@ namespace Auxiliary.Upload
                                        $"\r\n网盘类型:{uploadInfo.type}" +
                                        $"\r\n开始时间：{MMPU.Unix转换为DateTime(uploadInfo.status[uploadInfo.type].startTime.ToString())}" +
                                        $"\r\n结束时间：{MMPU.Unix转换为DateTime(uploadInfo.status[uploadInfo.type].endTime.ToString())}" +
-                                       $"\r\n==============={uploadInfo.type}上传失败===============\r\n", InfoLog.InfoClass.上传必要提示);
+                                       $"\r\n==============={uploadInfo.type}上传失败===============\r\n", InfoLog.InfoClass.上传系统信息);
                         uploadInfo.status[uploadInfo.type].comments = $"上传失败";
                         uploadInfo.status[uploadInfo.type].statusCode = -1;//上传失败
                         break;//达到最大重试次数，失败，退出
                     }
                     else//未达到最大重试次数，等待一定时间后重试
                     {
-                        InfoLog.InfoPrintf($"{uploadInfo.type}:第{uploadInfo.retries}/{Uploader.RETRY_MAX_TIMES}次上传失败，{Uploader.RETRY_WAITING_TIME}s后重试", InfoLog.InfoClass.上传必要提示);
+                        InfoLog.InfoPrintf($"{uploadInfo.type}:第{uploadInfo.retries}/{Uploader.RETRY_MAX_TIMES}次上传失败，{Uploader.RETRY_WAITING_TIME}s后重试", InfoLog.InfoClass.上传系统信息);
                         uploadInfo.status[uploadInfo.type].comments = $"第{uploadInfo.retries}次上传失败，重试等待中";
                         uploadInfo.retries++;//重试次数+1
                         Thread.Sleep(Uploader.RETRY_WAITING_TIME * 1000);//等待RETRY_WAITING_TIME秒

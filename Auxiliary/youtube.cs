@@ -89,11 +89,11 @@ namespace Auxiliary
         private static void Process_Exited(object sender, EventArgs e)
         {
             Process P = (Process)sender;
-            InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载必要提示);
+            InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
         }
         private static void Output(object sender, DataReceivedEventArgs e)
         {
-            InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.下载必要提示);
+            InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.下载系统信息);
             // Console.WriteLine(e.Data);
         }
         public static RoomInit.RoomInfo GetRoomInfo(string originalRoomId)

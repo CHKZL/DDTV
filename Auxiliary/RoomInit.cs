@@ -173,7 +173,7 @@ namespace Auxiliary
                                 MMPU.弹窗.Add(3000, "自动录制", "有关注的正在直播,根据配置列表开始自动录制");
                             }
 
-                            InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "直播间状态发生了变化", InfoLog.InfoClass.下载必要提示);
+                            InfoLog.InfoPrintf(最新的状态.名称 + "/" + 最新的状态.原名 + "直播间状态发生了变化", InfoLog.InfoClass.下载系统信息);
                             bool 是否新建任务 = true;
                             foreach (var item in MMPU.DownList)
                             {
@@ -194,7 +194,7 @@ namespace Auxiliary
                                     string 下载地址 = bilibili.根据房间号获取房间信息.下载地址(之前的状态.唯一码);
                                     if (string.IsNullOrEmpty(下载地址))
                                     {
-                                        InfoLog.InfoPrintf("解析下载地址失败，一般是该房间未开播或已加密", InfoLog.InfoClass.下载必要提示);
+                                        InfoLog.InfoPrintf("解析下载地址失败，一般是该房间未开播或已加密", InfoLog.InfoClass.下载系统信息);
                                         return;
                                     }
                                     Downloader DLL = Downloader.新建下载对象(之前的状态.平台, 之前的状态.唯一码, bilibili.根据房间号获取房间信息.获取标题(之前的状态.唯一码), Guid.NewGuid().ToString(), 下载地址, "自动录制", true, 最新的状态.名称, false, null);
@@ -411,7 +411,7 @@ namespace Auxiliary
             }
             if (首次启动)
             {
-                InfoLog.InfoPrintf("监控列表中有" + (bilibili.RoomList.Count()+ youtube.RoomList.Count()) + "个单推对象，开始监控", InfoLog.InfoClass.下载必要提示);
+                InfoLog.InfoPrintf("监控列表中有" + (bilibili.RoomList.Count()+ youtube.RoomList.Count()) + "个单推对象，开始监控", InfoLog.InfoClass.下载系统信息);
             }
             首次启动 = false;
             InfoLog.InfoPrintf("刷新本地房间列表完成", InfoLog.InfoClass.Debug);

@@ -83,7 +83,7 @@ namespace Auxiliary.Upload
             {
                 UploadOrderTemp.Add(int.Parse(enableOneDrive), "OneDrive");
                 CheckEnableUpload = true;
-                InfoLog.InfoPrintf($"已检测到OneDrive上传任务，上传顺序为{enableOneDrive}", InfoLog.InfoClass.上传必要提示);
+                InfoLog.InfoPrintf($"已检测到OneDrive上传任务，上传顺序为{enableOneDrive}", InfoLog.InfoClass.上传系统信息);
 
                 oneDriveConfig = MMPU.读取exe默认配置文件("OneDriveConfig", "");
                 InfoLog.InfoPrintf($"配置文件初始化任务[oneDriveConfig]:{oneDriveConfig}", InfoLog.InfoClass.Debug);
@@ -104,7 +104,7 @@ namespace Auxiliary.Upload
             {
                 UploadOrderTemp.Add(int.Parse(enableCos), "Cos");
                 CheckEnableUpload = true;
-                InfoLog.InfoPrintf($"已检测到Cos上传任务，上传顺序为{enableCos}", InfoLog.InfoClass.上传必要提示);
+                InfoLog.InfoPrintf($"已检测到Cos上传任务，上传顺序为{enableCos}", InfoLog.InfoClass.上传系统信息);
 
                 cosSecretId = MMPU.读取exe默认配置文件("CosSecretId", "");
                 InfoLog.InfoPrintf($"配置文件初始化任务[CosSecretId]:敏感信息，隐藏内容，信息长度:{cosSecretId.Length}", InfoLog.InfoClass.Debug);

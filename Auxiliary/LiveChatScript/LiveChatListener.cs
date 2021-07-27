@@ -287,7 +287,7 @@ namespace Auxiliary.LiveChatScript
             //Debug.Log(jsonBody);
             string cmd = (string)obj["cmd"];
             if (cmd != "DDTV_T1")
-                InfoLog.InfoPrintf("LiveChatListener收到数据，类型为：" + cmd, InfoLog.InfoClass.杂项提示);
+                InfoLog.InfoPrintf("LiveChatListener收到数据，类型为：" + cmd, InfoLog.InfoClass.进程一般信息);
             //Console.WriteLine(cmd);
             switch (cmd)
             {

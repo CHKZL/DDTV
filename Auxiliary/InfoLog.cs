@@ -19,6 +19,13 @@ namespace Auxiliary
         public static FileStream InfoInitFS;
         public static StreamWriter InfoInitSW;
         public static InfoClasslBool ClasslBool = new InfoClasslBool();
+        public static List<LogInfo> logInfos = new List<LogInfo>();
+        public class LogInfo
+        {
+            public DateTime Time { set; get; }
+            public int Type { set; get; }
+            public string LogMsg { set; get; }
+        }
         public class InfoClasslBool
         {
             public bool Debug { set; get; } = false;
@@ -33,11 +40,11 @@ namespace Auxiliary
         {
             Debug = 0,
             系统错误信息 = 1,
-            杂项提示 = 2,
-            下载必要提示 = 3,
-            没啥价值的消息 = 4,
-            上传必要提示 = 5,
-            系统强提醒=6,
+            进程一般信息 = 2,
+            下载系统信息 = 3,
+            系统一般信息 = 4,
+            上传系统信息 = 5,
+            系统强制信息 =6,
         }
         public static string 返回WSS连接状态列表()
         {
@@ -277,7 +284,14 @@ namespace Auxiliary
                             {
                                 if (MMPU.Debug打印到终端)
                                 {
-                                    Console.WriteLine("[Debug] " + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                                    DateTime Time = DateTime.Now;
+                                    Console.WriteLine("[Debug] " + Time.ToString("MM-dd HH:mm:ss") + ": " + mess);
+                                    logInfos.Add(new LogInfo 
+                                    { 
+                                        Time= Time,
+                                        Type= (int)Class,
+                                        LogMsg = mess
+                                    });
                                 }
                                 A = "\r\n[Debug]" + DateTime.Now.ToString("MM-dd HH:mm:ss") + ": " + mess;
 
@@ -288,58 +302,99 @@ namespace Auxiliary
                         {
                             if (ClasslBool.系统错误信息)
                             {
+                                DateTime Time = DateTime.Now;
                                 Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
-                                    "\r\n[SysteErrorInfo]: " + mess +
+                                    "\r\n[SysteErrorInfo]" + Time.ToString("MM-dd HH:mm:ss") + ": " + mess +
                                     "\r\n=========SysteErrorInfoEnd=========");
 
                                 A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
-
+                                logInfos.Add(new LogInfo
+                                {
+                                    Time = Time,
+                                    Type = (int)Class,
+                                    LogMsg = mess
+                                });
                             }
                         }
                         break;
-                    case InfoClass.杂项提示:
+                    case InfoClass.进程一般信息:
                         {
                             if (ClasslBool.杂项提示)
                             {
-                                Console.WriteLine("[Info]: " + mess);
+                                DateTime Time = DateTime.Now;
+                                Console.WriteLine("[Info]: " + Time.ToString("MM-dd HH:mm:ss") + ": " + mess);
                                 A = "\r\n[Info]: " + mess;
+                                logInfos.Add(new LogInfo
+                                {
+                                    Time = Time,
+                                    Type = (int)Class,
+                                    LogMsg = mess
+                                });
                             }
                         }
                         break;
-                    case InfoClass.下载必要提示:
+                    case InfoClass.下载系统信息:
                         {
                             if (ClasslBool.下载必要提示)
                             {
-                                Console.WriteLine("[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                                A = "\r\n[下载系统消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                DateTime Time = DateTime.Now;
+                                Console.WriteLine("[下载系统消息]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[下载系统消息]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                logInfos.Add(new LogInfo
+                                {
+                                    Time = Time,
+                                    Type = (int)Class,
+                                    LogMsg = mess
+                                });
                             }
                         }
                         break;
-                    case InfoClass.没啥价值的消息:
+                    case InfoClass.系统一般信息:
                         {
                             if (ClasslBool.没啥价值的消息)
                             {
-                                Console.WriteLine("[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                                A = "\r\n[没啥价值的消息]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                DateTime Time = DateTime.Now;
+                                Console.WriteLine("[没啥价值的消息]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[没啥价值的消息]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                logInfos.Add(new LogInfo
+                                {
+                                    Time = Time,
+                                    Type = (int)Class,
+                                    LogMsg = mess
+                                });
                             }
                         }
                         break;
-                    case InfoClass.上传必要提示:
+                    case InfoClass.上传系统信息:
                         {
                             if (ClasslBool.上传必要提示)
                             {
-                                Console.WriteLine("[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
-                                A = "\r\n[上传必要提示]" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                DateTime Time = DateTime.Now;
+                                Console.WriteLine("[上传必要提示]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess);
+                                A = "\r\n[上传必要提示]" + Time.ToString("yyyy-MM-dd HH:mm:ss") + ": " + mess;
+                                logInfos.Add(new LogInfo
+                                {
+                                    Time = Time,
+                                    Type = (int)Class,
+                                    LogMsg = mess
+                                });
                             }
                         }
                         break;
-                    case InfoClass.系统强提醒:
+                    case InfoClass.系统强制信息 :
                         {
+                            DateTime Time = DateTime.Now;
                             Console.WriteLine("\r\n ========= 系统提示 =========" +
-                                   "\r\n[系统提示]: " + mess +
+                                   "\r\n[系统提示]"+ Time.ToString("yyyy-MM-dd HH:mm:ss")+": " + mess +
                                    "\r\n========= 系统提示 =========");
 
                             A = "\r\n=========系统提示=========" + "\r\n[系统提示]: " + mess + "\r\n=========系统提示=========";
+                            logInfos.Add(new LogInfo
+                            {
+                                Time = Time,
+                                Type = (int)Class,
+                                LogMsg = mess
+                            });
                         }
                         break;
                 }

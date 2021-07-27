@@ -78,7 +78,7 @@ namespace DDTVLiveRecWebServer.API
                    $"\r\n保存路径:{item.文件保存路径}" +
                    $"\r\n下载任务类型:{(item.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
                    $"\r\n结束原因:{item.备注}" +
-                   $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载必要提示);
+                   $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载系统信息);
         }
         private class Messge : ReturnInfoPackage.Messge<Auxiliary.Downloader.DownIofoData>
         {
