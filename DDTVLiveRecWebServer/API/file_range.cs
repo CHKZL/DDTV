@@ -25,7 +25,7 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_range", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>(鉴权结果, null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
@@ -47,7 +47,7 @@ namespace DDTVLiveRecWebServer.API
                         }
                     }
                 }
-                return ReturnInfoPackage.InfoPkak(鉴权结果, fileInfos);
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, fileInfos);
             }
         }
         private class Messge

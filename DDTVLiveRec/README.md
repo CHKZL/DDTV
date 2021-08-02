@@ -50,10 +50,10 @@ web服务端:
 
 # API 说明文档
 
-* [点击查看API文档](https://github.com/CHKZL/DDTV2/blob/master/Dev/API-Doc.md)
+* [点击查看API文档](https://github.com/CHKZL/DDTV2/blob/master/Doc/docs/API/README.md)
 
 # Webhook 说明文档
-* [点击查看Webhook文档](https://github.com/CHKZL/DDTV2/blob/master/Dev/Webhook-Doc.md)
+* [点击查看Webhook文档](https://github.com/CHKZL/DDTV2/blob/master/Doc/docs/API/WebHook.md)
 
 
 # 如果使用Docker构建:

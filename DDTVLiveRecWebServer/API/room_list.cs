@@ -13,7 +13,7 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "room_list");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, "鉴权失败", null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
@@ -22,7 +22,7 @@ namespace DDTVLiveRecWebServer.API
                 {
                     roomInfos.Add(item);
                 }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, "请求成功", roomInfos);
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, roomInfos);
             }
         }
         private class Messge : Auxiliary.RoomInit.RL

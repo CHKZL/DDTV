@@ -12,7 +12,7 @@ namespace Auxiliary
 {
     public class update
     {
-        public static void 检查升级程序是否需要升级()
+        public static void 检查升级程序是否需要升级(string name)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace Auxiliary
                 int 更新文件 = 0;
                 int 缺少文件 = 0;
                 int itemnum = 0;
-                string ConfigUrl = "https://ddtv-update.oss-cn-zhangjiakou.aliyuncs.com/update/Config.json";
+                string ConfigUrl = $"https://{name}-update.oss-cn-zhangjiakou.aliyuncs.com/update/Config.json";
                 string a = 返回网页内容_GET(ConfigUrl);
                 更新配置文件 student = JsonConvert.DeserializeObject<更新配置文件>(a);
                 string 参考路径 = "./update/";
@@ -54,7 +54,7 @@ namespace Auxiliary
             }
             catch (Exception)
             {
-              //  return true;
+                //  return true;
             }
         }
         public static void 通过WC更新自动更新文件(string URL, string File)

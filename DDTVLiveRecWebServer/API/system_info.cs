@@ -16,7 +16,7 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "system_info");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, "鉴权失败", null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
@@ -57,7 +57,7 @@ namespace DDTVLiveRecWebServer.API
                         Update_Log = Auxiliary.MMPU.是否有新版本 ? Auxiliary.MMPU.更新公告 : null,
                     }
                 };
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, "请求成功", new List<SystemInfo>(){ systemInfo });
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, new List<SystemInfo>(){ systemInfo });
             }
           
         }

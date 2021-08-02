@@ -105,7 +105,6 @@ namespace DDTVLiveRecWebServer
                 #region API接口
                 endpoints.MapGet("/loginqr", async context =>
                 {
-                   // context.Response.ContentType = "image/png:png; charset=utf-8";
                     await context.Response.SendFileAsync("./BiliQR.png");
                 });
                 endpoints.MapPost("/api/weblogin", async context =>

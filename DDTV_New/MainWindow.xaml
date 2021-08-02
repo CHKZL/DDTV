@@ -114,7 +114,7 @@
             <Label Content="默认缓冲时长(秒):" Margin="25,321,662,166" RenderTransformOrigin="0.508,0.821"/>
             <TextBox x:Name="播放缓冲时长" Margin="143,321,621,168" Text="3" VerticalContentAlignment="Center" KeyUp="播放缓冲时长_KeyUp" />
             <Button Margin="191,322,563,169" Content="确定" Click="修改播放缓冲时长确定按钮点击事件" />
-            <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4并修复时间轴(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
+            <CheckBox x:Name="转码使能按钮" Content="下载完成后自动转码为MP4(转码时会占用大量系统资源，如需同时观看请注意！)" Margin="27,354,227,139" Click="录制完成后转码开关点击事件"/>
             <CheckBox x:Name="剪贴板监听按钮" Content="监听剪贴板(用于主站视频播放)" Margin="578,137,31,356" Click="剪贴板监听按钮开关点击事件" IsEnabled="False"/>
             <CheckBox x:Name="录制弹幕使能按钮" Content="录制弹幕/礼物记录(文件和视频同名)" Margin="578,157,0,336" Click="录制弹幕按钮开关点击事件"/>
             <Button x:Name="非VTB数据添加设置按钮" Content="非VTB数据添加/设置(注意看说明)" HorizontalAlignment="Left" Margin="531,469,0,0" VerticalAlignment="Top" Width="198" Click="非VTB数据添加设置按钮事件" Height="26"/>

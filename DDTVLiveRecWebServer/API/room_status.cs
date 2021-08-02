@@ -29,7 +29,7 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "room_status", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>(鉴权结果, null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
@@ -44,11 +44,10 @@ namespace DDTVLiveRecWebServer.API
                 }
                 catch (Exception)
                 {
-                    return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                    return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功但出现了错误, new List<roominfo>() {new roominfo()
                     {
-                        result=false,
-                        messge="输入的直播间房间号不符合房间号规则(数字)"
-                    }});
+                        result=false
+                    }}, "输入的直播间房间号不符合房间号规则(数字)");
                 }
                 var data = new List<RoomCadr>();
                 foreach (var item in bilibili房间主表)
@@ -86,7 +85,7 @@ namespace DDTVLiveRecWebServer.API
                 string JOO = JsonConvert.SerializeObject(new RoomBox() { data = data });
                 MMPU.储存文本(JOO, RoomConfigFile,true);
                 InitializeRoomList(0, false, false);
-                return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, new List<roominfo>() {new roominfo()
                     {
                         result=true,
                         messge="修改设置完成"
