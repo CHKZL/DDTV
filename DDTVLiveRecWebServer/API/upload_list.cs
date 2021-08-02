@@ -13,11 +13,11 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "upload_list");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>(鉴权结果, null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
-                return ReturnInfoPackage.InfoPkak(鉴权结果, Auxiliary.Upload.Uploader.UploadList);
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, Auxiliary.Upload.Uploader.UploadList);
             }
         }
         private class Messge

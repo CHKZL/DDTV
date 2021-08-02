@@ -28,7 +28,7 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "room_add", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>(鉴权结果, null);
+                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
             }
             else
             {
@@ -43,11 +43,11 @@ namespace DDTVLiveRecWebServer.API
                 }
                 catch (Exception)
                 {
-                    return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                    return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功但出现了错误, new List<roominfo>() {new roominfo()
                     {
                         result=false,
                         messge="输入的直播间房间号不符合房间号规则(数字)"
-                    }});
+                    }}, "输入的直播间房间号不符合房间号规则(数字)");
                 }
                 RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
                 RoomBox RB = new RoomBox
@@ -60,11 +60,10 @@ namespace DDTVLiveRecWebServer.API
                     {
                         if (item.RoomNumber == roomId.ToString())
                         {
-                            return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                            return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功但出现了错误, new List<roominfo>() {new roominfo()
                             {
-                                result=false,
-                                messge="配置文件中已有该房间号存在"
-                            }});
+                                result=false
+                            }}, "配置文件中已有该房间号存在");
                         }
                         RB.data.Add(item);
                     }
@@ -108,7 +107,7 @@ namespace DDTVLiveRecWebServer.API
                     是否提醒 = false,
                     平台 = "bilibili"
                 });
-                return ReturnInfoPackage.InfoPkak(鉴权结果, new List<roominfo>() {new roominfo()
+                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, new List<roominfo>() {new roominfo()
                     {
                         result=true,
                         messge=context.Request.Form["Name"] + "[" + roomId.ToString() + "]添加完成"
@@ -122,7 +121,7 @@ namespace DDTVLiveRecWebServer.API
         private class roominfo
         {
             public bool result { set; get; }
-            public string messge { set; get; }
+            public string messge { set; get; } = null;
         }
     }
 }

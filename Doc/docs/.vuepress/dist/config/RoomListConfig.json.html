@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>房间配置文件 | DDTV 你的地表最强B站录播机</title>
+    <meta name="generator" content="VuePress 1.8.2">
+    
+    <meta name="description" content="DDTV-你的地表最强B站录播机。一个可进行B站直播开播提醒.自动录制.在线播放、直播状态查看、跨平台部署的绿色工具。">
+    
+    <link rel="preload" href="/assets/css/0.styles.7ed32371.css" as="style"><link rel="preload" href="/assets/js/app.38557d80.js" as="script"><link rel="preload" href="/assets/js/3.0296fe51.js" as="script"><link rel="preload" href="/assets/js/26.5931a183.js" as="script"><link rel="prefetch" href="/assets/js/10.4f933b9d.js"><link rel="prefetch" href="/assets/js/11.51b8e9ae.js"><link rel="prefetch" href="/assets/js/12.0bff105b.js"><link rel="prefetch" href="/assets/js/13.f97be147.js"><link rel="prefetch" href="/assets/js/14.893e6920.js"><link rel="prefetch" href="/assets/js/15.8d97bec9.js"><link rel="prefetch" href="/assets/js/16.f3724054.js"><link rel="prefetch" href="/assets/js/17.680f8f1f.js"><link rel="prefetch" href="/assets/js/18.28171a17.js"><link rel="prefetch" href="/assets/js/19.a1c49a75.js"><link rel="prefetch" href="/assets/js/20.454b46b1.js"><link rel="prefetch" href="/assets/js/21.4f24b7da.js"><link rel="prefetch" href="/assets/js/22.feca24a2.js"><link rel="prefetch" href="/assets/js/23.92ddd439.js"><link rel="prefetch" href="/assets/js/24.7817138b.js"><link rel="prefetch" href="/assets/js/25.ef7e46ba.js"><link rel="prefetch" href="/assets/js/27.5dd0bbd4.js"><link rel="prefetch" href="/assets/js/28.f57124bf.js"><link rel="prefetch" href="/assets/js/29.ace8b766.js"><link rel="prefetch" href="/assets/js/30.7f9a0f82.js"><link rel="prefetch" href="/assets/js/31.54360692.js"><link rel="prefetch" href="/assets/js/32.2089581c.js"><link rel="prefetch" href="/assets/js/33.2237ae8d.js"><link rel="prefetch" href="/assets/js/4.5420925d.js"><link rel="prefetch" href="/assets/js/5.01f921f2.js"><link rel="prefetch" href="/assets/js/6.593aeb2d.js"><link rel="prefetch" href="/assets/js/7.cc14ac71.js"><link rel="prefetch" href="/assets/js/8.c5ecf089.js"><link rel="prefetch" href="/assets/js/9.6856db68.js"><link rel="prefetch" href="/assets/js/vendors~docsearch.9f78e3e8.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.7ed32371.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/DDTV.png" alt="DDTV 你的地表最强B站录播机" class="logo"> <span class="site-name can-hide">DDTV 你的地表最强B站录播机</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">
+  主页
+</a></div><div class="nav-item"><a href="/install/" class="nav-link">
+  安装
+</a></div><div class="nav-item"><a href="/config/" class="nav-link router-link-active">
+  配置说明
+</a></div><div class="nav-item"><a href="/AdvancedFeatures/" class="nav-link">
+  进阶功能说明
+</a></div><div class="nav-item"><a href="/API/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/QFA/" class="nav-link">
+  常见问题
+</a></div><div class="nav-item"><a href="/CHANGELOG/" class="nav-link">
+  更新日志
+</a></div><div class="nav-item"><a href="/about/" class="nav-link">
+  关于项目
+</a></div> <a href="https://github.com/CHKZL/DDTV2" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">
+  主页
+</a></div><div class="nav-item"><a href="/install/" class="nav-link">
+  安装
+</a></div><div class="nav-item"><a href="/config/" class="nav-link router-link-active">
+  配置说明
+</a></div><div class="nav-item"><a href="/AdvancedFeatures/" class="nav-link">
+  进阶功能说明
+</a></div><div class="nav-item"><a href="/API/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/QFA/" class="nav-link">
+  常见问题
+</a></div><div class="nav-item"><a href="/CHANGELOG/" class="nav-link">
+  更新日志
+</a></div><div class="nav-item"><a href="/about/" class="nav-link">
+  关于项目
+</a></div> <a href="https://github.com/CHKZL/DDTV2" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>配置说明</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/config/" aria-current="page" class="sidebar-link">配置文件说明</a></li><li><a href="/config/exe.config.html" class="sidebar-link">DDTV Core通用配置文件</a></li><li><a href="/config/RoomListConfig.json.html" aria-current="page" class="active sidebar-link">房间配置文件</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/config/RoomListConfig.json.html#房间配置文件的格式介绍" class="sidebar-link">房间配置文件的格式介绍</a></li></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="房间配置文件"><a href="#房间配置文件" class="header-anchor">#</a> 房间配置文件</h1> <h2 id="房间配置文件的格式介绍"><a href="#房间配置文件的格式介绍" class="header-anchor">#</a> 房间配置文件的格式介绍</h2> <p>默认房间文件<code>RoomListConfig.json</code>格式为json字符串，默认为空json，并且<code>DDTVLiveRec</code>和<code>DDTV2.0</code>通用<br> <code>DDTVLiveRec</code>和<code>DDTV2.0</code>的房间配置文件可以互相复制通用<br>
+如果是<code>DDTVLiveRec</code>，在下载的压缩包里附带了一个参考的文件，也可以参考那个文件进行手动编写<br>
+完整的房间配置文件是由多个房间配置组合成的，完整的文件格式如下<br>
+房间配置文件完整格式为</p> <div class="language- extra-class"><pre class="language-text"><code>{
+    &quot;data&quot;: [
+        {
+            &quot;Name&quot;: &quot;绯赤艾莉欧&quot;,
+            &quot;OfficialName&quot;: &quot;緋赤エリオ&quot;,
+            &quot;RoomNumber&quot;: &quot;21396545&quot;,
+            &quot;Types&quot;: &quot;bilibili&quot;,
+            &quot;status&quot;: false,
+            &quot;VideoStatus&quot;: false,
+            &quot;RemindStatus&quot;: false,
+            &quot;LiveStatus&quot;: false
+        },
+        {
+            &quot;Name&quot;: &quot;奥斯曼人谢谢你&quot;,
+            &quot;OfficialName&quot;: &quot;夢乃栞&quot;,
+            &quot;RoomNumber&quot;: &quot;14052636&quot;,
+            &quot;Types&quot;: &quot;bilibili&quot;,
+            &quot;status&quot;: false,
+            &quot;VideoStatus&quot;: false,
+            &quot;RemindStatus&quot;: false,
+            &quot;LiveStatus&quot;: false
+        }
+    ]
+}
+</code></pre></div><h3 id="房间配置文件中-单个房间配置信息说明"><a href="#房间配置文件中-单个房间配置信息说明" class="header-anchor">#</a> 房间配置文件中，单个房间配置信息说明</h3> <div class="language-json extra-class"><pre class="language-json"><code><span class="token punctuation">{</span>
+    <span class="token property">&quot;Name&quot;</span><span class="token operator">:</span> <span class="token string">&quot;奥斯曼人谢谢你&quot;</span><span class="token punctuation">,</span><span class="token comment">//为翻译名称</span>
+    <span class="token property">&quot;OfficialName&quot;</span><span class="token operator">:</span> <span class="token string">&quot;夢乃栞&quot;</span><span class="token punctuation">,</span><span class="token comment">//为官方名称</span>
+    <span class="token property">&quot;RoomNumber&quot;</span><span class="token operator">:</span> <span class="token string">&quot;14052636&quot;</span><span class="token punctuation">,</span><span class="token comment">//为B站直播的房间号</span>
+    <span class="token property">&quot;Types&quot;</span><span class="token operator">:</span> <span class="token string">&quot;bilibili&quot;</span><span class="token punctuation">,</span><span class="token comment">//为多平台支持预留，现在默认并必须为&quot;bilibili&quot;</span>
+    <span class="token property">&quot;status&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span><span class="token comment">//为是否开播自动录制的标识，false为检测到开播后不录制，true为检测到开播后自动录制</span>
+    <span class="token property">&quot;VideoStatus&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span><span class="token comment">//为DDTV开播弹窗提醒标识，false为检测到开播后系统气泡提醒，true为检测到开播后不提醒</span>
+    <span class="token property">&quot;RemindStatus&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span><span class="token comment">//为房间状态缓存信息，默认为false，不用手动修改</span>
+    <span class="token property">&quot;LiveStatus&quot;</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token comment">//为房间状态缓存信息，默认为false，不用手动修改</span>
+<span class="token punctuation">}</span>
+</code></pre></div><div class="custom-block danger"><p class="custom-block-title">警告</p> <p>手动编辑过后请检查JSON字符串的合法性，请保证确保符合参考文件的JSON文件格式！！！</p></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/CHKZL/DDTV2/edit/dev/docs/config/RoomListConfig.json.md" target="_blank" rel="noopener noreferrer">在 GitHub 上编辑此页</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/config/exe.config.html" class="prev">
+        DDTV Core通用配置文件
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.38557d80.js" defer></script><script src="/assets/js/3.0296fe51.js" defer></script><script src="/assets/js/26.5931a183.js" defer></script>
+  </body>
+</html>

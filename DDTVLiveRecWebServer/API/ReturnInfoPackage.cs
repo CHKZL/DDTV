@@ -8,8 +8,26 @@ namespace DDTVLiveRecWebServer.API
 {
     public class ReturnInfoPackage
     {
-        public static string InfoPkak<T>(int Code, string Messge, List<T> Package)
+        public static string InfoPkak<T>(int Code, List<T> Package, string Messge = null)
         {
+            if (Messge == null)
+            {
+                switch (Code)
+                {
+                    case (int)MessgeCode.请求错误:
+                        Messge = "请求错误";
+                        break;
+                    case (int)MessgeCode.鉴权失败:
+                        Messge = "鉴权失败";
+                        break;
+                    case (int)MessgeCode.请求成功:
+                        Messge = "请求成功";
+                        break;
+                    case (int)MessgeCode.请求成功但出现了错误:
+                        Messge = "请求成功但出现了错误";
+                        break;
+                }
+            }
             int PackageCount = 0;
             if (Package != null)
             {
@@ -36,7 +54,8 @@ namespace DDTVLiveRecWebServer.API
         {
             请求错误=-1,
             请求成功=1001,
-            鉴权失败=1002
+            鉴权失败=1002,
+            请求成功但出现了错误=1003,
         }
     }
 }

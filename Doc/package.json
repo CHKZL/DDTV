@@ -1,0 +1,23 @@
+{
+  "name": "ddtv",
+  "version": "1.0.6",
+  "description": "DDTV",
+  "author": "",
+  "main": "index.js",
+  "keywords": [
+    "theme",
+    "template",
+    "plugin",
+    "vuepress"
+  ],
+  "homepage": "https://github.com/openHacking/vuepress-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openHacking/vuepress-template.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  }
+}

@@ -1,10 +1,11 @@
-# DDTVCore API Doc
+# DDTV API Doc
 
-注:**该文档中所使用的ApiToken字符串为"1145141919810A"**
 
-## 请求流程
+
+## 请求说明
 ### 流程图如下:
-![API请求流程图](./API.png)
+<img :src="$withBase('/API.png')" alt="mixureSecure">
+
 ### 例:/api/room_delete接口
 >- Request:
 >```text
@@ -41,7 +42,7 @@
 【cmd=room_delete&RoomId=21706862&time=2345678&token=1145141919810A&ver=2】  
 对该字符串进行SHA1加密全部转换成大写字母后便得到sig值  
 【2B96810325EB0FE263A91FAA71592033377DF543】 
-## 注意事项:
+### 注意事项:
 >加密字符串拼接时公共变量sig不参与  
 在拼接加密字符串时应加上变量token，但应当注意，token不应当随请求一起提交，仅在本地参与  
 加密字符串拼接，键值对之间用&分割(如："code=system_info&time=1234567")  
@@ -72,28 +73,28 @@
 ## 已实现的通用API列表
 |方式|名称|返回内容|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|:--:|
-|POST|system_info|JSON|[获取系统运行情况](./API-Doc.md#post-apisystem_info)|0|
-|POST|system_config|JSON|[查看当前配置文件](./API-Doc.md#post-apisystem_config)|0|
-|POST|system_update|JSON|[检查更新](./API-Doc.md#post-apiupdate)|0|
-|POST|system_log|JSON|[获取系统运行日志](./API-Doc.md#post-apisystem_log)|0|
-|POST|rec_processing_list|JSON|[获取当前录制中的队列简报](./API-Doc.md#post-apirec_processing_list)|0|
-|POST|rec_all_list|JSON|[获取所有下载任务的队列简报](./API-Doc.md#post-apirec_all_list)|0|
-|POST|rec_info|JSON|[根据录制任务GUID获取任务详情](./API-Doc.md#post-apirec_info)|1|
-|POST|rec_cancel|JSON|[根据录制任务GUID取消相应任务](./API-Doc.md#post-apirec_cancel)|2|
-|POST|room_add|JSON|[增加配置文件中监听的房间](./API-Doc.md#post-apiroom_add)|4|
-|POST|room_delete|JSON|[删除配置文件中监听的房间](./API-Doc.md#post-apiroom_delete)|1|
-|POST|room_status|JSON|[修改房间的自动录制开关配置](./API-Doc.md#post-apiroom_status)|2|
-|POST|room_list|JSON|[获取当前房间配置列表总览](./API-Doc.md#post-apiroom_list)|0|
-|POST|file_lists|JSON|[获取当前录制文件夹中的所有文件的列表](./API-Doc.md#post-apifile_lists)|0|
-|POST|file_delete|JSON|[删除某个录制完成的文件](./API-Doc.md#post-apifile_delete)|3|
-|POST|file_range|JSON|[根据房间号获得相关录制文件](./API-Doc.md#post-apifile_range)|1|
-|POST|upload_list|JSON|[获取上传任务信息列表](./API-Doc.md#post-apiupload_list)|0|
+|POST|system_info|JSON|[获取系统运行情况](./#post-api-system-info)|0|
+|POST|system_config|JSON|[查看当前配置文件](./#post-api-system-config)|0|
+|POST|system_update|JSON|[检查更新](./##post-api-system-update)|0|
+|POST|system_log|JSON|[获取系统运行日志](./#post-api-system-log)|0|
+|POST|rec_processing_list|JSON|[获取当前录制中的队列简报](./#post-api-rec-processing-list)|0|
+|POST|rec_all_list|JSON|[获取所有下载任务的队列简报](./#post-api-rec_all-list)|0|
+|POST|rec_info|JSON|[根据录制任务GUID获取任务详情](./#post-api-rec-info)|1|
+|POST|rec_cancel|JSON|[根据录制任务GUID取消相应任务](./#post-api-rec-cancel)|2|
+|POST|room_add|JSON|[增加配置文件中监听的房间](./#post-api-room-add)|4|
+|POST|room_delete|JSON|[删除配置文件中监听的房间](./#post-api-room-delete)|1|
+|POST|room_status|JSON|[修改房间的自动录制开关配置](./#post-api-room-status)|2|
+|POST|room_list|JSON|[获取当前房间配置列表总览](./#post-api-room_list)|0|
+|POST|file_lists|JSON|[获取当前录制文件夹中的所有文件的列表](./#post-api-file-lists)|0|
+|POST|file_delete|JSON|[删除某个录制完成的文件](./#post-api-file-delete)|3|
+|POST|file_range|JSON|[根据房间号获得相关录制文件](./#post-api-file-range)|1|
+|POST|upload_list|JSON|[获取上传任务信息列表](./#post-api-upload-list)|0|
 
 
 ## 已实现的特殊API接口
 |方式|名称|返回内容|解释|私有变量数量|
 |:--:|:--:|:--:|:--:|:--:|
-|POST|file_steam|Flie|[获取播放文件](./API-Doc.md#post-file_path)|2|
+|GET|file_steam|Flie|[获取播放文件](./#get-file-path)|2|
 
 ## 返回结果状态码列表
 |值|含义|
@@ -103,10 +104,11 @@
 |1002|鉴权失败|
 
 
-# 接口详情
+## 接口详情
 
-## `POST /api/system_info`
-## 获取系统运行情况
+### `POST /api/system_info`
+
+::: details 获取系统运行情况
 
 - 私有变量  
 
@@ -161,9 +163,10 @@ path: http://127.0.0.1:11419/api/system_info
     ]
 }
 ```
+:::
 
-## `POST /api/system_config`
-## 查看当前配置文件
+### `POST /api/system_config`
+::: details 查看当前配置文件
 - 私有变量  
 
 无
@@ -221,10 +224,10 @@ path: http://127.0.0.1:11419/api/system_config
     ]
 }
 ```
+:::
 
-
-## `POST /api/system_update`
-## 检查有无更新
+### `POST /api/system_update`
+::: details 检查有无更新
 - 私有变量  
 
 无
@@ -258,10 +261,10 @@ path: http://127.0.0.1:11419/api/system_update
     ]
 }
 ```
+:::
 
-
-## `POST /api/system_log`
-## 获取系统运行日志
+### `POST /api/system_log`
+::: details 获取系统运行日志
 - 私有变量  
 
 无
@@ -313,10 +316,10 @@ public enum InfoClass
             系统强制信息=6,
         }
 ```
+:::
 
-
-## `POST /api/rec_processing_list`
-## 获取当前录制中的队列简报
+### `POST /api/rec_processing_list`
+::: details 获取当前录制中的队列简报
 - 私有变量  
 
 无
@@ -354,9 +357,9 @@ path: http://127.0.0.1:11419/api/rec_processing_list
     ]
 }
 ```
-
-## `POST /api/rec_all_list`
-## 获取所有下载任务的队列简报
+:::
+### `POST /api/rec_all_list`
+::: details 获取所有下载任务的队列简报
 - 私有变量  
 
 无
@@ -394,10 +397,10 @@ path: http://127.0.0.1:11419/api/rec_all_list
     ]
 }
 ```
+:::
 
-
-## `POST /api/rec_info`
-## 根据录制任务GUID获取任务详情
+### `POST /api/rec_info`
+::: details 根据录制任务GUID获取任务详情
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -467,9 +470,9 @@ path: http://127.0.0.1:11419/api/rec_info
     ]
 }
 ```
-
-## `POST /api/rec_cancel`
-## 根据录制任务GUID取消相应任务
+:::
+### `POST /api/rec_cancel`
+::: details 根据录制任务GUID取消相应任务
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -541,9 +544,9 @@ path: http://127.0.0.1:11419/api/rec_cancel
     ]
 }
 ```
-
-## `POST /api/room_add`
-## 增加配置文件中监听的房间
+:::
+### `POST /api/room_add`
+::: details 增加配置文件中监听的房间
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -586,10 +589,10 @@ path: http://127.0.0.1:11419/api/room_add
     ]
 }
 ```
+:::
 
-
-## `POST /api/room_delete`
-## 删除配置文件中监听的房间
+### `POST /api/room_delete`
+::: details 删除配置文件中监听的房间
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -625,10 +628,10 @@ path: http://127.0.0.1:11419/api/room_delete
     ]
 }
 ```
+:::
 
-
-## `POST /api/room_status`
-## 修改房间的自动录制开关配置
+### `POST /api/room_status`
+::: details 修改房间的自动录制开关配置
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -666,9 +669,9 @@ path: http://127.0.0.1:11419/api/room_status
     ]
 }
 ```
-
-## `POST /api/room_list`
-## 获取当前房间配置列表总览
+:::
+### `POST /api/room_list`
+::: details 获取当前房间配置列表总览
 - 私有变量  
 
 无  
@@ -707,10 +710,10 @@ path: http://127.0.0.1:11419/api/room_list
     ]
 }
 ```
+:::
 
-
-## `POST /api/file_lists`
-## 获取当前录制文件夹中的所有文件的列表
+### `POST /api/file_lists`
+::: details 获取当前录制文件夹中的所有文件的列表
 - 私有变量  
 
 无  
@@ -761,10 +764,10 @@ path: http://127.0.0.1:11419/api/file_lists
     ]
 }
 ```
+:::
 
-
-## `POST /api/file_delete`
-## 删除某个录制完成的文件
+### `POST /api/file_delete`
+::: details 删除某个录制完成的文件
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -804,10 +807,10 @@ path: http://127.0.0.1:11419/api/file_delete
     ]
 }
 ```
+:::
 
-
-## `POST /api/file_range`
-## 根据房间号获得相关录制文件
+### `POST /api/file_range`
+::: details 根据房间号获得相关录制文件
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -861,10 +864,10 @@ path: http://127.0.0.1:11419/api/file_range
     ]
 }
 ```
+:::
 
-
-## `POST /api/upload_list`
-## 获取上传任务信息列表
+### `POST /api/upload_list`
+::: details 获取上传任务信息列表
 
 - 私有变量  
 
@@ -898,11 +901,10 @@ path: http://127.0.0.1:11419/api/upload_list
     ]
 }
 ```
+:::
 
-
-## `POST /$file_path$`
-## 获取播放文件
-
+### `GET /$file_path$`
+::: details 获取播放文件
 - 私有变量  
 
 |参数名|格式|是否必须|解释|
@@ -912,21 +914,11 @@ path: http://127.0.0.1:11419/api/upload_list
 
 - Request:
 ```text
-method: POST
-path: http://127.0.0.1:11419/tmp/bilibili_蒂蒂媞薇_21446992/测试直播.mp4
-```
-```json
-"form-data":
-{
-    "time":2345678,
-    "cmd":"file_steam",
-    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "var":2,
-    "Directory":"bilibili_蒂蒂媞薇_21446992",
-    "File":"测试直播.mp4"
-}
+method: GET
+path: http://127.0.0.1:11419/tmp/bilibili_蒂蒂媞薇_21446992/测试直播.mp4?time=2345678&cmd=file_steam&sig=xxxxxxxxxxx&var=2&Directory=bilibili_蒂蒂媞薇_21446992&File=测试直播.mp4
 ```
 - Response:
 ```C#
 File
 ```
+:::

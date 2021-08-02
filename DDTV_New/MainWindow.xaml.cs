@@ -495,7 +495,7 @@ namespace DDTV_New
             Thread CPT = new Thread(() => 
             {
                 string 剪贴板缓存 = "";
-                while (true)
+                while (false)
                 {
                     while (MMPU.剪贴板监听)
                     {
@@ -576,7 +576,7 @@ namespace DDTV_New
 
                 if (MMPU.启动模式 == 0)
                 {
-                    update.检查升级程序是否需要升级();
+                    update.检查升级程序是否需要升级("ddtv");
                 }
             });
             //版本检查
