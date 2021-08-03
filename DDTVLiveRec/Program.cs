@@ -38,13 +38,8 @@ namespace DDTVLiveRec
                 {
                     try
                     {
-
-
                         update.检查升级程序是否需要升级("rec");
-
-
                         string 服务器版本号 = MMPU.TcpSend(Server.RequestCode.GET_VER, "{}", true, 50);
-
                         if (!string.IsNullOrEmpty(服务器版本号))
                         {
                             bool 检测状态 = true;
@@ -84,8 +79,7 @@ namespace DDTVLiveRec
             new Task(() =>
             {
                 while (true)
-                {
-                    
+                {                   
                     try
                     {                  
                         if(MMPU.是否有新版本)
@@ -102,8 +96,7 @@ namespace DDTVLiveRec
                     }
                     catch (Exception)
                     {
-
-                        throw;
+                     
                     }
                     if(是否已检查更新)
                     {

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Auxiliary.RequestMessge;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Auxiliary.RequestMessge.MessgeClass;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -13,21 +15,12 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "room_list");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<Auxiliary.RoomInit.RL>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                List<Auxiliary.RoomInit.RL> roomInfos = new List<Auxiliary.RoomInit.RL>();
-                foreach (var item in Auxiliary.RoomInit.bilibili房间主表)
-                {
-                    roomInfos.Add(item);
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, roomInfos);
+                return Auxiliary.RequestMessge.封装消息.获取当前房间配置列表总览信息.当前房间配置列表总览信息();
             }
         }
-        private class Messge : Auxiliary.RoomInit.RL
-        {
-            public static List<Auxiliary.RoomInit.RL> Package { set; get; }
-        }    
     }
 }

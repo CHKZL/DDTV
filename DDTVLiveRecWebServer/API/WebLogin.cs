@@ -25,7 +25,7 @@ namespace DDTVLiveRecWebServer.API
                         错误次数 = 0;
                         string WebToken = Guid.NewGuid().ToString();
                         Auxiliary.MMPU.WebToken = WebToken;
-                        return JsonConvert.SerializeObject(new login()
+                        return JsonConvert.SerializeObject(new Auxiliary.RequestMessge.ServerClass.Login()
                         {
                             messge = "登陆成功",
                             result = true,
@@ -42,7 +42,7 @@ namespace DDTVLiveRecWebServer.API
                         {
                             错误次数++;
                         }
-                        return JsonConvert.SerializeObject(new login()
+                        return JsonConvert.SerializeObject(new Auxiliary.RequestMessge.ServerClass.Login()
                         {
                             messge = "验证失败,还有" + (5 - 错误次数) + "次机会，全部错误将停止鉴权10分钟",
                             result = false,
@@ -51,7 +51,7 @@ namespace DDTVLiveRecWebServer.API
                 }
                 else
                 {
-                    return JsonConvert.SerializeObject(new login()
+                    return JsonConvert.SerializeObject(new Auxiliary.RequestMessge.ServerClass.Login()
                     {
                         messge = "操作过于频繁",
                         result = false,
@@ -60,27 +60,13 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return JsonConvert.SerializeObject(new login()
+                return JsonConvert.SerializeObject(new Auxiliary.RequestMessge.ServerClass.Login()
                 {
                     messge = "Null验证失败",
                     result = false,
                 });
             }
         }
-        private class login
-        { 
-            /// <summary>
-            /// 消息
-            /// </summary>
-            public string messge { set; get; }
-            /// <summary>
-            /// 是否成功
-            /// </summary>
-            public bool result { set; get; }
-            /// <summary>
-            /// 如果成功返回webtoken
-            /// </summary>
-            public string WebToken { set; get; } = null;
-        }
+
     }
 }

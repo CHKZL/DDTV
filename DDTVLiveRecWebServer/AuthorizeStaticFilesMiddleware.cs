@@ -49,14 +49,5 @@ namespace DDTVLiveRecWebServer
             //await context.ForbidAsync();
            
         }
-        private class Messge 
-        {
-            public static new List<FileInfo> Package { set; get; }
-
-        }
-        public class FileInfo
-        {
-            public string msg { set; get; }
-        } 
     }
 }

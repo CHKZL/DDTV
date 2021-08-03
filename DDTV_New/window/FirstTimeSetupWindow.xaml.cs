@@ -252,7 +252,7 @@ namespace DDTV_New.window
             {
                 登录bilibili提示文本1.Text = "您似乎已经登录";
                 登录bilibili提示文本2.Text = "正在初始化BiliUser配置文件，请稍候……";
-                MMPU.BiliUser配置文件初始化(0);
+                SystemInit.DDTV_Core初始化.B站账号初始化(0);
                 登录bilibili提示文本2.Text = "初始化BiliUser配置文件成功！请点击\"下一步\"";
                 登录bilibili按钮.IsEnabled = false;
                 return;

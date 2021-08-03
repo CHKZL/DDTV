@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessge.ReturnInfoPackage;
+using static Auxiliary.RequestMessge.System_Core;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -15,34 +18,13 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context,"system_config");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return InfoPkak<Messge<systemConfig>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-                List<List<string>> config = new List<List<string>>();
-                string[] B = configuration.AppSettings.Settings.AllKeys;
-                List<systemConfig> systemConfig = new List<systemConfig>();
-                foreach (var item in B)
-                {
-                    systemConfig.Add(new systemConfig {
-                        Key= item,
-                        Value = configuration.AppSettings.Settings[item].Value
-                     
-                    });
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, systemConfig);
+                return Auxiliary.RequestMessge.封装消息.获取配置文件信息.配置文件信息();
             }
         }
-        private class Messge:ReturnInfoPackage.Messge<systemConfig>
-        {
-            public static new List<systemConfig> Package { set; get; }
-
-        }
-        private class systemConfig 
-        {
-            public string Key { set; get; }
-            public string Value { set; get; }
-        }
+ 
     }
 }

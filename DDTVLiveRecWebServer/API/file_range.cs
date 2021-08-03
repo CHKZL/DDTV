@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Auxiliary.RequestMessge;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using static Auxiliary.RequestMessge.File;
+using static Auxiliary.RequestMessge.MessgeClass;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -25,42 +28,13 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_range", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<FileRangeInfo>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                List<FileInfo> fileInfos = new List<FileInfo>();
-                foreach (var Dir in new DirectoryInfo(Auxiliary.MMPU.缓存路径).GetDirectories())
-                {
-                    foreach (var File in new DirectoryInfo(Auxiliary.MMPU.缓存路径 + Dir.Name).GetFiles())
-                    {
-                        if (Dir.Name.Split('_')[Dir.Name.Split('_').Length - 1] == context.Request.Form["RoomId"])
-                        {
-                            fileInfos.Add(new FileInfo()
-                            {
-                                Directory = Dir.Name,
-                                ModifiedTime = File.CreationTime,
-                                Name = File.Name,
-                                Size = File.Length,
-                                Path = Auxiliary.MMPU.缓存路径 + Dir.Name + "/" + File.Name
-                            });
-                        }
-                    }
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, fileInfos);
+                return Auxiliary.RequestMessge.封装消息.根据房间号获取录制的文件列表.获取文件列表(context.Request.Form["RoomId"]);
             }
         }
-        private class Messge
-        {
-            public static List<FileInfo> Package { set; get; }
-        }
-        private class FileInfo
-        {
-            public long Size { set; get; }
-            public string Name { set; get; }
-            public string Directory { set; get; }
-            public string Path { set; get; }
-            public DateTime ModifiedTime { set; get; }
-        }
+
     }
 }
