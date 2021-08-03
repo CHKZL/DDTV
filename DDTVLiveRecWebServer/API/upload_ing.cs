@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Auxiliary.RequestMessge;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Auxiliary.RequestMessge.MessgeClass;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -13,27 +15,12 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "upload_ing");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<Auxiliary.Upload.UploadTask.UploadInfo>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                List<Auxiliary.Upload.UploadTask.UploadInfo> A = new List<Auxiliary.Upload.UploadTask.UploadInfo>();
-                foreach (var item1 in Auxiliary.Upload.Uploader.UploadList)
-                {
-                    foreach (var item2 in item1.status)
-                    {
-                        if(item2.Value.statusCode!=0&& item2.Value.statusCode != -1)
-                        {
-                            A.Add(item1);
-                        }
-                    }
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, A);
+                return Auxiliary.RequestMessge.封装消息.获取上传中的任务信息列表信息.上传中的任务信息列表信息();
             }
-        }
-        private class Messge
-        {
-            public static List<Auxiliary.Upload.UploadTask.UploadInfo> Package { set; get; }
         }
     }
 }

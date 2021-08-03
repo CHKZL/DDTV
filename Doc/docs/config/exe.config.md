@@ -60,6 +60,10 @@ Core配置文件为DDTV核心初始化配置文件，在DDTV2.0和DDTVLiveRec中
     <add key="WebPassword" value="ddtv" /><!-- DDTVLiveRec的WEB信息页登陆密码 -->
     <add key="WebhookUrl" value="" /><!-- DDTVLiveRec的Webhook目标地址 -->
     <add key="WebhookEnable" value="0" /><!-- DDTVLiveRec的Webhook开关 -->
+    <add key="WebSocketEnable" value="1" /><!-- 是否使能WebSocket服务器 -->
+    <add key="WebSocketPort" value="1" /><!-- WebSocket服务器初始化时使用的端口号 -->
+    <add key="WebSocketUserName" value="1" /><!-- 用于获取Token的WebSocket服务器账号 -->
+    <add key="WebSocketPassword" value="1" /><!-- 用于获取Token的WebSocket服务器密码 -->
   </appSettings>
   <system.net>
     <connectionManagement>

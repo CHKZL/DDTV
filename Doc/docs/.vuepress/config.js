@@ -70,6 +70,8 @@ module.exports = {
             'WEB服务器',
             '自动上传',
             'Debug模式',
+            'WebSocket服务器',
+            'API'
           ]
         }
       ],

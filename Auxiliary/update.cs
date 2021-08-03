@@ -19,7 +19,6 @@ namespace Auxiliary
                 int 未变化文件 = 0;
                 int 更新文件 = 0;
                 int 缺少文件 = 0;
-                int itemnum = 0;
                 string ConfigUrl = $"https://{name}-update.oss-cn-zhangjiakou.aliyuncs.com/update/Config.json";
                 string a = 返回网页内容_GET(ConfigUrl);
                 更新配置文件 student = JsonConvert.DeserializeObject<更新配置文件>(a);
@@ -29,25 +28,25 @@ namespace Auxiliary
                     if (!File.Exists(参考路径 + item.Name))
                     {
                         缺少文件++;
-                        Console.Write("\n□(进度:{2}/{3})检测到本地缺少的文件:{0}({1})开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
+                        //Console.Write("\n□(进度:{2}/{3})检测到本地缺少的文件:{0}({1})开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
                         var wc = new WebClient();
                         通过WC更新自动更新文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
-                        Console.WriteLine("{0}下载成功", item.Name);
+                        //Console.WriteLine("{0}下载成功", item.Name);
                     }
                     else
                     {
                         if (GetMD5HashFromFile(参考路径 + item.Name) != item.Md5)
                         {
                             更新文件++;
-                            Console.Write("\n◇(进度:{2}/{3}) {0}({1})和服务端比较有差异，需要更新，开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
+                            //Console.Write("\n◇(进度:{2}/{3}) {0}({1})和服务端比较有差异，需要更新，开始下载...", item.Name, CountSize(item.size), itemnum, student.data.Count);
                             var wc = new WebClient();
                             通过WC更新自动更新文件(item.Url, 参考路径 + item.Name);//File.ReadAllText("T:/Untitled-1.json");//;
-                            Console.WriteLine("{0}下载成功", item.Name);
+                            //Console.WriteLine("{0}下载成功", item.Name);
                         }
                         else
                         {
                             未变化文件++;
-                            Console.WriteLine("\n√(进度:{2}/{3}) {0}({1})文件未更新，跳过...", item.Name, CountSize(item.size), itemnum, student.data.Count);
+                            //Console.WriteLine("\n√(进度:{2}/{3}) {0}({1})文件未更新，跳过...", item.Name, CountSize(item.size), itemnum, student.data.Count);
                         }
                     }
                 }

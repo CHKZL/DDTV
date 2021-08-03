@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Auxiliary.RequestMessge;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessge.ServerClass;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -23,26 +26,12 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "rec_info", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<Auxiliary.Downloader.DownIofoData>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                List<Auxiliary.Downloader.DownIofoData> Package = new List<Auxiliary.Downloader.DownIofoData>();
-                foreach (var item in Auxiliary.MMPU.DownList)
-                {
-                    if(context.Request.Form["GUID"]==item.DownIofo.事件GUID)
-                    {
-                        Package.Add(item.DownIofo);
-                        Package[Package.Count - 1].WC = null;
-                    }
-                   
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, Package);
+                return Auxiliary.RequestMessge.封装消息.获取录制任务详情信息.录制任务详情信息(context.Request.Form["GUID"]);
             }
-        }
-        private class Messge : ReturnInfoPackage.Messge<Auxiliary.Downloader.DownIofoData>
-        {
-            public static new List<Auxiliary.Downloader.DownIofoData> Package { set; get; }
         }
     }
 }

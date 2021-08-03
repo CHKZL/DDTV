@@ -18,6 +18,7 @@ DDTV功能反馈讨论群:`338182356`
 |Webhook|方便二次开发,详情请查看`API`页面的webhook文档|
 |自动上传|用于自动录制完成或自动转码后把文件上传到腾讯对象储存或者OneDrive等云服务器上|
 |Debug模式|用于调试功能|
+|WebSocket服务器|用于实现长连接，方便二次开发，覆盖API+Webhook功能|
 
 ## 还有更多功能已完成功能，欢迎提出还未解锁的新功能~
 * DDTVCore录制功能跨平台支持！Windows、MacOS、Linux随意选！

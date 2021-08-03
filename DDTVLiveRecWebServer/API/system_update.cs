@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Auxiliary.RequestMessge;
+using Microsoft.AspNetCore.Http;
+using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessge.System_Core;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -13,40 +12,12 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "system_update");
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<SystemUpdateInfo>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                updateInfo updateInfo = new updateInfo()
-                {
-                    IsNewVer = Auxiliary.MMPU.是否有新版本,
-                    NewVer = Auxiliary.MMPU.是否有新版本 ? Auxiliary.MMPU.检测到的新版本号 : null,
-                    Update_Log = Auxiliary.MMPU.是否有新版本 ? Auxiliary.MMPU.更新公告 : null,
-                };
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, new List<updateInfo>() { updateInfo });
+                return Auxiliary.RequestMessge.封装消息.获取检查更新信息.检查更新信息();
             }
-
-        }
-
-        private class Messge : ReturnInfoPackage.Messge<updateInfo>
-        {
-            public static new List<updateInfo> Package { set; get; }
-
-        }
-        public class updateInfo
-        {
-            /// <summary>
-            /// 是否有新版本
-            /// </summary>
-            public bool IsNewVer { set; get; }
-            /// <summary>
-            /// 新版本号
-            /// </summary>
-            public string NewVer { get; set; }
-            /// <summary>
-            /// 更新日志
-            /// </summary>
-            public string Update_Log { get; set; }
 
         }
     }

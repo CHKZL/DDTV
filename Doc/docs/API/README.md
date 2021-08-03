@@ -89,7 +89,7 @@
 |POST|file_delete|JSON|[删除某个录制完成的文件](./#post-api-file-delete)|3|
 |POST|file_range|JSON|[根据房间号获得相关录制文件](./#post-api-file-range)|1|
 |POST|upload_list|JSON|[获取上传任务信息列表](./#post-api-upload-list)|0|
-
+|POST|upload_ing|JSON|[获取上传中的任务信息列表](./#post-api-upload-ing)|0|
 
 ## 已实现的特殊API接口
 |方式|名称|返回内容|解释|私有变量数量|
@@ -478,7 +478,6 @@ path: http://127.0.0.1:11419/api/rec_info
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
 |GUID|string|是|任务的GUID值，可通过rec_processing_list和rec_all_list接口获得|
-|RoomId|int|是|该任务所属的房间号|
 
 - Request:
 ```text
@@ -492,8 +491,7 @@ path: http://127.0.0.1:11419/api/rec_cancel
     "cmd":"rec_cancel",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "var":2,
-    "GUID":"fb7f502e-64ff-411b-9d55-d9f974751616",
-    "RoomId":21706862
+    "GUID":"fb7f502e-64ff-411b-9d55-d9f974751616"
 }
 ```
 - Response:
@@ -772,7 +770,6 @@ path: http://127.0.0.1:11419/api/file_lists
 
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
-|RoomId|int|是|配置文件中的房间号|
 |Directory|string|是|所在的文件夹名称|
 |Name|string|是|要删除的文件名|
 - Request:
@@ -787,7 +784,6 @@ path: http://127.0.0.1:11419/api/file_delete
     "cmd":"file_delete",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "var":2,
-    "RoomId":"21706862",
     "Directory":"bilibili_七咔拉CHikalar_21706862",
     "Name":"【早安还债】土豆子还债中_20210720112652317.flv",
 }
@@ -883,6 +879,43 @@ path: http://127.0.0.1:11419/api/upload_list
 {
     "time":2345678,
     "cmd":"upload_list",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "var":2
+}
+```
+- Response:
+```json
+{
+    "result": true,
+    "code":0,
+    "messge": "成功",
+    "queue": 1,
+    "Package": [
+        {
+            //根据实际情况自行解析即可
+        }
+    ]
+}
+```
+:::
+
+### `POST /api/upload_ing`
+::: details 获取上传任务信息列表
+
+- 私有变量  
+
+无
+
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/api/upload_ing
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"upload_ing",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "var":2
 }

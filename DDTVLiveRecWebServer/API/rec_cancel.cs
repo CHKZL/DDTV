@@ -1,8 +1,10 @@
 ﻿using Auxiliary;
+using Auxiliary.RequestMessge;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using static Auxiliary.Downloader;
+using static Auxiliary.RequestMessge.MessgeClass;
 
 namespace DDTVLiveRecWebServer.API
 {
@@ -13,7 +15,6 @@ namespace DDTVLiveRecWebServer.API
             bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
                 context.Request.Form["GUID"],
-                context.Request.Form["RoomId"]
             })
             {
                 if (string.IsNullOrEmpty(item))
@@ -25,26 +26,11 @@ namespace DDTVLiveRecWebServer.API
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "rec_cancel", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Messge>((int)ReturnInfoPackage.MessgeCode.鉴权失败, null);
+                return ReturnInfoPackage.InfoPkak<Messge<DownIofoData>>((int)ServerSendMessgeCode.鉴权失败, null);
             }
             else
             {
-                List<Auxiliary.Downloader.DownIofoData> Package = new List<Auxiliary.Downloader.DownIofoData>();
-                foreach (var item in Auxiliary.MMPU.DownList)
-                {
-                    if (context.Request.Form["GUID"] == item.DownIofo.事件GUID)
-                    {
-                        item.DownIofo.下载状态 = false;
-                        item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                        item.DownIofo.备注 = "用户取消下载";
-                        item.DownIofo.WC.CancelAsync();
-                        下载结束提醒("API请求取消该下载任务", item.DownIofo);
-                        鉴权结果.鉴权返回消息 = "删除成功";
-                        Package.Add(item.DownIofo);
-                        Package[Package.Count - 1].WC = null;
-                    }
-                }
-                return ReturnInfoPackage.InfoPkak((int)ReturnInfoPackage.MessgeCode.请求成功, Package);
+                return Auxiliary.RequestMessge.封装消息.执行取消录制任务.取消录制任务(context.Request.Form["GUID"]);
             }
         }
         public static void 下载结束提醒(string 提醒标题, DownIofoData item)
@@ -79,10 +65,6 @@ namespace DDTVLiveRecWebServer.API
                    $"\r\n下载任务类型:{(item.继承.是否为继承对象 ? "续下任务" : "新建下载任务")}" +
                    $"\r\n结束原因:{item.备注}" +
                    $"\r\n==============={提醒标题}===============\r\n", InfoLog.InfoClass.下载系统信息);
-        }
-        private class Messge : ReturnInfoPackage.Messge<Auxiliary.Downloader.DownIofoData>
-        {
-            public static new List<Auxiliary.Downloader.DownIofoData> Package { set; get; }
         }
     }
 }
