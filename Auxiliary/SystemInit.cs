@@ -279,7 +279,7 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[WebSocketUserName]:{MMPU.WebSocketUserName}", InfoLog.InfoClass.Debug);
                 MMPU.WebSocketPassword = MMPU.读取exe默认配置文件("WebSocketPassword", "defaultPassword");
                 InfoLog.InfoPrintf($"配置文件初始化任务[WebSocketPassword]:{MMPU.WebSocketPassword}", InfoLog.InfoClass.Debug);
-                if (!WSServer.WSServer.IsOpen)
+                if (!WSServer.WSServer.IsOpen&& MMPU.WebSocketEnable)
                 {
                     WSServer.WSServer.Open();
                 }
