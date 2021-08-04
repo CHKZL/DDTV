@@ -40,7 +40,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DD_Phone", "DD_Phone\DD_Pho
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "异步流下载测试项目", "异步流下载测试项目\异步流下载测试项目.csproj", "{567AD7A6-BD82-4077-A751-A44B21A50A7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTVLiveRec_Update", "DDTVLiveRec_Update\DDTVLiveRec_Update.csproj", "{4D568B85-50AE-4690-BE2E-EADB9839328F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRec_Update", "DDTVLiveRec_Update\DDTVLiveRec_Update.csproj", "{4D568B85-50AE-4690-BE2E-EADB9839328F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

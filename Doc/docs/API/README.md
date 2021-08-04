@@ -267,7 +267,11 @@ path: http://127.0.0.1:11419/api/system_update
 ::: details 获取系统运行日志
 - 私有变量  
 
-无
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|count|int|否|获取最近的多少条日志，取值为1-int32，如果小于0则默认返回所有log|
+
+
 - Request:
 ```text
 method: POST
@@ -279,7 +283,8 @@ path: http://127.0.0.1:11419/api/system_log
     "time":2345678,
     "cmd":"system_log",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-    "var":2
+    "var":2,
+    "count":1
 }
 ```
 - Response:

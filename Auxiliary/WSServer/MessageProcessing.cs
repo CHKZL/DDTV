@@ -41,7 +41,7 @@ namespace Auxiliary.WSServer
                         case (int)ClientSendMessgeCode.检查更新:
                             return RequestMessge.封装消息.获取检查更新信息.检查更新信息();
                         case (int)ClientSendMessgeCode.获取系统运行日志:
-                            return RequestMessge.封装消息.获取系统消息.系统消息();
+                            return "";
                         case (int)ClientSendMessgeCode.获取当前录制中的队列简报:
                             return RequestMessge.封装消息.获取当前录制中的任务队列简报信息.当前录制中的任务队列简报信息();
                         case (int)ClientSendMessgeCode.获取所有下载任务的队列简报:

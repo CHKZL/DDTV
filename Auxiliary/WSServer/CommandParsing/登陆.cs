@@ -1,5 +1,6 @@
 ﻿using Auxiliary.RequestMessge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,9 @@ namespace Auxiliary.WSServer.CommandParsing
             LoginMessge Login = new LoginMessge();
             try
             {
-                Login = JsonConvert.DeserializeObject<LoginMessge>(mess);
+                JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
+                Login.UserName = JO["UserName"].ToString();
+                Login.Password = JO["Password"].ToString();
             }
             catch (Exception)
             {

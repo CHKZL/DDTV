@@ -303,11 +303,9 @@ namespace Auxiliary
                             if (ClasslBool.系统错误信息)
                             {
                                 DateTime Time = DateTime.Now;
-                                Console.WriteLine("\r\n ========= SysteErrorInfoBeginning =========" +
-                                    "\r\n[SysteErrorInfo]" + Time.ToString("MM-dd HH:mm:ss") + ": " + mess +
-                                    "\r\n=========SysteErrorInfoEnd=========");
+                                Console.WriteLine("[系统错误信息]" + Time.ToString("MM-dd HH:mm:ss") + ": " + mess);
 
-                                A = "\r\n=========SysteErrorInfoBeginning=========" + "\r\n[SysteErrorInfo]: " + mess + "\r\n=========SysteErrorInfoEnd=========";
+                                A = "[SysteErrorInfo]: " + mess";
                                 logInfos.Add(new LogInfo
                                 {
                                     Time = Time,
@@ -384,11 +382,9 @@ namespace Auxiliary
                     case InfoClass.系统强制信息 :
                         {
                             DateTime Time = DateTime.Now;
-                            Console.WriteLine("\r\n ========= 系统提示 =========" +
-                                   "\r\n[系统提示]"+ Time.ToString("yyyy-MM-dd HH:mm:ss")+": " + mess +
-                                   "\r\n========= 系统提示 =========");
+                            Console.WriteLine("[系统提示]"+ Time.ToString("yyyy-MM-dd HH:mm:ss")+": " + mess );
 
-                            A = "\r\n=========系统提示=========" + "\r\n[系统提示]: " + mess + "\r\n=========系统提示=========";
+                            A = "[系统提示]: " + mess ";
                             logInfos.Add(new LogInfo
                             {
                                 Time = Time,

@@ -1,5 +1,6 @@
 ﻿using Auxiliary.RequestMessge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,8 +16,12 @@ namespace Auxiliary.WSServer.CommandParsing
         {
             RoomInfo Rec = new RoomInfo();
             try
-            {
-                Rec = JsonConvert.DeserializeObject<RoomInfo>(mess);
+            {  
+                JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
+                Rec.Name = JO["Name"].ToString();
+                Rec.OfficialName = JO["OfficialName"].ToString();
+                Rec.RoomId = JO["RoomId"].ToString();
+                Rec.RecStatus = bool.Parse(JO["RecStatus"].ToString());
             }
             catch (Exception)
             {
