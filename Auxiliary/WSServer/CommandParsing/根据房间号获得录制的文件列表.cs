@@ -1,5 +1,6 @@
 ﻿using Auxiliary.RequestMessge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,13 +16,14 @@ namespace Auxiliary.WSServer.CommandParsing
             FileList fileList = new FileList();
             try
             {
-                fileList = JsonConvert.DeserializeObject<FileList>(mess);
+                JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
+                fileList.RoomId = JO["RoomId"].ToString();
             }
             catch (Exception)
             {
                 return ReturnInfoPackage.InfoPkak<Messge<FileRangeInfo>>((int)ServerSendMessgeCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return Auxiliary.RequestMessge.封装消息.根据房间号获取录制的文件列表.获取文件列表(fileList.RoomId);
+            return RequestMessge.封装消息.根据房间号获取录制的文件列表.获取文件列表(fileList.RoomId);
         }
         internal class FileList
         { 

@@ -1,6 +1,7 @@
 ﻿using Fleck;
 using System;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Auxiliary.WSServer
@@ -17,7 +18,8 @@ namespace Auxiliary.WSServer
             if (MMPU.是否启用SSL)
             {
                 server = new WebSocketServer($"wss://0.0.0.0:{MMPU.WebSocket端口}");
-                server.Certificate = new X509Certificate2(MMPU.webServer_pfx证书名称, MMPU.webServer_pfx证书密码, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet);
+                server.Certificate = new X509Certificate2(MMPU.webServer_pfx证书名称, MMPU.webServer_pfx证书密码);
+                server.EnabledSslProtocols = SslProtocols.Ssl3 | SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12;
                 InfoLog.InfoPrintf("WebSocket服务端启动，测到加密证书，WS服务器以wss模式启动，请使用" + $"wss://设备IP:{MMPU.WebSocket端口}来访问WebSocket服务器", InfoLog.InfoClass.系统强制信息);
             }
             else

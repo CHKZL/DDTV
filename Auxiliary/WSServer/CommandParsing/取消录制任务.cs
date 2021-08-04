@@ -1,5 +1,6 @@
 ﻿using Auxiliary.RequestMessge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,8 @@ namespace Auxiliary.WSServer.CommandParsing
             RecInfo Rec = new RecInfo();
             try
             {
-                Rec = JsonConvert.DeserializeObject<RecInfo>(mess);
+                JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
+                Rec.GUID = JO["GUID"].ToString();
             }
             catch (Exception)
             {

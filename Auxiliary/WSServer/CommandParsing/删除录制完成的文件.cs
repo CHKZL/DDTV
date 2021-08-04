@@ -1,5 +1,6 @@
 ﻿using Auxiliary.RequestMessge;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,9 @@ namespace Auxiliary.WSServer.CommandParsing
             FileInfo File = new FileInfo();
             try
             {
-                File = JsonConvert.DeserializeObject<FileInfo>(mess);
+                JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
+                File.Directory = JO["Directory"].ToString();
+                File.Name = JO["Name"].ToString();
             }
             catch (Exception)
             {

@@ -19,6 +19,14 @@
 ```
 ::: tip 注意  
 其中Messge的内容应该为Json字符串，而不是Json对象  
+如:请求Token的完整命令应为:  
+```json
+{
+    "code":2001,
+    "Token":null,
+    "messge":"{\"UserName\":\"defaultUserName\",\"Password\":\"defaultPassword\"}"
+}
+``` 
 :::  
 
 :::danger 警告   
