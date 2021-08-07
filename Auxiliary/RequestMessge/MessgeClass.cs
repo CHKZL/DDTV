@@ -40,6 +40,7 @@ namespace Auxiliary.RequestMessge
             根据房间号获得相关录制文件 = 2016,
             获取上传任务信息列表 = 2017,
             获取上传中的任务信息列表 = 2018,
+            修改配置_自动转码设置=2201,
         }
     }
     public class File
@@ -278,5 +279,15 @@ namespace Auxiliary.RequestMessge
             /// </summary>
             public string WebToken { set; get; } = null;
         }
+    }
+
+    public class Config
+    {
+        public class AutoTranscoding
+        { 
+            public bool result { set; get; }
+            public string messge { set; get; }
+        }
+
     }
 }

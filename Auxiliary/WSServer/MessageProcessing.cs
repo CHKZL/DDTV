@@ -41,7 +41,7 @@ namespace Auxiliary.WSServer
                         case (int)ClientSendMessgeCode.检查更新:
                             return RequestMessge.封装消息.获取检查更新信息.检查更新信息();
                         case (int)ClientSendMessgeCode.获取系统运行日志:
-                            return "";
+                            return CommandParsing.获取日志信息.获取日志(rlc.messge);
                         case (int)ClientSendMessgeCode.获取当前录制中的队列简报:
                             return RequestMessge.封装消息.获取当前录制中的任务队列简报信息.当前录制中的任务队列简报信息();
                         case (int)ClientSendMessgeCode.获取所有下载任务的队列简报:
@@ -68,6 +68,8 @@ namespace Auxiliary.WSServer
                             return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, Upload.Uploader.UploadList);
                         case (int)ClientSendMessgeCode.获取上传中的任务信息列表:
                             return RequestMessge.封装消息.获取上传中的任务信息列表信息.上传中的任务信息列表信息();
+                        case (int)ClientSendMessgeCode.修改配置_自动转码设置:
+                            return CommandParsing.修改设置_自动转码设置.转码设置(rlc.messge);
                         default:
                             return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<ServerClass.Login>() { new ServerClass.Login() { messge = "未适配的Code", result = false } });
                     }
