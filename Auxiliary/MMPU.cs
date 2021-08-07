@@ -29,8 +29,13 @@ namespace Auxiliary
         {
             "增加转码完成后自动删除原始flv文件的功能和对应的配置文件",
             "增加自动上传功能(腾讯云Cos和onedirev)",
-            "增加API接口支持，具体API支持请查看页面[https://github.com/CHKZL/DDTV2/blob/master/Dev/API-Doc.md]",
-            "增加了Webhook功能"
+            "增加API接口支持，具体API支持请查看页面[https://ddtv.pro/API/]",
+            "增加了Webhook功能",
+            "增加了官网和对应的说明文档提示",
+            "增加了WebSocket服务器，支持API全走WS服务器",
+            "给DDTVLiveRec增加了提示提示更新和一键更新脚本",
+            "给WebSocket服务器增加了证书支持",
+            "部分设置支持使用API进行热重载了"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -39,9 +44,9 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string 版本号 = "2.0.6.1-Dev";
+        public static string 版本号 = "2.0.5.1c";
         public static string 检测到的新版本号 = "";
-        public static string 开发版本号 = $"开发模式(基于Ver{版本号}主分支)";     
+        public static string 开发版本号 = $"该服务器处于开发模式(基于Ver{版本号}主分支)";     
         public static string[] 不检测的版本号 = { 
             "2.0.5.1c" 
         };

@@ -305,7 +305,7 @@ namespace Auxiliary
                                 DateTime Time = DateTime.Now;
                                 Console.WriteLine("[系统错误信息]" + Time.ToString("MM-dd HH:mm:ss") + ": " + mess);
 
-                                A = "[SysteErrorInfo]: " + mess";
+                                A = "[SysteErrorInfo]: " + mess;
                                 logInfos.Add(new LogInfo
                                 {
                                     Time = Time,
@@ -384,7 +384,7 @@ namespace Auxiliary
                             DateTime Time = DateTime.Now;
                             Console.WriteLine("[系统提示]"+ Time.ToString("yyyy-MM-dd HH:mm:ss")+": " + mess );
 
-                            A = "[系统提示]: " + mess ";
+                            A = "[系统提示]: " + mess;
                             logInfos.Add(new LogInfo
                             {
                                 Time = Time,
