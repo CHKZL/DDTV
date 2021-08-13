@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.Room;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Room;
 using static Auxiliary.RoomInit;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 删除房间
     {
@@ -23,7 +23,7 @@ namespace Auxiliary.RequestMessge.封装消息
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
                     {
                         result=false
                     }}, "输入的直播间房间号不符合房间号规则(数字)");
@@ -44,15 +44,15 @@ namespace Auxiliary.RequestMessge.封装消息
             InitializeRoomList(roomId, true, false);
             if (okn)
             {
-                return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
                     {
                         result=true,
-                        messge="删除完成"
+                        message="删除完成"
                     }});
             }
             else
             {
-                return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomDeleteInfo>() {new RoomDeleteInfo()
                     {
                         result=false
                     }}, "配置文件中没有该房间号");

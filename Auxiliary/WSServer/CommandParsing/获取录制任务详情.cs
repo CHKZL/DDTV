@@ -1,10 +1,10 @@
-﻿using Auxiliary.RequestMessge;
+﻿using Auxiliary.RequestMessage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 using static Auxiliary.WSServer.WSServer;
 
 namespace Auxiliary.WSServer.CommandParsing
@@ -21,9 +21,9 @@ namespace Auxiliary.WSServer.CommandParsing
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak<Messge<Downloader.DownIofoData>>((int)ServerSendMessgeCode.请求成功但出现了错误,null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
+                return ReturnInfoPackage.InfoPkak<Message<Downloader.DownIofoData>>((int)ServerSendMessageCode.请求成功但出现了错误,null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessge.封装消息.获取录制任务详情信息.录制任务详情信息(Rec.GUID);       
+            return RequestMessage.封装消息.获取录制任务详情信息.录制任务详情信息(Rec.GUID);       
         }
         internal class RecInfo
         {

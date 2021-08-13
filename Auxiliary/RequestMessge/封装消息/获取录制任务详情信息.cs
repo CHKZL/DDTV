@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取录制任务详情信息
     {
@@ -18,7 +18,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     Package[Package.Count - 1].WC = null;
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, Package);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Package);
         }
     }
 }

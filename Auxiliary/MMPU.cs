@@ -35,7 +35,8 @@ namespace Auxiliary
             "增加了WebSocket服务器，支持API全走WS服务器",
             "给DDTVLiveRec增加了提示提示更新和一键更新脚本",
             "给WebSocket服务器增加了证书支持",
-            "部分设置支持使用API进行热重载了"
+            "部分设置支持使用API进行热重载了",
+            "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -50,6 +51,7 @@ namespace Auxiliary
         public static string[] 不检测的版本号 = { 
             "2.0.5.1c" 
         };
+        public static bool 调试模式 = true;
         public static bool 第一次打开播放窗口 = true;
         public static int 默认音量 = 0;
         public static int 缩小功能 = 1;
@@ -77,6 +79,7 @@ namespace Auxiliary
         public static bool 转码功能使能 = false;
         public static bool 转码后自动删除文件 = false;
         public static string 房间状态MD5值 = string.Empty;
+        public static string 文件名格式 = "{date}_{title}_{time}";
         public static bool 初始化后启动下载提示 = true;
         public static bool 是否提示一键导入 = true;
         public static bool 剪贴板监听 = false;

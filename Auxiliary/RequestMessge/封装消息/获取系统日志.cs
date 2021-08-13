@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static Auxiliary.InfoLog;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取系统日志
     {
@@ -21,7 +21,7 @@ namespace Auxiliary.RequestMessge.封装消息
                 logs = logInfos;
             }
 
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, logs);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, logs);
         }
     }
 }

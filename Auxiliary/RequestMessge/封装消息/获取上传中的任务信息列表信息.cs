@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取上传中的任务信息列表信息
     { 
@@ -20,7 +20,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     }
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, A);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, A);
         }
     }
 }

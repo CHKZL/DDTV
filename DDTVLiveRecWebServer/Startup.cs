@@ -34,6 +34,25 @@ namespace DDTVLiveRecWebServer
         {
             //注册MVC服务
             services.AddMvc();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("any", builder =>
+                {
+                    //builder.AllowAnyOrigin() //允许任何来源的主机访问
+                    builder
+
+                    .WithOrigins("http://*.*.*.*")//.SetIsOriginAllowedToAllowWildcardSubdomains()//设置允许访问的域
+
+                    .AllowAnyMethod()
+
+                    .AllowAnyHeader()
+
+                    .AllowCredentials();//
+
+                });
+
+            });
+            services.AddControllers();
             //注册Cookie认证服务
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
@@ -59,6 +78,7 @@ namespace DDTVLiveRecWebServer
                 app.UseHttpsRedirection();
             }
             app.UseRouting();
+            app.UseMiddleware<CorsMiddleware>();
             app.UseCors();
             if(!Directory.Exists("./static"))
             {
@@ -116,6 +136,11 @@ namespace DDTVLiveRecWebServer
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.system_info.Web(context));
+                });
+                endpoints.MapPost("/api/system_resource_monitoring", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.system_resource_monitoring.Web(context));
                 });
                 endpoints.MapPost("/api/system_config", async context =>
                 {
@@ -191,6 +216,11 @@ namespace DDTVLiveRecWebServer
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.upload_list.Web(context));
+                });
+                endpoints.MapPost("/api/upload_ing", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.upload_ing.Web(context));
                 });
                 #endregion
 
@@ -542,34 +572,42 @@ namespace DDTVLiveRecWebServer
         }
         public int ACCAsync(HttpContext context, string Key)
         {
+            return 2;
             if (context.User.Identity.IsAuthenticated)   //HttpContext.User.Identities.Count()>0)
             {
                 context.AuthenticateAsync();
+                Console.WriteLine("1");
                 Dictionary<string, string> currUser = context.User.Claims.ToDictionary(o => o.Type, o => o.Value);
                 if (currUser.TryGetValue(Key, out string Cache))
                 {
+                    Console.WriteLine("2");
                     if (Cache == Auxiliary.MMPU.webadmin验证字符串)
                     {
+                        Console.WriteLine("3");
                         return 2;
                     }
                     if (Cache == Auxiliary.MMPU.webghost验证字符串)
                     {
+                        Console.WriteLine("4");
                         return 1;
                     }
                     else
                     {
+                        Console.WriteLine("5");
                         NotloginAsync(context);
                         return 0;
                     }
                 }
                 else
                 {
+                    Console.WriteLine("6");
                     NotloginAsync(context);
                     return 0;
                 }
             }
             else
             {
+                Console.WriteLine("7");
                 NotloginAsync(context);
                 return 0;
             }

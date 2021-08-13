@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.Rec;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Rec;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取所有下载任务的简报队列信息
     {
         public static string 所有下载任务的简报队列信息()
         {
             List<RecAllList> Package = new List<RecAllList>();
-            foreach (var item in Auxiliary.MMPU.DownList)
+            foreach (var item in MMPU.DownList)
             {
 
                 Package.Add(new RecAllList
@@ -23,10 +23,12 @@ namespace Auxiliary.RequestMessge.封装消息
                     Downloaded_bit = item.DownIofo.已下载大小bit,
                     Downloaded_str = item.DownIofo.已下载大小str,
                     GUID = item.DownIofo.事件GUID,
+                    State=item.DownIofo.下载状态,
+                    Remark = item.DownIofo.备注
                 });
 
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, Package);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Package);
         }
     }
 }

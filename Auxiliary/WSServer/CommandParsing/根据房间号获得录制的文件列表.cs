@@ -1,11 +1,11 @@
-﻿using Auxiliary.RequestMessge;
+﻿using Auxiliary.RequestMessage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.File;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.File;
+using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.WSServer.CommandParsing
 {
@@ -21,9 +21,9 @@ namespace Auxiliary.WSServer.CommandParsing
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak<Messge<FileRangeInfo>>((int)ServerSendMessgeCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
+                return ReturnInfoPackage.InfoPkak<Message<FileRangeInfo>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessge.封装消息.根据房间号获取录制的文件列表.获取文件列表(fileList.RoomId);
+            return RequestMessage.封装消息.根据房间号获取录制的文件列表.获取文件列表(fileList.RoomId);
         }
         internal class FileList
         { 

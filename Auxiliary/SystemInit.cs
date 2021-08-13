@@ -94,6 +94,10 @@ namespace Auxiliary
                 RoomInit.RoomConfigFile = MMPU.读取exe默认配置文件("RoomConfiguration", "./RoomListConfig.json");
                 InfoLog.InfoPrintf($"配置文件初始化任务[RoomConfigFile]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
 
+                //录制文件名格式配置
+                MMPU.文件名格式 = MMPU.读取exe默认配置文件("DefaultFileName", "{date}_{title}_{time}");
+                InfoLog.InfoPrintf($"配置文件名格式[DefaultFileName]:{RoomInit.RoomConfigFile}", InfoLog.InfoClass.Debug);
+
                 //直播表刷新默认间隔
                 MMPU.直播列表刷新间隔 = int.Parse(MMPU.读取exe默认配置文件("LiveListTime", "5"));
                 InfoLog.InfoPrintf($"配置文件初始化任务[直播列表刷新间隔]:{ MMPU.直播列表刷新间隔}", InfoLog.InfoClass.Debug);

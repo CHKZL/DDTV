@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.System_Core;
-using static Auxiliary.RequestMessge.System_Core.SystemInfo;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.System_Core;
+using static Auxiliary.RequestMessage.System_Core.SystemInfo;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取系统消息
     {
@@ -24,7 +24,7 @@ namespace Auxiliary.RequestMessge.封装消息
             {
                 DDTVCore_Ver = MMPU.版本号,
                 Room_Quantity = bilibili.RoomList.Count,
-                oS_Info = new OS_Info()
+                os_Info = new OS_Info()
                 {
                     Associated_Users = Environment.UserName,
                     OS_Ver = RuntimeInformation.OSDescription,
@@ -49,7 +49,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     Update_Log = MMPU.是否有新版本 ? MMPU.更新公告 : null,
                 }
             };
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, new List<SystemInfo>() { systemInfo });
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, new List<SystemInfo>() { systemInfo });
         }
     }
 }

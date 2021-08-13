@@ -9,8 +9,9 @@ namespace DDTVLiveRecWebServer.鉴权
     {
         public static 鉴权返回结果 API接口鉴权(HttpContext context, string cmd, bool 是否缺少关键参数 = false)
         {
+       
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            if (context.Request.ContentType == "POST")
+            if (context.Request.Method == "POST")
             {
                 try
                 {
@@ -19,6 +20,8 @@ namespace DDTVLiveRecWebServer.鉴权
                         dic.Add(item.Key, item.Value);
                         if (string.IsNullOrEmpty(item.Value))
                         {
+                            if (Auxiliary.MMPU.调试模式)
+                                Console.WriteLine($"出现错误{item.Key}为空");
                             return new 鉴权返回结果()
                             {
                                 鉴权结果 = false,
@@ -29,14 +32,16 @@ namespace DDTVLiveRecWebServer.鉴权
                 }
                 catch (Exception)
                 {
+                    if (Auxiliary.MMPU.调试模式)
+                        Console.WriteLine($"请求中出现了系统无法识别的字符");
                     return new 鉴权返回结果()
                     {
                         鉴权结果 = false,
-                        鉴权返回消息 = "缺少必要参数"
+                        鉴权返回消息 = "请求中出现了系统无法识别的字符"
                     };
                 }
             }
-            else if (context.Request.ContentType == "GET")
+            else if (context.Request.Method == "GET")
             {
                 try
                 {
@@ -45,6 +50,8 @@ namespace DDTVLiveRecWebServer.鉴权
                         dic.Add(item.Key, item.Value);
                         if (string.IsNullOrEmpty(item.Value))
                         {
+                            if (Auxiliary.MMPU.调试模式)
+                                Console.WriteLine($"出现错误{item.Key}为空");
                             return new 鉴权返回结果()
                             {
                                 鉴权结果 = false,
@@ -55,6 +62,8 @@ namespace DDTVLiveRecWebServer.鉴权
                 }
                 catch (Exception)
                 {
+                    if (Auxiliary.MMPU.调试模式)
+                        Console.WriteLine($"请求中出现了系统无法识别的字符");
                     return new 鉴权返回结果()
                     {
                         鉴权结果 = false,
@@ -64,6 +73,8 @@ namespace DDTVLiveRecWebServer.鉴权
             }
             if (!dic.ContainsKey("sig") || !dic.ContainsKey("time") || !dic.ContainsKey("cmd") || !dic.ContainsKey("ver") || 是否缺少关键参数)
             {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"缺少必要的信息！");
                 return new 鉴权返回结果()
                 {
                     鉴权结果 = false,
@@ -72,6 +83,8 @@ namespace DDTVLiveRecWebServer.鉴权
             }
             if (dic.ContainsKey("token"))
             {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"不应该提交Token！");
                 return new 鉴权返回结果()
                 {
                     鉴权结果 = false,
@@ -80,6 +93,8 @@ namespace DDTVLiveRecWebServer.鉴权
             }
             if (dic["cmd"] != cmd)
             {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"提交的cmd内容和api请求不一致！");
                 return new 鉴权返回结果()
                 {
                     鉴权结果 = false,
@@ -87,19 +102,31 @@ namespace DDTVLiveRecWebServer.鉴权
                 };
             }
             int Time = 0;
-            int NowTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-            if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time) || NowTime < Time - 300 || Time + 300 > NowTime)
-            {
-                // if (Time != 2345678)
-                {
-                    return new 鉴权返回结果()
-                    {
-                        鉴权结果 = false,
-                        鉴权返回消息 = "Invalid Time"
-                    };
-                }
-            }
 
+            int NewTime = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+
+
+            if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time))
+            {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"时间格式错误！服务器时间{NewTime}，提交的时间{Time}");
+                return new 鉴权返回结果()
+                {
+                    鉴权结果 = false,
+                    鉴权返回消息 = "时间不能为空或值不正确"
+                };
+            }
+            int 时间差 = NewTime - Time;
+            if(时间差>300|| 时间差<-300)
+            {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"时间差值过大！服务器时间{NewTime}，提交的时间{Time}");
+                return new 鉴权返回结果()
+                {
+                    鉴权结果 = false,
+                    鉴权返回消息 = "时间差值过大！"
+                };
+            }
             switch (dic["ver"])
             {
                 //WebToken
@@ -117,6 +144,8 @@ namespace DDTVLiveRecWebServer.鉴权
             }
 
             var dicSort = from objDic in dic orderby objDic.Key ascending select objDic;
+
+
             List<List<string>> LS = new List<List<string>>();
             foreach (KeyValuePair<string, string> kvp in dicSort)
             {
@@ -139,6 +168,8 @@ namespace DDTVLiveRecWebServer.鉴权
             }
             else
             {
+                if (Auxiliary.MMPU.调试模式)
+                    Console.WriteLine($"sig校验失败，服务器计算的结果为:{服务器sig}，收到的数据为{dic["sig"]}");
                 return new 鉴权返回结果()
                 {
                     鉴权结果 = false,

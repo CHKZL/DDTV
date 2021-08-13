@@ -1,11 +1,11 @@
-﻿using Auxiliary.RequestMessge;
+﻿using Auxiliary.RequestMessage;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.Config;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.Config;
+using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.WSServer.CommandParsing
 {
@@ -21,9 +21,9 @@ namespace Auxiliary.WSServer.CommandParsing
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak<Messge<AutoTranscoding>>((int)ServerSendMessgeCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
+                return ReturnInfoPackage.InfoPkak<Message<AutoTranscoding>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessge.封装消息.修改配置_自动转码.转码(aTinfo.transcoding_status);
+            return RequestMessage.封装消息.修改配置_自动转码.转码(aTinfo.transcoding_status);
         }
         internal class ATinfo
         {

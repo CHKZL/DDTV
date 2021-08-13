@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
@@ -18,7 +19,18 @@ namespace DDTVLiveRecWebServer
 
         public async Task Invoke(HttpContext context)
         {
+           
+
             bool 鉴权预处理结果 = false;
+            try
+            {
+                int B = context.Request.Query.Count();
+            }
+            catch (Exception)
+            {
+                await context.ForbidAsync();
+                return;
+            }
             foreach (var item in new List<string>() {
                 context.Request.Query["Directory"],
                 context.Request.Query["File"],
@@ -30,6 +42,13 @@ namespace DDTVLiveRecWebServer
                     break;
                 }
             };
+            if (Auxiliary.MMPU.调试模式)
+            {
+                foreach (var item in context.Request.Query)
+                {
+                    Console.WriteLine($"{item.Key}={item.Value}");
+                }
+            }
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_steam", 鉴权预处理结果 ? true : false);
             //var WEBAPI请求文件 = context.Request.Headers["FileSig"].FirstOrDefault();
             if (!鉴权结果.鉴权结果)
