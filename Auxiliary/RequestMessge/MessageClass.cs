@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using static Auxiliary.RequestMessage.封装消息.获取系统资源信息.硬盘;
 
-namespace Auxiliary.RequestMessge
+namespace Auxiliary.RequestMessage
 {
-    public class MessgeClass
+    public class MessageClass
     {
-        public class Messge<T>
+        public class Message<T>
         {
             public int code { set; get; }//状态码
-            public string messge { set; get; }
+            public string message { set; get; }
             public int queue { set; get; }//Package的长度
             public List<T> Package { set; get; }
         }
-        public enum ServerSendMessgeCode
+        public enum ServerSendMessageCode
         {
             请求错误 = -1,
             请求成功 = 1001,
             鉴权失败 = 1002,
             请求成功但出现了错误 = 1003,
         }
-        public enum ClientSendMessgeCode
+        public enum ClientSendMessageCode
         {
             请求WebSocketWToken=2001,
             获取系统运行情况=2002,
@@ -48,7 +49,7 @@ namespace Auxiliary.RequestMessge
         public class FileDeleteInfo
         {
             public bool result { set; get; }
-            public string messge { set; get; } = null;
+            public string message { set; get; } = null;
         }
         public class FileRangeInfo
         {
@@ -99,6 +100,14 @@ namespace Auxiliary.RequestMessge
             /// 下载任务唯一标识符
             /// </summary>
             public string GUID { set; get; }
+            /// <summary>
+            /// 下载状态
+            /// </summary>
+            public bool State { set; get; }
+            /// <summary>
+            /// 备注
+            /// </summary>
+            public string Remark { set; get; }
         }
         public class RecLProcessinist
         {
@@ -130,6 +139,14 @@ namespace Auxiliary.RequestMessge
             /// 下载任务唯一标识符
             /// </summary>
             public string GUID { set; get; }
+            /// <summary>
+            /// 下载状态
+            /// </summary>
+            public bool State { set; get; }
+            /// <summary>
+            /// 备注
+            /// </summary>
+            public string Remark { set; get; }
         }
     }
     public class Room
@@ -137,17 +154,17 @@ namespace Auxiliary.RequestMessge
         public class RoomDeleteInfo
         {
             public bool result { set; get; }
-            public string messge { set; get; }
+            public string message { set; get; }
         }
         public class RoomStatusInfo
         {
             public bool result { set; get; }
-            public string messge { set; get; }
+            public string message { set; get; }
         }
         public class RoomAddInfo
         {
             public bool result { set; get; }
-            public string messge { set; get; } = null;
+            public string message { set; get; } = null;
         }
     }
     public class System_Core
@@ -170,7 +187,7 @@ namespace Auxiliary.RequestMessge
             /// <summary>
             /// 操作系统相关信息
             /// </summary>
-            public OS_Info oS_Info { get; set; }
+            public OS_Info os_Info { get; set; }
             /// <summary>
             /// 下载任务基础信息
             /// </summary>
@@ -261,6 +278,33 @@ namespace Auxiliary.RequestMessge
             public string Update_Log { get; set; }
 
         }
+        public class SystemResourceMonitoring
+        {
+            /// <summary>
+            /// 平台
+            /// </summary>
+            public string Platform { set; get; }
+            /// <summary>
+            /// DDTV使用的内存大小
+            /// </summary>
+            public long DDTV_use_memory { set; get; }
+            /// <summary>
+            /// CPU使用率
+            /// </summary>
+            public double CPU_usage { set; get; }
+            /// <summary>
+            /// 已使用的物理内存
+            /// </summary>
+            public long System_used_memory { set; get; }
+            /// <summary>
+            /// 物理内存总大小
+            /// </summary>
+            public long Total_memory { set; get; }
+            /// <summary>
+            /// 硬盘信息
+            /// </summary>
+            public List<HDDInfo> HDDInfo { set; get; }
+        }
     }
     public class ServerClass
     {
@@ -269,7 +313,7 @@ namespace Auxiliary.RequestMessge
             /// <summary>
             /// 消息
             /// </summary>
-            public string messge { set; get; }
+            public string message { set; get; }
             /// <summary>
             /// 是否成功
             /// </summary>
@@ -286,7 +330,7 @@ namespace Auxiliary.RequestMessge
         public class AutoTranscoding
         { 
             public bool result { set; get; }
-            public string messge { set; get; }
+            public string message { set; get; }
         }
 
     }

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static Auxiliary.RequestMessge.File;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.File;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 根据房间号获取录制的文件列表
     {
@@ -29,7 +29,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     }
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, fileInfos);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, fileInfos);
         }
     }
 }

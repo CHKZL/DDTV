@@ -114,8 +114,14 @@ namespace DDTVLiveRec
             InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载系统信息);
             while (true)
             {
-                Thread.Sleep(10);
+                System.ConsoleKeyInfo a = Console.ReadKey();
 
+                bool c = a.Key.Equals(ConsoleKey.I);
+                if(c)
+                {
+                    MMPU.调试模式 = !MMPU.调试模式;
+                    Console.WriteLine($"修改调试模式为:{ MMPU.调试模式}");
+                }
             }
            
         }

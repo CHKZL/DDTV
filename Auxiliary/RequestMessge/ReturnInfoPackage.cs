@@ -3,29 +3,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge
+namespace Auxiliary.RequestMessage
 {
     public class ReturnInfoPackage
     {
-        public static string InfoPkak<T>(int Code, List<T> Package, string Messge = null)
+        public static string InfoPkak<T>(int Code, List<T> Package, string Message = null)
         {
-            if (Messge == null)
+            if (Message == null)
             {
                 switch (Code)
                 {
-                    case (int)ServerSendMessgeCode.请求错误:
-                        Messge = "请求错误";
+                    case (int)ServerSendMessageCode.请求错误:
+                        Message = "请求错误";
                         break;
-                    case (int)ServerSendMessgeCode.鉴权失败:
-                        Messge = "鉴权失败";
+                    case (int)ServerSendMessageCode.鉴权失败:
+                        Message = "鉴权失败";
                         break;
-                    case (int)ServerSendMessgeCode.请求成功:
-                        Messge = "请求成功";
+                    case (int)ServerSendMessageCode.请求成功:
+                        Message = "请求成功";
                         break;
-                    case (int)ServerSendMessgeCode.请求成功但出现了错误:
-                        Messge = "请求成功但出现了错误";
+                    case (int)ServerSendMessageCode.请求成功但出现了错误:
+                        Message = "请求成功但出现了错误";
                         break;
                 }
             }
@@ -34,9 +34,9 @@ namespace Auxiliary.RequestMessge
             {
                 PackageCount = Package.Count;
             }
-            string B = JsonConvert.SerializeObject(new Messge<T>()
+            string B = JsonConvert.SerializeObject(new Message<T>()
             {
-                messge = Messge,
+                message = Message,
                 code = Code,
                 Package = Package,
                 queue = PackageCount

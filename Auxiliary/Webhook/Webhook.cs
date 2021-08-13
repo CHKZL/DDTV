@@ -82,7 +82,7 @@ namespace Auxiliary.Webhook
             public class mess<T>
             {
                 public string cmd { set; get; }
-                public T messge { set; get; }
+                public T message { set; get; }
                 public string Ver { set; get; } = "v1"; 
                 public DateTime hookTime { set; get; }
 
@@ -100,7 +100,7 @@ namespace Auxiliary.Webhook
                     string paraUrlCoded = JsonConvert.SerializeObject(new mess<T>()
                     {
                         cmd = cmd,
-                        messge = CL,
+                        message = CL,
                         hookTime = DateTime.Now
                     });
                     byte[] payload;

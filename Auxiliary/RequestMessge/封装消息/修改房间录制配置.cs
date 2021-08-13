@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.Room;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Room;
 using static Auxiliary.RoomInit;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 修改房间录制配置
     {
@@ -23,7 +23,7 @@ namespace Auxiliary.RequestMessge.封装消息
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<RoomStatusInfo>() {new RoomStatusInfo()
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomStatusInfo>() {new RoomStatusInfo()
                     {
                         result=false
                     }}, "输入的直播间房间号不符合房间号规则(数字)");
@@ -64,10 +64,10 @@ namespace Auxiliary.RequestMessge.封装消息
             string JOO = JsonConvert.SerializeObject(new RoomBox() { data = data });
             MMPU.储存文本(JOO, RoomConfigFile, true);
             InitializeRoomList(0, false, false);
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, new List<RoomStatusInfo>() {new RoomStatusInfo()
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, new List<RoomStatusInfo>() {new RoomStatusInfo()
                     {
                         result=true,
-                        messge="修改设置完成"
+                        message="修改设置完成"
                     }});
         }
     }

@@ -387,17 +387,17 @@ namespace Auxiliary
             string 保存路径;
             if (MMPU.下载储存目录 == 缓存路径)
             {
-                保存路径 = 缓存路径 + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/";
+                保存路径 = 缓存路径 +  唯一码 + "_" + 主播名称 + "_" + 平台 + "/";
                 if (!Directory.Exists(保存路径))//如果不存在就创建文件夹
                 {
                     Directory.CreateDirectory(保存路径);
                 }
-                保存路径 = 保存路径 + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
+                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
 
             }
             else
             {
-                保存路径 = MMPU.下载储存目录 + "/" + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/";
+                保存路径 = MMPU.下载储存目录 + "/" + 唯一码 + "_" + 主播名称 + "_" + 平台 + "/";
                 if (!Directory.Exists(保存路径))//如果不存在就创建file文件夹
                 {
                     try
@@ -408,15 +408,15 @@ namespace Auxiliary
                     {
                         MMPU.下载储存目录 = 缓存路径;
                         MMPU.setFiles("file", MMPU.下载储存目录);
-                        保存路径 = MMPU.下载储存目录 + "/" + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/";
+                        保存路径 = MMPU.下载储存目录 + "/" + 唯一码 + "_" + 主播名称 + "_" + 平台 + "/";
                     }
 
                 }
-                保存路径 = 保存路径 + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
+                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
                 if (File.Exists(保存路径))
                 {
                     Thread.Sleep(1);
-                    保存路径 = MMPU.下载储存目录 + "/" + 平台 + "_" + 主播名称 + "_" + 唯一码 + "/" + 标题 + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
+                    保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
                 }
             }
             switch (平台)

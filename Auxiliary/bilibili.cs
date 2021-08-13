@@ -250,6 +250,7 @@ namespace Auxiliary
         }
         public static void 周期更新B站房间状态()
         {
+            
             if(!是否正在更新房间信息)
             {
                 是否正在更新房间信息 = true;
@@ -411,31 +412,38 @@ namespace Auxiliary
                     UID.Add(UU);
                 }
             }
+            //Console.WriteLine($"开始获取B站API数据");
             JObject JO = 获取多房间直播状态(UID);
-            ;
-            foreach (var item in RoomList)
+            //Console.WriteLine($"{JO.ToString()}");
+            if (JO != null)
             {
-                try
+
+
+                foreach (var item in RoomList)
                 {
-                    int 状态 = (int)JO["data"][item.UID]["live_status"];
-                    if (状态 == 0)
+                    try
                     {
-                        item.直播状态 = false;
-                        item.轮播状态 = false;
+                        int 状态 = (int)JO["data"][item.UID]["live_status"];
+                        if (状态 == 0)
+                        {
+                            item.直播状态 = false;
+                            item.轮播状态 = false;
+                        }
+                        else if (状态 == 1)
+                        {
+                            item.直播状态 = true;
+                            item.轮播状态 = false;
+                        }
+                        else if (状态 == 2)
+                        {
+                            item.直播状态 = false;
+                            item.轮播状态 = true;
+                        }
                     }
-                    else if (状态 == 1)
+                    catch (Exception e)
                     {
-                        item.直播状态 = true;
-                        item.轮播状态 = false;
+                        ;
                     }
-                    else if (状态 == 2)
-                    {
-                        item.直播状态 = false;
-                        item.轮播状态 = true;
-                    }
-                }
-                catch (Exception e){
-                    ;
                 }
             }
         }
@@ -916,8 +924,19 @@ namespace Auxiliary
                     }  
                 }
                 LT += "]}";
-                JObject JO = (JObject)JsonConvert.DeserializeObject(MMPU.返回网页内容_POST_JSON("https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids", LT, "UTF-8"));
-                return JO;
+                //Console.WriteLine(LT);
+                try
+                {
+                    JObject JO = (JObject)JsonConvert.DeserializeObject(MMPU.返回网页内容_POST_JSON("https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids", LT, "UTF-8"));
+                    //Console.WriteLine(JO);
+                    return JO;
+
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+              
             }
             else
             {

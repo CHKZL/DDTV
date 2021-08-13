@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using static Auxiliary.Downloader;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 执行取消录制任务
     {
@@ -25,7 +25,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     Package[Package.Count - 1].WC = null;
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, Package);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Package);
         }
         private static void 下载结束提醒(string 提醒标题, DownIofoData item)
         {

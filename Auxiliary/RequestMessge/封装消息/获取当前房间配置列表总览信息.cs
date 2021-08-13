@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取当前房间配置列表总览信息
     {
@@ -14,7 +14,7 @@ namespace Auxiliary.RequestMessge.封装消息
             {
                 roomInfos.Add(item);
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, roomInfos);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, roomInfos);
         }
     }
 }

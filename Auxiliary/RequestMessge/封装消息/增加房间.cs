@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.Room;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Room;
 using static Auxiliary.RoomInit;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 增加房间
     {
@@ -23,10 +23,10 @@ namespace Auxiliary.RequestMessge.封装消息
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<RoomAddInfo>() {new RoomAddInfo()
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomAddInfo>() {new RoomAddInfo()
                     {
                         result=false,
-                        messge="输入的直播间房间号不符合房间号规则(数字)"
+                        message="输入的直播间房间号不符合房间号规则(数字)"
                     }}, "输入的直播间房间号不符合房间号规则(数字)");
             }
             RoomBox rlc = JsonConvert.DeserializeObject<RoomBox>(ReadConfigFile(RoomConfigFile));
@@ -40,7 +40,7 @@ namespace Auxiliary.RequestMessge.封装消息
                 {
                     if (item.RoomNumber == roomId.ToString())
                     {
-                        return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功但出现了错误, new List<RoomAddInfo>() {new RoomAddInfo()
+                        return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomAddInfo>() {new RoomAddInfo()
                             {
                                 result=false
                             }}, "配置文件中已有该房间号存在");
@@ -86,10 +86,10 @@ namespace Auxiliary.RequestMessge.封装消息
                 是否提醒 = false,
                 平台 = "bilibili"
             });
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, new List<RoomAddInfo>() {new RoomAddInfo()
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, new List<RoomAddInfo>() {new RoomAddInfo()
                     {
                         result=true,
-                        messge=Name + "[" + roomId.ToString() + "]添加完成"
+                        message=Name + "[" + roomId.ToString() + "]添加完成"
                     }});
         }
     }

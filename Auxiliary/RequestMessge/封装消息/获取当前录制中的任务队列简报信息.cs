@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessge.MessgeClass;
-using static Auxiliary.RequestMessge.Rec;
+using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Rec;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取当前录制中的任务队列简报信息
     {
@@ -24,10 +24,12 @@ namespace Auxiliary.RequestMessge.封装消息
                         Downloaded_bit = item.DownIofo.已下载大小bit,
                         Downloaded_str = item.DownIofo.已下载大小str,
                         GUID = item.DownIofo.事件GUID,
+                        State = item.DownIofo.下载状态,
+                        Remark=item.DownIofo.备注
                     });
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, list);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, list);
         }
     }
 }

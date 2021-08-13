@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using static Auxiliary.RequestMessge.File;
-using static Auxiliary.RequestMessge.MessgeClass;
+using static Auxiliary.RequestMessage.File;
+using static Auxiliary.RequestMessage.MessageClass;
 
-namespace Auxiliary.RequestMessge.封装消息
+namespace Auxiliary.RequestMessage.封装消息
 {
     public class 获取当前录制文件夹中的所有文件的列表信息
     {
@@ -26,7 +26,7 @@ namespace Auxiliary.RequestMessge.封装消息
                     });
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessgeCode.请求成功, fileInfos);
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, fileInfos);
         }
     }
 }
