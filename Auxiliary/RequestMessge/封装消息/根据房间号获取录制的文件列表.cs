@@ -16,7 +16,7 @@ namespace Auxiliary.RequestMessage.封装消息
             {
                 foreach (var File in new DirectoryInfo(Auxiliary.MMPU.缓存路径 + Dir.Name).GetFiles())
                 {
-                    if (Dir.Name.Split('_')[Dir.Name.Split('_').Length - 1] == RoomId)
+                    if (Dir.Name.Split('_')[Dir.Name.Split('_').Length - 1] == RoomId|| Dir.Name.Split('_')[0]==RoomId)
                     {
                         fileInfos.Add(new FileRangeInfo()
                         {

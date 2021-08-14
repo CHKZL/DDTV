@@ -185,6 +185,18 @@ namespace Auxiliary.RequestMessage
             /// </summary>
             public int Room_Quantity { get; set; }
             /// <summary>
+            /// 设置的服务器名称
+            /// </summary>
+            public string ServerName { get; set; }
+            /// <summary>
+            /// 服务器的唯一资源编号
+            /// </summary>
+            public string ServerAID { get; set; }
+            /// <summary>
+            /// 服务器所属分组
+            /// </summary>
+            public string ServerGroup { get; set; }
+            /// <summary>
             /// 操作系统相关信息
             /// </summary>
             public OS_Info os_Info { get; set; }

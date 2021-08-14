@@ -61,6 +61,16 @@ namespace Auxiliary
                 InfoLog.InfoPrintf($"配置文件初始化任务[心跳打印间隔]:{MMPU.心跳打印间隔}", InfoLog.InfoClass.Debug);
                 MMPU.网络环境变动监听 = MMPU.读取exe默认配置文件("NetStatusMonitor", "0") == "0" ? false : true;
                 InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{MMPU.网络环境变动监听}", InfoLog.InfoClass.Debug);
+
+
+                MMPU.ServerName = MMPU.读取exe默认配置文件("ServerName", "DDTVServer");
+                InfoLog.InfoPrintf($"配置文件初始化任务[网络环境变动监听]:{MMPU.ServerName}", InfoLog.InfoClass.Debug);
+
+                MMPU.ServerAID = MMPU.读取exe默认配置文件("ServerAID", Guid.NewGuid().ToString());
+                InfoLog.InfoPrintf($"配置文件初始化任务[ServerAID]:{MMPU.ServerAID}", InfoLog.InfoClass.Debug);
+
+                MMPU.ServerGroup = MMPU.读取exe默认配置文件("ServerGroup", "default");
+                InfoLog.InfoPrintf($"配置文件初始化任务[ServerGroup]:{MMPU.ServerGroup}", InfoLog.InfoClass.Debug);
             }
             public static void Debug系统初始化()
             {

@@ -20,10 +20,13 @@ namespace Auxiliary.RequestMessage.封装消息
                 else
                     下载完成++;
             }
-            var systemInfo = new SystemInfo()
+            SystemInfo systemInfo = new SystemInfo()
             {
                 DDTVCore_Ver = MMPU.版本号,
                 Room_Quantity = bilibili.RoomList.Count,
+                ServerAID=MMPU.ServerAID,
+                ServerGroup=MMPU.ServerGroup,
+                ServerName=MMPU.ServerName,
                 os_Info = new OS_Info()
                 {
                     Associated_Users = Environment.UserName,

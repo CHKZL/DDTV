@@ -114,6 +114,9 @@ namespace Auxiliary
         public static string WebToken = Guid.NewGuid().ToString();
         public static string WebhookUrl = "";
         public static bool WebhookEnable = false;
+        public static string ServerName="";
+        public static string ServerAID = "";
+        public static string ServerGroup = "";
 
         #region WebSocket
         public static bool WebSocketEnable = false;
