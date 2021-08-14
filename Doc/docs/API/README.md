@@ -141,6 +141,9 @@ path: http://127.0.0.1:11419/api/system_info
         {
             "DDTVCore_Ver": "2.0.5.1d",//当前DDTV核心版本号
             "Room_Quantity": 1,//当前配置文件中的房间数量
+            "ServerName":"DDTVServer",//配置文件中该服务器的名称(适用于多台服务器的人区分)
+            "ServerAID":"A10D218F-79CD-94E5-0580-666CF6A179CC",//配置文件中该服务器的全局唯一编号(适用于多台服务器的人区分)
+            "ServerGroup":"default",//配置文件中该服务器的分组(适用于多台服务器的人区分)
             "os_Info": {//
                 "OS_Ver": "Linux 5.4.0-74-generic #83-Ubuntu SMP Sat May 8 02:35:39 UTC 2021",//系统版本
                 "OS_Tpye": "X64",//系统架构

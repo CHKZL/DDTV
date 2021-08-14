@@ -101,7 +101,7 @@ namespace Auxiliary.Webhook
                     {
                         cmd = cmd,
                         message = CL,
-                        hookTime = DateTime.Now
+                        hookTime = DateTime.UtcNow
                     });
                     byte[] payload;
                     payload = Encoding.UTF8.GetBytes(paraUrlCoded);

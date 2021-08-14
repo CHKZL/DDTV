@@ -52,8 +52,12 @@ namespace Auxiliary.RequestMessage.封装消息
                 ManagementObject disk = new ManagementObject(
                     "win32_logicaldisk.deviceid=\"" + 盘符 + ":\"");
                 disk.Get();
-                string totalByte = disk["FreeSpace"].ToString();
-                windowsHDDInfo.Avail = Downloader.转换下载大小数据格式(long.Parse(totalByte));
+                windowsHDDInfo.Avail = Downloader.转换下载大小数据格式(long.Parse(disk["FreeSpace"].ToString()));
+                windowsHDDInfo.Size = Downloader.转换下载大小数据格式(long.Parse(disk["Size"].ToString()));
+                windowsHDDInfo.FileSystem = 盘符+":";
+                windowsHDDInfo.MountPath = 盘符 + ":";
+                windowsHDDInfo.Usage = ((1.0 - double.Parse(disk["FreeSpace"].ToString()) / double.Parse(disk["Size"].ToString())) * 100).ToString().Split('.')[0] + "%";
+                windowsHDDInfo.Used = Downloader.转换下载大小数据格式(long.Parse(disk["Size"].ToString()) - long.Parse(disk["FreeSpace"].ToString()));
                 return windowsHDDInfo;
             }
             public static List<HDDInfo> linux获取硬盘信息()
