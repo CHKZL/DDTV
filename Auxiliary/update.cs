@@ -23,6 +23,10 @@ namespace Auxiliary
                 string a = 返回网页内容_GET(ConfigUrl);
                 更新配置文件 student = JsonConvert.DeserializeObject<更新配置文件>(a);
                 string 参考路径 = "./update/";
+                if(!Directory.Exists(参考路径))
+                {
+                    Directory.CreateDirectory(参考路径);
+                }
                 foreach (var item in student.data)
                 {
                     if (!File.Exists(参考路径 + item.Name))

@@ -64,7 +64,7 @@
 
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
-|time|int|是|请求发出时的UTC时间戳，单位为秒，和服务器时间300秒以内的为有效请求(如:1626508097)|
+|time|int|是|请求发出时的UTC时间戳(注意是UTC时间不需要+8小时)，单位为秒，和服务器时间300秒以内的为有效请求(如:1626508097)|
 |cmd|string|是|请求的API接口的接口名称(如:system_info)|
 |sig|string|是|其他变量排序后按照规则拼接过后使用SHA1散列后得到的签名|
 |ver|int|是|接口的版本类型，当前只开放2。(1为DDTV服务端内部使用的WEB接口，规则不同)|
@@ -942,18 +942,112 @@ path: http://127.0.0.1:11419/api/upload_list
     "ver":2
 }
 ```
-- Response:
+- Response:*该内容仅供参考，可能有变动*
 ```json
 {
-    "result": true,//鉴权是否通过
-    "code":0,//请求状态码，请按返回结果状态码列表处理
-    "messge": "成功",//请求返回的备注信息
-    "queue": 1,//请求返回的Package包含有多少个子项目
-    "Package": [
+    "result":true,
+    "code":0,
+    "messge":"成功",
+    "queue":1,
+    "Package":[
         {
-            //根据实际情况自行解析即可
+            "streamerName":"蒂蒂媞薇",
+            "streamTitle":"测试直播",
+            "fileName":"这是文件名",
+            "fileSize":46548135574,
+            "srcFile":"这是待上传的文件路径",
+            "remotePath":"这是上传目标的路径",
+            "type":"这是上传的目标平台",
+            "retries":0,
+            "status":{
+                "这是目标平台1":{
+                    "startTime":1,
+                    "endTime":2,
+                    "statusCode":0,
+                    "comments":"其他信息，比如上传进度"
+                },"这是目标平台2":{
+                    "startTime":1,
+                    "endTime":2,
+                    "statusCode":0,
+                    "comments":"其他信息，比如上传进度"
+                }
+            }
         }
     ]
+}
+```
+:::
+
+::: details 上传任务的Package数据结构
+```C#
+/// <summary>
+/// 每个文件的上传信息
+/// </summary>
+public class UploadInfo
+{
+    // <summary>
+    /// 主播名
+    /// </summary>
+    public string streamerName { get; }
+    /// <summary>
+    /// 直播标题
+    /// </summary>
+    public string streamTitle { get; }
+    /// <summary>
+    /// 文件名
+    /// </summary>
+    public string fileName { get; }
+    /// <summary>
+    /// 文件大小
+    /// </summary>
+    public double fileSize { get; }
+
+    /// <summary>
+    /// 待上传文件路径
+    /// </summary>
+    public string srcFile { get; }
+    /// <summary>
+    /// 上传目标路径
+    /// </summary>
+    public string remotePath { get; }
+    /// <summary>
+    /// 上传目标
+    /// </summary>
+    public string type { set; get; }
+    /// <summary>
+    /// 已重试次数
+    /// </summary>
+    public int retries { set; get; }
+
+    /// <summary>
+    /// 存放每个上传任务的上传状态
+    /// </summary>
+    public Dictionary<string, UploadStatus> status { set; get; } = new Dictionary<string, UploadStatus>();
+
+    /// <summary>
+    /// 每个任务的上传状态
+    /// </summary>
+    public class UploadStatus
+    {
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public int startTime { set; get; }
+        /// <summary>
+        /// 结束时间
+        /// </summary>
+        public int endTime { set; get; }
+        /// <summary>
+        /// 上传状态
+        /// <para>-1：上传失败 0:上传成功 其他：上传次数</para>
+        /// </summary>
+        public int statusCode { set; get; }
+        /// <summary>
+        /// 其他信息
+        /// <para>用于web端展示上传进度</para>
+        /// </summary>
+        public string comments { set; get; }
+    }
 }
 ```
 :::
@@ -979,16 +1073,36 @@ path: http://127.0.0.1:11419/api/upload_ing
     "ver":2
 }
 ```
-- Response:
+- Response:*该内容仅供参考，可能有变动*
 ```json
 {
-    "result": true,//鉴权是否通过
-    "code":0,//请求状态码，请按返回结果状态码列表处理
-    "messge": "成功",//请求返回的备注信息
-    "queue": 1,//请求返回的Package包含有多少个子项目
-    "Package": [
+    "result":true,
+    "code":0,
+    "messge":"成功",
+    "queue":1,
+    "Package":[
         {
-            //根据实际情况自行解析即可
+            "streamerName":"蒂蒂媞薇",
+            "streamTitle":"测试直播",
+            "fileName":"这是文件名",
+            "fileSize":46548135574,
+            "srcFile":"这是待上传的文件路径",
+            "remotePath":"这是上传目标的路径",
+            "type":"这是上传的目标平台",
+            "retries":0,
+            "status":{
+                "这是目标平台1":{
+                    "startTime":1,
+                    "endTime":2,
+                    "statusCode":0,
+                    "comments":"其他信息，比如上传进度"
+                },"这是目标平台2":{
+                    "startTime":1,
+                    "endTime":2,
+                    "statusCode":0,
+                    "comments":"其他信息，比如上传进度"
+                }
+            }
         }
     ]
 }
