@@ -263,7 +263,7 @@ path: http://127.0.0.1:11419/api/system_resource_monitoring
             "Platform":"Linux",//系统平台
             "DDTV_use_memory":184549376,//DDTV使用的内存量
             "CPU_usage":2.72,//CPU使用率(百分比)
-            "System_used_memory":18876381265,//已使用的物理内存大小
+            "Available_memory":18876381265,//剩余的物理内存大小
             "Total_memory":18876381265,//总共物理内存大小
             "HDDInfo":[//磁盘列表
                 {

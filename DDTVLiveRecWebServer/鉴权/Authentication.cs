@@ -7,6 +7,10 @@ namespace DDTVLiveRecWebServer.鉴权
 {
     public class Authentication
     {
+        public static List<string> 不进行时间校验的接口 = new List<string>() 
+        {
+            "file_steam"
+        };
         public static 鉴权返回结果 API接口鉴权(HttpContext context, string cmd, bool 是否缺少关键参数 = false)
         {
        
@@ -101,32 +105,33 @@ namespace DDTVLiveRecWebServer.鉴权
                     鉴权返回消息 = "参数不正确"
                 };
             }
-            int Time = 0;
-
-            int NewTime = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-
-
-            if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time))
+            if(!不进行时间校验的接口.Contains(cmd))
             {
-                if (Auxiliary.MMPU.调试模式)
-                    Console.WriteLine($"时间格式错误！服务器时间{NewTime}，提交的时间{Time}");
-                return new 鉴权返回结果()
+                int Time = 0;
+                int NewTime = Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                if (string.IsNullOrEmpty(dic["time"]) || !int.TryParse(dic["time"], out Time))
                 {
-                    鉴权结果 = false,
-                    鉴权返回消息 = "时间不能为空或值不正确"
-                };
-            }
-            int 时间差 = NewTime - Time;
-            if(时间差>300|| 时间差<-300)
-            {
-                if (Auxiliary.MMPU.调试模式)
-                    Console.WriteLine($"时间差值过大！服务器时间{NewTime}，提交的时间{Time}");
-                return new 鉴权返回结果()
+                    if (Auxiliary.MMPU.调试模式)
+                        Console.WriteLine($"时间格式错误！服务器时间{NewTime}，提交的时间{Time}");
+                    return new 鉴权返回结果()
+                    {
+                        鉴权结果 = false,
+                        鉴权返回消息 = "时间不能为空或值不正确"
+                    };
+                }
+                int 时间差 = NewTime - Time;
+                if (时间差 > 300 || 时间差 < -300)
                 {
-                    鉴权结果 = false,
-                    鉴权返回消息 = "时间差值过大！"
-                };
+                    if (Auxiliary.MMPU.调试模式)
+                        Console.WriteLine($"时间差值过大！服务器时间{NewTime}，提交的时间{Time}");
+                    return new 鉴权返回结果()
+                    {
+                        鉴权结果 = false,
+                        鉴权返回消息 = "时间差值过大！"
+                    };
+                }
             }
+           
             switch (dic["ver"])
             {
                 //WebToken

@@ -305,9 +305,9 @@ namespace Auxiliary.RequestMessage
             /// </summary>
             public double CPU_usage { set; get; }
             /// <summary>
-            /// 已使用的物理内存
+            /// 剩余物理内存
             /// </summary>
-            public long System_used_memory { set; get; }
+            public long Available_memory { set; get; }
             /// <summary>
             /// 物理内存总大小
             /// </summary>
