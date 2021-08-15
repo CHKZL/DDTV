@@ -20,7 +20,7 @@ namespace Auxiliary.RequestMessage.封装消息
                 systemResourceMonitoring.CPU_usage = CPU.Liunx获取CPU使用率();
                 systemResourceMonitoring.DDTV_use_memory = Environment.WorkingSet;
                 systemResourceMonitoring.Platform = "Linux";
-                systemResourceMonitoring.System_used_memory = 内存.Liunx读取内存信息().Available * 1024;
+                systemResourceMonitoring.Available_memory = 内存.Liunx读取内存信息().Available * 1024;
                 systemResourceMonitoring.Total_memory = 内存.Liunx读取内存信息().Total * 1024;
                 systemResourceMonitoring.HDDInfo = 硬盘.linux获取硬盘信息();
             }
@@ -29,7 +29,7 @@ namespace Auxiliary.RequestMessage.封装消息
                 systemResourceMonitoring.CPU_usage = CPU.WindowsCPU使用率获取();
                 systemResourceMonitoring.DDTV_use_memory = Environment.WorkingSet;
                 systemResourceMonitoring.Platform = "Windows";
-                systemResourceMonitoring.System_used_memory = 内存.Windows获取内存信息().Available;
+                systemResourceMonitoring.Available_memory = 内存.Windows获取内存信息().Available;
                 systemResourceMonitoring.Total_memory = 内存.Windows获取内存信息().Total;
                 string 盘符 = "C";
                 if(MMPU.下载储存目录.Contains("./tmp"))
