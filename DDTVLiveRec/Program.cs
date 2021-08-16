@@ -39,7 +39,7 @@ namespace DDTVLiveRec
                     try
                     {
                         update.检查升级程序是否需要升级("rec");
-                        string 服务器版本号 = MMPU.TcpSend(Server.RequestCode.GET_VER, "{}", true, 50);
+                        string 服务器版本号 = MMPU.TcpSend(Server.RequestCode.GET_GET_DDTVLiveRec_LATEST_VERSION_NUMBER, "{}", true, 50);
                         if (!string.IsNullOrEmpty(服务器版本号))
                         {
                             bool 检测状态 = true;
@@ -53,7 +53,7 @@ namespace DDTVLiveRec
                             if (MMPU.版本号 != 服务器版本号 && 检测状态)
                             {
                                 MMPU.检测到的新版本号 = 服务器版本号;
-                                MMPU.更新公告 = MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100);
+                                MMPU.更新公告 = MMPU.TcpSend(Server.RequestCode.GET_DDTVLiveRec_UPDATE_ANNOUNCEMENT, "{}", true, 100);
                                 MMPU.是否有新版本 = true;
                                 InfoLog.InfoPrintf("检测到版本更新，请运行DDTVLiveRec的update子目录中的update程序进行升级，更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.下载系统信息);
                                 if (!是否已发送过webhook)
