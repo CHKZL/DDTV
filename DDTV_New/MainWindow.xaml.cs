@@ -413,7 +413,7 @@ namespace DDTV_New
                 {
                     编号 = "0",
                     名称 = "DDTV",
-                    版本 = MMPU.版本号,
+                    版本 = MMPU.DDTV版本号,
                     是否加载 = "强制",
                     说明 = "本软件的所有必须内容()",
                     备注 = ""
@@ -485,7 +485,7 @@ namespace DDTV_New
                 {
                     编号 = "8",
                     名称 = "DDTVLiveRec",
-                    版本 = MMPU.版本号,
+                    版本 = MMPU.DDTV版本号,
                     是否加载 = "√",
                     说明 = "提供录制核心功能",
                     备注 = ""
@@ -554,7 +554,7 @@ namespace DDTV_New
             //CPT.Join();
 
             //版本号更新
-            版本显示.Content = "版本: " + MMPU.版本号;
+            版本显示.Content = "版本: " + MMPU.DDTV版本号;
         }
         public void 公告项目启动()
         {
@@ -595,7 +595,7 @@ namespace DDTV_New
                             检测状态 = false;
                         }
                     }
-                    if (MMPU.版本号 != 服务器版本号 && 检测状态)
+                    if (MMPU.DDTV版本号 != 服务器版本号 && 检测状态)
                     {
                         MessageBoxResult dr = MessageBox.Show(
                             "检测到版本更新,更新公告:\r\n"

@@ -92,11 +92,20 @@ namespace Auxiliary.Webhook
             {
                 try
                 {
+                    string 版本 = "";
+                    if (MMPU.启动模式 == 0)
+                    {
+                        版本 = MMPU.DDTV版本号;
+                    }
+                    else if (MMPU.启动模式 == 1)
+                    {
+                        版本 = MMPU.DDTVLiveRec版本号;
+                    }
                     HttpWebRequest request;
                     request = (HttpWebRequest)WebRequest.Create(MMPU.WebhookUrl);
                     request.Method = "POST";
                     request.ContentType = "application/json; charset=UTF-8";
-                    request.UserAgent = $"DDTVCore/{MMPU.版本号}";
+                    request.UserAgent = $"DDTVCore/{版本}";
                     string paraUrlCoded = JsonConvert.SerializeObject(new mess<T>()
                     {
                         cmd = cmd,
