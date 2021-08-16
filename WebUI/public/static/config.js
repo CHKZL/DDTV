@@ -1,4 +1,4 @@
 window.apiObj = {
   // 没事不建议乱加斜杠
-    apiUrl:'https://test.你的域名.com:11451',
+    apiUrl:'https://127.0.0.1:11451',//参考格式：[https://你的域名:11451]或者[http://你的域名:11451]
   }
