@@ -26,10 +26,10 @@ namespace Auxiliary
             public static readonly int GET_PUSH_NOTIFICATION_1 = 20005;
             public static readonly int GET_TOGGLE_DYNAMIC_NOTIFICATION = 20009;
             public static readonly int GET_DYNAMIC_NOTIFICATION = 20010;
-            public static readonly int GET_LATEST_VERSION_NUMBER = 20011;
-            public static readonly int GET_UPDATE_ANNOUNCEMENT = 20012;
-            public static readonly int GET_VER = 20013;
-            public static readonly int GET_VERTEXT = 20014;
+            public static readonly int GET_DDTV_LATEST_VERSION_NUMBER = 20011;
+            public static readonly int GET_DDTV_UPDATE_ANNOUNCEMENT = 20012;
+            public static readonly int GET_GET_DDTVLiveRec_LATEST_VERSION_NUMBER = 20013;
+            public static readonly int GET_DDTVLiveRec_UPDATE_ANNOUNCEMENT = 20014;
             public static readonly int GET_LIVELSIT = 20016;
             public static readonly int GET_VTBSROOMLIST = 20017;
             public static readonly int GET_DDC_TIME_NUMBER = 30001;

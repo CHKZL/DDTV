@@ -583,7 +583,7 @@ namespace DDTV_New
             NewThreadTask.Run(() =>
             {
                 string 服务器版本号 = MMPU.TcpSend(
-                    Server.RequestCode.GET_LATEST_VERSION_NUMBER, "{}", true, 50);
+                    Server.RequestCode.GET_DDTV_LATEST_VERSION_NUMBER, "{}", true, 50);
 
                 if (!string.IsNullOrEmpty(服务器版本号))
                 {
@@ -599,7 +599,7 @@ namespace DDTV_New
                     {
                         MessageBoxResult dr = MessageBox.Show(
                             "检测到版本更新,更新公告:\r\n"
-                                + MMPU.TcpSend(Server.RequestCode.GET_UPDATE_ANNOUNCEMENT, "{}", true, 100)
+                                + MMPU.TcpSend(Server.RequestCode.GET_DDTV_UPDATE_ANNOUNCEMENT, "{}", true, 100)
                                 + "\r\n\r\n点击确定启动自动更新，点击取消忽略",
                             "有新版本",
                             MessageBoxButton.OKCancel,
