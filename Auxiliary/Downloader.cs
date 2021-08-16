@@ -392,7 +392,7 @@ namespace Auxiliary
                 {
                     Directory.CreateDirectory(保存路径);
                 }
-                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
+                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH_mm_ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
 
             }
             else
@@ -412,11 +412,11 @@ namespace Auxiliary
                     }
 
                 }
-                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
+                保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH_mm_ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
                 if (File.Exists(保存路径))
                 {
                     Thread.Sleep(1);
-                    保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH:mm:ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
+                    保存路径 = 保存路径 + MMPU.文件名格式.Replace("{date}", DateTime.Now.ToString("yyyy_MM_dd")).Replace("{title}", 标题).Replace("{time}", DateTime.Now.ToString("HH_mm_ss")) + "_" + new Random().Next(1000, 9999) + ".flv";
                 }
             }
             switch (平台)
