@@ -18,21 +18,21 @@ TODO:上传状态查看、日志分析、细化文件管理、重构播放页面
 ```js
 window.apiObj = {
   // 没事别乱加斜杠 域名最 后面没有斜杠 后面没有斜杠 后面没有斜杠
-    apiUrl:'https://test.你的域名.com:11419',
+    apiUrl:'http://你的域名:11419',//参考格式：[https://你的域名:11419]或者[http://你的域名:11419]
   }
 ```
 # 二、使用
 
 ## 1、自行构建
-Project setup
+安装项目依赖
 ```
 npm install
 ```
-Compiles and hot-reloads for development
+在开发模式下支持热更新的运行
 ```
 npm run serve
 ```
-Compiles and minifies for production
+打包用于生产环境
 ```
 npm run build
 ```

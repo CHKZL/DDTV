@@ -27,10 +27,7 @@ const service = axios.create({
 // })
 
 service.interceptors.response.use(response => {
-  //接收到响应数据并成功后的一些共有的处理，关闭loading等
-  
-  // 拦截响应失败 弹出鉴权失败
-  if(response.config.url != "/api/weblogin" && response.data.code == 1002) {
+  if(response.config.url != "/api/weblogin" && response.data.code != 1001) {
     sessionStorage.clear();
     Router.push("/login");
   }
