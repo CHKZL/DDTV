@@ -41,11 +41,9 @@ DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境�
 
 
 web服务端:  
-启动DDTVLiveRec后会自动启动内置的web服务端,提供了几个页面：  
-[http://IP:11419]：DDTVLiveRec的系统总览页面  
-[http://IP:11419/log]：DDTVLiveRec日志信息  
-[http://IP:11419/file]：DDTVLiveRec录制的文件列表  
-[http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
+首先需要将`\static\config.js`中的`apiUrl`改成你服务器对应的信息   
+启动DDTVLiveRec后会自动启动内置的web服务端,请访问[http://IP:11419]查看    
+WEB服务端信息页的默认账号密码为在配置文件`DDTVLiveRec.config`中的`WebUserName`和`WebPassword`    
 <br/>
 
 # API 说明文档

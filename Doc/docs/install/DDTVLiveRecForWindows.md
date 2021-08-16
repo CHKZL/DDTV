@@ -20,7 +20,11 @@ DDTVLiveRec依赖于`.NET Runtime`和`ASP.NET Core Runtime`环境运行，请先
 [下载ASP.NET Core Runtime(x64)](https://download.visualstudio.microsoft.com/download/pr/b67f2dbb-13e5-49c8-816e-ff588aaa4016/6698e25488c9c56572b593474e32b4bd/aspnetcore-runtime-5.0.8-win-x64.zip
 )  
 如果你的操作系统不是`64位Windows10`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/)进行环境的安装  
-### (2)配置房间文件
+### (2)WEB端口配置
+
+将`\static\config.js`中的`apiUrl`改成你服务器对应的信息  
+
+### (3)配置房间文件
 默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV2.0通用  
 可以直接使用DDTV2.0的房间配置文件复制过来即可  
 在下载的压缩包里附带了一个参考的文件，也可以参考那个文件进行手动编写  
@@ -51,6 +55,10 @@ DDTVLiveRec依赖于`.NET Runtime`和`ASP.NET Core Runtime`环境运行，请先
 :::danger 警告 
 手动编辑过后请检查JSON字符串的合法性，请保证确保符合参考文件的JSON文件格式！！！
 ::: 
+
+### (4)WEB端口设置
+如果是部署在公网或者有需要从外部访问WEB页的需求，请在系统防火墙和可能存在的云平台安全组中打开DDTVLiveRec的WEB服务所需端口(默认为**11419**)
+
 ## 4.启动&初始化
 在Windows下直接打开DDTVLiveRec.exe即可  
 然后根据控制台窗口显示的内容操作即可

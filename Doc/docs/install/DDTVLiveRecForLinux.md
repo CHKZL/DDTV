@@ -84,7 +84,7 @@ DDTVLiveRec是免安装的，把下载下来的压缩包解压到任意当前lin
 :::danger 警告 
 手动编辑过后请检查JSON字符串的合法性，请保证确保符合参考文件的JSON文件格式！！！
 ::: 
-### (3)WEB端口设置
+### (4)WEB端口设置
 如果是部署在公网或者有需要从外部访问WEB页的需求，请在系统防火墙和可能存在的云平台安全组中打开DDTVLiveRec的WEB服务所需端口(默认为**11419**)
 ## 4.启动&初始化
 1.根据你所使用的linux发行版本使用`dotnet ./DDTVLiveRec.dll`命令直接启动或者是用类似`nohup dotnet ./DDTVLiveRec.dll &`或者使用`scress`进行后台启动。   
