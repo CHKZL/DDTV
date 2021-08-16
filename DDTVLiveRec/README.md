@@ -36,7 +36,7 @@ DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境�
 　　2.把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件  
 　　4.在将`\static\config.js`中的`apiUrl`改成你服务器对应的信息  
 　　3.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动  
-　　4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
+　　4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)  
 　　5.访问访问[http://IP:11419]查看()  
 * 录制的视频文件在文件夹中的["tmp"]文件夹内
 
