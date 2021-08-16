@@ -53,8 +53,8 @@ namespace Auxiliary.DDcenter
 
                         await _webSocket.ConnectAsync(new Uri(
                             "wss://cluster.vtbs.moe/?uuid=DDTVvtbs" +
-                            "&runtime=DDTV" + MMPU.版本号 + 
-                            "&version=" + MMPU.版本号 + 
+                            "&runtime=DDTV" + MMPU.DDTV版本号 + 
+                            "&version=" + MMPU.DDTV版本号 + 
                             "&platform=" + (MMPU.启动模式 == 0 ? "win64" : "linux") + 
                             "&name=" + (MMPU.启动模式 == 0 ? "DDTV|" + Encryption.机器码.获取机器码("1145141919810") : "DDTVLiveRec")), _cancellation);
 

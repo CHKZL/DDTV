@@ -50,7 +50,7 @@ namespace DDTVLiveRec
                                     检测状态 = false;
                                 }
                             }
-                            if (MMPU.版本号 != 服务器版本号 && 检测状态)
+                            if (MMPU.DDTVLiveRec版本号 != 服务器版本号 && 检测状态)
                             {
                                 MMPU.检测到的新版本号 = 服务器版本号;
                                 MMPU.更新公告 = MMPU.TcpSend(Server.RequestCode.GET_DDTVLiveRec_UPDATE_ANNOUNCEMENT, "{}", true, 100);
