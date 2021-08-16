@@ -264,11 +264,14 @@ namespace Auxiliary
                     InfoLog.InfoPrintf($"配置文件初始化任务[SSL证书初始化]:证书不存在！或密码不存在，SSL证书加载失败", InfoLog.InfoClass.Debug);
                     InfoLog.InfoPrintf($"======未检测到SSL证书=======\r\n\r\n请使用[http://本设备IP或域名:" + MMPU.webServer默认监听端口 + "]进行访问\r\n\r\n======未检测到SSL连接=======", InfoLog.InfoClass.下载系统信息);
                 }
-                MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", "1145141919810A");
-                MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", "ami");
-                MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", "ddtv");
-                
-               
+                MMPU.ApiToken = MMPU.读取exe默认配置文件("ApiToken", Guid.NewGuid().ToString("N"));
+                MMPU.WebUserName = MMPU.读取exe默认配置文件("WebUserName", Guid.NewGuid().ToString("N").Substring(0,8));
+                MMPU.WebPassword = MMPU.读取exe默认配置文件("WebPassword", Guid.NewGuid().ToString("N").Substring(0, 8));
+
+                InfoLog.InfoPrintf($"配置文件初始化任务[ApiToken]敏感信息，隐藏内容，信息长度:{MMPU.ApiToken.Length}", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf($"配置文件初始化任务[WebUserName]敏感信息，隐藏内容，信息长度:{MMPU.WebUserName.Length}", InfoLog.InfoClass.Debug);
+                InfoLog.InfoPrintf($"配置文件初始化任务[WebPassword]敏感信息，隐藏内容，信息长度:{MMPU.WebPassword.Length}", InfoLog.InfoClass.Debug);
+
                 MMPU.缓存路径 = MMPU.下载储存目录;
                 MMPU.webServer默认监听IP = MMPU.读取exe默认配置文件("LiveRecWebServerDefaultIP", "0.0.0.0");
                 InfoLog.InfoPrintf($"配置文件初始化任务[webServer默认监听IP]:{MMPU.webServer默认监听IP}", InfoLog.InfoClass.Debug);
