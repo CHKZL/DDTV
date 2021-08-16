@@ -239,9 +239,15 @@ namespace Auxiliary.Upload
             public int statusCode { set; get; }
             /// <summary>
             /// 其他信息
-            /// <para>用于web端展示上传进度</para>
+            /// <para>用于web端展示备注</para>
             /// </summary>
             public string comments { set; get; }
+            /// <summary>
+            /// 上传进度
+            /// <para>范围为0~100之间的整数, -1时为进度读取失败</para>
+            /// </summary>
+            public int progress { set; get; }
+
 
             /// <summary>
             /// 初始化上传状态
