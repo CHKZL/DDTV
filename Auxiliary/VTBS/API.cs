@@ -17,7 +17,7 @@ namespace Auxiliary.VTBS
         {
             public static bool 更新CDN完成 = false;
             public static bool 更新vtbs房间直播状态完成 = false;
-            public static string VTBS_Url = "https://api.tokyo.vtbs.moe";
+            public static string VTBS_Url = "https://api.vtbs.moe/v1/short";
             public static void 根据CDN更新VTBS_Url()
             {
                 new Task(()=> {
