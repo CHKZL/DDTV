@@ -1,4 +1,3 @@
-
 # Created by https://www.gitignore.io/api/csharp
 # Edit at https://www.gitignore.io/?templates=csharp
 
@@ -388,3 +387,23 @@ healthchecksdb
 /DDTVLiveRec_Update
 /DDTVLiveRec_OSS_Update
 /Doc/致命文件名之&=!(;@##!@%$#^&!).mp4
+
+# WEBUI 
+.DS_Store
+/WebUI/node_modules
+/WebUI/dist
+
+
+# local env files
+/WebUI/.env.local
+/WebUI/.env.*.local
+
+# Log files
+/WebUI/npm-debug.log*
+/WebUI/yarn-debug.log*
+/WebUI/yarn-error.log*
+/WebUI/pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
