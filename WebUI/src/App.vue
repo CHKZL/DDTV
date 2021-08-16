@@ -5,7 +5,7 @@
     <div class="LeftMenu">
       <el-menu class="el-menu-open" :default-active="$route.path" :collapse="isCollapse" :router="true">
         <il class="logo" >
-          <el-image src="./logo.png" style="width:25px"></el-image>
+          <el-image src="./static/logo.png" style="width:25px"></el-image>
           <transition name="el-zoom-in-center" v-if="!isCollapse">
           <div class="logotitle" >DDTV</div>
           </transition>
