@@ -65,6 +65,10 @@ namespace Auxiliary.Upload
                                 InfoLog.InfoPrintf("BaiduPan上传任务已提交", InfoLog.InfoClass.下载系统信息);
                                 Upload(new BaiduPanUpload().doUpload);
                                 break;
+                            case "Oss":
+                                InfoLog.InfoPrintf("Oss上传任务已提交", InfoLog.InfoClass.下载系统信息);
+                                Upload(new OssUpload().doUpload);
+                                break;
                             default:
                                 break;
                         }

@@ -36,7 +36,7 @@ namespace Auxiliary.Upload
         public static string ossPath = "";
 
         public static Dictionary<int, string> UploadOrderTemp { set; get; } = new Dictionary<int, string>(); //未排序上传顺序
-        public static Dictionary<int, string> UploadOrder { set; get; } //上传顺序
+        public static Dictionary<int, string> UploadOrder { set; get; } = new Dictionary<int, string>(); //上传顺序
 
         public static List<UploadTask.UploadInfo> UploadList { set; get; } = new List<UploadTask.UploadInfo>(); //当前上传任务
 

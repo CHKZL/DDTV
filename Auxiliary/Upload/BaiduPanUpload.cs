@@ -10,6 +10,7 @@ namespace Auxiliary.Upload
     class BaiduPanUpload
     {
         private int exitCode;
+        private bool status;
         /// <summary>
         /// 初始化BaiduPan Upload
         /// </summary>
@@ -44,12 +45,24 @@ namespace Auxiliary.Upload
             {
                 string stringResults = e.Data;
                 if (stringResults == "" || stringResults == null) return;
+                if (stringResults.Contains("上传文件失败"))
+                    status = false;
+                if (stringResults.Contains("上传文件成功"))
+                    status = true;
                 uploadInfo.status["BaiduPan"].comments = stringResults;
                 InfoLog.InfoPrintf($"BaiduPan: {stringResults}", InfoLog.InfoClass.上传系统信息);
-                double uploadSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=↑ ).*?(?=/)").Value, @"[^\d-.]|[-.](?!\d)", ""));
-                double allSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=/).*?(?= )").Value, @"[^\d-.]|[-.](?!\d)", ""));
-                int progress = (int)Math.Ceiling(uploadSize / allSize * 100);
-                uploadInfo.status["BaiduPan"].progress = progress;
+                try
+                {
+                    double uploadSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=↑ ).*?(?=/)").Value, @"[^\d-.]|[-.](?!\d)", ""));
+                    double allSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=/).*?(?= )").Value, @"[^\d-.]|[-.](?!\d)", ""));
+                    int progress = (int)Math.Ceiling(uploadSize / allSize * 100);
+                    uploadInfo.status["BaiduPan"].progress = progress;
+                }
+                catch (System.FormatException)
+                {
+                    uploadInfo.status["BaiduPan"].progress = -1;
+                }
+                
             };  // 捕捉的信息
             proc.Start();
             proc.BeginOutputReadLine();   // 开始异步读取
@@ -57,7 +70,7 @@ namespace Auxiliary.Upload
             proc.WaitForExit();
             proc.Close();
             GC.Collect();
-            if (exitCode != 0)
+            if (exitCode != 0 || !status)
                 throw new UploadFailure("fail to upload");
         }
 
