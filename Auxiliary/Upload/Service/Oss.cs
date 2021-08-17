@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 
-namespace Auxiliary.Upload
+namespace Auxiliary.Upload.Service
 {
-    class OssUpload
+    class Oss : ServiceInterface
     {
         private string endpoint;
         private string accessKeyId ;
@@ -26,13 +26,13 @@ namespace Auxiliary.Upload
         /// <summary>
         /// 参数获取
         /// </summary>
-        public OssUpload()
+        public Oss()
         {
             client = new OssClient(endpoint, accessKeyId, accessKeySecret);
-            endpoint = Uploader.ossEndpoint;
-            accessKeyId = Uploader.ossAccessKeyId;
-            accessKeySecret = Uploader.ossAccessKeySecret;
-            bucketName = Uploader.ossBucketName;
+            endpoint = Configer.ossEndpoint;
+            accessKeyId = Configer.ossAccessKeyId;
+            accessKeySecret = Configer.ossAccessKeySecret;
+            bucketName = Configer.ossBucketName;
         }
 
         /// <summary>
@@ -103,20 +103,21 @@ namespace Auxiliary.Upload
         /// <summary>
         /// 上传文件
         /// </summary>
-        public void doUpload(UploadTask.UploadInfo uploadInfo)
+        public void doUpload(Info.TaskInfo task)
         {
+            string srcFile = task.localPath + task.fileName;
             try
             {
-                this.objectName = Uploader.cosPath + uploadInfo.remotePath + uploadInfo.fileName;
+                this.objectName = Configer.cosPath + task.remotePath + task.fileName;
                 InitMultiUpload();
-                FileInfo fileInfo = null;
+                System.IO.FileInfo fileInfo = null;
                 long partSize = 50 * 1048576;//初始块大小 50M
                 long fileSize = 0;
                 int partCount = 0;
                 try
                 {
                     long tmp;
-                    fileInfo = new FileInfo(uploadInfo.srcFile);
+                    fileInfo = new System.IO.FileInfo(srcFile);
                     fileSize = fileInfo.Length;
                     partSize /= 2;
                     do
@@ -129,33 +130,33 @@ namespace Auxiliary.Upload
                 }
                 catch (FileNotFoundException)
                 {
-                    throw new UploadFailure($"该文件{uploadInfo.srcFile}不存在");
+                    throw new UploadFailure($"该文件{task.fileName}不存在");
                 }
                 startTime = DateTime.Now;
                 for (var i = 0; i < partCount; i++)
                 {
                     try
                     {
-                        UploadPart(i, partSize, uploadInfo.srcFile);
+                        UploadPart(i, partSize, srcFile);
 
                         int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
                         string content = $"{partETags.Count}/{partCount} | {Math.Ceiling((double)(partETags.Count) / partCount * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partCount / partETags.Count - passTime)}s";
                         InfoLog.InfoPrintf($"Oss: {content}", InfoLog.InfoClass.上传系统信息);
-                        uploadInfo.status["Oss"].comments = content;
-                        uploadInfo.status["Oss"].progress = (int)Math.Ceiling((double)(partETags.Count) / partCount * 100);
+                        task.comments = content;
+                        task.progress = (int)Math.Ceiling((double)(partETags.Count) / partCount * 100);
                     }
                     catch (Aliyun.OSS.Common.OssException)
                     {
                         Thread.Sleep(1000);
                         try
                         {
-                            UploadPart(i, partSize, uploadInfo.srcFile);
+                            UploadPart(i, partSize, srcFile);
 
                             int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
                             string content = $"{partETags.Count}/{partCount} | {Math.Ceiling((double)(partETags.Count) / partCount * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partCount / partETags.Count - passTime)}s";
                             InfoLog.InfoPrintf($"Oss: {content}", InfoLog.InfoClass.上传系统信息);
-                            uploadInfo.status["Oss"].comments = content;
-                            uploadInfo.status["Oss"].progress = (int)Math.Ceiling((double)(partETags.Count) / partCount * 100);
+                            task.comments = content;
+                            task.progress = (int)Math.Ceiling((double)(partETags.Count) / partCount * 100);
                         }
                         catch (Aliyun.OSS.Common.OssException)
                         {

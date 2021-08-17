@@ -7,9 +7,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace Auxiliary.Upload
+namespace Auxiliary.Upload.Service
 {
-    class CosUpload
+    class Cos : ServiceInterface
     {
         private CosXml cosXml;
         private string uploadId;
@@ -18,15 +18,15 @@ namespace Auxiliary.Upload
         DateTime startTime;
         Dictionary<int, string> partNumberAndETags = new Dictionary<int, string>();
 
-        public CosUpload()
+        public Cos()
         {
             CosXmlConfig config = new CosXmlConfig.Builder()
-              .SetRegion(Uploader.cosRegion) //设置一个默认的存储桶地域
+              .SetRegion(Configer.cosRegion) //设置一个默认的存储桶地域
               .Build();
             long durationSecond = 600;//每次请求签名有效时长，单位为秒
-            QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(Uploader.cosSecretId,
-              Uploader.cosSecretKey, durationSecond);
-            this.bucket = Uploader.cosBucket;
+            QCloudCredentialProvider qCloudCredentialProvider = new DefaultQCloudCredentialProvider(Configer.cosSecretId,
+              Configer.cosSecretKey, durationSecond);
+            this.bucket = Configer.cosBucket;
             this.cosXml = new CosXmlServer(config, qCloudCredentialProvider);
         }
 
@@ -91,20 +91,21 @@ namespace Auxiliary.Upload
         /// <summary>
         /// 上传文件
         /// </summary>
-        public void doUpload(UploadTask.UploadInfo uploadInfo)
+        public void doUpload(Info.TaskInfo task)
          {
+            string srcFile = task.localPath + task.fileName;
             try
             {
-                this.key = Uploader.cosPath + uploadInfo.remotePath + uploadInfo.fileName;
+                this.key = Configer.cosPath + task.remotePath + task.fileName;
                 InitMultiUpload();
-                FileInfo fileInfo = null;
+                System.IO.FileInfo fileInfo = null;
                 long partSize = 50 * 1048576;//初始块大小 50M
                 long sourceLength = 0;
                 int partNum = 0;
                 try
                 {
                     long tmp;
-                    fileInfo = new FileInfo(uploadInfo.srcFile);
+                    fileInfo = new System.IO.FileInfo(srcFile);
                     sourceLength = fileInfo.Length;
                     partSize /= 2;
                     do
@@ -117,31 +118,31 @@ namespace Auxiliary.Upload
                 }
                 catch (FileNotFoundException)
                 {
-                    throw new UploadFailure($"该文件{uploadInfo.srcFile}不存在");
+                    throw new UploadFailure($"该文件{task.fileName}不存在");
                 }
                 startTime = DateTime.Now;
                 for (int i = 1; i <= partNum; i++)
                 {
                     try
                     { 
-                        UploadPart(i, partSize, uploadInfo.srcFile);
+                        UploadPart(i, partSize, srcFile);
                         int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
                         string content = $"{i}/{partNum} | {Math.Ceiling((double)(i) / partNum * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partNum / i - passTime)}s";
                         InfoLog.InfoPrintf($"Cos: {content}", InfoLog.InfoClass.上传系统信息);
-                        uploadInfo.status["Cos"].comments = content;
-                        uploadInfo.status["Cos"].progress = (int)Math.Ceiling((double)(i) / partNum * 100);
+                        task.comments = content;
+                        task.progress = (int)Math.Ceiling((double)(i) / partNum * 100);
                     }
                     catch (COSXML.CosException.CosServerException)
                     {
                         Thread.Sleep(1000);
                         try
                         {
-                            UploadPart(i, partSize, uploadInfo.srcFile);
+                            UploadPart(i, partSize, srcFile);
                             int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
                             string content = $"{i}/{partNum} | {Math.Ceiling((double)(i) / partNum * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partNum / i - passTime)}s";
                             InfoLog.InfoPrintf($"Cos: {content}", InfoLog.InfoClass.上传系统信息);
-                            uploadInfo.status["Cos"].comments = content;
-                            uploadInfo.status["Cos"].progress = (int)Math.Ceiling((double)(i) / partNum * 100);
+                            task.comments = content;
+                            task.progress = (int)Math.Ceiling((double)(i) / partNum * 100);
                         }
                         catch (COSXML.CosException.CosServerException)
                         {

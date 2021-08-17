@@ -3,25 +3,24 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using static Auxiliary.Upload.UploadTask;
 
-namespace Auxiliary.Upload
+namespace Auxiliary.Upload.Service
 {
-    class BaiduPanUpload
+    class BaiduPan : ServiceInterface
     {
         private int exitCode;
         private bool status;
         /// <summary>
         /// 初始化BaiduPan Upload
         /// </summary>
-        public BaiduPanUpload()
+        public BaiduPan()
         { }
 
         /// <summary>
         /// 上传到BaiduPan
         /// </summary>
         /// <param name="uploadInfo">传入上传信息</param>
-        public void doUpload(UploadInfo uploadInfo)
+        public void doUpload(Info.TaskInfo task)
         {
             Process proc = new Process();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -33,7 +32,7 @@ namespace Auxiliary.Upload
                 proc.StartInfo.FileName = "BaiduPCS-Go";
             }
             DateTime showTime = DateTime.Now;
-            proc.StartInfo.Arguments = $"u \"{uploadInfo.srcFile}\" \"{Uploader.baiduPanPath + uploadInfo.remotePath}\" --norapid -p 1";
+            proc.StartInfo.Arguments = $"u \"{task.localPath + task.fileName}\" \"{Configer.baiduPanPath + task.remotePath}\" --norapid -p 1";
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
             proc.StartInfo.RedirectStandardError = true;
@@ -49,18 +48,18 @@ namespace Auxiliary.Upload
                     status = false;
                 if (stringResults.Contains("上传文件成功"))
                     status = true;
-                uploadInfo.status["BaiduPan"].comments = stringResults;
+                task.comments = stringResults;
                 InfoLog.InfoPrintf($"BaiduPan: {stringResults}", InfoLog.InfoClass.上传系统信息);
                 try
                 {
                     double uploadSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=↑ ).*?(?=/)").Value, @"[^\d-.]|[-.](?!\d)", ""));
                     double allSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=/).*?(?= )").Value, @"[^\d-.]|[-.](?!\d)", ""));
                     int progress = (int)Math.Ceiling(uploadSize / allSize * 100);
-                    uploadInfo.status["BaiduPan"].progress = progress;
+                    task.progress = progress;
                 }
-                catch (System.FormatException)
+                catch (FormatException)
                 {
-                    uploadInfo.status["BaiduPan"].progress = -1;
+                    task.progress = -1;
                 }
                 
             };  // 捕捉的信息

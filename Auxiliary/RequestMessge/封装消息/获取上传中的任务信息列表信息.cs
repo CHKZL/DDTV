@@ -9,18 +9,29 @@ namespace Auxiliary.RequestMessage.封装消息
     { 
         public static string 上传中的任务信息列表信息()
         {
-            List<Upload.UploadTask.UploadInfo> A = new List<Upload.UploadTask.UploadInfo>();
-            foreach (var item1 in Upload.Uploader.UploadList)
+            List<Upload.Info.ProjectInfo> A = new List<Upload.Info.ProjectInfo>();
+            foreach (var project in Upload.Configer.UploadList)
             {
-                foreach (var item2 in item1.status)
+                checkAdd(A, project);
+            }
+            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, A);
+        }
+
+        private static void checkAdd(List<Upload.Info.ProjectInfo> A, Upload.Info.ProjectInfo project)
+        {
+            foreach (var filePair in project.files)
+            {
+                var file = filePair.Value;
+                foreach (var taskPair in file.tasks)
                 {
-                    if (item2.Value.statusCode != 0 && item2.Value.statusCode != -1)
+                    var task = taskPair.Value;
+                    if (task.statusCode == Upload.Status.OnGoing)
                     {
-                        A.Add(item1);
+                        A.Add(project);
+                        return;
                     }
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, A);
         }
     }
 }

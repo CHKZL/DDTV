@@ -231,7 +231,7 @@ namespace Auxiliary
                     setFiles(name, "1");
                     setFiles(name, "");
                 }
-                else;
+                else
                 {
                     setFiles(name,V);
                 }

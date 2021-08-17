@@ -12,7 +12,7 @@ namespace Auxiliary.Upload
     public class UploadTest
     {
         public DownIofoData downIofo;
-        public UploadTask uploadTask;
+        public Upload uploadTask;
 
         #region 生成数据
         /// <summary>
@@ -23,7 +23,7 @@ namespace Auxiliary.Upload
         public UploadTest(string srcFile)
         {
             Thread.Sleep(3000);
-            Uploader.enableUpload = true;
+            Configer.enableUpload = true;
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
             
@@ -37,8 +37,8 @@ namespace Auxiliary.Upload
 
             downIofo.文件保存路径 = srcFile;
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
         /// <summary>
         /// 测试上传，自动生成相应数据
@@ -48,8 +48,8 @@ namespace Auxiliary.Upload
         {
             CreateFixedSizeFile(@"UplaodTest_FilePath/UplaodTest_FileName.flv",1024*1024*1024);
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
         /// <summary>
         /// 测试上传，自动生成相应数据
@@ -62,7 +62,7 @@ namespace Auxiliary.Upload
             Thread.Sleep(3000);
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
-            Uploader.enableUpload = true;
+            Configer.enableUpload = true;
             Thread.Sleep(5000);
             downIofo = new DownIofoData();
             downIofo.主播名称 = "UplaodTest_SteamerName";
@@ -72,11 +72,11 @@ namespace Auxiliary.Upload
 
             downIofo.文件保存路径 = srcFile;
 
-            Uploader.UploadOrder.Clear();
-            Uploader.UploadOrder.Add(1, type);
+            Configer.UploadOrder.Clear();
+            Configer.UploadOrder.Add(1, type);
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
 
         /// <summary> 
