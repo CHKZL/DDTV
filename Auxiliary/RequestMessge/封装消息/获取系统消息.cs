@@ -20,9 +20,18 @@ namespace Auxiliary.RequestMessage.封装消息
                 else
                     下载完成++;
             }
+            string 版本 = "";
+            if (MMPU.启动模式 == 0)
+            {
+                版本 = MMPU.DDTV版本号;
+            }
+            else if (MMPU.启动模式 == 1)
+            {
+                版本 = MMPU.DDTVLiveRec版本号;
+            }
             SystemInfo systemInfo = new SystemInfo()
             {
-                DDTVCore_Ver = MMPU.版本号,
+                DDTVCore_Ver = 版本,
                 Room_Quantity = bilibili.RoomList.Count,
                 ServerAID=MMPU.ServerAID,
                 ServerGroup=MMPU.ServerGroup,
