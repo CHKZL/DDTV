@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using static Auxiliary.Downloader;
 
 namespace Auxiliary.Upload
@@ -21,8 +22,12 @@ namespace Auxiliary.Upload
         /// <param name="srcFile">上传源文件路径</param>
         public UploadTest(string srcFile)
         {
+            Thread.Sleep(3000);
+            Uploader.enableUpload = true;
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
+            
+            //Uploader.InitUpload();
 
             downIofo = new DownIofoData();
             downIofo.主播名称 = "UplaodTest_SteamerName";
@@ -54,10 +59,11 @@ namespace Auxiliary.Upload
         /// <param name="type">上传目标</param>
         public UploadTest(string srcFile, string type)
         {
+            Thread.Sleep(3000);
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
             Uploader.enableUpload = true;
-
+            Thread.Sleep(5000);
             downIofo = new DownIofoData();
             downIofo.主播名称 = "UplaodTest_SteamerName";
             downIofo.标题 = "UplaodTest_StreamTitle";
@@ -65,6 +71,7 @@ namespace Auxiliary.Upload
             downIofo.开始时间 = 0;
 
             downIofo.文件保存路径 = srcFile;
+
             Uploader.UploadOrder.Clear();
             Uploader.UploadOrder.Add(1, type);
 
