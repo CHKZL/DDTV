@@ -99,12 +99,19 @@ export default {
 </script>
  
 <style scoped>
-.login{
-  /*登录组件容器 */
+.login {
+  /* 布局容器设定居中 */
   display: flex;
-  flex-grow: 1;
-  justify-content:center;
   flex-direction: column;
-  align-items:center;
+  align-content: stretch;
+  justify-content: space-evenly;
+  align-items: center;
+  background: rgb(251, 202, 202);
+  /* 设置定位和左右上下 撑开 */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
 }
 </style>

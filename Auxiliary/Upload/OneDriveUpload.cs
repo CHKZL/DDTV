@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using static Auxiliary.Upload.UploadTask;
 
@@ -46,9 +47,13 @@ namespace Auxiliary.Upload
             {
                 string stringResults = e.Data;
                 if (stringResults == "" || stringResults == null) return;
-                uploadInfo.status["OneDrive"].comments = System.Text.RegularExpressions.Regex.Replace(stringResults, @"(.*\[)(.*)(\].*)", "$2");
+                string comments = System.Text.RegularExpressions.Regex.Replace(stringResults, @"(.*\[)(.*)(\].*)", "$2");
+                uploadInfo.status["OneDrive"].comments = comments;
                 InfoLog.InfoPrintf($"Onedrive: {stringResults}", InfoLog.InfoClass.上传系统信息);
-                
+                string RegexStr = @"\d+(\.\d+)?%";
+                Match mt = Regex.Match(comments, RegexStr);
+                string progress = mt.Value.Replace("%", "");
+                uploadInfo.status["OneDrive"].progress = int.Parse((progress == "") ? "-1" : progress);
             };  // 捕捉的信息
                 proc.Start();
                 proc.BeginOutputReadLine();   // 开始异步读取
