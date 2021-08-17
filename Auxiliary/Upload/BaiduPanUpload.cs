@@ -9,7 +9,6 @@ namespace Auxiliary.Upload
 {
     class BaiduPanUpload
     {
-        private string configFile { set; get; }
         private int exitCode;
         /// <summary>
         /// 初始化BaiduPan Upload
@@ -46,9 +45,9 @@ namespace Auxiliary.Upload
                 string stringResults = e.Data;
                 if (stringResults == "" || stringResults == null) return;
                 uploadInfo.status["BaiduPan"].comments = stringResults;
-                InfoLog.InfoPrintf($"BaiduPan: {stringResults}", InfoLog.InfoClass.上传必要提示);
-                double uploadSize = double.Parse(Regex.Replace(Regex.Match(comments, @"(?<=↑ ).*?(?=/)").Value, @"[^\d-.]|[-.](?!\d)", ""));
-                double allSize = double.Parse(Regex.Replace(Regex.Match(comments, @"(?<=/).*?(?= )").Value, @"[^\d-.]|[-.](?!\d)", ""));
+                InfoLog.InfoPrintf($"BaiduPan: {stringResults}", InfoLog.InfoClass.上传系统信息);
+                double uploadSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=↑ ).*?(?=/)").Value, @"[^\d-.]|[-.](?!\d)", ""));
+                double allSize = double.Parse(Regex.Replace(Regex.Match(stringResults, @"(?<=/).*?(?= )").Value, @"[^\d-.]|[-.](?!\d)", ""));
                 int progress = (int)Math.Ceiling(uploadSize / allSize * 100);
                 uploadInfo.status["BaiduPan"].progress = progress;
             };  // 捕捉的信息

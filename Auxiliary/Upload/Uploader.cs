@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace Auxiliary.Upload
 {
@@ -29,6 +26,14 @@ namespace Auxiliary.Upload
         //BaiduPan
         public static string enableBaiduPan { set; get; } = "";
         public static string baiduPanPath = "";
+
+        //Oss
+        public static string enableOss { set; get; } = "";
+        public static string ossEndpoint { set; get; } = "";
+        public static string ossAccessKeyId { set; get; } = "";
+        public static string ossAccessKeySecret { set; get; } = "";
+        public static string ossBucketName { set; get; } = "";
+        public static string ossPath = "";
 
         public static Dictionary<int, string> UploadOrderTemp { set; get; } = new Dictionary<int, string>(); //未排序上传顺序
         public static Dictionary<int, string> UploadOrder { set; get; } //上传顺序
@@ -64,6 +69,7 @@ namespace Auxiliary.Upload
                     InitOneDrive();
                     InitCos();
                     InitBaiduPan();
+                    InitOss();
 
                     enableUpload &= CheckEnableUpload; //配置文件中EnableUpload开启 且 至少成功配置一个上传目标
                     UploadOrder = UploadOrderTemp.OrderBy(p => p.Key).ToDictionary(p => p.Key, o => o.Value);
@@ -141,11 +147,42 @@ namespace Auxiliary.Upload
             {
                 UploadOrderTemp.Add(int.Parse(enableBaiduPan), "BaiduPan");
                 CheckEnableUpload = true;
-                InfoLog.InfoPrintf($"已检测到BaiduPan上传任务，上传顺序为{enableBaiduPan}", InfoLog.InfoClass.上传必要提示);
+                InfoLog.InfoPrintf($"已检测到BaiduPan上传任务，上传顺序为{enableBaiduPan}", InfoLog.InfoClass.上传系统信息);
 
                 baiduPanPath = MMPU.读取exe默认配置文件("BaiduPanPath", "/");
                 MMPU.CheckPath(ref baiduPanPath);
                 InfoLog.InfoPrintf($"配置文件初始化任务[BaiduPanPath]:{baiduPanPath}", InfoLog.InfoClass.Debug);
+            }
+        }
+
+        /// <summary>
+        /// 初始化Oss
+        /// </summary>
+        private static void InitOss()
+        {
+            enableOss = MMPU.读取exe默认配置文件("EnableOss", "0");
+            InfoLog.InfoPrintf($"配置文件初始化任务[EnableOss]:{enableOss}", InfoLog.InfoClass.Debug);
+            if (enableOss != "0")
+            {
+                UploadOrderTemp.Add(int.Parse(enableOss), "Oss");
+                CheckEnableUpload = true;
+                InfoLog.InfoPrintf($"已检测到Oss上传任务，上传顺序为{enableOss}", InfoLog.InfoClass.上传系统信息);
+
+                ossAccessKeyId = MMPU.读取exe默认配置文件("OssAccessKeyId", "");
+                InfoLog.InfoPrintf($"配置文件初始化任务[OssAccessKeyId]:敏感信息，隐藏内容，信息长度:{ossAccessKeyId.Length}", InfoLog.InfoClass.Debug);
+
+                ossAccessKeySecret = MMPU.读取exe默认配置文件("OssAccessKeySecret", "");
+                InfoLog.InfoPrintf($"配置文件初始化任务[OssAccessKeySecret]:敏感信息，隐藏内容，信息长度:{ossAccessKeySecret.Length}", InfoLog.InfoClass.Debug);
+
+                ossEndpoint = MMPU.读取exe默认配置文件("OssEndpoint", "");
+                InfoLog.InfoPrintf($"配置文件初始化任务[OssEndpoint]:{ossEndpoint}", InfoLog.InfoClass.Debug);
+
+                ossBucketName = MMPU.读取exe默认配置文件("OssBucketName", "");
+                InfoLog.InfoPrintf($"配置文件初始化任务[OssBucketName]:{ossBucketName}", InfoLog.InfoClass.Debug);
+
+                ossPath = MMPU.读取exe默认配置文件("OssPath", "/");
+                MMPU.CheckPath(ref ossPath);
+                InfoLog.InfoPrintf($"配置文件初始化任务[OssPath]:{ossPath}", InfoLog.InfoClass.Debug);
             }
         }
     }
