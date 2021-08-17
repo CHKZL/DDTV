@@ -10,6 +10,15 @@ namespace Auxiliary
     {
         public static string 返回ASS字幕文件头(string Title, string roomId, string name)
         {
+            string 版本 = "";
+            if (MMPU.启动模式 == 0)
+            {
+                版本 = MMPU.DDTV版本号;
+            }
+            else if (MMPU.启动模式 == 1)
+            {
+                版本 = MMPU.DDTVLiveRec版本号;
+            }
             switch (MMPU.弹幕录制种类)
             {
                 case 2:
@@ -21,7 +30,7 @@ namespace Auxiliary
                             "\r\n<mission>0</mission>" +
                             "\r\n<maxlimit>2147483647</maxlimit>" +
                             "\r\n<state>0</state>" +
-                            $"\r\n<app>DDTV{MMPU.版本号}</app>" +
+                            $"\r\n<app>DDTV{版本}</app>" +
                             $"\r\n<real_name>{name}</real_name>" +
                             $"\r\n<roomid>{roomId}</roomid>" +
                             $"\r\n<title>{Title}</title>" +

@@ -229,20 +229,29 @@ namespace Auxiliary.RequestMessage.封装消息
         {
             public static double WindowsCPU使用率获取()
             {
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
-                var cpuTimes = searcher.Get()
-                    .Cast<ManagementObject>()
-                    .Select(mo => new
-                    {
-                        Name = mo["Name"],
-                        Usage = mo["PercentProcessorTime"]
-                    }
-                    )
-                    .ToList();
-                var query = cpuTimes.Where(x => x.Name.ToString() == "_Total").Select(x => x.Usage);
-                //cpuTimes.Clear();
-                searcher.Dispose();
-                return double.Parse(query.SingleOrDefault().ToString());
+                try
+                {
+                    ManagementObjectSearcher searcher = new ManagementObjectSearcher("select * from Win32_PerfFormattedData_PerfOS_Processor");
+                    var cpuTimes = searcher.Get()
+                        .Cast<ManagementObject>()
+                        .Select(mo => new
+                        {
+                            Name = mo["Name"],
+                            Usage = mo["PercentProcessorTime"]
+                        }
+                        )
+                        .ToList();
+                    var query = cpuTimes.Where(x => x.Name.ToString() == "_Total").Select(x => x.Usage);
+                    //cpuTimes.Clear();
+                    searcher.Dispose();
+                    return double.Parse(query.SingleOrDefault().ToString());
+                }
+                catch (Exception)
+                {
+                    return 0;
+                }
+              
+               
             }
             public static double Liunx获取CPU使用率(int 保留几位小数 = 2)
             {
