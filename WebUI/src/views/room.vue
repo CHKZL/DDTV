@@ -6,7 +6,7 @@
       </div>
       <el-button icon="el-icon-search" circle></el-button>
       <el-button class="tools-item" icon="el-icon-plus"  circle @click="dialogFormVisible = true"></el-button>
-      <el-switch class="tools-item" active-color="#13ce66" inactive-color="#ff4949" ></el-switch>
+      <el-switch class="tools-item" v-model="stopall" active-color="#13ce66" inactive-color="#ff4949" ></el-switch>
     </div>
 
     <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
@@ -34,16 +34,15 @@
       </el-dialog>
 
     <div class="roomsbox">
-        <div  class="roomcard" v-for="item in room_list" :key="item.唯一码" :class="item.平台">
+        <div v-loading="false"  class="float-up roomcard" v-for="item in room_list" :key="item.唯一码" :class="item.平台">
           <el-badge  class="livebadge" value="直播中" :hidden="!item.直播状态"></el-badge>
           <div class="room-card-config">
-            <el-popover  width="150" trigger="click">
+            <el-popover trigger="click">
               <div style="text-align: right; margin: 0">
+                <el-button  size="mini" >备用按钮</el-button>
                 <el-button type="danger" size="mini" @click="process_room_delete(item.唯一码)">删除房间</el-button>
               </div>
-              <el-button type="text"  slot="reference" style="color:#000">
-                <i class="el-icon-setting" style="font-size:18px"></i>
-              </el-button>
+              <i class="el-icon-setting config-ico" slot="reference" style="font-size:20px"></i>
             </el-popover>
           </div>
           <div class="room-card-item">
@@ -56,6 +55,11 @@
             </div>
           </div>
           <el-switch class="live-switch" v-model="item.是否录制" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(item.唯一码, item.是否录制)"></el-switch>
+          <div class="set">
+            <i class="float-up like el-icon-star-on"></i>
+            <!-- <i class="like el-icon-star-off"></i> -->
+            <i class="float-up el-icon-folder"></i>
+          </div>
           <div class="roomid originname">ID:{{ item.唯一码 }}</div>
 
         </div>
@@ -68,7 +72,7 @@ import {postFormAPI,pubBody} from '../api'
 export default {
   data() {
     return {
-      loading: true,
+      stopall:false,
       AddRoom: { roomid: null, name:null, orgin:null, autoLive: true },
       addroomrules: {
         roomid: [
@@ -98,7 +102,7 @@ export default {
           this.getList();
         }
       }, 0);
-    }, 10000);
+    }, 50000);
   },
   methods: {
     resetForm(formName) {
@@ -290,9 +294,8 @@ export default {
   z-index: 1;
   max-width: 20px;
   max-height: 8px;
-  transition-property: padding,max-width,max-height,border-radius,display,background-color;
-  transition-duration: 0.5s;
-  transition-timing-function:ease-out;
+  transition-duration: 0.8s;
+  transition-timing-function:cubic-bezier(0.39, 0.575, 0.565, 1);
   overflow: hidden;
   flex-direction: row;
   justify-content: flex-start;
@@ -331,13 +334,37 @@ export default {
   width: 280px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   display: grid;
-  grid-template-columns: 10px 50px 140px 50px 20px 10px;
+  grid-template-columns: 10px 50px 45px 95px 50px 20px 10px;
   grid-template-rows: 10px 20px 95px  20px 10px;
-  grid-template-areas:  '. . . . . .'
-                        '. live . . config .'
-                        '. item item item item .'
-                        '. switch . rid rid .'
-                        '. . . . . .';
+  grid-template-areas:  '. .      .    .    .    .         .'
+                        '. live   .    .    .    config    .'
+                        '. item   item item item item      .'
+                        '. switch set  .    rid  rid       .'
+                        '. .      .    .    .    .         .';
+}
+.set {
+  grid-area: set;
+  display: flex;
+  font-size: 20px;
+  flex-direction: row;
+  justify-content: space-between; 
+}
+.like{
+  color: #ffd700;
+  text-shadow: 0 0px 6px #ffd700c4;
+  transition:color 0.2s;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.like:hover{
+  color: #dbbe16;
+}
+.float-up{
+  position: relative;
+  transition:top 0.3s;
+  top:0px
+}
+.float-up:hover{
+  top:-4px;
 }
 .bilibili{
   background-image:  url("../../public/static/bilibili.png");
@@ -361,6 +388,14 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+.config-ico{
+  color: rgba(0, 0, 0, 0.342);
+  transition: color 0.2s;
+}
+.config-ico:hover{
+  color: #000;
+  
 }
 .username {
   font-size: 28px;
