@@ -32,20 +32,19 @@ DDTVLiveRec的releases只提供依赖框架的可移植版本，请确保环境�
 2.下载[下载ASP.NET5.0运行时](https://download.visualstudio.microsoft.com/download/pr/48dd125b-b9ca-4fc7-b26c-558bff5bee13/214be31c3239444d4a9cfdf0574f3cd8/aspnetcore-runtime-5.0.1-win-x64.exe)和[下载NET5.0运行时](https://download.visualstudio.microsoft.com/download/pr/93095e51-be33-4b28-99c8-5ae0ebba753d/501f77f4b95d2e9c3481246a3eff9956/dotnet-runtime-5.0.1-win-x64.exe)2个文件进行安装，然后运行DDTVLiveRec
 
 启动准备:  
-　　1.因为DDTVLiveRec是根据DDTV2部分功能移植而来，所以需要依赖DDTV的配置文件，在使用前请先保证有一个可以正常使用的DDTV最新版本，并且已经登录。  
-　　2.把DDTV目录里登陆并配置好的【RoomListConfig.json】和【BiliUser.ini】复制到对应的DDTVLive文件夹中，该文件是房间配置文件和bilibili登陆验证文件  
-　　3.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动  
-　　4.(DDTVLive会监听11419端口，如果防火墙阻止请允许，该端口用于信息反馈的本地web服务端)
-
+　　1.在将`\static\config.js`中的`apiUrl`改成你服务器对应的信息  
+　　2.Linux系统使用[dotnet ./DDTVLiveRec.dll]命令直接启动或者是用类似[nohup dotnet ./DDTVLiveRec.dll &]之类的命令后台启动。  windows系统直接使用[DDTVLiveRec.exe]启动  
+　　3.根据控制台内容提示进行登录或相关操作  
+　　4.(DDTVLiveRec会使用11419端口，如果防火墙阻止请允许)   
+　　5.访问[http://IP:11419]进入DDTVLiveRec  
 * 录制的视频文件在文件夹中的["tmp"]文件夹内
 
 
-web服务端:  
-启动DDTVLiveRec后会自动启动内置的web服务端,提供了几个页面：  
-[http://IP:11419]：DDTVLiveRec的系统总览页面  
-[http://IP:11419/log]：DDTVLiveRec日志信息  
-[http://IP:11419/file]：DDTVLiveRec录制的文件列表  
-[http://IP:11419/list]：DDTVLiveRec下载列表状态查看  
+web服务端注意事项:  
+首先需要将`\static\config.js`中的`apiUrl`改成你服务器对应的信息   
+启动DDTVLiveRec后会自动启动内置的web服务端,请访问[http://IP:11419]查看    
+WEB服务端信息页的默认账号密码为在配置文件`DDTVLiveRec.config`中的`WebUserName`和`WebPassword`     
+    
 <br/>
 
 # API 说明文档

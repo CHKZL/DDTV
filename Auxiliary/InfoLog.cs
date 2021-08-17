@@ -426,10 +426,20 @@ namespace Auxiliary
             var proc = Process.GetCurrentProcess();
             var mem = proc.WorkingSet64;
             var cpu = proc.TotalProcessorTime;
-            BB += "<br/>当前DDTVLiveRec核心版本：" + (MMPU.开发模式 ? MMPU.开发版本号 : MMPU.版本号);
+            string 版本 = "";
+            if (MMPU.启动模式 == 0)
+            {
+                版本 = MMPU.DDTV版本号;
+            }
+            else if (MMPU.启动模式 == 1)
+            {
+                版本 = MMPU.DDTVLiveRec版本号;
+            }
+            BB += "<br/>当前DDTVLiveRec核心版本：" + (MMPU.开发模式 ? MMPU.开发版本号 : 版本);
             if (MMPU.开发模式)
             {
-                BB += $"<br/>当前为开发模式，该开发版本和主流版本({MMPU.版本号})有如下修改<br/>";
+
+                BB += $"<br/>当前为开发模式，该开发版本和主流版本({版本})有如下修改<br/>";
                 int i = 1;
                 foreach (var item in MMPU.开发更改)
                 {
