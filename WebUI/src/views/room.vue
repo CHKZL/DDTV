@@ -1,9 +1,15 @@
 <template>
   <div class="room">
     <div class = "tools">
-      <el-button icon="el-icon-plus" circle @click="dialogFormVisible = true"></el-button>
+      <div class="tools-icon">
+        <i class="el-icon-s-tools" style="font-size:18px;color:#fff"></i>
+      </div>
+      <el-button icon="el-icon-search" circle></el-button>
+      <el-button class="tools-item" icon="el-icon-plus"  circle @click="dialogFormVisible = true"></el-button>
+      <el-switch class="tools-item" active-color="#13ce66" inactive-color="#ff4949" ></el-switch>
+    </div>
 
-      <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
         <el-form label-position="right" :model="AddRoom" :rules="addroomrules" ref="AddRoom">
           <el-form-item label="房间号" prop="roomid">
             <el-input v-model="AddRoom.roomid" autocomplete="off"></el-input>
@@ -26,10 +32,9 @@
           <el-button type="primary" @click="to_AddRoom">确 定</el-button>
         </div>
       </el-dialog>
-    </div>
 
     <div class="roomsbox">
-        <div class="roomcard" v-for="item in room_list" :key="item.唯一码" :class="item.平台">
+        <div  class="roomcard" v-for="item in room_list" :key="item.唯一码" :class="item.平台">
           <el-badge  class="livebadge" value="直播中" :hidden="!item.直播状态"></el-badge>
           <div class="room-card-config">
             <el-popover  width="150" trigger="click">
@@ -41,14 +46,8 @@
               </el-button>
             </el-popover>
           </div>
-
           <div class="room-card-item">
             <div class="username" >{{ item.名称 }} </div>
-            <!-- <div class="username">
-                {{ item.名称 }} -->
-                <!-- <el-tag size="mini">{{ item.平台 }}</el-tag> -->
-                <!-- <el-tag size="mini" type="warning" v-if="item.直播状态">直播中</el-tag> -->
-            <!-- </div> -->
             <div class="originname">{{ item.原名 }} </div>
             <div>
                 <i class="el-icon-video-camera" v-if="item.是否录制"></i>
@@ -56,7 +55,6 @@
                 <i class="el-icon-loading" v-if="item.是否录制 && item.直播状态"></i>
             </div>
           </div>
-
           <el-switch class="live-switch" v-model="item.是否录制" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(item.唯一码, item.是否录制)"></el-switch>
           <div class="roomid originname">ID:{{ item.唯一码 }}</div>
 
@@ -281,24 +279,65 @@ export default {
 </script>
 
 <style scoped>
+.tools {
+  position: fixed;
+  background-color: #ff6a6a;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px 10px 10px 0px;
+  border: 1px solid #e2d0d0;
+  display: flex;
+  z-index: 1;
+  max-width: 20px;
+  max-height: 8px;
+  transition-property: padding,max-width,max-height,border-radius,display,background-color;
+  transition-duration: 0.5s;
+  transition-timing-function:ease-out;
+  overflow: hidden;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+.tools:hover{
+  padding: 10px 10px 10px 10px;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 18px;
+  background-color: #fff;
+}
+.tools:hover .tools-icon{
+  display: none;
+}
+.tools-icon {
+  width: 30px;
+  flex-shrink: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tools-item{
+  margin-left: 15px;
+}
 .roomsbox {
-    display: grid;
-    justify-content: space-evenly;
-    grid-template-columns: repeat(auto-fill, 280px);
-    grid-gap: 20px;
+  display: grid;
+  justify-content: space-evenly;
+  grid-template-columns: repeat(auto-fill, 280px);
+  grid-gap: 20px;
 }
 .roomcard {
-    height: 155px;
-    width: 280px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-    display: grid;
-    grid-template-columns: 10px 50px 140px 50px 20px 10px;
-    grid-template-rows: 10px 20px 95px  20px 10px;
-    grid-template-areas:  '. . . . . .'
-                          '. live . . config .'
-                          '. item item item item .'
-                          '. switch . rid rid .'
-                          '. . . . . .';
+  height: 155px;
+  width: 280px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 10px 50px 140px 50px 20px 10px;
+  grid-template-rows: 10px 20px 95px  20px 10px;
+  grid-template-areas:  '. . . . . .'
+                        '. live . . config .'
+                        '. item item item item .'
+                        '. switch . rid rid .'
+                        '. . . . . .';
 }
 .bilibili{
   background-image:  url("../../public/static/bilibili.png");
@@ -323,7 +362,6 @@ export default {
   flex-direction: column;
   justify-content: center;
 }
-
 .username {
   font-size: 28px;
   font-weight: 300;
