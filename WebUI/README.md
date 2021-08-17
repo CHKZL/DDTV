@@ -24,15 +24,15 @@ window.apiObj = {
 # 二、使用
 
 ## 1、自行构建
-Project setup
+安装项目依赖
 ```
 npm install
 ```
-Compiles and hot-reloads for development
+在开发模式下支持热更新的运行
 ```
 npm run serve
 ```
-Compiles and minifies for production
+打包用于生产环境
 ```
 npm run build
 ```
@@ -40,6 +40,7 @@ Lints and fixes files
 ```
 npm run lint
 ```
+
 
 # 三、贡献
 ## 1、贡献

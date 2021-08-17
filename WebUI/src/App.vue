@@ -2,14 +2,14 @@
 <!-- 这个是整个app的容器 -->
   <div class="app" v-if="$route.meta.keepAlive">
     <!-- 导航栏 -->
-    <div class="LeftMenu">
+    <div class="project-nav">
       <el-menu class="el-menu-open" :default-active="$route.path" :collapse="isCollapse" :router="true">
-        <il class="logo" >
-          <el-image src="./logo.png" style="width:25px"></el-image>
+        <div class="logo" >
+          <el-image src="./static/logo.png" style="width:25px"></el-image>
           <transition name="el-zoom-in-center" v-if="!isCollapse">
           <div class="logotitle" >DDTV</div>
           </transition>
-        </il>
+        </div>
         <el-menu-item index="/">
           <i class="el-icon-location"></i>
           <span slot="title">概览</span>
@@ -29,7 +29,7 @@
       </el-menu>
     </div>
     <!-- 网页主体 -->
-    <div class="MainBox">
+    <div class="content">
       <!-- 标题栏 -->
       <div class="top-bar">
         <div class="top-bar-title" v-if="$route.meta.title">{{ $route.meta.title }}</div>
@@ -43,13 +43,13 @@
           </div>
       
       <!-- 对应路由的内容 -->
-      <router-view></router-view>
+      <div class="router-view">
+        <router-view></router-view>
+      </div>
 
     </div>
   </div>
-  <div v-else class="app loginBackground">
-    <router-view></router-view>
-  </div>
+    <router-view v-else></router-view>
 </template>
 
 <script>
@@ -122,33 +122,43 @@ html,body{
 }
 body {
   margin: 0;
-  display: flex;
-  flex-direction: column;
   background-color: #effdff;
 }
-.loginBackground{
-  /*登录页背景 */
-  background-color: #ffdcdc;
-}
-.app{
-  /* 这个是本项目最外层容器 */
+.app {
+  flex: auto 1 1;
+  height: 100%;
   display: flex;
-  /* flex 对象 从左向右排列，且向两端对齐 
-  高度未定时则占满整个容器 */
-  align-items: stretch;
-  /* height: 100%; */
-  align-content: stretch;
-  flex-wrap: nowrap;
+  overflow: hidden;
   flex-direction: row;
-  justify-content: space-between;
-  flex-grow: 1;
 }
-.LeftMenu{
-  /*这个是左侧的菜单栏 在一个容器中排序永远靠前 故为-1*/
-  order:-1;
-  /*即使空间不足 也不缩小 */
-  flex-shrink:0
+.project-nav {
+  background: #fff;
+  box-shadow: 2px 0 10px rgba(0,0,0,.1);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
 }
+.router-view {
+  flex: 1;
+  height: 0;
+  overflow: auto;
+  padding: 20px 20px 20px 20px
+}
+.router-view::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+.router-view::-webkit-scrollbar-thumb {
+    background-color: #b4c7d0;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    border-radius: 5px;
+}
+.router-view::-webkit-scrollbar-track-piece {
+    background: 0 0;
+}
+
 .icon.outbound {
     color: #aaa;
     display: inline-block;
@@ -161,7 +171,6 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  /* padding: 20px 20px 20px 20px; */
   justify-content: center;
 }
 .logotitle{
@@ -172,40 +181,32 @@ body {
 }
 .el-menu-open{
   height: 100%;
-  /*菜单栏 flex 布局 */
   display: flex;
-  /*从上至下排列 */
   flex-direction:column;
-  /*投影 */
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1)
 }
 .el-menu-open:not(.el-menu--collapse) {
-  /*这里规定了在非拉伸状态下的菜单栏宽度 */
     width: 220px;
 }
-.MainBox{
-  /*这个是主要内容的对象*/
+.content {
+  flex: auto 1 1;
+  width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  /* width: 100%; */
-  justify-content: flex-start;
-  align-content: stretch;
-  align-items: stretch;
-  flex-grow: 1
 }
 .top-bar {
-  padding: 16px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  position: relative;
-  height: 32px;
-  z-index: 1;
-  /* background: #bbe6d6; */
-  border-block: solid 1px #e6e6e6;
-  background-color: #ffffff;
-  align-content: stretch;
-  justify-content: space-between;
+    flex: auto 0 0;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    height: 32px;
+    z-index: 1;
+    background: #ffffff;
+    justify-content: space-between;
+    border-bottom: 1px solid #e6e4e4;
 }
 .top-bar-title {
   font-size: 28px;

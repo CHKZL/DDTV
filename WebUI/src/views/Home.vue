@@ -386,7 +386,6 @@ export default {
   /*概览的主要元素的容器 全局布局的对象 */
   display: flex;
   flex-direction:column;
-  padding: 20px 20px 20px 20px;
 }
 .card-title {
   /* line-height: 54px; */
