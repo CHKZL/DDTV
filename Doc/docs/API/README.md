@@ -964,11 +964,13 @@ path: http://127.0.0.1:11419/api/upload_list
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 },"这是目标平台2":{
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 }
             }
@@ -1043,6 +1045,11 @@ public class UploadInfo
         /// </summary>
         public int statusCode { set; get; }
         /// <summary>
+        /// 上传进度
+        /// <para>百分比，取值1-100%，返回-1则为失败</para>
+        /// </summary>
+        public int progress { set; get; }
+        /// <summary>
         /// 其他信息
         /// <para>用于web端展示上传进度</para>
         /// </summary>
@@ -1095,11 +1102,13 @@ path: http://127.0.0.1:11419/api/upload_ing
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 },"这是目标平台2":{
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 }
             }
