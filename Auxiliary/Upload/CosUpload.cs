@@ -1,22 +1,11 @@
-﻿using COSXML.Common;
-using COSXML.CosException;
-using COSXML.Model;
-using COSXML.Model.Object;
-using COSXML.Model.Tag;
-using COSXML.Model.Bucket;
-using COSXML.Model.Service;
-using COSXML.Utils;
+﻿using COSXML;
 using COSXML.Auth;
-using COSXML.Transfer;
+using COSXML.Model.Object;
 using System;
-using COSXML;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Auxiliary.Upload
 {
@@ -55,23 +44,15 @@ namespace Auxiliary.Upload
         /// 上传一个分片
         private void UploadPart(int partNumber, long partSize, string srcPath)
         {
-            try
-            {
-                UploadPartRequest request = new UploadPartRequest(bucket, key, partNumber,
-                  this.uploadId, srcPath, partSize * (partNumber - 1), partSize);
-                //执行请求
-                UploadPartResult result = cosXml.UploadPart(request);
-                //请求成功
-                //获取返回分块的eTag,用于后续CompleteMultiUploads
-                partNumberAndETags.Add(partNumber, result.eTag);
-                //Console.WriteLine(result.GetResultInfo());
-            }
-            catch (COSXML.CosException.CosClientException clientEx)
-            {
-                //请求失败
-                Console.WriteLine("CosClientException: " + clientEx);
-                InfoLog.InfoPrintf($"Cos: CosClientException: {clientEx}", InfoLog.InfoClass.系统错误信息);
-            }
+
+            UploadPartRequest request = new UploadPartRequest(bucket, key, partNumber,
+              this.uploadId, srcPath, partSize * (partNumber - 1), partSize);
+            //执行请求
+            UploadPartResult result = cosXml.UploadPart(request);
+            //请求成功
+            //获取返回分块的eTag,用于后续CompleteMultiUploads
+            partNumberAndETags.Add(partNumber, result.eTag);
+            //Console.WriteLine(result.GetResultInfo());
         }
 
         /// 完成分片上传任务
@@ -90,17 +71,21 @@ namespace Auxiliary.Upload
             }
             catch (ArgumentNullException e)
             {
-                InfoLog.InfoPrintf($"Cos: ArgumentNullException: {e}", InfoLog.InfoClass.系统错误信息);
+                throw new UploadFailure($"Complete multi part failed, ArgumentNullException:{e.Message}");
             }
             catch (COSXML.CosException.CosClientException clientEx)
             {
                 //请求失败
-                InfoLog.InfoPrintf($"Cos: CosClientException: {clientEx}", InfoLog.InfoClass.系统错误信息);
+                throw new UploadFailure($"Complete multi part failed, CosClientException:{clientEx.Message}");
             }
             catch (COSXML.CosException.CosServerException serverEx)
             {
                 //请求失败
-                InfoLog.InfoPrintf($"Cos: CosServerException: {serverEx.GetInfo()}", InfoLog.InfoClass.系统错误信息);
+                throw new UploadFailure($"Complete multi part failed, CosServerException:{serverEx.GetInfo()}");
+            }
+            catch (Exception ex)
+            {
+                throw new UploadFailure($"Complete multi part failed, {ex.Message}");
             }
         }
         /// <summary>
@@ -132,8 +117,7 @@ namespace Auxiliary.Upload
                 }
                 catch (FileNotFoundException)
                 {
-                    InfoLog.InfoPrintf($"Cos: 该文件{uploadInfo.srcFile}不存在", InfoLog.InfoClass.系统错误信息);
-                    throw new UploadFailure("file not found");
+                    throw new UploadFailure($"该文件{uploadInfo.srcFile}不存在");
                 }
                 startTime = DateTime.Now;
                 for (int i = 1; i <= partNum; i++)
@@ -161,7 +145,7 @@ namespace Auxiliary.Upload
                         }
                         catch (COSXML.CosException.CosServerException)
                         {
-                            throw new UploadFailure("network error");
+                            throw new UploadFailure("Network error.");
                         }
                     }
                 }
@@ -169,7 +153,7 @@ namespace Auxiliary.Upload
             }
             catch (Exception e)
             {
-                throw new UploadFailure("unexpected error", e);
+                throw new UploadFailure($"Unexpected error, {e.Message}");
             }
         }
     }

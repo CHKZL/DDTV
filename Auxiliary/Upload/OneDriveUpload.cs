@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using static Auxiliary.Upload.UploadTask;
 
 namespace Auxiliary.Upload

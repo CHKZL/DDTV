@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using static Auxiliary.Downloader;
 
 
@@ -124,8 +121,9 @@ namespace Auxiliary.Upload
                     uploadInfo.status[uploadInfo.type].statusCode = 0;//上传成功
                     break;//成功则退出
                 }
-                catch (UploadFailure)//此次上传失败
+                catch (UploadFailure ex)//此次上传失败
                 {
+                    InfoLog.InfoPrintf($"{uploadInfo.type}: {ex.Message}",InfoLog.InfoClass.系统错误信息);
                     if (uploadInfo.retries == Uploader.RETRY_MAX_TIMES)//最后一次上传
                     {
                         InfoLog.InfoPrintf($"{uploadInfo.type}:第{uploadInfo.retries}/{Uploader.RETRY_MAX_TIMES}次{uploadInfo.type}上传失败", InfoLog.InfoClass.上传系统信息);
