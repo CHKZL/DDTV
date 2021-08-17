@@ -272,42 +272,7 @@ export default {
       return response.data;
 
     },
-    // 取消添加房间对话框
-    closed_Addroom() {
-      this.resetForm("AddRoom");
-      this.dialogFormVisible = false;
-    },
-    // 进行 添加房间的操作
-    to_AddRoom: async function () {
-      let that = this;
-      this.$refs["AddRoom"].validate((valid) => {
-        if (valid) {
-          that.proess_room_add();
-        } else {
-          console.debug("error submit!!");
-          return false;
-        }
-      });
-    },
-    // 处理添加房间
-    proess_room_add: async function () {
-      if (this.AddRoom.name == null) {
-        this.AddRoom.name = this.AddRoom.orgin;
-      }
-      var res = await this.room_add(
-        this.AddRoom.roomid,
-        this.AddRoom.orgin,
-        this.AddRoom.name,
-        this.AddRoom.autoLive
-      );
-      if (res.code != 1001) {
-        console.error(res.message);
-        this.$alert(res.message, "错误", { confirmButtonText: "确定" });
-      } else {
-        this.resetForm("AddRoom");
-        this.dialogFormVisible = false;
-      }
-    },
+
   /**
     * 添加房间
     * 
@@ -328,6 +293,42 @@ export default {
       console.debug(response)
       return response.data;
 
+    },
+
+    // 取消添加房间对话框
+    closed_Addroom() {
+      this.resetForm("AddRoom");
+      this.dialogFormVisible = false;
+    },
+    // 进行 添加房间的操作
+    to_AddRoom: async function () {
+      this.$refs["AddRoom"].validate((valid) => {
+        if (valid) {
+          if (this.AddRoom.name == null) {
+            this.AddRoom.name = this.AddRoom.orgin;
+          }
+          this.room_add(this.AddRoom.roomid,this.AddRoom.orgin,this.AddRoom.name,this.AddRoom.autoLive).then(result => {
+            this.msggo(result)
+            if(result.code == 1001){
+              let pushdata = { "islive":false,
+                                "table":"bilibili",
+                                "name":this.AddRoom.name,
+                                "orname":this.AddRoom.orgin,
+                                "rec":this.AddRoom.autoLive,
+                                "roomid":this.AddRoom.roomid,
+                                "show":true,
+                                "loading":false
+                            }
+              console.debug(pushdata)
+              this.room_list.push(pushdata);
+              this.dialogFormVisible = false
+            }
+          })
+        } else {
+          console.debug("error submit!!");
+          return false;
+        }
+      });
     },
 
 
