@@ -142,9 +142,10 @@ namespace Auxiliary.Upload
                     { 
                         UploadPart(i, partSize, uploadInfo.srcFile);
                         int passTime = (int)(DateTime.Now - startTime).TotalSeconds;
-                        string content = $"{i}/{partNum} | {i / partNum * 100}% |Time: {passTime}s | Remain: {passTime / i * partNum - passTime}s";
+                        string content = $"{i}/{partNum} | {Math.Ceiling((double)(i) / partNum * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partNum / i - passTime)}s";
                         InfoLog.InfoPrintf($"Cos: {content}", InfoLog.InfoClass.上传系统信息);
                         uploadInfo.status["Cos"].comments = content;
+                        uploadInfo.status["Cos"].progress = (int)Math.Ceiling((double)(i) / partNum * 100);
                     }
                     catch (COSXML.CosException.CosServerException)
                     {
@@ -156,6 +157,7 @@ namespace Auxiliary.Upload
                             string content = $"{i}/{partNum} | {Math.Ceiling((double)(i) / partNum * 100)}% |Time: {passTime}s | Remain: {Math.Ceiling((double)(passTime) * partNum / i - passTime)}s";
                             InfoLog.InfoPrintf($"Cos: {content}", InfoLog.InfoClass.上传系统信息);
                             uploadInfo.status["Cos"].comments = content;
+                            uploadInfo.status["Cos"].progress = (int)Math.Ceiling((double)(i) / partNum * 100);
                         }
                         catch (COSXML.CosException.CosServerException)
                         {

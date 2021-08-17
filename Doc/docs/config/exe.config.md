@@ -55,15 +55,19 @@ Core配置文件为DDTV核心初始化配置文件，在DDTV2.0和DDTVLiveRec中
     <add key="CosBucket" value="" /><!--腾讯云对象储存的存储桶名称  -->
     <add key="CosPath" value="" /><!-- 上传到腾讯云对象储存的路径 -->
     <add key="AutoTranscodingDelFile" value="0" /><!-- 转码后自动删除文件开关 -->
-    <add key="ApiToken" value="1145141919810A" /><!-- DDTVLiveRec的API服务的Token秘钥 -->
-    <add key="WebUserName" value="ami" /><!-- DDTVLiveRec的WEB信息页登陆用户名 -->
-    <add key="WebPassword" value="ddtv" /><!-- DDTVLiveRec的WEB信息页登陆密码 -->
-    <add key="WebhookUrl" value="" /><!-- DDTVLiveRec的Webhook目标地址 -->
-    <add key="WebhookEnable" value="0" /><!-- DDTVLiveRec的Webhook开关 -->
-    <add key="WebSocketEnable" value="1" /><!-- 是否使能WebSocket服务器 -->
-    <add key="WebSocketPort" value="1" /><!-- WebSocket服务器初始化时使用的端口号 -->
-    <add key="WebSocketUserName" value="1" /><!-- 用于获取Token的WebSocket服务器账号 -->
-    <add key="WebSocketPassword" value="1" /><!-- 用于获取Token的WebSocket服务器密码 -->
+    <add key="ServerName" value="DDTVServer" /><!-- 服务器默认名称 -->
+    <add key="ServerAID" value="8198ae60-094f-48a6-8272-1c2be8959c6a" /><!-- 服务器编号 -->
+    <add key="ServerGroup" value="default" /><!-- 服务器默认分组 -->
+    <add key="ApiToken" value="1145141919810A" /><!-- 默认APIToken -->
+    <add key="WebUserName" value="ami" /><!-- WEB详情页账号 -->
+    <add key="WebPassword" value="ddtv" /><!-- WEB详情页密码 -->
+    <add key="WebhookUrl" value="" /><!-- webhoob目标URL -->
+    <add key="WebhookEnable" value="0" /><!-- webhook使能 -->
+    <add key="WebSocketPort" value="11451" /><!-- WS服务器默认端口 -->
+    <add key="WebSocketEnable" value="0" /><!-- WS服务器使能 -->
+    <add key="WebSocketUserName" value="defaultUserName" /><!-- WS服务器默认账号 -->
+    <add key="WebSocketPassword" value="defaultPassword" /><!-- WS服务器默认密码 -->
+    <add key="DefaultFileName" value="{date}_{title}_{time}" /><!-- 保存的文件名默认格式，没有特殊需求请勿修改 -->
   </appSettings>
   <system.net>
     <connectionManagement>

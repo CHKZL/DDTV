@@ -1363,7 +1363,7 @@ namespace Auxiliary
                 {
                     ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                     ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF",false).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                    ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
                     //Console.BackgroundColor = ConsoleColor.Black;
                     //Console.ForegroundColor = ConsoleColor.White;
                     //Console.Write("  ");
