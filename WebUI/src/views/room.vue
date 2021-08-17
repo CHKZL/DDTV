@@ -1,6 +1,6 @@
 <template>
   <div class="room">
-    <el-card>
+    <div class = "tools">
       <el-button icon="el-icon-plus" circle @click="dialogFormVisible = true"></el-button>
 
       <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
@@ -26,35 +26,42 @@
           <el-button type="primary" @click="to_AddRoom">确 定</el-button>
         </div>
       </el-dialog>
-    </el-card>
+    </div>
 
-    <el-row :gutter="20">
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="item in room_list" :key="item.唯一码" style="padding-top: 20px">
-            <transition name="el-zoom-in-center">
-              <el-card style="height:155px">
-                  <div>
-                    <el-badge value="直播中" :hidden="!item.直播状态" class="item">
-                      <div class="username">
-                          {{ item.名称 }}
-                          <!-- <el-tag size="mini">{{ item.平台 }}</el-tag> -->
-                          <!-- <el-tag size="mini" type="warning" v-if="item.直播状态">直播中</el-tag> -->
-                      </div>
-                    </el-badge>
-                      <div class="originname">{{ item.原名 }}  ID:{{ item.唯一码 }}</div>
-                      <div>
-                          <i class="el-icon-video-camera" v-if="item.是否录制"></i>
-                          <i class="el-icon-video-camera" v-else style="color: #d6c3c3"></i>
-                          <i class="el-icon-loading" v-if="item.是否录制 && item.直播状态"></i>
-                      </div>
-                      <el-button size="mini" v-if="item.是否录制" type="warning" @click="process_room_status(item.唯一码, item.是否录制)">关闭自动录制</el-button>
-                      <el-button size="mini" v-else type="info" @click="process_room_status(item.唯一码, item.是否录制)">开启自动录制</el-button>
+    <div class="roomsbox">
+        <div class="roomcard" v-for="item in room_list" :key="item.唯一码" :class="item.平台">
+          <el-badge  class="livebadge" value="直播中" :hidden="!item.直播状态"></el-badge>
+          <div class="room-card-config">
+            <el-popover  width="150" trigger="click">
+              <div style="text-align: right; margin: 0">
+                <el-button type="danger" size="mini" @click="process_room_delete(item.唯一码)">删除房间</el-button>
+              </div>
+              <el-button type="text"  slot="reference" style="color:#000">
+                <i class="el-icon-setting" style="font-size:18px"></i>
+              </el-button>
+            </el-popover>
+          </div>
 
-                      <el-button type="danger" size="mini" @click="process_room_delete(item.唯一码)">删除房间</el-button>
-                  </div>
-              </el-card>
-            </transition>
-        </el-col>
-    </el-row>
+          <div class="room-card-item">
+            <div class="username" >{{ item.名称 }} </div>
+            <!-- <div class="username">
+                {{ item.名称 }} -->
+                <!-- <el-tag size="mini">{{ item.平台 }}</el-tag> -->
+                <!-- <el-tag size="mini" type="warning" v-if="item.直播状态">直播中</el-tag> -->
+            <!-- </div> -->
+            <div class="originname">{{ item.原名 }} </div>
+            <div>
+                <i class="el-icon-video-camera" v-if="item.是否录制"></i>
+                <i class="el-icon-video-camera" v-else style="color: #d6c3c3"></i>
+                <i class="el-icon-loading" v-if="item.是否录制 && item.直播状态"></i>
+            </div>
+          </div>
+
+          <el-switch class="live-switch" v-model="item.是否录制" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(item.唯一码, item.是否录制)"></el-switch>
+          <div class="roomid originname">ID:{{ item.唯一码 }}</div>
+
+        </div>
+    </div>
   </div>
 </template>
 
@@ -274,20 +281,55 @@ export default {
 </script>
 
 <style scoped>
-.room{
-  /*概览的主要元素的容器 全局布局的对象 */
-  display: flex;
-  flex-direction:column;
-  padding: 20px 20px 20px 20px;
+.roomsbox {
+    display: grid;
+    justify-content: space-evenly;
+    grid-template-columns: repeat(auto-fill, 280px);
+    grid-gap: 20px;
 }
+.roomcard {
+    height: 155px;
+    width: 280px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    display: grid;
+    grid-template-columns: 10px 50px 140px 50px 20px 10px;
+    grid-template-rows: 10px 20px 95px  20px 10px;
+    grid-template-areas:  '. . . . . .'
+                          '. live . . config .'
+                          '. item item item item .'
+                          '. switch . rid rid .'
+                          '. . . . . .';
+}
+.bilibili{
+  background-image:  url("../../public/static/bilibili.png");
+}
+.roomid{
+  grid-area: rid;
+}
+.room-card-item {
+  grid-area: item;
+  padding-left: 10px;
+}
+
+.livebadge {
+  grid-area: live;
+}
+.live-switch {
+  grid-area: switch;
+}
+.room-card-config {
+  grid-area: config;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .username {
   font-size: 28px;
   font-weight: 300;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  flex: 1;
+  max-width: 251px;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 .originname {
