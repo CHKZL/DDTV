@@ -381,7 +381,7 @@ export default {
   padding: 10px 10px 10px 0px;
   border: 1px solid #e2d0d0;
   display: flex;
-  z-index: 2008;
+  z-index: 2004;
   max-width: 20px;
   max-height: 8px;
   transition-duration: 0.8s;
