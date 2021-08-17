@@ -1,9 +1,15 @@
 <template>
   <div class="room">
-    <el-card>
-      <el-button icon="el-icon-plus" circle @click="dialogFormVisible = true"></el-button>
+    <div class = "tools">
+      <div class="tools-icon">
+        <i class="el-icon-s-tools" style="font-size:18px;color:#fff"></i>
+      </div>
+      <el-button icon="el-icon-search" circle></el-button>
+      <el-button class="tools-item" icon="el-icon-plus"  circle @click="dialogFormVisible = true"></el-button>
+      <el-switch class="tools-item" v-model="stopall" active-color="#13ce66" inactive-color="#ff4949" ></el-switch>
+    </div>
 
-      <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
+    <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
         <el-form label-position="right" :model="AddRoom" :rules="addroomrules" ref="AddRoom">
           <el-form-item label="房间号" prop="roomid">
             <el-input v-model="AddRoom.roomid" autocomplete="off"></el-input>
@@ -26,35 +32,39 @@
           <el-button type="primary" @click="to_AddRoom">确 定</el-button>
         </div>
       </el-dialog>
-    </el-card>
 
-    <el-row :gutter="20">
-        <el-col :xs="24" :sm="12" :md="8" :lg="6" v-for="item in room_list" :key="item.唯一码" style="padding-top: 20px">
-            <transition name="el-zoom-in-center">
-              <el-card style="height:155px">
-                  <div>
-                    <el-badge value="直播中" :hidden="!item.直播状态" class="item">
-                      <div class="username">
-                          {{ item.名称 }}
-                          <!-- <el-tag size="mini">{{ item.平台 }}</el-tag> -->
-                          <!-- <el-tag size="mini" type="warning" v-if="item.直播状态">直播中</el-tag> -->
-                      </div>
-                    </el-badge>
-                      <div class="originname">{{ item.原名 }}  ID:{{ item.唯一码 }}</div>
-                      <div>
-                          <i class="el-icon-video-camera" v-if="item.是否录制"></i>
-                          <i class="el-icon-video-camera" v-else style="color: #d6c3c3"></i>
-                          <i class="el-icon-loading" v-if="item.是否录制 && item.直播状态"></i>
-                      </div>
-                      <el-button size="mini" v-if="item.是否录制" type="warning" @click="process_room_status(item.唯一码, item.是否录制)">关闭自动录制</el-button>
-                      <el-button size="mini" v-else type="info" @click="process_room_status(item.唯一码, item.是否录制)">开启自动录制</el-button>
-
-                      <el-button type="danger" size="mini" @click="process_room_delete(item.唯一码)">删除房间</el-button>
-                  </div>
-              </el-card>
-            </transition>
-        </el-col>
-    </el-row>
+    <div class="roomsbox">
+      <transition name="slide" v-for="(item,index) in room_list" :key="item.roomid">
+        <div v-loading="room_list[index].loading" v-show="room_list[index].show" class="float-up roomcard" :class="item.table" >
+          <el-badge  class="livebadge" value="直播中" :hidden="!item.islive"></el-badge>
+          <div class="room-card-config">
+            <el-popover trigger="hover">
+              <div style="text-align: right; margin: 0">
+                <el-button  size="mini" @click="displaybox(index)" >假装删除</el-button>
+                <el-button type="danger" size="mini" @click="process_room_delete(index)">删除房间</el-button>
+              </div>
+              <i class="el-icon-setting config-ico" slot="reference" style="font-size:20px"></i>
+            </el-popover>
+          </div>
+          <div class="room-card-item">
+            <div class="username" >{{ item.name }} </div>
+            <div class="originname">{{ item.orname }} </div>
+            <div>
+                <i class="el-icon-video-camera" v-if="item.rec"></i>
+                <i class="el-icon-video-camera" v-else style="color: #d6c3c3"></i>
+                <i class="el-icon-loading" v-if="item.rec && item.islive"></i>
+            </div>
+          </div>
+          <el-switch class="live-switch" v-model="item.rec" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(index)"></el-switch>
+          <div class="set">
+            <i class="float-up like el-icon-star-on"></i>
+            <!-- <i class="like el-icon-star-off"></i> -->
+            <i class="float-up el-icon-folder"></i>
+          </div>
+          <div class="roomid originname">ID:{{ item.roomid }}</div>
+        </div>
+      </transition>
+    </div>
   </div>
 </template>
 
@@ -63,7 +73,7 @@ import {postFormAPI,pubBody} from '../api'
 export default {
   data() {
     return {
-      loading: true,
+      stopall:false,
       AddRoom: { roomid: null, name:null, orgin:null, autoLive: true },
       addroomrules: {
         roomid: [
@@ -93,41 +103,92 @@ export default {
           this.getList();
         }
       }, 0);
-    }, 10000);
+    }, 50000);
   },
   methods: {
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
-    // 自动录制按钮 弹窗
-    process_room_status: async function (roomid, status) {
-      let that = this;
-      await this.$confirm(
-        "此操作将设更改房间设置, 是否继续?",
-        status ? "关闭自动录制" : "开启自动录制",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
+    displaybox(i){
+      this.room_list[i].show = !this.room_list[i].show
+      console.debug(this.room_list[i].show)
+    },
+    /**
+    * 房间列表更新 将请求的数据 与本地数据进行对比 以帮助页面进行渲染
+    * 
+    * @param {arr} 源数据数组
+    */
+    render_data : function(arr){
+      // 遍历本地数据 生成一个 roomid 和 index 对应的索引
+      let datalen = this.room_list.length
+      let dataslent = []
+      // 拿到 roomid 生成索引
+      if (datalen !=0) {for(var i = 0; i < datalen; i++) {dataslent.push(this.room_list[i].roomid)}}
+      let arrlen = arr.length
+      let arrslent = []
+      if (arrlen !=0) {for(var j = 0; j < arrlen; j++) {arrslent.push(arr[j].唯一码)}}
+      let _dataSet = new Set(dataslent)
+      let _arrSet = new Set(arrslent)
+      let onlyData = dataslent.filter(item => !_arrSet.has(item))
+      let onlyArr  = arrslent.filter(item => !_dataSet.has(item))
+      // 删除data 中过期的数据
+      let onlydatalen = onlyData.length
+      if (onlydatalen != 0){
+        for(var k = 0; k < onlydatalen; k++) {
+          let dleindex = dataslent.indexOf(onlyData[k]);
+          this.room_list.splice(dleindex,1);
+          dataslent.splice(dleindex,1);
         }
-      )
-        .then(() => {
-          console.log(status);
-          that.room_status(roomid, !status);
-          this.$message({
-            type: "success",
-            message: "操作成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消操作",
-          });
+      }
+      // 检测 更新 数据 dataslent
+      let dataslentlen = dataslent.length
+      if (dataslentlen !=0){
+        for(var p = 0; p < dataslentlen; p++) {
+          let updatindex = arrslent.indexOf(dataslent[p])
+          let ordata = arr[updatindex]
+          let ondata = this.room_list[p]
+          if(ordata.直播状态 != ondata.islive) {this.room_list[p].islive = ordata.直播状态}
+          if(ordata.平台 != ondata.table) {this.room_list[p].table = ordata.平台}
+          if(ordata.名称 != ondata.name) {this.room_list[p].name = ordata.名称}
+          if(ordata.原名 != ondata.orname) {this.room_list[p].orname = ordata.原名}
+          if(ordata.是否录制 != ondata.rec) {this.room_list[p].rec = ordata.是否录制}
+        }
+      }
+      // 新增 onlyArr
+      let onlyArrlen = onlyArr.length;
+      if (onlyArrlen !=0){
+        for(var l = 0; l < onlyArrlen; l++) {
+          let addindex = arrslent.indexOf(onlyArr[l])
+          let adddata = arr[addindex]
+          let pushdata = { "islive":adddata.直播状态,
+                          "table":adddata.平台,
+                          "name":adddata.名称,
+                          "orname":adddata.原名,
+                          "rec":adddata.是否录制,
+                          "roomid":adddata.唯一码,
+                          "show":true,
+                          "loading":false
+                            }
+          console.debug(pushdata)
+          this.room_list.push(pushdata);
+        }
+      }
+      console.debug(this.room_list)
+    },
+    msggo(res) {
+      let message = "操作成功"
+      let type = "success"
+      if(res.code != 1001){
+        message = res.message
+        type = "error"
+      }
+        this.$message({
+          message: message,
+          type: type
         });
     },
 
-    /**
+  /**
     * 自动录制状态管理
     * 
     * @param {roomid} 房间号
@@ -142,31 +203,59 @@ export default {
       console.debug(param)
       let response = await postFormAPI('room_status',param,true)
       console.debug(response)
-      return response.data;
+      return response.data
 
     },
 
+
+    // 自动录制按钮 弹窗
+    process_room_status: async function (index) {
+      this.room_list[index].loading = true
+      let roomid = this.room_list[index].roomid
+      let status = this.room_list[index].rec
+      await this.$confirm(
+        "此操作将设更改房间设置, 是否继续?",
+        !status ? "关闭自动录制" : "开启自动录制",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }).then(() => {
+          console.debug("确定")
+          this.room_status(roomid,status).then(result => {
+            this.msggo(result)
+            if(result.code != 1001) this.room_list[index].rec = !status
+          })
+        })
+        .catch(() => {
+          console.debug("取消")
+          this.room_list[index].rec = !status
+        });
+        this.room_list[index].loading=false
+        
+    },
+
     // 删除房间弹窗
-    process_room_delete: async function (roomid) {
-      let that = this;
+    process_room_delete: async function (index) {
+      this.room_list[index].loading = true
+      let roomid = this.room_list[index].roomid
+
       await this.$confirm("此操作将从配置中删除, 是否继续?", "删除房间", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          that.room_delete(roomid);
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+          this.room_delete(roomid).then(result => {
+            this.msggo(result)
+            if(result.code != 1001) this.room_list[index].rec = !status;
+            if(result.code == 1001) this.room_list.splice(index,1);
+          })
         })
         .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
+          console.log("取消")
         });
+        this.room_list[index].loading=false
     },
     /**
     * 删除房间
@@ -183,42 +272,7 @@ export default {
       return response.data;
 
     },
-    // 取消添加房间对话框
-    closed_Addroom() {
-      this.resetForm("AddRoom");
-      this.dialogFormVisible = false;
-    },
-    // 进行 添加房间的操作
-    to_AddRoom: async function () {
-      let that = this;
-      this.$refs["AddRoom"].validate((valid) => {
-        if (valid) {
-          that.proess_room_add();
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    // 处理添加房间
-    proess_room_add: async function () {
-      if (this.AddRoom.name == null) {
-        this.AddRoom.name = this.AddRoom.orgin;
-      }
-      var res = await this.room_add(
-        this.AddRoom.roomid,
-        this.AddRoom.orgin,
-        this.AddRoom.name,
-        this.AddRoom.autoLive
-      );
-      if (res.code != 1001) {
-        console.error(res.message);
-        this.$alert(res.message, "错误", { confirmButtonText: "确定" });
-      } else {
-        this.resetForm("AddRoom");
-        this.dialogFormVisible = false;
-      }
-    },
+
   /**
     * 添加房间
     * 
@@ -241,14 +295,46 @@ export default {
 
     },
 
+    // 取消添加房间对话框
+    closed_Addroom() {
+      this.resetForm("AddRoom");
+      this.dialogFormVisible = false;
+    },
+    // 进行 添加房间的操作
+    to_AddRoom: async function () {
+      this.$refs["AddRoom"].validate((valid) => {
+        if (valid) {
+          if (this.AddRoom.name == null) {
+            this.AddRoom.name = this.AddRoom.orgin;
+          }
+          this.room_add(this.AddRoom.roomid,this.AddRoom.orgin,this.AddRoom.name,this.AddRoom.autoLive).then(result => {
+            this.msggo(result)
+            if(result.code == 1001){
+              let pushdata = { "islive":false,
+                                "table":"bilibili",
+                                "name":this.AddRoom.name,
+                                "orname":this.AddRoom.orgin,
+                                "rec":this.AddRoom.autoLive,
+                                "roomid":this.AddRoom.roomid,
+                                "show":true,
+                                "loading":false
+                            }
+              console.debug(pushdata)
+              this.room_list.push(pushdata);
+              this.dialogFormVisible = false
+            }
+          })
+        } else {
+          console.debug("error submit!!");
+          return false;
+        }
+      });
+    },
+
 
   /**
-    * 添加房间
+    * 房间列表
     * 
-    * @param {roomid} 房间号
-    * @param {username} 用户可以自定义的用户名
-    * @param {originname} 原名
-    * @param {rec} 自动录制
     * @return 接口返回的数据
     */
 
@@ -257,9 +343,8 @@ export default {
       console.debug(param)
       let response = await postFormAPI('room_list',param,true)
       console.debug(response)
-      this.room_list = response.data.Package
+      this.render_data(response.data.Package)
       return response.data;
-
     },
     // 用来发轮询请求的
     getList: async function () {
@@ -274,20 +359,140 @@ export default {
 </script>
 
 <style scoped>
-.room{
-  /*概览的主要元素的容器 全局布局的对象 */
+.slide-enter-active{
+ transition:all .5s linear;
+}
+.slide-leave-active{
+  transition:all .1s linear;
+}
+.slide-enter{
+  transform: translateX(-100%);
+  opacity: 0;
+}
+.slide-leave-to{
+  transform: translateX(110%);
+  opacity: 0;
+}
+.tools {
+  position: fixed;
+  background-color: #ff6a6a;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 10px 10px 10px 0px;
+  border: 1px solid #e2d0d0;
   display: flex;
-  flex-direction:column;
-  padding: 20px 20px 20px 20px;
+  z-index: 2004;
+  max-width: 20px;
+  max-height: 8px;
+  transition-duration: 0.8s;
+  transition-timing-function:cubic-bezier(0.39, 0.575, 0.565, 1);
+  overflow: hidden;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  align-content: center;
+}
+.tools:hover{
+  padding: 10px 10px 10px 10px;
+  max-width: 300px;
+  max-height: 300px;
+  border-radius: 18px;
+  background-color: #fff;
+}
+.tools:hover .tools-icon{
+  display: none;
+}
+.tools-icon {
+  width: 30px;
+  flex-shrink: 0;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tools-item{
+  margin-left: 15px;
+}
+.roomsbox {
+  display: grid;
+  justify-content: space-evenly;
+  grid-template-columns: repeat(auto-fill, 280px);
+  grid-gap: 20px;
+}
+.roomcard {
+  height: 155px;
+  width: 280px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 10px 50px 45px 95px 50px 20px 10px;
+  grid-template-rows: 10px 20px 95px  20px 10px;
+  grid-template-areas:  '. .      .    .    .    .         .'
+                        '. live   .    .    .    config    .'
+                        '. item   item item item item      .'
+                        '. switch set  .    rid  rid       .'
+                        '. .      .    .    .    .         .';
+}
+.set {
+  grid-area: set;
+  display: flex;
+  font-size: 20px;
+  flex-direction: row;
+  justify-content: space-between; 
+}
+.like{
+  color: #ffd700;
+  text-shadow: 0 0px 6px #ffd700c4;
+  transition:color 0.2s;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.like:hover{
+  color: #dbbe16;
+}
+.float-up{
+  position: relative;
+  transition:top 0.3s;
+  top:0px
+}
+.float-up:hover{
+  top:-4px;
+}
+.bilibili{
+  background-image:  url("../../public/static/bilibili.png");
+}
+.roomid{
+  grid-area: rid;
+}
+.room-card-item {
+  grid-area: item;
+  padding-left: 10px;
+}
+
+.livebadge {
+  grid-area: live;
+}
+.live-switch {
+  grid-area: switch;
+}
+.room-card-config {
+  grid-area: config;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.config-ico{
+  color: rgba(0, 0, 0, 0.342);
+  transition: color 0.2s;
+}
+.config-ico:hover{
+  color: #000;
+  
 }
 .username {
   font-size: 28px;
   font-weight: 300;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
-  flex: 1;
+  max-width: 251px;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 .originname {
