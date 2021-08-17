@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Auxiliary.Upload
 {
-    public static class Uploader
+    public static class Configer
     {
         //上传配置属性
         public static bool enableUpload { set; get; } = false;//开启上传
@@ -38,7 +38,7 @@ namespace Auxiliary.Upload
         public static Dictionary<int, string> UploadOrderTemp { set; get; } = new Dictionary<int, string>(); //未排序上传顺序
         public static Dictionary<int, string> UploadOrder { set; get; } = new Dictionary<int, string>(); //上传顺序
 
-        public static List<UploadTask.UploadInfo> UploadList { set; get; } = new List<UploadTask.UploadInfo>(); //当前上传任务
+        public static List<Info.ProjectInfo> UploadList { set; get; } = new List<Info.ProjectInfo>(); //当前上传任务
 
         //删除文件
         public static string deleteAfterUpload { set; get; } = "";

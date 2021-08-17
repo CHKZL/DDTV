@@ -25,7 +25,7 @@ namespace Auxiliary
             }      
             public static void 上传系统初始化()
             {
-                Upload.Uploader.InitUpload();//初始化上传配置
+                Upload.Configer.InitUpload();//初始化上传配置
             }
             public static void 消息系统初始化(int 模式)
             {
