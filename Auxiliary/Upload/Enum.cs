@@ -2,6 +2,7 @@
 {
     public enum TaskType
     {
+        Uninitialized,
         OneDrive,
         Cos,
         BaiduPan,
@@ -9,6 +10,7 @@
     }
     public enum FileType
     {
+        Uninitialized,
         flv,
         gift,
         danmu,
@@ -16,6 +18,7 @@
     }
     public enum Status
     {
+        Uninitialized,
         Success,
         Fail,
         OnHold,

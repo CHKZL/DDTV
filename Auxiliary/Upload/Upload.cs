@@ -38,9 +38,10 @@ namespace Auxiliary.Upload
                 }
                 else project = null;
             }
-            catch(CreateUploadTaskFailure)
+            catch(TaskException ex)
             {
                 project = null;//无法获取上传信息时为空
+                InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.系统错误信息);
             }
         }
 
@@ -50,7 +51,14 @@ namespace Auxiliary.Upload
             {
                 new Task(() =>
                 {
-                    project.UploadProject();
+                    try
+                    {
+                        project.UploadProject();
+                    }
+                    catch (Exception ex)
+                    {
+                        InfoLog.InfoPrintf($"未知上传错误, {project.streamerName}-{project.streamTitle}上传失败\n{ex.Message}", InfoLog.InfoClass.系统错误信息);
+                    }
                 }).Start();
             }
         }

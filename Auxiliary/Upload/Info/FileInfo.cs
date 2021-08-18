@@ -58,19 +58,37 @@ namespace Auxiliary.Upload.Info
         /// </summary>
         public FileInfo(string fileName, string localPath, string remotePath, FileType fileType)
         {
-            startTime = -1;
-            endTime = -1;
-            statusCode = Status.OnHold;
-            this.fileName = fileName;
-            this.localPath = localPath;
-            this.remotePath = remotePath;
-            this.fileType = fileType;
-            this.fileSize = (double)new System.IO.FileInfo(this.localPath + this.fileName).Length;
+            try
+            {
+                startTime = -1;
+                endTime = -1;
+                statusCode = Status.OnHold;
+                this.fileName = fileName;
+                this.localPath = localPath;
+                this.remotePath = remotePath;
+                this.fileType = fileType;
+                this.fileSize = (double)new System.IO.FileInfo(this.localPath + this.fileName).Length;
+            }
+            catch (System.ArgumentException)
+            {
+                throw new FileException($"找不到文件{localPath + fileName}");
+            }
+
             foreach (var item in Configer.UploadOrder) //遍历上传目标
             {
-                TaskInfo task = new TaskInfo(fileName, localPath, remotePath, fileType, (TaskType)Enum.Parse(typeof(TaskType), item.Value));
-                tasks.Add((TaskType)Enum.Parse(typeof(TaskType), item.Value), task);
+                try
+                {
+                    TaskInfo task = new TaskInfo(fileName, localPath, remotePath, fileType, (TaskType)Enum.Parse(typeof(TaskType), item.Value));
+                    tasks.Add((TaskType)Enum.Parse(typeof(TaskType), item.Value), task);
+                }
+                catch (TaskException ex)
+                {
+                    InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                }
             }
+
+            if (tasks.Count == 0)
+                throw new FileException($"文件{fileName}无有效上传目标");
         }
 
         public void uploadFile()
