@@ -27,6 +27,9 @@
           <span slot="title">查看文档</span>
         </el-menu-item>
       </el-menu>
+      <div class="about">
+        <i class="el-icon-more"></i>
+      </div>
     </div>
     <!-- 网页主体 -->
     <div class="content">
@@ -136,6 +139,14 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
+  padding-bottom: 30px;
+}
+.about {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 .router-view {
   flex: 1;

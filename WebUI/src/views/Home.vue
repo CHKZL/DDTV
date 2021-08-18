@@ -25,7 +25,7 @@
 
               <el-card shadow="hover">
                 <div class="card-title-litter">正在上传</div>
-                <div class="big-number">{{uoload.length}}</div>
+                <div class="big-number">{{upload.length}}</div>
               </el-card>
           </div>
 
@@ -130,12 +130,12 @@
           <i class="el-icon-coin"></i>
       </div>
       <div class="linux_hdd_bar">
-        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo" :key="index">
+        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo"  :key="index">
           <div class="linux_hdd_bar_text">
             <div>{{item.MountPath}}</div>
             <div>{{item.Usage}}/{{item.Size}}</div>
           </div>
-          <el-progress :percentage="parseInt(item.Used)"></el-progress>
+          <el-progress :color="DishBarColor" :percentage="parseInt(item.Used)"></el-progress>
         </div>
       </div>
     </div>
@@ -169,7 +169,7 @@
 
         </div>
         <div class="table_class">
-          <el-table :data="rec_tab" style="width: 100%">
+          <el-table :data="rec_tab" style="width: 100%;" max-height="250">
             <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
             <el-table-column prop="RoomId" label="房间号">
             </el-table-column>
@@ -193,6 +193,22 @@
         </div>
     </div>
 
+     <div class="systemInfo">
+        <div class="card-title">
+          上传详情
+          <i class="el-icon-sort"></i>
+        </div>
+        <div class="upload_box grid_2">
+          <div class="upload_card" v-for="(item,index) in upload" :key="index">
+            <div class="username" >{{ item.streamTitle }} </div>
+            <div class="originname">{{ item.streamerName }} </div>
+            <div class="upload_box_icon">
+              <i v-for="(item,key) in item.files" :class="key"  :key="key"></i>
+            </div>
+          </div>
+        </div>
+    </div>
+
   </div>
 </template>
 
@@ -200,6 +216,7 @@
 import {formatDate} from '../reunit'
 import {postFormAPI,pubBody} from '../api'
 import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
+import {fake_up_data} from '../utils/fake_data'
 export default {
   data() {
     return {
@@ -210,7 +227,14 @@ export default {
       dl_all:0,
       system_monitor:sys_mon_ex,
       HDD:{},
-      uoload:[]
+      upload:fake_up_data.Package,
+      DishBarColor: [
+          {color: '#1989fa', percentage: 20},
+          {color: '#6f7ad3', percentage: 40},
+          {color: '#5cb87a', percentage: 60},
+          {color: '#e6a23c', percentage: 80},
+          {color: '#f56c6c', percentage: 100}
+        ]
     };
   },
   created: async function(){
@@ -275,7 +299,7 @@ export default {
       // 获取所有的录制队列 （含有历史）
       this.rec_all_list()
       // 获取队列简报 （上传）
-      this.upload_ing()
+      // this.upload_ing()
       // 获取系统监控
       this.system_resource_monitoring()
     },
@@ -290,7 +314,7 @@ export default {
       console.debug(param)
       let response = await postFormAPI('upload_ing',param,true)
       console.debug(response)
-      this.uoload  =  response.data.Package
+      this.upload  =  response.data.Package
       return response.data;
 
     },
@@ -432,12 +456,47 @@ export default {
   display:grid;
   grid-gap: 10px;
 }
+.grid_2{
+  grid-template-columns: 1fr 1fr;
+}
 .grid_3{
   grid-template-columns: 1fr 1fr 1fr;
 }
 .grid_4{
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
+.upload_box{
+  display:grid;
+}
+.upload_box_icon{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90px;
+  color: #cebfbf;
+}
+.upload_box_icon_after{
+  color: #000000;
+}
+.upload_box_icon_is{
+  color: #ae92f0;
+}
+.el-icon-film, .flv{
+  font-size: 19px;
+}
+
+.el-icon-present, .gift{
+  font-size: 19px;
+}
+
+.el-icon-chat-dot-square, .danmu{
+  font-size: 19px;
+}
+
+.el-icon-video-play, .mp4{
+  font-size: 19px;
+}
+
 .card-title {
   /* line-height: 54px; */
   font-size: 14px;
@@ -454,5 +513,17 @@ export default {
   font-size: 25px;
   font-weight: 600;
   color: #333;
+}
+.username {
+  font-size: 28px;
+  font-weight: 300;
+  max-width: 300px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.originname {
+  font-size: 10px;
+  color: #af8585;
 }
 </style>
