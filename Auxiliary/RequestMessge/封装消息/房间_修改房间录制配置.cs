@@ -8,9 +8,9 @@ using static Auxiliary.RoomInit;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 修改房间录制配置
+    public class 房间_修改房间录制配置
     {
-        public static string 修改录制配置(string RoomId, bool RecStatus)
+        public static string 修改录制配置(string RoomId, bool RecStatus,bool AllRoom =false)
         {
             int roomId = 0;
             try
@@ -31,7 +31,7 @@ namespace Auxiliary.RequestMessage.封装消息
             var data = new List<RoomCadr>();
             foreach (var item in bilibili房间主表)
             {
-                if (item.唯一码 == roomId.ToString())
+                if (item.唯一码 == roomId.ToString()|| AllRoom)
                 {
                     data.Add(new RoomCadr
                     {
@@ -42,7 +42,8 @@ namespace Auxiliary.RequestMessage.封装消息
                         VideoStatus =RecStatus,
                         Types = item.平台,
                         RemindStatus = item.是否提醒,
-                        status = false
+                        status = false,
+                        Like=item.Like
                     });
                 }
                 else
@@ -56,7 +57,8 @@ namespace Auxiliary.RequestMessage.封装消息
                         VideoStatus = item.是否录制,
                         Types = item.平台,
                         RemindStatus = item.是否提醒,
-                        status = false
+                        status = false,
+                        Like = item.Like
                     });
                 }
             }

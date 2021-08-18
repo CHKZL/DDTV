@@ -6,7 +6,7 @@ using static Auxiliary.RequestMessage.Rec;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取所有下载任务的简报队列信息
+    public class 下载_获取所有下载任务的简报队列信息
     {
         public static string 所有下载任务的简报队列信息()
         {
