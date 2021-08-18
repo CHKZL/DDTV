@@ -453,6 +453,9 @@ namespace Auxiliary
             if(继承的项目!=null)
             {
                 下载对象.DownIofo.继承.待合并文件列表 = 继承的项目.继承.待合并文件列表;
+                下载对象.DownIofo.弹幕储存流 = 继承的项目.弹幕储存流;
+                下载对象.DownIofo.弹幕录制基准时间 = 继承的项目.弹幕录制基准时间;
+                下载对象.DownIofo.礼物储存流 = 继承的项目.礼物储存流;
             }
             if (!是否保存)
             {
@@ -630,7 +633,9 @@ namespace Auxiliary
                                                 {
                                                     DownIofo.下载状态 = false;
                                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                                    下载结束提醒(true, "下载任务结束", DownIofo);
+                                                    //NagisaCo: 被继承项目不关闭弹幕礼物流
+                                                    //下载结束提醒(true, "下载任务结束", DownIofo);
+                                                    下载结束提醒(false, "下载任务结束", DownIofo);
                                                     重连下载对象.DownIofo.备注 = "完成重连，正在续命..";
                                                     //下载对象.DownIofo.下载状态 = true;
                                                     return;
