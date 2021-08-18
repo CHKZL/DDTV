@@ -72,7 +72,7 @@
           </el-descriptions>
       </div>
 
-      <div class="systemInfo">
+      <div class="systemInfo" v-loading="system_monitor.reload">
           <div class="card-title">
             设备状态
             <i class="el-icon-warning-outline"></i>
@@ -95,10 +95,10 @@
             </el-col>
             <el-col :span="8">
               <el-card shadow="hover">
-                <div class="card-title-litter">磁盘</div>
+                <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
                 <div class="big-number">
-                  <span>{{sys_dish.Usage}}</span>
-                  <span>/{{sys_dish.Size}}</span>
+                  <span>{{HDD.Usage}}</span>
+                  <span>/{{HDD.Size}}</span>
                 </div>
               </el-card>
             </el-col>
@@ -122,11 +122,27 @@
             </el-descriptions-item>
             <el-descriptions-item label="CPU">{{system_monitor.CPU_usage}}%</el-descriptions-item>
             <el-descriptions-item label="内存">{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</el-descriptions-item>
-            <el-descriptions-item label="磁盘">{{sys_dish.Size}}</el-descriptions-item>
-            <el-descriptions-item label="DDTV占用内存">{{((system_monitor.DDTV_use_memory/1024)/1024).toFixed(2)}}MB</el-descriptions-item>
+            <el-descriptions-item label="磁盘">{{HDD.Size}}</el-descriptions-item>
+            <el-descriptions-item label="DDTV占用内存">{{((system_info_data.os_Info.Memory_Usage/1024)/1024).toFixed(2)}}MB</el-descriptions-item>
           </el-descriptions>
       </div>
 
+    </div>
+
+    <div class="systemInfo" v-if="system_monitor.Platform == 'Linux'">
+      <div class="card-title">
+          磁盘管理
+          <i class="el-icon-coin"></i>
+      </div>
+      <div class="linux_hdd_bar">
+        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo" :key="index">
+          <div class="linux_hdd_bar_text">
+            <div>{{item.MountPath}}</div>
+            <div>{{item.Usage}}/{{item.Size}}</div>
+          </div>
+          <el-progress :percentage="parseInt(item.Used)"></el-progress>
+        </div>
+      </div>
     </div>
     
     <div class="systemInfo">
@@ -134,27 +150,24 @@
           任务概览
           <i class="el-icon-tickets"></i>
         </div>
-        <el-row :gutter="10">
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">正在进行</div>
-              <div class="big-number">{{rec_tab.length}}</div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">下载量</div>
-              <div class="big-number">{{dl_all > 1000000000 ? (dl_all/1000000000).toFixed(2) + "GB":(dl_all/1000000).toFixed(2)+ "MB" }}</div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">出错</div>
-              <div class="big-number">0</div>
-              <div></div>
-            </el-card>
-          </el-col>
-        </el-row>
+        <div class="bataGroup">
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">正在进行</div>
+            <div class="big-number">{{rec_tab.length}}</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">下载量</div>
+            <div class="big-number">{{dl_all > 1000000000 ? (dl_all/1000000000).toFixed(2) + "GB":(dl_all/1000000).toFixed(2)+ "MB" }}</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">出错</div>
+            <div class="big-number">0</div>
+          </el-card>
+
+        </div>
 
         <el-table :data="rec_tab" style="width: 100%">
           <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
@@ -185,16 +198,17 @@
 <script>
 import {formatDate} from '../reunit'
 import {postFormAPI,pubBody} from '../api'
+import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
 export default {
   data() {
     return {
-      system_info_data: [],
+      system_info_data: sys_data_ex,
       tableData: [],
       rec_tab: [],
       rec_all:[],
       dl_all:0,
-      system_monitor:[],
-      sys_dish:{},
+      system_monitor:sys_mon_ex,
+      HDD:{},
       uoload:[]
     };
   },
@@ -287,19 +301,19 @@ export default {
     */
     system_resource_monitoring:async function(){
       let param = pubBody('system_resource_monitoring')
-      console.debug(param)
       let response = await postFormAPI('system_resource_monitoring',param,true)
       console.debug(response)
-
       this.system_monitor = response.data.Package[0]
-      let dish = this.system_monitor.HDDInfo
-      var dishlen = dish.length
-      for(var j = 0; j < dishlen; j++) {
-        if(dish[j].MountPath == "/"){
-          this.sys_dish = dish[j]
+      if (this.system_monitor.Platform != 'Linux') this.HDD = response.data.Package[0].HDDInfo[0]
+      else{
+        let dish = this.system_monitor.HDDInfo
+        var dishlen = dish.length
+        for(var j = 0; j < dishlen; j++) {
+          if(dish[j].MountPath == "/"){
+            this.HDD = dish[j]
+          }
         }
       }
-
     },
 
     /**
@@ -360,11 +374,8 @@ export default {
     */
     system_info: async function () {
       let param = pubBody('system_info')
-      console.debug(param)
       let response = await postFormAPI('system_info',param,true)
-      console.debug(response)
       this.system_info_data = response.data.Package[0];
-      console.debug(this.system_info_data)
       return response.data;
     },
   },
@@ -381,6 +392,23 @@ export default {
   display: grid;
   grid-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(540px, 100%));
+}
+.linux_hdd_bar{
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.linux_hdd_bar_text {
+  font-size: 14px;
+  color: #6f7173;
+  /* display: inline-block; */
+  /* vertical-align: middle; */
+  /* margin-left: 10px; */
+  display: flex;
+  /* line-height: 1; */
+  justify-content: space-between;
+  flex-direction: row;
+  padding-right: 17px;
 }
 .sys {
   display: grid;
