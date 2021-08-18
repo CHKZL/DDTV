@@ -33,14 +33,14 @@
         </div>
       </el-dialog>
 
-    <div class="roomsbox">
+    <div class="roomsbox" v-if="room_list.length !=0">
       <transition name="slide" v-for="(item,index) in room_list" :key="item.roomid">
         <div v-loading="room_list[index].loading" v-show="room_list[index].show" class="float-up roomcard" :class="item.table" >
           <el-badge  class="livebadge" value="直播中" :hidden="!item.islive"></el-badge>
           <div class="room-card-config">
             <el-popover trigger="hover">
               <div style="text-align: right; margin: 0">
-                <el-button  size="mini" @click="displaybox(index)" >假装删除</el-button>
+                <el-button  size="mini" @click="displaybox(index)" >停止录制</el-button>
                 <el-button type="danger" size="mini" @click="process_room_delete(index)">删除房间</el-button>
               </div>
               <i class="el-icon-setting config-ico" slot="reference" style="font-size:20px"></i>
@@ -57,19 +57,20 @@
           </div>
           <el-switch class="live-switch" v-model="item.rec" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(index)"></el-switch>
           <div class="set">
-            <i class="float-up like el-icon-star-on"></i>
-            <!-- <i class="like el-icon-star-off"></i> -->
+            <i @click="room_like_pross(index)" class="float-up" :class="room_list[index].like ? 'el-icon-star-on like-on':'el-icon-star-off like-off'"></i>
             <i class="float-up el-icon-folder"></i>
           </div>
           <div class="roomid originname">ID:{{ item.roomid }}</div>
         </div>
       </transition>
     </div>
+    <el-empty v-else description="啥都木有"></el-empty>
   </div>
 </template>
 
 <script>
 import {postFormAPI,pubBody} from '../api'
+import {room_data} from '../utils/data_cli'
 export default {
   data() {
     return {
@@ -90,20 +91,34 @@ export default {
       room_list: [],
     };
   },
-  mounted: async function () {
-    // 发一次请求 确定用户凭据的有效性
-    await this.getList();
-    this.loading = false;
-    
-    // 进行轮询，定时间隔10秒一次
+  // watch: {
+  //   room_list(newValue, oldValue){
+  //     for (let i = 0; i < newValue.length; i++) {
+  //       if (oldValue[i] != newValue[i]) {
+  //         console.log(newValue)
+  //       }
+  //     }
+  //     console.log("room 数据发送变化")
+  //     console.log(newValue,oldValue)
+  //   },
+  //   deep: true
+  // },
+  created:async function() {
+    console.log("初始化数据")
+    await postFormAPI('room_list',pubBody('room_list'),true).then(result => {
+      room_data(this,result.data.Package)
+    })
+  },
+  mounted() {
+
+    console.log("挂载页面")
     this.timer = window.setInterval(() => {
       setTimeout(() => {
         if (sessionStorage.getItem("token")) {
-          // 轮询 的逻辑
           this.getList();
         }
       }, 0);
-    }, 50000);
+    }, 60000);
   },
   methods: {
     resetForm(formName) {
@@ -113,81 +128,6 @@ export default {
       this.room_list[i].show = !this.room_list[i].show
       console.debug(this.room_list[i].show)
     },
-    /**
-    * 房间列表更新 将请求的数据 与本地数据进行对比 以帮助页面进行渲染
-    * 
-    * @param {arr} 源数据数组
-    */
-    render_data : function(arr){
-      // 遍历本地数据 生成一个 roomid 和 index 对应的索引
-      let datalen = this.room_list.length
-      let dataslent = []
-      // 拿到 roomid 生成索引
-      if (datalen !=0) {for(var i = 0; i < datalen; i++) {dataslent.push(this.room_list[i].roomid)}}
-      let arrlen = arr.length
-      let arrslent = []
-      if (arrlen !=0) {for(var j = 0; j < arrlen; j++) {arrslent.push(arr[j].唯一码)}}
-      let _dataSet = new Set(dataslent)
-      let _arrSet = new Set(arrslent)
-      let onlyData = dataslent.filter(item => !_arrSet.has(item))
-      let onlyArr  = arrslent.filter(item => !_dataSet.has(item))
-      // 删除data 中过期的数据
-      let onlydatalen = onlyData.length
-      if (onlydatalen != 0){
-        for(var k = 0; k < onlydatalen; k++) {
-          let dleindex = dataslent.indexOf(onlyData[k]);
-          this.room_list.splice(dleindex,1);
-          dataslent.splice(dleindex,1);
-        }
-      }
-      // 检测 更新 数据 dataslent
-      let dataslentlen = dataslent.length
-      if (dataslentlen !=0){
-        for(var p = 0; p < dataslentlen; p++) {
-          let updatindex = arrslent.indexOf(dataslent[p])
-          let ordata = arr[updatindex]
-          let ondata = this.room_list[p]
-          if(ordata.直播状态 != ondata.islive) {this.room_list[p].islive = ordata.直播状态}
-          if(ordata.平台 != ondata.table) {this.room_list[p].table = ordata.平台}
-          if(ordata.名称 != ondata.name) {this.room_list[p].name = ordata.名称}
-          if(ordata.原名 != ondata.orname) {this.room_list[p].orname = ordata.原名}
-          if(ordata.是否录制 != ondata.rec) {this.room_list[p].rec = ordata.是否录制}
-        }
-      }
-      // 新增 onlyArr
-      let onlyArrlen = onlyArr.length;
-      if (onlyArrlen !=0){
-        for(var l = 0; l < onlyArrlen; l++) {
-          let addindex = arrslent.indexOf(onlyArr[l])
-          let adddata = arr[addindex]
-          let pushdata = { "islive":adddata.直播状态,
-                          "table":adddata.平台,
-                          "name":adddata.名称,
-                          "orname":adddata.原名,
-                          "rec":adddata.是否录制,
-                          "roomid":adddata.唯一码,
-                          "show":true,
-                          "loading":false
-                            }
-          console.debug(pushdata)
-          this.room_list.push(pushdata);
-        }
-      }
-      console.debug(this.room_list)
-    },
-    msggo(res) {
-      let message = "操作成功"
-      let type = "success"
-      if(res.code != 1001){
-        message = res.message
-        type = "error"
-      }
-        this.$message({
-          message: message,
-          type: type
-        });
-    },
-
   /**
     * 自动录制状态管理
     * 
@@ -206,8 +146,12 @@ export default {
       return response.data
 
     },
-
-
+    msggo:function (res){
+      console.log(res)
+      let typ = "success",msg = "操作成功"
+      if (res.code != 1001) {typ = "error",msg = res.message}
+      this.$message({message: msg,type: typ});
+    },
     // 自动录制按钮 弹窗
     process_room_status: async function (index) {
       this.room_list[index].loading = true
@@ -257,6 +201,32 @@ export default {
         });
         this.room_list[index].loading=false
     },
+
+    /**
+    * like 房间
+    * 
+    * @param {roomid} 房间号
+    * @param {like} like接口的状态
+    * @return 接口返回的数据
+    */
+    room_like:async function(roomid,like){
+      let param = pubBody('room_like')
+      param.roomId = roomid
+      param.likeStatus = like
+      let response = await postFormAPI('room_like',param,true)
+      return response.data
+    },
+
+    room_like_pross : function(index){
+      let like = this.room_list[index].like,
+          roomid = this.room_list[index].roomid
+      this.room_like(roomid,!like).then(result =>{
+        this.msggo(result)
+        if(result.code == 1001) this.room_list[index].like = !like
+      })
+
+    },
+
     /**
     * 删除房间
     * 
@@ -330,28 +300,26 @@ export default {
         }
       });
     },
-
-
-  /**
+      /**
     * 房间列表
     * 
     * @return 接口返回的数据
     */
 
-    get_roomsetting: async function () {
-      let param = pubBody('room_list')
-      console.debug(param)
-      let response = await postFormAPI('room_list',param,true)
-      console.debug(response)
-      this.render_data(response.data.Package)
-      return response.data;
-    },
+  get_roomsetting: async function () {
+    let param = pubBody('room_list')
+    console.debug(param)
+    let response = await postFormAPI('room_list',param,true)
+    console.debug(response)
+    room_data(this,response.data.Package)
+    return response.data;
+  },
     // 用来发轮询请求的
-    getList: async function () {
+  getList: async function () {
       this.get_roomsetting();
-      }
-    },
-  // 销毁定时器
+    }
+
+  },
   destroyed() {
     window.clearInterval(this.timer);
   },
@@ -439,14 +407,22 @@ export default {
   flex-direction: row;
   justify-content: space-between; 
 }
-.like{
+.like-on{
   color: #ffd700;
   text-shadow: 0 0px 6px #ffd700c4;
   transition:color 0.2s;
   transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
 }
-.like:hover{
+.like-on:hover{
   color: #dbbe16;
+}
+.like-off{
+  color: #383838;
+  transition:color 0.2s;
+  transition-timing-function: cubic-bezier(0.075, 0.82, 0.165, 1);
+}
+.like-off:hover{
+  color: #6e6b6b;
 }
 .float-up{
   position: relative;
