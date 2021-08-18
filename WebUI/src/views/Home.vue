@@ -168,28 +168,29 @@
           </el-card>
 
         </div>
-
-        <el-table :data="rec_tab" style="width: 100%">
-          <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
-          <el-table-column prop="RoomId" label="房间号">
-          </el-table-column>
-          <el-table-column prop="Name" label="昵称">
-          </el-table-column>
-          <el-table-column prop="Downloaded_str" label="已录制文件大小">
-          </el-table-column>
-          <el-table-column label="开始时间">
-            <template slot-scope="scope">
-            {{toDate(scope.row.StartTime)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="Remark" label="备注">
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div class="table_class">
+          <el-table :data="rec_tab" style="width: 100%">
+            <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
+            <el-table-column prop="RoomId" label="房间号">
+            </el-table-column>
+            <el-table-column prop="Name" label="昵称">
+            </el-table-column>
+            <el-table-column prop="Downloaded_str" label="已录制文件大小">
+            </el-table-column>
+            <el-table-column label="开始时间">
+              <template slot-scope="scope">
+              {{toDate(scope.row.StartTime)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="Remark" label="备注">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
     </div>
 
   </div>
@@ -409,6 +410,9 @@ export default {
   justify-content: space-between;
   flex-direction: row;
   padding-right: 17px;
+}
+.table_class{
+  padding: 20px 0 0 0;
 }
 .sys {
   display: grid;
