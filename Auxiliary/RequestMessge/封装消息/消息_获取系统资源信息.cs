@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取系统资源信息
+    public class 消息_获取系统资源信息
     {
         
         public static string 获取系统资源情况()
