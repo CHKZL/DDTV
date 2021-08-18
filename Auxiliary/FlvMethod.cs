@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Auxiliary
 {
@@ -128,6 +129,8 @@ namespace Auxiliary
                 try
                 {
                     ProcessPuls process = new ProcessPuls();
+                    TimeSpan all = new TimeSpan(), now = new TimeSpan();
+                    int progress = -1;
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";
@@ -138,18 +141,47 @@ namespace Auxiliary
                     }
                     process.StartInfo.Arguments = "-i " + Filename + " -vcodec copy -acodec copy " + Filename.Replace(".flv", "") + ".mp4";
                     process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardInput = true;
                     process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.RedirectStandardInput = true;
+                    process.StartInfo.CreateNoWindow = true; // 不显示窗口。
                     process.EnableRaisingEvents = true;
-                    process.ErrorDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的信息
+                    process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                    process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                    {
+                        string stringResults = e.Data;
+                        if (stringResults == "" || stringResults == null) return;
+                        //Console.WriteLine(stringResults);
+                        if (stringResults.Contains("Duration"))
+                        {
+                            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
+                        }
+                        if (stringResults.Contains("time"))
+                        {
+                            string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
+                            if (tmpNow != "")
+                            {
+                                now = TimeSpan.Parse(tmpNow);
+                                progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
+                            }
+                        }
+                        if (progress != -1)
+                        {
+                            InfoLog.InfoPrintf($"转码进度:{progress}%", InfoLog.InfoClass.下载系统信息);
+                        }
+                        //Console.WriteLine(progress);
+                    };  // 捕捉的信息
                     DateTime beginTime = DateTime.Now;
                     process.Start();
                     process.BeginErrorReadLine();   // 开始异步读取
                     process.Exited += Process_Exited;
+                    
+                    //NagisaCo: 等待转码，使mp4文件完整后再开始上传功能
+                    process.WaitForExit();
+                    process.Close();
+
                     GC.Collect();
-                   
+
                 }
                 catch (Exception)
                 {
@@ -176,12 +208,6 @@ namespace Auxiliary
                 MMPU.文件删除委托(P.OriginalVideoFilename, "转码完成自动，删除原始文件");
             }
  
-        }
-
-        private static void Output(object sender, DataReceivedEventArgs e)
-        {
-            //InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.Debug);
-           // Console.WriteLine(e.Data);
         }
 
         const int FLV_HEADER_SIZE = 9;
