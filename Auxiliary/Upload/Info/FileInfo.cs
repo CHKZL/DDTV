@@ -108,7 +108,14 @@ namespace Auxiliary.Upload.Info
 
             endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
             if (flag)
+            {
                 statusCode = Status.Success;
+                //删除文件
+                if (Configer.deleteAfterUpload == "1")
+                {
+                    MMPU.文件删除委托(localPath + fileName, "上传成功, 自动删除本地文件");
+                }
+            }
             else
                 statusCode = Status.Fail;
         }
