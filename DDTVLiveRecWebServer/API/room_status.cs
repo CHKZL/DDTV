@@ -27,7 +27,6 @@ namespace DDTVLiveRecWebServer.API
             }
             bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
-                context.Request.Form["RoomId"],
                 context.Request.Form["RecStatus"],  
             })
             {
