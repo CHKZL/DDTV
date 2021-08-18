@@ -6,7 +6,7 @@ using static Auxiliary.RequestMessage.System_Core;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取检查更新信息
+    public class 消息_获取检查更新信息
     {
         public static string 检查更新信息()
         {

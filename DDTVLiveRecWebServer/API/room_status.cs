@@ -28,7 +28,7 @@ namespace DDTVLiveRecWebServer.API
             bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
                 context.Request.Form["RoomId"],
-                context.Request.Form["RecStatus"]
+                context.Request.Form["RecStatus"],  
             })
             {
                 if (string.IsNullOrEmpty(item))
@@ -46,7 +46,9 @@ namespace DDTVLiveRecWebServer.API
             {
                 bool 录制状态 = false;
                 bool.TryParse(context.Request.Form["RecStatus"], out 录制状态);
-                return Auxiliary.RequestMessage.封装消息.修改房间录制配置.修改录制配置(context.Request.Form["RoomId"], 录制状态);
+                bool 是否全部房间 = false;
+                bool.TryParse(context.Request.Form["AllRoom"], out 是否全部房间);
+                return Auxiliary.RequestMessage.封装消息.房间_修改房间录制配置.修改录制配置(context.Request.Form["RoomId"], 录制状态, 是否全部房间);
             }
         }
     }

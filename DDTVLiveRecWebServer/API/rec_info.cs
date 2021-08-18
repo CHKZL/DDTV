@@ -38,7 +38,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取录制任务详情信息.录制任务详情信息(context.Request.Form["GUID"]);
+                return Auxiliary.RequestMessage.封装消息.下载_获取录制任务详情信息.录制任务详情信息(context.Request.Form["GUID"]);
             }
         }
     }

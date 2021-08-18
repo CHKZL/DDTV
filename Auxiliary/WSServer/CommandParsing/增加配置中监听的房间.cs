@@ -27,7 +27,7 @@ namespace Auxiliary.WSServer.CommandParsing
             {
                 return ReturnInfoPackage.InfoPkak<Message<RoomAddInfo>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessage.封装消息.增加房间.增加(Rec.RoomId, Rec.Name, Rec.OfficialName, Rec.RecStatus);
+            return RequestMessage.封装消息.房间_增加房间.增加(Rec.RoomId, Rec.Name, Rec.OfficialName, Rec.RecStatus);
         }
         internal class RoomInfo
         {

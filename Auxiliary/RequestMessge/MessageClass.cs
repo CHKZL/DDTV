@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using static Auxiliary.RequestMessage.封装消息.获取系统资源信息.硬盘;
+using static Auxiliary.RequestMessage.封装消息.消息_获取系统资源信息.硬盘;
 
 namespace Auxiliary.RequestMessage
 {
@@ -41,7 +41,9 @@ namespace Auxiliary.RequestMessage
             根据房间号获得相关录制文件 = 2016,
             获取上传任务信息列表 = 2017,
             获取上传中的任务信息列表 = 2018,
+            修改房间Like配置=2019,
             修改配置_自动转码设置=2201,
+
         }
     }
     public class File
@@ -157,6 +159,11 @@ namespace Auxiliary.RequestMessage
             public string message { set; get; }
         }
         public class RoomStatusInfo
+        {
+            public bool result { set; get; }
+            public string message { set; get; }
+        }
+        public class RoomLiekInfo
         {
             public bool result { set; get; }
             public string message { set; get; }

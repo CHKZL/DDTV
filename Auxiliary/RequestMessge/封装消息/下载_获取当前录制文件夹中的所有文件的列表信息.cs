@@ -7,7 +7,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取当前录制文件夹中的所有文件的列表信息
+    public class 下载_获取当前录制文件夹中的所有文件的列表信息
     {
         public static string 当前录制文件夹中的所有文件的列表信息()
         {
