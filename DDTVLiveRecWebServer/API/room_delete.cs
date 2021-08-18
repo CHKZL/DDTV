@@ -41,7 +41,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.删除房间.删除(context.Request.Form["RoomId"]);
+                return Auxiliary.RequestMessage.封装消息.房间_删除房间.删除(context.Request.Form["RoomId"]);
             }
         }
 

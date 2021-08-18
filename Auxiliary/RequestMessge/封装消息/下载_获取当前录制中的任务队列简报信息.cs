@@ -6,7 +6,7 @@ using static Auxiliary.RequestMessage.Rec;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取当前录制中的任务队列简报信息
+    public class 下载_获取当前录制中的任务队列简报信息
     {
         public static string 当前录制中的任务队列简报信息()
         {
@@ -25,7 +25,8 @@ namespace Auxiliary.RequestMessage.封装消息
                         Downloaded_str = item.DownIofo.已下载大小str,
                         GUID = item.DownIofo.事件GUID,
                         State = item.DownIofo.下载状态,
-                        Remark=item.DownIofo.备注
+                        Remark=item.DownIofo.备注,
+                        Transcoding = item.DownIofo.是否转码中
                     });
                 }
             }

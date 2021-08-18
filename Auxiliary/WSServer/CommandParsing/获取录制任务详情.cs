@@ -23,7 +23,7 @@ namespace Auxiliary.WSServer.CommandParsing
             {
                 return ReturnInfoPackage.InfoPkak<Message<Downloader.DownIofoData>>((int)ServerSendMessageCode.请求成功但出现了错误,null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessage.封装消息.获取录制任务详情信息.录制任务详情信息(Rec.GUID);       
+            return RequestMessage.封装消息.下载_获取录制任务详情信息.录制任务详情信息(Rec.GUID);       
         }
         internal class RecInfo
         {

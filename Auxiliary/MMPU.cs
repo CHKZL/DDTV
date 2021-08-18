@@ -36,7 +36,8 @@ namespace Auxiliary
             "给DDTVLiveRec增加了提示提示更新和一键更新脚本",
             "给WebSocket服务器增加了证书支持",
             "部分设置支持使用API进行热重载了",
-            "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x"
+            "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x",
+            "为DDTVLiveRec增加了全新的Web界面，替换原来的简单信息页"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -169,6 +170,11 @@ namespace Auxiliary
             SystemInit.辅助功能初始化.系统心跳初始化(模式);
             SystemInit.辅助功能初始化.文件删除后台委托初始化();
             Downloader.轮询检查下载任务();
+
+
+
+
+
             return true;
         }
     

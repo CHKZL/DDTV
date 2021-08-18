@@ -7,7 +7,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取系统日志
+    public class 消息_获取系统日志
     {
         public static string 日志(int count)
         {
