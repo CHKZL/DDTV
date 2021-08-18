@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 删除录制的文件
+    public class 文件_删除录制的文件
     {
         public static string 删除(string Dir,string Name)
         {

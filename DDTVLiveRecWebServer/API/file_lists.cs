@@ -19,7 +19,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取当前录制文件夹中的所有文件的列表信息.当前录制文件夹中的所有文件的列表信息();
+                return Auxiliary.RequestMessage.封装消息.下载_获取当前录制文件夹中的所有文件的列表信息.当前录制文件夹中的所有文件的列表信息();
             }
         }
     }
