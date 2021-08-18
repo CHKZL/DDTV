@@ -74,6 +74,16 @@ namespace Auxiliary.Upload.Info
                 throw new FileException($"找不到文件{localPath + fileName}");
             }
 
+            if (fileSize == 0)
+            {
+                //删除文件
+                if (Configer.deleteAfterUpload == "1")
+                {
+                    MMPU.文件删除委托(localPath + fileName, "检测到本地文件为空, 自动删除");
+                }
+                throw new FileException($"文件{localPath + fileName}为空, 取消上传");
+            }
+
             foreach (var item in Configer.UploadOrder) //遍历上传目标
             {
                 try
