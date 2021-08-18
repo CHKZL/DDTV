@@ -55,18 +55,25 @@ namespace Auxiliary.Upload.Info
 
         public TaskInfo(string fileName, string localPath, string remotePath,FileType fileType, TaskType taskType)
         {
-            startTime = -1;
-            endTime = -1;
-            statusCode = Status.OnHold;
-            this.fileName = fileName;
-            this.localPath = localPath;
-            this.remotePath = remotePath;
-            this.fileType = fileType;
-            this.taskType = taskType;
+            try
+            {
+                startTime = -1;
+                endTime = -1;
+                statusCode = Status.OnHold;
+                this.fileName = fileName;
+                this.localPath = localPath;
+                this.remotePath = remotePath;
+                this.fileType = fileType;
+                this.taskType = taskType;
 
-            retries = -1;
-            progress = -1;
-            comments = ""; 
+                retries = -1;
+                progress = -1;
+                comments = "";
+            }
+            catch(Exception ex)
+            {
+                throw new TaskException($"创建任务{fileName}-{Enum.GetName((typeof(TaskType)), taskType)}失败", ex);
+            }
         }
 
         public void UploadTask()

@@ -58,45 +58,100 @@ namespace Auxiliary.Upload.Info
                 string localPath = (Path.GetDirectoryName(downIofo.文件保存路径) + "/").Replace("\\", "/");
                 string flvFileName = Path.GetFileName(downIofo.文件保存路径);
                 string remotePath = $"{downIofo.主播名称}_{downIofo.房间_频道号}/{MMPU.Unix转换为DateTime(downIofo.开始时间.ToString()).ToString("yyyyMMdd")}_{downIofo.标题}/";
-                files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
                 if (MMPU.录制弹幕)
                 {
                     try
                     {
                         files.Add(FileType.gift, new FileInfo(flvFileName + ".txt", localPath, remotePath, FileType.gift));
+                        InfoLog.InfoPrintf($"礼物文件已添加上传队列", InfoLog.InfoClass.Debug);
                     }
-                    catch
+                    catch (FileException ex)
                     {
-                        //throw new CreateUploadTaskFailure("礼物文件上传任务创建失败");
+                        InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                        InfoLog.InfoPrintf("未找到礼物文件",InfoLog.InfoClass.上传系统信息);
                     }
                     try
                     {
                         files.Add(FileType.danmu, new FileInfo(flvFileName.Replace(".flv", (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml")), localPath, remotePath, FileType.danmu));
+                        InfoLog.InfoPrintf($"弹幕文件已添加上传队列", InfoLog.InfoClass.Debug);
                     }
-                    catch
+                    catch (FileException ex)
                     {
-                        //throw new CreateUploadTaskFailure("弹幕文件上传任务创建失败");
+                        InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                        InfoLog.InfoPrintf("未找到弹幕文件", InfoLog.InfoClass.上传系统信息);
                     }
                     
                 }
-                if (MMPU.转码功能使能)
+                if (MMPU.转码功能使能) //开启转码
                 {
-                    try
+                    if (MMPU.转码后自动删除文件) //开启转码后删除
                     {
-                        files.Add(FileType.mp4, new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
-                            if (MMPU.转码后自动删除文件)
-                                files.Remove(FileType.flv);
+                        try
+                        {
+                            files.Add(FileType.mp4, new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
+                            InfoLog.InfoPrintf($"转码mp4文件已添加上传队列", InfoLog.InfoClass.Debug);
+                        }
+                        catch (FileException ex) //未找到mp4文件
+                        {
+                            InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                            InfoLog.InfoPrintf("未找到转码mp4文件", InfoLog.InfoClass.上传系统信息);
+                            try //mp4文件不存在 添加flv文件
+                            {
+                                files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                                InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
+                            }
+                            catch (FileException ex2) //MP4 flv文件均不存在
+                            {
+                                InfoLog.InfoPrintf(ex2.Message, InfoLog.InfoClass.Debug);
+                                InfoLog.InfoPrintf("未找到flv文件", InfoLog.InfoClass.Debug);
+                                InfoLog.InfoPrintf("未找到视频文件", InfoLog.InfoClass.系统错误信息);
+                            }
+                        }
                     }
-                    catch
+                    else //未开启转码后删除
                     {
-                        //throw new CreateUploadTaskFailure("转码文件上传任务创建失败");
+                        try //添加mp4文件
+                        {
+                            files.Add(FileType.mp4, new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
+                            InfoLog.InfoPrintf($"转码mp4文件已添加上传队列", InfoLog.InfoClass.Debug);
+                        }
+                        catch (FileException ex)
+                        {
+                            InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                            InfoLog.InfoPrintf("未找到转码mp4文件", InfoLog.InfoClass.上传系统信息);
+                        }
+                        try //添加flv文件
+                        {
+                            files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                            InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
+                        }
+                        catch (FileException ex)
+                        {
+                            InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                            InfoLog.InfoPrintf("未找到flv文件", InfoLog.InfoClass.上传系统信息);
+                        }
                     }
-                    
                 }
+                else //未开启转码
+                {
+                    try //添加flv文件
+                    {
+                        files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                        InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
+                    }
+                    catch (FileException ex)
+                    {
+                        InfoLog.InfoPrintf(ex.Message, InfoLog.InfoClass.Debug);
+                        InfoLog.InfoPrintf("未找到flv文件", InfoLog.InfoClass.上传系统信息);
+                    }
+                }
+
+                if (files.Count == 0)
+                    throw new ProjectException($"创建{streamerName}-{streamTitle}上传任务失败，未获取到相关文件");
             }
             catch
             {
-                //throw new CreateUploadTaskFailure("创建{streamerName}-{streamTitle}上传任务失败，无法获取文件信息");//处理获取文件名、文件大小的错误
+                throw new ProjectException($"创建{streamerName}-{streamTitle}上传任务失败，无法获取项目信息");
             }
         }
 
