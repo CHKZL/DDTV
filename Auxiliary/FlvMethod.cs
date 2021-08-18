@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace Auxiliary
 {
@@ -18,12 +19,12 @@ namespace Auxiliary
             public string File1Url { set; get; }
             public string File2Url { set; get; }
         }
-        public static string FlvSum(Flv A,bool 是否直播结束)
+        public static string FlvSum(Flv A, bool 是否直播结束)
         {
             List<string> DelFileList = new List<string>();
             String path1 = A.File1Url;
             String path2 = A.File2Url;
-            if(!File.Exists(path1))
+            if (!File.Exists(path1))
             {
                 InfoLog.InfoPrintf("续录文件[" + path1 + "]文件不存在，不符合合并条件，文件合并取消", InfoLog.InfoClass.Debug);
                 return null;
@@ -37,11 +38,11 @@ namespace Auxiliary
             if (是否直播结束)
             {
                 string file = A.File1Url.Replace("_202", "⒂").Split('⒂')[0];
-                if(file.Substring(file.Length-4,4)==".flv")
+                if (file.Substring(file.Length - 4, 4) == ".flv")
                 {
                     file = file.Substring(0, file.Length - 4);
                 }
-                if(!string.IsNullOrEmpty(file))
+                if (!string.IsNullOrEmpty(file))
                 {
                     output = file + $"_{DateTime.Now.ToString("yyyyMMddHHmmssfff")}合并.flv";
                 }
@@ -58,7 +59,7 @@ namespace Auxiliary
                     }
                     else
                     {
-                        output = $"_{new Random().Next(10000,99999)}合并.flv";
+                        output = $"_{new Random().Next(10000, 99999)}合并.flv";
                     }
                 }
             }
@@ -66,7 +67,7 @@ namespace Auxiliary
             {
                 output = A.File1Url.Replace("_202", "⒂").Split('⒂')[0] + "_" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".flv";
             }
-            if(File.Exists(output))
+            if (File.Exists(output))
             {
                 output.Replace(".flv", new Random().Next(1000, 9999) + ".flv");
             }
@@ -114,7 +115,7 @@ namespace Auxiliary
                     InfoLog.InfoPrintf("2该视频不适合合并，放弃合并", InfoLog.InfoClass.下载系统信息);
                     return null;
                 }
-               
+
             }
         }
         /// <summary>
@@ -128,6 +129,8 @@ namespace Auxiliary
                 try
                 {
                     ProcessPuls process = new ProcessPuls();
+                    TimeSpan all = new TimeSpan(), now = new TimeSpan();
+                    int progress = -1;
                     if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
                         process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";
@@ -138,18 +141,47 @@ namespace Auxiliary
                     }
                     process.StartInfo.Arguments = "-i " + Filename + " -vcodec copy -acodec copy " + Filename.Replace(".flv", "") + ".mp4";
                     process.StartInfo.UseShellExecute = false;
-                    process.StartInfo.CreateNoWindow = true;
                     process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.RedirectStandardInput = true;
                     process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.RedirectStandardInput = true;
+                    process.StartInfo.CreateNoWindow = true; // 不显示窗口。
                     process.EnableRaisingEvents = true;
-                    process.ErrorDataReceived += new DataReceivedEventHandler(Output);  // 捕捉ffmpeg.exe的信息
+                    process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                    process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                    {
+                        string stringResults = e.Data;
+                        if (stringResults == "" || stringResults == null) return;
+                        //Console.WriteLine(stringResults);
+                        if (stringResults.Contains("Duration"))
+                        {
+                            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
+                        }
+                        if (stringResults.Contains("time"))
+                        {
+                            string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
+                            if (tmpNow != "")
+                            {
+                                now = TimeSpan.Parse(tmpNow);
+                                progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
+                            }
+                        }
+                        if (progress != -1)
+                        {
+                            InfoLog.InfoPrintf($"转码进度:{progress}%", InfoLog.InfoClass.下载系统信息);
+                        }
+                        //Console.WriteLine(progress);
+                    };  // 捕捉的信息
                     DateTime beginTime = DateTime.Now;
                     process.Start();
                     process.BeginErrorReadLine();   // 开始异步读取
                     process.Exited += Process_Exited;
+
+                    //NagisaCo: 等待转码，使mp4文件完整后再开始上传功能
+                    process.WaitForExit();
+                    process.Close();
+
                     GC.Collect();
-                   
+
                 }
                 catch (Exception)
                 {
@@ -159,7 +191,7 @@ namespace Auxiliary
             {
                 GC.Collect();
             }
-           
+
         }
         public class ProcessPuls : Process
         {
@@ -170,18 +202,12 @@ namespace Auxiliary
         private static void Process_Exited(object sender, EventArgs e)
         {
             ProcessPuls P = (ProcessPuls)sender;
-            InfoLog.InfoPrintf("转码任务完成:"+P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
-            if(MMPU.转码后自动删除文件)
+            InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
+            if (MMPU.转码后自动删除文件)
             {
                 MMPU.文件删除委托(P.OriginalVideoFilename, "转码完成自动，删除原始文件");
             }
- 
-        }
 
-        private static void Output(object sender, DataReceivedEventArgs e)
-        {
-            //InfoLog.InfoPrintf(e.Data, InfoLog.InfoClass.Debug);
-           // Console.WriteLine(e.Data);
         }
 
         const int FLV_HEADER_SIZE = 9;
