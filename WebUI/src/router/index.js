@@ -6,6 +6,7 @@ import Login from '../views/Login.vue'
 import File from '../views/file.vue'
 import Room from '../views/room.vue'
 import Play from '../views/play.vue'
+import NotFound from '../views/404.vue'
 
 Vue.use(VueRouter)
 
@@ -54,6 +55,14 @@ const routes = [
       title:"登录",
       keepAlive: false
       
+    }
+  },
+  {
+    path: '*',
+    component:NotFound,
+    meta: {
+      keepAlive: true,
+      title:'404'
     }
   }
 ]

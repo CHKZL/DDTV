@@ -8,7 +8,7 @@
             <i class="el-icon-tickets"></i>
           </div>
 
-          <div class="bataGroup">
+          <div class="bataGroup grid_3">
               <el-card shadow="hover">
                 <div class="card-title-litter">监听房间数</div>
                 <div class="big-number">
@@ -77,14 +77,12 @@
             设备状态
             <i class="el-icon-warning-outline"></i>
           </div>
-          <el-row :gutter="10">
-            <el-col :span="8">
+            <div class="bataGroup grid_3">
               <el-card shadow="hover">
                 <div class="card-title-litter">CPU</div>
                 <div class="big-number">{{system_monitor.CPU_usage}}%</div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">内存</div>
                 <div class="big-number">
@@ -92,8 +90,6 @@
                   <span>/{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</span>
                 </div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
               <el-card shadow="hover">
                 <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
                 <div class="big-number">
@@ -101,8 +97,7 @@
                   <span>/{{HDD.Size}}</span>
                 </div>
               </el-card>
-            </el-col>
-          </el-row>
+            </div>
           <el-descriptions style="padding-top: 20px">
             <el-descriptions-item label="服务器名称">{{system_info_data.ServerName}}</el-descriptions-item>
             <el-descriptions-item label="UUID">
@@ -150,7 +145,7 @@
           任务概览
           <i class="el-icon-tickets"></i>
         </div>
-        <div class="bataGroup">
+        <div class="bataGroup grid_4">
 
           <el-card shadow="hover">
             <div class="card-title-litter">正在进行</div>
@@ -163,8 +158,13 @@
           </el-card>
 
           <el-card shadow="hover">
-            <div class="card-title-litter">出错</div>
-            <div class="big-number">0</div>
+            <div class="card-title-litter">转码管道</div>
+            <div class="big-number" style="color:rgb(103 194 58)">空闲</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">已录制文件数</div>
+            <div class="big-number" >455</div>
           </el-card>
 
         </div>
@@ -431,8 +431,12 @@ export default {
 .bataGroup{
   display:grid;
   grid-gap: 10px;
+}
+.grid_3{
   grid-template-columns: 1fr 1fr 1fr;
-
+}
+.grid_4{
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 .card-title {
   /* line-height: 54px; */
