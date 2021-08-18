@@ -1,9 +1,40 @@
 /**
 * ddtv data_cli 用于进行api数据更新 隔离视图层和api请求的数据的一类函数
 * (c) 2021 禾咕咕
-* @param {arr} 源数据数组
+* @param {arr or obj} 源数据
 */
-export async function room_data(self,arr) {
+
+export function isObjectEqual(obj1, obj2) {
+    let o1 = obj1 instanceof Object;
+    let o2 = obj2 instanceof Object;
+    if (!o1 || !o2) {    // 如果不是对象 直接判断数据是否相等
+        return obj1 === obj2
+    }
+    // 判断对象的可枚举属性组成的数组长度
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        return false;
+    }
+    for (let attr in obj1) {
+        let a1 = Object.prototype.toString.call(obj1[attr]) == '[object Object]'
+        let a2 = Object.prototype.toString.call(obj2[attr]) == '[object Object]'
+        let arr1 = Object.prototype.toString.call(obj1[attr]) == '[object Array]'
+        if (a1 && a2) {
+            // 如果是对象继续判断
+            return isObjectEqual(obj1[attr], obj2[attr])
+        } else if (arr1) {
+            // 如果是对象 判断
+            if (obj1[attr].toString() != obj2[attr].toString()) {
+                return false;
+            }
+        } else if (obj1[attr] !== obj2[attr]) {
+            // 不是对象的就判断数值是否相等
+            return false
+        }
+    }
+    return true
+}
+
+export async function room_data(self, arr) {
     // 遍历本地数据 初始化 roomid 和 index 对应的索引
     let datalen = self.room_list.length,
         dataslent = []
@@ -55,7 +86,7 @@ export async function room_data(self,arr) {
                     "orname": adddata.原名,
                     "rec": adddata.是否录制,
                     "roomid": adddata.唯一码,
-                    "like":adddata.Like,
+                    "like": adddata.Like,
                     "show": true,
                     "loading": false
                 }
@@ -65,3 +96,57 @@ export async function room_data(self,arr) {
     }
     console.debug(self.room_list)
 }
+
+export function sys_info_pr(self, obj) {
+    console.log(self.system_info_data)
+    if (!isObjectEqual(self.system_info_data, obj)) { self.system_info_data = obj }
+    else console.log("数据没有发生改变")
+}
+
+export const sys_data_ex = {
+    "DDTVCore_Ver": "--",
+    "Room_Quantity": "--",
+    "ServerName": "--",
+    "ServerAID": "--",
+    "ServerGroup": "--",
+    "os_Info": {
+        "OS_Ver": "--",
+        "OS_Tpye": "--",
+        "Memory_Usage": 0,
+        "Runtime_Ver": "--",
+        "UserInteractive": "--",
+        "Associated_Users": "--",
+        "Current_Directory": "--",
+        "AppCore_Ver": "--",
+        "WebCore_Ver": "--"
+    },
+    "download_Info": {
+        "Downloading": "--",
+        "Completed_Downloads": "--"
+    },
+    "ver_Info": {
+        "IsNewVer": "--",
+        "NewVer": "--",
+        "Update_Log": "--"
+    }
+}
+export const sys_mon_ex = {
+    "reload":true,
+    "Platform": "p",
+    "DDTV_use_memory": 0,
+    "CPU_usage": 0,
+    "Available_memory": 0,
+    "Total_memory": 0,
+    "HDDInfo": [
+        {
+            "FileSystem": "",
+            "Size": "0T",
+            "Used": "66%",
+            "Avail": "0T",
+            "Usage": "0T",
+            "MountPath": "/"
+        }
+    ]
+}
+
+
