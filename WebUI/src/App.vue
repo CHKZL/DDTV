@@ -61,14 +61,10 @@ export default {
     };
   },
   mounted() {
-    console.log(document.body.clientWidth)
-    this.screenWidth = document.body.clientWidth
-    if(this.screenWidth < 1300) this.isCollapse = true
-    const that = this;
     window.onresize = () => {
       return (() => {
         window.screenWidth = document.body.clientWidth;
-        that.screenWidth = window.screenWidth;
+        this.screenWidth = window.screenWidth;
       })();
     };
   },
@@ -107,6 +103,8 @@ export default {
   created() {
     window.addEventListener("resize", this.getwindth);
     this.getwindth();
+    this.screenWidth = document.body.clientWidth
+    if(this.screenWidth < 1300) this.isCollapse = true
   },
   destroyed() {
     window.removeEventListener("resize", this.getwindth);
