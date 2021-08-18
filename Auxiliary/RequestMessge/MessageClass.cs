@@ -110,6 +110,10 @@ namespace Auxiliary.RequestMessage
             /// 备注
             /// </summary>
             public string Remark { set; get; }
+            /// <summary>
+            /// 是否在转码中
+            /// </summary>
+            public bool Transcoding { set; get; }
         }
         public class RecLProcessinist
         {
@@ -149,6 +153,10 @@ namespace Auxiliary.RequestMessage
             /// 备注
             /// </summary>
             public string Remark { set; get; }
+            /// <summary>
+            /// 是否在转码中
+            /// </summary>
+            public bool Transcoding { set; get; }
         }
     }
     public class Room

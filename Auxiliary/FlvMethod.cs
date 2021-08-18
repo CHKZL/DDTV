@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using static Auxiliary.Downloader;
 
 namespace Auxiliary
 {
@@ -122,12 +123,13 @@ namespace Auxiliary
         /// 调用ffmpeg修复阿B的傻逼时间轴，顺便封装成MP4
         /// </summary>
         /// <param name="Filename">转码文件</param>
-        public static void 转码(string Filename)
+        public static void 转码(string Filename,DownIofoData downIofoData)
         {
             if (MMPU.转码功能使能)
             {
                 try
                 {
+                    downIofoData.是否转码中 = true;
                     ProcessPuls process = new ProcessPuls();
                     TimeSpan all = new TimeSpan(), now = new TimeSpan();
                     int progress = -1;
@@ -168,6 +170,14 @@ namespace Auxiliary
                         if (progress != -1)
                         {
                             InfoLog.InfoPrintf($"转码进度:{progress}%", InfoLog.InfoClass.下载系统信息);
+                            if(downIofoData!=null)
+                            {
+                                downIofoData.转码进度 = progress;
+                            }
+                            else
+                            {
+                                downIofoData.转码进度 = -1;
+                            }
                         }
                         //Console.WriteLine(progress);
                     };  // 捕捉的信息
@@ -186,6 +196,7 @@ namespace Auxiliary
                 catch (Exception)
                 {
                 }
+                downIofoData.是否转码中 = false;
             }
             else
             {
