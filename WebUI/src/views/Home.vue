@@ -1,38 +1,33 @@
 <template>
   <div class="home">
-    <el-row :gutter="10">
-      <el-col :xs="24" :md="12">
-        <el-card class="systemInfo">
+    <div class="sys">
+
+      <div class="systemInfo">
           <div class="card-title">
             系统状态
             <i class="el-icon-tickets"></i>
           </div>
-          <el-row :gutter="10">
-            <el-col :span="8">
+
+          <div class="bataGroup">
               <el-card shadow="hover">
                 <div class="card-title-litter">监听房间数</div>
                 <div class="big-number">
                   {{ system_info_data.Room_Quantity }}
                 </div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">正在录制</div>
                 <div class="big-number">
                   {{ system_info_data.download_Info.Downloading }}
                 </div>
-                <div></div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">正在上传</div>
                 <div class="big-number">{{uoload.length}}</div>
-                <div></div>
               </el-card>
-            </el-col>
-          </el-row>
+          </div>
 
           <el-descriptions style="padding-top: 20px">
             <el-descriptions-item label="更新">
@@ -75,10 +70,9 @@
               {{ system_info_data.os_Info.Associated_Users }}
             </el-descriptions-item>
           </el-descriptions>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <el-card class="serverInfo">
+      </div>
+
+      <div class="systemInfo">
           <div class="card-title">
             设备状态
             <i class="el-icon-warning-outline"></i>
@@ -131,11 +125,11 @@
             <el-descriptions-item label="磁盘">{{sys_dish.Size}}</el-descriptions-item>
             <el-descriptions-item label="DDTV占用内存">{{((system_monitor.DDTV_use_memory/1024)/1024).toFixed(2)}}MB</el-descriptions-item>
           </el-descriptions>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10" style="padding-top: 20px">
-      <el-card class="tasksInfo">
+      </div>
+
+    </div>
+    
+    <div class="systemInfo">
         <div class="card-title">
           任务概览
           <i class="el-icon-tickets"></i>
@@ -183,8 +177,8 @@
             </template>
           </el-table-column>
         </el-table>
-      </el-card>
-    </el-row>
+    </div>
+
   </div>
 </template>
 
@@ -204,10 +198,10 @@ export default {
       uoload:[]
     };
   },
+  created: async function(){
+    await this.getList()
+  },
   mounted: async function () {
-    // 发一次请求 确定用户凭据的有效性
-    this.getList();
-
     // 进行轮询，定时间隔10秒一次
     this.timer = window.setInterval(() => {
       setTimeout(() => {
@@ -384,8 +378,29 @@ export default {
 <style>
 .home{
   /*概览的主要元素的容器 全局布局的对象 */
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(540px, 100%));
+}
+.sys {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+  grid-template-rows: repeat(1, 300px);
+}
+.systemInfo {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  padding: 20px 20px 20px 20px;
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
+  align-items: stretch;
+  align-content: center;
+}
+.bataGroup{
+  display:grid;
+  grid-gap: 10px;
+  grid-template-columns: 1fr 1fr 1fr;
+
 }
 .card-title {
   /* line-height: 54px; */
