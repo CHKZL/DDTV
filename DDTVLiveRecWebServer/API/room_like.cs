@@ -2,15 +2,14 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static Auxiliary.RequestMessage.File;
 using static Auxiliary.RequestMessage.MessageClass;
+using static Auxiliary.RequestMessage.Room;
 
 namespace DDTVLiveRecWebServer.API
 {
-    public class file_range
+    public class room_like
     {
         public static string Web(HttpContext context)
         {
@@ -20,11 +19,12 @@ namespace DDTVLiveRecWebServer.API
             }
             catch (Exception)
             {
-                return ReturnInfoPackage.InfoPkak<Message<FileRangeInfo>>((int)ServerSendMessageCode.鉴权失败, null, "请求的表单格式不正确！");
+                return ReturnInfoPackage.InfoPkak<Message<RoomLiekInfo>>((int)ServerSendMessageCode.鉴权失败, null, "请求的表单格式不正确！");
             }
             bool 鉴权预处理结果 = false;
             foreach (var item in new List<string>() {
-                context.Request.Form["RoomId"]
+                context.Request.Form["RoomId"],
+                context.Request.Form["LikeStatus"]
             })
             {
                 if (string.IsNullOrEmpty(item))
@@ -33,16 +33,17 @@ namespace DDTVLiveRecWebServer.API
                     break;
                 }
             };
-            var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_range", 鉴权预处理结果 ? true : false);
+            var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "room_like", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
-                return ReturnInfoPackage.InfoPkak<Message<FileRangeInfo>>((int)ServerSendMessageCode.鉴权失败, null, 鉴权结果.鉴权返回消息);
+                return ReturnInfoPackage.InfoPkak<Message<RoomLiekInfo>>((int)ServerSendMessageCode.鉴权失败, null, 鉴权结果.鉴权返回消息);
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.文件_根据房间号获取录制的文件列表.获取文件列表(context.Request.Form["RoomId"]);
+                bool Like状态 = false;
+                bool.TryParse(context.Request.Form["LikeStatus"], out Like状态);
+                return Auxiliary.RequestMessage.封装消息.房间_修改liek状态.修改Like配置(context.Request.Form["RoomId"], Like状态);
             }
         }
-
     }
 }

@@ -42,7 +42,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.删除录制的文件.删除(context.Request.Form["Directory"], context.Request.Form["Name"]);
+                return Auxiliary.RequestMessage.封装消息.文件_删除录制的文件.删除(context.Request.Form["Directory"], context.Request.Form["Name"]);
             }
         }
 

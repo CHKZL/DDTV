@@ -23,7 +23,7 @@ namespace Auxiliary.WSServer.CommandParsing
             {
                 return ReturnInfoPackage.InfoPkak<Message<AutoTranscoding>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessage.封装消息.修改配置_自动转码.转码(aTinfo.transcoding_status);
+            return RequestMessage.封装消息.配置_自动转码.转码(aTinfo.transcoding_status);
         }
         internal class ATinfo
         {
