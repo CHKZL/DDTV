@@ -37,15 +37,27 @@ namespace Auxiliary
                 catch (Exception) { }
                 try
                 {
+                    string danmuFile = ((System.IO.FileStream)DOL.弹幕储存流.BaseStream).Name;
                     DOL.弹幕储存流.Close();
                     DOL.弹幕储存流.Dispose();
+                    if (Path.GetFileNameWithoutExtension(danmuFile) != Path.GetFileNameWithoutExtension(DOL.文件保存路径))
+                    {
+                        File.Move(danmuFile, DOL.文件保存路径.Substring(0, DOL.文件保存路径.Length - 4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
+                        MMPU.文件删除委托(danmuFile, "弹幕文件重命名");
+                    }
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间弹幕储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
                 try
                 {
+                    string giftFile = ((System.IO.FileStream)DOL.礼物储存流.BaseStream).Name;
                     DOL.礼物储存流.Close();
                     DOL.礼物储存流.Dispose();
+                    if (giftFile.Substring(0, giftFile.Length - 4) != DOL.文件保存路径)
+                    {
+                        File.Move(giftFile, DOL.文件保存路径 + ".txt");
+                        MMPU.文件删除委托(giftFile, "礼物文件重命名");
+                    }
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间礼物储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
