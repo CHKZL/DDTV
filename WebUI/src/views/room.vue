@@ -6,7 +6,7 @@
       </div>
       <el-button icon="el-icon-search" circle></el-button>
       <el-button class="tools-item" icon="el-icon-plus"  circle @click="dialogFormVisible = true"></el-button>
-      <el-switch class="tools-item" v-model="stopall" active-color="#13ce66" inactive-color="#ff4949" ></el-switch>
+      <el-switch class="tools-item" v-model="stopall" active-color="#46d485" inactive-color="#efe3e3"></el-switch>
     </div>
 
     <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
@@ -40,7 +40,7 @@
           <div class="room-card-config">
             <el-popover trigger="hover">
               <div style="text-align: right; margin: 0">
-                <el-button  size="mini" @click="displaybox(index)" >停止录制</el-button>
+                <el-button  size="mini" @click="displaybox(index)" >锁定配置</el-button>
                 <el-button type="danger" size="mini" @click="process_room_delete(index)">删除房间</el-button>
               </div>
               <i class="el-icon-setting config-ico" slot="reference" style="font-size:20px"></i>
@@ -55,7 +55,7 @@
                 <i class="el-icon-loading" v-if="item.rec && item.islive"></i>
             </div>
           </div>
-          <el-switch class="live-switch" v-model="item.rec" active-color="#13ce66" inactive-color="#ff4949" @change="process_room_status(index)"></el-switch>
+          <el-switch class="live-switch" v-model="item.rec" active-color="#46d485" inactive-color="#efe3e3" @change="process_room_status(index)"></el-switch>
           <div class="set">
             <i @click="room_like_pross(index)" class="float-up" :class="room_list[index].like ? 'el-icon-star-on like-on':'el-icon-star-off like-off'"></i>
             <i class="float-up el-icon-folder"></i>

@@ -119,7 +119,7 @@ export default {
   top: 0;
 }
 .login-background[data-v-26084dc2] {
-  background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url(/static/img/loginBack.b32af197.jpg);
+  background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url("../../public/static/loginBack.jpg");
   background-size: cover;
   background-position: center;
 }
