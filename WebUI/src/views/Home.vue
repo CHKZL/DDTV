@@ -204,12 +204,12 @@
             <div class="originname">七咔拉CHikalar</div>
             <div class="card-title">项目内容</div>
             <div class="UpObjInof">
-              
               <el-image src="../static/flv.png" style="width:60px"></el-image>
               <el-image src="../static/mp4.png" style="width:60px"></el-image>
               <el-image src="../static/gift.png" style="width:60px"></el-image>
               <el-image src="../static/danmuku.png" style="width:60px"></el-image>
             </div>
+            <div>这样的图标太丑了，我就算从楼上跳下去也不会去用，我再想想</div>
           </div>
         </div>
     </div>
