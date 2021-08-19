@@ -16,7 +16,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取检查更新信息.检查更新信息();
+                return Auxiliary.RequestMessage.封装消息.消息_获取检查更新信息.检查更新信息();
             }
 
         }

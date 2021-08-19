@@ -24,7 +24,7 @@ namespace Auxiliary.WSServer.CommandParsing
             {
                 return ReturnInfoPackage.InfoPkak<Message<DownIofoData>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessage.封装消息.执行取消录制任务.取消录制任务(Rec.GUID);
+            return RequestMessage.封装消息.下载_执行取消录制任务.取消录制任务(Rec.GUID);
         }
         internal class RecInfo 
         {

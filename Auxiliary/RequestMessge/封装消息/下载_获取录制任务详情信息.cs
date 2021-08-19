@@ -5,7 +5,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取录制任务详情信息
+    public class 下载_获取录制任务详情信息
     {
         public static string 录制任务详情信息(string GUID)
         {

@@ -17,19 +17,30 @@ namespace Auxiliary.WSServer.CommandParsing
             try
             {
                 JObject JO = (JObject)JsonConvert.DeserializeObject(mess);
-                Rec.RoomId = JO["RoomId"].ToString();
                 Rec.RecStatus = bool.Parse(JO["RecStatus"].ToString());
+
+                int 房间号 = 0;
+                int.TryParse(JO["RoomId"].ToString(), out 房间号);
+                Rec.RoomId = 房间号.ToString();
+                if(房间号==0)
+                {
+                    Rec.RoomId = null;
+                }
+                bool 是否全部房间 = false;
+                bool.TryParse(JO["AllRoom"].ToString(), out 是否全部房间);
+                Rec.AllRoom = 是否全部房间;
             }
             catch (Exception)
             {
                 return ReturnInfoPackage.InfoPkak<Message<RoomStatusInfo>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "服务器收到的数据不符合消息解析的必要条件，请检查数据格式");
             }
-            return RequestMessage.封装消息.修改房间录制配置.修改录制配置(Rec.RoomId, Rec.RecStatus);
+            return RequestMessage.封装消息.房间_修改房间录制配置.修改录制配置(Rec.RoomId, Rec.RecStatus, Rec.AllRoom);
         }
         internal class RoomInfo
         {
             internal string RoomId { set; get; }
             internal bool RecStatus { set; get; }
+            internal bool AllRoom { set; get; } = false;
         }
     }
 }

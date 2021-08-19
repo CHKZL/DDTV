@@ -84,7 +84,8 @@
 |POST|rec_cancel|JSON|[根据录制任务GUID取消相应任务](./#post-api-rec-cancel)|2|
 |POST|room_add|JSON|[增加配置文件中监听的房间](./#post-api-room-add)|4|
 |POST|room_delete|JSON|[删除配置文件中监听的房间](./#post-api-room-delete)|1|
-|POST|room_status|JSON|[修改房间的自动录制开关配置](./#post-api-room-status)|2|
+|POST|room_status|JSON|[修改房间的自动录制开关配置](./#post-api-room-status)|3|
+|POST|room_like|JSON|[修改房间Like配置](./#post-api-room-like)|2|
 |POST|room_list|JSON|[获取当前房间配置列表总览](./#post-api-room-list)|0|
 |POST|file_lists|JSON|[获取当前录制文件夹中的所有文件的列表](./#post-api-file-lists)|0|
 |POST|file_delete|JSON|[删除某个录制完成的文件](./#post-api-file-delete)|3|
@@ -415,7 +416,8 @@ path: http://127.0.0.1:11419/api/rec_processing_list
             "EndTime": 0,//结束时间，如果未结束就是0
             "GUID": "fb7f502e-64ff-411b-9d55-d9f974751616",//任务ID
             "State":true,//下载状态
-            "Remark":"自动录制中"//任务状态说明
+            "Remark":"自动录制中",//任务状态说明
+            "Transcoding":false
         }
     ]
 }
@@ -457,7 +459,8 @@ path: http://127.0.0.1:11419/api/rec_all_list
             "EndTime": 0,//结束时间，如果未结束就是0
             "GUID": "fb7f502e-64ff-411b-9d55-d9f974751616",//任务ID
             "State":true,//下载状态
-            "Remark":"自动录制中"//任务状态说明
+            "Remark":"自动录制中",//任务状态说明
+            "Transcoding":false
         }
     ]
 }
@@ -530,7 +533,9 @@ path: http://127.0.0.1:11419/api/rec_info
                 "继承的下载文件路径": null,
                 "合并后的文件路径": null
             },
-            "是否是固定视频": false
+            "是否是固定视频": false,
+            "是否转码中":false,
+            "转码进度":-1
         }
     ]
 }
@@ -602,7 +607,9 @@ path: http://127.0.0.1:11419/api/rec_cancel
                 "继承的下载文件路径": null,
                 "合并后的文件路径": null
             },
-            "是否是固定视频": false
+            "是否是固定视频": false,
+            "是否转码中":false,
+            "转码进度":-1
         }
     ]
 }
@@ -696,11 +703,16 @@ path: http://127.0.0.1:11419/api/room_delete
 ### `POST /api/room_status`
 ::: details 修改房间的自动录制开关配置
 - 私有变量  
+* 注意！`RoomId`和`AllRoom`至少填写一个！当`AllRoom`为`true`时，`RoomId`无效 
 
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
-|RoomId|int|是|房间号|
 |RecStatus|bool|是|是否打开开播自动录制|
+|RoomId|int|否|房间号|
+|AllRoom|bool|否|如果为真，则会把本次请求的RecStatus设置到所有房间|
+
+
+
 - Request:
 ```text
 method: POST
@@ -711,6 +723,48 @@ path: http://127.0.0.1:11419/api/room_status
 {
     "time":2345678,
     "cmd":"room_status",
+    "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "ver":2,
+    "RoomId":21706862,
+    "RecStatus":false,
+    "AllRoom":true
+}
+```
+- Response:
+```json
+{
+    "result": true,//鉴权是否通过
+    "code":0,//请求状态码，请按返回结果状态码列表处理
+    "messge": "成功",//请求返回的备注信息
+    "queue": 1,//请求返回的Package包含有多少个子项目
+    "Package": [
+        {
+            "result": true,//请求是否完成
+            "messge": "设置完成，已把所有房间监控状态改为false"//信息
+        }
+    ]
+}
+```
+:::
+
+### `POST /api/room_like`
+::: details 修改房间Like配置
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|RoomId|int|是|房间号|
+|LikeStatus|bool|是|设置Like状态|
+- Request:
+```text
+method: POST
+path: http://127.0.0.1:11419/api/room_like
+```
+```json
+"form-data":
+{
+    "time":2345678,
+    "cmd":"room_like",
     "sig":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "ver":2,
     "RoomId":21706862,
@@ -732,8 +786,9 @@ path: http://127.0.0.1:11419/api/room_status
     ]
 }
 ```
-
 :::
+
+
 ### `POST /api/room_list`
 ::: details 获取当前房间配置列表总览
 - 私有变量  
@@ -964,11 +1019,13 @@ path: http://127.0.0.1:11419/api/upload_list
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 },"这是目标平台2":{
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 }
             }
@@ -1043,6 +1100,11 @@ public class UploadInfo
         /// </summary>
         public int statusCode { set; get; }
         /// <summary>
+        /// 上传进度
+        /// <para>百分比，取值1-100%，返回-1则为失败</para>
+        /// </summary>
+        public int progress { set; get; }
+        /// <summary>
         /// 其他信息
         /// <para>用于web端展示上传进度</para>
         /// </summary>
@@ -1095,11 +1157,13 @@ path: http://127.0.0.1:11419/api/upload_ing
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 },"这是目标平台2":{
                     "startTime":1,
                     "endTime":2,
                     "statusCode":0,
+                    "progress":1,//上传进度1-100，-1为获取失败
                     "comments":"其他信息，比如上传进度"
                 }
             }
