@@ -6,7 +6,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取配置文件信息
+    public class 消息_获取配置文件信息
     {
         public static string 配置文件信息()
         {

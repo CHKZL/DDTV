@@ -19,7 +19,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取当前房间配置列表总览信息.当前房间配置列表总览信息();
+                return Auxiliary.RequestMessage.封装消息.消息_获取当前房间配置列表总览信息.当前房间配置列表总览信息();
             }
         }
     }

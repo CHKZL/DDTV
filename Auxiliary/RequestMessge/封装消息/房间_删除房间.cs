@@ -8,7 +8,7 @@ using static Auxiliary.RoomInit;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 删除房间
+    public class 房间_删除房间
     {
         public static string 删除(string RoomId)
         {

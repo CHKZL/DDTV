@@ -1,38 +1,33 @@
 <template>
   <div class="home">
-    <el-row :gutter="10">
-      <el-col :xs="24" :md="12">
-        <el-card class="systemInfo">
+    <div class="sys">
+
+      <div class="systemInfo">
           <div class="card-title">
             系统状态
             <i class="el-icon-tickets"></i>
           </div>
-          <el-row :gutter="10">
-            <el-col :span="8">
+
+          <div class="bataGroup grid_3">
               <el-card shadow="hover">
                 <div class="card-title-litter">监听房间数</div>
                 <div class="big-number">
                   {{ system_info_data.Room_Quantity }}
                 </div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">正在录制</div>
                 <div class="big-number">
                   {{ system_info_data.download_Info.Downloading }}
                 </div>
-                <div></div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">正在上传</div>
                 <div class="big-number">{{uoload.length}}</div>
-                <div></div>
               </el-card>
-            </el-col>
-          </el-row>
+          </div>
 
           <el-descriptions style="padding-top: 20px">
             <el-descriptions-item label="更新">
@@ -75,22 +70,19 @@
               {{ system_info_data.os_Info.Associated_Users }}
             </el-descriptions-item>
           </el-descriptions>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <el-card class="serverInfo">
+      </div>
+
+      <div class="systemInfo" v-loading="system_monitor.reload">
           <div class="card-title">
             设备状态
             <i class="el-icon-warning-outline"></i>
           </div>
-          <el-row :gutter="10">
-            <el-col :span="8">
+            <div class="bataGroup grid_3">
               <el-card shadow="hover">
                 <div class="card-title-litter">CPU</div>
                 <div class="big-number">{{system_monitor.CPU_usage}}%</div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
+
               <el-card shadow="hover">
                 <div class="card-title-litter">内存</div>
                 <div class="big-number">
@@ -98,17 +90,14 @@
                   <span>/{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</span>
                 </div>
               </el-card>
-            </el-col>
-            <el-col :span="8">
               <el-card shadow="hover">
-                <div class="card-title-litter">磁盘</div>
+                <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
                 <div class="big-number">
-                  <span>{{sys_dish.Usage}}</span>
-                  <span>/{{sys_dish.Size}}</span>
+                  <span>{{HDD.Usage}}</span>
+                  <span>/{{HDD.Size}}</span>
                 </div>
               </el-card>
-            </el-col>
-          </el-row>
+            </div>
           <el-descriptions style="padding-top: 20px">
             <el-descriptions-item label="服务器名称">{{system_info_data.ServerName}}</el-descriptions-item>
             <el-descriptions-item label="UUID">
@@ -128,86 +117,106 @@
             </el-descriptions-item>
             <el-descriptions-item label="CPU">{{system_monitor.CPU_usage}}%</el-descriptions-item>
             <el-descriptions-item label="内存">{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</el-descriptions-item>
-            <el-descriptions-item label="磁盘">{{sys_dish.Size}}</el-descriptions-item>
-            <el-descriptions-item label="DDTV占用内存">{{((system_monitor.DDTV_use_memory/1024)/1024).toFixed(2)}}MB</el-descriptions-item>
+            <el-descriptions-item label="磁盘">{{HDD.Size}}</el-descriptions-item>
+            <el-descriptions-item label="DDTV占用内存">{{((system_info_data.os_Info.Memory_Usage/1024)/1024).toFixed(2)}}MB</el-descriptions-item>
           </el-descriptions>
-        </el-card>
-      </el-col>
-    </el-row>
-    <el-row :gutter="10" style="padding-top: 20px">
-      <el-card class="tasksInfo">
+      </div>
+
+    </div>
+
+    <div class="systemInfo" v-if="system_monitor.Platform == 'Linux'">
+      <div class="card-title">
+          磁盘管理
+          <i class="el-icon-coin"></i>
+      </div>
+      <div class="linux_hdd_bar">
+        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo" :key="index">
+          <div class="linux_hdd_bar_text">
+            <div>{{item.MountPath}}</div>
+            <div>{{item.Usage}}/{{item.Size}}</div>
+          </div>
+          <el-progress :percentage="parseInt(item.Used)"></el-progress>
+        </div>
+      </div>
+    </div>
+    
+    <div class="systemInfo">
         <div class="card-title">
           任务概览
           <i class="el-icon-tickets"></i>
         </div>
-        <el-row :gutter="10">
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">正在进行</div>
-              <div class="big-number">{{rec_tab.length}}</div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">下载量</div>
-              <div class="big-number">{{dl_all > 1000000000 ? (dl_all/1000000000).toFixed(2) + "GB":(dl_all/1000000).toFixed(2)+ "MB" }}</div>
-            </el-card>
-          </el-col>
-          <el-col :span="8">
-            <el-card shadow="hover">
-              <div class="card-title-litter">出错</div>
-              <div class="big-number">0</div>
-              <div></div>
-            </el-card>
-          </el-col>
-        </el-row>
+        <div class="bataGroup grid_4">
 
-        <el-table :data="rec_tab" style="width: 100%">
-          <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
-          <el-table-column prop="RoomId" label="房间号">
-          </el-table-column>
-          <el-table-column prop="Name" label="昵称">
-          </el-table-column>
-          <el-table-column prop="Downloaded_str" label="已录制文件大小">
-          </el-table-column>
-          <el-table-column label="开始时间">
-            <template slot-scope="scope">
-            {{toDate(scope.row.StartTime)}}
-            </template>
-          </el-table-column>
-          <el-table-column prop="Remark" label="备注">
-          </el-table-column>
-          <el-table-column label="操作">
-            <template slot-scope="scope">
-              <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-      </el-card>
-    </el-row>
+          <el-card shadow="hover">
+            <div class="card-title-litter">正在进行</div>
+            <div class="big-number">{{rec_tab.length}}</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">下载量</div>
+            <div class="big-number">{{dl_all > 1000000000 ? (dl_all/1000000000).toFixed(2) + "GB":(dl_all/1000000).toFixed(2)+ "MB" }}</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">转码管道</div>
+            <div class="big-number" style="color:rgb(103 194 58)">空闲</div>
+          </el-card>
+
+          <el-card shadow="hover">
+            <div class="card-title-litter">已录制文件数</div>
+            <div class="big-number" >455</div>
+          </el-card>
+
+        </div>
+        <div class="table_class">
+          <el-table :data="rec_tab" style="width: 100%">
+            <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
+            <el-table-column prop="RoomId" label="房间号">
+            </el-table-column>
+            <el-table-column prop="Name" label="昵称">
+            </el-table-column>
+            <el-table-column prop="Downloaded_str" label="已录制文件大小">
+            </el-table-column>
+            <el-table-column label="开始时间">
+              <template slot-scope="scope">
+              {{toDate(scope.row.StartTime)}}
+              </template>
+            </el-table-column>
+            <el-table-column prop="Remark" label="备注">
+            </el-table-column>
+            <el-table-column label="操作">
+              <template slot-scope="scope">
+                <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+        </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 import {formatDate} from '../reunit'
 import {postFormAPI,pubBody} from '../api'
+import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
 export default {
   data() {
     return {
-      system_info_data: [],
+      system_info_data: sys_data_ex,
       tableData: [],
       rec_tab: [],
       rec_all:[],
       dl_all:0,
-      system_monitor:[],
-      sys_dish:{},
+      system_monitor:sys_mon_ex,
+      HDD:{},
       uoload:[]
     };
   },
+  created: async function(){
+    await this.getList()
+  },
   mounted: async function () {
-    // 发一次请求 确定用户凭据的有效性
-    this.getList();
-
     // 进行轮询，定时间隔10秒一次
     this.timer = window.setInterval(() => {
       setTimeout(() => {
@@ -293,19 +302,19 @@ export default {
     */
     system_resource_monitoring:async function(){
       let param = pubBody('system_resource_monitoring')
-      console.debug(param)
       let response = await postFormAPI('system_resource_monitoring',param,true)
       console.debug(response)
-
       this.system_monitor = response.data.Package[0]
-      let dish = this.system_monitor.HDDInfo
-      var dishlen = dish.length
-      for(var j = 0; j < dishlen; j++) {
-        if(dish[j].MountPath == "/"){
-          this.sys_dish = dish[j]
+      if (this.system_monitor.Platform != 'Linux') this.HDD = response.data.Package[0].HDDInfo[0]
+      else{
+        let dish = this.system_monitor.HDDInfo
+        var dishlen = dish.length
+        for(var j = 0; j < dishlen; j++) {
+          if(dish[j].MountPath == "/"){
+            this.HDD = dish[j]
+          }
         }
       }
-
     },
 
     /**
@@ -366,11 +375,8 @@ export default {
     */
     system_info: async function () {
       let param = pubBody('system_info')
-      console.debug(param)
       let response = await postFormAPI('system_info',param,true)
-      console.debug(response)
       this.system_info_data = response.data.Package[0];
-      console.debug(this.system_info_data)
       return response.data;
     },
   },
@@ -384,9 +390,53 @@ export default {
 <style>
 .home{
   /*概览的主要元素的容器 全局布局的对象 */
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(540px, 100%));
+}
+.linux_hdd_bar{
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+.linux_hdd_bar_text {
+  font-size: 14px;
+  color: #6f7173;
+  /* display: inline-block; */
+  /* vertical-align: middle; */
+  /* margin-left: 10px; */
   display: flex;
-  flex-direction:column;
+  /* line-height: 1; */
+  justify-content: space-between;
+  flex-direction: row;
+  padding-right: 17px;
+}
+.table_class{
+  padding: 20px 0 0 0;
+}
+.sys {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(540px, 1fr));
+  grid-template-rows: repeat(1, 300px);
+}
+.systemInfo {
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   padding: 20px 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  align-content: center;
+}
+.bataGroup{
+  display:grid;
+  grid-gap: 10px;
+}
+.grid_3{
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.grid_4{
+  grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 .card-title {
   /* line-height: 54px; */
