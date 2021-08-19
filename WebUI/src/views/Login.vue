@@ -1,11 +1,12 @@
 <template>
   <div class="login login-background">
+    <div class="firefly" v-for="count in 15" :key="count"></div>
     <div class="login-logo">
       <el-image src="../static/logo.png" class="login-logo-img"></el-image>
       <div class="login-logo-title"></div>
     </div>
     <el-card style="width: 391px;">
-      <el-form :model="loginForm" :rules="rules" ref="loginForm">
+      <el-form :model="loginForm" :rules="rules" ref="loginForm" style="z-index: 99">
         <el-form-item label="用户名" prop="user">
           <el-input type="text" v-model="loginForm.user" autocomplete="off"></el-input>
         </el-form-item>
@@ -103,6 +104,7 @@ export default {
 </script>
  
 <style scoped>
+@import '../style/firefly.css';
 .login {
   /* 布局容器设定居中 */
   display: flex;
