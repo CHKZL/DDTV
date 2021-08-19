@@ -7,6 +7,8 @@ namespace Auxiliary.Upload.Info
 {
     public class TaskInfo
     {
+        
+
         /// <summary>
         /// 文件名
         /// </summary>
@@ -30,6 +32,7 @@ namespace Auxiliary.Upload.Info
         public long endTime { set; get; }
 
         public FileType fileType;
+
         public TaskType taskType;
 
         /// <summary>
@@ -50,6 +53,7 @@ namespace Auxiliary.Upload.Info
         /// <para>范围为0~100之间的整数, -1时为进度读取失败</para>
         /// </summary>
         public int progress { set; get; }
+
 
         public TaskInfo(string fileName, string localPath, string remotePath,FileType fileType, TaskType taskType)
         {
