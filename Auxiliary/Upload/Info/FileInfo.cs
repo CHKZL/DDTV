@@ -30,9 +30,21 @@ namespace Auxiliary.Upload.Info
         /// <summary>
         /// 当前上传任务
         /// </summary>
-        public TaskType currentTask { get; }
+        public TaskType currentTaskType { set; get; }
+
+        public TaskInfo currentTaskInfo = null;
+
         /// <summary>
         /// 上传任务列表
+        /// </summary>
+        public List<TaskType> taskList = new List<TaskType>();
+        /// <summary>
+        /// 已完成任务列表
+        /// </summary>
+        public List<TaskType> taskDone = new List<TaskType>();
+
+        /// <summary>
+        /// 上传任务
         /// </summary>
         public List<Info.TaskInfo> tasks = new List<Info.TaskInfo>();
 
@@ -45,13 +57,16 @@ namespace Auxiliary.Upload.Info
         /// 结束时间
         /// </summary>
         public long endTime { set; get; }
-
+        /// <summary>
+        /// 文件大小
+        /// </summary>
         public double fileSize { get; }
 
         /// <summary>
         /// 任务状态
         /// </summary>
         public Status statusCode { set; get; }
+
 
         /// <summary>
         /// 初始化上传状态
@@ -89,6 +104,7 @@ namespace Auxiliary.Upload.Info
                 try
                 {
                     TaskInfo task = new TaskInfo(fileName, localPath, remotePath, fileType, (TaskType)Enum.Parse(typeof(TaskType), item.Value));
+                    taskList.Add(task.taskType);
                     tasks.Add(task);
                 }
                 catch (TaskException ex)
@@ -110,10 +126,14 @@ namespace Auxiliary.Upload.Info
 
             foreach (var item in tasks)
             {
+                currentTaskInfo = item;
+                currentTaskType = item.taskType;
                 item.UploadTask();
+                taskDone.Add(item.taskType);
 
                 if (item.statusCode == Status.Fail)
                     flag = false;
+                currentTaskInfo = null;
             }
 
             endTime = MMPU.获取时间戳();
