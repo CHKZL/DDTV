@@ -5,7 +5,7 @@
       <el-image src="../static/logo.png" class="login-logo-img"></el-image>
       <div class="login-logo-title"></div>
     </div>
-    <el-card style="width: 391px;">
+    <el-card style="width: 391px;z-index:99">
       <el-form :model="loginForm" :rules="rules" ref="loginForm" style="z-index: 99">
         <el-form-item label="用户名" prop="user">
           <el-input type="text" v-model="loginForm.user" autocomplete="off"></el-input>
