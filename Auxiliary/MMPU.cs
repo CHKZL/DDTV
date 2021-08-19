@@ -940,9 +940,9 @@ namespace Auxiliary
         /// 获得13位的时间戳
         /// </summary>
         /// <returns></returns>
-        public static int 获取时间戳()
+        public static long 获取时间戳()
         {
-            return Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            return Convert.ToInt64((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
 
         }
         /// <summary>    
