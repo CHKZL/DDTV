@@ -58,7 +58,7 @@
           <el-switch class="live-switch" v-model="item.rec" active-color="#46d485" inactive-color="#efe3e3" @change="process_room_status(index)"></el-switch>
           <div class="set">
             <i @click="room_like_pross(index)" class="float-up" :class="room_list[index].like ? 'el-icon-star-on like-on':'el-icon-star-off like-off'"></i>
-            <i class="float-up el-icon-folder"></i>
+            <i @click="tofile(item.roomid)" class="float-up el-icon-folder"></i>
           </div>
           <div class="roomid originname">ID:{{ item.roomid }}</div>
         </div>
@@ -121,6 +121,14 @@ export default {
     }, 60000);
   },
   methods: {
+    tofile(room){
+      this.$router.push({
+        path: '/file',
+        query: {
+          rooid:room
+        }
+      })
+    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },

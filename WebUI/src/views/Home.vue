@@ -199,11 +199,16 @@
           <i class="el-icon-sort"></i>
         </div>
         <div class="upload_box grid_2">
-          <div class="upload_card" v-for="(item,index) in upload" :key="index">
-            <div class="username" >{{ item.streamTitle }} </div>
-            <div class="originname">{{ item.streamerName }} </div>
-            <div class="upload_box_icon">
-              <i v-for="(item,key) in item.files" :class="key"  :key="key"></i>
+          <div class="upload_card" v-for="count in 1" :key="count">
+            <div class="livename" >【七宝游戏】摸摸雀雀好耶~</div>
+            <div class="originname">七咔拉CHikalar</div>
+            <div class="card-title">项目内容</div>
+            <div class="UpObjInof">
+              
+              <el-image src="../static/flv.png" style="width:60px"></el-image>
+              <el-image src="../static/mp4.png" style="width:60px"></el-image>
+              <el-image src="../static/gift.png" style="width:60px"></el-image>
+              <el-image src="../static/danmuku.png" style="width:60px"></el-image>
             </div>
           </div>
         </div>
@@ -467,6 +472,9 @@ export default {
 }
 .upload_box{
   display:grid;
+  border: 1px solid #e2d0d0;
+  border-radius: 5px;
+  padding: 10px 10px 10px 10px;
 }
 .upload_box_icon{
   display: flex;
@@ -514,10 +522,10 @@ export default {
   font-weight: 600;
   color: #333;
 }
-.username {
+.livename {
   font-size: 28px;
   font-weight: 300;
-  max-width: 300px;
+  max-width: 500px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
