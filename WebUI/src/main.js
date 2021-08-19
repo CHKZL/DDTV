@@ -11,10 +11,11 @@ Vue.use(VideoPlayer)
 
 
 
-new Vue({
+var vue = new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount('#app')
+export default vue
 
 
