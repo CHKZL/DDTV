@@ -10,22 +10,25 @@ namespace Auxiliary.RequestMessage.封装消息
     {
         public static string 取消录制任务(string GUID)
         {
+
             List<DownIofoData> Package = new List<DownIofoData>();
             foreach (var item in MMPU.DownList)
             {
                 if (GUID == item.DownIofo.事件GUID)
                 {
-                    item.DownIofo.下载状态 = false;
-                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                  
                     item.DownIofo.备注 = "用户取消下载";
-                    item.DownIofo.WC.CancelAsync();
                     下载结束提醒("API请求取消该下载任务", item.DownIofo);
-                    //鉴权结果.鉴权返回消息 = "删除成功";
-                    Package.Add(item.DownIofo);
-                    Package[Package.Count - 1].WC = null;
+                    item.DownIofo.下载状态 = false;
+                    item.DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);  
+                    item.DownIofo.WC.CancelAsync();
+                    if(MMPU.调试模式)
+                        Console.WriteLine("结束下载任务，调用CancelAsync完成");
+                    Package.Add(item.DownIofo);             
+                    return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Package);
                 }
             }
-            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Package);
+            return ReturnInfoPackage.InfoPkak<Message<DownIofoData>>((int)ServerSendMessageCode.请求成功但出现了错误, null, "没有找到对应GUID的下载任务");
         }
         private static void 下载结束提醒(string 提醒标题, DownIofoData item)
         {
