@@ -7,7 +7,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 根据房间号获取录制的文件列表
+    public class 文件_根据房间号获取录制的文件列表
     {
         public static string 获取文件列表(string RoomId)
         {

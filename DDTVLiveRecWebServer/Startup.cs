@@ -191,6 +191,11 @@ namespace DDTVLiveRecWebServer
                     context.Response.ContentType = "application/json; charset=utf-8";
                     await context.Response.WriteAsync(API.room_status.Web(context));
                 });
+                endpoints.MapPost("/api/room_like", async context =>
+                {
+                    context.Response.ContentType = "application/json; charset=utf-8";
+                    await context.Response.WriteAsync(API.room_like.Web(context));
+                });
                 endpoints.MapPost("/api/room_list", async context =>
                 {
                     context.Response.ContentType = "application/json; charset=utf-8";

@@ -33,7 +33,7 @@ namespace DDTVLiveRecWebServer.API
             {
                 bool 转码设置 = false;
                 bool.TryParse(context.Request.Form["transcoding_status"], out 转码设置);
-                return Auxiliary.RequestMessage.封装消息.修改配置_自动转码.转码(转码设置);
+                return Auxiliary.RequestMessage.封装消息.配置_自动转码.转码(转码设置);
             }
         }
     }

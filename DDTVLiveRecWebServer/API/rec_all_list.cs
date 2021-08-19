@@ -20,7 +20,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取所有下载任务的简报队列信息.所有下载任务的简报队列信息();
+                return Auxiliary.RequestMessage.封装消息.下载_获取所有下载任务的简报队列信息.所有下载任务的简报队列信息();
             }
         }
     }

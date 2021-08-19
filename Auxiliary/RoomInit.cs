@@ -45,6 +45,7 @@ namespace Auxiliary
             public string 平台 { set; get; }
             public string youtubeVideoId { set; get; }
             public LiveChatListener liveChatListener { set; get; }
+            public bool Like { set; get; }
 
         }
 
@@ -57,6 +58,7 @@ namespace Auxiliary
             public bool 是否提醒 { set; get; }
             public bool 是否录制 { set; get; }
             public string 唯一码 { set; get; }
+            public bool Like { set; get; }
         }
         public static bool 根据唯一码获取直播状态(string GUID)
         {
@@ -214,7 +216,7 @@ namespace Auxiliary
                     }
                 }
                 int B = 之前的bilibili房间主表状态.Count();
-                临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名 });
+                临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名,Like=最新的状态.Like });
             }
             if(之前的bilibili房间主表状态.Count!=0)
             {
@@ -379,7 +381,8 @@ namespace Auxiliary
                         直播状态 = item.LiveStatus,
                         原名 = item.OfficialName,
                         是否提醒 = item.RemindStatus,
-                        平台="bilibili"
+                        平台="bilibili",
+                        Like=item.Like
                     });
                     if (首次启动)
                     {
@@ -401,7 +404,8 @@ namespace Auxiliary
                         直播状态 = item.LiveStatus,
                         原名 = item.OfficialName,
                         是否提醒 = item.RemindStatus,
-                        平台="youtube"
+                        平台="youtube",
+                        Like = item.Like
                     });
                     if (首次启动)
                     {
@@ -432,6 +436,7 @@ namespace Auxiliary
             public bool VideoStatus { get; set; } = false;//是否开播自动录制，默认为false
             public bool RemindStatus { get; set; } = false;//是否开播气泡提示，默认false
             public bool LiveStatus { get; set; } = false;//当前的直播状态，默认为false
+            public bool Like { set; get; } = false;//用于标记在列表中优先显示、特殊关照的房间
 
         }
     }

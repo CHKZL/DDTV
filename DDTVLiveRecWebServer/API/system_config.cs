@@ -22,7 +22,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取配置文件信息.配置文件信息();
+                return Auxiliary.RequestMessage.封装消息.消息_获取配置文件信息.配置文件信息();
             }
         }
  

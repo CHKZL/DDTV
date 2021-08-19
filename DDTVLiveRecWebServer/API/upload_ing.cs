@@ -19,7 +19,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取上传中的任务信息列表信息.上传中的任务信息列表信息();
+                return Auxiliary.RequestMessage.封装消息.上传_获取上传中的任务信息列表信息.上传中的任务信息列表信息();
             }
         }
     }

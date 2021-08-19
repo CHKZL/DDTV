@@ -39,7 +39,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.执行取消录制任务.取消录制任务(context.Request.Form["GUID"]);
+                return Auxiliary.RequestMessage.封装消息.下载_执行取消录制任务.取消录制任务(context.Request.Form["GUID"]);
             }
         }
         public static void 下载结束提醒(string 提醒标题, DownIofoData item)

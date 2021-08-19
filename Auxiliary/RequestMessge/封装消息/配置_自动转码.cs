@@ -5,7 +5,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 修改配置_自动转码
+    public class 配置_自动转码
     {
         public static string 转码(bool T)
         {
