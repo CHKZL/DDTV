@@ -19,12 +19,10 @@ namespace Auxiliary.RequestMessage.封装消息
 
         private static void checkAdd(List<Upload.Info.ProjectInfo> A, Upload.Info.ProjectInfo project)
         {
-            foreach (var filePair in project.files)
+            foreach (var file in project.files)
             {
-                var file = filePair.Value;
-                foreach (var taskPair in file.tasks)
+                foreach (var task in file.tasks)
                 {
-                    var task = taskPair.Value;
                     if (task.statusCode == Upload.Status.OnGoing)
                     {
                         A.Add(project);

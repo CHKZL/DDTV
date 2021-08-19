@@ -23,16 +23,14 @@ namespace Auxiliary.Upload.Info
         /// <summary>
         /// 开始时间
         /// </summary>
-        public int startTime { set; get; }
+        public long startTime { set; get; }
         /// <summary>
         /// 结束时间
         /// </summary>
-        public int endTime { set; get; }
+        public long endTime { set; get; }
 
         public FileType fileType;
         public TaskType taskType;
-
-        //public Service.ServiceInterface @interface;
 
         /// <summary>
         /// 已重试次数
@@ -78,7 +76,7 @@ namespace Auxiliary.Upload.Info
 
         public void UploadTask()
         {
-            startTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            startTime = MMPU.获取时间戳();
             Type classType = Type.GetType("Auxiliary.Upload.Service." + Enum.GetName(typeof(TaskType), taskType));
             Service.ServiceInterface @interface = (Service.ServiceInterface)Activator.CreateInstance(classType);
 
@@ -102,7 +100,7 @@ namespace Auxiliary.Upload.Info
                     @interface.doUpload(this);
 
                     InfoLog.InfoPrintf($"{Enum.GetName(typeof(TaskType), taskType)}:上传完毕", InfoLog.InfoClass.上传系统信息);
-                    endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);//更新结束时间
+                    endTime = MMPU.获取时间戳();//更新结束时间
                     
                     InfoLog.InfoPrintf($"\r\n=============={Enum.GetName(typeof(TaskType), taskType)}-{Enum.GetName(typeof(FileType), fileType)}上传成功================\r\n" +
                                        $"\r\n本地路径:{localPath}" +
@@ -121,7 +119,7 @@ namespace Auxiliary.Upload.Info
                     if (retries == Configer.RETRY_MAX_TIMES)//最后一次上传
                     {
                         InfoLog.InfoPrintf($"{Enum.GetName(typeof(TaskType), taskType)}:第{retries}/{Configer.RETRY_MAX_TIMES}次{Enum.GetName(typeof(TaskType), taskType)}上传失败", InfoLog.InfoClass.上传系统信息);
-                        endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+                        endTime = MMPU.获取时间戳();
 
                         InfoLog.InfoPrintf($"\r\n=============={Enum.GetName(typeof(TaskType), taskType)}-{Enum.GetName(typeof(FileType), fileType)}上传失败================\r\n" +
                                            $"\r\n本地路径:{localPath}" +

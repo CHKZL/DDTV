@@ -177,12 +177,10 @@ namespace Auxiliary
 
             foreach (var project in Upload.Configer.UploadList)
             {
-                foreach (var filePair in project.files)
+                foreach (var file in project.files)
                 {
-                    var file = filePair.Value;
-                    foreach(var taskPair in file.tasks)
+                    foreach(var task in file.tasks)
                     {
-                        var task = taskPair.Value;
                         cnt++;
 
                         string startTime = MMPU.Unix转换为DateTime(task.startTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss");

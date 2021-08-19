@@ -26,16 +26,16 @@ namespace Auxiliary.Upload.Info
         /// <summary>
         /// 上传文件列表
         /// </summary>
-        public Dictionary<FileType, Info.FileInfo> files = new Dictionary<FileType, Info.FileInfo>();
+        public List<Info.FileInfo> files = new List<Info.FileInfo>();
 
         /// <summary>
         /// 开始时间
         /// </summary>
-        public int startTime { set; get; }
+        public long startTime { set; get; }
         /// <summary>
         /// 结束时间
         /// </summary>
-        public int endTime { set; get; }
+        public long endTime { set; get; }
 
         /// <summary>
         /// 上传状态
@@ -62,7 +62,7 @@ namespace Auxiliary.Upload.Info
                 {
                     try
                     {
-                        files.Add(FileType.gift, new FileInfo(flvFileName + ".txt", localPath, remotePath, FileType.gift));
+                        files.Add(new FileInfo(flvFileName + ".txt", localPath, remotePath, FileType.gift));
                         InfoLog.InfoPrintf($"礼物文件已添加上传队列", InfoLog.InfoClass.Debug);
                     }
                     catch (FileException ex)
@@ -72,7 +72,7 @@ namespace Auxiliary.Upload.Info
                     }
                     try
                     {
-                        files.Add(FileType.danmu, new FileInfo(flvFileName.Replace(".flv", (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml")), localPath, remotePath, FileType.danmu));
+                        files.Add(new FileInfo(flvFileName.Replace(".flv", (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml")), localPath, remotePath, FileType.danmu));
                         InfoLog.InfoPrintf($"弹幕文件已添加上传队列", InfoLog.InfoClass.Debug);
                     }
                     catch (FileException ex)
@@ -88,7 +88,7 @@ namespace Auxiliary.Upload.Info
                     {
                         try
                         {
-                            files.Add(FileType.mp4, new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
+                            files.Add(new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
                             InfoLog.InfoPrintf($"转码mp4文件已添加上传队列", InfoLog.InfoClass.Debug);
                         }
                         catch (FileException ex) //未找到mp4文件
@@ -97,7 +97,7 @@ namespace Auxiliary.Upload.Info
                             InfoLog.InfoPrintf("未找到转码mp4文件", InfoLog.InfoClass.上传系统信息);
                             try //mp4文件不存在 添加flv文件
                             {
-                                files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                                files.Add(new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
                                 InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
                             }
                             catch (FileException ex2) //MP4 flv文件均不存在
@@ -112,7 +112,7 @@ namespace Auxiliary.Upload.Info
                     {
                         try //添加mp4文件
                         {
-                            files.Add(FileType.mp4, new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
+                            files.Add(new FileInfo(flvFileName.Replace(".flv", ".mp4"), localPath, remotePath, FileType.mp4));
                             InfoLog.InfoPrintf($"转码mp4文件已添加上传队列", InfoLog.InfoClass.Debug);
                         }
                         catch (FileException ex)
@@ -122,7 +122,7 @@ namespace Auxiliary.Upload.Info
                         }
                         try //添加flv文件
                         {
-                            files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                            files.Add(new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
                             InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
                         }
                         catch (FileException ex)
@@ -136,7 +136,7 @@ namespace Auxiliary.Upload.Info
                 {
                     try //添加flv文件
                     {
-                        files.Add(FileType.flv, new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
+                        files.Add(new FileInfo(flvFileName, localPath, remotePath, FileType.flv));
                         InfoLog.InfoPrintf($"flv文件已添加上传队列", InfoLog.InfoClass.Debug);
                     }
                     catch (FileException ex)
@@ -157,20 +157,21 @@ namespace Auxiliary.Upload.Info
 
         public void UploadProject()
         {
-            startTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            startTime = MMPU.获取时间戳();
+
             statusCode = Status.OnGoing;
 
             bool flag = true;
 
             foreach (var item in files)
             {
-                item.Value.uploadFile();
+                item.uploadFile();
 
-                if (item.Value.statusCode == Status.Fail)
+                if (item.statusCode == Status.Fail)
                     flag = false;
             }
 
-            endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            endTime = MMPU.获取时间戳();
             if (flag)
                 statusCode = Status.Success;
             else
