@@ -355,18 +355,27 @@ namespace Auxiliary
                         }
                         DownIofo.弹幕储存流.Flush();//写入弹幕数据
                         break;
+                    /*礼物流格式
+                     * timestamp|uid|username|type|content|amount
+                     */
                     case SendGiftEventArgs gift:
-                        DownIofo.礼物储存流.WriteLine("收到来自{0}[{1}]的{2}个{3}礼物", gift.UserName, gift.UserId, gift.Amount, gift.GiftName);
+                        DownIofo.礼物储存流.WriteLine($"{gift.Timestamp}|{gift.UserId}|{gift.UserName}|礼物|{gift.GiftName}|{gift.Amount}");
                         DownIofo.礼物储存流.Flush();//写入礼物数据
                         break;
                     case GuardBuyEventArgs guard:
-                        DownIofo.礼物储存流.WriteLine("增加舰队:{0}当上了{1}", guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督");
+                        string content = guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督";
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|{guard.UserId}|{guard.UserName}|舰队|{content}|{guard.Number}");
                         DownIofo.礼物储存流.Flush();//写入舰队数据
                         break;
                     case WarningEventArg Warning:
-                        DownIofo.礼物储存流.WriteLine("{0}：被超管警告了，警告内容：{1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Warning.msg);
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{Warning.msg}|1");
                         DownIofo.礼物储存流.Flush();//写入超管警告内容
                         break;
+                    //TODO: SC记录
+                    /*case SuperchatEventArg sc:
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{sc.OriginalInformation}|1");
+                        //DownIofo.礼物储存流.Flush();//写入sc
+                        break;*/
 
                 }
             }
