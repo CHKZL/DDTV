@@ -46,6 +46,8 @@ namespace Auxiliary.RequestMessage.封装消息
             {
                 if (AllRoom||item.唯一码 == roomId.ToString())
                 {
+                    if (MMPU.调试模式)
+                        Console.WriteLine($"修改房间属性：将{item.名称}的VideoStatus状态设置为{RecStatus}");
                     data.Add(new RoomCadr
                     {
                         LiveStatus = item.直播状态,
