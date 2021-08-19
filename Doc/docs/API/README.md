@@ -1138,37 +1138,79 @@ path: http://127.0.0.1:11419/api/upload_ing
 - Response:*该内容仅供参考，可能有变动*
 ```json
 {
-    "result":true,
-    "code":0,
-    "messge":"成功",
-    "queue":1,
-    "Package":[
-        {
-            "streamerName":"蒂蒂媞薇",
-            "streamTitle":"测试直播",
-            "fileName":"这是文件名",
-            "fileSize":46548135574,
-            "srcFile":"这是待上传的文件路径",
-            "remotePath":"这是上传目标的路径",
-            "type":"这是上传的目标平台",
-            "retries":0,
-            "status":{
-                "这是目标平台1":{
-                    "startTime":1,
-                    "endTime":2,
-                    "statusCode":0,
-                    "progress":1,//上传进度1-100，-1为获取失败
-                    "comments":"其他信息，比如上传进度"
-                },"这是目标平台2":{
-                    "startTime":1,
-                    "endTime":2,
-                    "statusCode":0,
-                    "progress":1,//上传进度1-100，-1为获取失败
-                    "comments":"其他信息，比如上传进度"
-                }
-            }
-        }
-    ]
+	"code": 1001,
+	"message": "请求成功",
+	"queue": 1,
+	"Package": [
+		{
+			//主播名
+			"streamerName": "Nagisa",
+			//直播标题
+			"streamTitle": "测试",
+			//开始时间
+			"startTime": 1629407271,
+			//结束时间
+			"endTime": -1,
+			//当前上传File类型
+			"currentFileType": 1,
+			//当前上传Task网盘类型
+			"currentTaskType": 2,
+			//当前project状态
+			"statusCode": 4,
+			//当前task备注
+			"comments": "1/1 | 100% |Time: 2s | Remain: 0s",
+			//当前task进度
+			"progress": 100,
+			//该项目上传文件列表
+			"fileList": [ 
+				1,
+				3
+			],
+			//该项目已完成文件列表
+			"fileDone": [],
+			//正在上传的File详情
+			"fileInfo": {
+				//File文件名
+				"fileName": "2021_08_19_测试_21_06_33_2725.flv",
+				//此文件类型
+				"fileType": 1,
+				//文件大小
+				"fileSize": 8165881.0,
+				//开始时间
+				"startTime": 1629407271,
+				//结束时间
+				"endTime": -1,
+				//当前file状态
+				"statusCode": 4,
+				//当前file上传任务列表
+				"taskList": [
+					2,
+					1,
+					3
+				],
+				//当前file已完成任务列表
+				"taskDone": []
+			},
+			//正在上传的Task详情
+			"taskInfo": {
+				//本地文件完整路径
+				"localFullPath": "./tmp/123456_Nagisa_bilibili/2021_08_19_测试_21_06_33_2725.flv",
+				//网盘文件完整路径
+				"remoteFullPath": "Nagisa_123456/20210819_测试/2021_08_19_测试_21_06_33_2725.flv",
+				//当前task上传网盘类型
+				"taskType": 2,
+				//开始时间
+				"startTime": 1629407371,
+				//结束时间
+				"endTime": -1,
+				//当前task已重试次数
+				"retries": 1,
+				//task状态
+				"statusCode": 4
+			}
+		},
+        {...}
+	]
 }
 ```
 :::
