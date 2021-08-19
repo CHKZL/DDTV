@@ -6,7 +6,7 @@ using static Auxiliary.RequestMessage.MessageClass;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 执行取消录制任务
+    public class 下载_执行取消录制任务
     {
         public static string 取消录制任务(string GUID)
         {

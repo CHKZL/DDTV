@@ -8,7 +8,7 @@ using static Auxiliary.RoomInit;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 增加房间
+    public class 房间_增加房间
     {
         public static string 增加(string RoomId,string Name,string OfficialName,bool RecStatus)
         {

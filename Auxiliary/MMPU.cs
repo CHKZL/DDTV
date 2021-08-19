@@ -36,7 +36,8 @@ namespace Auxiliary
             "给DDTVLiveRec增加了提示提示更新和一键更新脚本",
             "给WebSocket服务器增加了证书支持",
             "部分设置支持使用API进行热重载了",
-            "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x"
+            "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x",
+            "为DDTVLiveRec增加了全新的Web界面，替换原来的简单信息页"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -169,6 +170,11 @@ namespace Auxiliary
             SystemInit.辅助功能初始化.系统心跳初始化(模式);
             SystemInit.辅助功能初始化.文件删除后台委托初始化();
             Downloader.轮询检查下载任务();
+
+
+
+
+
             return true;
         }
     
@@ -934,22 +940,10 @@ namespace Auxiliary
         /// 获得13位的时间戳
         /// </summary>
         /// <returns></returns>
-        public static long 获取时间戳()
+        public static int 获取时间戳()
         {
-            DateTime time = DateTime.Now;
-            return DateTime转换为Unix(time);
+            return Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
 
-        }
-        /// <summary>  
-        /// 将c# DateTime时间格式转换为Unix时间戳格式  
-        /// </summary>  
-        /// <param name="time">时间</param>  
-        /// <returns>long</returns>  
-        public static long DateTime转换为Unix(DateTime time)
-        {
-            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
-            long t = (time.Ticks - startTime.Ticks) / 10000;   //除10000调整为13位      
-            return t;
         }
         /// <summary>    
         /// 时间戳转为C#格式时间    

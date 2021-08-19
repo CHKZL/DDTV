@@ -44,7 +44,7 @@ namespace DDTVLiveRecWebServer.API
             }
             else
             {
-                return Auxiliary.RequestMessage.封装消息.获取系统日志.日志(需求条数);
+                return Auxiliary.RequestMessage.封装消息.消息_获取系统日志.日志(需求条数);
             }
         }
     }

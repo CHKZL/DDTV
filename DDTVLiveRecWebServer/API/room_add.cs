@@ -47,7 +47,7 @@ namespace DDTVLiveRecWebServer.API
                 string CA = context.Request.Form["RecStatus"];
                 bool 是否录制 = false;
                 bool.TryParse(CA, out 是否录制);
-                return Auxiliary.RequestMessage.封装消息.增加房间.增加(context.Request.Form["RoomId"], context.Request.Form["Name"], context.Request.Form["OfficialName"], 是否录制);
+                return Auxiliary.RequestMessage.封装消息.房间_增加房间.增加(context.Request.Form["RoomId"], context.Request.Form["Name"], context.Request.Form["OfficialName"], 是否录制);
             }
         }
     }

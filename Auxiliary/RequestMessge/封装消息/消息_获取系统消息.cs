@@ -8,7 +8,7 @@ using static Auxiliary.RequestMessage.System_Core.SystemInfo;
 
 namespace Auxiliary.RequestMessage.封装消息
 {
-    public class 获取系统消息
+    public class 消息_获取系统消息
     {
         public static string 系统消息()
         {
