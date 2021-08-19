@@ -83,7 +83,6 @@ namespace DDTV_New
                     Auxiliary.MMPU.DownList[选中的行].DownIofo.WC.CancelAsync();
                 }
             }
-
         }
 
         private void DownList_SelectionChanged(object sender, SelectionChangedEventArgs e)
