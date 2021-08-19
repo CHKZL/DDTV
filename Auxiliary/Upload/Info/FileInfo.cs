@@ -34,17 +34,17 @@ namespace Auxiliary.Upload.Info
         /// <summary>
         /// 上传任务列表
         /// </summary>
-        public Dictionary<TaskType, Info.TaskInfo> tasks = new Dictionary<TaskType, Info.TaskInfo>();
+        public List<Info.TaskInfo> tasks = new List<Info.TaskInfo>();
 
 
         /// <summary>
         /// 开始时间
         /// </summary>
-        public int startTime { set; get; }
+        public long startTime { set; get; }
         /// <summary>
         /// 结束时间
         /// </summary>
-        public int endTime { set; get; }
+        public long endTime { set; get; }
 
         public double fileSize { get; }
 
@@ -89,7 +89,7 @@ namespace Auxiliary.Upload.Info
                 try
                 {
                     TaskInfo task = new TaskInfo(fileName, localPath, remotePath, fileType, (TaskType)Enum.Parse(typeof(TaskType), item.Value));
-                    tasks.Add((TaskType)Enum.Parse(typeof(TaskType), item.Value), task);
+                    tasks.Add(task);
                 }
                 catch (TaskException ex)
                 {
@@ -103,20 +103,20 @@ namespace Auxiliary.Upload.Info
 
         public void uploadFile()
         {
-            startTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            startTime = MMPU.获取时间戳();
             statusCode = Status.OnGoing;
 
             bool flag = true;
 
             foreach (var item in tasks)
             {
-                item.Value.UploadTask();
+                item.UploadTask();
 
-                if (item.Value.statusCode == Status.Fail)
+                if (item.statusCode == Status.Fail)
                     flag = false;
             }
 
-            endTime = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
+            endTime = MMPU.获取时间戳();
             if (flag)
             {
                 statusCode = Status.Success;
