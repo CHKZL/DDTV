@@ -72,25 +72,25 @@
           </el-descriptions>
       </div>
 
-      <div class="systemInfo" v-loading="system_monitor.reload">
+      <div class="systemInfo" >
           <div class="card-title">
             设备状态
             <i class="el-icon-warning-outline"></i>
           </div>
             <div class="bataGroup grid_3">
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">CPU</div>
                 <div class="big-number">{{system_monitor.CPU_usage}}%</div>
               </el-card>
 
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">内存</div>
                 <div class="big-number">
                   <span>{{((((system_monitor.Total_memory - system_monitor.Available_memory)/1024)/1024)/1024).toFixed(1)}}G</span>
                   <span>/{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</span>
                 </div>
               </el-card>
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
                 <div class="big-number">
                   <span>{{HDD.Usage}}</span>
@@ -186,7 +186,7 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
+                <el-button size="mini" :disabled="true" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
               </template>
             </el-table-column>
           </el-table>

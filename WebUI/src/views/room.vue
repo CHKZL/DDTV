@@ -4,9 +4,9 @@
       <div class="tools-icon">
         <i class="el-icon-s-tools" style="font-size:18px;color:#fff"></i>
       </div>
-      <el-button icon="el-icon-search" circle></el-button>
+      <el-button :disabled="true" icon="el-icon-search" circle></el-button>
       <el-button class="tools-item" icon="el-icon-plus"  circle @click="dialogFormVisible = true"></el-button>
-      <el-switch class="tools-item" v-model="stopall" active-color="#46d485" inactive-color="#efe3e3"></el-switch>
+      <el-switch :disabled="true" class="tools-item" v-model="stopall" active-color="#46d485" inactive-color="#efe3e3"></el-switch>
     </div>
 
     <el-dialog title="添加房间" :visible.sync="dialogFormVisible">
@@ -40,7 +40,7 @@
           <div class="room-card-config">
             <el-popover trigger="hover">
               <div style="text-align: right; margin: 0">
-                <el-button  size="mini" @click="displaybox(index)" >锁定配置</el-button>
+                <el-button :disabled="true" size="mini" @click="displaybox(index)" >锁定配置</el-button>
                 <el-button type="danger" size="mini" @click="process_room_delete(index)">删除房间</el-button>
               </div>
               <i class="el-icon-setting config-ico" slot="reference" style="font-size:20px"></i>
