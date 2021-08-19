@@ -98,6 +98,8 @@ namespace Auxiliary
             public string 主播名称 { set; get; }
             public 继承 继承 { set; get; }
             public bool 是否是固定视频 { set; get; } = false;
+            public int 转码进度 { set; get; } = -1;
+            public bool 是否转码中 { set; get; } = false;
         }
         public class 继承
         {
@@ -544,7 +546,7 @@ namespace Auxiliary
                         }
                         if (!DownIofo.是否是播放任务)
                         {
-                            FlvMethod.转码(DownIofo.文件保存路径);
+                            FlvMethod.转码(DownIofo.文件保存路径, DownIofo);
                         }
                         InfoLog.InfoPrintf(DownIofo.房间_频道号 + "房间:" + DownIofo.主播名称 + " 下播，录制完成", InfoLog.InfoClass.下载系统信息);
                         foreach (var item in RoomInit.bilibili房间主表)
@@ -622,7 +624,7 @@ namespace Auxiliary
                                                 }
                                                 if (!DownIofo.是否是播放任务)
                                                 {
-                                                    FlvMethod.转码(DownIofo.文件保存路径);
+                                                    FlvMethod.转码(DownIofo.文件保存路径, DownIofo);
                                                 }
                                                 DownIofo.备注 = "服务器主动断开连接，直播结束";
                                                 重连下载对象.DownIofo.下载状态 = false;

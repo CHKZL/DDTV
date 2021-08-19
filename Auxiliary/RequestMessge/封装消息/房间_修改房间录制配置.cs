@@ -15,10 +15,23 @@ namespace Auxiliary.RequestMessage.封装消息
             int roomId = 0;
             try
             {
-                string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(RoomId);
-                if (!string.IsNullOrEmpty(roomDD))
+                if(!string.IsNullOrEmpty(RoomId))
                 {
-                    roomId = int.Parse(roomDD);
+                    string roomDD = bilibili.根据房间号获取房间信息.获取真实房间号(RoomId);
+                    if (!string.IsNullOrEmpty(roomDD))
+                    {
+                        roomId = int.Parse(roomDD);
+                    }
+                }
+                else
+                {
+                    if (!AllRoom)
+                    {
+                        return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.鉴权失败, new List<RoomStatusInfo>() {new RoomStatusInfo()
+                        {
+                            result=false
+                        }}, "没选择AllRoom并房间号为空，请求错误！");
+                    }
                 }
             }
             catch (Exception)
@@ -31,7 +44,7 @@ namespace Auxiliary.RequestMessage.封装消息
             var data = new List<RoomCadr>();
             foreach (var item in bilibili房间主表)
             {
-                if (item.唯一码 == roomId.ToString()|| AllRoom)
+                if (AllRoom||item.唯一码 == roomId.ToString())
                 {
                     data.Add(new RoomCadr
                     {

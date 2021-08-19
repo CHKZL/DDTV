@@ -416,7 +416,8 @@ path: http://127.0.0.1:11419/api/rec_processing_list
             "EndTime": 0,//结束时间，如果未结束就是0
             "GUID": "fb7f502e-64ff-411b-9d55-d9f974751616",//任务ID
             "State":true,//下载状态
-            "Remark":"自动录制中"//任务状态说明
+            "Remark":"自动录制中",//任务状态说明
+            "Transcoding":false
         }
     ]
 }
@@ -458,7 +459,8 @@ path: http://127.0.0.1:11419/api/rec_all_list
             "EndTime": 0,//结束时间，如果未结束就是0
             "GUID": "fb7f502e-64ff-411b-9d55-d9f974751616",//任务ID
             "State":true,//下载状态
-            "Remark":"自动录制中"//任务状态说明
+            "Remark":"自动录制中",//任务状态说明
+            "Transcoding":false
         }
     ]
 }
@@ -531,7 +533,9 @@ path: http://127.0.0.1:11419/api/rec_info
                 "继承的下载文件路径": null,
                 "合并后的文件路径": null
             },
-            "是否是固定视频": false
+            "是否是固定视频": false,
+            "是否转码中":false,
+            "转码进度":-1
         }
     ]
 }
@@ -603,7 +607,9 @@ path: http://127.0.0.1:11419/api/rec_cancel
                 "继承的下载文件路径": null,
                 "合并后的文件路径": null
             },
-            "是否是固定视频": false
+            "是否是固定视频": false,
+            "是否转码中":false,
+            "转码进度":-1
         }
     ]
 }
@@ -697,12 +703,16 @@ path: http://127.0.0.1:11419/api/room_delete
 ### `POST /api/room_status`
 ::: details 修改房间的自动录制开关配置
 - 私有变量  
+* 注意！`RoomId`和`AllRoom`至少填写一个！当`AllRoom`为`true`时，`RoomId`无效 
 
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
-|RoomId|int|是|房间号|
 |RecStatus|bool|是|是否打开开播自动录制|
+|RoomId|int|否|房间号|
 |AllRoom|bool|否|如果为真，则会把本次请求的RecStatus设置到所有房间|
+
+
+
 - Request:
 ```text
 method: POST
