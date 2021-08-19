@@ -1,5 +1,9 @@
 <template>
-  <div class="login">
+  <div class="login login-background">
+    <div class="login-logo">
+      <el-image src="../static/logo.png" class="login-logo-img"></el-image>
+      <div class="login-logo-title"></div>
+    </div>
     <el-card style="width: 391px;">
       <el-form :model="loginForm" :rules="rules" ref="loginForm">
         <el-form-item label="用户名" prop="user">
@@ -113,5 +117,24 @@ export default {
   right: 0;
   bottom: 0;
   top: 0;
+}
+.login-background[data-v-26084dc2] {
+  background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url(/static/img/loginBack.b32af197.jpg);
+  background-size: cover;
+  background-position: center;
+}
+.login-logo {
+  position: fixed;
+  top: 20px;
+  display: flex;
+  left: 20px;
+  justify-content: space-between;
+}
+.login-logo-title{
+  color: #fff;
+  font-size: 28px;
+}
+.login-logo-img{
+  width: 83px;
 }
 </style>

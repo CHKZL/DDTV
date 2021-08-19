@@ -5,10 +5,9 @@
     <div class="project-nav">
       <el-menu class="el-menu-open" :default-active="$route.path" :collapse="isCollapse" :router="true">
         <div class="logo" >
-          <el-image src="./static/logo.png" style="width:25px"></el-image>
-          <transition name="el-zoom-in-center" v-if="!isCollapse">
-          <div class="logotitle" >DDTV</div>
-          </transition>
+          <el-image src="../static/logo.png" style="width:90px" v-show="!isCollapse"></el-image>
+          <el-image src="../static/logo_mini.png" style="width:25px" v-show="isCollapse"></el-image>
+          
         </div>
         <el-menu-item index="/">
           <i class="el-icon-location"></i>
