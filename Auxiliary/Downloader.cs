@@ -336,7 +336,7 @@ namespace Auxiliary
                                 {
                                     string 弹幕 = danmu.Message.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;").Replace("&", "&amp;");
                                     弹幕 = Regex.Replace(弹幕, @"[\x00-\x08\x0B\x0C\x0E-\x1F]", "");
-                                    DownIofo.弹幕储存流.WriteLine($"<d p=\"{interval.TotalSeconds},{danmu.MessageType},{danmu.MessageFontSize},16777215,{(MMPU.获取时间戳() / 1000)},0,{danmu.UserId},0\">" +
+                                    DownIofo.弹幕储存流.WriteLine($"<d p=\"{interval.TotalSeconds},{danmu.MessageType},{danmu.MessageFontSize},16777215,{MMPU.获取时间戳()},0,{danmu.UserId},0\">" +
                                         $"{弹幕}</d>");
                                     break;
                                 }

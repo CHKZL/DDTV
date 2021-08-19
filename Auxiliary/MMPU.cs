@@ -940,22 +940,10 @@ namespace Auxiliary
         /// 获得13位的时间戳
         /// </summary>
         /// <returns></returns>
-        public static long 获取时间戳()
+        public static int 获取时间戳()
         {
-            DateTime time = DateTime.Now;
-            return DateTime转换为Unix(time);
+            return Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
 
-        }
-        /// <summary>  
-        /// 将c# DateTime时间格式转换为Unix时间戳格式  
-        /// </summary>  
-        /// <param name="time">时间</param>  
-        /// <returns>long</returns>  
-        public static long DateTime转换为Unix(DateTime time)
-        {
-            DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1, 0, 0, 0, 0));
-            long t = (time.Ticks - startTime.Ticks) / 10000;   //除10000调整为13位      
-            return t;
         }
         /// <summary>    
         /// 时间戳转为C#格式时间    
