@@ -78,7 +78,6 @@ router.beforeEach((to, from, next) => {
 
   // 如果用户登录了还想要回到登录页 取消跳转
   if (to.name == 'Login' && isAuthenticated) next(false)
-  else next()
   // 动态添加 title 后面拼接一个名称
   document.title =  to.meta.title.concat(" - 你的地表最强B站录播机")
 
