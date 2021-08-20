@@ -335,6 +335,9 @@ export default {
 </script>
 
 <style scoped>
+.room{
+  padding-top: 20px;
+}
 .slide-enter-active{
  transition:all .5s linear;
 }
@@ -360,8 +363,8 @@ export default {
   z-index: 2004;
   max-width: 20px;
   max-height: 8px;
-  transition-duration: 0.8s;
-  transition-timing-function:cubic-bezier(0.39, 0.575, 0.565, 1);
+  transition-duration: 0.6s;
+  transition-timing-function:cubic-bezier(0.35, 0.76, 0.49, 1.05);
   overflow: hidden;
   flex-direction: row;
   justify-content: flex-start;
@@ -370,8 +373,8 @@ export default {
 }
 .tools:hover{
   padding: 10px 10px 10px 10px;
-  max-width: 300px;
-  max-height: 300px;
+  max-width: 150px;
+  max-height: 62px;
   border-radius: 18px;
   background-color: #fff;
 }
@@ -435,6 +438,7 @@ export default {
 .float-up{
   position: relative;
   transition:top 0.3s;
+  transition-timing-function: cubic-bezier(0.4, 1.01, 0.87, 1.02);
   top:0px
 }
 .float-up:hover{

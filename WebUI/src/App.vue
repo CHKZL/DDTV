@@ -42,7 +42,7 @@
             </svg>
           </span>
         </a>
-          </div>
+      </div>
       
       <!-- 对应路由的内容 -->
       <div class="router-view">
@@ -151,7 +151,7 @@ body {
   flex: 1;
   height: 0;
   overflow: auto;
-  padding: 20px 20px 20px 20px
+  /* padding: 0 20px 20px 20px */
 }
 .router-view::-webkit-scrollbar {
     width: 10px;
@@ -204,17 +204,14 @@ body {
   flex-direction: column;
 }
 .top-bar {
-    flex: auto 0 0;
-    padding: 16px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    height: 32px;
-    z-index: 1;
-    background: #ffffff;
-    justify-content: space-between;
-    border-bottom: 1px solid #e6e4e4;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  height: 32px;
+  background: #ffffff;
+  justify-content: space-between;
+  border-bottom: 1px solid #e6e4e4;
+  z-index: 99;
 }
 .top-bar-title {
   font-size: 28px;
