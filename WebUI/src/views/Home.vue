@@ -25,7 +25,7 @@
 
               <el-card shadow="hover">
                 <div class="card-title-litter">正在上传</div>
-                <div class="big-number">{{uoload.length}}</div>
+                <div class="big-number">{{upload.length}}</div>
               </el-card>
           </div>
 
@@ -72,25 +72,25 @@
           </el-descriptions>
       </div>
 
-      <div class="systemInfo" v-loading="system_monitor.reload">
+      <div class="systemInfo" >
           <div class="card-title">
             设备状态
             <i class="el-icon-warning-outline"></i>
           </div>
             <div class="bataGroup grid_3">
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">CPU</div>
                 <div class="big-number">{{system_monitor.CPU_usage}}%</div>
               </el-card>
 
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">内存</div>
                 <div class="big-number">
                   <span>{{((((system_monitor.Total_memory - system_monitor.Available_memory)/1024)/1024)/1024).toFixed(1)}}G</span>
                   <span>/{{(((system_monitor.Total_memory/1024)/1024)/1024).toFixed(0)}}G</span>
                 </div>
               </el-card>
-              <el-card shadow="hover">
+              <el-card shadow="hover" v-loading="system_monitor.reload">
                 <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
                 <div class="big-number">
                   <span>{{HDD.Usage}}</span>
@@ -130,12 +130,12 @@
           <i class="el-icon-coin"></i>
       </div>
       <div class="linux_hdd_bar">
-        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo" :key="index">
+        <div class="linux_hdd_bar_item" v-for="(item,index) in system_monitor.HDDInfo"  :key="index">
           <div class="linux_hdd_bar_text">
             <div>{{item.MountPath}}</div>
             <div>{{item.Usage}}/{{item.Size}}</div>
           </div>
-          <el-progress :percentage="parseInt(item.Used)"></el-progress>
+          <el-progress :color="DishBarColor" :percentage="parseInt(item.Used)"></el-progress>
         </div>
       </div>
     </div>
@@ -169,7 +169,7 @@
 
         </div>
         <div class="table_class">
-          <el-table :data="rec_tab" style="width: 100%">
+          <el-table :data="rec_tab" style="width: 100%;" max-height="250">
             <el-table-column prop="GUID" label="GUID" width="300"> </el-table-column>
             <el-table-column prop="RoomId" label="房间号">
             </el-table-column>
@@ -186,10 +186,31 @@
             </el-table-column>
             <el-table-column label="操作">
               <template slot-scope="scope">
-                <el-button size="mini" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
+                <el-button size="mini" :disabled="true" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
               </template>
             </el-table-column>
           </el-table>
+        </div>
+    </div>
+
+     <div class="systemInfo">
+        <div class="card-title">
+          上传详情
+          <i class="el-icon-sort"></i>
+        </div>
+        <div class="upload_box grid_2">
+          <div class="upload_card" v-for="count in 1" :key="count">
+            <div class="livename" >【七宝游戏】摸摸雀雀好耶~</div>
+            <div class="originname">七咔拉CHikalar</div>
+            <div class="card-title">项目内容</div>
+            <div class="UpObjInof">
+              <el-image src="../static/flv.png" style="width:60px"></el-image>
+              <el-image src="../static/mp4.png" style="width:60px"></el-image>
+              <el-image src="../static/gift.png" style="width:60px"></el-image>
+              <el-image src="../static/danmuku.png" style="width:60px"></el-image>
+            </div>
+            <div>这样的图标太丑了，我就算从楼上跳下去也不会去用，我再想想</div>
+          </div>
         </div>
     </div>
 
@@ -200,6 +221,7 @@
 import {formatDate} from '../reunit'
 import {postFormAPI,pubBody} from '../api'
 import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
+import {fake_up_data} from '../utils/fake_data'
 export default {
   data() {
     return {
@@ -210,7 +232,14 @@ export default {
       dl_all:0,
       system_monitor:sys_mon_ex,
       HDD:{},
-      uoload:[]
+      upload:fake_up_data.Package,
+      DishBarColor: [
+          {color: '#1989fa', percentage: 20},
+          {color: '#6f7ad3', percentage: 40},
+          {color: '#5cb87a', percentage: 60},
+          {color: '#e6a23c', percentage: 80},
+          {color: '#f56c6c', percentage: 100}
+        ]
     };
   },
   created: async function(){
@@ -275,7 +304,7 @@ export default {
       // 获取所有的录制队列 （含有历史）
       this.rec_all_list()
       // 获取队列简报 （上传）
-      this.upload_ing()
+      // this.upload_ing()
       // 获取系统监控
       this.system_resource_monitoring()
     },
@@ -290,7 +319,7 @@ export default {
       console.debug(param)
       let response = await postFormAPI('upload_ing',param,true)
       console.debug(response)
-      this.uoload  =  response.data.Package
+      this.upload  =  response.data.Package
       return response.data;
 
     },
@@ -432,12 +461,50 @@ export default {
   display:grid;
   grid-gap: 10px;
 }
+.grid_2{
+  grid-template-columns: 1fr 1fr;
+}
 .grid_3{
   grid-template-columns: 1fr 1fr 1fr;
 }
 .grid_4{
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
+.upload_box{
+  display:grid;
+  border: 1px solid #e2d0d0;
+  border-radius: 5px;
+  padding: 10px 10px 10px 10px;
+}
+.upload_box_icon{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90px;
+  color: #cebfbf;
+}
+.upload_box_icon_after{
+  color: #000000;
+}
+.upload_box_icon_is{
+  color: #ae92f0;
+}
+.el-icon-film, .flv{
+  font-size: 19px;
+}
+
+.el-icon-present, .gift{
+  font-size: 19px;
+}
+
+.el-icon-chat-dot-square, .danmu{
+  font-size: 19px;
+}
+
+.el-icon-video-play, .mp4{
+  font-size: 19px;
+}
+
 .card-title {
   /* line-height: 54px; */
   font-size: 14px;
@@ -454,5 +521,17 @@ export default {
   font-size: 25px;
   font-weight: 600;
   color: #333;
+}
+.livename {
+  font-size: 28px;
+  font-weight: 300;
+  max-width: 500px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.originname {
+  font-size: 10px;
+  color: #af8585;
 }
 </style>

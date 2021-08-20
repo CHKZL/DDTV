@@ -1,6 +1,5 @@
 <template>
   <div class="ng-404">
-    404页面
   </div>
 </template>
 
@@ -16,6 +15,10 @@ export default {
 
 <style scoped>
 .ng-404{
-    display: flex;
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  grid-gap: 20px;
+  grid-auto-flow: row dense;
 }
+
 </style>
