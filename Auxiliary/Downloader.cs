@@ -37,15 +37,27 @@ namespace Auxiliary
                 catch (Exception) { }
                 try
                 {
+                    string danmuFile = ((System.IO.FileStream)DOL.弹幕储存流.BaseStream).Name;
                     DOL.弹幕储存流.Close();
                     DOL.弹幕储存流.Dispose();
+                    if (Path.GetFileNameWithoutExtension(danmuFile) != Path.GetFileNameWithoutExtension(DOL.文件保存路径))
+                    {
+                        File.Move(danmuFile, DOL.文件保存路径.Substring(0, DOL.文件保存路径.Length - 4) + (MMPU.弹幕录制种类 == 1 ? ".ass" : ".xml"));
+                        MMPU.文件删除委托(danmuFile, "弹幕文件重命名");
+                    }
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间弹幕储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
                 try
                 {
+                    string giftFile = ((System.IO.FileStream)DOL.礼物储存流.BaseStream).Name;
                     DOL.礼物储存流.Close();
                     DOL.礼物储存流.Dispose();
+                    if (giftFile.Substring(0, giftFile.Length - 4) != DOL.文件保存路径)
+                    {
+                        File.Move(giftFile, DOL.文件保存路径 + ".txt");
+                        MMPU.文件删除委托(giftFile, "礼物文件重命名");
+                    }
                     InfoLog.InfoPrintf($"{DOL.房间_频道号}房间礼物储存流对象回收完成", InfoLog.InfoClass.Debug);
                 }
                 catch (Exception) { }
@@ -146,8 +158,8 @@ namespace Auxiliary
                         Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
                     }).Start();
 
-                    Upload.UploadTask uploadTask = new Upload.UploadTask(item.DownIofo);
-                    uploadTask.UploadVideo();
+                    Upload.Upload uploadTask = new Upload.Upload(item.DownIofo);
+                    uploadTask.upload();
                 }
             }
         }
@@ -343,18 +355,27 @@ namespace Auxiliary
                         }
                         DownIofo.弹幕储存流.Flush();//写入弹幕数据
                         break;
+                    /*礼物流格式
+                     * timestamp|uid|username|type|content|amount
+                     */
                     case SendGiftEventArgs gift:
-                        DownIofo.礼物储存流.WriteLine("收到来自{0}[{1}]的{2}个{3}礼物", gift.UserName, gift.UserId, gift.Amount, gift.GiftName);
+                        DownIofo.礼物储存流.WriteLine($"{gift.Timestamp}|{gift.UserId}|{gift.UserName}|礼物|{gift.GiftName}|{gift.Amount}");
                         DownIofo.礼物储存流.Flush();//写入礼物数据
                         break;
                     case GuardBuyEventArgs guard:
-                        DownIofo.礼物储存流.WriteLine("增加舰队:{0}当上了{1}", guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督");
+                        string content = guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督";
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|{guard.UserId}|{guard.UserName}|舰队|{content}|{guard.Number}");
                         DownIofo.礼物储存流.Flush();//写入舰队数据
                         break;
                     case WarningEventArg Warning:
-                        DownIofo.礼物储存流.WriteLine("{0}：被超管警告了，警告内容：{1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), Warning.msg);
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{Warning.msg}|1");
                         DownIofo.礼物储存流.Flush();//写入超管警告内容
                         break;
+                    //TODO: SC记录
+                    /*case SuperchatEventArg sc:
+                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{sc.OriginalInformation}|1");
+                        //DownIofo.礼物储存流.Flush();//写入sc
+                        break;*/
 
                 }
             }
@@ -455,6 +476,9 @@ namespace Auxiliary
             if(继承的项目!=null)
             {
                 下载对象.DownIofo.继承.待合并文件列表 = 继承的项目.继承.待合并文件列表;
+                下载对象.DownIofo.弹幕储存流 = 继承的项目.弹幕储存流;
+                下载对象.DownIofo.弹幕录制基准时间 = 继承的项目.弹幕录制基准时间;
+                下载对象.DownIofo.礼物储存流 = 继承的项目.礼物储存流;
             }
             if (!是否保存)
             {
@@ -497,20 +521,19 @@ namespace Auxiliary
                     DownIofo.备注 = "下载任务结束";                 
                     if (e.Cancelled&&!DownIofo.网络超时)
                     {
-                        Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
                         if (!DownIofo.播放状态 && DownIofo.是否是播放任务)
                         {
                             DownIofo.备注 = "播放窗口关闭";           
                             DownIofo.下载状态 = false;
                             下载结束提醒(true, "下载任务结束",DownIofo);
-                            uploadTask.UploadVideo();
+                            new Upload.Upload(DownIofo).upload();
                             return;
                         }
                         DownIofo.继承.待合并文件列表.Add(DownIofo.文件保存路径);
                         DownIofo.备注 = "用户取消，停止下载";
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
-                        uploadTask.UploadVideo();
+                        new Upload.Upload(DownIofo).upload();
                     }
                     else if (!e.Cancelled&& !bilibili.根据房间号获取房间信息.是否正在直播(DownIofo.房间_频道号,true))
                     {
@@ -544,8 +567,8 @@ namespace Auxiliary
                         }
                         DownIofo.下载状态 = false;
                         下载结束提醒(true, "下载任务结束", DownIofo);
-                        Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
-                        uploadTask.UploadVideo();
+                        Upload.Upload uploadTask = new Upload.Upload(DownIofo);
+                        uploadTask.upload();
 
                         return;
                     }
@@ -617,8 +640,8 @@ namespace Auxiliary
                                                 DownIofo.下载状态 = false;
                                                 DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
                                                 下载结束提醒(true, "下载任务结束", 重连下载对象.DownIofo);
-                                                Upload.UploadTask uploadTask = new Upload.UploadTask(DownIofo);
-                                                uploadTask.UploadVideo();
+                                                Upload.Upload uploadTask = new Upload.Upload(DownIofo);
+                                                uploadTask.upload();
                                             }
                                             catch (Exception){}
                                             return;
@@ -632,7 +655,9 @@ namespace Auxiliary
                                                 {
                                                     DownIofo.下载状态 = false;
                                                     DownIofo.结束时间 = Convert.ToInt32((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0)).TotalSeconds);
-                                                    下载结束提醒(true, "下载任务结束", DownIofo);
+                                                    //NagisaCo: 被继承项目不关闭弹幕礼物流
+                                                    //下载结束提醒(true, "下载任务结束", DownIofo);
+                                                    下载结束提醒(false, "下载任务结束", DownIofo);
                                                     重连下载对象.DownIofo.备注 = "完成重连，正在续命..";
                                                     //下载对象.DownIofo.下载状态 = true;
                                                     return;

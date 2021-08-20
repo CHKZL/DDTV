@@ -148,7 +148,9 @@ WEB文件列表界面
 # DDTVLiveRec上传模块使用说明
 
 ## 0 基本设置  
+
 配置文件：DDTVLiveRec.dll.config中需要配置的参数  
+
 - DeleteAfterUpload  
   上传后删除源文件：1删除 2保留  
   只有当最后一个上传任务成功后 才会执行删除操作
@@ -160,8 +162,10 @@ WEB文件列表界面
 - xxxPath  
   上传至xxx的目录，默认为$/$根目标  
   该目录下会根据直播间进行分类，每个文件夹下根据直播时间再分类
+
 ## 1 OneDrive
-1. 软件安装 安装OneDriveUploader  
+1. 软件安装 安装OneDriveUploader
+
 https://github.com/MoeClub/OneList/tree/master/OneDriveUploader
 
     - Windows用户下载i386(32位)/amd64(64位)中的可执行文件到DDTVLiveRec.exe的同级目录下  
@@ -170,20 +174,50 @@ https://github.com/MoeClub/OneList/tree/master/OneDriveUploader
         wget https://raw.githubusercontent.com/MoeClub/OneList/master/OneDriveUploader/amd64/linux/OneDriveUploader -P /usr/local/bin/
         chmod +x /usr/local/bin/OneDriveUploader
         ```
-2. 配置  
+1. 配置
+
    根据[安装OneDriveUploader]在github页上的说明，先初始化他的配置文件  
    再在DDTVLiveRec.dll.config 中将初始化后生成的auth.json位置填入DDTVLiveRec配置文件的$OneDriveConfig$  
 
 ## 2 腾讯Cos对象存储
+
 1. 申请腾讯云API
-2. DDTVLiveRec配置文件中填写相关信息(如果配置文件中没有对应的值，则启动一次DDTVLiveRec即可(包括登陆的整个流程走一次))  
+   
+2. DDTVLiveRec配置文件中填写相关信息(如果配置文件中没有对应的值，则启动一次DDTVLiveRec即可(包括登陆的整个流程走一次))
+   
    - CosSecretId API中的ID
    - CosSecretKey API中的Key
    - CosRegion 存储桶所在区域，格式为 xx-xxxx
    - CosBucket 存储桶名称，格式为 bucketname-appid
 
+## 3 百度网盘
+
+1. 软件安装 BaiduPCS-Go <https://github.com/qjfoidnh/BaiduPCS-Go/releases/tag/v3.8.2>
+   
+   选择自己的系统下载可执行文件
+
+2. 登录百度云账号
+   
+   根据教程<https://github.com/qjfoidnh/BaiduPCS-Go#%E7%99%BB%E5%BD%95%E7%99%BE%E5%BA%A6%E5%B8%90%E5%8F%B7>，使用BaiduPCS登录账号，软件会自动保存账号信息
+
+3. 修改配置文件
+
+## 4 阿里云OSS对象存储
+
+`由于没有OSS的账号进行测试，可能存在bug`
+
+参数配置详见  
+[OSS->SDK->.NET->初始化](https://help.aliyun.com/document_detail/32087.html?spm=a2c4g.11186623.0.0.6a9e4772ue7ipS)
+
+  - OssAccessKeyId ID
+  - OssAccessKeySecret 密码
+  - OssEndpoint 访问域名
+  - OssBucketName 存储桶名称
+
 没有你的上传目标？试试自己添加吧！
 [相关文档](./Upload.md)  
+
+
 <br/>
 <br/>
 
