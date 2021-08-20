@@ -1,7 +1,12 @@
 <template>
-  <div class="login">
-    <el-card style="width: 391px;">
-      <el-form :model="loginForm" :rules="rules" ref="loginForm">
+  <div class="login login-background">
+    <div class="firefly" v-for="count in 15" :key="count"></div>
+    <div class="login-logo">
+      <el-image src="../static/logo.png" class="login-logo-img"></el-image>
+      <div class="login-logo-title"></div>
+    </div>
+    <el-card style="width: 391px;z-index:99">
+      <el-form :model="loginForm" :rules="rules" ref="loginForm" style="z-index: 99">
         <el-form-item label="用户名" prop="user">
           <el-input type="text" v-model="loginForm.user" autocomplete="off"></el-input>
         </el-form-item>
@@ -99,6 +104,7 @@ export default {
 </script>
  
 <style scoped>
+@import '../style/firefly.css';
 .login {
   /* 布局容器设定居中 */
   display: flex;
@@ -113,5 +119,24 @@ export default {
   right: 0;
   bottom: 0;
   top: 0;
+}
+.login-background {
+  background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url("../../public/static/loginBack.jpg");
+  background-size: cover;
+  background-position: center;
+}
+.login-logo {
+  position: fixed;
+  top: 20px;
+  display: flex;
+  left: 20px;
+  justify-content: space-between;
+}
+.login-logo-title{
+  color: #fff;
+  font-size: 28px;
+}
+.login-logo-img{
+  width: 83px;
 }
 </style>

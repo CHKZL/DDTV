@@ -5,10 +5,9 @@
     <div class="project-nav">
       <el-menu class="el-menu-open" :default-active="$route.path" :collapse="isCollapse" :router="true">
         <div class="logo" >
-          <el-image src="./static/logo.png" style="width:25px"></el-image>
-          <transition name="el-zoom-in-center" v-if="!isCollapse">
-          <div class="logotitle" >DDTV</div>
-          </transition>
+          <el-image src="../static/logo.png" style="width:90px" v-show="!isCollapse"></el-image>
+          <el-image src="../static/logo_mini.png" style="width:25px" v-show="isCollapse"></el-image>
+          
         </div>
         <el-menu-item index="/">
           <i class="el-icon-location"></i>
@@ -27,6 +26,9 @@
           <span slot="title">查看文档</span>
         </el-menu-item>
       </el-menu>
+      <div class="about">
+        <i class="el-icon-more"></i>
+      </div>
     </div>
     <!-- 网页主体 -->
     <div class="content">
@@ -136,6 +138,14 @@ body {
   z-index: 2;
   display: flex;
   flex-direction: column;
+  padding-bottom: 30px;
+}
+.about {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 .router-view {
   flex: 1;
