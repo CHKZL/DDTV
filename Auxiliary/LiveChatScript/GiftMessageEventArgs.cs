@@ -77,6 +77,7 @@ namespace Auxiliary.LiveChatScript
         /// 数量
         /// </summary>
         public int Number { get; set; }
+        public long Timestamp { get; set; }
 
         internal GuardBuyEventArgs(JObject obj) : base(obj)
         {
@@ -86,6 +87,7 @@ namespace Auxiliary.LiveChatScript
             GiftName = (string)obj["data"]["gift_name"];
             Price = (int)obj["data"]["price"];
             Number = (int)obj["data"]["num"];
+            Timestamp = (long)obj["data"]["start_time"];
             //GiftId = obj["data"]["gift_id"].Value<string>();//舰长没有
         }
 
