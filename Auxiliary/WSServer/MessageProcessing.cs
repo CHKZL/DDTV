@@ -67,7 +67,7 @@ namespace Auxiliary.WSServer
                         case (int)ClientSendMessageCode.根据房间号获得相关录制文件:
                             return CommandParsing.根据房间号获得录制的文件列表.获得文件列表(rlc.message);
                         case (int)ClientSendMessageCode.获取上传任务信息列表:
-                            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Upload.Uploader.UploadList);
+                            return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功, Upload.Configer.UploadList);
                         case (int)ClientSendMessageCode.获取上传中的任务信息列表:
                             return RequestMessage.封装消息.上传_获取上传中的任务信息列表信息.上传中的任务信息列表信息();
                         case (int)ClientSendMessageCode.修改配置_自动转码设置:
