@@ -335,6 +335,9 @@ export default {
 </script>
 
 <style scoped>
+.room{
+  padding-top: 20px;
+}
 .slide-enter-active{
  transition:all .5s linear;
 }

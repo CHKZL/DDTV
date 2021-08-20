@@ -422,6 +422,7 @@ export default {
   display: grid;
   grid-gap: 20px;
   grid-template-columns: repeat(auto-fit, minmax(540px, 100%));
+  padding: 20px;
 }
 .linux_hdd_bar{
   display: grid;
