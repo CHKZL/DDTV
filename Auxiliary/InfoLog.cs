@@ -136,19 +136,24 @@ namespace Auxiliary
             int finished = 0;
             int uploading = 0;
 
-            Func<int,string> getStatus = code =>
+            Func<Upload.Status, int, string> getStatus = (code, times) =>
             {
                 string statusText="";
                 switch(code)
                 {
-                    case 0:
+                    case Upload.Status.Success:
                         statusText = "■上传成功";
                         break;
-                    case -1:
+                    case Upload.Status.Fail:
                         statusText = "×上传失败";
                         break;
+                    case Upload.Status.OnGoing:
+                        statusText = $"○第{times}上传中";
+                        break;
+                    case Upload.Status.OnHold:
+                        statusText = $"●等待中";
+                        break;
                     default:
-                        statusText = $"□第{code}次上传";
                         break;
                 }
                 return statusText;
@@ -170,58 +175,49 @@ namespace Auxiliary
                 "<td>开始时间</td>" +
                 "<td>结束时间</td></tr>"));
 
-            foreach (var file in Upload.Uploader.UploadList)
+            foreach (var project in Upload.Configer.UploadList)
             {
-                foreach (var item in file.status)
+                foreach (var file in project.files)
                 {
-                    cnt++;
-                    var upTask = item.Value;
-                    string startTime = MMPU.Unix转换为DateTime(upTask.startTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss");
-                    string endTime = upTask.endTime > 0 ? MMPU.Unix转换为DateTime(upTask.endTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss") : "";
+                    foreach(var task in file.tasks)
+                    {
+                        cnt++;
 
-                    if (Mode == 0)
-                    {
-                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
-                            file.streamerName + "</td><td>" +
-                            file.fileName + "</td><td>" +
-                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
-                            item.Key + "</td><td>" +
-                            getStatus(upTask.statusCode) + "</td><td>" +
-                            upTask.comments + "</td><td>" +
-                            startTime + "</td><td>" +
-                            endTime + "</td></td>"));
-                    }
-                    else if (Mode == 1 && upTask.statusCode!=0 && upTask.statusCode != -1)
-                    {
-                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
-                            file.streamerName + "</td><td>" +
-                            file.fileName + "</td><td>" +
-                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
-                            item.Key + "</td><td>" +
-                            getStatus(upTask.statusCode) + "</td><td>" +
-                            upTask.comments + "</td><td>" +
-                            startTime + "</td><td>" +
-                            endTime + "</td></td>"));
-                    }
-                    else if (Mode == 2 && (upTask.statusCode == 0 || upTask.statusCode == -1))
-                    {
-                        uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
-                            file.streamerName + "</td><td>" +
-                            file.fileName + "</td><td>" +
-                            Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
-                            item.Key + "</td><td>" +
-                            getStatus(upTask.statusCode) + "</td><td>" +
-                            upTask.comments + "</td><td>" +
-                            startTime + "</td><td>" +
-                            endTime + "</td></td>"));
-                    }
-                    if (upTask.statusCode != 0 && upTask.statusCode != -1)
-                    {
-                        uploading++;
-                    }
-                    else
-                    {
-                        finished++;
+                        string startTime = MMPU.Unix转换为DateTime(task.startTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss");
+                        string endTime = task.endTime > 0 ? MMPU.Unix转换为DateTime(task.endTime.ToString()).ToString("yyyy/MM/dd HH:mm:ss") : "";
+
+                        if (Mode == 0)
+                        {
+                            uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                                project.streamerName + "</td><td>" +
+                                file.fileName + "</td><td>" +
+                                Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
+                                Enum.GetName(typeof(Upload.TaskType), task.taskType) + "</td><td>" +
+                                getStatus(task.statusCode, task.retries) + "</td><td>" +
+                                task.comments + "</td><td>" +
+                                startTime + "</td><td>" +
+                                endTime + "</td></td>"));
+                        }
+                        else if (Mode == 2 && (task.statusCode == Upload.Status.OnGoing || task.statusCode == Upload.Status.Success))
+                        {
+                            uploadList.Add(string.Format("<tr><td>" + cnt + "</td><td>" +
+                                project.streamerName + "</td><td>" +
+                                file.fileName + "</td><td>" +
+                                Downloader.转换下载大小数据格式(file.fileSize) + "</td><td>" +
+                                Enum.GetName(typeof(Upload.TaskType), task.taskType) + "</td><td>" +
+                                getStatus(task.statusCode, task.retries) + "</td><td>" +
+                                task.comments + "</td><td>" +
+                                startTime + "</td><td>" +
+                                endTime + "</td></td>"));
+                        }
+                        if (task.statusCode == Upload.Status.OnGoing)
+                        {
+                            uploading++;
+                        }
+                        else
+                        {
+                            finished++;
+                        }
                     }
                 }
             }
@@ -525,7 +521,7 @@ namespace Auxiliary
                 BB += $"<br/>可使用内存:{Downloader.转换下载大小数据格式(double.Parse(Men.Available) * 1024.0)} 总内存大小:{Downloader.转换下载大小数据格式(double.Parse(Men.Total) * 1024.0)}</body></html>";
             }
             BB += "<hr/>---下载任务---<br/>" + InfoLog.DownloaderInfoPrintf(1);
-            if (Upload.Uploader.enableUpload)
+            if (Upload.Configer.enableUpload)
             {
                 BB += "<br/>---上传任务---<br/>" + InfoLog.UploaderInfoPrintf(1);
             }

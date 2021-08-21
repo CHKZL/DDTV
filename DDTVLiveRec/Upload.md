@@ -1,11 +1,19 @@
 ## 新增上传配置(以Cos为例)
+
+`此项已更新`
+
 ### 0 代码结构介绍
 ![代码结构](./软件图/代码结构.png)  
 在Auxiliary项目下，有Upload的文件夹  
-- xxxUpload.cs 不同上传目标的实现上传的代码
-- Uploader.cs 静态类，用于初始化并保存上传配置、管理上传顺序
+- Service 不同上传目标的实现上传的代码
+- Info 上传任务层次生成及上传函数
+- Configer.cs 静态类，用于初始化并保存上传配置、管理上传顺序
+- Uplaod.cs 上传时实例化该对象，并调用内部函数
 - UploadException.cs 自定义异常类，用于上传失败时的异常处理
 - UplaodTask.cs 上传任务，每次上传实例化此类，其中包括上传信息以及上传状态等内容  
+- Enum.cs 内含文件类型，上传网盘类型，状态三种枚举类
+- UploadMsg.cs 用于API信息封装
+- UploadTest.cs 可调用进行测试
 
 ### 1 配置好基本上传代码
 1. 使用c#写出能正常运行的上传代码，需要有一个public函数进行上传  
@@ -50,8 +58,11 @@
     - 配置异常处理  
     当上传失败后，请抛出$UploadFailure$异常，便于上层捕捉后重试
 5. 调用上传函数  
-   在UploadTask中的switch语句中新增相应case并使用Upload函数调用自己写的上传函数
-    ![调用函数](./软件图/调用函数.png)  
+   
+   ~~在UploadTask中的switch语句中新增相应case并使用Upload函数调用自己写的上传函数~~
+   
+   修改Enum.cs中TaskType，在末尾添加新增的类型
+6. 前端展示部分修改
 ### 3 编译后调试检查
 
 ### 4 修改ReadME.md，编写相关使用文档

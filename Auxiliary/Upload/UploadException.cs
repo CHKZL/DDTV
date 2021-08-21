@@ -1,16 +1,30 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Auxiliary.Upload
 {
     /// <summary>
-    /// 获取上传文件信息失败
+    /// Task创建失败
     /// </summary>
-    public class CreateUploadTaskFailure : ApplicationException
+    public class TaskException : ApplicationException
     {
-        public CreateUploadTaskFailure(string message) : base(message) { }
-        public CreateUploadTaskFailure(string message, Exception inner) : base(message, inner) { }
+        public TaskException(string message) : base(message) { }
+        public TaskException(string message, Exception inner) : base(message, inner) { }
+    }
+    /// <summary>
+    /// File创建失败
+    /// </summary>
+    public class FileException : ApplicationException
+    {
+        public FileException(string message) : base(message) { }
+        public FileException(string message, Exception inner) : base(message, inner) { }
+    }
+    /// <summary>
+    /// Project创建失败
+    /// </summary>
+    public class ProjectException : ApplicationException
+    {
+        public ProjectException(string message) : base(message) { }
+        public ProjectException(string message, Exception inner) : base(message, inner) { }
     }
 
     /// <summary>

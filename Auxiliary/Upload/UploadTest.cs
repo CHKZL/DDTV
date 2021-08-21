@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using static Auxiliary.Downloader;
 
 namespace Auxiliary.Upload
@@ -11,7 +12,7 @@ namespace Auxiliary.Upload
     public class UploadTest
     {
         public DownIofoData downIofo;
-        public UploadTask uploadTask;
+        public Upload uploadTask;
 
         #region 生成数据
         /// <summary>
@@ -21,8 +22,12 @@ namespace Auxiliary.Upload
         /// <param name="srcFile">上传源文件路径</param>
         public UploadTest(string srcFile)
         {
+            Thread.Sleep(3000);
+            Configer.enableUpload = true;
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
+            
+            //Uploader.InitUpload();
 
             downIofo = new DownIofoData();
             downIofo.主播名称 = "UplaodTest_SteamerName";
@@ -32,8 +37,8 @@ namespace Auxiliary.Upload
 
             downIofo.文件保存路径 = srcFile;
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
         /// <summary>
         /// 测试上传，自动生成相应数据
@@ -43,8 +48,8 @@ namespace Auxiliary.Upload
         {
             CreateFixedSizeFile(@"UplaodTest_FilePath/UplaodTest_FileName.flv",1024*1024*1024);
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
         /// <summary>
         /// 测试上传，自动生成相应数据
@@ -54,10 +59,11 @@ namespace Auxiliary.Upload
         /// <param name="type">上传目标</param>
         public UploadTest(string srcFile, string type)
         {
+            Thread.Sleep(3000);
             MMPU.Debug模式 = true;
             MMPU.Debug打印到终端 = true;
-            Uploader.enableUpload = true;
-
+            Configer.enableUpload = true;
+            Thread.Sleep(5000);
             downIofo = new DownIofoData();
             downIofo.主播名称 = "UplaodTest_SteamerName";
             downIofo.标题 = "UplaodTest_StreamTitle";
@@ -65,11 +71,12 @@ namespace Auxiliary.Upload
             downIofo.开始时间 = 0;
 
             downIofo.文件保存路径 = srcFile;
-            Uploader.UploadOrder.Clear();
-            Uploader.UploadOrder.Add(1, type);
 
-            uploadTask = new UploadTask(downIofo);
-            uploadTask.UploadVideo();
+            Configer.UploadOrder.Clear();
+            Configer.UploadOrder.Add(1, type);
+
+            uploadTask = new Upload(downIofo);
+            uploadTask.upload();
         }
 
         /// <summary> 
