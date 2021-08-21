@@ -1,6 +1,4 @@
-# 一个普通的web ui
-> ~~年轻人的第一个web项目~~
-
+# README —— 一套适配DDTV的Web管理系统
 ## 一、项目介绍
 
 ### 1、介绍
@@ -21,6 +19,24 @@ window.apiObj = {
     apiUrl:'http://你的域名:11419',//参考格式：[https://你的域名:11419]或者[http://你的域名:11419]
   }
 ```
+### 5、自行构建
+安装项目依赖
+```
+npm install
+```
+在开发模式下支持热更新的运行
+```
+npm run serve
+```
+打包用于生产环境
+```
+npm run build
+```
+检查和修复
+```
+npm run lint
+```
+
 # 二、使用
 ## 1、叨一叨
 其实这个项目算我不务正业做的第一个基于**纯天然、植物饲养的**Vue 2.0web项目。
@@ -106,24 +122,6 @@ window.apiObj = {
 
 
 
-
-## 1、自行构建
-安装项目依赖
-```
-npm install
-```
-在开发模式下支持热更新的运行
-```
-npm run serve
-```
-打包用于生产环境
-```
-npm run build
-```
-Lints and fixes files
-```
-npm run lint
-```
 
 
 # 三、贡献
