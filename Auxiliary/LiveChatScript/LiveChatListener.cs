@@ -284,7 +284,13 @@ namespace Auxiliary.LiveChatScript
                 obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             }
             catch (Exception){ return; }
-            //Debug.Log(jsonBody);
+
+            //Console.WriteLine(jsonBody);
+            /*StreamWriter streamWriter = new StreamWriter(@"E:/data.json", true);
+            streamWriter.WriteLine(jsonBody);
+            streamWriter.Flush();
+            streamWriter.Close();*/
+
             string cmd = (string)obj["cmd"];
             if (cmd != "DDTV_T1")
                 InfoLog.InfoPrintf("LiveChatListener收到数据，类型为：" + cmd, InfoLog.InfoClass.进程一般信息);
@@ -295,7 +301,10 @@ namespace Auxiliary.LiveChatScript
                 case "DANMU_MSG":
                     MessageReceived(this, new DanmuMessageEventArgs(obj));
                     break;
-                    
+                //SC信息
+                case "SUPER_CHAT_MESSAGE":
+                    MessageReceived(this, new SuperchatEventArg(obj));
+                    break;
                 case "SEND_GIFT":
                     MessageReceived(this, new SendGiftEventArgs(obj));
                     break;

@@ -364,18 +364,17 @@ namespace Auxiliary
                         break;
                     case GuardBuyEventArgs guard:
                         string content = guard.GuardLevel == 3 ? "舰长" : guard.GuardLevel == 2 ? "提督" : "总督";
-                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|{guard.UserId}|{guard.UserName}|舰队|{content}|{guard.Number}");
+                        DownIofo.礼物储存流.WriteLine($"{guard.Timestamp}|{guard.UserId}|{guard.UserName}|舰队|{content}|{guard.Number}");
                         DownIofo.礼物储存流.Flush();//写入舰队数据
                         break;
                     case WarningEventArg Warning:
                         DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{Warning.msg}|1");
                         DownIofo.礼物储存流.Flush();//写入超管警告内容
                         break;
-                    //TODO: SC记录
-                    /*case SuperchatEventArg sc:
-                        DownIofo.礼物储存流.WriteLine($"{MMPU.获取时间戳()}|-1|超管|警告|{sc.OriginalInformation}|1");
-                        //DownIofo.礼物储存流.Flush();//写入sc
-                        break;*/
+                    case SuperchatEventArg sc:
+                        DownIofo.礼物储存流.WriteLine($"{sc.timestamp}|{sc.userId}|{sc.userName}|醒目留言|{sc.message}|{sc.timeLength}");
+                        DownIofo.礼物储存流.Flush();//写入sc
+                        break;
 
                 }
             }
