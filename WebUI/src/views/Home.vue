@@ -149,7 +149,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">正在进行</div>
-            <div class="big-number">{{rec_tab.length}}</div>
+            <div class="big-number">{{rec_tab.length + upload.length}}</div>
           </el-card>
 
           <el-card shadow="hover">
@@ -164,7 +164,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">已录制文件数</div>
-            <div class="big-number" >455</div>
+            <div class="big-number" >{{filescount}}</div>
           </el-card>
 
         </div>
@@ -199,17 +199,16 @@
           <i class="el-icon-sort"></i>
         </div>
         <div class="upload_box grid_2">
-          <div class="upload_card" v-for="count in 1" :key="count">
-            <div class="livename" >【七宝游戏】摸摸雀雀好耶~</div>
-            <div class="originname">七咔拉CHikalar</div>
-            <div class="card-title">项目内容</div>
-            <div class="UpObjInof">
-              <el-image src="../static/flv.png" style="width:60px"></el-image>
-              <el-image src="../static/mp4.png" style="width:60px"></el-image>
-              <el-image src="../static/gift.png" style="width:60px"></el-image>
-              <el-image src="../static/danmuku.png" style="width:60px"></el-image>
+          <div class="upload_card" v-for="count in 2" :key="count">
+            <div>
+              <div class="livename" >摸摸雀雀好耶~</div>
+              <div class="originname">七咔拉CHikalar</div>
+              <div class="upload_file">
+                <cp :rate="20"></cp>
+                <div class="originname">进行中</div>
+                <div class="originname">已完成</div>
+              </div>
             </div>
-            <div>这样的图标太丑了，我就算从楼上跳下去也不会去用，我再想想</div>
           </div>
         </div>
     </div>
@@ -233,6 +232,7 @@ export default {
       system_monitor:sys_mon_ex,
       HDD:{},
       upload:fake_up_data.Package,
+      filescount:0,
       DishBarColor: [
           {color: '#1989fa', percentage: 20},
           {color: '#6f7ad3', percentage: 40},
@@ -242,7 +242,10 @@ export default {
         ]
     };
   },
+  components: {
+  },
   created: async function(){
+    await this.file_lists()
     await this.getList()
   },
   mounted: async function () {
@@ -308,6 +311,14 @@ export default {
       // 获取系统监控
       this.system_resource_monitoring()
     },
+    /**
+     * 本函数封装了获取文件列表的功能
+     */
+    file_lists:async function(){
+      let param = pubBody('file_lists')
+      let response = await postFormAPI('file_lists',param,true)
+      this.filescount = response.data.Package.length
+    },
 
     /**
     * 本函数封装了请求后端接口获取 获取上传中的队列简报 （全部）
@@ -316,9 +327,7 @@ export default {
     */
     upload_ing: async function(){
       let param = pubBody('upload_ing')
-      console.debug(param)
       let response = await postFormAPI('upload_ing',param,true)
-      console.debug(response)
       this.upload  =  response.data.Package
       return response.data;
 
@@ -473,39 +482,12 @@ export default {
 }
 .upload_box{
   display:grid;
-  border: 1px solid #e2d0d0;
-  border-radius: 5px;
   padding: 10px 10px 10px 10px;
 }
-.upload_box_icon{
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  width: 90px;
-  color: #cebfbf;
+.upload_card{
+  border-left: 6px solid #2196F3;
+  padding: 10px 10px 10px 10px;
 }
-.upload_box_icon_after{
-  color: #000000;
-}
-.upload_box_icon_is{
-  color: #ae92f0;
-}
-.el-icon-film, .flv{
-  font-size: 19px;
-}
-
-.el-icon-present, .gift{
-  font-size: 19px;
-}
-
-.el-icon-chat-dot-square, .danmu{
-  font-size: 19px;
-}
-
-.el-icon-video-play, .mp4{
-  font-size: 19px;
-}
-
 .card-title {
   /* line-height: 54px; */
   font-size: 14px;
@@ -524,7 +506,7 @@ export default {
   color: #333;
 }
 .livename {
-  font-size: 28px;
+  font-size: 25px;
   font-weight: 300;
   max-width: 500px;
   overflow: hidden;

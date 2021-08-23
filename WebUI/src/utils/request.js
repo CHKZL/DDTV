@@ -1,6 +1,6 @@
 /****   request.js   ****/
 import axios from 'axios'
-import { Message} from 'element-ui';
+//import { Message} from 'element-ui';
 import Router from '../router' 
 
 const service = axios.create({
@@ -34,7 +34,7 @@ service.interceptors.response.use(response => {
   return response
 }, error => {
    /***** 接收到异常响应的处理开始 *****/
-  if (error && error.response) {
+  // if (error && error.response) {
     // 1.公共错误处理
     // 2.根据响应码具体处理
     // switch (error.response.status) {
@@ -78,15 +78,15 @@ service.interceptors.response.use(response => {
     //   default:
     //     error.message = `连接错误${error.response.status}`
     // }
-  } else {
-    // 超时处理
-    if (JSON.stringify(error).includes('timeout')) {
-      Message.error('服务器响应超时，请刷新当前页')
-    }
-    error.message = '连接服务器失败'
-  }
+  // } else {
+  //   // 超时处理
+  //   if (JSON.stringify(error).includes('timeout')) {
+  //     Message.error('服务器响应超时，请刷新当前页')
+  //   }
+  //   error.message = '连接服务器失败'
+  // }
 
-  Message.error(error.message)
+  //Message.error(error.message)
   /***** 处理结束 *****/
   //如果不需要错误处理，以上的处理过程都可省略
   return Promise.resolve(error.response)
