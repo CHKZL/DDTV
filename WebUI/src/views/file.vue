@@ -3,31 +3,49 @@
     <div class="tool-bar">
       <div class="but-bar">
         <el-button-group style="width: 100%;">
-          <el-button size="mini" icon="el-icon-download">下载</el-button>
-          <el-button size="mini" type="danger" icon="el-icon-delete">删除</el-button>
+          <el-button size="mini" disabled icon="el-icon-download">下载</el-button>
+          <el-button size="mini" disabled type="danger" icon="el-icon-delete">删除</el-button>
         </el-button-group>
-        <el-input size="mini"  placeholder="搜索您的文件" v-model="input1">
+        <!-- <el-input size="mini"  placeholder="搜索您的文件" v-model="input1">
           <template slot="prepend">
             <i class="el-icon-search"></i>
           </template>
-        </el-input>
+        </el-input> -->
       </div>
       <div class="path">
         <div class="pathinfo">
-          <el-button type="text" style="padding: 0 10px 0 0;">返回上一层</el-button> 
-          <div class="originname" style="font-size: 14px;">tmp > vup</div>
+          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = files" :disabled="filesShow.name == '/'">返回上一层</el-button> 
+          <div class="originname" style="font-size: 14px;">tmp {{filesShow.name != "/" ? `> ${filesShow.name}`:""}}</div>
         </div>
-        <div style="color:#969a94;font-size: 14px;">已全部加载，共129个文件/目录</div>
+        <div style="color:#969a94;font-size: 14px;">已全部加载，共{{Object.keys(filesShow.Obj).length}}个文件/目录</div>
       </div>
       <div class="path" style="justify-content: flex-start;">
-        <el-checkbox style="padding: 0 10px 0 0;" ></el-checkbox>
-        <div style="color:#969a94;font-size: 14px;">已选中13个文件/目录</div>
+        <el-checkbox style="padding: 0 10px 0 0;" disabled></el-checkbox>
+        <div style="color:#969a94;font-size: 14px;">开发中</div>
       </div>
     </div>
     <div class="file_list">
-      <div v-for="count in 100" :key="count" class="file_list_item">
-        <el-checkbox></el-checkbox>
-        <div>{{count}}.mp4</div>
+      <div v-for="(item,key) in filesShow.Obj" :key="key" class="file_list_item">
+        <div style="display:flex;flex-direction: row;align-items: center;">
+          <el-checkbox  :disabled="item.type == 0 ? true:false"></el-checkbox>
+          <img v-if="item.type == 0" src="../../public/static/dict.png" class="fileIcon" />
+          <img v-else-if="item.type == 1" src="../../public/static/mp4.png" class="fileIcon" />
+          <img v-else src="../../public/static/flv.png" class="fileIcon" />
+          
+          <el-button v-if="item.type == 0" type="text" style="padding-left: 20px;" @click="filesShow = item" >{{key}}</el-button> 
+          <div v-else style="padding-left: 20px;font-size: 14px;">{{key}}</div>
+        </div>
+        <div>
+          <div class="originname" style="padding-left: 20px;float: left;">{{item.type != 0 ? change(item.Obj.Size):"--"}}</div>
+          <div class="originname" style="padding-left: 20px;float: right;">{{item.type != 0 ? transformTimestamp(item.Obj.ModifiedTime):''}}</div>
+        </div>
+        <div style="justify-self: center;">
+          <el-button-group style="width: 100%;" v-show="item.type != 0">
+            <el-button size="mini" icon="el-icon-video-play">播放</el-button>
+            <el-button size="mini" icon="el-icon-download">下载</el-button>
+            <el-button size="mini" type="danger" icon="el-icon-delete" @click="process_file_delete(item.Obj.Directory, key)">删除</el-button>
+          </el-button-group>
+        </div>
       </div>
     </div>
   </div>
@@ -38,12 +56,27 @@ import { postFormAPI, pubBody } from "../api";
 export default {
   data() {
     return {
-      roomid: "",
-      room: [],
-      dialogshow: false,
-      file_tab: [],
+      files:{},
+      filesShow:{},
+      userlook:null
     };
   },
+
+  created: async function(){
+
+    let data = await this.file_lists(),
+        filesdict = this.render_manage(data),
+        roomid = this.$route.query.rooid
+    if(roomid) {
+      this.file_range(roomid).then(result => {
+        this.files = filesdict
+        this.filesShow = this.render_manage(result)
+      })
+    }else{
+    this.files = filesdict
+    this.filesShow = filesdict}
+  },
+
   mounted: async function () {
     // 发一次请求 确定用户凭据的有效性
     this.getList();
@@ -104,7 +137,46 @@ export default {
       // console.log('dateString', dateString); // > dateString 2021-07-06 14:23
       return dateString;
     },
+
+    /**
+     * 本函数封装了获取文件列表的功能
+     */
+    file_lists:async function(){
+      let param = pubBody('file_lists'),
+          response = await postFormAPI('file_lists',param,true)
+      return response
+    },
+
+    // 渲染管理
+
+    render_manage:function(data){
+      let res = data.data.Package,
+          reslen = res.length,
+          filesdict = {"type":0,"name":'/',"Obj":{}},
+          pathdit = {}
+
+      for (var i = 0; i < reslen; i++) { 
+        let dictName = res[i].Directory
+        if(pathdit[dictName]) pathdit[dictName].push(res[i])
+        else pathdit[dictName] = [res[i]]
+      }
+      for(var key in pathdit){
+        let fileitem = {},
+            itemlen = pathdit[key].length
+        for (var j = 0; j < itemlen; j++) {
+          let fileInfo = pathdit[key][j],
+              fileName = fileInfo.Name
+          fileitem[fileName] = {"type":1,"name":key,"Obj":fileInfo}
+        }
+        filesdict.Obj[key] = {"type":0,"name":key,"Obj":fileitem}
+      }
+      console.log(filesdict)
+      return filesdict
+    },
+
+
     // 去视频播放页
+
     getDescribe(path1, name, flv) {
       let rpath = "";
       if (flv) {
@@ -120,6 +192,12 @@ export default {
         },
       });
       window.open(newpage.href, "_blank");
+    },
+    msggo:function (res){
+      console.log(res)
+      let typ = "success",msg = "操作成功"
+      if (res.code != 1001) {typ = "error",msg = res.message}
+      this.$message({message: msg,type: typ});
     },
 
     /**
@@ -139,19 +217,26 @@ export default {
       return response.data;
     },
     process_file_delete: async function (Directory, Name) {
-      let that = this;
       await this.$confirm("此操作不可恢复, 是否继续?", "删除文件", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          that.file_delete(Directory, Name);
-          this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
-          that.useroom_file(that.roomid);
+          this.file_delete(Directory, Name).then(result => {
+            this.msggo(result)
+            // 更新视图
+            this.file_lists().then(result => {
+            let userlook = this.filesShow.name,
+                countlist = this.render_manage(result)
+
+            this.files = countlist
+            if(userlook!='/') this.filesShow = countlist.Obj[userlook]
+            else this.filesShow = countlist
+            console.log(userlook)
+            console.log(countlist)
+            })
+          })
         })
         .catch(() => {
           this.$message({
@@ -165,16 +250,17 @@ export default {
     useroom_file: async function (roomid) {
       this.roomid = roomid;
       let res = await this.file_range(roomid);
-      this.file_tab = res.Package;
-      var len = this.file_tab.length;
-      for (var i = 0; i < len; i++) {
-        let type = this.file_tab[i].Name.slice(-3);
-        if (type == "flv") type = true;
-        else type = false;
-        this.file_tab[i].Type = type;
-      }
-      this.dialogshow = true;
+      // this.file_tab = res.Package;
+      // var len = this.file_tab.length;
+      // for (var i = 0; i < len; i++) {
+      //   let type = this.file_tab[i].Name.slice(-3);
+      //   if (type == "flv") type = true;
+      //   else type = false;
+      //   this.file_tab[i].Type = type;
+      // }
+      return res
     },
+
     getList: async function () {
       // 获取全部房间
       this.room_list();
@@ -193,7 +279,7 @@ export default {
       console.debug(param);
       let response = await postFormAPI("file_range", param, true);
       console.debug(response);
-      return response.data;
+      return response;
     },
 
     // 获取当前所有房间
@@ -220,6 +306,7 @@ export default {
   flex-direction: column;
   position: relative;
 }
+.fileIcon{height: 38px;padding-left: 30px;}
 .tool-bar{
   display: flex;
   flex-direction: column;
@@ -255,10 +342,13 @@ export default {
   border-bottom: 1px solid rgb(143 239 255);
   padding-left: 10px;
   padding-right: 10px;
-  display: flex;
-  align-content: center;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 4fr 1fr 2fr;
   align-items: center;
+  background-color: #f0e7e700;
+}
+.file_list_item:hover{
+  background-color: #f0e7e785;
 }
 .username {
   font-size: 28px;

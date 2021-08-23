@@ -149,7 +149,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">正在进行</div>
-            <div class="big-number">{{rec_tab.length}}</div>
+            <div class="big-number">{{rec_tab.length + upload.length}}</div>
           </el-card>
 
           <el-card shadow="hover">
@@ -164,7 +164,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">已录制文件数</div>
-            <div class="big-number" >455</div>
+            <div class="big-number" >{{filescount}}</div>
           </el-card>
 
         </div>
@@ -232,6 +232,7 @@ export default {
       system_monitor:sys_mon_ex,
       HDD:{},
       upload:fake_up_data.Package,
+      filescount:0,
       DishBarColor: [
           {color: '#1989fa', percentage: 20},
           {color: '#6f7ad3', percentage: 40},
@@ -244,6 +245,7 @@ export default {
   components: {
   },
   created: async function(){
+    await this.file_lists()
     await this.getList()
   },
   mounted: async function () {
@@ -309,6 +311,14 @@ export default {
       // 获取系统监控
       this.system_resource_monitoring()
     },
+    /**
+     * 本函数封装了获取文件列表的功能
+     */
+    file_lists:async function(){
+      let param = pubBody('file_lists')
+      let response = await postFormAPI('file_lists',param,true)
+      this.filescount = response.data.Package.length
+    },
 
     /**
     * 本函数封装了请求后端接口获取 获取上传中的队列简报 （全部）
@@ -317,9 +327,7 @@ export default {
     */
     upload_ing: async function(){
       let param = pubBody('upload_ing')
-      console.debug(param)
       let response = await postFormAPI('upload_ing',param,true)
-      console.debug(response)
       this.upload  =  response.data.Package
       return response.data;
 
