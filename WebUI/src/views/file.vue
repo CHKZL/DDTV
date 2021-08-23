@@ -14,17 +14,19 @@
       </div>
       <div class="path">
         <div class="pathinfo">
-          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = files" :disabled="filesShow.name == '/'">返回上一层</el-button> 
-          <div class="originname" style="font-size: 14px;">tmp {{filesShow.name != "/" ? `> ${filesShow.name}`:""}}</div>
+          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = files,useroomid=false" :disabled="filesShow.name == '/'">返回首页</el-button>
+          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = roomfile" v-show="useroomid">返回搜索</el-button>
+          <div class="originname" style="font-size: 14px;">{{useroomid ? "搜索":"tmp"}} {{filesShow.name != "/" ? `> ${filesShow.name}`:""}}</div>
         </div>
         <div style="color:#969a94;font-size: 14px;">已全部加载，共{{Object.keys(filesShow.Obj).length}}个文件/目录</div>
       </div>
       <div class="path" style="justify-content: flex-start;">
         <el-checkbox style="padding: 0 10px 0 0;" disabled></el-checkbox>
-        <div style="color:#969a94;font-size: 14px;">开发中</div>
+        <div style="color:#969a94;font-size: 14px;">批量操作开发中</div>
       </div>
     </div>
-    <div class="file_list">
+    <el-empty v-if="JSON.stringify(filesShow.Obj) == '{}'" description="啥都木有"></el-empty>
+    <div v-else class="file_list">
       <div v-for="(item,key) in filesShow.Obj" :key="key" class="file_list_item">
         <div style="display:flex;flex-direction: row;align-items: center;">
           <el-checkbox  :disabled="item.type == 0 ? true:false"></el-checkbox>
@@ -41,8 +43,8 @@
         </div>
         <div style="justify-self: center;">
           <el-button-group style="width: 100%;" v-show="item.type != 0">
-            <el-button size="mini" icon="el-icon-video-play">播放</el-button>
-            <el-button size="mini" icon="el-icon-download">下载</el-button>
+            <el-button size="mini" icon="el-icon-video-play" @click="getDescribe(item.Obj.Directory, key)">播放</el-button>
+            <el-button size="mini" icon="el-icon-download" type="success" @click="play_str(key,item.Obj.Directory)">下载</el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="process_file_delete(item.Obj.Directory, key)">删除</el-button>
           </el-button-group>
         </div>
@@ -53,14 +55,17 @@
 
 <script>
 import { postFormAPI, pubBody } from "../api";
+import {play_str} from "../utils/play_url"
 export default {
   data() {
     return {
       files:{},
       filesShow:{},
-      userlook:null
+      useroomid:false,
+      roomfile:{}
     };
   },
+
 
   created: async function(){
 
@@ -69,8 +74,12 @@ export default {
         roomid = this.$route.query.rooid
     if(roomid) {
       this.file_range(roomid).then(result => {
+        let showdata = this.render_manage(result)
+        showdata.name = `${roomid}的搜索结果`
+        this.useroomid = true
         this.files = filesdict
-        this.filesShow = this.render_manage(result)
+        this.filesShow = showdata
+        this.roomfile = showdata
       })
     }else{
     this.files = filesdict
@@ -91,6 +100,11 @@ export default {
     }, 30000);
   },
   methods: {
+    play_str(name,path){
+      let url = play_str(name,path)
+      console.log(url)
+      window.open(url)
+    },
     // 字节计算
     change: function (limit) {
       var size = "";
@@ -177,15 +191,9 @@ export default {
 
     // 去视频播放页
 
-    getDescribe(path1, name, flv) {
-      let rpath = "";
-      if (flv) {
-        rpath = "/playflv";
-      } else {
-        rpath = "/play";
-      }
+    getDescribe(path1, name) {
       let newpage = this.$router.resolve({
-        path: rpath,
+        path: "/play",
         query: {
           path: path1,
           name: name,
