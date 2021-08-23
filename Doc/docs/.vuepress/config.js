@@ -88,6 +88,16 @@ module.exports = {
             'WebHook'
           ]
         }
+      ], 
+      '/QFA/': [
+        {
+          title: 'QFA',
+          collapsable: false,
+          sidebar: 'auto',
+          children: [
+            ''
+          ]
+        }
       ],
       '/CHANGELOG/': [
         {
