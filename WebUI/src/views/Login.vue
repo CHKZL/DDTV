@@ -3,36 +3,49 @@
     <div style="width: 391px;z-index:99">
       <el-image src="../static/logo.png" class="login-logo-img"></el-image>
       <div class="login-title">登录</div>
-      <el-form :model="loginForm" :rules="rules" ref="loginForm" style="z-index: 99">
+      <el-form :model="loginForm" :rules="rules" ref="loginForm" v-show="!show">
         <el-form-item label="用户名" prop="user">
           <el-input type="text" v-model="loginForm.user" autocomplete="off"></el-input>
         </el-form-item>
+
         <el-form-item label="密码" prop="pass">
           <el-input type="password" v-model="loginForm.pass" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
-      <div class="login-bt blue-bg" @click="submitForm('loginForm')">登录</div>
+      <el-form  :model="tokenForm" :rules="tokenrules" ref="tokenForm" v-show="show">
+        <el-form-item label="TOKEN 密钥" prop="token">
+          <el-input v-model="tokenForm.token" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+
+      <div class="login-bt blue-bg" @click="!show ? submitForm('loginForm'):tokenlogin()">{{show ? '验证登录':'登录'}}</div>
       <div class="login-or">-OR-</div>
-      <div class="login-bt blue-border">TOKEN USER</div>
+      <div class="login-bt blue-border" @click="show = !show">{{!show ? 'TOKEN USER':'账号密码登录'}}</div>
     </div>
   </div>
 </template>
  
 <script>
-import {postFormAPI} from '../api'
+import {postFormAPI,pubBody} from '../api'
 export default {
   name: "Login",
   components: {},
   data() {
     return {
+      show:false,
       load:false,
       // 存放表单数据的对象
-      loginForm: {user: "",pass: "",},
+      loginForm: {user: "",pass: ""},
+      tokenForm:{token:""},
       // 验证规则
       rules: {
         user: [{ required: true, message: "用户名不能为空"}],
         pass: [{ required: true, message: "密码不能为空"}],
+      },
+      tokenrules:{
+        token:[{required: true, message: "token不能为空"}]
       }
+
     };
   },
   methods: {
@@ -67,8 +80,36 @@ export default {
       if(!res.data.result) this.openWindows(res.data.message,'登录出现问题')
       else {
         sessionStorage.setItem("token",res.data.WebToken)
+        sessionStorage.setItem("ver",1)
         this.$router.push('/')
         }
+      this.load = false
+    },
+
+    /**
+    * 本函数封装了请求后端接口获取 system_info 的方法
+    * 
+    * @return 接口返回的数据
+    */
+    system_info: async function () {
+      let param = pubBody('system_info')
+      param.ver = 2
+      param.token = this.tokenForm.token
+      console.log(param)
+      let response = await postFormAPI('system_info',param,true)
+      return response;
+    },
+
+    tokenlogin: async function (){
+      this.load = true
+      this.system_info().then(result => {
+        if(result.data.code != 1001) this.openWindows(result.data.message,'登录出现问题')
+        else{
+          sessionStorage.setItem("token",this.tokenForm.token)
+          sessionStorage.setItem("ver",2)
+          this.$router.push('/')
+        }
+      })
       this.load = false
     },
 
