@@ -11,10 +11,15 @@ let resquest = "/api"
 */
 export function pubBody(type) {
     let time = parseInt(new Date().getTime() / 1000)
+    // 账号密码为1 api TOKEN 2
+    let ver = sessionStorage.getItem("ver");
+    // 因为签名需要 token 的参与 下面先加入token
+    let token = sessionStorage.getItem("token");
     let body = {
         "time":time,
         "cmd":type,
-        "ver":1,
+        "ver":ver,
+        "token":token
     }
     return body
 }
@@ -47,9 +52,6 @@ export function objKeySort(obj) {
 * @return sig
 */
 export function sig(params) {
-    // 因为签名需要 token 的参与 下面先加入token
-    let token = sessionStorage.getItem("token");
-    params.token = token
     // 根据 json 数据的键进行排序
     let newparams = objKeySort(params)
     // 生成签名字符串
