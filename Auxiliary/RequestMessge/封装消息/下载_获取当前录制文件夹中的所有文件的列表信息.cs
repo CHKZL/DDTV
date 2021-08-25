@@ -22,7 +22,7 @@ namespace Auxiliary.RequestMessage.封装消息
                         ModifiedTime = File.CreationTime,
                         Name = File.Name,
                         Size = File.Length,
-                        Path = Auxiliary.MMPU.缓存路径 + Dir.Name + "/" + File.Name
+                        Path = MMPU.缓存路径 + Dir.Name + "/" + File.Name
                     });
                 }
             }
