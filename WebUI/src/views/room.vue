@@ -74,6 +74,7 @@ import {room_data} from '../utils/data_cli'
 export default {
   data() {
     return {
+      load:true,
       stopall:false,
       AddRoom: { roomid: null, name:null, orgin:null, autoLive: true },
       addroomrules: {
@@ -110,7 +111,6 @@ export default {
     })
   },
   mounted() {
-
     console.log("挂载页面")
     this.timer = window.setInterval(() => {
       setTimeout(() => {
