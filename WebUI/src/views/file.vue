@@ -1,5 +1,5 @@
 <template>
-  <div class="file">
+  <div class="file" v-loading="load">
     <div class="tool-bar">
       <div class="but-bar">
         <el-button-group style="width: 100%;">
@@ -15,7 +15,7 @@
       <div class="path">
         <div class="pathinfo">
           <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = files,useroomid=false" :disabled="filesShow.name == '/'">返回首页</el-button>
-          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = roomfile" v-show="useroomid">返回搜索</el-button>
+          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow.name == `${$route.query.rooid}的搜索结果` ? $router.push('/room'):filesShow = roomfile" v-show="useroomid">{{filesShow.name == `${this.$route.query.rooid}的搜索结果` ? '返回房间列表':'返回搜索'}}</el-button>
           <div class="originname" style="font-size: 14px;">{{useroomid ? "搜索":"tmp"}} {{filesShow.name != "/" ? `> ${filesShow.name}`:""}}</div>
         </div>
         <div style="color:#969a94;font-size: 14px;">已全部加载，共{{Object.keys(filesShow.Obj).length}}个文件/目录</div>
@@ -59,8 +59,9 @@ import {play_str} from "../utils/play_url"
 export default {
   data() {
     return {
+      load:true,
       files:{},
-      filesShow:{},
+      filesShow:{"name":"加载中","Obj":{}},
       useroomid:false,
       roomfile:{}
     };
@@ -84,25 +85,26 @@ export default {
     }else{
     this.files = filesdict
     this.filesShow = filesdict}
+    this.load = false
   },
 
   mounted: async function () {
-    // 发一次请求 确定用户凭据的有效性
-    this.getList();
-    // 进行轮询，定时间隔10秒一次
-    this.timer = window.setInterval(() => {
-      setTimeout(() => {
-        if (sessionStorage.getItem("token")) {
-          // 轮询 的逻辑
-          this.getList();
-        }
-      }, 0);
-    }, 30000);
+    // this.load = false
+    // // 发一次请求 确定用户凭据的有效性
+    // this.getList();
+    // // 进行轮询，定时间隔10秒一次
+    // this.timer = window.setInterval(() => {
+    //   setTimeout(() => {
+    //     if (sessionStorage.getItem("token")) {
+    //       // 轮询 的逻辑
+    //       this.getList();
+    //     }
+    //   }, 0);
+    // }, 30000);
   },
   methods: {
     play_str(name,path){
       let url = play_str(name,path)
-      console.log(url)
       window.open(url)
     },
     // 字节计算
@@ -148,7 +150,6 @@ export default {
         date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
       // const s = date.getSeconds(); // 秒
       const dateString = Y + M + D + h + m;
-      // console.log('dateString', dateString); // > dateString 2021-07-06 14:23
       return dateString;
     },
 
@@ -184,7 +185,6 @@ export default {
         }
         filesdict.Obj[key] = {"type":0,"name":key,"Obj":fileitem}
       }
-      console.log(filesdict)
       return filesdict
     },
 
@@ -202,7 +202,6 @@ export default {
       window.open(newpage.href, "_blank");
     },
     msggo:function (res){
-      console.log(res)
       let typ = "success",msg = "操作成功"
       if (res.code != 1001) {typ = "error",msg = res.message}
       this.$message({message: msg,type: typ});
@@ -219,9 +218,7 @@ export default {
       let param = pubBody("file_delete");
       param.directory = Directory;
       param.name = Name;
-      console.debug(param);
       let response = await postFormAPI("file_delete", param, true);
-      console.debug(response);
       return response.data;
     },
     process_file_delete: async function (Directory, Name) {
@@ -234,16 +231,34 @@ export default {
           this.file_delete(Directory, Name).then(result => {
             this.msggo(result)
             // 更新视图
-            this.file_lists().then(result => {
-            let userlook = this.filesShow.name,
-                countlist = this.render_manage(result)
-
-            this.files = countlist
-            if(userlook!='/') this.filesShow = countlist.Obj[userlook]
-            else this.filesShow = countlist
-            console.log(userlook)
-            console.log(countlist)
+            if(this.useroomid) {
+              console.log("搜索内删除")
+              this.useroom_file(this.$route.query.rooid).then(result => {
+              let showdata = this.render_manage(result),
+                  userlook = this.filesShow.name
+              
+              this.file_lists().then(result => {
+                this.files = this.render_manage(result)
+              })
+              showdata.name = `${this.$route.query.rooid}的搜索结果`
+              if(showdata.Obj[userlook]) this.filesShow = showdata.Obj[userlook]
+              else this.filesShow = {"type":0,"name":userlook,"Obj":{}}
+              this.roomfile = showdata
             })
+            }
+            else {
+              console.log("文件列表内删除")
+              this.file_lists().then(result => {
+              let userlook = this.filesShow.name,
+                  countlist = this.render_manage(result)
+              this.files = countlist
+              if(userlook!='/') {
+                if(countlist.Obj[userlook]) this.filesShow = countlist.Obj[userlook]
+                else this.filesShow = {"type":0,"name":userlook,"Obj":{}}
+            }
+            else this.filesShow = countlist
+            })
+            }
           })
         })
         .catch(() => {
@@ -284,26 +299,22 @@ export default {
     file_range: async function (roomid) {
       let param = pubBody("file_range");
       param.roomId = roomid;
-      console.debug(param);
       let response = await postFormAPI("file_range", param, true);
-      console.debug(response);
       return response;
     },
 
     // 获取当前所有房间
     room_list: async function () {
       let param = pubBody("room_list");
-      console.debug(param);
       let response = await postFormAPI("room_list", param, true);
-      console.debug(response);
       this.room = response.data.Package;
       return response.data;
     },
   },
   // 销毁定时器
-  destroyed() {
-    window.clearInterval(this.timer);
-  },
+  // destroyed() {
+  //   window.clearInterval(this.timer);
+  // },
 };
 </script>
 

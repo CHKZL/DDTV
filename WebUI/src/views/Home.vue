@@ -204,7 +204,6 @@
               <div class="livename" >摸摸雀雀好耶~</div>
               <div class="originname">七咔拉CHikalar</div>
               <div class="upload_file">
-                <cp :rate="20"></cp>
                 <div class="originname">进行中</div>
                 <div class="originname">已完成</div>
               </div>
