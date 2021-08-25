@@ -15,8 +15,8 @@ module.exports = {
     algolia: {},
     logo: '/DDTV.png',
     repo: 'CHKZL/DDTV2',
-    docsDir: 'docs',
-    docsBranch: 'dev',
+    docsDir: 'Doc/docs',
+    docsBranch: 'master',
     editLinks: true,
     editLinkText: '在 GitHub 上编辑此页',
     lastUpdated: '上次更新',
@@ -86,6 +86,16 @@ module.exports = {
           children: [
             '',
             'WebHook'
+          ]
+        }
+      ], 
+      '/QFA/': [
+        {
+          title: 'QFA',
+          collapsable: false,
+          sidebar: 'auto',
+          children: [
+            ''
           ]
         }
       ],
