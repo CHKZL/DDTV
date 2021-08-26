@@ -159,7 +159,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">转码管道</div>
-            <div class="big-number" style="color:rgb(103 194 58)">空闲</div>
+            <div class="big-number" style="color:rgb(103 194 58)">等待开发</div>
           </el-card>
 
           <el-card shadow="hover">
