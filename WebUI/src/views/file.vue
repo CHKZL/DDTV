@@ -22,14 +22,14 @@
       </div>
       <div class="path" style="justify-content: flex-start;">
         <el-checkbox style="padding: 0 10px 0 0;" disabled></el-checkbox>
-        <div style="color:#969a94;font-size: 14px;">批量操作开发中</div>
+        <div style="color:#969a94;font-size: 14px;">已选择{{selent.length}}个文件</div>
       </div>
     </div>
     <el-empty v-if="JSON.stringify(filesShow.Obj) == '{}'" description="啥都木有"></el-empty>
     <div v-else class="file_list">
       <div v-for="(item,key) in filesShow.Obj" :key="key" class="file_list_item">
         <div style="display:flex;flex-direction: row;align-items: center;">
-          <el-checkbox  :disabled="item.type == 0 ? true:false"></el-checkbox>
+          <el-checkbox  :disabled="item.type == 0"></el-checkbox>
           <img v-if="item.type == 0" src="../../public/static/dict.png" class="fileIcon" />
           <img v-else-if="item.type == 1" src="../../public/static/mp4.png" class="fileIcon" />
           <img v-else-if="item.type == 2" src="../../public/static/flv.png" class="fileIcon" />
@@ -45,7 +45,7 @@
         </div>
         <div style="justify-self: center;">
           <el-button-group style="width: 100%;" v-show="item.type != 0">
-            <el-button size="mini" icon="el-icon-video-play" @click="getDescribe(item.Obj.Directory, key)">播放</el-button>
+            <el-button size="mini" icon="el-icon-video-play" :disabled="item.type != 1"  @click="getDescribe(item.Obj.Directory, key)">播放</el-button>
             <el-button size="mini" icon="el-icon-download" type="success" @click="play_str(key,item.Obj.Directory)">下载</el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="process_file_delete(item.Obj.Directory, key)">删除</el-button>
           </el-button-group>
@@ -65,7 +65,8 @@ export default {
       files:{},
       filesShow:{"name":"加载中","Obj":{}},
       useroomid:false,
-      roomfile:{}
+      roomfile:{},
+      selent:[]
     };
   },
 

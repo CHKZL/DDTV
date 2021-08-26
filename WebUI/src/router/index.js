@@ -7,6 +7,7 @@ import File from '../views/file.vue'
 import Room from '../views/room.vue'
 import Play from '../views/play.vue'
 import NotFound from '../views/404.vue'
+import Tasks from '../views/tasks.vue'
 
 Vue.use(VueRouter)
 
@@ -45,6 +46,15 @@ const routes = [
     meta: {
       keepAlive: true,
       title:'房间管理'
+    }
+  },
+  {
+    path: '/tasks',
+    name: 'Tasks',
+    component: Tasks,
+    meta: {
+      keepAlive: true,
+      title:'任务详情'
     }
   },
   {
