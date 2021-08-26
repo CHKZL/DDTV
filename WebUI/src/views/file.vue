@@ -32,7 +32,9 @@
           <el-checkbox  :disabled="item.type == 0 ? true:false"></el-checkbox>
           <img v-if="item.type == 0" src="../../public/static/dict.png" class="fileIcon" />
           <img v-else-if="item.type == 1" src="../../public/static/mp4.png" class="fileIcon" />
-          <img v-else src="../../public/static/flv.png" class="fileIcon" />
+          <img v-else-if="item.type == 2" src="../../public/static/flv.png" class="fileIcon" />
+          <img v-else-if="item.type == 3" src="../../public/static/xml.png" class="fileIcon" />
+          <img v-else-if="item.type == 4" src="../../public/static/txt.png" class="fileIcon" />
           
           <el-button v-if="item.type == 0" type="text" style="padding-left: 20px;" @click="filesShow = item" >{{key}}</el-button> 
           <div v-else style="padding-left: 20px;font-size: 14px;">{{key}}</div>
@@ -180,8 +182,24 @@ export default {
             itemlen = pathdit[key].length
         for (var j = 0; j < itemlen; j++) {
           let fileInfo = pathdit[key][j],
-              fileName = fileInfo.Name
-          fileitem[fileName] = {"type":1,"name":key,"Obj":fileInfo}
+              fileName = fileInfo.Name,
+              type = fileName.slice(-3).toLowerCase(),
+              filetype = 1
+          switch (type) {
+            case "mp4":
+              filetype = 1
+              break;
+            case "flv":
+              filetype = 2
+              break;
+            case "xml":
+              filetype = 3
+              break;
+            case "txt":
+              filetype = 4
+              break;
+          }
+          fileitem[fileName] = {"type":filetype,"name":key,"Obj":fileInfo}
         }
         filesdict.Obj[key] = {"type":0,"name":key,"Obj":fileitem}
       }
