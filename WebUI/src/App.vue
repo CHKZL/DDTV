@@ -21,6 +21,10 @@
           <i class="el-icon-document"></i>
           <span slot="title">文件管理</span>
         </el-menu-item>
+        <el-menu-item index="/tasks">
+          <i class="el-icon-s-order"></i>
+          <span slot="title">任务详情</span>
+        </el-menu-item>
         <el-menu-item  onclick="window.open('https://ddtv.pro')">
           <i class="el-icon-s-management"></i>
           <span slot="title">查看文档</span>

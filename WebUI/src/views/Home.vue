@@ -159,7 +159,7 @@
 
           <el-card shadow="hover">
             <div class="card-title-litter">转码管道</div>
-            <div class="big-number" style="color:rgb(103 194 58)">空闲</div>
+            <div class="big-number" style="color:rgb(103 194 58)">等待开发</div>
           </el-card>
 
           <el-card shadow="hover">
@@ -193,21 +193,19 @@
         </div>
     </div>
 
-     <div class="systemInfo">
+     <div class="systemInfo" v-show="upload.length != 0">
         <div class="card-title">
           上传详情
           <i class="el-icon-sort"></i>
         </div>
         <div class="upload_box grid_2">
-          <div class="upload_card" v-for="count in 2" :key="count">
+          <div class="upload_card" v-for="(item,index) in upload" :key="index">
             <div>
-              <div class="livename" >摸摸雀雀好耶~</div>
-              <div class="originname">七咔拉CHikalar</div>
-              <div class="upload_file">
-                <cp :rate="20"></cp>
-                <div class="originname">进行中</div>
-                <div class="originname">已完成</div>
-              </div>
+              <div class="livename" >{{item.streamTitle}}</div>
+              <div class="originname">{{item.streamerName}}</div>
+              <div class="originname">共{{item.fileList.length}}个项目 / 已完成{{item.fileDone.length}}个</div>
+              <el-progress style="padding-top: 10px;" :color="DishBarColor" :text-inside="true" :stroke-width="26" :percentage="item.progress">{{item.comments}}</el-progress>
+              <div style="padding-top: 5px;" class="originname">{{item.comments}}</div>
             </div>
           </div>
         </div>
@@ -220,7 +218,6 @@
 import {formatDate} from '../reunit'
 import {postFormAPI,pubBody} from '../api'
 import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
-import {fake_up_data} from '../utils/fake_data'
 export default {
   data() {
     return {
@@ -231,7 +228,7 @@ export default {
       dl_all:0,
       system_monitor:sys_mon_ex,
       HDD:{},
-      upload:fake_up_data.Package,
+      upload:[],
       filescount:0,
       DishBarColor: [
           {color: '#1989fa', percentage: 20},
@@ -247,6 +244,7 @@ export default {
   created: async function(){
     await this.file_lists()
     await this.getList()
+    await this.system_resource_monitoring()
   },
   mounted: async function () {
     // 进行轮询，定时间隔10秒一次
@@ -258,6 +256,14 @@ export default {
         }
       }, 0);
     }, 10000);
+    this.timer2 = window.setInterval(() => {
+      setTimeout(() => {
+        if (sessionStorage.getItem("token")) {
+          // 轮询 的逻辑
+          this.system_resource_monitoring()
+        }
+      }, 0);
+    }, 60000);
   },
   methods: {
     toDate(v){
@@ -307,10 +313,10 @@ export default {
       // 获取所有的录制队列 （含有历史）
       this.rec_all_list()
       // 获取队列简报 （上传）
-      // this.upload_ing()
+      this.upload_ing()
       // 获取系统监控
-      this.system_resource_monitoring()
     },
+
     /**
      * 本函数封装了获取文件列表的功能
      */
@@ -421,6 +427,7 @@ export default {
   // 销毁定时器
   destroyed() {
     window.clearInterval(this.timer);
+    window.clearInterval(this.timer2);
   },
 };
 </script>
