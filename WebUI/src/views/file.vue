@@ -1,5 +1,5 @@
 <template>
-  <div class="file">
+  <div class="file" v-loading="load">
     <div class="tool-bar">
       <div class="but-bar">
         <el-button-group style="width: 100%;">
@@ -15,24 +15,26 @@
       <div class="path">
         <div class="pathinfo">
           <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = files,useroomid=false" :disabled="filesShow.name == '/'">返回首页</el-button>
-          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow = roomfile" v-show="useroomid">返回搜索</el-button>
+          <el-button type="text" style="padding: 0 10px 0 0;" @click="filesShow.name == `${$route.query.rooid}的搜索结果` ? $router.push('/room'):filesShow = roomfile" v-show="useroomid">{{filesShow.name == `${this.$route.query.rooid}的搜索结果` ? '返回房间列表':'返回搜索'}}</el-button>
           <div class="originname" style="font-size: 14px;">{{useroomid ? "搜索":"tmp"}} {{filesShow.name != "/" ? `> ${filesShow.name}`:""}}</div>
         </div>
         <div style="color:#969a94;font-size: 14px;">已全部加载，共{{Object.keys(filesShow.Obj).length}}个文件/目录</div>
       </div>
       <div class="path" style="justify-content: flex-start;">
         <el-checkbox style="padding: 0 10px 0 0;" disabled></el-checkbox>
-        <div style="color:#969a94;font-size: 14px;">批量操作开发中</div>
+        <div style="color:#969a94;font-size: 14px;">已选择{{selent.length}}个文件</div>
       </div>
     </div>
     <el-empty v-if="JSON.stringify(filesShow.Obj) == '{}'" description="啥都木有"></el-empty>
     <div v-else class="file_list">
       <div v-for="(item,key) in filesShow.Obj" :key="key" class="file_list_item">
         <div style="display:flex;flex-direction: row;align-items: center;">
-          <el-checkbox  :disabled="item.type == 0 ? true:false"></el-checkbox>
+          <el-checkbox  :disabled="item.type == 0"></el-checkbox>
           <img v-if="item.type == 0" src="../../public/static/dict.png" class="fileIcon" />
           <img v-else-if="item.type == 1" src="../../public/static/mp4.png" class="fileIcon" />
-          <img v-else src="../../public/static/flv.png" class="fileIcon" />
+          <img v-else-if="item.type == 2" src="../../public/static/flv.png" class="fileIcon" />
+          <img v-else-if="item.type == 3" src="../../public/static/xml.png" class="fileIcon" />
+          <img v-else-if="item.type == 4" src="../../public/static/txt.png" class="fileIcon" />
           
           <el-button v-if="item.type == 0" type="text" style="padding-left: 20px;" @click="filesShow = item" >{{key}}</el-button> 
           <div v-else style="padding-left: 20px;font-size: 14px;">{{key}}</div>
@@ -43,7 +45,7 @@
         </div>
         <div style="justify-self: center;">
           <el-button-group style="width: 100%;" v-show="item.type != 0">
-            <el-button size="mini" icon="el-icon-video-play" @click="getDescribe(item.Obj.Directory, key)">播放</el-button>
+            <el-button size="mini" icon="el-icon-video-play" :disabled="item.type != 1"  @click="getDescribe(item.Obj.Directory, key)">播放</el-button>
             <el-button size="mini" icon="el-icon-download" type="success" @click="play_str(key,item.Obj.Directory)">下载</el-button>
             <el-button size="mini" type="danger" icon="el-icon-delete" @click="process_file_delete(item.Obj.Directory, key)">删除</el-button>
           </el-button-group>
@@ -59,10 +61,12 @@ import {play_str} from "../utils/play_url"
 export default {
   data() {
     return {
+      load:true,
       files:{},
-      filesShow:{},
+      filesShow:{"name":"加载中","Obj":{}},
       useroomid:false,
-      roomfile:{}
+      roomfile:{},
+      selent:[]
     };
   },
 
@@ -84,25 +88,26 @@ export default {
     }else{
     this.files = filesdict
     this.filesShow = filesdict}
+    this.load = false
   },
 
   mounted: async function () {
-    // 发一次请求 确定用户凭据的有效性
-    this.getList();
-    // 进行轮询，定时间隔10秒一次
-    this.timer = window.setInterval(() => {
-      setTimeout(() => {
-        if (sessionStorage.getItem("token")) {
-          // 轮询 的逻辑
-          this.getList();
-        }
-      }, 0);
-    }, 30000);
+    // this.load = false
+    // // 发一次请求 确定用户凭据的有效性
+    // this.getList();
+    // // 进行轮询，定时间隔10秒一次
+    // this.timer = window.setInterval(() => {
+    //   setTimeout(() => {
+    //     if (sessionStorage.getItem("token")) {
+    //       // 轮询 的逻辑
+    //       this.getList();
+    //     }
+    //   }, 0);
+    // }, 30000);
   },
   methods: {
     play_str(name,path){
       let url = play_str(name,path)
-      console.log(url)
       window.open(url)
     },
     // 字节计算
@@ -148,7 +153,6 @@ export default {
         date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
       // const s = date.getSeconds(); // 秒
       const dateString = Y + M + D + h + m;
-      // console.log('dateString', dateString); // > dateString 2021-07-06 14:23
       return dateString;
     },
 
@@ -179,12 +183,27 @@ export default {
             itemlen = pathdit[key].length
         for (var j = 0; j < itemlen; j++) {
           let fileInfo = pathdit[key][j],
-              fileName = fileInfo.Name
-          fileitem[fileName] = {"type":1,"name":key,"Obj":fileInfo}
+              fileName = fileInfo.Name,
+              type = fileName.slice(-3).toLowerCase(),
+              filetype = 1
+          switch (type) {
+            case "mp4":
+              filetype = 1
+              break;
+            case "flv":
+              filetype = 2
+              break;
+            case "xml":
+              filetype = 3
+              break;
+            case "txt":
+              filetype = 4
+              break;
+          }
+          fileitem[fileName] = {"type":filetype,"name":key,"Obj":fileInfo}
         }
         filesdict.Obj[key] = {"type":0,"name":key,"Obj":fileitem}
       }
-      console.log(filesdict)
       return filesdict
     },
 
@@ -202,7 +221,6 @@ export default {
       window.open(newpage.href, "_blank");
     },
     msggo:function (res){
-      console.log(res)
       let typ = "success",msg = "操作成功"
       if (res.code != 1001) {typ = "error",msg = res.message}
       this.$message({message: msg,type: typ});
@@ -219,9 +237,7 @@ export default {
       let param = pubBody("file_delete");
       param.directory = Directory;
       param.name = Name;
-      console.debug(param);
       let response = await postFormAPI("file_delete", param, true);
-      console.debug(response);
       return response.data;
     },
     process_file_delete: async function (Directory, Name) {
@@ -234,16 +250,34 @@ export default {
           this.file_delete(Directory, Name).then(result => {
             this.msggo(result)
             // 更新视图
-            this.file_lists().then(result => {
-            let userlook = this.filesShow.name,
-                countlist = this.render_manage(result)
-
-            this.files = countlist
-            if(userlook!='/') this.filesShow = countlist.Obj[userlook]
-            else this.filesShow = countlist
-            console.log(userlook)
-            console.log(countlist)
+            if(this.useroomid) {
+              console.log("搜索内删除")
+              this.useroom_file(this.$route.query.rooid).then(result => {
+              let showdata = this.render_manage(result),
+                  userlook = this.filesShow.name
+              
+              this.file_lists().then(result => {
+                this.files = this.render_manage(result)
+              })
+              showdata.name = `${this.$route.query.rooid}的搜索结果`
+              if(showdata.Obj[userlook]) this.filesShow = showdata.Obj[userlook]
+              else this.filesShow = {"type":0,"name":userlook,"Obj":{}}
+              this.roomfile = showdata
             })
+            }
+            else {
+              console.log("文件列表内删除")
+              this.file_lists().then(result => {
+              let userlook = this.filesShow.name,
+                  countlist = this.render_manage(result)
+              this.files = countlist
+              if(userlook!='/') {
+                if(countlist.Obj[userlook]) this.filesShow = countlist.Obj[userlook]
+                else this.filesShow = {"type":0,"name":userlook,"Obj":{}}
+            }
+            else this.filesShow = countlist
+            })
+            }
           })
         })
         .catch(() => {
@@ -284,26 +318,22 @@ export default {
     file_range: async function (roomid) {
       let param = pubBody("file_range");
       param.roomId = roomid;
-      console.debug(param);
       let response = await postFormAPI("file_range", param, true);
-      console.debug(response);
       return response;
     },
 
     // 获取当前所有房间
     room_list: async function () {
       let param = pubBody("room_list");
-      console.debug(param);
       let response = await postFormAPI("room_list", param, true);
-      console.debug(response);
       this.room = response.data.Package;
       return response.data;
     },
   },
   // 销毁定时器
-  destroyed() {
-    window.clearInterval(this.timer);
-  },
+  // destroyed() {
+  //   window.clearInterval(this.timer);
+  // },
 };
 </script>
 
