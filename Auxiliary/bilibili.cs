@@ -1087,7 +1087,7 @@ namespace Auxiliary
                 try
                 {
                     JObject result = JObject.Parse(roomHtml);
-                    string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
+                    string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").Replace("#", "").Replace("&", "").Replace("=", "").Replace("%", "").ToString();
                     StringBuilder rBuilder = new StringBuilder(roomName);
                     foreach (char rInvalidChar in Path.GetInvalidPathChars())
                         rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
