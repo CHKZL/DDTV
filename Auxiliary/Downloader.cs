@@ -155,7 +155,7 @@ namespace Auxiliary
                         {
                             标题 = $"重置下载任务{DateTime.Now.ToString("yyyyMMddHHmmssfff")}{new Random().Next(10000,99999)}";
                         }
-                        Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.标题), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.标题), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
+                        Downloader DLL = Downloader.新建下载对象(item.DownIofo.平台, item.DownIofo.房间_频道号, bilibili.根据房间号获取房间信息.获取标题(item.DownIofo.房间_频道号), Guid.NewGuid().ToString(), bilibili.根据房间号获取房间信息.下载地址(item.DownIofo.房间_频道号), "下载状态异常，重置下载任务", item.DownIofo.是否保存, item.DownIofo.主播名称, false, null);
                     }).Start();
 
                     Upload.Upload uploadTask = new Upload.Upload(item.DownIofo);
