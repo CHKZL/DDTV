@@ -19,7 +19,7 @@ namespace DDTVLiveRecWebServer
 
         public async Task Invoke(HttpContext context)
         {
-           
+
 
             bool 鉴权预处理结果 = false;
             try
@@ -32,8 +32,8 @@ namespace DDTVLiveRecWebServer
                 return;
             }
             foreach (var item in new List<string>() {
-                context.Request.Query["Directory"],
-                context.Request.Query["File"],
+                System.Web.HttpUtility.UrlDecode(context.Request.Query["Directory"],System.Text.Encoding.UTF8),
+                System.Web.HttpUtility.UrlDecode(context.Request.Query["File"],System.Text.Encoding.UTF8)
             })
             {
                 if (string.IsNullOrEmpty(item))
@@ -46,7 +46,7 @@ namespace DDTVLiveRecWebServer
             {
                 foreach (var item in context.Request.Query)
                 {
-                    Console.WriteLine($"{item.Key}={item.Value}");
+                    Console.WriteLine($"{System.Web.HttpUtility.UrlDecode(item.Key, System.Text.Encoding.UTF8)}={System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8)}");
                 }
             }
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_steam", 鉴权预处理结果 ? true : false);

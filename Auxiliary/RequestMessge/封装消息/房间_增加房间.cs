@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using static Auxiliary.RequestMessage.MessageClass;
 using static Auxiliary.RequestMessage.Room;
@@ -12,6 +13,32 @@ namespace Auxiliary.RequestMessage.封装消息
     {
         public static string 增加(string RoomId,string Name,string OfficialName,bool RecStatus)
         {
+            if(string.IsNullOrEmpty(Name)||string.IsNullOrEmpty(OfficialName))
+            {
+                return ReturnInfoPackage.InfoPkak((int)ServerSendMessageCode.请求成功但出现了错误, new List<RoomAddInfo>() {new RoomAddInfo()
+                    {
+                        result=false,
+                        message="Name和OfficialName不能为空"
+                    }}, "Name和OfficialName不能为空");
+            }
+            try
+            {
+                Name = Name.Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").Replace("#", "").Replace("&", "").Replace("=", "").Replace("%", "").ToString();
+                StringBuilder NameBuilder = new StringBuilder(Name);
+                foreach (char rInvalidChar in Path.GetInvalidPathChars())
+                    NameBuilder.Replace(rInvalidChar.ToString(), string.Empty);
+                Name = NameBuilder.ToString();
+
+                OfficialName = OfficialName.Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").Replace("#", "").Replace("&", "").Replace("=", "").Replace("%", "").ToString();
+                StringBuilder OfficialNameBuilder = new StringBuilder(OfficialName);
+                foreach (char rInvalidChar in Path.GetInvalidPathChars())
+                    OfficialNameBuilder.Replace(rInvalidChar.ToString(), string.Empty);
+                OfficialName = OfficialNameBuilder.ToString();
+            }
+            catch (Exception)
+            {
+
+            }
             int roomId = 0;
             try
             {
