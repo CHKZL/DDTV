@@ -84,9 +84,13 @@ export default {
         ],
         orgin: [
           { required: true, message: "名称不能为空", trigger: "blur" },
-          {pattern:/^[^\s]*$/,message: "名称不能含有空格" }
+          {pattern:/^[^\s]*$/,message: "名称不能含有空格" },
+          {pattern:/^[\u31F0-\u31FF\u30A0-\u30FF\u3040-\u309F\u4E00-\u9FA5A-Za-z0-9_]+$/,message:"只能包含汉字、字母、数字、下划线、日文"}
         ],
-        name: [{pattern:/^[^\s]*$/,message: "名称不能含有空格" }],
+        name: [{pattern:/^[^\s]*$/,message: "名称不能含有空格" },
+        {pattern:/^[\u31F0-\u31FF\u30A0-\u30FF\u3040-\u309F\u4E00-\u9FA5A-Za-z0-9_]+$/,message:"只能包含汉字、字母、数字、下划线、日文"}
+        ],
+
       },
       dialogFormVisible: false,
       room_list: [],
