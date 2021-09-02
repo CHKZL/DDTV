@@ -69,6 +69,37 @@
 |sig|string|是|其他变量排序后按照规则拼接过后使用SHA1散列后得到的签名|
 |ver|int|是|接口的版本类型，当前只开放2。(1为DDTV服务端内部使用的WEB接口，规则不同)|
 
+:::warning 关于请求的UrlEncode问题  
+当请求的Url带参数时，需要对Url的键值对内容和路径内容进行Url编码
+如：GET /$file_path$ 接口请求的Url为  
+```Url
+http://127.0.0.1:11419/tmp/test/V?!@#$%^&*.mp4?time=2345678&cmd=file_steam&sig=xxxxxxxxxxx&var=2&Directory=test&File=V?!@#$%^&*.mp4
+```
+拆分来看就是
+```
+http://127.0.0.1:11419/tmp/test/V?!@#$%^&*.mp4　?
+time=2345678　&
+cmd=file_steam　&
+sig=xxxxxxxxxxx　&
+var=2　&
+Directory=test　&
+File=V?!@#$%^&*.mp4
+```   
+进过Url编码后为
+```url
+http://127.0.0.1:11419/tmp/test/V%3F!%40%23%24%25%5E%26*.mp4?time=2345678&cmd=file_steam&sig=xxxxxxxxxxx&var=2&Directory=test&File=V%3F!%40%23%24%25%5E%26*.mp4  
+```
+拆开来看就是
+```url
+http://127.0.0.1:11419/tmp/test/V%3F!%40%23%24%25%5E%26*.mp4　?
+time=2345678　&
+cmd=file_steam　&
+sig=xxxxxxxxxxx　&
+var=2　&
+Directory=test　&
+File=V%3F!%40%23%24%25%5E%26*.mp4  
+```
+:::
 
 ## 已实现的通用API列表
 |方式|名称|返回内容|解释|私有变量数量|

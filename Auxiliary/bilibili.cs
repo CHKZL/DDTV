@@ -1087,7 +1087,11 @@ namespace Auxiliary
                 try
                 {
                     JObject result = JObject.Parse(roomHtml);
-                    string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").ToString();
+                    string roomName = result["data"]["title"].ToString().Replace(" ", "").Replace("/", "").Replace("\\", "").Replace("\"", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("<", "").Replace(">", "").Replace("|", "").Replace("#", "").Replace("&", "").Replace("=", "").Replace("%", "").ToString();
+                    StringBuilder rBuilder = new StringBuilder(roomName);
+                    foreach (char rInvalidChar in Path.GetInvalidPathChars())
+                        rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
+                    roomName = rBuilder.ToString();
                     InfoLog.InfoPrintf("根据RoomId获取到标题:" + roomName, InfoLog.InfoClass.Debug);
                     DataCache.写缓存(DataCache.缓存头.房间标题 + roomID, roomName);
                     return roomName;

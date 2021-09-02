@@ -51,11 +51,11 @@ namespace DDTVLiveRecWebServer.鉴权
                 {
                     foreach (var item in context.Request.Query)
                     {
-                        dic.Add(item.Key, item.Value);
-                        if (string.IsNullOrEmpty(item.Value))
+                        dic.Add(System.Web.HttpUtility.UrlDecode(item.Key, System.Text.Encoding.UTF8), System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8));
+                        if (string.IsNullOrEmpty(System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8)))
                         {
                             if (Auxiliary.MMPU.调试模式)
-                                Console.WriteLine($"出现错误{item.Key}为空");
+                                Console.WriteLine($"出现错误{System.Web.HttpUtility.UrlDecode(item.Key, System.Text.Encoding.UTF8)}为空");
                             return new 鉴权返回结果()
                             {
                                 鉴权结果 = false,
