@@ -184,11 +184,11 @@
             </el-table-column>
             <el-table-column prop="Remark" label="备注">
             </el-table-column>
-            <el-table-column label="操作">
+            <!-- <el-table-column label="操作">
               <template slot-scope="scope">
                 <el-button size="mini" :disabled="true" type="danger" @click="press_stop_rec(scope.row.GUID)">停止录制</el-button>
               </template>
-            </el-table-column>
+            </el-table-column> -->
           </el-table>
         </div>
     </div>

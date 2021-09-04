@@ -15,7 +15,10 @@ export function play_str(name,path) {
         sigstr = `cmd=file_steam&Directory=${path}&File=${name}&time=${time}&token=${token}&ver=${ver}`,
         ps = `cmd=file_steam&Directory=${path}&File=${name}&time=${time}&ver=${ver}`,
         shadata = sha1(sigstr).toLocaleUpperCase(),
-        url = `${window.apiObj.apiUrl}/tmp/${path}/${name}?${ps}&sig=${shadata}`
+        host = window.apiObj.apiUrl
 
-    return url
+    if(window.apiObj.apiUrl == false) host =  location.protocol + '//' + location.host 
+    
+    let url = `${host}/tmp/${path}/${name}?${ps}&sig=${shadata}`
+    return encodeURI(url)
 }

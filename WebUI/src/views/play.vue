@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import sha1 from "sha1";
+import {play_str} from "../utils/play_url"
 export default {
   data() {
     return {
@@ -61,13 +61,7 @@ export default {
   mounted() {
     this.name = this.$route.query.name;
     this.path = this.$route.query.path;
-    let token = sessionStorage.getItem("token");
-    var time = parseInt(new Date().getTime() / 1000);
-    let sigstr =`cmd=file_steam&Directory=${this.path}&File=${this.name}&time=${time}&token=${token}&ver=1`
-    let ps =`cmd=file_steam&Directory=${this.path}&File=${this.name}&time=${time}&ver=1`
-    // 计算签名
-    let shadata = sha1(sigstr).toLocaleUpperCase();
-    var url = `${window.apiObj.apiUrl}/tmp/${this.path}/${this.name}?${ps}&sig=${shadata}`
+    let url = play_str(this.name,this.path)
     console.log(url);
     this.playerOptions.sources[0].src = url;
     this.$refs.videoPlayer.player;
