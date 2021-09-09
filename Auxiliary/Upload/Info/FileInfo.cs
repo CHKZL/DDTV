@@ -88,6 +88,10 @@ namespace Auxiliary.Upload.Info
             {
                 throw new FileException($"找不到文件{localPath + fileName}");
             }
+            catch (System.IO.FileNotFoundException)
+            {
+                throw new FileException($"找不到文件{localPath + fileName}");
+            }
 
             if (fileSize == 0)
             {
