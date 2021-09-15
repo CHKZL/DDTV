@@ -169,9 +169,9 @@ namespace Auxiliary.Upload.Info
                 if (files.Count == 0)
                     throw new ProjectException($"创建{streamerName}-{streamTitle}上传任务失败，未获取到相关文件");
             }
-            catch
+            catch (Exception e)
             {
-                throw new ProjectException($"创建{streamerName}-{streamTitle}上传任务失败，无法获取项目信息");
+                throw new ProjectException($"创建{streamerName}-{streamTitle}上传任务失败，无法获取项目信息\n{e}");
             }
         }
 

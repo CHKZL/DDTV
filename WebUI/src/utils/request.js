@@ -3,9 +3,13 @@ import axios from 'axios'
 //import { Message} from 'element-ui';
 import Router from '../router' 
 
+let host = window.apiObj.apiUrl
+if(window.apiObj.apiUrl == false) host =  location.protocol + '//' + location.host 
+
 const service = axios.create({
   // 起始连接
-  baseURL: window.apiObj.apiUrl,
+
+  baseURL: host,
   // 超时时间 单位是ms，这里设置了3s的超时时间
   timeout: 3 * 1000
 })

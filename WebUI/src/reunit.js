@@ -5,7 +5,7 @@
 * @return 字符串
 */
 export function formatDate(value) {
-    let date = new Date(((value - (8 * 60 *60)) * 1000));
+    let date = new Date(value  * 1000);
     let y = date.getFullYear();
     let MM = date.getMonth() + 1;
     MM = MM < 10 ? ('0' + MM) : MM;
