@@ -114,13 +114,21 @@ namespace DDTVLiveRec
             InfoLog.InfoPrintf(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + ": " + "DDTVLiveRec启动完成", InfoLog.InfoClass.下载系统信息);
             while (true)
             {
-                System.ConsoleKeyInfo a = Console.ReadKey();
-
-                bool c = a.Key.Equals(ConsoleKey.I);
-                if(c)
+                if(Console.ReadKey().Key.Equals(ConsoleKey.I))
                 {
-                    MMPU.调试模式 = !MMPU.调试模式;
-                    Console.WriteLine($"修改调试模式为:{ MMPU.调试模式}");
+                    Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
+                        $"a：修改调试模式(控制台会输出API接口调用日志)\n" +
+                        $"b：查看WebUserName和WebPassword\n" +
+                        $"c：查看WebToken\n" +
+                        $"d：查看ApiToken\n" +
+                        $"");
+                    switch (Console.ReadKey().Key)
+                    {
+                        case ConsoleKey.A:
+                            MMPU.调试模式 = !MMPU.调试模式;
+                            Console.WriteLine($"修改调试模式为:{ MMPU.调试模式}");
+                            break;
+                    }  
                 }
             }
            
