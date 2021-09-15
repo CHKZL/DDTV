@@ -184,7 +184,15 @@ namespace Auxiliary
                     DateTime beginTime = DateTime.Now;
                     process.Start();
                     process.BeginErrorReadLine();   // 开始异步读取
-                    process.Exited += Process_Exited;
+                    process.Exited += delegate (object sender, EventArgs e)
+                    {
+                        ProcessPuls P = (ProcessPuls)sender;
+                        InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
+                        if (MMPU.转码后自动删除文件)
+                        {
+                            MMPU.文件删除委托(Filename, "转码完成自动，删除原始文件"); //使用传入参数删除原flv文件
+                        }
+                    };
 
                     //NagisaCo: 等待转码，使mp4文件完整后再开始上传功能
                     process.WaitForExit();
@@ -208,16 +216,6 @@ namespace Auxiliary
         {
             public string OriginalVideoFilename = "";
             public string NewVideoFilename = "";
-
-        }
-        private static void Process_Exited(object sender, EventArgs e)
-        {
-            ProcessPuls P = (ProcessPuls)sender;
-            InfoLog.InfoPrintf("转码任务完成:" + P.StartInfo.Arguments, InfoLog.InfoClass.下载系统信息);
-            if (MMPU.转码后自动删除文件)
-            {
-                MMPU.文件删除委托(P.OriginalVideoFilename, "转码完成自动，删除原始文件");
-            }
 
         }
 
