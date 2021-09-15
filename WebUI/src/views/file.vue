@@ -237,7 +237,7 @@ export default {
       let param = pubBody("file_delete");
       param.directory = Directory;
       param.name = Name;
-      let response = await postFormAPI("file_delete", param, true);
+      let response = await postFormAPI("file_delete",param, true);
       return response.data;
     },
     process_file_delete: async function (Directory, Name) {
