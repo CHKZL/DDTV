@@ -31,17 +31,43 @@ namespace DDTVLiveRecWebServer
                 await context.ForbidAsync();
                 return;
             }
-            foreach (var item in new List<string>() {
-                System.Web.HttpUtility.UrlDecode(context.Request.Query["Directory"],System.Text.Encoding.UTF8),
-                System.Web.HttpUtility.UrlDecode(context.Request.Query["File"],System.Text.Encoding.UTF8)
-            })
+            List<string> KeyL = new List<string>() 
             {
-                if (string.IsNullOrEmpty(item))
+                "Directory", 
+                "File"
+            };
+            Dictionary<string, string> _ = UrlCode.UrlDecode(context, false);
+            foreach (var item in KeyL)
+            {
+                if(_.ContainsKey(item))
+                {
+                    if (string.IsNullOrEmpty(_[item]))
+                    {
+                        鉴权预处理结果 = true;
+                        break;
+                    }
+                }
+                else
                 {
                     鉴权预处理结果 = true;
                     break;
                 }
-            };
+            }
+
+           
+
+
+            //foreach (var item in new List<string>() {
+            //    System.Web.HttpUtility.UrlDecode(context.Request.Query["Directory"],System.Text.Encoding.UTF8),
+            //    System.Web.HttpUtility.UrlDecode(context.Request.Query["File"],System.Text.Encoding.UTF8)
+            //})
+            //{
+            //    if (string.IsNullOrEmpty(item))
+            //    {
+            //        鉴权预处理结果 = true;
+            //        break;
+            //    }
+            //};
             if (Auxiliary.MMPU.调试模式)
             {
                 foreach (var item in context.Request.Query)

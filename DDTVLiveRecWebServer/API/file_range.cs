@@ -23,16 +23,37 @@ namespace DDTVLiveRecWebServer.API
                 return ReturnInfoPackage.InfoPkak<Message<FileRangeInfo>>((int)ServerSendMessageCode.鉴权失败, null, "请求的表单格式不正确！");
             }
             bool 鉴权预处理结果 = false;
-            foreach (var item in new List<string>() {
-                context.Request.Form["RoomId"]
-            })
+            List<string> KeyL = new List<string>()
             {
-                if (string.IsNullOrEmpty(item))
+                "RoomId"
+            };
+            Dictionary<string, string> _ = UrlCode.UrlDecode(context, true);
+            foreach (var item in KeyL)
+            {
+                if (_.ContainsKey(item))
+                {
+                    if (string.IsNullOrEmpty(_[item]))
+                    {
+                        鉴权预处理结果 = true;
+                        break;
+                    }
+                }
+                else
                 {
                     鉴权预处理结果 = true;
                     break;
                 }
-            };
+            }
+            //foreach (var item in new List<string>() {
+            //    context.Request.Form["RoomId"]
+            //})
+            //{
+            //    if (string.IsNullOrEmpty(item))
+            //    {
+            //        鉴权预处理结果 = true;
+            //        break;
+            //    }
+            //};
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "file_range", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
