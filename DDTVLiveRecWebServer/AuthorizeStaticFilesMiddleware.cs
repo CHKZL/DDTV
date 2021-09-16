@@ -35,7 +35,7 @@ namespace DDTVLiveRecWebServer
             {
                 "Directory", 
                 "File"
-            };
+            }.Select(x => x.ToLower()).ToList();
             Dictionary<string, string> _ = UrlCode.UrlDecode(context, false);
             foreach (var item in KeyL)
             {
