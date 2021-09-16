@@ -91,7 +91,7 @@
                 </div>
               </el-card>
               <el-card shadow="hover" v-loading="system_monitor.reload">
-                <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 /':''}}</div>
+                <div class="card-title-litter">磁盘{{system_monitor.Platform  == 'Linux' ? ' 挂载点 ' + mount:''}}</div>
                 <div class="big-number">
                   <span>{{HDD.Usage}}</span>
                   <span>/{{HDD.Size}}</span>
@@ -221,6 +221,7 @@ import {sys_data_ex,sys_mon_ex} from '../utils/data_cli'
 export default {
   data() {
     return {
+      mount:window.apiObj.mount,
       system_info_data: sys_data_ex,
       tableData: [],
       rec_tab: [],
@@ -354,7 +355,7 @@ export default {
         let dish = this.system_monitor.HDDInfo
         var dishlen = dish.length
         for(var j = 0; j < dishlen; j++) {
-          if(dish[j].MountPath == "/"){
+          if(dish[j].MountPath == this.mount){
             this.HDD = dish[j]
           }
         }
