@@ -1,6 +1,6 @@
 <template>
   <div class="login login-background" v-loading="load">
-    <div style="width: 391px;z-index:99">
+    <div class="login-box">
       <el-image src="../static/logo.png" class="login-logo-img"></el-image>
       <div class="login-title">登录</div>
       <el-form :model="loginForm" :rules="rules" ref="loginForm" v-show="!show">
@@ -18,7 +18,7 @@
         </el-form-item>
       </el-form>
 
-      <div class="login-bt blue-bg" @click="!show ? submitForm('loginForm'):tokenlogin()">{{show ? '验证登录':'登录'}}</div>
+      <div class="login-bt blue-bg" @click="!show ? userlogin():tokenlogin()">{{show ? '验证登录':'登录'}}</div>
       <div class="login-or">-OR-</div>
       <div class="login-bt blue-border" @click="show = !show">{{!show ? 'TOKEN USER':'账号密码登录'}}</div>
     </div>
@@ -32,6 +32,7 @@ export default {
   components: {},
   data() {
     return {
+      windth:window.screenWidth,
       show:false,
       load:false,
       // 存放表单数据的对象
@@ -68,22 +69,32 @@ export default {
     * @param {loginname} 登录名  str
     * @param {password}  密码  str
     */
-    userlogin:async function(loginname,password) {
+    userlogin:async function() {
       // 构建请求参数
+      let ts = this.submitForm('loginForm')
+      if(ts == false) return false
+      this.load = true
       let param = {
-        "WebUserName": loginname,
-        "WebPassword": password
+        "WebUserName": this.loginForm.user,
+        "WebPassword": this.loginForm.pass
       }
       // 发请求
-      let res = await postFormAPI('weblogin',param,false)
-      // 解析请求数据
-      if(!res.data.result) this.openWindows(res.data.message,'登录出现问题')
-      else {
-        sessionStorage.setItem("token",res.data.WebToken)
-        sessionStorage.setItem("ver",1)
-        this.$router.push('/')
-        }
-      this.load = false
+      try {
+        let res = await postFormAPI('weblogin',param,false)
+        if(!res.data.result) this.openWindows(res.data.message,'登录出现问题')
+        else {
+          sessionStorage.setItem("token",res.data.WebToken)
+          sessionStorage.setItem("ver",1)
+          this.$router.push('/')
+          }
+      }
+      catch(err) {
+        console.error("登录请求出错，请检查网络连接与网站配置。")
+        this.openWindows('登录出现问题,请检查网络连接与网站配置。','网络连接失败')
+      }
+      finally {
+        this.load = false
+      }
     },
 
     /**
@@ -93,24 +104,31 @@ export default {
     */
     system_info: async function () {
       let param = pubBody('system_info')
-      param.ver = 2
-      param.token = this.tokenForm.token
-      console.log(param)
       let response = await postFormAPI('system_info',param,true)
-      return response;
+      this.system_info_data = response.data.Package[0];
+      return response.data;
     },
 
     tokenlogin: async function (){
+      let ts = this.submitForm('tokenForm')
+      if(ts == false) return false
       this.load = true
-      this.system_info().then(result => {
+      try {
+        let result = await this.system_info()
         if(result.data.code != 1001) this.openWindows(result.data.message,'登录出现问题')
         else{
           sessionStorage.setItem("token",this.tokenForm.token)
           sessionStorage.setItem("ver",2)
           this.$router.push('/')
         }
-      })
-      this.load = false
+      }
+      catch(err) {
+        console.error("登录请求出错，请检查网络连接与网站配置。")
+        this.openWindows('登录出现问题,请检查网络连接与网站配置。','网络连接失败')
+      }
+      finally {
+        this.load = false
+      }
     },
 
     /**
@@ -118,17 +136,16 @@ export default {
     * 
     * @param {formName} 表单名  str
     */
-    submitForm(formName) {
+    submitForm: function(formName) {
+      let submit = false
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          // 发送登录请求
-          this.load = true
-          this.userlogin(this.loginForm.user,this.loginForm.pass);
+          submit = true
         } else {
           console.debug("用户还没有通过表单验证");
-          return false;
         }
       });
+      return submit
     },
   },
 };
@@ -136,19 +153,21 @@ export default {
  
 <style scoped>
 .login {
-  /* 布局容器设定居中 */
   display: flex;
   flex-direction: column;
-  align-content: stretch;
-  justify-content: space-evenly;
-  align-items: center;
   background: rgb(255, 255, 255);
-  /* 设置定位和左右上下 撑开 */
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   top: 0;
+  padding-left: 40px;
+  padding-right: 40px;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.login-box{
+  min-width: 320px;
 }
 .login-background {
   /* background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url("../../public/static/loginBack.jpg"); */
