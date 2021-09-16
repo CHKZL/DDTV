@@ -140,7 +140,11 @@ namespace Auxiliary.LiveChatScript
             { }
             try
             {
-                m_innerRts.Cancel();
+                if(m_innerRts!=null)
+                {
+                    m_innerRts.Cancel();
+                }
+                
             }
             catch (Exception)
             {}

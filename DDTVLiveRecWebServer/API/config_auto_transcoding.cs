@@ -14,16 +14,37 @@ namespace DDTVLiveRecWebServer.API
         public static string Web(HttpContext context)
         {
             bool 鉴权预处理结果 = false;
-            foreach (var item in new List<string>() {
-                context.Request.Form["TranscodingStatus"]
-            })
+            List<string> KeyL = new List<string>()
             {
-                if (string.IsNullOrEmpty(item))
+                "TranscodingStatus"
+            };
+            Dictionary<string, string> _ = UrlCode.UrlDecode(context, true);
+            foreach (var item in KeyL)
+            {
+                if (_.ContainsKey(item))
+                {
+                    if (string.IsNullOrEmpty(_[item]))
+                    {
+                        鉴权预处理结果 = true;
+                        break;
+                    }
+                }
+                else
                 {
                     鉴权预处理结果 = true;
                     break;
                 }
-            };
+            }
+            //foreach (var item in new List<string>() {
+            //    context.Request.Form["TranscodingStatus"]
+            //})
+            //{
+            //    if (string.IsNullOrEmpty(item))
+            //    {
+            //        鉴权预处理结果 = true;
+            //        break;
+            //    }
+            //};
             var 鉴权结果 = 鉴权.Authentication.API接口鉴权(context, "config_auto_transcoding", 鉴权预处理结果 ? true : false);
             if (!鉴权结果.鉴权结果)
             {
