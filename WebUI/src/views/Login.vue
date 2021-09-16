@@ -1,6 +1,6 @@
 <template>
   <div class="login login-background" v-loading="load">
-    <div style="max-width: 390px">
+    <div class="login-box">
       <el-image src="../static/logo.png" class="login-logo-img"></el-image>
       <div class="login-title">登录</div>
       <el-form :model="loginForm" :rules="rules" ref="loginForm" v-show="!show">
@@ -32,6 +32,7 @@ export default {
   components: {},
   data() {
     return {
+      windth:window.screenWidth,
       show:false,
       load:false,
       // 存放表单数据的对象
@@ -71,11 +72,7 @@ export default {
     userlogin:async function() {
       // 构建请求参数
       let ts = this.submitForm('loginForm')
-      console.log
-      if(ts == false){
-        console.log(ts)
-        return false
-      }
+      if(ts == false) return false
       this.load = true
       let param = {
         "WebUserName": this.loginForm.user,
@@ -92,8 +89,8 @@ export default {
           }
       }
       catch(err) {
-        console.log(err)
-        this.openWindows('登录出现问题,请检查网络连接','网络连接失败')
+        console.error("登录请求出错，请检查网络连接与网站配置。")
+        this.openWindows('登录出现问题,请检查网络连接与网站配置。','网络连接失败')
       }
       finally {
         this.load = false
@@ -113,15 +110,25 @@ export default {
     },
 
     tokenlogin: async function (){
+      let ts = this.submitForm('tokenForm')
+      if(ts == false) return false
       this.load = true
-      this.system_info().then(result => {
+      try {
+        let result = await this.system_info()
         if(result.data.code != 1001) this.openWindows(result.data.message,'登录出现问题')
         else{
           sessionStorage.setItem("token",this.tokenForm.token)
           sessionStorage.setItem("ver",2)
           this.$router.push('/')
         }
-      })
+      }
+      catch(err) {
+        console.error("登录请求出错，请检查网络连接与网站配置。")
+        this.openWindows('登录出现问题,请检查网络连接与网站配置。','网络连接失败')
+      }
+      finally {
+        this.load = false
+      }
     },
 
     /**
@@ -148,17 +155,19 @@ export default {
 .login {
   display: flex;
   flex-direction: column;
-  align-content: stretch;
-  justify-content: space-evenly;
-  align-items: stretch;
   background: rgb(255, 255, 255);
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   top: 0;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.login-box{
+  min-width: 320px;
 }
 .login-background {
   /* background: linear-gradient(to top,rgb(0 0 0 / 59%),rgb(0 0 0 / 62%)),url("../../public/static/loginBack.jpg"); */
