@@ -26,7 +26,7 @@ namespace DDTVLiveRecWebServer.API
             List<string> KeyL = new List<string>()
             {
                 "RoomId"
-            };
+            }.Select(x => x.ToLower()).ToList();
             Dictionary<string, string> _ = UrlCode.UrlDecode(context, true);
             foreach (var item in KeyL)
             {

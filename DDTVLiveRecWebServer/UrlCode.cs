@@ -20,14 +20,14 @@ namespace DDTVLiveRecWebServer
             {
                 foreach (var item in context.Request.Form)
                 {
-                    _.Add(item.Key, System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8));
+                    _.Add(item.Key.ToLower(), System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8));
                 }
             }
             else
             {
                 foreach (var item in context.Request.Query)
                 {
-                    _.Add(item.Key, System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8));
+                    _.Add(item.Key.ToLower(), System.Web.HttpUtility.UrlDecode(item.Value, System.Text.Encoding.UTF8));
                 }
             }
             return _;
