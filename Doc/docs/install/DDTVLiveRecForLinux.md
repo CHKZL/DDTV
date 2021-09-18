@@ -67,11 +67,12 @@ DDTVLiveRec是免安装的，把下载下来的压缩包解压到任意当前lin
             "status": false,
             "VideoStatus": false,
             "RemindStatus": false,
-            "LiveStatus": false
+            "LiveStatus": false,
+            "UID":407106379
 }
 ```
 多个这种格式的内容组成  
-使用DDTVLiveRec需要注意的为["Name"]["OfficialName"]["RoomNumber"]["VideoStatus"]；其中：   
+使用DDTVLiveRec需要注意的为["Name"]["OfficialName"]["RoomNumber"]["VideoStatus"]["UID"]；其中：   
 * ["Name"]为翻译名称
 * ["OfficialName"]为官方名称
 * ["RoomNumber"]为BiliLive房间号
@@ -80,6 +81,7 @@ DDTVLiveRec是免安装的，把下载下来的压缩包解压到任意当前lin
 * ["VideoStatus"]为是否开播自动录制的标识，false为检测到开播后不录制，true为检测到开播后自动录制
 * ~~["RemindStatus"]为DDTV开播弹窗提醒标识，在DDTVLive中无用，默认为false~~
 * ~~["LiveStatus"]为DDTV直播状态标识，在DDTVLive中无用，默认为false~~  
+* ["UID"]为该账号的用户UID，该值和房间号同样重要！
 **也就是说["VideoStatus"]为false的项不会自动录制，请注意**  
 :::danger 警告 
 手动编辑过后请检查JSON字符串的合法性，请保证确保符合参考文件的JSON文件格式！！！
