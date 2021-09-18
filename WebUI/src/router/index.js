@@ -1,13 +1,21 @@
 // router > index.js VueRouter 配置 BY @NGWORKS
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import File from '../views/file.vue'
-import Room from '../views/room.vue'
-import Play from '../views/play.vue'
-import NotFound from '../views/404.vue'
-import Tasks from '../views/tasks.vue'
+// import Home from '../views/Home.vue'
+// import Login from '../views/Login.vue'
+// import File from '../views/file.vue'
+// import Room from '../views/room.vue'
+// import Play from '../views/play.vue'
+// import NotFound from '../views/404.vue'
+// import Tasks from '../views/tasks.vue'
+const Home = () => import(/* webpackChunkName: "group-1" */ '../views/Home.vue')
+const Login = () => import(/* webpackChunkName: "group-2" */ '../views/Login.vue')
+const File = () => import(/* webpackChunkName: "group-3" */ '../views/file.vue')
+const Room = () => import(/* webpackChunkName: "group-4" */ '../views/room.vue')
+const Play = () => import(/* webpackChunkName: "group-5" */ '../views/play.vue')
+const NotFound = () => import(/* webpackChunkName: "group-1" */ '../views/404.vue')
+const Tasks = () => import(/* webpackChunkName: "group-6" */ '../views/tasks.vue')
+
 
 Vue.use(VueRouter)
 
