@@ -28,7 +28,7 @@ namespace Auxiliary
         public static string[] 开发更改 = new string[] 
         {
             "增加转码完成后自动删除原始flv文件的功能和对应的配置文件",
-            "增加自动上传到云端功能",
+            "增加自动上传功能(腾讯云Cos和onedirev)",
             "增加API接口支持，具体API支持请查看页面[https://ddtv.pro/API/]",
             "增加了Webhook功能",
             "增加了官网和对应的说明文档提示",
@@ -37,12 +37,7 @@ namespace Auxiliary
             "给WebSocket服务器增加了证书支持",
             "部分设置支持使用API进行热重载了",
             "修改文件保存路径和文件名为:{ROOMID}_{NAME}/{DATE}_{TITLE}_{TIME}_{R}.x",
-            "为DDTVLiveRec增加了全新的Web界面，替换原来的简单信息页",
-            "增加了全新的文件管理逻辑",
-            "支持了转码进度展示功能",
-            "增加了弹幕和礼物记录文件随着录制文件同步上传到云端功能",
-            "修复了直播房间名特殊字符导致录制/上传失败的问题",
-            "增加了全新的DDTVLiveRec服务端WEB页支持"
+            "为DDTVLiveRec增加了全新的Web界面，替换原来的简单信息页"
         };
         public static 弹窗提示 弹窗 = new 弹窗提示();
         public static List<Downloader> DownList = new List<Downloader>();
@@ -51,8 +46,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string DDTV版本号 = "2.0.6.1a";
-        public static string DDTVLiveRec版本号 = "2.0.6.1a";
+        public static string DDTV版本号 = "2.0.5.1c";
+        public static string DDTVLiveRec版本号 = "3.0.1.1a";
         public static string 检测到的新版本号 = "";
         public static string 开发版本号 = $"该服务器处于开发模式(基于Ver{DDTVLiveRec版本号}主分支)";     
         public static string[] 不检测的版本号 = { 
