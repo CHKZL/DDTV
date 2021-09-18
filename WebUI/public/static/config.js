@@ -5,5 +5,5 @@ window.apiObj = {
   apiUrl: false,
   // 这里是用来配置主要展示的挂载磁盘，仅Linux系统配置有效。
   // 默认展示的是 / 下挂载的磁盘，您可根据自身情况更改
-  mount:'/'
+  mount: '/'
 }
