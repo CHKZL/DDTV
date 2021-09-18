@@ -104,8 +104,9 @@ export default {
     */
     system_info: async function () {
       let param = pubBody('system_info')
+      param.ver = 2
+      param.token = this.tokenForm.token
       let response = await postFormAPI('system_info',param,true)
-      this.system_info_data = response.data.Package[0];
       return response.data;
     },
 
@@ -115,7 +116,8 @@ export default {
       this.load = true
       try {
         let result = await this.system_info()
-        if(result.data.code != 1001) this.openWindows(result.data.message,'登录出现问题')
+        console.log(result)
+        if(result.code != 1001) this.openWindows(result.message,'登录出现问题')
         else{
           sessionStorage.setItem("token",this.tokenForm.token)
           sessionStorage.setItem("ver",2)
