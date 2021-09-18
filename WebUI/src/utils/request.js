@@ -32,8 +32,10 @@ const service = axios.create({
 
 service.interceptors.response.use(response => {
   if(response.config.url != "/api/weblogin" && response.data.code != 1001) {
-    sessionStorage.clear();
-    Router.push("/login");
+    if(response.config.url != "/api/system_info"){
+      sessionStorage.clear();
+      Router.push("/login");
+    }
   }
   return response
 }, error => {
