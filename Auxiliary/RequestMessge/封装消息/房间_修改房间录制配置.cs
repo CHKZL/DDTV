@@ -58,7 +58,8 @@ namespace Auxiliary.RequestMessage.封装消息
                         Types = item.平台,
                         RemindStatus = item.是否提醒,
                         status = false,
-                        Like=item.Like
+                        Like=item.Like,
+                        UID=item.UID
                     });
                 }
                 else

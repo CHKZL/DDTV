@@ -1046,7 +1046,7 @@ namespace DDTV_New
                     return;
                 }
                 string 唯一码 = roomInfo.房间号;
-                string 标题 = roomInfo.标题;
+                string 标题 = bilibili.根据房间号获取房间信息.获取标题(roomInfo.房间号);
                 try
                 {
                     switch (平台)
@@ -1059,7 +1059,7 @@ namespace DDTV_New
                                 {
                                     if (item.房间号 == 唯一码)
                                     {
-                                        item.标题 = roomInfo.标题;
+                                        item.标题 = bilibili.根据房间号获取房间信息.获取标题(roomInfo.房间号);
                                         标题 = item.标题;
                                     }
                                 }
