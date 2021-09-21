@@ -78,7 +78,7 @@ namespace DDTVLiveRecWebServer.鉴权
             if (!dic.ContainsKey("sig") || !dic.ContainsKey("time") || !dic.ContainsKey("cmd") || !dic.ContainsKey("ver") || 是否缺少关键参数)
             {
                 if (Auxiliary.MMPU.调试模式)
-                    Console.WriteLine($"缺少必要的信息！");
+                    Console.WriteLine($"缺少必要参数");
                 return new 鉴权返回结果()
                 {
                     鉴权结果 = false,
