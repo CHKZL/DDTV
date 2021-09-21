@@ -217,7 +217,7 @@ namespace Auxiliary
                     }
                 }
                 int B = 之前的bilibili房间主表状态.Count();
-                临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.是否录制视频? 最新的状态.直播状态:false, 原名 = 最新的状态.原名,Like=最新的状态.Like,UID=long.Parse(最新的状态.UID) });
+                临时主表.Add(new RL { 名称 = 最新的状态.名称, 唯一码 = 最新的状态.房间号, 平台 = "bilibili", 是否录制 = 最新的状态.是否录制视频, 是否提醒 = 最新的状态.是否提醒, 直播状态 = 最新的状态.直播状态, 原名 = 最新的状态.原名,Like=最新的状态.Like,UID=long.Parse(最新的状态.UID) });
             }
             if(之前的bilibili房间主表状态.Count!=0)
             {
