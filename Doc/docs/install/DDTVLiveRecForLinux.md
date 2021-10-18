@@ -1,7 +1,7 @@
 # DDTVLiveRec安装教程（Linux）
 ## 1.下载
-从以下地方选一个下载DDTV2.0最新版本  
-[GitHub](https://hub.fastgit.org/CHKZL/DDTV2/releases/latest)  
+从以下地方选一个下载DDTV最新版本  
+[GitHub](https://hub.fastgit.org/CHKZL/DDTV/releases/latest)  
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  
 DDTV聊天吹水群:`307156949`  
 DDTV功能反馈讨论群:`338182356`
@@ -54,8 +54,8 @@ DDTVLiveRec是免安装的，把下载下来的压缩包解压到任意当前lin
 将`\static\config.js`中的`apiUrl`改成你服务器对应的信息  
 
 ### (3)配置房间文件
-默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV2.0通用  
-可以直接使用DDTV2.0的房间配置文件复制过来即可  
+默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV通用  
+可以直接使用DDTV的房间配置文件复制过来即可  
 在下载的压缩包里附带了一个参考的文件，也可以参考那个文件进行手动编写  
 房间配置文件格式为
 ```json

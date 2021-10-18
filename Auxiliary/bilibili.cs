@@ -1155,6 +1155,7 @@ namespace Auxiliary
                 }
                 catch (Exception e)
                 {
+                    //InfoLog.InfoPrintf($"\n特殊测试日志\n出现错误的API地址:\nhttps://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomid}&otype=json&qn=10000&platform=web\n返回的内容为:\n{resultString}\n错误日志打印完毕\n", InfoLog.InfoClass.系统错误信息);
                     InfoLog.InfoPrintf("视频流地址解析失败：" + e.Message, InfoLog.InfoClass.系统错误信息);
                     return "";
                 }

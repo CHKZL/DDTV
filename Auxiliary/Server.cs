@@ -19,7 +19,7 @@ namespace Auxiliary
         public static readonly IPAddress IP_ADDRESS = MMPU.根据URL获取IP地址("127.0.0.1");
 #endif
         public static readonly int PORT = 11433;
-        public static readonly string PROJECT_ADDRESS = "https://github.com/CHKZL/DDTV2/releases/latest";
+        public static readonly string PROJECT_ADDRESS = "https://github.com/CHKZL/DDTV/releases/latest";
         public static class RequestCode
         {
             public static readonly int GET_NEW_MEMBER_LIST_CONTENT = 20001;

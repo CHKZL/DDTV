@@ -1,16 +1,16 @@
-# DDTV2.0安装教程
+# DDTV安装教程
 :::warning 注意
-DDTV2.0仅支持Windows平台运行，其他平台需要录制请使用DDTVLiveRec
+DDTV仅支持Windows平台运行，其他平台需要录制请使用DDTVLiveRec
 :::
 ## 1.下载
-从以下地方选一个下载DDTV2.0最新版本  
-[GitHub](https://hub.fastgit.org/CHKZL/DDTV2/releases/latest)  
+从以下地方选一个下载DDTV最新版本  
+[GitHub](https://hub.fastgit.org/CHKZL/DDTV/releases/latest)  
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  
 DDTV聊天吹水群:`307156949`  
 DDTV功能反馈讨论群:`338182356`
 
 ## 2.安装
-DDTV2.0是免安装的，把下载下来的压缩包解压到任意位置即可  
+DDTV是免安装的，把下载下来的压缩包解压到任意位置即可  
 
 
 ## 3.启动&初始化

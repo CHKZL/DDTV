@@ -2,8 +2,8 @@
 
 ## 房间配置文件的格式介绍
 
-默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且`DDTVLiveRec`和`DDTV2.0`通用  
-`DDTVLiveRec`和`DDTV2.0`的房间配置文件可以互相复制通用  
+默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且`DDTVLiveRec`和`DDTV`通用  
+`DDTVLiveRec`和`DDTV`的房间配置文件可以互相复制通用  
 如果是`DDTVLiveRec`，在下载的压缩包里附带了一个参考的文件，也可以参考那个文件进行手动编写  
 完整的房间配置文件是由多个房间配置组合成的，完整的文件格式如下  
 房间配置文件完整格式为
