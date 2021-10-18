@@ -126,7 +126,19 @@ namespace DDTVLiveRec
                     {
                         case ConsoleKey.A:
                             MMPU.调试模式 = !MMPU.调试模式;
-                            Console.WriteLine($"修改调试模式为:{ MMPU.调试模式}");
+                            Console.WriteLine($"修改调试模式\n修改调试模式为:{ MMPU.调试模式}");
+                            break;
+                        case ConsoleKey.B:
+                            Console.WriteLine($"查看WebUserName和WebPassword\nWebUserName:{ MMPU.WebUserName}\nWebPassword:{MMPU.WebPassword}");
+                            break;
+                        case ConsoleKey.C:
+                            Console.WriteLine($"查看WebToken\nWebToken:{MMPU.WebToken}");
+                            break;
+                        case ConsoleKey.D:
+                            Console.WriteLine($"查看ApiToken\nApiToken:{MMPU.ApiToken}");
+                            break;
+                        default:
+                            Console.WriteLine("没有该操作命令！");
                             break;
                     }  
                 }

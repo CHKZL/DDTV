@@ -14,7 +14,7 @@ module.exports = {
   themeConfig: {
     algolia: {},
     logo: '/DDTV.png',
-    repo: 'CHKZL/DDTV2',
+    repo: 'CHKZL/DDTV',
     docsDir: 'Doc/docs',
     docsBranch: 'master',
     editLinks: true,

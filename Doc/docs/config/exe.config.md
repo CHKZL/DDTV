@@ -1,8 +1,8 @@
 # DDTV Core通用配置文件
 ## Core配置文件说明
-Core配置文件为DDTV核心初始化配置文件，在DDTV2.0和DDTVLiveRec中都存在  
+Core配置文件为DDTV核心初始化配置文件，在DDTV和DDTVLiveRec中都存在  
   
-其中在DDTV2.0中叫`DDTV_NEW.exe.config`、在DDTVLiveRec中叫`DDTVLiveRec.exe.config`或`DDTVLiveRec.dll.config`
+其中在DDTV中叫`DDTV_NEW.exe.config`、在DDTVLiveRec中叫`DDTVLiveRec.exe.config`或`DDTVLiveRec.dll.config`
 :::tip
 其中在Windows下为exe，在linux和MacOS下为dll 
 :::
@@ -16,23 +16,23 @@ Core配置文件为DDTV核心初始化配置文件，在DDTV2.0和DDTVLiveRec中
 <configuration>
   <appSettings>
     <add key="file" value="./tmp/" /><!-- 下载文件默认目录，如果没有特殊需求请勿修改 -->
-    <add key="Livefile" value="./tmp/LiveCache/" /><!-- DDTV2.0在线播放时产生的缓存文件，会自己定期清理 -->
+    <add key="Livefile" value="./tmp/LiveCache/" /><!-- DDTV在线播放时产生的缓存文件，会自己定期清理 -->
     <add key="RoomConfiguration" value="./RoomListConfig.json" /><!-- 房间配置文件的路径和名称，如果没有特殊需求请勿修改 -->
     <add key="RoomTime" value="20" /><!-- Core对于直播状态的查询间隔，推荐默认值即可，过快的间隔可能会导致被http 412黑名单半小时 -->
-    <add key="DefaultVolume" value="100" /><!-- DDTV2.0中的默认音量 -->
-    <add key="Zoom" value="1" /><!-- 配置DDTV2.0的缩小默认值，1为缩小到开始菜单，0为缩小到后台托盘 -->
-    <add key="PlayNum" value="5" /><!-- DDTV2.0的最大直播并行数量 -->
-    <add key="DanMuColor" value="0xFF,0x00,0x00,0x00" /><!-- DDTV2.0的默认弹幕颜色 -->
-    <add key="ZiMuColor" value="0xFF,0x00,0x00,0x00" /><!-- DDTV2.0的默认字幕颜色 -->
-    <add key="DanMuSize" value="20" /><!-- DDTV2.0的默认弹幕字体大小 -->
-    <add key="ZiMuSize" value="24" /><!-- DDTV2.0的默认字幕字体大小 -->
-    <add key="LiveListTime" value="5" /><!-- DDTV2.0的直播列表UI刷新间隔，如果没有特殊需求请勿修改 -->
-    <add key="PlayWindowH" value="450" /><!-- DDTV2.0的播放器默认高度 -->
-    <add key="PlayWindowW" value="800" /><!-- DDTV2.0的播放器默认宽度 -->
-    <add key="BufferDuration" value="3" /><!-- DDTV2.0播放前缓冲多少秒 -->
+    <add key="DefaultVolume" value="100" /><!-- DDTV中的默认音量 -->
+    <add key="Zoom" value="1" /><!-- 配置DDTV的缩小默认值，1为缩小到开始菜单，0为缩小到后台托盘 -->
+    <add key="PlayNum" value="5" /><!-- DDTV的最大直播并行数量 -->
+    <add key="DanMuColor" value="0xFF,0x00,0x00,0x00" /><!-- DDTV的默认弹幕颜色 -->
+    <add key="ZiMuColor" value="0xFF,0x00,0x00,0x00" /><!-- DDTV的默认字幕颜色 -->
+    <add key="DanMuSize" value="20" /><!-- DDTV的默认弹幕字体大小 -->
+    <add key="ZiMuSize" value="24" /><!-- DDTV的默认字幕字体大小 -->
+    <add key="LiveListTime" value="5" /><!-- DDTV的直播列表UI刷新间隔，如果没有特殊需求请勿修改 -->
+    <add key="PlayWindowH" value="450" /><!-- DDTV的播放器默认高度 -->
+    <add key="PlayWindowW" value="800" /><!-- DDTV的播放器默认宽度 -->
+    <add key="BufferDuration" value="3" /><!-- DDTV播放前缓冲多少秒 -->
     <add key="AutoTranscoding" value="0" /><!-- 是否启动自动转码功能，详细信息请参考'高级功能配置'中关于自动转码文档 -->
     <add key="DataSource" value="0" /><!-- DDTV默认的数据源，0和1为B站原生API接口不同配置，2为Vtbs辅助数据源，默认0 -->
-    <add key="IsFirstTimeUsing" value="1" /><!-- DDTV2.0引导初始化，如果为1，启动时会启动初始化引导，初始化完成后会自动改为0 -->
+    <add key="IsFirstTimeUsing" value="1" /><!-- DDTV引导初始化，如果为1，启动时会启动初始化引导，初始化完成后会自动改为0 -->
     <add key="LiveRecWebServerDefaultIP" value="0.0.0.0" /><!-- DDTVLiveRec的WEB服务监听来源IP，0.0.0.0为监听全部地址 -->
     <add key="Port" value="11419" /><!-- DTVLiveRec的WEB服务监听端口 -->
     <add key="RecordDanmu" value="0" /><!-- 是否启动弹幕录制，0为关闭，1为启动 -->
