@@ -1117,9 +1117,21 @@ namespace Auxiliary
                     return null;
                 }
                 string resultString;
+                int Nu = 0;
                 try
                 {
-                    resultString = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web");
+                    do
+                    {
+
+                        resultString = MMPU.使用WC获取网络内容("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomid + "&otype=json&qn=10000&platform=web");
+                        Nu++;
+                        if (Nu > 5)
+                        {
+                            InfoLog.InfoPrintf("api.live.bilibili.com网络请求超时次数过多，请检查网络线路质量", InfoLog.InfoClass.下载系统信息);
+                            break;
+                        }
+                            
+                    } while (string.IsNullOrEmpty(resultString));
                 }
                 catch (Exception e)
                 {
@@ -1155,8 +1167,8 @@ namespace Auxiliary
                 }
                 catch (Exception e)
                 {
-                    //InfoLog.InfoPrintf($"\n特殊测试日志\n出现错误的API地址:\nhttps://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomid}&otype=json&qn=10000&platform=web\n返回的内容为:\n{resultString}\n错误日志打印完毕\n", InfoLog.InfoClass.系统错误信息);
-                    InfoLog.InfoPrintf("视频流地址解析失败：" + e.Message, InfoLog.InfoClass.系统错误信息);
+                    InfoLog.InfoPrintf($"\n特殊测试日志\n出现错误的API地址:\nhttps://api.live.bilibili.com/room/v1/Room/playUrl?cid={roomid}&otype=json&qn=10000&platform=web\n返回的内容为:\n{resultString}\n错误日志打印完毕\n", InfoLog.InfoClass.系统错误信息);
+                    InfoLog.InfoPrintf("视频流地址解析失败：" + e.Message+"\n发生错误的字段:"+ resultString, InfoLog.InfoClass.系统错误信息);
                     return "";
                 }
             }
