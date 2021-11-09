@@ -51,8 +51,8 @@ namespace Auxiliary
         public static string 直播缓存目录 = "";
         public static int 直播更新时间 = 20;
         public static string 下载储存目录 = "";
-        public static string DDTV版本号 = "2.0.6.1a";
-        public static string DDTVLiveRec版本号 = "2.0.6.1a";
+        public static string DDTV版本号 = "2.0.6.1b";
+        public static string DDTVLiveRec版本号 = "2.0.6.1b";
         public static string 检测到的新版本号 = "";
         public static string 开发版本号 = $"该服务器处于开发模式(基于Ver{DDTVLiveRec版本号}主分支)";     
         public static string[] 不检测的版本号 = { 

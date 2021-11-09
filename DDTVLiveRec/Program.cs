@@ -90,7 +90,7 @@ namespace DDTVLiveRec
                             }
                             else
                             {
-                                InfoLog.InfoPrintf("检测到版本更新，请运行DDTVLiveRec的update子目录中的update程序进行升级，更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.系统强制信息);
+                                InfoLog.InfoPrintf("检测到版本更新，请访问 https://ddtv.pro 查看更新，更新内容:\n" + MMPU.更新公告 + "\n\n", InfoLog.InfoClass.系统强制信息);
                             }
                         }
                     }

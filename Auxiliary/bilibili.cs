@@ -423,26 +423,36 @@ namespace Auxiliary
                 {
                     try
                     {
-                        int 状态 = (int)JO["data"][item.UID]["live_status"];
-                        if (状态 == 0)
+                        int 状态=0;
+                        if (JO.Property("data") != null)
                         {
-                            item.直播状态 = false;
-                            item.轮播状态 = false;
-                        }
-                        else if (状态 == 1)
-                        {
-                            item.直播状态 = true;
-                            item.轮播状态 = false;
-                        }
-                        else if (状态 == 2)
-                        {
-                            item.直播状态 = false;
-                            item.轮播状态 = true;
+                            if (((JObject)JO["data"]).Property(item.UID) != null)
+                            {
+                                if (((JObject)JO["data"][item.UID]).Property("live_status") != null)
+                                {
+                                    状态 = (int)JO["data"][item.UID]["live_status"];
+                                    if (状态 == 0)
+                                    {
+                                        item.直播状态 = false;
+                                        item.轮播状态 = false;
+                                    }
+                                    else if (状态 == 1)
+                                    {
+                                        item.直播状态 = true;
+                                        item.轮播状态 = false;
+                                    }
+                                    else if (状态 == 2)
+                                    {
+                                        item.直播状态 = false;
+                                        item.轮播状态 = true;
+                                    }
+                                }
+                            }
                         }
                     }
                     catch (Exception e)
                     {
-                        ;
+                      
                     }
                 }
             }

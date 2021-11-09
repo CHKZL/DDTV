@@ -597,38 +597,51 @@ namespace DDTV_New
                     }
                     if (MMPU.DDTV版本号 != 服务器版本号 && 检测状态)
                     {
-                        MessageBoxResult dr = MessageBox.Show(
-                            "检测到版本更新,更新公告:\r\n"
-                                + MMPU.TcpSend(Server.RequestCode.GET_DDTV_UPDATE_ANNOUNCEMENT, "{}", true, 100)
-                                + "\r\n\r\n点击确定启动自动更新，点击取消忽略",
-                            "有新版本",
-                            MessageBoxButton.OKCancel,
-                            MessageBoxImage.Question);
-
-                        if (dr == MessageBoxResult.OK)
+                        if (MMPU.DDTV版本号.Substring(0, 1) == "2")
                         {
-                            if (File.Exists("./update/DDTV_Update.exe"))
-                            {
-                                //启动外部程式
-                                ProcessStartInfo startInfo = new ProcessStartInfo
-                                {
-                                    FileName = System.Windows.Forms.Application.StartupPath + "./update/DDTV_Update.exe",
-                                    Arguments = "DDTV",
-                                    WindowStyle = ProcessWindowStyle.Normal
-                                };
-                                try
-                                {
-                                    Process.Start(startInfo);
-                                }
-                                catch (Exception) { }
+                            MessageBoxResult dr = MessageBox.Show(
+                                "检测到版本更新,更新公告:\r\n"
+                                    + MMPU.TcpSend(Server.RequestCode.GET_DDTV_UPDATE_ANNOUNCEMENT, "{}", true, 100)
+                                    + "\r\n\r\n点击确定启动自动更新，点击取消忽略",
+                                "有新版本",
+                                MessageBoxButton.OKCancel,
+                                MessageBoxImage.Question);
 
-                                Environment.Exit(0);
-                            }
-                            else
+                            if (dr == MessageBoxResult.OK)
                             {
-                                MessageBox.Show("未找到自动更新程序，请到github或者群共享手动下载,点击确定跳转到github页面");
-                                Process.Start(Server.PROJECT_ADDRESS);
+                                if (File.Exists("./update/DDTV_Update.exe"))
+                                {
+                                    //启动外部程式
+                                    ProcessStartInfo startInfo = new ProcessStartInfo
+                                    {
+                                        FileName = System.Windows.Forms.Application.StartupPath + "./update/DDTV_Update.exe",
+                                        Arguments = "DDTV",
+                                        WindowStyle = ProcessWindowStyle.Normal
+                                    };
+                                    try
+                                    {
+                                        Process.Start(startInfo);
+                                    }
+                                    catch (Exception) { }
+
+                                    Environment.Exit(0);
+                                }
+                                else
+                                {
+                                    MessageBox.Show("未找到自动更新程序，请到github或者群共享手动下载,点击确定跳转到github页面");
+                                    Process.Start(Server.PROJECT_ADDRESS);
+                                }
                             }
+                        }
+                        else
+                        {
+                            MessageBox.Show(
+                                "检测到版本更新,更新公告:\r\n"
+                                    + MMPU.TcpSend(Server.RequestCode.GET_DDTV_UPDATE_ANNOUNCEMENT, "{}", true, 100)
+                                    + "\r\n\r\n更多消息请访问 https://ddtv.pro 查看",
+                                "有新版本",
+                                MessageBoxButton.OKCancel,
+                                MessageBoxImage.Question);
                         }
                     }                   
                 }
