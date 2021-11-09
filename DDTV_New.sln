@@ -26,6 +26,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "异步流下载测试项目
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTVLiveRec_Update", "DDTVLiveRec_Update\DDTVLiveRec_Update.csproj", "{4D568B85-50AE-4690-BE2E-EADB9839328F}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Auxiliary", "..\..\..\..\Auxiliary\Auxiliary.csproj", "{B9797A7B-D297-4BBA-B54F-13C366CDDE49}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -144,6 +146,18 @@ Global
 		{4D568B85-50AE-4690-BE2E-EADB9839328F}.Release|x64.Build.0 = Release|Any CPU
 		{4D568B85-50AE-4690-BE2E-EADB9839328F}.Release|x86.ActiveCfg = Release|Any CPU
 		{4D568B85-50AE-4690-BE2E-EADB9839328F}.Release|x86.Build.0 = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|x64.Build.0 = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Debug|x86.Build.0 = Debug|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|x64.ActiveCfg = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|x64.Build.0 = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|x86.ActiveCfg = Release|Any CPU
+		{B9797A7B-D297-4BBA-B54F-13C366CDDE49}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
