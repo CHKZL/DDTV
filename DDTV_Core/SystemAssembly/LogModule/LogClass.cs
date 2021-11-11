@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemModule.Log
+namespace DDTV_Core.SystemAssembly.Log
 {
     public class LogClass
     {
@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemModule.Log
             Info = 30,//系统一般消息
             Debug = 40,//调试信息
             Trace = 50,//一些追踪数据
-            All=999,//打开所有日志
+            All = int.MaxValue,//打开所有日志
         }
         public string? Message { set; get; }//日志内容
         public LogType Type { set; get; }//日志类型
