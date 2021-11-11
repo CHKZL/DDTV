@@ -7,15 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemModule.Log
+namespace DDTV_Core.SystemAssembly.Log
 {
-    public class LogDB
+    internal class LogDB
     {
         private static SqliteConnection SQLiteConn = new();
         private static string dbPath = string.Empty;
         internal static string ErrorFilePath = string.Empty;
 
-        public class Config
+        internal class Config
         {
             #region 初始化数据库
             /// <summary>
@@ -50,6 +50,7 @@ namespace DDTV_Core.SystemModule.Log
                         //创建表
                         new SqliteCommand($"create table Log(Source string,Type int,Message string,Time DateTime,RunningTime int)", SQLiteConn).ExecuteNonQuery();
                     }
+                    Log.AddLog(nameof(Log), LogClass.LogType.Info, $"Log数据库连接"+(isLoadDb?"重连":"初始化")+"完成");
                     return true;
                 }
                 catch (Exception e)
@@ -75,28 +76,35 @@ namespace DDTV_Core.SystemModule.Log
             {
                 try
                 {
-                    string sqltext = $"insert into Log(Source, Type, Message, Time, RunningTime) values (@Source, @Type, @Message, @Time ,@RunningTime)";
-                    SqliteCommand cmd = new(sqltext, SQLiteConn);
-                    //构造参数
-                    SqliteParameter[] pms = new SqliteParameter[]
+                    if (SQLiteConn.State==ConnectionState.Open)
                     {
+                        string sqltext = $"insert into Log(Source, Type, Message, Time, RunningTime) values (@Source, @Type, @Message, @Time ,@RunningTime)";
+                        SqliteCommand cmd = new(sqltext, SQLiteConn);
+                        //构造参数
+                        SqliteParameter[] pms = new SqliteParameter[]
+                        {
                             new SqliteParameter("@Source",DbType.String) {Value=logClass.Source },
                             new SqliteParameter("@Type",DbType.String) {Value=logClass.Type },
                             new SqliteParameter("@Message",DbType.String) {Value=logClass.Message },
                             new SqliteParameter("@Time",DbType.DateTime) {Value=logClass.Time },
                             new SqliteParameter("@RunningTime",DbType.Int32) {Value=logClass.RunningTime },
-                    };
-                    //将变量参数加到cmd
-                    cmd.Parameters.AddRange(pms);
-                    //执行
-                    int i = cmd.ExecuteNonQuery();
-                    if (i > 0)
-                    {
-                        return true;
+                        };
+                        //将变量参数加到cmd
+                        cmd.Parameters.AddRange(pms);
+                        //执行
+                        int i = cmd.ExecuteNonQuery();
+                        if (i > 0)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                     else
                     {
-                        return false;
+                        return true;
                     }
                 }
                 catch (Exception e)

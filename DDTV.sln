@@ -5,7 +5,12 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Core", "DDTV_Core\DDTV_Core.csproj", "{44093B5D-8645-43F0-A37B-298B5A86CF44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_Core_Test", "DDTV_Core_Test\DDTV_Core_Test.csproj", "{C9A25133-73D2-47E0-B2E4-77192571BEE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Core_Test", "DDTV_Core_Test\DDTV_Core_Test.csproj", "{C9A25133-73D2-47E0-B2E4-77192571BEE9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E47FBBA-EE75-4959-B060-A31FF1AF53C1}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

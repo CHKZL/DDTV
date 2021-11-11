@@ -7,7 +7,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.IO;
 
-namespace DDTV_Core.SystemModule.Log
+namespace DDTV_Core.SystemAssembly.Log
 {
     /// <summary>
     /// 核心日志信息处理
@@ -37,8 +37,13 @@ namespace DDTV_Core.SystemModule.Log
                 {
                     ErrorLogFileWrite("LogSystem","日志数据库写入失败");
                 }
-            }).Start();
+            });
         }
+        /// <summary>
+        /// 错误日志
+        /// </summary>
+        /// <param name="Source"></param>
+        /// <param name="Message"></param>
         public static void ErrorLogFileWrite(string Source,string Message)
         {
             string ErrorText = $"{DateTime.Now}:[Error][{Source}][{RunningTimeStopwatch.Elapsed.Seconds}]{Message}！";
@@ -48,6 +53,8 @@ namespace DDTV_Core.SystemModule.Log
         {
             LogLevel= (int)log;
             RunningTimeStopwatch.Start();
+            AddLog(nameof(Log),LogClass.LogType.Info,"Log系统初始化完成");
+            LogDB.Config.SQLiteInit(false);
         }
     }
 }
