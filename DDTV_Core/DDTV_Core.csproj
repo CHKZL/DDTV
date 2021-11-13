@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <Folder Include="FunctionAssembly\" />
+    <Folder Include="SystemAssembly\NetworkRequestModule\Get\" />
+    <Folder Include="SystemAssembly\NetworkRequestModule\WebSocket\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -15,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BiliAccount" Version="2.5.4.26" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />
   </ItemGroup>

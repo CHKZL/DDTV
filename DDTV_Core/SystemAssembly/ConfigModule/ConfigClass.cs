@@ -24,7 +24,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 }
             }
         }
-        public enum ConfigType
+        internal static Dictionary<int, string> ConfigType = new Dictionary<int, string>();
+        internal enum Type
         {
 
         }
