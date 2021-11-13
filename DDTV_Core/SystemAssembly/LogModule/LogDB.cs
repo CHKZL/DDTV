@@ -45,10 +45,10 @@ namespace DDTV_Core.SystemAssembly.Log
                     //连接实例日志数据库
                     SQLiteConn = new SqliteConnection($"Data Source = {dbPath}");
                     SQLiteConn.Open();
-                    if (isLoadDb)
+                    if (!isLoadDb)
                     {
                         //创建表
-                        new SqliteCommand($"create table Log(Source string,Type int,Message string,Time DateTime,RunningTime int)", SQLiteConn).ExecuteNonQuery();
+                        new SqliteCommand($"create table Log(Source string,Type int,Message string,Time DateTime,RunningTime long)", SQLiteConn).ExecuteNonQuery();
                     }
                     Log.AddLog(nameof(Log), LogClass.LogType.Info, $"Log数据库连接"+(isLoadDb?"重连":"初始化")+"完成");
                     return true;
@@ -87,7 +87,7 @@ namespace DDTV_Core.SystemAssembly.Log
                             new SqliteParameter("@Type",DbType.String) {Value=logClass.Type },
                             new SqliteParameter("@Message",DbType.String) {Value=logClass.Message },
                             new SqliteParameter("@Time",DbType.DateTime) {Value=logClass.Time },
-                            new SqliteParameter("@RunningTime",DbType.Int32) {Value=logClass.RunningTime },
+                            new SqliteParameter("@RunningTime",DbType.Int64) {Value=logClass.RunningTime },
                         };
                         //将变量参数加到cmd
                         cmd.Parameters.AddRange(pms);

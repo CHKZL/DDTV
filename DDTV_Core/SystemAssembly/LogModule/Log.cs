@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.Log
     public class Log
     {
         private static int LogLevel = (int)LogClass.LogType.All;
-        private static readonly Stopwatch RunningTimeStopwatch = new();
+
 
         public static void AddLog(string Source,LogClass.LogType logType,string Message)
         {
@@ -23,7 +23,7 @@ namespace DDTV_Core.SystemAssembly.Log
             {
                 LogClass logClass = new()
                 {
-                    RunningTime = RunningTimeStopwatch.Elapsed.Seconds,
+                    RunningTime =TimeModule.Time.Operate.GetRunMilliseconds(),
                     Message = Message,
                     Source = Source,
                     Time = DateTime.Now,
@@ -46,13 +46,13 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message"></param>
         public static void ErrorLogFileWrite(string Source,string Message)
         {
-            string ErrorText = $"{DateTime.Now}:[Error][{Source}][{RunningTimeStopwatch.Elapsed.Seconds}]{Message}！";
+            string ErrorText = $"{DateTime.Now}:[Error][{Source}][{TimeModule.Time.Operate.GetRunMilliseconds()}]{Message}！";
             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
         }
         public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
         {
+            TimeModule.Time.Config.Init();
             LogLevel= (int)log;
-            RunningTimeStopwatch.Start();
             AddLog(nameof(Log),LogClass.LogType.Info,"Log系统初始化完成");
             LogDB.Config.SQLiteInit(false);
         }

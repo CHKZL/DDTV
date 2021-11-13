@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemAssembly.ConfigFileModule
+namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     internal class ConfigClass
     {
@@ -23,6 +23,10 @@ namespace DDTV_Core.SystemAssembly.ConfigFileModule
                     internal bool Enabled  { set; get; } = false;//是否有效
                 }
             }
+        }
+        public enum ConfigType
+        {
+
         }
     }
 }
