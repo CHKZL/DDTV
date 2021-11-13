@@ -104,7 +104,7 @@ namespace DDTV_Core.SystemAssembly.Log
                     }
                     else
                     {
-                        return true;
+                        return false;
                     }
                 }
                 catch (Exception e)
