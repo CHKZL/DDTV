@@ -11,8 +11,7 @@ namespace DDTV_Core.SystemAssembly
         public static void Init()
         {
             Log.Log.LogInit();
-            ConfigFileModule.Config.ReadConfigFile();
-            ConfigFileModule.Config.WriteConfigFile();
+            ConfigModule.ConfigFile.ReadConfigFile();
         }
     }
 }
