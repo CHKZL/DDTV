@@ -18,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                QR.QRInit();
                 do
                 {
-                    if (!string.IsNullOrEmpty(BilibiliUser.cookie.csrf)||!string.IsNullOrEmpty(BilibiliUser.cookie.uid)||!string.IsNullOrEmpty(BilibiliUser.cookie.cookie)||BilibiliUser.cookie.ExTime>DateTime.UtcNow)
+                    if (!string.IsNullOrEmpty(BilibiliUser.account.csrf)||!string.IsNullOrEmpty(BilibiliUser.account.uid)||!string.IsNullOrEmpty(BilibiliUser.account.cookie)||BilibiliUser.account.ExTime>DateTime.UtcNow)
                     {
                         switch (satrtType)
                         {
@@ -36,7 +36,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                         }    
                     Thread.Sleep(6000);
                     }
-                } while (string.IsNullOrEmpty(BilibiliUser.cookie.cookie));
+                } while (string.IsNullOrEmpty(BilibiliUser.account.cookie));
             }
         }
         public class QR
@@ -57,15 +57,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
             {
                 if (status == ByQRCode.QrCodeStatus.Success)
                 {
-                    BilibiliUser.account=account;
+                    BilibiliUser.AccClass=account;
                     Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "QR扫码登陆bilibili成功");
-                    BilibiliUser.cookie.uid= account.Uid;
+                    BilibiliUser.account.uid= account.Uid;
                     foreach (var item in account.Cookies)
                     {
-                        BilibiliUser.cookie.cookie = BilibiliUser.cookie.cookie + item + ";";
+                        BilibiliUser.account.cookie = BilibiliUser.account.cookie + item + ";";
                     }
-                    BilibiliUser.cookie.ExTime =account.Expires_Cookies;
-                    BilibiliUser.cookie.csrf=account.CsrfToken;
+                    BilibiliUser.account.ExTime =account.Expires_Cookies;
+                    BilibiliUser.account.csrf=account.CsrfToken;
 
                     BilibiliUser.WritUserFile();
                 }

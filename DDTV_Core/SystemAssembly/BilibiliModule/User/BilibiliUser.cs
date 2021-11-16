@@ -10,8 +10,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
     internal class BilibiliUser
     {
-        internal static Account account = new Account();
-        public static CookieInfo cookie = new CookieInfo();
+        public static Account AccClass = new();
+        public static CookieInfo account = new CookieInfo();
         public class CookieInfo
         {
             /// <summary>
@@ -34,7 +34,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
         public static bool Init(InitDDTV_Core.SatrtType satrtType = InitDDTV_Core.SatrtType.DDTV_CLI)
         {
             ReadUserFile();
-            if (!string.IsNullOrEmpty(cookie.csrf)&&!string.IsNullOrEmpty(cookie.uid)&&!string.IsNullOrEmpty(cookie.cookie)&&cookie.ExTime>DateTime.UtcNow)
+            if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
             {
                 return true;
             }
@@ -51,10 +51,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                 File.Delete(BiliUserFile);      
             }
             File.WriteAllLines(BiliUserFile, new string[] {
-                    $"cookie={EncryptionModule.Encryption.AesStr(cookie.cookie)}",
-                    $"ExTime={cookie.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}",
-                    $"csrf={cookie.csrf}",
-                    $"uid={cookie.uid}",
+                    $"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}",
+                    $"ExTime={account.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}",
+                    $"csrf={account.csrf}",
+                    $"uid={account.uid}",
                 }, Encoding.UTF8);
             return true;
         }
@@ -70,10 +70,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                 string[] UserFileLine = File.ReadAllLines(BiliUserFile);
                 if (UserFileLine.Length>1||UserFileLine[0].Length>1)
                 {
-                    cookie.cookie=String.Empty;
-                    cookie.csrf=String.Empty;
-                    cookie.ExTime=DateTime.MinValue;
-                    cookie.uid=String.Empty;
+                    account.cookie=String.Empty;
+                    account.csrf=String.Empty;
+                    account.ExTime=DateTime.MinValue;
+                    account.uid=String.Empty;
                     foreach (var item in UserFileLine)
                     {
                         if (item.Split('=').Length>1)
@@ -84,7 +84,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                     {
                                         try
                                         {
-                                            cookie.cookie = EncryptionModule.Encryption.UnAesStr(item.Split('=')[1]);
+                                            account.cookie = EncryptionModule.Encryption.UnAesStr(item.Split('=')[1]);
                                         }
                                         catch (Exception e)
                                         {
@@ -96,24 +96,24 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                     {
                                         if (DateTime.TryParse(item.Split('=')[1], out DateTime ExTime))
                                         {
-                                            cookie.ExTime=ExTime;
+                                            account.ExTime=ExTime;
                                         }
                                         break;
                                     }
                                 case "csrf":
                                     {
-                                        cookie.csrf = item.Split('=')[1];
+                                        account.csrf = item.Split('=')[1];
                                         break;
                                     }
                                 case "uid":
                                     {
-                                        cookie.uid = item.Split('=')[1];
+                                        account.uid = item.Split('=')[1];
                                         break;
                                     }
                             }
                         }
                     }
-                    if (!string.IsNullOrEmpty(cookie.csrf)&&!string.IsNullOrEmpty(cookie.uid)&&!string.IsNullOrEmpty(cookie.cookie)&&cookie.ExTime>DateTime.UtcNow)
+                    if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
                     {
                         return true;
                     }

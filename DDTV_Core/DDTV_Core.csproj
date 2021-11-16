@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="FunctionAssembly\" />
-    <Folder Include="SystemAssembly\NetworkRequestModule\Get\" />
     <Folder Include="SystemAssembly\NetworkRequestModule\WebSocket\" />
   </ItemGroup>
 
