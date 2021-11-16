@@ -14,7 +14,29 @@ namespace DDTV_Core.SystemAssembly.Log
     /// </summary>
     public class Log
     {
+        /// <summary>
+        /// 日志等级(向下包含)
+        /// </summary>
         private static LogClass.LogType LogLevel = LogClass.LogType.All;
+        /// <summary>
+        /// Log系统初始化
+        /// </summary>
+        /// <param name="log">日志等级</param>
+        public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
+        {
+            LogLevel= log;
+            TimeModule.Time.Config.Init();
+            LogDB.Config.SQLiteInit(false);
+            AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
+        }
+        /// <summary>
+        /// 增加日志
+        /// </summary>
+        /// <param name="Source">日志来源(类名)</param>
+        /// <param name="logType">日志类型</param>
+        /// <param name="Message">日志内容</param>
+        /// <param name="IsError">是否是错误(错误内容会出了数据库外另外写一份txt文本记录详细错误日志和堆栈)</param>
+        /// <param name="exception">IsError为真是有效，错误日志的Exception信息</param>
         public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null)
         {
             Task.Run(() =>
@@ -55,13 +77,6 @@ namespace DDTV_Core.SystemAssembly.Log
         {
             string ErrorText = $"{DateTime.Now}:[Error][{Source}][{TimeModule.Time.Operate.GetRunMilliseconds()}]{Message}！";
             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
-        }
-        public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
-        {
-            LogLevel= log;
-            TimeModule.Time.Config.Init();
-            LogDB.Config.SQLiteInit(false);
-            AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
         }
     }
 }

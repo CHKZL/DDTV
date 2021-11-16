@@ -10,6 +10,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
     public class Rooms
     {
         public static Dictionary<long, RoomInfoClass.RoomInfo> RoomInfo = new();
+        /// <summary>
+        /// 通过API更新本地房间信息
+        /// </summary>
         public static void UpdateRoomInfo()
         {
             List<long> mids = new List<long>();
@@ -47,6 +50,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 }
             }
         }
+        /// <summary>
+        /// 查找对应每个值的缓存数据来源API(房间组件内部方法)
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <param name="cacheType"></param>
+        /// <returns></returns>
         private static RoomInfoClass.RoomInfo SelectAPI(long uid, DataCacheModule.DataCacheClass.CacheType cacheType)
         {
             switch (cacheType)
@@ -111,6 +120,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                     return API.RoomInfo.room_init(uid);
                 case DataCacheModule.DataCacheClass.CacheType.special_type:
                     return API.RoomInfo.room_init(uid);
+                case DataCacheModule.DataCacheClass.CacheType.roomStatus:
+                    return API.RoomInfo.getRoomInfoOld(uid);
+                case DataCacheModule.DataCacheClass.CacheType.roundStatus:
+                    return API.RoomInfo.getRoomInfoOld(uid);
+                case DataCacheModule.DataCacheClass.CacheType.url:
+                    return API.RoomInfo.getRoomInfoOld(uid);
                 default:
                     return null;
             }
