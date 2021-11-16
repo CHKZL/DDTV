@@ -14,8 +14,8 @@ namespace DDTV_Core.SystemAssembly.Log
     /// </summary>
     public class Log
     {
-        private static int LogLevel = (int)LogClass.LogType.All;
-        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception exception = null)
+        private static LogClass.LogType LogLevel = LogClass.LogType.All;
+        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null)
         {
             Task.Run(() =>
             {
@@ -31,9 +31,13 @@ namespace DDTV_Core.SystemAssembly.Log
                 {
                     ErrorLogFileWrite(Source, $"{Message},错误堆栈:\n{exception.ToString()}");
                 }
-                if ((int)logType < LogLevel)
+                if (logType <= LogLevel)
                 {
                     Console.WriteLine($"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}");
+                }
+                else
+                {
+                    
                 }
                 if (!LogDB.Operate.AddDb(logClass))
                 {
@@ -54,7 +58,7 @@ namespace DDTV_Core.SystemAssembly.Log
         }
         public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
         {
-            LogLevel= (int)log;
+            LogLevel= log;
             TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
             AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");

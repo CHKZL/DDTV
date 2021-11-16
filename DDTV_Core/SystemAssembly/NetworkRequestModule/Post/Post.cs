@@ -17,7 +17,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         /// <param name="jsonParam"></param>
         /// <param name="encode"></param>
         /// <returns></returns>
-        public static string GetWebInfo_JsonClass(string url, string jsonParam, string encode)
+        public static string SendRequest_GetWebInfo_JsonClass(string url, string jsonParam, string encode)
         {
             string strURL = url;
             HttpWebRequest request;
@@ -28,14 +28,6 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             byte[] payload;
             payload = Encoding.GetEncoding(encode.ToUpper()).GetBytes(paraUrlCoded);
             request.ContentLength = payload.Length;
-            //request.UserAgent = NetClass.UA();
-            //if (url.Contains("bilibili"))
-            //{
-            //    if (!string.IsNullOrEmpty(BilibiliModule.User.BilibiliUser.cookie.cookie))
-            //    {
-            //        request.CookieContainer = NetClass.CookieContainerTransformation(BilibiliModule.User.BilibiliUser.cookie.cookie);
-            //    }
-            //}
             Stream writer = request.GetRequestStream();
             writer.Write(payload, 0, payload.Length);
             writer.Close();
@@ -50,7 +42,68 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 strValue += StrDate + "\r\n";
             }
+            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
             return strValue;
+        }
+        /// <summary>
+        /// 以Post方式发送带参数和CookieContainer对象的http请求(该方法应该是为发送弹幕而特殊准备的)
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="dic"></param>
+        /// <param name="cook"></param>
+        /// <returns></returns>
+        public static string SendRequest_SendDanmu(string url, Dictionary<string, string> dic, CookieContainer cook)
+        {
+            string result = "";
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Method = "POST";
+            req.ContentType = "application/x-www-form-urlencoded";
+            req.UserAgent = NetClass.UA();
+            if (url.Contains("bilibili"))
+            {
+                if (!string.IsNullOrEmpty(BilibiliModule.User.BilibiliUser.account.cookie))
+                {
+                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliModule.User.BilibiliUser.account.cookie);
+                }
+            }
+            #region 添加Post 参数  
+            StringBuilder builder = new StringBuilder();
+            int i = 0;
+            foreach (var item in dic)
+            {
+                if (item.Key.Length > 20)
+                {
+                    if (i > 0)
+                        builder.Append("&");
+                    builder.AppendFormat("{0}", item.Key);
+                    i++;
+                }
+                else
+                {
+                    if (i > 0)
+                        builder.Append("&");
+                    builder.AppendFormat("{0}={1}", item.Key, item.Value);
+                    i++;
+                }
+            }
+            byte[] data = Encoding.UTF8.GetBytes(builder.ToString());
+            req.ContentLength = data.Length;
+            req.CookieContainer = cook;
+            using (Stream reqStream = req.GetRequestStream())
+            {
+                reqStream.Write(data, 0, data.Length);
+                reqStream.Close();
+            }
+            #endregion
+            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+            Stream stream = resp.GetResponseStream();
+            //获取响应内容  
+            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                result = reader.ReadToEnd();
+            }
+            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"发起POST请求:SendRequest_SendDanmu完成");
+            return result;
         }
     }
 }

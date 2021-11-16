@@ -4,3 +4,21 @@
 dotnet_diagnostic.CS8618.severity = none
 csharp_indent_braces=false
 csharp_space_before_semicolon_in_for_statement=true
+
+# CS8600: 将 null 字面量或可能为 null 的值转换为非 null 类型。
+dotnet_diagnostic.CS8600.severity = none
+
+# CS8603: 可能返回 null 引用。
+dotnet_diagnostic.CS8603.severity = none
+
+# CS8602: 解引用可能出现空引用。
+dotnet_diagnostic.CS8602.severity = none
+
+# CS8604: 引用类型参数可能为 null。
+dotnet_diagnostic.CS8604.severity = none
+
+# CA5350: 不要使用弱加密算法
+dotnet_diagnostic.CA5350.severity = none
+
+# SYSLIB0021: 类型或成员已过时
+dotnet_diagnostic.SYSLIB0021.severity = none

@@ -1,0 +1,99 @@
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.DataCacheModule;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass;
+using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
+
+namespace DDTV_Core.SystemAssembly.ConfigModule
+{
+    internal class RoomConfigFile
+    {
+        private static string ConfigFile = CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json",CoreConfigClass.Group.Core);
+        /// <summary>
+        /// 读取房间配置文件
+        /// </summary>
+        internal static void ReadRoomConfigFile()
+        {
+            var rlc = new RoomList();
+            try
+            {
+                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(ConfigFile));
+            }
+            catch (Exception)
+            {
+                rlc = JsonConvert.DeserializeObject<RoomList>("{}");
+                Log.Log.AddLog(nameof(RoomConfigFile),Log.LogClass.LogType.Error, "房间json配置文件格式错误！请检测核对！");
+            }
+            List<RoomCard> RoomConfigList = rlc?.data;
+            //RoomConfigList = rlc?.data;
+            //如果房间配置文件错误或者为空，默认生成一个新的List<RoomCard>对象
+            if (RoomConfigList == null)
+            {
+                RoomConfigList = new List<RoomCard>();
+            }
+            foreach (var item in RoomConfigList)
+            {
+                if(item.UID==8760033)
+                {
+                    ;
+                }
+                if (Rooms.RoomInfo.TryGetValue(item.UID, out var roomInfo))
+                {
+                    Rooms.RoomInfo[item.UID].uname =string.IsNullOrEmpty(item.name)?item.Name: item.name;
+                    Rooms.RoomInfo[item.UID].Description=item.Description;
+                    Rooms.RoomInfo[item.UID].room_id=item.RoomId==0?int.Parse(item.RoomNumber) :item.RoomId;
+                    Rooms.RoomInfo[item.UID].IsAutoRec = (item.IsAutoRec||item.VideoStatus);
+                    Rooms.RoomInfo[item.UID].IsRemind = (item.IsRemind||item.RemindStatus);
+                    Rooms.RoomInfo[item.UID].Like = item.Like;
+                }
+                else
+                {
+                    Rooms.RoomInfo.Add(item.UID,new RoomInfoClass.RoomInfo() 
+                    { 
+                        uname = string.IsNullOrEmpty(item.name) ? item.Name : item.name,
+                        Description = item.Description,
+                        room_id = item.RoomId==0 ? int.Parse(item.RoomNumber) : item.RoomId,
+                        IsAutoRec = (item.IsAutoRec||item.VideoStatus),
+                        IsRemind =(item.IsRemind||item.RemindStatus),
+                        Like = item.Like,
+                        uid = item.UID,
+                    });
+                }
+                DataCache.SetCache(CacheType.uname, item.UID.ToString(), Rooms.RoomInfo[item.UID].uname.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.Description, item.UID.ToString(), Rooms.RoomInfo[item.UID].Description!=null?Rooms.RoomInfo[item.UID].Description.ToString():"", int.MaxValue);
+                DataCache.SetCache(CacheType.room_id, item.UID.ToString(), Rooms.RoomInfo[item.UID].room_id.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsAutoRec, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsAutoRec.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsRemind, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsRemind.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.Like, item.UID.ToString(), Rooms.RoomInfo[item.UID].Like.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.uid, item.UID.ToString(), Rooms.RoomInfo[item.UID].uid.ToString(), int.MaxValue);
+            }
+            Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"读取房间配置文件完成，一共读取到[{RoomConfigList.Count}]个房间配置");
+        }
+        internal static void WriteRoomConfigFile()
+        {
+            List<RoomCard> roomCards = new();
+            foreach (var item in Rooms.RoomInfo)
+            {
+                roomCards.Add(new RoomCard
+                { 
+                    IsAutoRec=item.Value.IsAutoRec,
+                    Description=item.Value.Description,
+                    IsRemind=item.Value.IsRemind,
+                    Like=item.Value.Like,
+                    name=item.Value.uname,
+                    RoomId=item.Value.room_id,
+                    UID=item.Value.uid
+                });
+            }
+            File.WriteAllText(ConfigFile, JsonConvert.SerializeObject(roomCards));
+            Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.Count}]个房间配置");
+        }
+    }
+}

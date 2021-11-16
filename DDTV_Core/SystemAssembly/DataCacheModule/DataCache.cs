@@ -16,14 +16,15 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
         /// <param name="Value">值</param>
         /// <param name="ExTime">有效期(毫秒)</param>
         /// <returns>是否设置成功</returns>
-        public static bool SetCache(DataCacheClass.CacheType CacheType, string Key, string Value, int ExTime)
+        public static bool SetCache(DataCacheClass.CacheType CacheType, string Key, string Value, long ExTime)
         {
-            if (DataCacheClass.Caches.TryGetValue((int)CacheType, out var Cache))
+            if (DataCacheClass.Caches.TryGetValue(CacheType, out var Cache))
             {
                 if (Cache.ContainsKey(Key))
                 {
                     Cache[Key].Value = Value;
                     Cache[Key].ExTime = TimeModule.Time.Operate.GetRunMilliseconds()+ExTime;
+                    //Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"更新缓存:Type为[{CacheType}]的数据键[{Key}设置数据[{Value}]缓存成功，该缓存有效期至UTC零点时间+[{Cache[Key].ExTime}]毫秒");
                 }
                 else
                 {
@@ -32,6 +33,7 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
                         Value= Value,
                         ExTime=TimeModule.Time.Operate.GetRunMilliseconds()+ExTime
                     });
+                    //Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"增加缓存:Type为[{CacheType}]的数据键[{Key}设置数据[{Value}]缓存成功，该缓存有效期至UTC零点时间+[{Cache[Key].ExTime}]毫秒");
                     return true;
                 }
             }
@@ -47,21 +49,24 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
         public static bool GetCache(DataCacheClass.CacheType CacheType, string Key, out string Value)
         {
             Value = string.Empty;
-            if (DataCacheClass.Caches.TryGetValue((int)CacheType, out var Cache))
+            if (DataCacheClass.Caches.TryGetValue(CacheType, out var Cache))
             {
                 if (Cache.ContainsKey(Key))
                 {
-                    if (Cache[Key].ExTime<TimeModule.Time.Operate.GetRunMilliseconds())
+                    if (Cache[Key].ExTime>TimeModule.Time.Operate.GetRunMilliseconds())
                     {
                         Value = Cache[Key].Value;
+                        //Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"命中缓存:Type为[{CacheType}]的数据键[{Key}数据[{Value}]缓存读取成功，该缓存有效期至UTC零点时间+[{Cache[Key].ExTime}]毫秒");
                         return true;
                     }
                     else
                     {
+                       // Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"缓存未命中:Type为[{CacheType}]的数据键[{Key}数据[{Value}]缓存命中失败，加入数据池等待更新数据");
                         return false;
                     }
                 }
             }
+            //Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"缓存未命中:Type为[{CacheType}]的数据键[{Key}数据[{Value}]缓存命中失败，加入数据池等待更新数据");
             return false;
         }
     }

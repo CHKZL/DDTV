@@ -18,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
         {
             if (string.IsNullOrEmpty(source))
             {
-                return null;
+                return "";
             }
             var encoding = Encoding.UTF8;
             MD5 md5 = MD5.Create();
@@ -67,7 +67,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = encoding.GetBytes(source);
             string encrypt;
-            Rijndael aes = Rijndael.Create();
+            Aes aes = Aes.Create();
             using (MemoryStream mStream = new MemoryStream())
             {
                 using (CryptoStream cStream = new CryptoStream(mStream, aes.CreateEncryptor(btKey, btIv), CryptoStreamMode.Write))
@@ -106,7 +106,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = Convert.FromBase64String(source);
             string decrypt;
-            Rijndael aes = Rijndael.Create();
+            Aes aes = Aes.Create();
             using (MemoryStream mStream = new MemoryStream())
             {
                 using (CryptoStream cStream = new CryptoStream(mStream, aes.CreateDecryptor(btKey, btIv), CryptoStreamMode.Write))

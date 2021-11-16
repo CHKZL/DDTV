@@ -27,11 +27,14 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule
             {
                 try
                 {
-                    CK.Add(new Cookie(cook[i].Split('=')[0], cook[i].Split('=')[1].Replace(",", "%2C")) { Domain = "live.bilibili.com" });
+                    if(!string.IsNullOrEmpty(cook[i]))
+                    {
+                        CK.Add(new Cookie(cook[i].Split('=')[0], cook[i].Split('=')[1].Replace(",", "%2C")) { Domain = "live.bilibili.com" });
+                    }          
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
+                    Log.Log.AddLog(nameof(NetClass), Log.LogClass.LogType.Error, "将cookie字符串转换为CookieContainer对象的过程中出现了未知错误！", true, e);
                 }
             }
             return CK;
