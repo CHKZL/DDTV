@@ -9,6 +9,9 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
 {
     internal class RoomPatrol
     {
+        /// <summary>
+        /// 房间巡逻(房间状态监控)初始化
+        /// </summary>
         public static void Init()
         {
             BilibiliModule.Rooms.Rooms.UpdateRoomInfo();
@@ -35,7 +38,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             });
         }
         /// <summary>
-        /// 循环任务
+        /// 房间更新状态监测
         /// </summary>
         public static void Patrol()
         {

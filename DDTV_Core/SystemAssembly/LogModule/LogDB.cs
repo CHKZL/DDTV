@@ -72,6 +72,11 @@ namespace DDTV_Core.SystemAssembly.Log
         }
         public class Operate
         {
+            /// <summary>
+            /// 增加日志数据库记录
+            /// </summary>
+            /// <param name="logClass"></param>
+            /// <returns></returns>
             public static bool AddDb(LogClass logClass)
             {
                 try

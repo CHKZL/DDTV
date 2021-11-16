@@ -76,6 +76,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"读取房间配置文件完成，一共读取到[{RoomConfigList.Count}]个房间配置");
         }
+        /// <summary>
+        /// 保存房间配置文件
+        /// </summary>
         internal static void WriteRoomConfigFile()
         {
             List<RoomCard> roomCards = new();

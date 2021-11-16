@@ -8,25 +8,44 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class CoreConfigClass
     {
+
         internal static Config config = new();
         internal class Config
         {
             internal List<Data> datas = new();
             internal class Data
             {
+                /// <summary>
+                /// 配置键
+                /// </summary>
                 internal Key Key { set; get; }
+                /// <summary>
+                /// 配置分组
+                /// </summary>
                 internal Group Group { set; get; } = Group.Default;
+                /// <summary>
+                /// 配置值
+                /// </summary>
                 internal string Value { set; get; } = "";
-                internal bool Enabled { set; get; } = false;//是否有效
+                /// <summary>
+                /// 是否有效
+                /// </summary>
+                internal bool Enabled { set; get; } = false;
                 
             }
         }
         internal static Dictionary<int, string> ConfigType = new Dictionary<int, string>();
+        /// <summary>
+        /// 配置分组
+        /// </summary>
         public enum Group
         {
             Default,
             Core,
         }
+        /// <summary>
+        /// 配置键
+        /// </summary>
         public enum Key
         {
             /// <summary>

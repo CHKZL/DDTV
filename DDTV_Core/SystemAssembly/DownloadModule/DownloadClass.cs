@@ -12,6 +12,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static List<Downloads> DownloadList = new();
         internal class Downloads
         {
+            /// <summary>
+            /// 房间号
+            /// </summary>
             public string RoomId { get; set; }
             /// <summary>
             /// 是否下载中

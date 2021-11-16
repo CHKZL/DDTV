@@ -15,6 +15,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 {
     internal class Download
     {
+        /// <summary>
+        /// 增加下载任务(施工中)
+        /// </summary>
+        /// <param name="Url"></param>
+        /// <param name="FilePath"></param>
         public static void AddDownLoad(string Url,string FilePath)
         {
             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"下载调度器收到下载任务[{Url}],当前为开发调试模式，暂不下载");
