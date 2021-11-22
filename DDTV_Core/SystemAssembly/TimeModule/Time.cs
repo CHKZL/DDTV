@@ -40,6 +40,17 @@ namespace DDTV_Core.SystemAssembly.TimeModule
             {
                 return RunningTimeStopwatch.Elapsed.Days;
             }
+            /// <summary>
+            /// 转换时间戳为C#时间
+            /// </summary>
+            /// <param name="timeStamp">时间戳 单位：毫秒</param>
+            /// <returns>C#时间</returns>
+            public static DateTime ConvertTimeStampToDateTime(long timeStamp)
+            {
+                DateTime startTime = TimeZone.CurrentTimeZone.ToLocalTime(new System.DateTime(1970, 1, 1)); // 当地时区
+                DateTime dt = startTime.AddMilliseconds(timeStamp);
+                return dt;
+            }
         }  
     }
 }

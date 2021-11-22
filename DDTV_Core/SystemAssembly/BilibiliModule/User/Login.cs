@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DDTV_Core.SystemAssembly.ConfigModule;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
@@ -18,7 +19,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                QR.QRInit();
                 do
                 {
-                    if (!string.IsNullOrEmpty(BilibiliUser.account.csrf)||!string.IsNullOrEmpty(BilibiliUser.account.uid)||!string.IsNullOrEmpty(BilibiliUser.account.cookie)||BilibiliUser.account.ExTime>DateTime.UtcNow)
+                    if (!string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||!string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime>DateTime.UtcNow)
                     {
                         switch (satrtType)
                         {
@@ -36,7 +37,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                         }    
                     Thread.Sleep(6000);
                     }
-                } while (string.IsNullOrEmpty(BilibiliUser.account.cookie));
+                } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
             }
         }
         public class QR
@@ -57,17 +58,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
             {
                 if (status == ByQRCode.QrCodeStatus.Success)
                 {
-                    BilibiliUser.AccClass=account;
+                    BilibiliUserConfig.AccClass=account;
                     Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "QR扫码登陆bilibili成功");
-                    BilibiliUser.account.uid= account.Uid;
+                    BilibiliUserConfig.account.uid= account.Uid;
                     foreach (var item in account.Cookies)
                     {
-                        BilibiliUser.account.cookie = BilibiliUser.account.cookie + item + ";";
+                        BilibiliUserConfig.account.cookie = BilibiliUserConfig.account.cookie + item + ";";
                     }
-                    BilibiliUser.account.ExTime =account.Expires_Cookies;
-                    BilibiliUser.account.csrf=account.CsrfToken;
+                    BilibiliUserConfig.account.ExTime =account.Expires_Cookies;
+                    BilibiliUserConfig.account.csrf=account.CsrfToken;
 
-                    BilibiliUser.WritUserFile();
+                    BilibiliUserConfig.WritUserFile();
                 }
             }
         } 

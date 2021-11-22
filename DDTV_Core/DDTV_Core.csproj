@@ -4,10 +4,17 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyVersion>3.0.1</AssemblyVersion>
+    <FileVersion>3.0.1</FileVersion>
+    <Authors>ami</Authors>
+    <Version>3.0.1-Dev</Version>
+    <Description>这是DDTV3.0的核心库，详细内容请查看DDTV官网
+ddtv.pro</Description>
+    <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="FunctionAssembly\" />
     <Folder Include="SystemAssembly\NetworkRequestModule\WebSocket\" />
   </ItemGroup>
 
@@ -16,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" Version="3.7.4.5" />
     <PackageReference Include="BiliAccount" Version="2.5.4.26" />
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.0" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />

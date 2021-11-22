@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
 {
@@ -41,6 +44,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public string title { get; set; } = "";
             /// <summary>
+            /// 主播简介
+            /// </summary>
+            public string description { get; set; } = "";
+            /// <summary>
+            /// 关注数
+            /// </summary>
+            public int attention { get; set; } 
+            /// <summary>
             /// 直播间房间号(直播间实际房间号)
             /// </summary>
             public int room_id { get; set; }
@@ -56,6 +67,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 开播时间(未开播时为-62170012800,live_status为1时有效)
             /// </summary>
             public long live_time { get; set; }
+            public DateTime live_time_T { set; get; }
             /// <summary>
             /// 直播状态(1为正在直播，2为轮播中)
             /// </summary>
@@ -171,7 +183,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// <summary>
             /// (废弃：请使用cover_from_user(该值为getRoomInfoOld接口冗余值)直播封面图
             /// </summary>
-            internal string cover { get; set; } = "";
+            internal string user_cover { get; set; } = "";
             /// <summary>
             /// 轮播状态(0：未轮播 1：轮播)
             /// </summary>
@@ -196,7 +208,37 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 特殊标记(Local值)
             /// </summary>
             public bool Like { set; get; }
-
+            /// <summary>
+            /// 用户等级
+            /// </summary>
+            public int level { set; get; }
+            /// <summary>
+            /// 主播性别
+            /// </summary>
+            public string sex { set; get; }
+            /// <summary>
+            /// 主播简介
+            /// </summary>
+            public string sign { set; get; }
+            /// <summary>
+            /// 房间的WS连接对象类
+            /// </summary>
+            public RoomWebSocket roomWebSocket { set; get; }= new RoomWebSocket();
+            public bool IsDownload { set; get; } = false;
+            public List<Downloads> DownloadingList { set; get; } = new List<Downloads>();
+            public List<Downloads> DownloadedLog { set; get; } = new List<Downloads>();
+        }
+        public class RoomWebSocket
+        {
+            /// <summary>
+            /// 是否已连接
+            /// </summary>
+            public bool IsConnect { set; get; }
+            public long dokiTime { set; get; }
+            /// <summary>
+            /// WbdScket服务器信息
+            /// </summary>
+            public API.LiveChatScript.LiveChatListener LiveChatListener { set; get; } = new API.LiveChatScript.LiveChatListener();
         }
     }
 }

@@ -6,58 +6,62 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
 {
-    internal class RoomConfigClass
+    public class RoomConfigClass
     {
        public class RoomList
         {
             public List<RoomCard> data { set; get; } = new List<RoomCard>();
         }
-        internal class RoomCard
+        public class RoomCard
         {
             /// <summary>
             /// 名称
             /// </summary>
-            public string name { get; set; } = "";
+            public string name;
             /// <summary>
             /// 描述
             /// </summary>
-            public string Description { get; set; } = "";
-            /// <summary>
+            public string Description;
             /// 房间号
             /// </summary>
-            public int RoomId { get; set; }
+            public int RoomId;
             /// <summary>
             /// 用户UID(mid)
             /// </summary>
-            public long UID { set; get; } = 0;
+            public long UID;
             /// <summary>
             /// 自动录制
             /// </summary>
-            public bool IsAutoRec { get; set; }
+            public bool IsAutoRec;
             /// <summary>
             /// 开播提醒
             /// </summary>
-            public bool IsRemind { get; set; }
+            public bool IsRemind;
             /// <summary>
             /// 优先标记
             /// </summary>
-            public bool Like { get; set; }
+            public bool Like;
             /// <summary>
-            /// (抛弃)(请使用name)名称
+            /// (已弃用！！)(请使用name)名称
             /// </summary>
-            public string Name { set; get; } = "";
+            [NonSerialized]
+            public string Name;
             /// <summary>
-            /// (抛弃)(请使用)房间号
+            /// (已弃用！！)(请使用)房间号
             /// </summary>
-            public string RoomNumber { set; get; } = "";
+            [NonSerialized]
+            public string RoomNumber;
             /// <summary>
-            /// (抛弃)(请使用IsAutoRec)是否自动录制
+            /// (已弃用！！)(请使用IsAutoRec)是否自动录制
             /// </summary>
-            public bool VideoStatus { get; set; }
+            [NonSerialized]
+            public bool VideoStatus;
             /// <summary>
-            /// (抛弃)(请使用IsRemind)是否开播提醒
+            /// (已弃用！！)(请使用IsRemind)是否开播提醒
             /// </summary>
-            public bool RemindStatus { get; set; }
+            [NonSerialized]
+            public bool RemindStatus;
         }
+       
     }
 }

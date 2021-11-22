@@ -60,155 +60,175 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
             /// <summary>
             /// 直播间房间号(直播间实际房间号)
             /// </summary>
-            room_id = 1000,
+            room_id,
             /// <summary>
             /// 直播间分区id
             /// </summary>
-            area = 1001,
+            area,
             /// <summary>
             /// 直播间分区名
             /// </summary>
-            area_name = 1002,
+            area_name,
             /// <summary>
             /// 直播间新版分区id
             /// </summary>
-            area_v2_id = 1003,
+            area_v2_id,
             /// <summary>
             /// 直播间新版分区名
             /// </summary>
-            area_v2_name = 1004,
+            area_v2_name,
             /// <summary>
             /// 直播间父分区id
             /// </summary>
-            area_v2_parent_id = 1005,
+            area_v2_parent_id,
             /// <summary>
             /// 直播间父分区名
             /// </summary>
-            area_v2_parent_name = 1006,
+            area_v2_parent_name,
             /// <summary>
             /// 直播类型(0:普通直播，1：手机直播)
             /// </summary>
-            broadcast_type = 1007,
+            broadcast_type,
             /// <summary>
             /// 直播间封面url
             /// </summary>
-            cover_from_user = 1008,
+            cover_from_user,
             /// <summary>
             /// 主播头像url
             /// </summary>
-            face = 1009,
+            face,
             /// <summary>
             /// 直播间隐藏信息
             /// </summary>
-            hidden_till = 1010,
+            hidden_till,
             /// <summary>
             /// 直播间关键帧url
             /// </summary>
-            keyframe = 1011,
+            keyframe,
             /// <summary>
             /// 直播间开播状态(0：未开播，1：正在直播，2：轮播中)
             /// </summary>
-            live_status = 1012,
+            live_status,
             /// <summary>
             /// 直播持续时长
             /// </summary>
-            live_time = 1013,
+            live_time,
             /// <summary>
             /// 直播间封禁信息
             /// </summary>
-            lock_till = 1014,
+            lock_till,
             /// <summary>
             /// 直播间在线人数
             /// </summary>
-            online = 1015,
+            online,
             /// <summary>
             /// 直播间房间号(直播间短房间号，常见于签约主播)
             /// </summary>
-            short_id = 1016,
+            short_id,
             /// <summary>
             /// 直播间标签
             /// </summary>
-            tag_name = 1017,
+            tag_name,
             /// <summary>
             /// 直播间自定标签
             /// </summary>
-            tags = 1018,
+            tags,
             /// <summary>
             /// 直播间标题
             /// </summary>
-            title = 1019,
+            title,
             /// <summary>
             /// 主播mid
             /// </summary>
-            uid = 1020,
+            uid,
             /// <summary>
             /// 主播用户名
             /// </summary>
-            uname = 1021,
+            uname,
             /// <summary>
             /// 是否P2P
             /// </summary>
-            need_p2p=1022,
+            need_p2p,
             /// <summary>
             /// 是否隐藏
             /// </summary>
-            is_hidden=1023,
+            is_hidden,
             /// <summary>
             /// 是否锁定
             /// </summary>
-            is_locked=1024,
+            is_locked,
             /// <summary>
             /// 是否竖屏
             /// </summary>
-            is_portrait=1025,
+            is_portrait,
             /// <summary>
             /// 是否加密
             /// </summary>
-            encrypted=1026,
+            encrypted,
             /// <summary>
             /// 加密房间是否通过密码验证(encrypted为true时有效)
             /// </summary>
-            pwd_verified = 1027,
+            pwd_verified,
             /// <summary>
             /// 暂时不知道是用来干啥的值
             /// </summary>
-            room_shield=1028,
+            room_shield,
             /// <summary>
             /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
             /// </summary>
-            is_sp = 1029,
+            is_sp,
             /// <summary>
             /// 特殊直播间标志(0：普通直播间 1：付费直播间 2：拜年祭直播间)
             /// </summary>
-            special_type = 1030,
+            special_type,
             /// <summary>
-            /// 直播间状态(0:无房间 1:有房间)
+            /// 房间是否存在(0:无房间 1:有房间)
             /// </summary>
-            roomStatus = 1031,
+            roomStatus,
             /// <summary>
             /// 轮播状态(0：未轮播 1：轮播)
             /// </summary>
-            roundStatus = 1032,
+            roundStatus,
             /// <summary>
             /// 直播间网页url
             /// </summary>
-            url = 1033,
+            url,
             /// <summary>
             /// 描述(Local值)
             /// </summary>
-            Description = 1034,
+            Description,
             /// <summary>
             /// 是否自动录制(Local值)
             /// </summary>
-            IsAutoRec = 1035,
+            IsAutoRec,
             /// <summary>
             /// 是否开播提醒(Local值)
             /// </summary>
-            IsRemind = 1036,
+            IsRemind,
             /// <summary>
             /// 特殊标记(Local值)
             /// </summary>
-            Like = 1037,
+            Like,
+            /// <summary>
+            /// 房间关注人数
+            /// </summary>
+            attention,
+            /// <summary>
+            /// 主播简介(网络值)
+            /// </summary>
+            description,
+            /// <summary>
+            /// 账号等级
+            /// </summary>
+            level,
+            /// <summary>
+            /// 主播性别
+            /// </summary>
+            sex,
+            /// <summary>
+            /// 主播签名
+            /// </summary>
+            sign,
             /// <summary>
             /// 其他临时内容
             /// </summary>

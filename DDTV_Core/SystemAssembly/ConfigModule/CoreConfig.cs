@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
 {
@@ -18,7 +19,22 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             RoomConfigFile.ReadRoomConfigFile();
 
             //读取完成后最后储存一次配置文件
-            CoreConfigFile.WriteConfigFile();
+            //CoreConfigFile.WriteConfigFile();
+            Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
+            BilibiliUserConfig.Init();
+            Task.Run(() => { 
+            while(true)
+                {
+                    try
+                    {
+                        CoreConfigFile.WriteConfigFile();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    Thread.Sleep(30*1000);
+                }
+            });
         }
         /// <summary>
         /// 获取配置

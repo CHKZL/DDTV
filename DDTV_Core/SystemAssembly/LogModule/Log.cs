@@ -55,7 +55,7 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 if (logType <= LogLevel)
                 {
-                    Console.WriteLine($"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}");
+                    Console.WriteLine($"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}\n");
                 }
                 else
                 {

@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace DDTV_Core.SystemAssembly.RoomPatrolModule
 {
-    internal class RoomPatrol
+    public class RoomPatrol
     {
         /// <summary>
         /// 房间巡逻(房间状态监控)初始化
@@ -25,6 +25,8 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         //自动录制
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                         //这下面应该写录制的操作了(施工中)
+                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid);
+                        
                     }
                 }
             }
@@ -33,7 +35,14 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                 while(true)
                 {
                     Thread.Sleep(10*1000);
-                    Patrol();
+                    try
+                    {
+                        Patrol();
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Log.AddLog(nameof(RoomPatrol),Log.LogClass.LogType.Warn,$"房间巡逻出现错误，错误堆栈:\n{e.ToString()}");
+                    }
                 }
             });
         }
@@ -51,10 +60,6 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             BilibiliModule.Rooms.Rooms.UpdateRoomInfo();
             foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
             {
-                if(item.Value.uid==408490081)
-                {
-                    ;
-                }
                 if(item.Value.live_status==1)
                 {
                     if(keyValuePairs[item.Value.uid]!=1)
@@ -66,6 +71,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                             //自动录制警告！
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                             //这下面应该写录制的操作了(施工中)
+                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid);
                         }
                         if (item.Value.IsRemind)
                         {
@@ -75,7 +81,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     }
                 }
             }
-            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Debug, $"周期性更新房间信息成功");
+            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Trace, $"周期性更新房间信息成功");
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     internal class RoomConfigFile
     {
-        private static string ConfigFile = CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json",CoreConfigClass.Group.Core);
+        
         /// <summary>
         /// 读取房间配置文件
         /// </summary>
@@ -24,7 +24,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var rlc = new RoomList();
             try
             {
-                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(ConfigFile));
+                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json", CoreConfigClass.Group.Core)));
             }
             catch (Exception)
             {
@@ -40,10 +40,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             foreach (var item in RoomConfigList)
             {
-                if(item.UID==8760033)
-                {
-                    ;
-                }
                 if (Rooms.RoomInfo.TryGetValue(item.UID, out var roomInfo))
                 {
                     Rooms.RoomInfo[item.UID].uname =string.IsNullOrEmpty(item.name)?item.Name: item.name;
@@ -81,10 +77,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// </summary>
         internal static void WriteRoomConfigFile()
         {
-            List<RoomCard> roomCards = new();
+            RoomWrite roomCards = new() { data=new List<RoomCard>() };
             foreach (var item in Rooms.RoomInfo)
             {
-                roomCards.Add(new RoomCard
+                roomCards.data.Add(new RoomCard
                 { 
                     IsAutoRec=item.Value.IsAutoRec,
                     Description=item.Value.Description,
@@ -95,8 +91,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     UID=item.Value.uid
                 });
             }
-            File.WriteAllText(ConfigFile, JsonConvert.SerializeObject(roomCards));
-            Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.Count}]个房间配置");
+            File.WriteAllText(CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json", CoreConfigClass.Group.Core), JsonConvert.SerializeObject(roomCards));
+            Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.data.Count}]个房间配置");
+        }
+        public class RoomWrite
+        {
+            public List<RoomCard> data { set; get; }
         }
     }
 }

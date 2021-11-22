@@ -1,4 +1,5 @@
 ﻿using BiliAccount;
+using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemAssembly.BilibiliModule.User
+namespace DDTV_Core.SystemAssembly.ConfigModule
 {
-    internal class BilibiliUser
+    public class BilibiliUserConfig
     {
         public static Account AccClass = new();
         public static CookieInfo account = new CookieInfo();
@@ -88,7 +89,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                         }
                                         catch (Exception e)
                                         {
-                                            Log.Log.AddLog(nameof(BilibiliUser), Log.LogClass.LogType.Error, "读取BiliUser配置文件[cookie]出现AES错误！",true,e);
+                                            Log.Log.AddLog(nameof(BilibiliUserConfig), Log.LogClass.LogType.Error, "读取BiliUser配置文件[cookie]出现AES错误！",true,e);
                                         }
                                         break;
                                     }
