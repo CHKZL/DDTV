@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DDTV_Core.SystemAssembly.ConfigModule;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,9 +62,9 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             req.UserAgent = NetClass.UA();
             if (url.Contains("bilibili"))
             {
-                if (!string.IsNullOrEmpty(BilibiliModule.User.BilibiliUser.account.cookie))
+                if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
                 {
-                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliModule.User.BilibiliUser.account.cookie);
+                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
                 }
             }
             #region 添加Post 参数  

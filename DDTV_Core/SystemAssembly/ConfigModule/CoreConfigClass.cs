@@ -42,6 +42,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             Default,
             Core,
+            Download,
         }
         /// <summary>
         /// 配置键
@@ -52,7 +53,18 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 房间配置文件
             /// </summary>
             RoomListConfig,
-
+            /// <summary>
+            /// 默认下载总文件夹
+            /// </summary>
+            DownloadPath,
+            /// <summary>
+            /// 默认下载文件夹名字格式
+            /// </summary>
+            DownloadDirectoryName,
+            /// <summary>
+            /// 默认下载文件名格式
+            /// </summary>
+            DownloadFileName,
         }
     }
 }
