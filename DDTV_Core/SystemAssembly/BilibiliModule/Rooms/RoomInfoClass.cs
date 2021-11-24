@@ -221,6 +221,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public string sign { set; get; }
             /// <summary>
+            /// 文件是否切片
+            /// </summary>
+            public bool FlvCuttinge { set; get; } = false;
+            /// <summary>
             /// 房间的WS连接对象类
             /// </summary>
             public RoomWebSocket roomWebSocket { set; get; }= new RoomWebSocket();

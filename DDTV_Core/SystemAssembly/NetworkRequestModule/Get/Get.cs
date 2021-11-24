@@ -45,11 +45,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                 {
                     result = reader.ReadToEnd();
                 }
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"发起GetRequest请求完成");
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起GetRequest请求完成");
             }
             catch (Exception)
             {
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"GetRequest请求超时或错误");
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"GetRequest请求超时或错误");
                 return null;
             }
             return result;

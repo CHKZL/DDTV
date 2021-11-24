@@ -6,15 +6,6 @@ namespace DDTV_Core.Tool.Flv
 {
     public class Sum
     {
-        public static void test(string FileName)
-        {
-            using FileStream NewFileStream = new FileStream(FileName, FileMode.Open);
-            using (FileStream fsMerge = new FileStream("test.flv", FileMode.Create))
-            {
-                Merge(NewFileStream, fsMerge, true, 0);
-            }
-                
-        }
         public static void FlvFileSum(SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo roomInfo,string OkFilePath)
         {
             if (roomInfo.DownloadingList.Count>1)

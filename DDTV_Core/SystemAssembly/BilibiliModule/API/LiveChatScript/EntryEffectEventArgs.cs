@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 {
-    class EntryEffectEventArgs : MessageEventArgs
+    public class EntryEffectEventArgs : MessageEventArgs
     {
         /// <summary>
         /// 舰长头像

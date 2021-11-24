@@ -42,7 +42,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 if (roominfo!=null)
                 {
                     string value = roominfo.GetType().GetProperty(Enum.GetName(typeof(DataCacheModule.DataCacheClass.CacheType), cacheType)).GetValue(roominfo, null).ToString();
-                    Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Trace, $"获取用户[{uid}]直播房间的[{cacheType}]信息成功:{value}");
+                    Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.TmpInfo, $"获取用户[{uid}]直播房间的[{cacheType}]信息成功:{value}");
                     return value;
                 }
                 else

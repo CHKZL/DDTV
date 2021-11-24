@@ -43,7 +43,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 strValue += StrDate + "\r\n";
             }
-            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
+            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
             return strValue;
         }
         /// <summary>
@@ -103,7 +103,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 result = reader.ReadToEnd();
             }
-            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace, $"发起POST请求:SendRequest_SendDanmu完成");
+            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
             return result;
         }
     }
