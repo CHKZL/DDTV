@@ -25,10 +25,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public bool IsDownloading { get; set; }
             /// <summary>
-            /// 是否已修复FlvMetaData
-            /// </summary>
-            public bool IsFix { set; get; } = false;
-            /// <summary>
             /// 下载地址
             /// </summary>
             public string Url { get; set; }
@@ -36,6 +32,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 下载的文件
             /// </summary>
             public string File { set; get; }
+            public Tool.Flv.FlvClass.FlvTimes flvTimes { set; get; } =new Tool.Flv.FlvClass.FlvTimes();
+            /// <summary>
+            /// FLV文件头
+            /// </summary>
+            public Tool.Flv.FlvClass.FlvHeader FlvHeader { set; get; } = new Tool.Flv.FlvClass.FlvHeader();
+            /// <summary>
+            /// FLV头脚本数据
+            /// </summary>
+            public Tool.Flv.FlvClass.FlvTag FlvScriptTag { set; get; }=new Tool.Flv.FlvClass.FlvTag();
             /// <summary>
             /// WebRequest类的HTTP的实现
             /// </summary>
@@ -71,6 +76,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 /// </summary>
                 Cancel,
             }
+
             public void Clear()
             {
                 //HttpWebRequest.Abort();
@@ -83,20 +89,29 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 IsCancel=true;
             }
-            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path,string FileName)
+            /// <summary>
+            /// 下载任务实际执行事件
+            /// </summary>
+            /// <param name="req">下载任务WebRequest对象</param>
+            /// <param name="Path">保存路径</param>
+            /// <param name="FileName">保存文件名</param>
+            /// <param name="FlvC">是否切片</param>
+            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path,string FileName,string format, bool FlvC)
             {
-                Task.Run(async () => {
+                Task.Run(() => {
+                    int count = 1;
                     //Path="D:"+Path.Substring(1, Path.Length-1);
                     Path= Tool.PathOperation.CreateAll(Path);                
-                    FileName = Path+"/"+FileName;
-                    File=FileName;
+                    File=Path+"/"+FileName+"_"+count+"."+format;
                     HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
                     Stream stream = resp.GetResponseStream();
-                    FileStream fileStream = new FileStream(FileName, FileMode.Create);
+                    FileStream fileStream = new FileStream(File, FileMode.Create);
                     Status= DownloadStatus.Downloading;
-                    
+                    uint DataLength = 9;
+                    uint TagLen = 0;
                     while (true)
-                    {
+                    { 
+                        byte[] data = new byte[DataLength];
                         if (stream.CanRead)
                         {
                             if(IsCancel)
@@ -110,35 +125,60 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Download.DownloadCompleteTaskd(Uid,false);
                                 return;
                             }
-                            int EndF = stream.ReadByte();
-                            if (EndF!=-1)
+                            for (int i = 0; i < DataLength ; i++)
                             {
-                                DownloadCount++;
-                                byte T = (byte)EndF;
-                                fileStream.Write(new byte[] { T }, 0, 1);
-                            }
-                            else
-                            {
-                                Clear();
-                                fileStream.Close();
-                                fileStream.Dispose();
-                                if(await Tool.Flv.Fix.FixFlvMetaData(fileStream.Name)>-1)
+                                int EndF = stream.ReadByte();
+                                if (EndF!=-1)
                                 {
-                                    IsFix=true;
-                                }
-                                if (BilibiliModule.Rooms.Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status)=="1")
-                                {
-                                    Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
-                                    Download.AddDownloadTaskd(Uid);
-                                    return;
+                                    data[i]=(byte)EndF;
+                                    DownloadCount++;
                                 }
                                 else
                                 {
-                                    Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
-                                    Download.DownloadCompleteTaskd(Uid);
-                                    return;
+                                    Clear();
+                                    fileStream.Close();
+                                    fileStream.Dispose();
+                                    if (BilibiliModule.Rooms.Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status)=="1")
+                                    {
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
+                                        Download.AddDownloadTaskd(Uid);
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
+                                        Download.DownloadCompleteTaskd(Uid, !FlvC);
+                                        return;
+                                    }
                                 }
                             }
+                            byte[] FixData = Tool.Flv.SteamFix.FixWrite(data, this, out uint DL);
+                            DataLength=DL;
+                            fileStream.Write(FixData, 0, FixData.Length);
+                            if (FlvC&&DownloadCount>(1024*1024*5)&&DataLength==15)
+                            {
+                                count++;
+                                fileStream.Close();
+                                fileStream.Dispose();
+                                File=Path+"/"+FileName+"_"+count+"."+format;
+                                fileStream = new FileStream(File, FileMode.Create);
+                                byte[] buffer = new byte[9+15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
+                                fileStream.Write(buffer, 0, buffer.Length);
+                                fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
+
+                                TagLen = (uint)FlvScriptTag.TagaData.Length+15;
+                                flvTimes.ErrorAudioTimes=0;
+                                flvTimes.ErrorVideoTimes=0;
+                                flvTimes.FlvTotalTagCount=1;
+                                flvTimes.FlvVideoTagCount=0;
+                                flvTimes.FlvAudioTagCount=0;
+                                flvTimes.IsTagHeader=true;
+                                DownloadCount=TagLen;
+                            }
+
+
+
+                            
                         }                      
                     }
                 });

@@ -81,7 +81,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     }
                 }
             }
-            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Trace, $"周期性更新房间信息成功");
+            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.TmpInfo, $"周期性更新房间信息成功");
         }
     }
 }

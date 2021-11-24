@@ -443,7 +443,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         }
 
 
-        //FUCKBILIBILI
         #region 新协议解析方法
 
         /// <summary>

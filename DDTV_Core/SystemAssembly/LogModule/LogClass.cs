@@ -30,6 +30,8 @@ namespace DDTV_Core.SystemAssembly.Log
             /// 一些追踪数据
             /// </summary>
             Trace = 50,
+            Trace_Web=51,
+            TmpInfo=99,
             /// <summary>
             /// 打开所有日志
             /// </summary>

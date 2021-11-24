@@ -12,8 +12,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BilibiliLiveChatScript", "BilibiliLiveChatScript\BilibiliLiveChatScript.csproj", "{8088582B-8D1B-4C73-8652-600D1E9A23D3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -28,10 +26,6 @@ Global
 		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8088582B-8D1B-4C73-8652-600D1E9A23D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8088582B-8D1B-4C73-8652-600D1E9A23D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8088582B-8D1B-4C73-8652-600D1E9A23D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8088582B-8D1B-4C73-8652-600D1E9A23D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
