@@ -5,13 +5,15 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>3.0.1</AssemblyVersion>
-    <FileVersion>3.0.1</FileVersion>
+    <AssemblyVersion>3.0.1.1</AssemblyVersion>
+    <FileVersion>3.0.1.1</FileVersion>
     <Authors>ami</Authors>
     <Version>3.0.1-Dev</Version>
     <Description>这是DDTV3.0的核心库，详细内容请查看DDTV官网
 ddtv.pro</Description>
     <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>
+    <Copyright></Copyright>
+    <PackageTags></PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

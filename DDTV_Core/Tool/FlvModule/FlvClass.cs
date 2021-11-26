@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.Tool.Flv
+namespace DDTV_Core.Tool.FlvModule
 {
     public class FlvClass
     {
@@ -18,6 +18,7 @@ namespace DDTV_Core.Tool.Flv
             public bool IsTagHeader { set; get; } = true;
             public uint ErrorAudioTimes { get; set; } = 0;
             public uint ErrorVideoTimes { get; set; } = 0;
+            public byte TagType = 0x00;
         }
         public class FlvHeader
         {

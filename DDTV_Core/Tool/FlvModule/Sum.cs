@@ -2,11 +2,11 @@
 using System.IO;
 
 
-namespace DDTV_Core.Tool.Flv
+namespace DDTV_Core.Tool.FlvModule
 {
     public class Sum
     {
-        public static void FlvFileSum(SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo roomInfo,string OkFilePath)
+        public static string FlvFileSum(SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo roomInfo,string OkFilePath)
         {
             if (roomInfo.DownloadingList.Count>1)
             {
@@ -20,8 +20,8 @@ namespace DDTV_Core.Tool.Flv
                         {
                             if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                             {
-                                SystemAssembly.Log.Log.AddLog(nameof(Flv), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                                return;
+                                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                                return "";
                             }
                             int time = Merge(OldFileStream, fsMerge, true, 0);
                             time = Merge(NewFileStream, fsMerge, false, time);
@@ -34,11 +34,16 @@ namespace DDTV_Core.Tool.Flv
                 }
                 File.Copy(OldFileStream.Name, OkFilePath);
                 OldFileStream.Close();
-                OldFileStream.Dispose();
+                OldFileStream.Dispose(); 
                 foreach (var item in roomInfo.DownloadingList)
                 {
-                    File.Delete(item.File);
+                    FileOperation.Del(item.File);
                 }
+                return OkFilePath;
+            }
+            else
+            {
+                return "";
             }
         }
 

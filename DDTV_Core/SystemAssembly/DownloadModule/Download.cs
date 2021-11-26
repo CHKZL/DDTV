@@ -46,18 +46,36 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         /// <param name="uid"></param>
         /// <param name="IsSun">是否合并</param>
-        public static void DownloadCompleteTaskd(long uid, bool IsSun = true)
+        public static void DownloadCompleteTaskd(long uid, bool Split = false , bool IsSun = true, bool IsTranscod = false)
         {
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
+                //当自动切片使能时，自动转码和flv文件合并取消
+                if(Split)
+                {
+                    IsSun = false;
+                    IsTranscod = false;
+                }
+                else
+                {
+                    IsSun = true;
+                    IsTranscod = true;
+                }
                 roomInfo.IsDownload=false;
                 if (IsSun)
                 {
-                    Tool.Flv.Sum.FlvFileSum(roomInfo, $"./{DefaultPath}" +
-                                                   $"/{DefaultDirectoryName.Replace("{ROOMID}", BilibiliModule.Rooms.Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)).Replace("{NAME}", BilibiliModule.Rooms.Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}"+
-                                                   "/"+
-                                                   $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", BilibiliModule.Rooms.Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("_{R}", "")+".flv"}");
+                    string SunFileName = Tool.FlvModule.Sum.FlvFileSum(roomInfo, $"./{DefaultPath}" +
+                                                   $"/{DefaultDirectoryName.Replace("{ROOMID}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}" +
+                                                   "/" +
+                                                   $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("_{R}", "") + ".flv"}");
+                    Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
+                    {
+                        AfterFilenameExtension=".mp4",
+                        BeforeFilePath= SunFileName,
+                        AfterFilePath= SunFileName,
+                    });
                 }
+
                 foreach (var item in roomInfo.DownloadingList)
                 {
                     item.HttpWebRequest=null;

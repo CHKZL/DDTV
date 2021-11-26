@@ -1,14 +1,19 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
 {
+
     internal class RoomConfig
     {
+        public static string RoomFile = CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json", CoreConfigClass.Group.Core);
         /// <summary>
         /// 添加房间记录
         /// </summary>

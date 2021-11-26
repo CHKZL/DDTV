@@ -32,9 +32,9 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             Stream writer = request.GetRequestStream();
             writer.Write(payload, 0, payload.Length);
             writer.Close();
-            System.Net.HttpWebResponse response;
-            response = (System.Net.HttpWebResponse)request.GetResponse();
-            System.IO.Stream s;
+            HttpWebResponse response;
+            response = (HttpWebResponse)request.GetResponse();
+            Stream s;
             s = response.GetResponseStream();
             string StrDate = "";
             string strValue = "";

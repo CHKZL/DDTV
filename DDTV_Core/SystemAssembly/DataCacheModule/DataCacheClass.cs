@@ -13,7 +13,7 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
         /// <summary>
         /// 内建缓存表
         /// </summary>
-        private static Dictionary<DataCacheClass.CacheType, Dictionary<string, Data>> caches = new Dictionary<DataCacheClass.CacheType, Dictionary<string, Data>>(new Dictionary<DataCacheClass.CacheType, Dictionary<string, Data>> { })
+        private static Dictionary<CacheType, Dictionary<string, Data>> caches = new Dictionary<CacheType, Dictionary<string, Data>>(new Dictionary<CacheType, Dictionary<string, Data>> { })
             {
                 { CacheType.room_id, new Dictionary<string, Data>() },
                 { CacheType.area, new Dictionary<string, Data>() },

@@ -12,21 +12,25 @@ using System.Net;
 namespace DDTV_Core
 {
     public class InitDDTV_Core
-    { 
+    {
         /// <summary>
         /// Core的版本号
         /// </summary>
-        public static string Ver = "3.0.1.1-dev";
+        public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+"-"+System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            Console.WriteLine($"========================\nDDTV_Core启动，当前Core版本:{Ver}\n========================");
+            //Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Log.LogInit(LogClass.LogType.Debug);
             SystemAssembly.ConfigModule.CoreConfig.ConfigInit();
             SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
+
+            
+
             //SystemAssembly.ConfigModule.RoomConfig.AddRoom(473244363,"");
 
             //while (true)
@@ -48,21 +52,22 @@ namespace DDTV_Core
             //    2096422,
             //    8041302
             //};
-            //Task.Run((Action)(() => {
+            //Task.Run((Action)(() =>
+            //{
             //    foreach (var item in vs)
             //    {
-            //        //BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-                    //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(434334701);
-                    //roomInfo.roomWebSocket.LiveChatListener.MessageReceived+=LiveChatListener_MessageReceived;
+            //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
+            //        var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(269415357);
+            //        roomInfo.roomWebSocket.LiveChatListener.MessageReceived+=LiveChatListener_MessageReceived;
             //        Thread.Sleep(1000);
             //    }
             //}));
-            //while(true)
+            //while (true)
             //{
             //    int i = 1;
             //    foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
             //    {
-            //        if(item.Value.roomWebSocket.IsConnect)
+            //        if (item.Value.roomWebSocket.IsConnect)
             //        {
             //            long Time = TimeModule.Time.Operate.GetRunMilliseconds()-item.Value.roomWebSocket.dokiTime;
             //            Console.WriteLine(Time>35000 ? "no■"+Time : "ko□"+Time+$" {i} {item.Value.room_id} {item.Value.roomWebSocket.LiveChatListener.host.host_list[0].host}");

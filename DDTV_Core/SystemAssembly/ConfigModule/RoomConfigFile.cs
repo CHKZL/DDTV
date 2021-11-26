@@ -24,7 +24,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var rlc = new RoomList();
             try
             {
-                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json", CoreConfigClass.Group.Core)));
+                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(RoomConfig.RoomFile));
             }
             catch (Exception)
             {
@@ -91,7 +91,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     UID=item.Value.uid
                 });
             }
-            File.WriteAllText(CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "./RoomListConfig.json", CoreConfigClass.Group.Core), JsonConvert.SerializeObject(roomCards));
+            File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards));
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.data.Count}]个房间配置");
         }
         public class RoomWrite
