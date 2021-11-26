@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass;
 
-namespace DDTV_Core.Tool.Flv
+namespace DDTV_Core.Tool.FlvModule
 {
     public class SteamFix
     {
@@ -47,6 +47,7 @@ namespace DDTV_Core.Tool.Flv
                                 data[12]=0x00;
                                 data[13]=0x00;
                                 data[14]=0x00;
+                                downloads.flvTimes.TagType=0x12;
                                 return data;
                             }
                         case 0x08:
@@ -66,13 +67,15 @@ namespace DDTV_Core.Tool.Flv
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
-                                if (downloads.flvTimes.FlvAudioTagCount==0)
+                                
+                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                downloads.flvTimes.TagType=0x08;
+                                if (downloads.flvTimes.FlvVideoTagCount==0)
                                 {
-                                    downloads.FlvScriptTag.FistAbody=new byte[11];
-                                    downloads.FlvScriptTag.FistAbody=data;
+                                    downloads.FlvScriptTag.FistAbody=new byte[data.Length];
+                                    downloads.FlvScriptTag.FistAbody= data;
                                 }
                                 downloads.flvTimes.FlvAudioTagCount++;
-                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
                                 return data;
                             }
                         case 0x09:
@@ -91,8 +94,16 @@ namespace DDTV_Core.Tool.Flv
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
-                                downloads.flvTimes.FlvVideoTagCount++;
+                                
                                 SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                downloads.flvTimes.TagType=0x09;
+                                if(downloads.flvTimes.FlvVideoTagCount==0)
+                                {
+                                    downloads.FlvScriptTag.FistVbody=new byte[data.Length];
+                                    downloads.FlvScriptTag.FistVbody= data;
+                                }
+                                
+                                downloads.flvTimes.FlvVideoTagCount++;
                                 return data;
                             }
                         default:
@@ -105,10 +116,36 @@ namespace DDTV_Core.Tool.Flv
                 }
                 else
                 {
+                    
                     downloads.flvTimes.IsTagHeader=!downloads.flvTimes.IsTagHeader;
                     if (downloads.flvTimes.FlvTotalTagCount<2)
                     {
                         downloads.FlvScriptTag.TagaData=data;
+                    }
+                    else
+                    {
+                        switch(downloads.flvTimes.TagType)
+                        {
+                            case 0x08:
+                                if (downloads.flvTimes.FlvAudioTagCount==1)
+                                {
+                                    byte[] TEST = new byte[downloads.FlvScriptTag.FistAbody.Length+data.Length];
+                                    downloads.FlvScriptTag.FistAbody.CopyTo(TEST,0);
+                                    data.CopyTo(TEST, downloads.FlvScriptTag.FistAbody.Length);
+                                    downloads.FlvScriptTag.FistAbody=TEST;
+                                }
+                                break;
+                            case 0x09:
+                                if (downloads.flvTimes.FlvVideoTagCount==1)
+                                {
+                                    byte[] TEST = new byte[downloads.FlvScriptTag.FistVbody.Length+data.Length];
+                                    downloads.FlvScriptTag.FistVbody.CopyTo(TEST, 0);
+                                    data.CopyTo(TEST, downloads.FlvScriptTag.FistVbody.Length);
+                                    downloads.FlvScriptTag.FistVbody=TEST;
+                                }
+                                break;
+                        }
+                        downloads.flvTimes.FlvAudioTagCount++;
                     }
                     Len=15;
                     return data;

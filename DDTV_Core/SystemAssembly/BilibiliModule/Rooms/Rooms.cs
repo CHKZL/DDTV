@@ -79,19 +79,19 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 case DataCacheModule.DataCacheClass.CacheType.cover_from_user:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.face:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.hidden_till:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
                 case DataCacheModule.DataCacheClass.CacheType.keyframe:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_status:
-                    return API.RoomInfo.room_init(uid);
+                    return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_time:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
                 case DataCacheModule.DataCacheClass.CacheType.lock_till:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
                 case DataCacheModule.DataCacheClass.CacheType.room_id:
-                    return API.RoomInfo.get_info(uid);
+                    return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.short_id:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.tag_name:
@@ -101,7 +101,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 case DataCacheModule.DataCacheClass.CacheType.uid:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
                 case DataCacheModule.DataCacheClass.CacheType.uname:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.need_p2p:
                     return API.RoomInfo.room_init(uid);
                 case DataCacheModule.DataCacheClass.CacheType.is_hidden:
@@ -121,7 +121,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 case DataCacheModule.DataCacheClass.CacheType.special_type:
                     return API.RoomInfo.room_init(uid);
                 case DataCacheModule.DataCacheClass.CacheType.roomStatus:
-                    return API.RoomInfo.room_init(uid);
+                    return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.attention:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.description:
@@ -130,6 +130,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.title:
                     return API.RoomInfo.get_info(uid);
+                case DataCacheModule.DataCacheClass.CacheType.level:
+                    return API.UserInfo.info(uid);
+                case DataCacheModule.DataCacheClass.CacheType.sex:
+                    return API.UserInfo.info(uid);
+                case DataCacheModule.DataCacheClass.CacheType.url:
+                    return API.UserInfo.info(uid);
+                case DataCacheModule.DataCacheClass.CacheType.sign:
+                    return API.UserInfo.info(uid);
                 default:
                     return null;
             }

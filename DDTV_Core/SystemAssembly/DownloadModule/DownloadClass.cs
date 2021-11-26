@@ -32,15 +32,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 下载的文件
             /// </summary>
             public string File { set; get; }
-            public Tool.Flv.FlvClass.FlvTimes flvTimes { set; get; } =new Tool.Flv.FlvClass.FlvTimes();
+            public Tool.FlvModule.FlvClass.FlvTimes flvTimes { set; get; } = new();
             /// <summary>
             /// FLV文件头
             /// </summary>
-            public Tool.Flv.FlvClass.FlvHeader FlvHeader { set; get; } = new Tool.Flv.FlvClass.FlvHeader();
+            public Tool.FlvModule.FlvClass.FlvHeader FlvHeader { set; get; } = new();
             /// <summary>
             /// FLV头脚本数据
             /// </summary>
-            public Tool.Flv.FlvClass.FlvTag FlvScriptTag { set; get; }=new Tool.Flv.FlvClass.FlvTag();
+            public Tool.FlvModule.FlvClass.FlvTag FlvScriptTag { set; get; }=new();
             /// <summary>
             /// WebRequest类的HTTP的实现
             /// </summary>
@@ -95,8 +95,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="req">下载任务WebRequest对象</param>
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
-            /// <param name="FlvC">是否切片</param>
-            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path,string FileName,string format, bool FlvC)
+            /// <param name="Split">是否切片</param>
+            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path,string FileName,string format, bool Split)
             {
                 Task.Run(() => {
                     int count = 1;
@@ -147,15 +147,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     else
                                     {
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
-                                        Download.DownloadCompleteTaskd(Uid, !FlvC);
+                                        Download.DownloadCompleteTaskd(Uid, !Split);
                                         return;
                                     }
                                 }
                             }
-                            byte[] FixData = Tool.Flv.SteamFix.FixWrite(data, this, out uint DL);
+                            byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
                             DataLength=DL;
                             fileStream.Write(FixData, 0, FixData.Length);
-                            if (FlvC&&DownloadCount>(1024*1024*5)&&DataLength==15)
+                            if (Split&&DownloadCount>(1024*1024*5)&&DataLength==15)
                             {
                                 count++;
                                 fileStream.Close();
@@ -165,20 +165,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 byte[] buffer = new byte[9+15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                 fileStream.Write(buffer, 0, buffer.Length);
                                 fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
-
+                                fileStream.Write(FlvScriptTag.FistAbody, 0, FlvScriptTag.FistAbody.Length);
+                                fileStream.Write(FlvScriptTag.FistVbody, 0, FlvScriptTag.FistVbody.Length);
                                 TagLen = (uint)FlvScriptTag.TagaData.Length+15;
                                 flvTimes.ErrorAudioTimes=0;
                                 flvTimes.ErrorVideoTimes=0;
                                 flvTimes.FlvTotalTagCount=1;
-                                flvTimes.FlvVideoTagCount=0;
-                                flvTimes.FlvAudioTagCount=0;
+                                flvTimes.FlvVideoTagCount=1;
+                                flvTimes.FlvAudioTagCount=1;
                                 flvTimes.IsTagHeader=true;
                                 DownloadCount=TagLen;
                             }
-
-
-
-                            
                         }                      
                     }
                 });

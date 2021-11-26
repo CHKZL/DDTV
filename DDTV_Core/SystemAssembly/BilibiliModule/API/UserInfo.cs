@@ -1,4 +1,5 @@
-﻿using DDTV_Core.SystemAssembly.DataCacheModule;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.DataCacheModule;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -17,13 +18,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        internal static User.UserClass.UserInfo info(long uid)
+        internal static RoomInfoClass.RoomInfo info(long uid)
         {
             JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/space/acc/info?mid="+uid));
             if (JO!=null&&JO.ContainsKey("code")&&JO["code"]!=null&&(int)JO["code"]==0)
             {
                 if (JO.TryGetValue("data", out var RoomInit)&&RoomInit!=null)
                 {
+                    RoomInfoClass.RoomInfo room=new RoomInfoClass.RoomInfo();
                     User.UserClass.UserInfo userClass = new()
                     {
                         face=RoomInit["face"].ToString(),
@@ -54,23 +56,27 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         Rooms.Rooms.RoomInfo[uid].title =userClass.title;
                         Rooms.Rooms.RoomInfo[uid].url =userClass.url;
                         Rooms.Rooms.RoomInfo[uid].roundStatus =userClass.roundStatus;
+                        room=Rooms.Rooms.RoomInfo[uid];
                     }
                     else
                     {
-                        Rooms.Rooms.RoomInfo.Add(uid, new Rooms.RoomInfoClass.RoomInfo(){ 
-                        uid=uid,
-                        room_id=userClass.roomid,
-                        level=userClass.level,
-                        live_status=userClass.liveStatus,
-                        uname=userClass.name,
-                        face=userClass.face,
-                        roomStatus=userClass.roomStatus,
-                        sex=userClass.sex,
-                        sign=userClass.sign,
-                        title=userClass.title,
-                        url=userClass.url,
-                        roundStatus=userClass.roundStatus
-                        });
+                        RoomInfoClass.RoomInfo roomInfo1 = new()
+                        {
+                            uid=uid,
+                            room_id=userClass.roomid,
+                            level=userClass.level,
+                            live_status=userClass.liveStatus,
+                            uname=userClass.name,
+                            face=userClass.face,
+                            roomStatus=userClass.roomStatus,
+                            sex=userClass.sex,
+                            sign=userClass.sign,
+                            title=userClass.title,
+                            url=userClass.url,
+                            roundStatus=userClass.roundStatus
+                        };
+                        Rooms.Rooms.RoomInfo.Add(uid, roomInfo1);
+                        room=roomInfo1;
                     }
                     DataCache.SetCache(CacheType.room_id, uid.ToString(), userClass.roomid.ToString(), int.MaxValue);
                     DataCache.SetCache(CacheType.level, uid.ToString(), userClass.level.ToString(), 3600*1000);
@@ -84,7 +90,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     DataCache.SetCache(CacheType.url, uid.ToString(), userClass.url, 1*1000);
                     DataCache.SetCache(CacheType.roundStatus, uid.ToString(), userClass.roundStatus.ToString(), 0);
                     Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间get_info信息成功");
-                    return userClass;
+                    return room;
                 }
             }
             return null;

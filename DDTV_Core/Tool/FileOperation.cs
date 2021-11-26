@@ -1,21 +1,24 @@
 ﻿using DDTV_Core.SystemAssembly.ConfigModule;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.Tool
 {
-    internal class FileOperation
+    public class FileOperation
     {
+        private static DelEvent delEvent = new DelEvent();
+
         /// <summary>
         /// 判断网络路径的文件是否存在
         /// </summary>
         /// <param name="Url"></param>
         /// <returns></returns>
-        internal static bool IsExistsNetFile(string Url)
+        public static bool IsExistsNetFile(string Url)
         {
             try
             {
@@ -39,6 +42,55 @@ namespace DDTV_Core.Tool
             catch (Exception)
             {
                 return false;
+            }
+        }
+        /// <summary>
+        /// 删除文件
+        /// </summary>
+        /// <param name="File"></param>
+        public static void Del(string File)
+        {
+            delEvent.AddFile(File);
+        }
+        internal class DelEvent
+        {
+            private List<string> DelFilelist = new();
+            private bool IsDelEnable = false;
+            internal void AddFile(string File)
+            {
+                DelFilelist.Add(File);
+                if (!IsDelEnable)
+                {
+                    IsDelEnable = true;
+                    Del();
+                }
+            }
+            private void Del()
+            {
+                while (true)
+                {
+                    for (int i = DelFilelist.Count - 1 ; i > 0 ; i--)
+                    {
+                        if (File.Exists(DelFilelist[i]))
+                        {
+                            try
+                            {
+                                File.Delete(DelFilelist[i]);
+                                DelFilelist.RemoveAt(i);
+                            }
+                            catch (Exception) { }
+                        }
+                        else
+                        {
+                            try
+                            {
+                                DelFilelist.RemoveAt(i);
+                            }
+                            catch (Exception) { }
+                        }
+                    }
+                    Thread.Sleep(10000);
+                }
             }
         }
     }
