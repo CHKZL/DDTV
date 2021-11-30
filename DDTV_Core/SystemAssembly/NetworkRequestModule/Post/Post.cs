@@ -20,31 +20,42 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         /// <returns></returns>
         public static string SendRequest_GetWebInfo_JsonClass(string url, string jsonParam, string encode)
         {
+            NetClass.API_Count(url);
             string strURL = url;
-            HttpWebRequest request;
-            request = (HttpWebRequest)WebRequest.Create(strURL);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strURL);
+            request.ServicePoint.Expect100Continue = false;
             request.Method = "POST";
             request.ContentType = "application/json;charset=" + encode.ToUpper();
             string paraUrlCoded = jsonParam;
             byte[] payload;
             payload = Encoding.GetEncoding(encode.ToUpper()).GetBytes(paraUrlCoded);
             request.ContentLength = payload.Length;
-            Stream writer = request.GetRequestStream();
-            writer.Write(payload, 0, payload.Length);
-            writer.Close();
-            HttpWebResponse response;
-            response = (HttpWebResponse)request.GetResponse();
-            Stream s;
-            s = response.GetResponseStream();
-            string StrDate = "";
-            string strValue = "";
-            StreamReader Reader = new StreamReader(s, Encoding.GetEncoding(encode.ToUpper()));
-            while ((StrDate = Reader.ReadLine()) != null)
+            using (Stream writer = request.GetRequestStream())
             {
-                strValue += StrDate + "\r\n";
+                writer.Write(payload, 0, payload.Length);
+                writer.Close();
             }
-            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
-            return strValue;
+            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            {
+                string StrDate = "";
+                string strValue = "";
+                using (Stream s = response.GetResponseStream())
+                {
+                    using (StreamReader Reader = new StreamReader(s, Encoding.GetEncoding(encode.ToUpper())))
+                    {
+                        while ((StrDate = Reader.ReadLine()) != null)
+                        {
+                            strValue += StrDate + "\r\n";
+                        }
+                    }
+                }
+                if(response!=null)
+                {
+                    response.Dispose();
+                }
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
+                return strValue;
+            }
         }
         /// <summary>
         /// 以Post方式发送带参数和CookieContainer对象的http请求(该方法应该是为发送弹幕而特殊准备的)
@@ -55,8 +66,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         /// <returns></returns>
         public static string SendRequest_SendDanmu(string url, Dictionary<string, string> dic, CookieContainer cook)
         {
+            NetClass.API_Count(url);
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.ServicePoint.Expect100Continue = false;
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = NetClass.UA();
@@ -96,15 +109,23 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                 reqStream.Close();
             }
             #endregion
-            HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-            Stream stream = resp.GetResponseStream();
-            //获取响应内容  
-            using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+            using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
             {
-                result = reader.ReadToEnd();
+                using (Stream stream = resp.GetResponseStream())
+                {
+                    //获取响应内容  
+                    using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                    {
+                        result = reader.ReadToEnd();
+                    }
+                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
+                    if (resp != null)
+                    {
+                        resp.Dispose();
+                    }
+                    return result;
+                }
             }
-            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
-            return result;
         }
     }
 }

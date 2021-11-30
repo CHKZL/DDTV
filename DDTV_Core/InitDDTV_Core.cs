@@ -23,13 +23,24 @@ namespace DDTV_Core
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            //Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
+            Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.DefaultConnectionLimit = 512;
+            ServicePointManager.Expect100Continue = false;
             Log.LogInit(LogClass.LogType.Debug);
             SystemAssembly.ConfigModule.CoreConfig.ConfigInit();
+            SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
             SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
 
-            
+            //while (true)
+            //{
+            //    //SystemAssembly.BilibiliModule.API.UserInfo.info(122459);
+            //    //string B = SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(122459, SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status);
+            //    //SystemAssembly.BilibiliModule.Rooms.Rooms.SelectAPI(122459, SystemAssembly.DataCacheModule.DataCacheClass.CacheType.)
+            //    Thread.Sleep(5000);
+            //}
+            #region 测试代码
+
 
             //SystemAssembly.ConfigModule.RoomConfig.AddRoom(473244363,"");
 
@@ -57,8 +68,8 @@ namespace DDTV_Core
             //    foreach (var item in vs)
             //    {
             //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-            //        var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(269415357);
-            //        roomInfo.roomWebSocket.LiveChatListener.MessageReceived+=LiveChatListener_MessageReceived;
+            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(439605619);
+            //roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             //        Thread.Sleep(1000);
             //    }
             //}));
@@ -85,6 +96,57 @@ namespace DDTV_Core
             //string url = BilibiliModule.API.RoomInfo.playUrl(2299184, BilibiliModule.Rooms.RoomInfoClass.PlayQuality.OriginalPainting);
             //DownloadModule.Download.DownFLV_WebClient(url);
             //BilibiliModule.API.DanMu.send(BilibiliModule.Rooms.Rooms.GetValue(408490081, DataCacheModule.DataCacheClass.CacheType.room_id), "DDTV3.0弹幕发送测试");
+            #endregion
+            while (true)
+            {
+                if (Console.ReadKey().Key.Equals(ConsoleKey.I))
+                {
+                    Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
+                         $"a：查看下载中的任务情况\n" +
+                         $"b：查看调用阿B的API次数\n" +
+                         $"c：查看API查询次数");
+                    switch (Console.ReadKey().Key)
+                    {
+                        case ConsoleKey.A:
+                            {
+                                int i = 0;
+                                Console.WriteLine($"下载中的任务:");
+                                foreach (var A1 in SystemAssembly.BilibiliModule.Rooms.Rooms.RoomInfo)
+                                {
+                                    if (A1.Value.DownloadingList.Count > 0)
+                                    {
+                                        ulong FileSize = 0;
+                                        foreach (var item in A1.Value.DownloadingList)
+                                        {
+                                            FileSize += (ulong)item.DownloadCount;
+                                        }
+                                        i++;
+                                        Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(FileSize)}");
+                                    }
+                                }
+                                break;
+                            }
+                        case ConsoleKey.B:
+                            {
+                                Console.WriteLine("API使用统计:");
+                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.API_UsageCount)
+                                {
+                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                }
+                                break;
+                            }
+                        case ConsoleKey.C:
+                            {
+                                Console.WriteLine("查询API统计:");
+                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.SelectAPI_Count)
+                                {
+                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                }
+                                break;
+                            }
+                    }
+                }
+            }
         }
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)

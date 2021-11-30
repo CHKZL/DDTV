@@ -12,7 +12,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 {
     public class DownloadClass
     {
-       
+
         public class Downloads
         {
             /// <summary>
@@ -40,7 +40,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// FLV头脚本数据
             /// </summary>
-            public Tool.FlvModule.FlvClass.FlvTag FlvScriptTag { set; get; }=new();
+            public Tool.FlvModule.FlvClass.FlvTag FlvScriptTag { set; get; } = new();
             /// <summary>
             /// WebRequest类的HTTP的实现
             /// </summary>
@@ -80,14 +80,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             public void Clear()
             {
                 //HttpWebRequest.Abort();
-                IsDownloading=false;
-                Status=DownloadStatus.DownloadComplete;
-               
+                IsDownloading = false;
+                Status = DownloadStatus.DownloadComplete;
+
             }
             private bool IsCancel = false;
             public void Cancel()
             {
-                IsCancel=true;
+                IsCancel = true;
             }
             /// <summary>
             /// 下载任务实际执行事件
@@ -96,87 +96,121 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
             /// <param name="Split">是否切片</param>
-            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path,string FileName,string format, bool Split)
+            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path, string FileName, string format, bool Split)
             {
-                Task.Run(() => {
-                    int count = 1;
-                    //Path="D:"+Path.Substring(1, Path.Length-1);
-                    Path= Tool.PathOperation.CreateAll(Path);                
-                    File=Path+"/"+FileName+"_"+count+"."+format;
-                    HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-                    Stream stream = resp.GetResponseStream();
-                    FileStream fileStream = new FileStream(File, FileMode.Create);
-                    Status= DownloadStatus.Downloading;
-                    uint DataLength = 9;
-                    uint TagLen = 0;
-                    while (true)
-                    { 
-                        byte[] data = new byte[DataLength];
-                        if (stream.CanRead)
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        int count = 1;
+                        //Path="D:"+Path.Substring(1, Path.Length-1);
+                        Path = Tool.PathOperation.CreateAll(Path);
+                        File = Path + "/" + FileName + "_" + count + "." + format;
+                        using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
-                            if(IsCancel)
+                            using (Stream stream = resp.GetResponseStream())
                             {
-                                stream.Close();
-                                stream.Dispose();
-                                resp.Close();
-                                resp.Dispose();
-                                Status= DownloadStatus.Cancel;
-                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
-                                Download.DownloadCompleteTaskd(Uid,false);
-                                return;
-                            }
-                            for (int i = 0; i < DataLength ; i++)
-                            {
-                                int EndF = stream.ReadByte();
-                                if (EndF!=-1)
+                                FileStream fileStream = new FileStream(File, FileMode.Create);
+
+                                Status = DownloadStatus.Downloading;
+                                uint DataLength = 9;
+                                uint TagLen = 0;
+                                while (true)
                                 {
-                                    data[i]=(byte)EndF;
-                                    DownloadCount++;
-                                }
-                                else
-                                {
-                                    Clear();
-                                    fileStream.Close();
-                                    fileStream.Dispose();
-                                    if (BilibiliModule.Rooms.Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status)=="1")
+                                    byte[] data = new byte[DataLength];
+                                    if (Path.Contains("YXM"))
                                     {
-                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
-                                        Download.AddDownloadTaskd(Uid);
+                                        ;
+                                    }
+                                    if (IsCancel)
+                                    {
+                                        stream.Close();
+                                        stream.Dispose();
+                                        resp.Close();
+                                        resp.Dispose();
+                                        Status = DownloadStatus.Cancel;
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
+                                        Download.DownloadCompleteTaskd(Uid, false, false, false);
+                                       
                                         return;
                                     }
-                                    else
+                                    for (int i = 0 ; i < DataLength ; i++)
                                     {
-                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
-                                        Download.DownloadCompleteTaskd(Uid, !Split);
-                                        return;
+                                        int EndF = 0;
+                                        if (stream.CanRead)
+                                        {
+                                            EndF = stream.ReadByte();
+                                        }
+                                        else
+                                        {
+                                            EndF = -1;
+                                        }
+                                        if (EndF != -1)
+                                        {
+                                            data[i] = (byte)EndF;
+                                            DownloadCount++;
+                                        }
+                                        else
+                                        {
+                                            Clear();
+                                            fileStream.Close();
+                                            fileStream.Dispose();
+                                            if (BilibiliModule.Rooms.Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                                            {
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
+                                                if (resp != null)
+                                                {
+                                                    resp.Close();
+                                                    resp.Dispose();
+                                                }
+                                                Download.AddDownloadTaskd(Uid);
+                                                return;
+                                            }
+                                            else
+                                            {
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
+                                                if (resp != null)
+                                                {
+                                                    resp.Close();
+                                                    resp.Dispose();
+                                                }
+                                                Download.DownloadCompleteTaskd(Uid, Split);
+                                                return;
+                                            }
+                                        }
                                     }
+                                    byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
+                                    DataLength = DL;
+                                    fileStream.Write(FixData, 0, FixData.Length);
+                                    if (Split && DownloadCount > (1024 * 1024 * 5) && DataLength == 15)
+                                    {
+                                        count++;
+                                        fileStream.Close();
+                                        fileStream.Dispose();
+                                        File = Path + "/" + FileName + "_" + count + "." + format;
+                                        fileStream = new FileStream(File, FileMode.Create);
+                                        byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
+                                        fileStream.Write(buffer, 0, buffer.Length);
+                                        fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
+                                        fileStream.Write(FlvScriptTag.FistAbody, 0, FlvScriptTag.FistAbody.Length);
+                                        fileStream.Write(FlvScriptTag.FistVbody, 0, FlvScriptTag.FistVbody.Length);
+                                        TagLen = (uint)FlvScriptTag.TagaData.Length + 15;
+                                        flvTimes.ErrorAudioTimes = 0;
+                                        flvTimes.ErrorVideoTimes = 0;
+                                        flvTimes.FlvTotalTagCount = 1;
+                                        flvTimes.FlvVideoTagCount = 1;
+                                        flvTimes.FlvAudioTagCount = 1;
+                                        flvTimes.IsTagHeader = true;
+                                        DownloadCount = TagLen;
+                                    }
+
                                 }
                             }
-                            byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
-                            DataLength=DL;
-                            fileStream.Write(FixData, 0, FixData.Length);
-                            if (Split&&DownloadCount>(1024*1024*5)&&DataLength==15)
-                            {
-                                count++;
-                                fileStream.Close();
-                                fileStream.Dispose();
-                                File=Path+"/"+FileName+"_"+count+"."+format;
-                                fileStream = new FileStream(File, FileMode.Create);
-                                byte[] buffer = new byte[9+15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
-                                fileStream.Write(buffer, 0, buffer.Length);
-                                fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
-                                fileStream.Write(FlvScriptTag.FistAbody, 0, FlvScriptTag.FistAbody.Length);
-                                fileStream.Write(FlvScriptTag.FistVbody, 0, FlvScriptTag.FistVbody.Length);
-                                TagLen = (uint)FlvScriptTag.TagaData.Length+15;
-                                flvTimes.ErrorAudioTimes=0;
-                                flvTimes.ErrorVideoTimes=0;
-                                flvTimes.FlvTotalTagCount=1;
-                                flvTimes.FlvVideoTagCount=1;
-                                flvTimes.FlvAudioTagCount=1;
-                                flvTimes.IsTagHeader=true;
-                                DownloadCount=TagLen;
-                            }
-                        }                      
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误！错误信息:\n{e.ToString()}");
                     }
                 });
             }
