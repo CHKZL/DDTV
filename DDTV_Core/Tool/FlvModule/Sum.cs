@@ -41,6 +41,11 @@ namespace DDTV_Core.Tool.FlvModule
                 }
                 return OkFilePath;
             }
+            else if(roomInfo.DownloadingList.Count==1)
+            {
+                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"[{roomInfo.room_id}]合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
+                return roomInfo.DownloadingList[0].File;
+            }
             else
             {
                 return "";

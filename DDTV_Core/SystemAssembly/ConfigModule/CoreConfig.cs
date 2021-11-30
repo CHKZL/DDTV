@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
 {
@@ -17,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             CoreConfigFile.ReadConfigFile();
             RoomConfigFile.ReadRoomConfigFile();
-
+            Rooms.UpdateRoomInfo();
             //读取完成后最后储存一次配置文件
             //CoreConfigFile.WriteConfigFile();
             Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");

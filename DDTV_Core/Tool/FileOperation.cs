@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace DDTV_Core.Tool
 {
@@ -67,30 +68,32 @@ namespace DDTV_Core.Tool
             }
             private void Del()
             {
-                while (true)
-                {
-                    for (int i = DelFilelist.Count - 1 ; i > 0 ; i--)
+                Task.Run(() => {
+                    while (true)
                     {
-                        if (File.Exists(DelFilelist[i]))
+                        for (int i = DelFilelist.Count - 1 ; i > -1 ; i--)
                         {
-                            try
+                            if (File.Exists(DelFilelist[i]))
                             {
-                                File.Delete(DelFilelist[i]);
-                                DelFilelist.RemoveAt(i);
+                                try
+                                {
+                                    File.Delete(DelFilelist[i]);
+                                    DelFilelist.RemoveAt(i);
+                                }
+                                catch (Exception) { }
                             }
-                            catch (Exception) { }
-                        }
-                        else
-                        {
-                            try
+                            else
                             {
-                                DelFilelist.RemoveAt(i);
+                                try
+                                {
+                                    DelFilelist.RemoveAt(i);
+                                }
+                                catch (Exception) { }
                             }
-                            catch (Exception) { }
                         }
+                        Thread.Sleep(10000);
                     }
-                    Thread.Sleep(10000);
-                }
+                });
             }
         }
     }

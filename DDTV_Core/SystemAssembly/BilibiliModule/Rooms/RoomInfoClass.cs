@@ -223,7 +223,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// <summary>
             /// 文件是否切片
             /// </summary>
-            public bool FlvCuttinge { set; get; } = true;
+            public bool FlvSplit { set; get; } = false;
             /// <summary>
             /// 房间的WS连接对象类
             /// </summary>

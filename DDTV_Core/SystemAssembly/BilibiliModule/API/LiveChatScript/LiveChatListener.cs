@@ -287,7 +287,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //礼物combo
                 case "COMBO_SEND":               
                     break;
-                //欢迎舰长进入房间
+                //进场特效
                 case "ENTRY_EFFECT":
                     MessageReceived(this, new EntryEffectEventArgs(obj));
                     break;

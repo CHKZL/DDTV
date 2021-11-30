@@ -23,6 +23,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Info = 30,
             /// <summary>
+            /// 转码消息
+            /// </summary>
+            Info_Transcod=31,
+            /// <summary>
             /// 调试信息
             /// </summary>
             Debug = 40,

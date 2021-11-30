@@ -12,8 +12,8 @@ namespace DDTV_Core.Tool.TranscodModule
 {
     internal class Transcod
     {
-        public static bool IsTranscod=false;
-        public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.RoomListConfig, "-i {Before} -vcodec copy -acodec copy {After}", CoreConfigClass.Group.Core);
+        public static bool IsAutoTranscod= bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsAutoTranscod, "false", CoreConfigClass.Group.Core));
+        public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.TranscodParmetrs, "-i {Before} -vcodec copy -acodec copy {After}", CoreConfigClass.Group.Core);
         /// <summary>
         /// 调用ffmpeg进行转码
         /// </summary>
@@ -28,7 +28,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 int progress = -1;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    process.StartInfo.FileName = "./libffmpeg/ffmpeg.exe";
+                    process.StartInfo.FileName = "./lib/ffmpeg/ffmpeg.exe";
                 }
                 else
                 {
@@ -51,26 +51,32 @@ namespace DDTV_Core.Tool.TranscodModule
                 process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
                 process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                 {
-                    string stringResults = e.Data;
-                    if (stringResults == "" || stringResults == null) return;
-                    //Console.WriteLine(stringResults);
-                    if (stringResults.Contains("Duration"))
+                    try
                     {
-                        all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
-                    }
-                    if (stringResults.Contains("time"))
-                    {
-                        string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
-                        if (tmpNow != "")
+                        string stringResults = e.Data;
+                        if (stringResults == "" || stringResults == null) return;
+                        //Console.WriteLine(stringResults);
+                        if (stringResults.Contains("Duration"))
                         {
-                            now = TimeSpan.Parse(tmpNow);
-                            progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
+                            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
+                        }
+                        if (stringResults.Contains("time"))
+                        {
+                            string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
+                            if (tmpNow != "")
+                            {
+                                now = TimeSpan.Parse(tmpNow);
+                                progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
+                            }
+                        }
+                        if (progress > 0)
+                        {
+                            SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info_Transcod, $"转码进度:{progress}%");
+                            transcodClass.Progress = progress;
                         }
                     }
-                    if (progress != -1)
+                    catch (Exception)
                     {
-                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, $"转码进度:{progress}%");
-                        transcodClass.Progress = progress;
                     }
                 };  // 捕捉的信息
                 DateTime beginTime = DateTime.Now;
@@ -89,9 +95,10 @@ namespace DDTV_Core.Tool.TranscodModule
                 GC.Collect();
                 return transcodClass;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 transcodClass.IsTranscod = false;
+                SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "转码出现致命错误！错误信息:\n" + e.ToString());
                 return transcodClass;
             }
 
