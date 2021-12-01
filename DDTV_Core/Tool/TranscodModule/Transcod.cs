@@ -49,36 +49,36 @@ namespace DDTV_Core.Tool.TranscodModule
                 process.StartInfo.CreateNoWindow = true; // 不显示窗口。
                 process.EnableRaisingEvents = true;
                 process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
-                {
-                    try
-                    {
-                        string stringResults = e.Data;
-                        if (stringResults == "" || stringResults == null) return;
-                        //Console.WriteLine(stringResults);
-                        if (stringResults.Contains("Duration"))
-                        {
-                            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
-                        }
-                        if (stringResults.Contains("time"))
-                        {
-                            string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
-                            if (tmpNow != "")
-                            {
-                                now = TimeSpan.Parse(tmpNow);
-                                progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
-                            }
-                        }
-                        if (progress > 0)
-                        {
-                            SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info_Transcod, $"转码进度:{progress}%");
-                            transcodClass.Progress = progress;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                    }
-                };  // 捕捉的信息
+                //process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                //{
+                //    try
+                //    {
+                //        string stringResults = e.Data;
+                //        if (stringResults == "" || stringResults == null) return;
+                //        //Console.WriteLine(stringResults);
+                //        if (stringResults.Contains("Duration"))
+                //        {
+                //            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
+                //        }
+                //        if (stringResults.Contains("time"))
+                //        {
+                //            string tmpNow = Regex.Match(stringResults, @"(?<= time=).*?(?= bitrate)").Value;
+                //            if (tmpNow != "")
+                //            {
+                //                now = TimeSpan.Parse(tmpNow);
+                //                progress = (int)Math.Ceiling(now.TotalMilliseconds / all.TotalMilliseconds * 100);
+                //            }
+                //        }
+                //        if (progress > 0)
+                //        {
+                //            SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info_Transcod, $"转码进度:{progress}%");
+                //            transcodClass.Progress = progress;
+                //        }
+                //    }
+                //    catch (Exception)
+                //    {
+                //    }
+                //};  // 捕捉的信息
                 DateTime beginTime = DateTime.Now;
                 process.Start();
                 process.BeginErrorReadLine();   // 开始异步读取

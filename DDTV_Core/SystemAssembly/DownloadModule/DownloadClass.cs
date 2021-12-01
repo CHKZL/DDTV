@@ -136,10 +136,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     }
                                     for (int i = 0 ; i < DataLength ; i++)
                                     {
-                                        int EndF = 0;
+                                        EOF: int EndF = 0;
                                         if (stream.CanRead)
                                         {
-                                            EndF = stream.ReadByte();
+                                            try
+                                            {
+                                                EndF = stream.ReadByte();
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"录制任务读取到错误的EOF位，写入的文件为:{File}",true,e);
+                                                goto EOF;
+                                            }
+
                                         }
                                         else
                                         {

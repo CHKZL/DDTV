@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 
 
@@ -13,24 +15,32 @@ namespace DDTV_Core.Tool.FlvModule
                 FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].File, FileMode.Open);
                 for (int i = 1 ; i < roomInfo.DownloadingList.Count ; i++)
                 {
-                    using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].File, FileMode.Open);
-                    string TmpFile = "";
-                    using (FileStream fsMerge = new FileStream(PathOperation.CreateAll("./tmp/")+$"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv", FileMode.Create))
-                        if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
-                        {
-                            if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+                    if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].File) && File.Exists(roomInfo.DownloadingList[i].File))
+                    {
+                        using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].File, FileMode.Open);
+                        string TmpFile = "";
+                        using (FileStream fsMerge = new FileStream(PathOperation.CreateAll("./tmp/") + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv", FileMode.Create))
+                            if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                             {
-                                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                                return "";
-                            }
-                            int time = Merge(OldFileStream, fsMerge, true, 0);
-                            time = Merge(NewFileStream, fsMerge, false, time);
+                                if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+                                {
+                                    SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                                    return "";
+                                }
+                                int time = Merge(OldFileStream, fsMerge, true, 0);
+                                time = Merge(NewFileStream, fsMerge, false, time);
 
-                            OldFileStream.Close();
-                            OldFileStream.Dispose();
-                            TmpFile=fsMerge.Name;
-                        }
-                    OldFileStream = new FileStream(TmpFile, FileMode.Open);
+                                OldFileStream.Close();
+                                OldFileStream.Dispose();
+                                TmpFile = fsMerge.Name;
+                            }
+                        OldFileStream = new FileStream(TmpFile, FileMode.Open);
+                    }
+                    else
+                    {
+                        SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"来自{roomInfo.room_id}房间的录制结束合并发生错误，{roomInfo.DownloadingList[i].File}文件为空，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}。错误的房间信息数据:{JsonConvert.SerializeObject(roomInfo)}");
+                        return "";
+                    }
                 }
                 File.Copy(OldFileStream.Name, OkFilePath);
                 OldFileStream.Close();
@@ -43,7 +53,7 @@ namespace DDTV_Core.Tool.FlvModule
             }
             else if(roomInfo.DownloadingList.Count==1)
             {
-                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"[{roomInfo.room_id}]合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
+                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Info, $"[{roomInfo.room_id}]合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
                 return roomInfo.DownloadingList[0].File;
             }
             else

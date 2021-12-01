@@ -42,7 +42,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     }
                     catch (Exception e)
                     {
-                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"房间信息获取失败，错误json字符串内容:\n{RoomInit.ToString()}\n失败日志:\n{e.ToString()}");
+                        Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"房间信息获取失败，错误json字符串内容:\n{RoomInit.ToString()}", true, e);
                         return null;
                     }
 

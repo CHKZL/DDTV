@@ -319,7 +319,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取视频流地址失败，失败的json串:\n{JO.ToString()}，错误日志:\n{e.ToString()}");
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取视频流地址失败，失败的json串:\n{JO.ToString()}", true, e);
             }
             return null;
         }

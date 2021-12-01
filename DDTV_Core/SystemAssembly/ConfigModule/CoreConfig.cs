@@ -30,8 +30,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     {
                         CoreConfigFile.WriteConfigFile();
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Warn, $"配置文件定时储存出现错误", true, e);
                     }
                     Thread.Sleep(30*1000);
                 }

@@ -33,15 +33,16 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             Task.Run(() => 
             {
                 while(true)
-                {
-                    Thread.Sleep(10*1000);
+                {     
                     try
                     {
+                        Thread.Sleep(2 * 1000);
                         Patrol();
+                        Thread.Sleep(8 * 1000);
                     }
                     catch (Exception e)
                     {
-                        Log.Log.AddLog(nameof(RoomPatrol),Log.LogClass.LogType.Warn,$"房间巡逻出现错误，错误堆栈:\n{e.ToString()}");
+                        Log.Log.AddLog(nameof(RoomPatrol),Log.LogClass.LogType.Warn,$"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试",true,e);
                     }
                 }
             });
