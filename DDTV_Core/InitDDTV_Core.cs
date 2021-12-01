@@ -31,14 +31,7 @@ namespace DDTV_Core
             SystemAssembly.ConfigModule.CoreConfig.ConfigInit();
             SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
             SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
-
-            //while (true)
-            //{
-            //    //SystemAssembly.BilibiliModule.API.UserInfo.info(122459);
-            //    //string B = SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(122459, SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status);
-            //    //SystemAssembly.BilibiliModule.Rooms.Rooms.SelectAPI(122459, SystemAssembly.DataCacheModule.DataCacheClass.CacheType.)
-            //    Thread.Sleep(5000);
-            //}
+ 
             #region 测试代码
 
 
@@ -129,7 +122,7 @@ namespace DDTV_Core
                         case ConsoleKey.B:
                             {
                                 Console.WriteLine("API使用统计:");
-                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.API_UsageCount)
+                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.API_Usage_Count)
                                 {
                                     Console.WriteLine($"{item.Value}次，来源：{item.Key}");
                                 }

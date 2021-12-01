@@ -33,14 +33,14 @@ namespace DDTV_Core.Tool
                 }
                 httpWebRequest.Timeout = 5000;
                 //返回响应状态是否是成功比较的布尔值
-                var B = httpWebRequest.GetResponse;
+                //var B = httpWebRequest.GetResponse;
                 if (((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode == HttpStatusCode.OK)
                 {
 
                 }
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }

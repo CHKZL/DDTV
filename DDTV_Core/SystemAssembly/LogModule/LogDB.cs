@@ -55,7 +55,16 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorLogFileWrite("DB_System", $"[日志数据库初始化失败]错误堆栈:{e}");
+                    Log.ErrorLogFileWrite(new LogClass()
+                    {
+                        exception = e,
+                        IsError = true,
+                        Message = "日志数据库初始化失败",
+                        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
+                        Source = nameof(LogDB),
+                        Time = DateTime.Now,
+                        Type = LogClass.LogType.Error
+                    });
                     return false;
                 }
             }
@@ -66,8 +75,9 @@ namespace DDTV_Core.SystemAssembly.Log
             /// <returns></returns>
             private static string GetDbFileName()
             {
-                ErrorFilePath= $"./Log/DDTVCoreErrorLog_{DateTime.Now:yyyy-MM-ddTHH-mm-ss-fffff}.txt";
-                return $"./Log/DDTVCoreLog_{DateTime.Now:yyyy-MM-ddTHH-mm-ss-fffff}.sqlite";
+                string date = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fffff");
+                ErrorFilePath= $"./Log/DDTVCoreErrorLog_{date}.txt";
+                return $"./Log/DDTVCoreLog_{date}.sqlite";
             }
         }
         public class Operate
@@ -114,7 +124,16 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 catch (Exception e)
                 {
-                    Log.ErrorLogFileWrite("DB_System", $"[日志数据库写入失败]错误堆栈:{e}");
+                    Log.ErrorLogFileWrite(new LogClass()
+                    {
+                        exception = e,
+                        IsError = true,
+                        Message = "日志数据库写入出现未知错误",
+                        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
+                        Source = nameof(LogDB),
+                        Time = DateTime.Now,
+                        Type = LogClass.LogType.Error
+                    });
                     return false;
                 }
             }

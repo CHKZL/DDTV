@@ -22,7 +22,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         public event EventHandler<MessageEventArgs> MessageReceived;
 
         public byte[] m_ReceiveBuffer;
-        public DanMu.DanMu.DanMuWssInfo host { set; get; }
+        public DanMu.DanMuClass.DanMuWssInfo host { set; get; }
         public CancellationTokenSource m_innerRts;
         private int TroomId = 0;
         public bool startIn = false;
@@ -43,8 +43,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 mid= uid;
                 await ConnectAsync(roomId, null);
             }
-            catch (Exception E)
+            catch (Exception e)
             {
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"LiveChatListener初始化Connect出现错误", true, e);
             }
         }
 
@@ -66,7 +67,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             catch (Exception e)
             {
                 //InfoLog.InfoPrintf("WSS连接发生错误:" + e.ToString(), InfoLog.InfoClass.Debug);
-                Console.WriteLine(e.ToString());
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e);
+                //Console.WriteLine(e.ToString());
             }
 
             int realRoomId = roomId;//await _getRealRoomId(roomId);
@@ -129,12 +131,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             {
                 m_client.Dispose();
                 //InfoLog.InfoPrintf($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收完成:", InfoLog.InfoClass.Debug);
-                Console.WriteLine($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收完成");
+                //Console.WriteLine($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收完成");
             }
             catch (Exception)
             {
                 //InfoLog.InfoPrintf($"×{TroomId}房间LCL连接已断开，ClientWebSocket对象回收失败:", InfoLog.InfoClass.Debug);
-                Console.WriteLine($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收失败");
+                //Console.WriteLine($"{TroomId}房间LCL连接已断开，ClientWebSocket对象回收失败");
             }
             try
             {
@@ -190,7 +192,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                         }
                         catch (Exception e)
                         {
-                            string BBB = e.ToString();
                             throw;
                         }
                     }

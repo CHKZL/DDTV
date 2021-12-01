@@ -78,19 +78,26 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 if (IsTranscod)
                 {
                     if (FileList.Count > 0)
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})合并flv文件任务结束，开始转码");
-                    foreach (var item in FileList)
                     {
-                        if (!string.IsNullOrEmpty(item))
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})合并flv文件任务结束，开始转码");
+                        foreach (var item in FileList)
                         {
-                            Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
+                            if (!string.IsNullOrEmpty(item))
                             {
-                                AfterFilenameExtension = ".mp4",
-                                BeforeFilePath = item,
-                                AfterFilePath = item,
-                            });
+                                Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
+                                {
+                                    AfterFilenameExtension = ".mp4",
+                                    BeforeFilePath = item,
+                                    AfterFilePath = item,
+                                });
+                            }
                         }
                     }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})合并返回的flv文件数量为0，放弃转码，保留原始数据或环境");
+                    }
+                    
                 }
                 foreach (var item in roomInfo.DownloadingList)
                 {
@@ -196,7 +203,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误！错误信息:\n{e.ToString()}");
+                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误！",true,e);
             }
         }
         /// <summary>

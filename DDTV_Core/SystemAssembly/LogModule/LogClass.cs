@@ -61,5 +61,13 @@ namespace DDTV_Core.SystemAssembly.Log
         /// 来源
         /// </summary>
         public string? Source { set; get; }
+        /// <summary>
+        /// 时候是需要写入txt记录的错误
+        /// </summary>
+        public bool IsError { set; get; }
+        /// <summary>
+        /// IsError为真时有效，记录错误详细信息
+        /// </summary>
+        public Exception exception { set; get; }
     }
 }

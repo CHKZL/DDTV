@@ -10,7 +10,6 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule
 {
     internal class NetClass
     {
-        public static Dictionary<string,int> API_UsageCount = new();
         public static Dictionary<DataCacheModule.DataCacheClass.CacheType, int> SelectAPI_Count = new();
         private static List<DataCacheModule.DataCacheClass.CacheType> cacheTypes = new();
 

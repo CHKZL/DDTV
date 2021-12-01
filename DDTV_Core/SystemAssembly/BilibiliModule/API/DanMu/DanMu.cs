@@ -39,9 +39,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        internal static DanMuWssInfo getDanmuInfo(long uid)
+        internal static DanMuClass.DanMuWssInfo getDanmuInfo(long uid)
         {
-            DanMuWssInfo danMuWssInfo = new DanMuWssInfo()
+            DanMuClass.DanMuWssInfo danMuWssInfo = new DanMuClass.DanMuWssInfo()
             {
                 uid=uid
             };
@@ -56,7 +56,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                     {
                         foreach (var item in JO["data"]["host_list"])
                         {
-                            danMuWssInfo.host_list.Add(new Host()
+                            danMuWssInfo.host_list.Add(new DanMuClass.Host()
                             {
                                 host=item["host"].ToString(),
                                 port=(int)item["port"],
@@ -74,19 +74,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             }
             return danMuWssInfo;
         }
-        public class DanMuWssInfo
-        {
-            public long uid { set; get; }
-            public string token { set; get; }
-            public List<Host> host_list { set; get; } = new List<Host>();
-           
-        }
-        public class Host
-        {
-            public string host { set; get; }
-            public int port { set; get; }
-            public int wss_port { set; get; }
-            public int ws_port { set; get; }
-        }
+
     }
 }
