@@ -128,7 +128,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                            $"UID:{roomInfo.uid}\n" +
                            $"昵称:{roomInfo.uname}\n" +
                            $"标题:{roomInfo.title}\n" +
-                           $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].File : "") +
+                           $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].FileName : "") +
                            $"\n===================");
                 roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
             }
