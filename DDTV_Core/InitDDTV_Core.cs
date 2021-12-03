@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
-            TestVetInfo();
+            //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.Expect100Continue = false;

@@ -12,12 +12,12 @@ namespace DDTV_Core.Tool.FlvModule
         {
             if (roomInfo.DownloadingList.Count>1)
             {
-                FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].File, FileMode.Open);
+                FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].FileName, FileMode.Open);
                 for (int i = 1 ; i < roomInfo.DownloadingList.Count ; i++)
                 {
-                    if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].File) && File.Exists(roomInfo.DownloadingList[i].File))
+                    if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].FileName) && File.Exists(roomInfo.DownloadingList[i].FileName))
                     {
-                        using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].File, FileMode.Open);
+                        using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].FileName, FileMode.Open);
                         string SunTmpFime = PathOperation.CreateAll("./tmp/") + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
                         using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                             if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
@@ -37,7 +37,7 @@ namespace DDTV_Core.Tool.FlvModule
                     }
                     else
                     {
-                        SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"来自{roomInfo.room_id}房间的录制结束合并发生错误，{roomInfo.DownloadingList[i].File}文件为空，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}。错误的房间信息数据:{JsonConvert.SerializeObject(roomInfo)}");
+                        SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"来自{roomInfo.room_id}房间的录制结束合并发生错误，{roomInfo.DownloadingList[i].FileName}文件不存在，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}");
                         return "";
                     }
                 }
@@ -47,14 +47,14 @@ namespace DDTV_Core.Tool.FlvModule
                 OldFileStream.Dispose();         
                 foreach (var item in roomInfo.DownloadingList)
                 {
-                    FileOperation.Del(item.File);
+                    FileOperation.Del(item.FileName);
                 }
                 return OkFilePath;
             }
             else if(roomInfo.DownloadingList.Count==1)
             {
                 SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Info, $"[{roomInfo.room_id}]合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
-                return roomInfo.DownloadingList[0].File;
+                return roomInfo.DownloadingList[0].FileName;
             }
             else
             {

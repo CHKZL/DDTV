@@ -1,4 +1,5 @@
-﻿using DDTV_Core.SystemAssembly.ConfigModule;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// 下载的文件
             /// </summary>
-            public string File { set; get; }
+            public string FileName { set; get; }
             public Tool.FlvModule.FlvClass.FlvTimes flvTimes { set; get; } = new();
             /// <summary>
             /// FLV文件头
@@ -105,12 +106,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.PathOperation.CreateAll(Path);
-                        File = Path + "/" + FileName + "_" + count + "." + format;
+                        FileName = Path + "/" + FileName + "_" + count + "." + format;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
                             {
-                                FileStream fileStream = new FileStream(File, FileMode.Create);
+                                FileStream fileStream = new FileStream(FileName, FileMode.Create);
 
                                 Status = DownloadStatus.Downloading;
                                 uint DataLength = 9;
@@ -141,7 +142,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             catch (Exception e)
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"录制任务读取到错误的EOF位，写入的文件为:{File}",true,e);
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"录制任务读取到错误的EOF位，写入的文件为:{FileName}",true,e);
                                                 goto EOF;
                                             }
                                         }
@@ -157,9 +158,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         else
                                         {
                                             Clear();
+                                            if(flvTimes.FlvTotalTagCount<3)
+                                            {
+                                                Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
+                                                if (File.Exists(fileStream.Name))
+                                                {
+                                                    Tool.FileOperation.Del(fileStream.Name);
+                                                }
+                                            }
                                             fileStream.Close();
                                             fileStream.Dispose();
-                                            if (BilibiliModule.Rooms.Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                                           
+                                            if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                                             {
                                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
                                                 if (resp != null)
@@ -191,8 +201,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         count++;
                                         fileStream.Close();
                                         fileStream.Dispose();
-                                        File = Path + "/" + FileName + "_" + count + "." + format;
-                                        fileStream = new FileStream(File, FileMode.Create);
+                                        FileName = Path + "/" + FileName + "_" + count + "." + format;
+                                        fileStream = new FileStream(FileName, FileMode.Create);
                                         byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                         fileStream.Write(buffer, 0, buffer.Length);
                                         fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
@@ -212,9 +222,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                     }
+                    catch (WebException ex)
+                    {
+                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意WEB连接错误，尝试重连",true,ex);
+                        Download.AddDownloadTaskd(Uid, false);
+                        return;
+                    }
                     catch (Exception e)
                     {
-                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误！错误信息:\n{e.ToString()}");
+                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
                     }
                 });
             }
