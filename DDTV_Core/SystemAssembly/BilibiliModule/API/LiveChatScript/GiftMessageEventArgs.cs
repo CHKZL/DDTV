@@ -6,7 +6,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 {
     public class SendGiftEventArgs : MessageEventArgs
     {
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         public string UserName { get; set; } 
 
@@ -45,7 +45,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         internal SendGiftEventArgs(JObject obj) : base(obj)
         {
-            UserId = (int)obj["data"]["uid"];
+            UserId = (long)obj["data"]["uid"];
             UserName = (string)obj["data"]["uname"];
             TotalCoin = (int)obj["data"]["total_coin"];
             Amount = (int)obj["data"]["num"];
@@ -69,7 +69,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         /// </summary>
         public int GuardLevel { get; set; }
 
-        public string GiftName { get; set; }
+        public string GuardName { get; set; }
 
         /// <summary>
         /// 花费：单位金瓜子
@@ -93,7 +93,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             GuardLevel = (int)obj["data"]["guard_level"];
             UserId = (int)obj["data"]["uid"];
             UserName = (string)obj["data"]["username"];
-            GiftName = (string)obj["data"]["gift_name"];
+            GuardName = (string)obj["data"]["gift_name"];
             Price = (int)obj["data"]["price"];
             Number = (int)obj["data"]["num"];
             Timestamp = (long)obj["data"]["start_time"];

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 
 namespace DDTV_Core.SystemAssembly.RoomPatrolModule
 {
@@ -14,25 +15,26 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
         /// </summary>
         public static void Init()
         {
-            BilibiliModule.Rooms.Rooms.UpdateRoomInfo();
-            foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
+            Rooms.UpdateRoomInfo();
+            foreach (var item in Rooms.RoomInfo)
             {
                 if (item.Value.live_status==1)
                 {
                     Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
-                    if (item.Value.IsAutoRec)
+                    if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                     {
                         //自动录制
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                         //这下面应该写录制的操作了(施工中)
-                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid);
+                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid,true);
                         
                     }
                 }
             }
             Task.Run(() => 
             {
-                while(true)
+                long ETime = 0;
+                while (true)
                 {     
                     try
                     {
@@ -42,7 +44,11 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     }
                     catch (Exception e)
                     {
-                        Log.Log.AddLog(nameof(RoomPatrol),Log.LogClass.LogType.Warn,$"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试",true,e);
+                        if ((ETime + 300000) > TimeModule.Time.Operate.GetRunMilliseconds())
+                        {
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Warn, $"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试", true, e);
+                        }
+                        ETime = TimeModule.Time.Operate.GetRunMilliseconds();
                     }
                 }
             });
@@ -72,7 +78,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                             //自动录制警告！
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                             //这下面应该写录制的操作了(施工中)
-                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid);
+                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
                         }
                         if (item.Value.IsRemind)
                         {

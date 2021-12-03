@@ -53,7 +53,7 @@ namespace DDTV_Core.Tool
         {
             delEvent.AddFile(File);
         }
-        internal class DelEvent
+        private class DelEvent
         {
             private List<string> DelFilelist = new();
             private bool IsDelEnable = false;

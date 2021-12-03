@@ -22,7 +22,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// <param name="IsAutoRec">是否自动录制</param>
         /// <param name="IsRemind">是否开播提醒</param>
         /// <returns></returns>
-        internal static string AddRoom(long uid, string Description, bool IsAutoRec = false, bool IsRemind = false)
+        internal static string AddRoom(long uid, string Description, bool IsAutoRec = false, bool IsRemind = false,bool IsRecDanmu=false)
         {
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
@@ -43,6 +43,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         Rooms.RoomInfo[uid].uname=Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                         Rooms.RoomInfo[uid].room_id=RoomId;
                         Rooms.RoomInfo[uid].uid=uid;
+                        Rooms.RoomInfo[uid].IsRecDanmu=IsRecDanmu;
                     }
                     else
                     {
@@ -54,7 +55,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             Like=false,
                             uname=Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname),
                             room_id=RoomId,
-                            uid=uid
+                            uid=uid,
+                            IsRecDanmu = IsRecDanmu,
                         });
                     }
 

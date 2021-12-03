@@ -9,7 +9,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 {
     public class WelcomeEventArgs : MessageEventArgs
     {
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         public string UserName { get; set; }
 
@@ -22,7 +22,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         internal WelcomeEventArgs(JObject obj) : base(obj)
         {
-            UserId = (int)obj["data"]["uid"];
+            UserId = (long)obj["data"]["uid"];
             UserName = (string)obj["data"]["uname"];
             svip = (int)obj["data"]["svip"];
             vip = (int)obj["data"]["vip"];

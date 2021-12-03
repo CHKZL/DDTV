@@ -12,7 +12,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         public string Message { get; set; }
         public string messageTrans { get; set; }
         public int RoomID { set; get; }
-        public int UserId { set; get; }
+        public long UserId { set; get; }
         public string UserName { set; get; }
         public long Ts { set; get; }
         public int SCID { set; get; }
@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         {
             Message = (string)obj["data"]["message"];
             messageTrans = (string)obj["data"]["message_trans"];
-            UserId = (int)obj["data"]["uid"];
+            UserId = (long)obj["data"]["uid"];
             UserName = (string)obj["data"]["user_info"]["uname"];
             face = (string)obj["data"]["user_info"]["face"];
             Ts = (long)obj["data"]["ts"];

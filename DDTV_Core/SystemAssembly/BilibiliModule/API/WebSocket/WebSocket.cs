@@ -22,7 +22,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener.host =DanMu.DanMu.getDanmuInfo(uid);
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener.Connect(Rooms.Rooms.RoomInfo[uid].room_id, uid);
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect=!Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect;
-                    //Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener.MessageReceived+=LiveChatListener_MessageReceived;
                     return Rooms.Rooms.RoomInfo[uid];
                 }
                 else

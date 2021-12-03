@@ -10,9 +10,33 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
     public class DanmuMessageEventArgs:MessageEventArgs
     {
         /// <summary>
+        /// 弹幕在视频里的时间
+        /// </summary>
+        public double Time { set; get; }
+        /// <summary>
+        /// 弹幕类型
+        /// </summary>
+        public int MessageType { get; set; }
+        /// <summary>
+        /// 字体大小
+        /// </summary>
+        public int Size { set; get; } = 25;
+        /// <summary>
+        /// 弹幕颜色
+        /// </summary>
+        public int MessageColor { get; set; }
+        /// <summary>
+        /// 时间戳
+        /// </summary>
+        public long Timestamp { get; set; }
+        /// <summary>
+        /// 弹幕池
+        /// </summary>
+        public int pool { set; get; } = 0;
+        /// <summary>
         /// 发送人userId
         /// </summary>
-        public int UserId { get; set; }
+        public long UserId { get; set; }
         /// <summary>
         /// 发送人昵称
         /// </summary>
@@ -25,29 +49,20 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         /// 发送人等级
         /// </summary>
         public int GuardLV { get; set; }
-        /// <summary>
-        /// 弹幕颜色
-        /// </summary>
-        public int MessageColor { get; set; }
-        /// <summary>
-        /// 弹幕类型
-        /// </summary>
-        public int MessageType { get; set; }
+        
+       
         /// <summary>
         /// 弹幕字号
         /// </summary>
         public int MessageFontSize { get; set; }
-        /// <summary>
-        /// 时间戳
-        /// </summary>
-        public long Timestamp { get; set; }
+       
 
         public string UserTitile { get; set; }
 
 
         internal DanmuMessageEventArgs(JObject obj) : base(obj)
         {
-            UserId = (int)obj["info"][2][0];
+            UserId = (long)obj["info"][2][0];
             UserName = (string)obj["info"][2][1];
             Message = (string)obj["info"][1];
             GuardLV = (int)obj["info"][7];

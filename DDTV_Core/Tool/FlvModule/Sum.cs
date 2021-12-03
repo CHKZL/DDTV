@@ -18,23 +18,22 @@ namespace DDTV_Core.Tool.FlvModule
                     if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].File) && File.Exists(roomInfo.DownloadingList[i].File))
                     {
                         using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].File, FileMode.Open);
-                        string TmpFile = "";
-                        using (FileStream fsMerge = new FileStream(PathOperation.CreateAll("./tmp/") + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv", FileMode.Create))
+                        string SunTmpFime = PathOperation.CreateAll("./tmp/") + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
+                        using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                             if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                             {
                                 if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                                 {
                                     SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                                    FileOperation.Del(SunTmpFime);
                                     return "";
                                 }
                                 int time = Merge(OldFileStream, fsMerge, true, 0);
                                 time = Merge(NewFileStream, fsMerge, false, time);
-
                                 OldFileStream.Close();
                                 OldFileStream.Dispose();
-                                TmpFile = fsMerge.Name;
                             }
-                        OldFileStream = new FileStream(TmpFile, FileMode.Open);
+                        OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
                     }
                     else
                     {
@@ -43,8 +42,9 @@ namespace DDTV_Core.Tool.FlvModule
                     }
                 }
                 File.Copy(OldFileStream.Name, OkFilePath);
+                FileOperation.Del(OldFileStream.Name);
                 OldFileStream.Close();
-                OldFileStream.Dispose(); 
+                OldFileStream.Dispose();         
                 foreach (var item in roomInfo.DownloadingList)
                 {
                     FileOperation.Del(item.File);

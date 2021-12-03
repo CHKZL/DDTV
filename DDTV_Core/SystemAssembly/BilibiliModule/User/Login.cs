@@ -19,7 +19,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                QR.QRInit();
                 do
                 {
-                    if (!string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||!string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime>DateTime.UtcNow)
+                    if (string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime<DateTime.UtcNow)
                     {
                         switch (satrtType)
                         {

@@ -8,36 +8,57 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
 {
     public class DataCacheClass
     {
-        internal static Dictionary<CacheType, Dictionary<string, Data>> Caches { get => caches; set => caches=value; }
+        internal static Dictionary<CacheType, Dictionary<string, Data>> Caches { get => caches; set => caches = value; }
 
         /// <summary>
         /// 内建缓存表
         /// </summary>
         private static Dictionary<CacheType, Dictionary<string, Data>> caches = new Dictionary<CacheType, Dictionary<string, Data>>(new Dictionary<CacheType, Dictionary<string, Data>> { })
-            {
-                { CacheType.room_id, new Dictionary<string, Data>() },
-                { CacheType.area, new Dictionary<string, Data>() },
-                { CacheType.area_name, new Dictionary<string, Data>() },
-                { CacheType.area_v2_id, new Dictionary<string, Data>() },
-                { CacheType.area_v2_name, new Dictionary<string, Data>() },
-                { CacheType.area_v2_parent_id, new Dictionary<string, Data>() },
-                { CacheType.area_v2_parent_name, new Dictionary<string, Data>() },
-                { CacheType.broadcast_type, new Dictionary<string, Data>() },
-                { CacheType.cover_from_user, new Dictionary<string, Data>() },
-                { CacheType.face, new Dictionary<string, Data>() },
-                { CacheType.hidden_till, new Dictionary<string, Data>() },
-                { CacheType.keyframe, new Dictionary<string, Data>() },
-                { CacheType.live_status, new Dictionary<string, Data>() },
-                { CacheType.live_time, new Dictionary<string, Data>() },
-                { CacheType.lock_till, new Dictionary<string, Data>() },
-                { CacheType.online, new Dictionary<string, Data>() },
-                { CacheType.short_id, new Dictionary<string, Data>() },
-                { CacheType.tag_name, new Dictionary<string, Data>() },
-                { CacheType.tags, new Dictionary<string, Data>() },
-                { CacheType.title, new Dictionary<string, Data>() },
-                { CacheType.uid, new Dictionary<string, Data>() },
-                { CacheType.uname, new Dictionary<string, Data>() },
-                { CacheType.Other, new Dictionary<string, Data>() },
+        {
+            { CacheType.room_id, new Dictionary<string, Data>() },
+            { CacheType.area, new Dictionary<string, Data>() },
+            { CacheType.area_name, new Dictionary<string, Data>() },
+            { CacheType.area_v2_id, new Dictionary<string, Data>() },
+            { CacheType.area_v2_name, new Dictionary<string, Data>() },
+            { CacheType.area_v2_parent_id, new Dictionary<string, Data>() },
+            { CacheType.area_v2_parent_name, new Dictionary<string, Data>() },
+            { CacheType.broadcast_type, new Dictionary<string, Data>() },
+            { CacheType.cover_from_user, new Dictionary<string, Data>() },
+            { CacheType.face, new Dictionary<string, Data>() },
+            { CacheType.hidden_till, new Dictionary<string, Data>() },
+            { CacheType.keyframe, new Dictionary<string, Data>() },
+            { CacheType.live_status, new Dictionary<string, Data>() },
+            { CacheType.live_time, new Dictionary<string, Data>() },
+            { CacheType.lock_till, new Dictionary<string, Data>() },
+            { CacheType.online, new Dictionary<string, Data>() },
+            { CacheType.short_id, new Dictionary<string, Data>() },
+            { CacheType.tag_name, new Dictionary<string, Data>() },
+            { CacheType.tags, new Dictionary<string, Data>() },
+            { CacheType.title, new Dictionary<string, Data>() },         
+            { CacheType.uid, new Dictionary<string, Data>() },       
+            { CacheType.uname, new Dictionary<string, Data>() },      
+            { CacheType.Other, new Dictionary<string, Data>() },
+            { CacheType.need_p2p, new Dictionary<string, Data>() },
+            { CacheType.is_hidden, new Dictionary<string, Data>() },
+            { CacheType.is_locked, new Dictionary<string, Data>() },
+            { CacheType.is_portrait, new Dictionary<string, Data>() },
+            { CacheType.encrypted, new Dictionary<string, Data>() },
+            { CacheType.pwd_verified, new Dictionary<string, Data>() },
+            { CacheType.room_shield, new Dictionary<string, Data>() },
+            { CacheType.is_sp, new Dictionary<string, Data>() },
+            { CacheType.special_type, new Dictionary<string, Data>() },
+            { CacheType.roomStatus, new Dictionary<string, Data>() },
+            { CacheType.url, new Dictionary<string, Data>() },
+            { CacheType.description, new Dictionary<string, Data>() },
+            { CacheType.Description, new Dictionary<string, Data>() },
+            { CacheType.IsAutoRec, new Dictionary<string, Data>() },
+            { CacheType.IsRemind, new Dictionary<string, Data>() },
+            { CacheType.IsRecDanmu, new Dictionary<string, Data>() },
+            { CacheType.Like, new Dictionary<string, Data>() },
+            { CacheType.attention, new Dictionary<string, Data>() },
+            { CacheType.level, new Dictionary<string, Data>() },
+            { CacheType.sex, new Dictionary<string, Data>() },
+            { CacheType.sign, new Dictionary<string, Data>() },
             };
 
 
@@ -205,6 +226,10 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
             /// 是否开播提醒(Local值)
             /// </summary>
             IsRemind,
+            /// <summary>
+            /// 是否录制弹幕(Local值)
+            /// </summary>
+            IsRecDanmu,
             /// <summary>
             /// 特殊标记(Local值)
             /// </summary>

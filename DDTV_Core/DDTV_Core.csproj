@@ -5,7 +5,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>3.0.1.1</AssemblyVersion>
+    <AssemblyVersion></AssemblyVersion>
     <FileVersion>3.0.1.1</FileVersion>
     <Authors>ami</Authors>
     <Version>3.0.1-Dev</Version>
@@ -14,6 +14,7 @@ ddtv.pro</Description>
     <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>
     <Copyright></Copyright>
     <PackageTags></PackageTags>
+    <OutputType>Library</OutputType>
   </PropertyGroup>
 
   <ItemGroup>

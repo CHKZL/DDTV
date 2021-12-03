@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.NetworkRequestModule
 {
-    internal class NetClass
+    public class NetClass
     {
         public static Dictionary<DataCacheModule.DataCacheClass.CacheType, int> SelectAPI_Count = new();
         private static List<DataCacheModule.DataCacheClass.CacheType> cacheTypes = new();

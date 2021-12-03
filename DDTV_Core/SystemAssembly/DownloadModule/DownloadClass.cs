@@ -118,10 +118,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 while (true)
                                 {
                                     byte[] data = new byte[DataLength];
-                                    if (Path.Contains("YXM"))
-                                    {
-                                        ;
-                                    }
                                     if (IsCancel)
                                     {
                                         stream.Close();
@@ -148,7 +144,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"录制任务读取到错误的EOF位，写入的文件为:{File}",true,e);
                                                 goto EOF;
                                             }
-
                                         }
                                         else
                                         {
@@ -172,7 +167,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     resp.Close();
                                                     resp.Dispose();
                                                 }
-                                                Download.AddDownloadTaskd(Uid);
+                                                Download.AddDownloadTaskd(Uid,false);
                                                 return;
                                             }
                                             else
