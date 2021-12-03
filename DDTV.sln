@@ -5,12 +5,12 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Core", "DDTV_Core\DDTV_Core.csproj", "{44093B5D-8645-43F0-A37B-298B5A86CF44}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Core_Test", "DDTV_Core_Test\DDTV_Core_Test.csproj", "{C9A25133-73D2-47E0-B2E4-77192571BEE9}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3E47FBBA-EE75-4959-B060-A31FF1AF53C1}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_CLI", "DDTV_CLI\DDTV_CLI.csproj", "{5E93B384-B5F7-413C-BFF7-99A43B2CAAAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +22,10 @@ Global
 		{44093B5D-8645-43F0-A37B-298B5A86CF44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44093B5D-8645-43F0-A37B-298B5A86CF44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{44093B5D-8645-43F0-A37B-298B5A86CF44}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9A25133-73D2-47E0-B2E4-77192571BEE9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E93B384-B5F7-413C-BFF7-99A43B2CAAAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E93B384-B5F7-413C-BFF7-99A43B2CAAAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E93B384-B5F7-413C-BFF7-99A43B2CAAAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E93B384-B5F7-413C-BFF7-99A43B2CAAAB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

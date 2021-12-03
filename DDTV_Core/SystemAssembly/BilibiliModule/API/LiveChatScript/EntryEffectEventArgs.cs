@@ -16,7 +16,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         /// <summary>
         /// 舰长uid
         /// </summary>
-        public int uid { set; get; }
+        public long uid { set; get; }
         /// <summary>
         /// 欢迎信息
         /// </summary>
@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         internal EntryEffectEventArgs(JObject obj) : base(obj)
         {
-            uid = (int)obj["data"]["uid"];
+            uid = (long)obj["data"]["uid"];
             face = (string)obj["data"]["face"];
             copy_writing = (string)obj["data"]["copy_writing"];
             copy_writing_v2 = (string)obj["data"]["copy_writing_v2"];

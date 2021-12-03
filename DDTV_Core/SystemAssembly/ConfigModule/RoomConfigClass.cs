@@ -12,6 +12,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             public List<RoomCard> data { set; get; } = new List<RoomCard>();
         }
+        public class RoomListDiscard
+        {
+            public List<RoomCardDiscard> data { set; get; } = new List<RoomCardDiscard>();
+        }
         public class RoomCard
         {
             /// <summary>
@@ -38,30 +42,33 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             public bool IsRemind;
             /// <summary>
+            /// 是否录制弹幕
+            /// </summary>
+            public bool IsRecDanmu;
+            /// <summary>
             /// 优先标记
             /// </summary>
+            public bool Like;
+        }
+        public class RoomCardDiscard: RoomCard
+        {  
             public bool Like;
             /// <summary>
             /// (已弃用！！)(请使用name)名称
             /// </summary>
-            [NonSerialized]
             public string Name;
             /// <summary>
             /// (已弃用！！)(请使用)房间号
             /// </summary>
-            [NonSerialized]
             public string RoomNumber;
             /// <summary>
             /// (已弃用！！)(请使用IsAutoRec)是否自动录制
             /// </summary>
-            [NonSerialized]
             public bool VideoStatus;
             /// <summary>
             /// (已弃用！！)(请使用IsRemind)是否开播提醒
             /// </summary>
-            [NonSerialized]
             public bool RemindStatus;
         }
-       
     }
 }

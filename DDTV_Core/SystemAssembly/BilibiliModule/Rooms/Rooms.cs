@@ -17,7 +17,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         public static void UpdateRoomInfo()
         {
             List<long> mids = new List<long>();
-            foreach (var item in Rooms.RoomInfo)
+            foreach (var item in RoomInfo)
             {
                 mids.Add(item.Value.uid);
             }

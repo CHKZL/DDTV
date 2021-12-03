@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -205,6 +206,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public bool IsRemind { set; get; }
             /// <summary>
+            /// 是否录制弹幕(Local值)
+            /// </summary>
+            public bool IsRecDanmu { set; get; }
+            /// <summary>
             /// 特殊标记(Local值)
             /// </summary>
             public bool Like { set; get; }
@@ -228,9 +233,23 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 房间的WS连接对象类
             /// </summary>
             public RoomWebSocket roomWebSocket { set; get; }= new RoomWebSocket();
+            /// <summary>
+            /// 下载标识符
+            /// </summary>
             public bool IsDownload { set; get; } = false;
+            /// <summary>
+            /// 房间当前下载任务记录
+            /// </summary>
             public List<Downloads> DownloadingList { set; get; } = new List<Downloads>();
+            /// <summary>
+            /// 房间历史下载记录
+            /// </summary>
             public List<Downloads> DownloadedLog { set; get; } = new List<Downloads>();
+            /// <summary>
+            /// 弹幕录制对象
+            /// </summary>
+            public API.DanMu.DanMuClass.DanmuMessage DanmuFile { set; get; } = new API.DanMu.DanMuClass.DanmuMessage();
+           
         }
         public class RoomWebSocket
         {

@@ -17,21 +17,21 @@ namespace DDTV_Core
         /// Core的版本号
         /// </summary>
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+"-"+System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
+            TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.Expect100Continue = false;
             Log.LogInit(LogClass.LogType.Debug);
-            SystemAssembly.ConfigModule.CoreConfig.ConfigInit();
+            SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
             SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
             SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
- 
+
             #region 测试代码
 
 
@@ -61,7 +61,7 @@ namespace DDTV_Core
             //    foreach (var item in vs)
             //    {
             //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(439605619);
+            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(582225536);
             //roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             //        Thread.Sleep(1000);
             //    }
@@ -90,60 +90,32 @@ namespace DDTV_Core
             //DownloadModule.Download.DownFLV_WebClient(url);
             //BilibiliModule.API.DanMu.send(BilibiliModule.Rooms.Rooms.GetValue(408490081, DataCacheModule.DataCacheClass.CacheType.room_id), "DDTV3.0弹幕发送测试");
             #endregion
-            while (true)
+
+        }
+
+
+        public static void TestVetInfo()
+        {
+            Task.Run(() =>
             {
-                if (Console.ReadKey().Key.Equals(ConsoleKey.I))
+                while(true)
                 {
-                    Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
-                         $"a：查看下载中的任务情况\n" +
-                         $"b：查看调用阿B的API次数\n" +
-                         $"c：查看API查询次数");
-                    switch (Console.ReadKey().Key)
+                    try
                     {
-                        case ConsoleKey.A:
-                            {
-                                int i = 0;
-                                Console.WriteLine($"下载中的任务:");
-                                foreach (var A1 in SystemAssembly.BilibiliModule.Rooms.Rooms.RoomInfo)
-                                {
-                                    if (A1.Value.DownloadingList.Count > 0)
-                                    {
-                                        ulong FileSize = 0;
-                                        foreach (var item in A1.Value.DownloadingList)
-                                        {
-                                            FileSize += (ulong)item.DownloadCount;
-                                        }
-                                        i++;
-                                        Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(FileSize)}");
-                                    }
-                                }
-                                break;
-                            }
-                        case ConsoleKey.B:
-                            {
-                                Console.WriteLine("API使用统计:");
-                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.API_Usage_Count)
-                                {
-                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                }
-                                break;
-                            }
-                        case ConsoleKey.C:
-                            {
-                                Console.WriteLine("查询API统计:");
-                                foreach (var item in SystemAssembly.NetworkRequestModule.NetClass.SelectAPI_Count)
-                                {
-                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                }
-                                break;
-                            }
+                        Thread.Sleep(90 * 1000);
+                        Console.WriteLine("当前版本为开发预览测试版，请随时关注反馈群更新到最新版本。\n如遇见任何问题，请加群[338182356]反馈");
+                    }
+                    catch (Exception)
+                    {
+
                     }
                 }
-            }
+            });
         }
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
+            
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
@@ -153,7 +125,7 @@ namespace DDTV_Core
                     Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到Superchat信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(SuperchatEvent.Timestamp)} {SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
                     break;
                 case GuardBuyEventArgs GuardBuyEvent:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GiftName}(单价{GuardBuyEvent.Price})");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
                     break;
                 case SendGiftEventArgs sendGiftEventArgs:
                     Log.AddLog(nameof(LiveChatListener),LogClass.LogType.Info, $"[收到礼物]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
@@ -171,9 +143,9 @@ namespace DDTV_Core
         /// </summary>
         public enum SatrtType
         {
-            DDTV_Core=0,
-            DDTV_GUI=1,
-            DDTV_CLI=2,
+            DDTV_Core,
+            DDTV_GUI,
+            DDTV_CLI,
             DDTV_Other=int.MaxValue
         }
     }

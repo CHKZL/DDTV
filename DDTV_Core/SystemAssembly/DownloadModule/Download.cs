@@ -24,11 +24,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <summary>
         /// 增加下载任务
         /// </summary>
-        public static void AddDownloadTaskd(long uid)
+        public static void AddDownloadTaskd(long uid,bool IsNewTask=false)
         {
             Task.Run(() =>
             {
-                AddDownLoad(uid);
+                AddDownLoad(uid, IsNewTask);
             });
         }
         /// <summary>
@@ -56,6 +56,27 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
+                string OkFileName = $"./{DefaultPath}" +
+                                                   $"/{DefaultDirectoryName.Replace("{ROOMID}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}" +
+                                                   "/" +
+                                                   $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("_{R}", "") + ".flv"}";
+                if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec))&&roomInfo.roomWebSocket.IsConnect)
+                {
+                    roomInfo.roomWebSocket.IsConnect = false;
+                    if (roomInfo.roomWebSocket.LiveChatListener != null)
+                        try
+                        {
+                            roomInfo.roomWebSocket.LiveChatListener.startIn = false;
+                            roomInfo.DanmuFile.TimeStopwatch.Stop();
+                            roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                            BilibiliModule.API.DanMu.DanMuRec.SevaDanmuFile(roomInfo);
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"结束LiveChat连接时发生未知错误", true, e);
+                        }
+
+                }
                 //当自动切片使能时，自动转码和flv文件合并取消
                 if (Split)
                 {
@@ -65,10 +86,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 if (IsSun)
                 {
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})录制任务结束，开始检测并合并flv文件");
-                    string SunFileName = Tool.FlvModule.Sum.FlvFileSum(roomInfo, $"./{DefaultPath}" +
-                                                   $"/{DefaultDirectoryName.Replace("{ROOMID}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}" +
-                                                   "/" +
-                                                   $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("_{R}", "") + ".flv"}");
+                    string SunFileName = Tool.FlvModule.Sum.FlvFileSum(roomInfo, OkFileName);
                     if(!string.IsNullOrEmpty(SunFileName))
                     {
                         FileList.Add(SunFileName);
@@ -99,6 +117,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     
                 }
+               
                 foreach (var item in roomInfo.DownloadingList)
                 {
                     item.HttpWebRequest = null;
@@ -118,7 +137,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// 增加下载任务具体实现
         /// </summary>
         /// <param name="uid">需要下载的房间uid号</param>
-        private static void AddDownLoad(long uid,bool retry=false)
+        private static void AddDownLoad(long uid,bool IsNewTask)
         {
             while (!Rooms.RoomInfo.ContainsKey(uid))
             {
@@ -152,7 +171,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                         downloadClass.Status = DownloadClass.Downloads.DownloadStatus.Standby;
-                        if (retry)
+                        if (!IsNewTask)
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})的下载请求，等在数据流中...");
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
@@ -167,6 +186,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             string FileName = $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(downloadClass.Uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("{R}", new Random().Next(1000, 9999).ToString())}";
                             //执行下载任务
                             downloadClass.DownFLV_HttpWebRequest(req,Path, FileName, "flv", roomInfo.FlvSplit);
+                            if(IsNewTask && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
+                            {
+                                //施工中,弹幕录制
+                                roomInfo.DanmuFile = new();
+                                roomInfo.DanmuFile.FileName = Path + "/" + FileName;
+                                BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
+                            }
                         }
                         else if (Ok == 1)
                         {
@@ -178,7 +204,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         else
                         {
                             Rooms.RoomInfo[uid].DownloadingList.RemoveAt(Rooms.RoomInfo[uid].DownloadingList.Count - 1);
-                            AddDownLoad(uid);
+                            AddDownLoad(uid,false);
                         }
                     }
                     else

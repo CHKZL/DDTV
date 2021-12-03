@@ -21,22 +21,22 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// </summary>
         internal static void ReadRoomConfigFile()
         {
-            var rlc = new RoomList();
+            var rlc = new RoomListDiscard();
             try
             {
-                rlc = JsonConvert.DeserializeObject<RoomList>(File.ReadAllText(RoomConfig.RoomFile));
+                rlc = JsonConvert.DeserializeObject<RoomListDiscard>(File.ReadAllText(RoomConfig.RoomFile));
             }
             catch (Exception)
             {
-                rlc = JsonConvert.DeserializeObject<RoomList>("{}");
+                rlc = JsonConvert.DeserializeObject<RoomListDiscard>("{}");
                 Log.Log.AddLog(nameof(RoomConfigFile),Log.LogClass.LogType.Error, "房间json配置文件格式错误！请检测核对！");
             }
-            List<RoomCard> RoomConfigList = rlc?.data;
+            List<RoomCardDiscard> RoomConfigList = rlc?.data;
             //RoomConfigList = rlc?.data;
             //如果房间配置文件错误或者为空，默认生成一个新的List<RoomCard>对象
             if (RoomConfigList == null)
             {
-                RoomConfigList = new List<RoomCard>();
+                RoomConfigList = new List<RoomCardDiscard>();
             }
             foreach (var item in RoomConfigList)
             {
@@ -48,6 +48,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Rooms.RoomInfo[item.UID].IsAutoRec = (item.IsAutoRec||item.VideoStatus);
                     Rooms.RoomInfo[item.UID].IsRemind = (item.IsRemind||item.RemindStatus);
                     Rooms.RoomInfo[item.UID].Like = item.Like;
+                    Rooms.RoomInfo[item.UID].IsRecDanmu = item.IsRecDanmu;
                 }
                 else
                 {
@@ -60,6 +61,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         IsRemind =(item.IsRemind||item.RemindStatus),
                         Like = item.Like,
                         uid = item.UID,
+                        IsRecDanmu=item.IsRecDanmu,
                     });
                 }
                 DataCache.SetCache(CacheType.uname, item.UID.ToString(), Rooms.RoomInfo[item.UID].uname.ToString(), int.MaxValue);
@@ -69,8 +71,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 DataCache.SetCache(CacheType.IsRemind, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsRemind.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.Like, item.UID.ToString(), Rooms.RoomInfo[item.UID].Like.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.uid, item.UID.ToString(), Rooms.RoomInfo[item.UID].uid.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsRecDanmu, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsRecDanmu.ToString(), int.MaxValue);
             }
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"读取房间配置文件完成，一共读取到[{RoomConfigList.Count}]个房间配置");
+            WriteRoomConfigFile();
         }
         /// <summary>
         /// 保存房间配置文件
@@ -88,7 +92,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Like=item.Value.Like,
                     name=item.Value.uname,
                     RoomId=item.Value.room_id,
-                    UID=item.Value.uid
+                    UID=item.Value.uid,
+                    IsRecDanmu=item.Value.IsRecDanmu
                 });
             }
             File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards));

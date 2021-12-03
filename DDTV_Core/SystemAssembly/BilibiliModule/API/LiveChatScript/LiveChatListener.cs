@@ -20,6 +20,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         private ClientWebSocket m_client;
 
         public event EventHandler<MessageEventArgs> MessageReceived;
+        public event EventHandler<EventArgs> DisposeSent;
 
         public byte[] m_ReceiveBuffer;
         public DanMu.DanMuClass.DanMuWssInfo host { set; get; }
@@ -46,6 +47,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             catch (Exception e)
             {
                 Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"LiveChatListener初始化Connect出现错误", true, e);
+                Dispose();
             }
         }
 
@@ -68,6 +70,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             {
                 //InfoLog.InfoPrintf("WSS连接发生错误:" + e.ToString(), InfoLog.InfoClass.Debug);
                 Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e);
+                Dispose();
                 //Console.WriteLine(e.ToString());
             }
 
@@ -100,6 +103,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                    //POST-CANCEL
                    //InfoLog.InfoPrintf("LiveChatListener连接断开，房间号:"+ realRoomId, InfoLog.InfoClass.Debug);
                    Console.WriteLine("LiveChatListender cancelled.");
+
                }
                try
                {
@@ -166,6 +170,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             {
                 Close();
             }
+            DisposeSent.Invoke(this, EventArgs.Empty);
             _disposed = true;
         }
 
@@ -270,7 +275,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
 
             string cmd = (string)obj["cmd"];
-           
+            DisposeSent.Invoke(this, EventArgs.Empty);
             switch (cmd)
             {
                 //弹幕信息

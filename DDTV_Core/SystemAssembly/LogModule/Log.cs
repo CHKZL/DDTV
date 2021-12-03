@@ -88,7 +88,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message"></param>
         public static void ErrorLogFileWrite(LogClass logClass)// string Source, string Message)
         {
-            string ErrorText = $"{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}！";
+            string ErrorText = $"\n\n{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}，错误堆栈\n{logClass.exception.ToString()}";
             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
         }
     }

@@ -32,7 +32,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             public string uid { set; get; }
         }
-        public static bool Init(InitDDTV_Core.SatrtType satrtType = InitDDTV_Core.SatrtType.DDTV_CLI)
+        public static bool Init(InitDDTV_Core.SatrtType satrtType = InitDDTV_Core.SatrtType.DDTV_Core)
         {
             ReadUserFile();
             if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
