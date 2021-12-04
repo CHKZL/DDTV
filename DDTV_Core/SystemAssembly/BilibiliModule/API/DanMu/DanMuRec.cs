@@ -31,6 +31,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             LiveChatListener liveChatListener = (LiveChatListener)sender;
             if(liveChatListener.startIn)
             {
+                Log.Log.AddLog(nameof(DanMuRec),LogClass.LogType.Info,$"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
                 Rec(liveChatListener.mid);
             }      
         }

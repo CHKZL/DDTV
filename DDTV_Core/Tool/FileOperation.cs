@@ -33,7 +33,6 @@ namespace DDTV_Core.Tool
                 }
                 httpWebRequest.Timeout = 5000;
                 //返回响应状态是否是成功比较的布尔值
-                //var B = httpWebRequest.GetResponse;
                 if (((HttpWebResponse)httpWebRequest.GetResponse()).StatusCode == HttpStatusCode.OK)
                 {
 
@@ -60,9 +59,10 @@ namespace DDTV_Core.Tool
         /// <returns>返回清除不符合要求的字符后的字符串</returns>
         public static string CheckFilenames(string text)
         {
+            text = text.Replace(" ", string.Empty).Replace("/", string.Empty).Replace("\\", string.Empty).Replace("\"", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty).Replace("?", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty).Replace("|", string.Empty).Replace("#", string.Empty).Replace("&", string.Empty).Replace("=", string.Empty).Replace("%", string.Empty).Replace("\0", string.Empty);
             StringBuilder rBuilder = new StringBuilder(text);
             foreach (char rInvalidChar in Path.GetInvalidPathChars())
-                rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
+                rBuilder = rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
             text = rBuilder.ToString();
             return text;
         }

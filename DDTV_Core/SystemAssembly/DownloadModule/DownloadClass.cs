@@ -97,7 +97,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
             /// <param name="Split">是否切片</param>
-            internal void DownFLV_HttpWebRequest(HttpWebRequest req, string Path, string FileName, string format, bool Split)
+            internal void DownFLV_HttpWebRequest(DownloadClass.Downloads downloads,HttpWebRequest req, string Path, string FileName, string format, bool Split)
             {
                 Task.Run(() =>
                 {
@@ -107,6 +107,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.PathOperation.CreateAll(Path);
                         FileName = Path + "/" + FileName + "_" + count + "." + format;
+                        downloads.FileName= FileName;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -133,7 +134,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     }
                                     for (int i = 0 ; i < DataLength ; i++)
                                     {
-                                        EOF: int EndF = 0;
+                                        int EndF = 0;
                                         if (stream.CanRead)
                                         {
                                             try
@@ -142,8 +143,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             catch (Exception e)
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"录制任务读取到错误的EOF位，写入的文件为:{FileName}",true,e);
-                                                goto EOF;
+                                                EndF = -1;
                                             }
                                         }
                                         else

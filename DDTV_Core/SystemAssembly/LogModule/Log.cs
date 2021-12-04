@@ -39,7 +39,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message">日志内容</param>
         /// <param name="IsError">是否是错误(错误内容会出了数据库外另外写一份txt文本记录详细错误日志和堆栈)</param>
         /// <param name="exception">IsError为真时有效，错误日志的Exception信息</param>
-        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null)
+        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null,bool IsDisplay=true)
         {
             Task.Run(() =>
             {
@@ -58,7 +58,7 @@ namespace DDTV_Core.SystemAssembly.Log
                     ErrorLogFileWrite(logClass);// Source, $"{Message},错误堆栈:\n{exception.ToString()}");
                     Message = Message + " 详细信息已写入txt文本日志中";
                 }
-                if (logType <= LogLevel&& logType!= LogClass.LogType.Info_Transcod)
+                if (logType <= LogLevel&& logType!= LogClass.LogType.Info_Transcod&& IsDisplay)
                 {
                     Console.WriteLine($"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}\n");
                 }

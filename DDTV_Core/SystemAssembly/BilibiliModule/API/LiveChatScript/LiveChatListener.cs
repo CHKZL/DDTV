@@ -25,7 +25,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         public byte[] m_ReceiveBuffer;
         public DanMu.DanMuClass.DanMuWssInfo host { set; get; }
         public CancellationTokenSource m_innerRts;
-        private int TroomId = 0;
+        public int TroomId = 0;
         public bool startIn = false;
         public string wss_S = "";
         public long mid = 0;
@@ -347,7 +347,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     //房间横幅信息，应该就是置顶的那个跳转广告
                     break;
                 default:
-                    Console.WriteLine(cmd);
+                    //Console.WriteLine(cmd);
                     MessageReceived(this, new MessageEventArgs(obj));
                     break;
             }
