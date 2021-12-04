@@ -53,6 +53,22 @@ namespace DDTV_Core.Tool
         {
             delEvent.AddFile(File);
         }
+        /// <summary>
+        /// 检查字符串是否符合文件路径标准
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns>返回清除不符合要求的字符后的字符串</returns>
+        public static string CheckFilenames(string text)
+        {
+            StringBuilder rBuilder = new StringBuilder(text);
+            foreach (char rInvalidChar in Path.GetInvalidPathChars())
+                rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
+            text = rBuilder.ToString();
+            return text;
+        }
+        /// <summary>
+        /// 文件删除服务
+        /// </summary>
         private class DelEvent
         {
             private List<string> DelFilelist = new();

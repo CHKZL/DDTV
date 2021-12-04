@@ -23,12 +23,14 @@ namespace DDTV_Core
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
-            //TestVetInfo();
+            TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 512;
             ServicePointManager.Expect100Continue = false;
             Log.LogInit(LogClass.LogType.Debug);
             SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
+
+           
             SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
             SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
 
@@ -61,7 +63,7 @@ namespace DDTV_Core
             //    foreach (var item in vs)
             //    {
             //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(582225536);
+            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(667526012);
             //roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             //        Thread.Sleep(1000);
             //    }

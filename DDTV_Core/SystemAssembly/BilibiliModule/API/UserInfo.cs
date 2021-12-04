@@ -1,9 +1,11 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DataCacheModule;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -11,7 +13,7 @@ using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 {
-    internal class UserInfo
+    public class UserInfo
     {
         /// <summary>
         /// 获取账号信息
@@ -57,7 +59,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         Rooms.Rooms.RoomInfo[uid].roomStatus = data.live_room.roomStatus;
                         Rooms.Rooms.RoomInfo[uid].sex = data.sex;
                         Rooms.Rooms.RoomInfo[uid].sign = data.sign;
-                        Rooms.Rooms.RoomInfo[uid].title = data.live_room.title;
+                        Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(data.live_room.title);
                         Rooms.Rooms.RoomInfo[uid].url = data.live_room.url;
                         Rooms.Rooms.RoomInfo[uid].roundStatus = data.live_room.roundStatus;
                         room = Rooms.Rooms.RoomInfo[uid];
@@ -75,7 +77,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             roomStatus = data.live_room.roomStatus,
                             sex = data.sex,
                             sign = data.sign,
-                            title = data.live_room.title,
+                            title = Tool.FileOperation.CheckFilenames(data.live_room.title),
                             url = data.live_room.url,
                             roundStatus = data.live_room.roundStatus
                         };
@@ -87,7 +89,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     DataCache.SetCache(CacheType.live_status, uid.ToString(), data.live_room.liveStatus.ToString(), 0);
                     DataCache.SetCache(CacheType.uname, uid.ToString(), data.name, int.MaxValue);
                     DataCache.SetCache(CacheType.face, uid.ToString(), data.face, int.MaxValue);
-                    DataCache.SetCache(CacheType.roomStatus, uid.ToString(), data.live_room.roomStatus.ToString(), 300*1000);
+                    DataCache.SetCache(CacheType.roomStatus, uid.ToString(), data.live_room.roomStatus.ToString(), 300 * 1000);
                     DataCache.SetCache(CacheType.sex, uid.ToString(), data.sex, int.MaxValue);
                     DataCache.SetCache(CacheType.sign, uid.ToString(), data.sign, int.MaxValue);
                     DataCache.SetCache(CacheType.title, uid.ToString(), data.live_room.title, 0);
@@ -99,6 +101,50 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             return null;
         }
-
+        public static void follow(long uid)
+        {
+            List<User.follow.ListItem> FollowList = new();
+            int pg = 0;
+            int total = 0; 
+            do
+            {
+                pg++;
+                string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/relation/followings?vmid=" + uid + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp");
+                User.follow.Root root = JsonConvert.DeserializeObject<User.follow.Root>(WebText);
+                if (root.code == 0 && root.data.list.Count > 0)
+                {
+                    foreach (var item in root.data.list)
+                    {
+                        FollowList.Add(item);
+                    }
+                }
+                total = root.data.total;
+            } while (pg * 50 < total);
+            if (File.Exists("./Resources/vtbs.json"))
+            {
+                JArray keyValuePairs = (JArray)JsonConvert.DeserializeObject(File.ReadAllText("./Resources/vtbs.json"));
+                List<User.VtbsFile> vtbsFiles = new();
+                foreach (var item in keyValuePairs)
+                {
+                    long mid = 0;
+                    int roomid = 0;
+                    string name = "";
+                    try
+                    {
+                        mid = long.Parse(item["mid"].ToString());
+                        roomid = int.Parse(item["roomid"].ToString());
+                        name = Tool.FileOperation.CheckFilenames(item["uname"].ToString());
+                        if(FollowList.Any(e => e.mid == mid)&& mid!=0&&roomid!=0)
+                        {
+                            RoomConfig.AddRoom(mid, roomid, name);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+                RoomConfigFile.WriteRoomConfigFile();
+            }
+        }
     }
 }

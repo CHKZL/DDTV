@@ -275,7 +275,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
 
             string cmd = (string)obj["cmd"];
-            DisposeSent.Invoke(this, EventArgs.Empty);
             switch (cmd)
             {
                 //弹幕信息

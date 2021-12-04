@@ -9,6 +9,11 @@ namespace DDTV_Core.Tool
 {
     internal class PathOperation
     {
+        /// <summary>
+        /// 在指定路径中创建所有目录
+        /// </summary>
+        /// <param name="Path">指定的路径</param>
+        /// <returns></returns>
         public static string CreateAll(string Path)
         {
             Directory.CreateDirectory(Path);
