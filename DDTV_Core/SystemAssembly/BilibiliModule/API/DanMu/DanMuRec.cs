@@ -143,7 +143,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             string Gift = "视频时间,送礼人昵称,送礼人Uid,上舰类型,上舰时间,每月价格,时间戳";
             foreach (var item in guardBuyInfos)
             {
-                Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{item.GuardLevel},{item.Number},{item.Price},{item.Timestamp}";
+                string Level = item.GuardLevel == 1 ? "舰长" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "总督" : item.GuardLevel.ToString();
+                Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{Level},{item.Number},{item.Price},{item.Timestamp}";
             }
             File.WriteAllText(FileName + "_舰队.csv", Gift);
         }
