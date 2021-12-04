@@ -78,7 +78,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                         Rooms.Rooms.RoomInfo[uid].room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).room_id;
                                         Rooms.Rooms.RoomInfo[uid].short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).short_id;
                                         Rooms.Rooms.RoomInfo[uid].tag_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).tag_name;
-                                        Rooms.Rooms.RoomInfo[uid].title = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).title;
+                                        Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).title);
                                         Rooms.Rooms.RoomInfo[uid].uname = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).uname;
                                     }
                                 }
@@ -106,7 +106,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
                                 DataCache.SetCache(CacheType.tags, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tags.ToString(), 60 * 1000);
                                 DataCache.SetCache(CacheType.tag_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tag_name.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.title, uid.ToString(), Rooms.Rooms.RoomInfo[uid].title.ToString(), 0);
+                                DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
                                 DataCache.SetCache(CacheType.uname, uid.ToString(), Rooms.Rooms.RoomInfo[uid].uname.ToString(), int.MaxValue);
                                 if (UIDList.Count() == 1)
                                 {
@@ -246,7 +246,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         Rooms.Rooms.RoomInfo[uid].online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).online;
                         Rooms.Rooms.RoomInfo[uid].description = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).description;
                         Rooms.Rooms.RoomInfo[uid].live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).live_status;
-                        Rooms.Rooms.RoomInfo[uid].title = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).title;
+                        Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).title);
                         Rooms.Rooms.RoomInfo[uid].cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).user_cover;
                         Rooms.Rooms.RoomInfo[uid].keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).keyframe;
                         Rooms.Rooms.RoomInfo[uid].area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).area_name;
@@ -261,7 +261,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 5 * 1000);
                     DataCache.SetCache(CacheType.description, uid.ToString(), Rooms.Rooms.RoomInfo[uid].description.ToString(), 300 * 1000);
                     DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);
-                    DataCache.SetCache(CacheType.title, uid.ToString(), Rooms.Rooms.RoomInfo[uid].title.ToString(), 0);
+                    DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
                     DataCache.SetCache(CacheType.cover_from_user, uid.ToString(), Rooms.Rooms.RoomInfo[uid].user_cover.ToString(), 60 * 1000);
                     DataCache.SetCache(CacheType.keyframe, uid.ToString(), Rooms.Rooms.RoomInfo[uid].keyframe.ToString(), 60 * 1000);
                     DataCache.SetCache(CacheType.area_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_name.ToString(), 60 * 1000);

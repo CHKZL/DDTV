@@ -20,13 +20,17 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             {
                 if (item.Value.live_status==1)
                 {
-                    Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
+                    //Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
                     if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                     {
                         //自动录制
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到开播根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】：[{item.Value.title}]");
                         DownloadModule.Download.AddDownloadTaskd(item.Value.uid,true);
                         
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-：[{item.Value.title}]，根据配置忽略");
                     }
                 }
             }
@@ -59,12 +63,12 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
         {
 
             Dictionary<long, int> keyValuePairs = new Dictionary<long, int>();
-            foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
+            foreach (var item in Rooms.RoomInfo)
             {
                 keyValuePairs.Add(item.Key, item.Value.live_status);
             }
-            BilibiliModule.Rooms.Rooms.UpdateRoomInfo();
-            foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
+            Rooms.UpdateRoomInfo();
+            foreach (var item in Rooms.RoomInfo)
             {
                 if(item.Value.live_status==1)
                 {

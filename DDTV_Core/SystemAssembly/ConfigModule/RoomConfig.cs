@@ -71,6 +71,25 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 }
             }
         }
+
+        internal static void AddRoom(long uid, int RoomId, string Name)
+        {
+            if (!Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            {
+                Rooms.RoomInfo.Add(uid, new RoomInfoClass.RoomInfo()
+                {
+                    IsAutoRec = false,
+                    IsRemind = false,
+                    Description = "",
+                    Like = false,
+                    uname = Name,
+                    room_id = RoomId,
+                    uid = uid,
+                    IsRecDanmu = false,
+                });
+            }
+        }
+
         /// <summary>
         /// 修改房间配置内容
         /// </summary>

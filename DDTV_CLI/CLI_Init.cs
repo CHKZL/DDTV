@@ -47,7 +47,8 @@ namespace DDTV_CLI
                     Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
                          $"a：查看下载中的任务情况\n" +
                          $"b：查看调用阿B的API次数\n" +
-                         $"c：查看API查询次数");
+                         $"c：查看API查询次数\n" +
+                         $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
                     switch (Console.ReadKey().Key)
                     {
                         case ConsoleKey.A:
@@ -87,6 +88,9 @@ namespace DDTV_CLI
                                 }
                                 break;
                             }
+                        case ConsoleKey.D:
+                            DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+                            break;
                     }
                 }
             }
