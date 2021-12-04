@@ -25,7 +25,6 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     {
                         //自动录制
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
-                        //这下面应该写录制的操作了(施工中)
                         DownloadModule.Download.AddDownloadTaskd(item.Value.uid,true);
                         
                     }
@@ -44,7 +43,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     }
                     catch (Exception e)
                     {
-                        if ((ETime + 300000) > TimeModule.Time.Operate.GetRunMilliseconds())
+                        if ((ETime + 300000) < TimeModule.Time.Operate.GetRunMilliseconds())
                         {
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Warn, $"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试", true, e);
                         }
@@ -77,7 +76,6 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         {
                             //自动录制警告！
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
-                            //这下面应该写录制的操作了(施工中)
                             DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
                         }
                         if (item.Value.IsRemind)

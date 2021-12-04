@@ -101,7 +101,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
 
         public static void SevaDanmuFile(RoomInfoClass.RoomInfo roomInfo)
         {
-            //施工中，弹幕缓存数据解析和储存
             SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id);
             SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
             SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);

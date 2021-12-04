@@ -51,6 +51,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <param name="uid">用户UID</param>
         /// <param name="Split">任务是否切片(当自动切片使能时，自动转码和flv文件合并取消)</param>
         /// <param name="IsSun">是否合并和转码</param>
+        /// <param name="IsTranscod">是否转码</param>
         public static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsSun = true, bool IsTranscod = true)
         {
             List<string> FileList = new List<string>();
@@ -60,6 +61,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                    $"/{DefaultDirectoryName.Replace("{ROOMID}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}" +
                                                    "/" +
                                                    $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("_{R}", "") + ".flv"}";
+                //弹幕录制结束处理
                 if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec))&&roomInfo.roomWebSocket.IsConnect)
                 {
                     roomInfo.roomWebSocket.IsConnect = false;
@@ -83,6 +85,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     IsSun = false;
                 }
                 roomInfo.IsDownload = false;
+                //合并flv文件
                 if (IsSun)
                 {
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})录制任务结束，开始检测并合并flv文件");
@@ -188,7 +191,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.DownFLV_HttpWebRequest(req,Path, FileName, "flv", roomInfo.FlvSplit);
                             if(IsNewTask && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
-                                //施工中,弹幕录制
                                 roomInfo.DanmuFile = new();
                                 roomInfo.DanmuFile.FileName = Path + "/" + FileName;
                                 BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
@@ -197,13 +199,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         else if (Ok == 1)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}已下播，录制任务取消");
-                            Rooms.RoomInfo[uid].DownloadingList.RemoveAt(Rooms.RoomInfo[uid].DownloadingList.Count - 1);
+                            Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                             DownloadCompleteTaskd(uid, roomInfo.FlvSplit);
                             return;
                         }
                         else
                         {
-                            Rooms.RoomInfo[uid].DownloadingList.RemoveAt(Rooms.RoomInfo[uid].DownloadingList.Count - 1);
+                            Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                             AddDownLoad(uid,false);
                         }
                     }
