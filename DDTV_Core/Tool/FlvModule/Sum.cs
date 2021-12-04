@@ -10,6 +10,14 @@ namespace DDTV_Core.Tool.FlvModule
     {
         public static string FlvFileSum(SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo roomInfo,string OkFilePath)
         {
+            for (int i = 0 ; i < roomInfo.DownloadingList.Count ; i++)
+            {
+                if(!File.Exists(roomInfo.DownloadingList[i].FileName))
+                {
+                    roomInfo.DownloadingList.RemoveAt(i);
+                    i--;
+                }
+            }
             if (roomInfo.DownloadingList.Count>1)
             {
                 FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].FileName, FileMode.Open);
