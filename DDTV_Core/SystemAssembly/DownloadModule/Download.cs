@@ -68,6 +68,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     if (roomInfo.roomWebSocket.LiveChatListener != null)
                         try
                         {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{ Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)})的直播已结束，LiveChat连接中断，储存相关数据");
                             roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                             roomInfo.DanmuFile.TimeStopwatch.Stop();
                             roomInfo.roomWebSocket.LiveChatListener.Dispose();
@@ -126,13 +127,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     item.HttpWebRequest = null;
                     roomInfo.DownloadedLog.Add(item);
                 }
-                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"\n录制任务完成:\n===================\n" +
+                string EndText = $"\n录制任务完成:\n===================\n" +
                            $"直播间:{roomInfo.room_id}\n" +
                            $"UID:{roomInfo.uid}\n" +
                            $"昵称:{roomInfo.uname}\n" +
                            $"标题:{roomInfo.title}\n" +
-                           $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].FileName : "") +
-                           $"\n===================");
+                           $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].FileName : string.Empty) +
+                           $"\n===================";
+                Console.WriteLine(EndText);
+                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n","　"), false, null, false);
                 roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
             }
         }
@@ -179,16 +182,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"\n开始录制任务:\n===================\n" +
+                            string StarText = $"\n开始录制任务:\n===================\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
                                 $"UID:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uid)}\n" +
                                 $"昵称:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}\n" +
                                 $"标题:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)}\n" +
-                                $"===================");
+                                $"===================";
+                            Console.WriteLine(StarText);
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n","　"),false,null,false);
+
                             string Path = $"./{DefaultPath}/{DefaultDirectoryName.Replace("{ROOMID}", downloadClass.RoomId).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}";
                             string FileName = $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(downloadClass.Uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("{R}", new Random().Next(1000, 9999).ToString())}";
                             //执行下载任务
-                            downloadClass.DownFLV_HttpWebRequest(req,Path, FileName, "flv", roomInfo.FlvSplit);
+                            downloadClass.DownFLV_HttpWebRequest(downloadClass, req,Path, FileName, "flv", roomInfo.FlvSplit);
                             if(IsNewTask && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
                                 roomInfo.DanmuFile = new();
