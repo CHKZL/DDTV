@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"info获取网络数据为空或超时");
                 Thread.Sleep(500);
-                info(uid);
+                return info(uid);
             }
 
             JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);

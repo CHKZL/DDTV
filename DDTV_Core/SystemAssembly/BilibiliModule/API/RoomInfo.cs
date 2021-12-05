@@ -42,7 +42,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 {
                     Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_status_info_by_uids获取网络数据为空或超时");
                     Thread.Sleep(800);
-                    get_status_info_by_uids(UIDList, query);
+                    return get_status_info_by_uids(UIDList, query);
                 }
                 JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
                 if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
@@ -140,7 +140,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"room_init获取网络数据为空或超时");
                 Thread.Sleep(800);
-                room_init(uid);
+                return room_init(uid);
             }
             JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
             if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
@@ -228,7 +228,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_info获取网络数据为空或超时");
                 Thread.Sleep(800);
-                get_info(uid);
+                return get_info(uid);
             }
             JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
             if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
@@ -285,12 +285,22 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 
             if(string.IsNullOrEmpty(WebText))
             {
-                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时");
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
-                playUrl(uid, qn);
+                return playUrl(uid, qn);
+                
             }
 
-            JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
+            JObject JO =new JObject();
+            try
+            {
+                JO = (JObject)JsonConvert.DeserializeObject(WebText);
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误", true, e);
+                return playUrl(uid, qn);
+            }
 
             try
             {
