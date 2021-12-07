@@ -88,7 +88,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest发生未知错误！错误日志:\n{e.ToString()}");
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Error, $"GetRequest发生未知错误", true, e);
                 return null;
             }
             //return result;

@@ -8,11 +8,49 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Img\UI\BackGround.jpg" />
+    <None Remove="Resources\Img\UI\cloud-download.png" />
+    <None Remove="Resources\Img\UI\home.png" />
+    <None Remove="Resources\Img\UI\indent.png" />
+    <None Remove="Resources\Img\UI\reload _ime.png" />
+    <None Remove="Resources\Img\UI\smile.png" />
+    <None Remove="Resources\Img\UI\unordered-list.png" />
+    <None Remove="Resources\Img\UI\wrench.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="HandyControl" Version="3.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DDTV_Core\DDTV_Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Img\UI\BackGround.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\cloud-download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\home.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\indent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\reload _ime.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\smile.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\unordered-list.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\wrench.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 
 </Project>
