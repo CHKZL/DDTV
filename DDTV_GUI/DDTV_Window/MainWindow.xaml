@@ -1,0 +1,140 @@
+﻿<hc:GlowWindow  x:Class="DDTV_GUI.DDTV_Window.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:DDTV_GUI"
+        mc:Ignorable="d"
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
+        Title="MainWindow" Width="800" Height="450"
+        AllowsTransparency="True" WindowStyle="None" Background="Transparent"  MinWidth="800" MaxWidth="800" MinHeight="450" MaxHeight="450">
+
+    <Grid Background="White">
+        <Grid Name="BackGroundGrid" MouseLeftButtonDown="GlowWindow_MouseLeftButtonDown">
+            <Image Name="BackGroundImage" Source="/Resources/Img/UI/BackGround.jpg" Opacity="0.2" />
+
+        </Grid>
+        <Grid Name="TestGrid" Visibility="Collapsed">
+            <ToggleButton Content="Left" IsChecked="{Binding IsOpen,ElementName=About}" Height="60" Width="82"/>
+            <Button Command="{Binding InfoGlobalCmd}" Content="测试提示功能" Margin="478,154,0,0" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click" Height="56" Width="168"/>
+        </Grid>
+        <Grid Name="DrawerGrid">
+            <hc:Drawer Name="About" Dock="Left" ShowMode="Push">
+                <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Margin="10,0,0,0" Text="关于DDTV" Style="{StaticResource TextBlockTitle}" HorizontalAlignment="Left"/>
+                        <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                    </Grid>
+                </Border>
+            </hc:Drawer>
+        </Grid>
+        <Grid Name="SideMenuGrid" Height="450" Width="120" Margin="0,0,680,0">
+            <hc:SideMenu BorderThickness="1" SelectionChanged="SideMenu_SelectionChanged" >
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="SelectionChanged">
+                        <hc:EventToCommand Command="{Binding SwitchItemCmd}" PassEventArgsToCommand="True" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+                <hc:SideMenuItem Header="首页">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/home.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="监控列表">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/unordered-list.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="录制任务">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/cloud-download.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="历史记录">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/reload _ime.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="日志">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/indent.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="设置">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/wrench.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="其他">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+            </hc:SideMenu>
+            <!--<StackPanel>
+                <Button Content="∨" Margin="0,410,0,0" Style="{StaticResource ButtonInfo}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,0">
+                            <GradientStop Color="#FF00BCD4"/>
+                            <GradientStop Color="#FF00A1D6" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+                <Button Content="X" Margin="-80,-30,0,0" Style="{StaticResource ButtonDanger}">
+                    <Button.Background>
+                        <LinearGradientBrush EndPoint="1,0">
+                            <GradientStop Color="#FFDB3340"/>
+                            <GradientStop Color="#FFFB7299" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Button.Background>
+                </Button>
+            </StackPanel>-->
+        </Grid>
+        <Grid Name="mainWindowGrid" Margin="110,-41,0,0">
+            <TabControl Name="MainWindowTab" Margin="10,10,0,0" Style="{StaticResource TabControlInLine}" Background="{x:Null}">
+                <TabItem Header="首页">
+                    <hc:Row Margin="0,0,0,0">
+                        <hc:Col Span="8">
+                            <GroupBox  Width="200" Height="150" Header="CPU使用率" Padding="10" Margin="16" Style="{StaticResource GroupBoxTab}">
+                                <hc:CircleProgressBar Value="50" FontSize="30" Margin="0,0,0,0"/>
+                            </GroupBox>
+                        </hc:Col>
+                        <hc:Col Span="8">
+                            <GroupBox  Width="200" Height="150" Header="内存使用率" Padding="10" Margin="16" Style="{StaticResource GroupBoxTab}">
+                                <Border Background="#7FFFFFFF" CornerRadius="4">
+                                    <TextBlock Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                            </GroupBox>
+                        </hc:Col>
+                        <hc:Col Span="8">
+                            <GroupBox  Width="200" Height="150" Header="录制磁盘剩余空间" Padding="10" Margin="16" Style="{StaticResource GroupBoxTab}">
+                                <Border Background="#7FFFFFFF" CornerRadius="4">
+                                    <TextBlock Text="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                </Border>
+                            </GroupBox>
+                        </hc:Col>
+                    </hc:Row>
+                </TabItem>
+                <TabItem Header="监控列表">
+                </TabItem>
+                <TabItem Header="录制任务">
+                </TabItem>
+                <TabItem Header="历史记录">
+                </TabItem>
+                <TabItem Header="日志">
+                </TabItem>
+                <TabItem Header="设置">
+                </TabItem>
+                <TabItem Header="其他">
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </Grid>
+
+</hc:GlowWindow>

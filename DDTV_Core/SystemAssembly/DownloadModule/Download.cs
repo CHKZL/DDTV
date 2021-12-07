@@ -195,6 +195,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             string FileName = $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(downloadClass.Uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("{R}", new Random().Next(1000, 9999).ToString())}";
                             //执行下载任务
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req,Path, FileName, "flv", roomInfo.FlvSplit);
+                            //录制弹幕
                             if(IsNewTask && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
                                 roomInfo.DanmuFile = new();
