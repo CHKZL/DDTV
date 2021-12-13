@@ -136,7 +136,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{item.GiftName},{item.Amount},{item.Price},{item.Timestamp}";
             }
-            File.WriteAllText(FileName + "_礼物.csv", Gift);
+            File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
         }
         public static void SevaGuardBuy(List<DanMuClass.GuardBuyInfo> guardBuyInfos, string FileName)
         {
@@ -146,7 +146,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 string Level = item.GuardLevel == 1 ? "舰长" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "总督" : item.GuardLevel.ToString();
                 Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{Level},{item.Number},{item.Price},{item.Timestamp}";
             }
-            File.WriteAllText(FileName + "_舰队.csv", Gift);
+            File.WriteAllText(FileName + "_舰队.csv", Gift, Encoding.UTF8);
         }
         public static void SevaSuperChat(List<DanMuClass.SuperChatInfo> superChatInfos, string FileName)
         {
@@ -155,7 +155,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{item.Price},{item.Message},{item.MessageTrans},{item.Timestamp}";
             }
-            File.WriteAllText(FileName + "_SC.csv", Gift);
+            File.WriteAllText(FileName + "_SC.csv", Gift, Encoding.UTF8);
         }
     }
 }

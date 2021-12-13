@@ -20,7 +20,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 房间号
             /// </summary>
             public string RoomId { get; set; }
+            /// <summary>
+            /// 用户UID
+            /// </summary>
             public long Uid { set; get; }
+            /// <summary>
+            /// 昵称
+            /// </summary>
+            public string Name { get; set; }
+            /// <summary>
+            /// 标题
+            /// </summary>
+            public string Title { get; set; }
             /// <summary>
             /// 是否下载中
             /// </summary>
@@ -30,9 +41,21 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public string Url { get; set; }
             /// <summary>
-            /// 下载的文件
+            /// 下载的完整文件路径
             /// </summary>
             public string FileName { set; get; }
+            /// <summary>
+            /// 文件夹路径
+            /// </summary>
+            public string FilePath { set; get; }
+            /// <summary>
+            /// 开始时间
+            /// </summary>
+            public DateTime StartTime { set; get; }=DateTime.Now;
+            /// <summary>
+            /// 结束时间
+            /// </summary>
+            public DateTime EndTime { set; get; }
             public Tool.FlvModule.FlvClass.FlvTimes flvTimes { set; get; } = new();
             /// <summary>
             /// FLV文件头
@@ -83,6 +106,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 //HttpWebRequest.Abort();
                 IsDownloading = false;
                 Status = DownloadStatus.DownloadComplete;
+                EndTime = DateTime.Now;
 
             }
             private bool IsCancel = false;
@@ -233,57 +257,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
                     }
                 });
-            }
-        }
-        public class DlwnLog
-        {
-            /// <summary>
-            /// 房间号
-            /// </summary>
-            public string RoomId { get; set; }
-            public long Uid { set; get; }
-            /// <summary>
-            /// 是否下载中
-            /// </summary>
-            public bool IsDownloading { get; set; }
-            /// <summary>
-            /// 是否已修复FlvMetaData
-            /// </summary>
-            public bool IsFix { set; get; } = false;
-            /// <summary>
-            /// 下载地址
-            /// </summary>
-            public string Url { get; set; }
-            /// <summary>
-            /// 下载的文件
-            /// </summary>
-            public string File { set; get; }
-            /// <summary>
-            /// 已下载字节数
-            /// </summary>
-            public long DownloadCount { get; set; }
-            /// <summary>
-            /// 下载状态
-            /// </summary>
-            public DownloadStatus Status { get; set; } = DownloadStatus.NewTask;
-            public enum DownloadStatus
-            {
-                /// <summary>
-                /// 新任务
-                /// </summary>
-                NewTask = 0,
-                /// <summary>
-                /// 已准备
-                /// </summary>
-                Standby = 1,
-                /// <summary>
-                /// 下载中
-                /// </summary>
-                Downloading = 2,
-                /// <summary>
-                /// 下载结束
-                /// </summary>
-                DownloadComplete = 3,
             }
         }
     }

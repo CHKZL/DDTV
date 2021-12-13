@@ -5,21 +5,35 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Resources\Img\UI\DDTV.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\Img\UI\add_user.png" />
+    <None Remove="Resources\Img\UI\alert.png" />
     <None Remove="Resources\Img\UI\BackGround.jpg" />
+    <None Remove="Resources\Img\UI\close.png" />
     <None Remove="Resources\Img\UI\cloud-download.png" />
+    <None Remove="Resources\Img\UI\DDTV.ico" />
+    <None Remove="Resources\Img\UI\delete.png" />
+    <None Remove="Resources\Img\UI\folder-open.png" />
     <None Remove="Resources\Img\UI\home.png" />
     <None Remove="Resources\Img\UI\indent.png" />
+    <None Remove="Resources\Img\UI\play-circle.png" />
     <None Remove="Resources\Img\UI\reload _ime.png" />
+    <None Remove="Resources\Img\UI\shrink.png" />
     <None Remove="Resources\Img\UI\smile.png" />
+    <None Remove="Resources\Img\UI\stop.png" />
     <None Remove="Resources\Img\UI\unordered-list.png" />
+    <None Remove="Resources\Img\UI\video.png" />
+    <None Remove="Resources\Img\UI\View.png" />
     <None Remove="Resources\Img\UI\wrench.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="HandyControl" Version="3.2.0" />
+    <PackageReference Include="HandyControl" Version="3.3.0" />
+    <PackageReference Include="LibVLCSharp" Version="3.6.3" />
+    <PackageReference Include="LibVLCSharp.WPF" Version="3.6.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,10 +41,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Resources\Img\UI\add_user.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\alert.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\BackGround.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Img\UI\close.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\cloud-download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\DDTV.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\folder-open.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\home.png">
@@ -39,18 +71,48 @@
     <Resource Include="Resources\Img\UI\indent.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Img\UI\play-circle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\reload _ime.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\shrink.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\smile.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Img\UI\stop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\unordered-list.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\video.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\View.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\wrench.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

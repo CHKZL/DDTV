@@ -278,7 +278,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        internal static string playUrl(long uid, RoomInfoClass.PlayQuality qn)
+        public static string playUrl(long uid, RoomInfoClass.PlayQuality qn)
         {
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");

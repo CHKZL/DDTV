@@ -63,7 +63,7 @@ namespace DDTV_Core
             //    foreach (var item in vs)
             //    {
             //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(667526012);
+            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(122459);
             //roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             //        Thread.Sleep(1000);
             //    }
@@ -96,7 +96,7 @@ namespace DDTV_Core
         }
 
 
-        public static void TestVetInfo()
+        private static void TestVetInfo()
         {
             Task.Run(() =>
             {
@@ -150,5 +150,8 @@ namespace DDTV_Core
             DDTV_CLI,
             DDTV_Other=int.MaxValue
         }
+
+
+     
     }
 }
