@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 
@@ -68,6 +69,34 @@ namespace DDTV_Core.Tool.FlvModule
             {
                 return "";
             }
+        }
+        public static void FlvFileSum(List<string> FilePaht,string Name)
+        {
+            FileStream OldFileStream = new FileStream(FilePaht[0], FileMode.Open);
+            for (int i = 1 ; i < FilePaht.Count ; i++)
+            {
+                using FileStream NewFileStream = new FileStream(FilePaht[i], FileMode.Open);
+                string SunTmpFime = PathOperation.CreateAll("./tmp/") + $"{Name}_{new Random().Next(10000, 99999)}.flv";
+                using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
+                    if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
+                    {
+                        if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+                        {
+                            SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自21446992房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                            FileOperation.Del(SunTmpFime);
+                           
+                        }
+                        int time = Merge(OldFileStream, fsMerge, true, 0);
+                        time = Merge(NewFileStream, fsMerge, false, time);
+                        OldFileStream.Close();
+                        OldFileStream.Dispose();
+                    }
+                OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
+            }
+            File.Copy(OldFileStream.Name, "./test.flv");
+            FileOperation.Del(OldFileStream.Name);
+            OldFileStream.Close();
+            OldFileStream.Dispose();
         }
 
         const int FLV_HEADER_SIZE = 9;
@@ -190,9 +219,10 @@ namespace DDTV_Core.Tool.FlvModule
             {
                 fsInput.Position = FLV_HEADER_SIZE + 4;
             }
-
+            long i = 0;
             while (fsInput.Read(tmp, 0, FLV_TAG_HEADER_SIZE) > 0)
             {
+                i += FLV_TAG_HEADER_SIZE;
                 dataSize = FromInt24StringBe(tmp[1], tmp[2], tmp[3]);
                 curTimestamp = GetTimestamp(tmp[4], tmp[5], tmp[6], tmp[7]);
                 newTimestamp = curTimestamp + lastTimestamp;
@@ -202,18 +232,21 @@ namespace DDTV_Core.Tool.FlvModule
                 readLen = dataSize + 4;
                 if (fsInput.Read(buf, 0, readLen) > 0)
                 {
+                    i += readLen;
                     fsMerge.Write(buf, 0, readLen);
                 }
                 else
                 {
-                    goto failed;
+                    SystemAssembly.Log.Log.AddLog(nameof(Sum), SystemAssembly.Log.LogClass.LogType.Warn, $"合并文件发现数据长度和文件头自报长度不同，差值部分放弃合并，自报长度{fsInput.Length},已处理长度{readLen}");
+                    return newTimestamp;
+                    //goto failed;
                 }
             }
 
             return newTimestamp;
 
-failed:
-            throw new Exception("Merge Failed");
+//failed:
+//            throw new Exception("Merge Failed");
         }
 
     }

@@ -258,11 +258,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         private void _parse(string jsonBody)
         {
-
             var obj = new JObject();
             try
-            {
-              
+            {        
                 jsonBody = ReplaceString(jsonBody);
                 if (jsonBody.Contains("DANMU_MSG"))
                 {
@@ -272,8 +270,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             }
             catch (Exception) { return; }
-
-
             string cmd = (string)obj["cmd"];
             switch (cmd)
             {
@@ -578,7 +574,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             //    buffer[i] = messages[i + 16];
             //}
             Array.Copy(messages, 16, buffer, 0, bodyLength);
-
+            Console.WriteLine($"收到信息：Operation类型{messages[11]}，body内容[{Encoding.Default.GetString(buffer)}]");
             switch (protocol.Version)
             {
                 case 1:

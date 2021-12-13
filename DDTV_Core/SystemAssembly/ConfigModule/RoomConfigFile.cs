@@ -95,6 +95,14 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     UID=item.Value.uid,
                     IsRecDanmu=item.Value.IsRecDanmu
                 });
+                DataCache.SetCache(CacheType.uname, item.Value.uid.ToString(), item.Value.uname.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.Description, item.Value.uid.ToString(), item.Value.Description != null ? item.Value.Description.ToString() : "", int.MaxValue);
+                DataCache.SetCache(CacheType.room_id, item.Value.uid.ToString(), item.Value.room_id.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsAutoRec, item.Value.uid.ToString(), item.Value.IsAutoRec.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsRemind, item.Value.uid.ToString(), item.Value.IsRemind.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.Like, item.Value.uid.ToString(), item.Value.Like.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.uid, item.Value.uid.ToString(), item.Value.uid.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsRecDanmu, item.Value.uid.ToString(), item.Value.IsRecDanmu.ToString(), int.MaxValue);
             }
             File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards));
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.data.Count}]个房间配置");

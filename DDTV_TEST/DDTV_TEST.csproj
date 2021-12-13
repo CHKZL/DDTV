@@ -5,21 +5,10 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>3.0.1.1-Dev</Version>
-    <Description>这是DDTV的CLI版本</Description>
-    <ApplicationIcon>DDTV.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="DDTV.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\DDTV_Core\DDTV_Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Doc\" />
   </ItemGroup>
 
 </Project>

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
 // Disable the warning.
 //#pragma warning disable SYSLIB0014
@@ -18,9 +19,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 {
     public class Download
     {
-        public static string DefaultPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "Rec", CoreConfigClass.Group.Download);
-        public static string DefaultDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
-        public static string DefaultFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}_{R}", CoreConfigClass.Group.Download);
+        private static string DefaultPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "Rec", CoreConfigClass.Group.Download);
+        private static string DefaultDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
+        private static string DefaultFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}_{R}", CoreConfigClass.Group.Download);
+        /// <summary>
+        /// 下载完成事件
+        /// </summary>
+        public static event EventHandler<EventArgs> DownloadCompleted;
         /// <summary>
         /// 增加下载任务
         /// </summary>
@@ -35,14 +40,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// 取消下载任务
         /// </summary>
         /// <param name="uid"></param>
-        public static void CancelDownload(long uid)
+        public static bool CancelDownload(long uid)
         {
-            if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            try
             {
-                foreach (var item in roomInfo.DownloadingList)
+                if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    item.Cancel();
+                    foreach (var item in roomInfo.DownloadingList)
+                    {
+                        item.Cancel();
+                        return true;
+                    }
                 }
+                return false;
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"取消下载任务出现未知错误！", true, e);
+                return false;
             }
         }
         /// <summary>
@@ -52,7 +67,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <param name="Split">任务是否切片(当自动切片使能时，自动转码和flv文件合并取消)</param>
         /// <param name="IsSun">是否合并和转码</param>
         /// <param name="IsTranscod">是否转码</param>
-        public static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsSun = true, bool IsTranscod = true)
+        internal static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsSun = true, bool IsTranscod = true)
         {
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
@@ -121,12 +136,41 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     
                 }
-               
+                DownloadClass.Downloads downloads = new DownloadClass.Downloads();
+                DateTime StartTime = DateTime.MaxValue;
+                DateTime EndTime = DateTime.MinValue;
                 foreach (var item in roomInfo.DownloadingList)
                 {
                     item.HttpWebRequest = null;
-                    roomInfo.DownloadedLog.Add(item);
+                    downloads.HttpWebRequest = null;
+                    downloads.RoomId = item.RoomId;
+                    downloads.Uid = item.Uid;
+                    downloads.Name = item.Name;
+                    downloads.IsDownloading = false;
+                    downloads.Url = String.Empty;
+                    downloads.FileName = String.Empty;
+                    if(item.Title!=downloads.Title)
+                    {
+                        downloads.Title = item.Title;
+                    }
+                    if(item.StartTime< StartTime)
+                    {
+                        downloads.StartTime = item.StartTime;
+                    }
+                    if (item.EndTime > EndTime)
+                    {
+                        downloads.EndTime = item.EndTime;
+                    }
+                    downloads.DownloadCount+=item.DownloadCount;
+                    downloads.Status = DownloadStatus.DownloadComplete;
+                    downloads.FilePath = item.FilePath;
+                    if (FileList.Count > 0)
+                    {
+                        downloads.FileName = FileList[0];
+                    }        
                 }
+                roomInfo.DownloadedLog.Add(downloads);
+                DownloadCompleted.Invoke(downloads, EventArgs.Empty);
                 string EndText = $"\n录制任务完成:\n===================\n" +
                            $"直播间:{roomInfo.room_id}\n" +
                            $"UID:{roomInfo.uid}\n" +
@@ -157,6 +201,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     DownloadClass.Downloads downloadClass = new DownloadClass.Downloads();
                     Rooms.RoomInfo[uid].DownloadingList.Add(downloadClass);
                     downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
+                    downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                     DownloadClass.Downloads DL = roomInfo.DownloadingList.Find(e => e.IsDownloading);
                     if (DL == null)// && Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.roomStatus) == "1")
                     {
@@ -177,16 +222,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                         downloadClass.Status = DownloadClass.Downloads.DownloadStatus.Standby;
-                        if (!IsNewTask)
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})的下载请求，等在数据流中...");
+                        //if (IsNewTask)
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})的下载请求，等待数据流中...");
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
                         {
+                            downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
                             string StarText = $"\n开始录制任务:\n===================\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
                                 $"UID:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uid)}\n" +
                                 $"昵称:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}\n" +
-                                $"标题:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title)}\n" +
+                                $"标题:{downloadClass.Title}\n" +
                                 $"===================";
                             Console.WriteLine(StarText);
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n","　"),false,null,false);
@@ -194,6 +240,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             string Path = $"./{DefaultPath}/{DefaultDirectoryName.Replace("{ROOMID}", downloadClass.RoomId).Replace("{NAME}", Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname))}";
                             string FileName = $"{DefaultFileName.Replace("{DATE}", DateTime.Now.ToString("yyMMdd")).Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss")).Replace("{TITLE}", Rooms.GetValue(downloadClass.Uid, DataCacheModule.DataCacheClass.CacheType.title)).Replace("{R}", new Random().Next(1000, 9999).ToString())}";
                             //执行下载任务
+                            downloadClass.FilePath = Path;
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req,Path, FileName, "flv", roomInfo.FlvSplit);
                             //录制弹幕
                             if(IsNewTask && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))

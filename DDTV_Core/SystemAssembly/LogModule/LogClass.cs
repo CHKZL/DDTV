@@ -19,6 +19,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Warn = 20,
             /// <summary>
+            /// 房间巡逻系统错误日志
+            /// </summary>
+            Warn_RoomPatrol = 23,
+            /// <summary>
             /// 系统一般消息
             /// </summary>
             Info = 30,

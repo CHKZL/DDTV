@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.Tool
 {
-    internal class PathOperation
+    public class PathOperation
     {
         /// <summary>
         /// 在指定路径中创建所有目录
@@ -18,6 +18,19 @@ namespace DDTV_Core.Tool
         {
             Directory.CreateDirectory(Path);
             return Path;
+        }
+        public static bool OpenPath(string Path)
+        {
+            if(Directory.Exists(Path))
+            {
+                System.Diagnostics.Process.Start("explorer.exe", Path);
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+            
         }
     }
 }

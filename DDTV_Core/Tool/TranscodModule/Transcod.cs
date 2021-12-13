@@ -28,7 +28,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 int progress = -1;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    process.StartInfo.FileName = "./lib/ffmpeg/ffmpeg.exe";
+                    process.StartInfo.FileName = "./plugins/ffmpeg/ffmpeg.exe";
                 }
                 else
                 {
