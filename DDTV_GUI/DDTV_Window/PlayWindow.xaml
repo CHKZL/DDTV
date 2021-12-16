@@ -1,4 +1,4 @@
-﻿<Window  x:Class="DDTV_GUI.DDTV_Window.PlayWindow"
+﻿<hc:GlowWindow  x:Class="DDTV_GUI.DDTV_Window.PlayWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,32 +6,33 @@
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:local="clr-namespace:DDTV_GUI"
-        mc:Ignorable="d"
-        
+        mc:Ignorable="d"      
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
         Title="PlayWindow" Width="800" Height="460"
-        Icon="/Resources/Img/UI/DDTV.ico"
-        
-        WindowStyle="None" AllowsTransparency="True" Background="#fb7299" MouseDown="GlowWindow_MouseDown" >
-    <Grid>
+        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" >
+
+    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" KeyDown="Window_KeyDown">
         <Grid>
-            
-        </Grid>
-        <Grid x:Name="PlayControl" Margin="0,422,0,0" Background="#6600A1D6">
-         
-        </Grid>
-        <Grid Height="38" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="38">
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
+                <Slider Name="volume" Maximum="100" Margin="40,10,0,0" HorizontalAlignment="Left" Width="200"/>
+                <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Button_Click"/>
+            </Grid>
+            <Grid Name="loading" Background="#7F5B5B5B">
+                <Label Background="White" FontSize="72">loading...</Label>
+            </Grid>
+            <StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
                 <ToggleButton BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" Click="ToggleButton_Click">
                     <hc:StatusSwitchElement.CheckedElement>
                         <Border Background="#00a1d6">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
                         </Border>
                     </hc:StatusSwitchElement.CheckedElement>
                     <Border Background="#fb7299">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
                     </Border>
                 </ToggleButton>
             </StackPanel>
         </Grid>
-    </Grid>
-</Window>
+    </vlc:VideoView>
+</hc:GlowWindow>

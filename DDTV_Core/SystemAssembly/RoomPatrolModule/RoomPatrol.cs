@@ -90,13 +90,20 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                             //自动录制警告！
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                             DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
-                            StartRec.Invoke(item.Value, EventArgs.Empty);
+                            if(StartRec!=null)
+                            {
+                                StartRec.Invoke(item.Value, EventArgs.Empty);
+                            }
+                            
                         }
                         if (item.Value.IsRemind)
                         {
                             //开播提醒警告！
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"开播提醒:【{item.Value.room_id}-{item.Value.uname}】");
-                            StartLive.Invoke(item.Value, EventArgs.Empty);
+                            if (StartLive != null)
+                            {
+                                StartLive.Invoke(item.Value, EventArgs.Empty);
+                            }
                         }
                     }
                 }

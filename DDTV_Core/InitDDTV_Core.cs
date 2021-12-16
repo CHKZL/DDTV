@@ -16,23 +16,26 @@ namespace DDTV_Core
         /// <summary>
         /// Core的版本号
         /// </summary>
-        public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name+"-"+System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
-            TestVetInfo();
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 512;
-            ServicePointManager.Expect100Continue = false;
-            Log.LogInit(LogClass.LogType.Debug);
-            SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
+            Task.Run(() =>
+            {
+                Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
+                Log.LogInit(LogClass.LogType.Debug);
+                TestVetInfo();
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+                ServicePointManager.DefaultConnectionLimit = 512;
+                ServicePointManager.Expect100Continue = false;
+                SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
 
-           
-            SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
-            SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
+
+                //SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
+                SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
+            });
 
             #region 测试代码
 
@@ -100,7 +103,7 @@ namespace DDTV_Core
         {
             Task.Run(() =>
             {
-                while(true)
+                while (true)
                 {
                     try
                     {
@@ -117,7 +120,7 @@ namespace DDTV_Core
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
-            
+
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
@@ -130,7 +133,7 @@ namespace DDTV_Core
                     Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
                     break;
                 case SendGiftEventArgs sendGiftEventArgs:
-                    Log.AddLog(nameof(LiveChatListener),LogClass.LogType.Info, $"[收到礼物]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到礼物]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
                     break;
                 case EntryEffectEventArgs entryEffectEventArgs:
                     Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
@@ -148,10 +151,11 @@ namespace DDTV_Core
             DDTV_Core,
             DDTV_GUI,
             DDTV_CLI,
-            DDTV_Other=int.MaxValue
+            DDTV_WEB,
+            DDTV_Other = int.MaxValue
         }
 
 
-     
+
     }
 }

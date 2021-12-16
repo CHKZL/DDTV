@@ -88,7 +88,7 @@ namespace DDTV_Core.Tool.TranscodModule
                     SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "转码任务完成:" + P.StartInfo.Arguments);
                 };
 
-                //NagisaCo: 等待转码，使mp4文件完整后再开始上传功能
+                
                 process.WaitForExit();
                 process.Close();
                 transcodClass.IsTranscod = false;
