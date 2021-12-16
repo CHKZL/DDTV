@@ -46,8 +46,8 @@ namespace DDTV_CLI
                 {
                     Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
                          $"a：查看下载中的任务情况\n" +
-                         $"b：查看调用阿B的API次数\n" +
-                         $"c：查看API查询次数\n" +
+                         $"b：查看调用阿B的API次数(已禁用)\n" +
+                         $"c：查看API查询次数(已禁用)\n" +
                          $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
                     switch (Console.ReadKey().Key)
                     {
@@ -72,20 +72,20 @@ namespace DDTV_CLI
                             }
                         case ConsoleKey.B:
                             {
-                                Console.WriteLine("API使用统计:");
-                                foreach (var item in NetClass.API_Usage_Count)
-                                {
-                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                }
+                                //Console.WriteLine("API使用统计:");
+                                //foreach (var item in NetClass.API_Usage_Count)
+                                //{
+                                //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                //}
                                 break;
                             }
                         case ConsoleKey.C:
                             {
-                                Console.WriteLine("查询API统计:");
-                                foreach (var item in NetClass.SelectAPI_Count)
-                                {
-                                    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                }
+                                //Console.WriteLine("查询API统计:");
+                                //foreach (var item in NetClass.SelectAPI_Count)
+                                //{
+                                //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                //}
                                 break;
                             }
                         case ConsoleKey.D:

@@ -129,7 +129,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
-                        Path = Tool.PathOperation.CreateAll(Path);
+                        Path = Tool.FileOperation.CreateAll(Path);
                         FileName = Path + "/" + FileName + "_" + count + "." + format;
                         downloads.FileName= FileName;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())

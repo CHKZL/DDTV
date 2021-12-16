@@ -1,4 +1,5 @@
-﻿using DDTV_Core.SystemAssembly.ConfigModule;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
 
 namespace DDTV_Core.Tool
 {
@@ -55,16 +57,41 @@ namespace DDTV_Core.Tool
         /// <summary>
         /// 检查字符串是否符合文件路径标准
         /// </summary>
-        /// <param name="text"></param>
+        /// <param name="Text"></param>
         /// <returns>返回清除不符合要求的字符后的字符串</returns>
-        public static string CheckFilenames(string text)
+        public static string CheckFilenames(string Text)
         {
-            text = text.Replace(" ", string.Empty).Replace("/", string.Empty).Replace("\\", string.Empty).Replace("\"", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty).Replace("?", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty).Replace("|", string.Empty).Replace("#", string.Empty).Replace("&", string.Empty).Replace("=", string.Empty).Replace("%", string.Empty).Replace("\0", string.Empty);
-            StringBuilder rBuilder = new StringBuilder(text);
+            Text = Text.Replace(" ", string.Empty).Replace("/", string.Empty).Replace("\\", string.Empty).Replace("\"", string.Empty).Replace(":", string.Empty).Replace("*", string.Empty).Replace("?", string.Empty).Replace("<", string.Empty).Replace(">", string.Empty).Replace("|", string.Empty).Replace("#", string.Empty).Replace("&", string.Empty).Replace("=", string.Empty).Replace("%", string.Empty).Replace("\0", string.Empty);
+            StringBuilder rBuilder = new StringBuilder(Text);
             foreach (char rInvalidChar in Path.GetInvalidPathChars())
                 rBuilder = rBuilder.Replace(rInvalidChar.ToString(), string.Empty);
-            text = rBuilder.ToString();
-            return text;
+            Text = rBuilder.ToString();
+            return Text;
+        }
+        /// <summary>
+        /// 替换关键字(用于替换预设的关键字如{roomid},{name}之类的)
+        /// </summary>
+        /// <param name="Text"></param>
+        /// <returns></returns>
+        public static string ReplaceKeyword(long uid,string Text)
+        {
+            return Text
+                .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
+                .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
+                .Replace("{DATE}", DateTime.Now.ToString("yyMMdd"))
+                .Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss"))
+                .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
+                .Replace("{R}", new Random().Next(1000, 9999).ToString());
+        }
+        /// <summary>
+        /// 在指定路径中创建所有目录
+        /// </summary>
+        /// <param name="Path">指定的路径</param>
+        /// <returns></returns>
+        public static string CreateAll(string Path)
+        {
+            Directory.CreateDirectory(Path);
+            return Path;
         }
         /// <summary>
         /// 文件删除服务

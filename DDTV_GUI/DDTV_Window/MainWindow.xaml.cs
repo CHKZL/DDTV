@@ -30,10 +30,11 @@ namespace DDTV_GUI.DDTV_Window
     public partial class MainWindow : GlowWindow
     {
         public event EventHandler<EventArgs> DisposeSent;
+        public static double DefaultVolume = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play));
         public MainWindow()
         {
             InitializeComponent();
-            string Title = $"DDTV-你的地表最强B站录播机　({InitDDTV_Core.Ver})";
+            string Title = $"{InitDDTV_Core.Ver}";
             this.Title = Title;
             DDTV_ICO.Text = Title;
 
@@ -43,10 +44,15 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.StartLive += RoomPatrol_StartLive;
             RoomPatrol.StartRec += RoomPatrol_StartRec;
             Download.DownloadCompleted += Download_DownloadCompleted;
-            //更新界面数据
+            //定时更新界面数据
             UpdateInterface.Main.update(this);
             UpdateInterface.Main.ActivationInterface = 0;
-            //DisposeSent.Invoke(this, EventArgs.Empty);
+
+            InitMainUI();
+        }
+        private void InitMainUI()
+        {
+            DefaultFileName.Text = Download.DefaultFileName;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -456,18 +462,14 @@ namespace DDTV_GUI.DDTV_Window
                 long uid = UpdateInterface.Main.liveList[Index].Uid;
                 if(UpdateInterface.Main.liveList[Index].LiveState==1)
                 {
-                    //打开播放器
+                    PlayWindow playWindow = new PlayWindow(uid);
+                    playWindow.Show();
                 }
                 else
                 {
                     Growl.Warning($"该房间未开播");
-                }
-                //bool IsLive = bool.Parse(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status));
-                //PlayWindow playWindow = new PlayWindow(uid);
-                //playWindow.Show();
-                //TEST t = new TEST();
-                //t.Show();
-            }      
+                }          
+            }
         }
     }
 }

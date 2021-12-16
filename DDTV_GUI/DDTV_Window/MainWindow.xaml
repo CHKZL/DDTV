@@ -213,6 +213,14 @@
 
                 </TabItem>
                 <TabItem Header="设置">
+                    <Grid Margin="20" Background="#4C797979">
+
+                        <TextBox Name="DefaultFileName" hc:InfoElement.TitleWidth="80" hc:InfoElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Margin="10,5,100,322" Text="TEST2">
+                            <hc:Poptip.Instance>
+                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  (可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>
+                            </hc:Poptip.Instance>
+                        </TextBox>
+                    </Grid>
                 </TabItem>
                 <TabItem Header="关于">
                 </TabItem>

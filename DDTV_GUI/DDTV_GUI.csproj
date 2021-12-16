@@ -32,8 +32,8 @@
 
   <ItemGroup>
     <PackageReference Include="HandyControl" Version="3.3.0" />
-    <PackageReference Include="LibVLCSharp" Version="3.6.3" />
-    <PackageReference Include="LibVLCSharp.WPF" Version="3.6.3" />
+    <PackageReference Include="LibVLCSharp" Version="3.6.4" />
+    <PackageReference Include="LibVLCSharp.WPF" Version="3.6.4" />
   </ItemGroup>
 
   <ItemGroup>

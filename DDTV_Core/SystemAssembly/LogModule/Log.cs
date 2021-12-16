@@ -24,12 +24,15 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="log">日志等级</param>
         public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
         {
-            LogLevel= log;
+           
+            LogLevel = log;
             TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
 
-
+           
             AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
+            WeritDB();
+            WriteErrorLogFile();
         }
         /// <summary>
         /// 增加日志
@@ -64,23 +67,48 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 if (logType < LogClass.LogType.Trace)
                 {
-                    if (!LogDB.Operate.AddDb(logClass))
+                    LogDBClasses.Add(logClass);
+                    //if (!LogDB.Operate.AddDb(logClass))
+                    //{
+                    //    ErrorLogFileWrite(new LogClass()
+                    //    {
+                    //        exception = exception,
+                    //        IsError = true,
+                    //        Message = "日志数据库写入失败",
+                    //        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
+                    //        Source = nameof(Log),
+                    //        Time = DateTime.Now,
+                    //        Type = LogClass.LogType.Error
+                    //    });
+                    //}
+                }
+            });
+        }
+        private static List<LogClass> LogDBClasses = new List<LogClass>();
+        private static void WeritDB()
+        {
+            Task.Run(() => {
+            while (true)
+                {
+                    try
                     {
-                        ErrorLogFileWrite(new LogClass()
+                        if(LogDBClasses.Count>0)
                         {
-                            exception = null,
-                            IsError = true,
-                            Message = "日志数据库写入失败",
-                            RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
-                            Source = nameof(Log),
-                            Time = DateTime.Now,
-                            Type = LogClass.LogType.Error
-                        });
+                            if(LogDB.Operate.AddDb(LogDBClasses[0]))
+                            {
+                                LogDBClasses.RemoveAt(0);
+                            }
+                        }
+                        Thread.Sleep(50);
+                    }
+                    catch (Exception)
+                    {
+
                     }
                 }
             });
         }
-
+        private static List<LogClass> logClasses = new List<LogClass>();
         /// <summary>
         /// 错误日志
         /// </summary>
@@ -88,8 +116,35 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message"></param>
         public static void ErrorLogFileWrite(LogClass logClass)// string Source, string Message)
         {
-            string ErrorText = $"\n\n{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}，错误堆栈\n{logClass.exception.ToString()}";
-            File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
+            logClasses.Add(logClass);     
+        }
+       
+        private static void WriteErrorLogFile()
+        {
+            Task.Run(() => {
+                while (true)
+                {
+                    try
+                    {
+
+                        if (logClasses.Count > 0)
+                        {
+                            string ErrorText = $"\n\n{logClasses[0].Time}:[Error][{logClasses[0].Source}][{logClasses[0].RunningTime}]{logClasses[0].Message}";
+                            if (logClasses[0].exception != null)
+                            {
+                                ErrorText += "错误堆栈\n{logClass.exception.ToString()";
+                            }
+                            logClasses.RemoveAt(0);
+                            File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
+                        }
+                        Thread.Sleep(50);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            });
         }
     }
 }

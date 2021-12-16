@@ -52,6 +52,14 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 下载系统运行相关的配置
             /// </summary>
             Download,
+            /// <summary>
+            /// WEBAPI相关的配置
+            /// </summary>
+            WEB_API,
+            /// <summary>
+            /// 播放器相关设置
+            /// </summary>
+            Play,
         }
         /// <summary>
         /// 配置键
@@ -66,6 +74,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 默认下载总文件夹(应该是一个绝对\相对路径目录)
             /// </summary>
             DownloadPath,
+            /// <summary>
+            /// 临时文件存放文件夹
+            /// </summary>
+            TmpPath,
             /// <summary>
             /// 默认下载文件夹名字格式(应该为关键字组合，如:{ROOMID}_{NAME})
             /// </summary>
@@ -82,6 +94,22 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 自动转码(自动转码的使能配置，为布尔值false或ture)
             /// </summary>
             IsAutoTranscod,
+            /// <summary>
+            /// 是否启用WEB_API加密证书(应该为布尔值)
+            /// </summary>
+            WEB_API_SSL,
+            /// <summary>
+            /// WEB_API启用HTTPS后调用的pfx证书文件路径(应该是一个绝对\相对路径文件地址)
+            /// </summary>
+            pfxFileName,
+            /// <summary>
+            /// WEB_API启用后HTTPS调用的pfx证书秘钥文件(应该是一个绝对\相对路径文件地址)
+            /// </summary>
+            pfxPasswordFileName,
+            /// <summary>
+            /// 播放器默认音量(应该是一个uint值，取值0-100)
+            /// </summary>
+            DefaultVolume,
         }
     }
 }

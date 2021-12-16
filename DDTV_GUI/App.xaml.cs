@@ -14,12 +14,6 @@ namespace DDTV_GUI
     /// </summary>
     public partial class App : Application
     {
-        private void Application_Startup(object sender, StartupEventArgs e)
-        {
-            Timeline.DesiredFrameRateProperty.OverrideMetadata(
-                typeof(Timeline),
-                new FrameworkPropertyMetadata { DefaultValue = 60 }
-                );
-        }
+     
     }
 }
