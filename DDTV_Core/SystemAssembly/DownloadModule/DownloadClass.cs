@@ -35,7 +35,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// FLV大小限制使能
             /// </summary>
-            public bool FlvSplit { get; set; }
+            public bool FlvSplit { get; set; } = false;
             /// <summary>
             /// FLV切割大小单位为byte
             /// </summary>
@@ -159,7 +159,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         resp.Dispose();
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
-                                        Download.DownloadCompleteTaskd(Uid, false, false, false);
+                                        Download.DownloadCompleteTaskd(Uid, false, true);
                                        
                                         return;
                                     }

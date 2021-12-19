@@ -75,8 +75,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <param name="Split">任务是否切片(当自动切片使能时，自动转码和flv文件合并取消)</param>
         /// <param name="IsSun">是否合并和转码</param>
         /// <param name="IsTranscod">是否转码</param>
-        internal static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsSun = true, bool IsTranscod = true)
+        internal static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsCancel = false)
         {
+            bool IsSun = true, IsTranscod = true;
+            if(IsCancel)
+            {
+                IsSun = false;
+                IsTranscod = false;
+                Split = false;
+            }
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
@@ -144,54 +151,58 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
 
                 }
-                DownloadClass.Downloads downloads = new DownloadClass.Downloads();
-                DateTime StartTime = DateTime.MaxValue;
-                DateTime EndTime = DateTime.MinValue;
-                foreach (var item in roomInfo.DownloadingList)
+                if (!IsCancel)
                 {
-                    item.HttpWebRequest = null;
-                    downloads.HttpWebRequest = null;
-                    downloads.RoomId = item.RoomId;
-                    downloads.Uid = item.Uid;
-                    downloads.Name = item.Name;
-                    downloads.IsDownloading = false;
-                    downloads.Url = String.Empty;
-                    downloads.FileName = String.Empty;
-                    if (item.Title != downloads.Title)
+                    DownloadClass.Downloads downloads = new DownloadClass.Downloads();
+                    DateTime StartTime = DateTime.MaxValue;
+                    DateTime EndTime = DateTime.MinValue;
+                    foreach (var item in roomInfo.DownloadingList)
                     {
-                        downloads.Title = item.Title;
+                        item.HttpWebRequest = null;
+                        downloads.HttpWebRequest = null;
+                        downloads.RoomId = item.RoomId;
+                        downloads.Uid = item.Uid;
+                        downloads.Name = item.Name;
+                        downloads.IsDownloading = false;
+                        downloads.Url = String.Empty;
+                        downloads.FileName = String.Empty;
+                        if (item.Title != downloads.Title)
+                        {
+                            downloads.Title = item.Title;
+                        }
+                        if (item.StartTime < StartTime)
+                        {
+                            downloads.StartTime = item.StartTime;
+                        }
+                        if (item.EndTime > EndTime)
+                        {
+                            downloads.EndTime = item.EndTime;
+                        }
+                        downloads.DownloadCount += item.DownloadCount;
+                        downloads.Status = DownloadStatus.DownloadComplete;
+                        downloads.FilePath = item.FilePath;
+                        if (FileList.Count > 0)
+                        {
+                            downloads.FileName = FileList[0];
+                        }
                     }
-                    if (item.StartTime < StartTime)
-                    {
-                        downloads.StartTime = item.StartTime;
-                    }
-                    if (item.EndTime > EndTime)
-                    {
-                        downloads.EndTime = item.EndTime;
-                    }
-                    downloads.DownloadCount += item.DownloadCount;
-                    downloads.Status = DownloadStatus.DownloadComplete;
-                    downloads.FilePath = item.FilePath;
-                    if (FileList.Count > 0)
-                    {
-                        downloads.FileName = FileList[0];
-                    }
-                }
-                roomInfo.DownloadedLog.Add(downloads);
-                if (DownloadCompleted != null)
-                {
-                    DownloadCompleted.Invoke(downloads, EventArgs.Empty);
-                }
 
-                string EndText = $"\n录制任务完成:\n===================\n" +
-                           $"直播间:{roomInfo.room_id}\n" +
-                           $"UID:{roomInfo.uid}\n" +
-                           $"昵称:{roomInfo.uname}\n" +
-                           $"标题:{roomInfo.title}\n" +
-                           $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].FileName : string.Empty) +
-                           $"\n===================";
-                Console.WriteLine(EndText);
-                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
+                    roomInfo.DownloadedLog.Add(downloads);
+                    if (DownloadCompleted != null)
+                    {
+                        DownloadCompleted.Invoke(downloads, EventArgs.Empty);
+                    }
+
+                    string EndText = $"\n录制任务完成:\n===================\n" +
+                               $"直播间:{roomInfo.room_id}\n" +
+                               $"UID:{roomInfo.uid}\n" +
+                               $"昵称:{roomInfo.uname}\n" +
+                               $"标题:{roomInfo.title}\n" +
+                               $"储存路径:" + (roomInfo.DownloadingList.Count > 0 ? roomInfo.DownloadingList[0].FileName : string.Empty) +
+                               $"\n===================";
+                    Console.WriteLine(EndText);
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
+                }
                 roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
             }
         }
@@ -211,15 +222,16 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
                     DownloadClass.Downloads downloadClass = new DownloadClass.Downloads();
-                    Rooms.RoomInfo[uid].DownloadingList.Add(downloadClass);
-                    downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
-                    downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                     DownloadClass.Downloads DL = roomInfo.DownloadingList.Find(e => e.IsDownloading);
                     if (DL == null)// && Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.roomStatus) == "1")
                     {
+                        Rooms.RoomInfo[uid].DownloadingList.Add(downloadClass);
+                        downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
+                        downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                         roomInfo.IsDownload = true;
                         downloadClass.Uid = uid;
                         downloadClass.Url = BilibiliModule.API.RoomInfo.playUrl(uid, (RoomInfoClass.Quality)RecQuality);
+                        downloadClass.IsDownloading = true;
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(downloadClass.Url);
                         req.Method = "GET";
                         req.ContentType = "application/x-www-form-urlencoded";

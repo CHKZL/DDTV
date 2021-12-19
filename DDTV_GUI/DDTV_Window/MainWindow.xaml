@@ -268,7 +268,14 @@
                                         </hc:ComboBox>
                                     </Grid>
                                     <Grid Width="630" Margin="5">
-                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" Margin="0,0,460,0" SelectionChanged="ComboBox_SelectionChanged">
+                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" Margin="0,0,460,0" SelectionChanged="RecQualityComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
+                                            <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
+                                            <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
+                                            <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
+                                            <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
+                                        </hc:ComboBox>
+                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="205,0,255,0" SelectionChanged="PlayQualityComboBox_SelectionChanged">
                                             <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
