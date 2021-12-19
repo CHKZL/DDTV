@@ -101,7 +101,7 @@
                         <TextBlock x:Name="LiveBroadcastingCount" Margin="100,54,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
                         <TextBlock x:Name="RecCount" Margin="100,94,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
                         <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
-                        <TextBlock Text="已知的问题：&#13;1：直播间观看功能有时候不能用&#13;2：播放窗口平铺通能还没写好&#13;3：播放窗口弹幕功能还没写好"   Height="103" Margin="40,291,340,0" VerticalAlignment="Top"/>
+                        <TextBlock Text="已知的问题：&#13;1：播放窗口平铺通能还没写好&#13;2：播放窗口弹幕功能还没写好"   Height="103" Margin="40,291,340,0" VerticalAlignment="Top"/>
                         <TextBlock Margin="10,14,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
                         <TextBlock Margin="10,54,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
                         <TextBlock Margin="10,94,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>

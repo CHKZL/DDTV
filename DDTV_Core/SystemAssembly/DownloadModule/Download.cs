@@ -19,7 +19,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 {
     public class Download
     {
-        public static string DefaultPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "./Rec", CoreConfigClass.Group.Download);
+        public static string DefaultPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "./Rec/", CoreConfigClass.Group.Download);
         public static string DefaultDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
         public static string DefaultFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}", CoreConfigClass.Group.Download);
         public static string TmpPath = CoreConfig.GetValue(CoreConfigClass.Key.TmpPath, "./tmp/", CoreConfigClass.Group.Download);
@@ -87,7 +87,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
-                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"/{DefaultDirectoryName}" + "/" + $"{DefaultFileName}" + "_{R}.flv");
+                if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
+                    DefaultPath = DefaultPath + "/";
+                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + "/" + $"{DefaultFileName}" + "_{R}.flv");
 
                 //弹幕录制结束处理
                 if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
@@ -260,8 +262,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 $"===================";
                             Console.WriteLine(StarText);
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n", "　"), false, null, false);
-
-                            string Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}/{DefaultDirectoryName}");
+                            if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
+                                DefaultPath = DefaultPath + "/";
+                            string Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}{DefaultDirectoryName}");
                             string FileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultFileName}" + "_{R}");
                             //执行下载任务
                             downloadClass.FilePath = Path;
