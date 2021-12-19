@@ -22,20 +22,14 @@ namespace DDTV_Core
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            Task.Run(() =>
-            {
-                Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
-                Log.LogInit(LogClass.LogType.Debug);
-                TestVetInfo();
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-                ServicePointManager.DefaultConnectionLimit = 512;
-                ServicePointManager.Expect100Continue = false;
-                SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
-
-
-                //SystemAssembly.NetworkRequestModule.NetClass.SAPIEVT();
-                SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
-            });
+            Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
+            Log.LogInit(LogClass.LogType.Debug);
+            TestVetInfo();
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.DefaultConnectionLimit = 512;
+            ServicePointManager.Expect100Continue = false;
+            SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
+           
 
             #region 测试代码
 

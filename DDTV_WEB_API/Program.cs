@@ -4,13 +4,13 @@ using Microsoft.Extensions.FileProviders;
 using System.Security.Cryptography.X509Certificates;
 using DDTV_Core.SystemAssembly.ConfigModule;
 
-namespace DDTVLiveRecWebServer
+namespace DDTV_WEB_API//DDTVLiveRecWebServer
 {
     public class Program
     {
-        private static bool IsLTS = true;
-        private static string pfxFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "Rec", CoreConfigClass.Group.WEB_API);
-        private static string pfxPasswordFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "Rec", CoreConfigClass.Group.WEB_API);
+        private static bool IsSSL = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WEB_API_SSL, "false", CoreConfigClass.Group.WEB_API));
+        private static string pfxFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxFileName, "pfxFileName", CoreConfigClass.Group.WEB_API);
+        private static string pfxPasswordFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxPasswordFileName, "pfxPasswordFileName", CoreConfigClass.Group.WEB_API);
         public static void Main(string[] args)
         {
             {
@@ -41,18 +41,15 @@ namespace DDTVLiveRecWebServer
                 //    SetAPP(webBuilder);
                 //});
                 builder.Services.AddSwaggerGen();
-                if (IsLTS)
+                if (IsSSL)
                 {
                     builder.WebHost.ConfigureKestrel(options =>
                     {
                         options.ConfigureHttpsDefaults(httpsOptions =>
-                        {
-                           
-                            var certPath = Path.Combine(builder.Environment.ContentRootPath, "./6790481.pem");
-                            var keyPath = Path.Combine(builder.Environment.ContentRootPath, "./6790481.key");
-
-                            httpsOptions.ServerCertificate = X509Certificate2.CreateFromPemFile(certPath,
-                                                             keyPath);
+                        {                         
+                            var certPath = Path.Combine(builder.Environment.ContentRootPath, pfxFileName);
+                            var keyPath = Path.Combine(builder.Environment.ContentRootPath, pfxPasswordFileName);
+                            httpsOptions.ServerCertificate = X509Certificate2.CreateFromPemFile(certPath,keyPath);
                         });
                     });
                 }
@@ -80,47 +77,5 @@ namespace DDTVLiveRecWebServer
 
             }
         }
-        public static void SetAPP(IWebHostBuilder app)
-        {
-            if (IsLTS)
-            {
-                app.ConfigureKestrel(option =>
-                {
-                    option.ConfigureHttpsDefaults(i =>
-                    {
-                        i.ServerCertificate = new System.Security.Cryptography.X509Certificates.X509Certificate2($"./pfx证书名称", "pfx证书密码");
-                    });
-                });
-                //app.UseStartup<StartupBase>().UseUrls("https://0.0.0.0:10086");
-            }
-            //else
-            //{
-            //    app.UseStartup<StartupBase>().UseUrls("http://0.0.0.0:10086");
-            //}
-        }
-        //public static IHostBuilder Start(string[] args) =>
-        //    Host.CreateDefaultBuilder(args)
-        //        .ConfigureWebHostDefaults(webBuilder =>
-        //        {
-        //            webBuilder.UseStartup<StartupBase>().UseUrls("http://0.0.0.0:10086");
-        //            //webBuilder.UseStartup<Startup>();
-        //            SetAPP(webBuilder);
-            
-        //            webBuilder.Configure(app =>
-        //            {
-        //                app.UseSwagger();
-        //                app.UseSwaggerUI();
-        //                app.UseHttpsRedirection();
-
-        //                //提供WEB服务器必要的资源文件，该文件夹的文件不会进过鉴权
-        //                app.UseFileServer(new FileServerOptions()
-        //                {
-        //                    EnableDirectoryBrowsing = false,//关闭目录结构树访问权限
-        //                    FileProvider = new PhysicalFileProvider(DDTV_Core.Tool.PathOperation.CreateAll(Environment.CurrentDirectory + @"/static")),
-        //                    RequestPath = new PathString("/static")
-        //                });
-        //            });
-                    
-        //        });
     }
 }

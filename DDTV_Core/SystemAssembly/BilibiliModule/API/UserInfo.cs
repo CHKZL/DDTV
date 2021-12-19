@@ -101,8 +101,82 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             return null;
         }
-        public static void follow(long uid)
+
+        public static bool LoginValidityVerification()
         {
+            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/nav");
+            JObject root= (JObject)JsonConvert.DeserializeObject(WebText);
+            if(root.TryGetValue("data",out var data))
+            {
+                try
+                {
+    
+                    if (bool.TryParse(data["isLogin"].ToString(),out bool T))
+                    {
+                        if (T)
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息isLogin值是出现未知问题,请求到的数据为:{WebText}");
+                        return true;
+                    }
+                }
+                catch (Exception)
+                {
+                    Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息出现解析错误,请求到的数据为:{WebText}");
+                    return true;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+        //如果好用，请收藏地址，帮忙分享。
+
+
+        internal class Root
+        {
+            /// <summary>
+            /// 
+            /// </summary>
+            internal int code { get; set; }
+            /// <summary>
+            /// 消息
+            /// </summary>
+            internal string message { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            internal int ttl { get; set; }
+            /// <summary>
+            /// 
+            /// </summary>
+            internal Data data { get; set; }
+            internal class Data
+            {
+                /// <summary>
+                /// 是否登陆
+                /// </summary>
+                internal string isLogin { get; set; }
+            }
+        }
+
+        /// <summary>
+        /// 添加关注列表中的V到本地房间配置文件
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public static int follow(long uid)
+        {
+            int AddCount = 0;
             List<User.follow.ListItem> FollowList = new();
             int pg = 0;
             int total = 0; 
@@ -137,6 +211,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         if(FollowList.Any(e => e.mid == mid)&& mid!=0&&roomid!=0)
                         {
                             RoomConfig.AddRoom(mid, roomid, name);
+                            AddCount++;
                         }
                     }
                     catch (Exception)
@@ -145,6 +220,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 }
                 RoomConfigFile.WriteRoomConfigFile();
             }
+            return AddCount;
         }
     }
 }

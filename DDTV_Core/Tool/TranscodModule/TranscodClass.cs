@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.Tool.TranscodModule
 {
-    internal class TranscodClass
+    public class TranscodClass
     {
         /// <summary>
         /// 转码任务状态，T为正在转码
         /// </summary>
-        internal bool IsTranscod { get; set; }
+        public bool IsTranscod { get; set; }
         /// <summary>
         /// 转码后文件储存路径
         /// </summary>

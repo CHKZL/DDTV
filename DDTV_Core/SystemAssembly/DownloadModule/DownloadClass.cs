@@ -33,6 +33,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public string Title { get; set; }
             /// <summary>
+            /// FLV大小限制使能
+            /// </summary>
+            public bool FlvSplit { get; set; }
+            /// <summary>
+            /// FLV切割大小单位为byte
+            /// </summary>
+            public long FlvSplitSize { set; get; }
+            /// <summary>
             /// 是否下载中
             /// </summary>
             public bool IsDownloading { get; set; }
@@ -120,8 +128,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="req">下载任务WebRequest对象</param>
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
-            /// <param name="Split">是否切片</param>
-            internal void DownFLV_HttpWebRequest(DownloadClass.Downloads downloads,HttpWebRequest req, string Path, string FileName, string format, bool Split)
+            internal void DownFLV_HttpWebRequest(Downloads downloads,HttpWebRequest req, string Path, string FileName, string format)
             {
                 Task.Run(() =>
                 {
@@ -212,7 +219,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     resp.Close();
                                                     resp.Dispose();
                                                 }
-                                                Download.DownloadCompleteTaskd(Uid, Split);
+                                                Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
                                                 return;
                                             }
                                         }
@@ -220,7 +227,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
                                     DataLength = DL;
                                     fileStream.Write(FixData, 0, FixData.Length);
-                                    if (Split && DownloadCount > (1024 * 1024 * 5) && DataLength == 15)
+                                    if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize && DataLength == 15)
                                     {
                                         count++;
                                         fileStream.Close();

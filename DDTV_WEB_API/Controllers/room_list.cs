@@ -9,7 +9,7 @@ namespace DDTV_WEB_API.Controllers
     public class room_list : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "room_list")]
-        [Consumes("application/json")]
+        //[Consumes("application/json")]
         public string Post()
         {
             //Response.ContentType = "application/json";

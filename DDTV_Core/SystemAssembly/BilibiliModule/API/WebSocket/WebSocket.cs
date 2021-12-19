@@ -26,7 +26,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
                 }
                 else
                 {
-                    return null;
+                    return Rooms.Rooms.RoomInfo[uid];
                     //
                 }
             }

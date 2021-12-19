@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// <summary>
         /// 直播质量
         /// </summary>
-        public enum PlayQuality
+        public enum Quality
         {
             /// <summary>
             /// 流畅
@@ -225,10 +225,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 主播简介
             /// </summary>
             public string sign { set; get; }
-            /// <summary>
-            /// 文件是否切片
-            /// </summary>
-            public bool FlvSplit { set; get; } = false;
             /// <summary>
             /// 房间的WS连接对象类
             /// </summary>

@@ -83,7 +83,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             DownloadDirectoryName,
             /// <summary>
-            /// 默认下载文件名格式(应该为关键字组合，如:{DATE}_{TIME}_{TITLE}_{R})
+            /// 默认下载文件名格式(应该为关键字组合，如:{DATE}_{TIME}_{TITLE})
             /// </summary>
             DownloadFileName,
             /// <summary>
@@ -110,6 +110,38 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 播放器默认音量(应该是一个uint值，取值0-100)
             /// </summary>
             DefaultVolume,
+            /// <summary>
+            /// 首次启动标志位(应该是一个布尔值第一次启动为真)
+            /// </summary>
+            FirstStart,
+            /// <summary>
+            /// 录制分辨率(应该为有限的int值，可选值为 80:流畅  150:高清  250:超清  400:蓝光  10000:原画)
+            /// </summary>
+            RecQuality,
+            /// <summary>
+            /// 全局弹幕录制开关(布尔值，每个房间自己在房间配置列表单独设置，这个是是否启用弹幕录制功能的总共开关)
+            /// </summary>
+            IsRecDanmu,
+            /// <summary>
+            /// 全局礼物录制开关(布尔值)
+            /// </summary>
+            IsRecGift,
+            /// <summary>
+            /// 全局上舰录制开关(布尔值)
+            /// </summary>
+            IsRecGuard,
+            /// <summary>
+            /// 全局SC录制开关(布尔值)
+            /// </summary>
+            IsRecSC,
+            /// <summary>
+            /// 全局FLV文件按大小切分开关(布尔值)
+            /// </summary>
+            IsFlvSplit,
+            /// <summary>
+            /// 当IsFlvSplit为真时使能，FLV文件切分的大小(应该为long值，切割值应该以byte计算)
+            /// </summary>
+            FlvSplitSize,
         }
     }
 }

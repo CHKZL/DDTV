@@ -278,7 +278,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl(long uid, RoomInfoClass.PlayQuality qn)
+        public static string playUrl(long uid, RoomInfoClass.Quality qn)
         {
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
@@ -311,7 +311,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         if (JO.TryGetValue("data", out var Roomdurl) && Roomdurl != null)
                         {
 
-                            string Url = Roomdurl["durl"][0]["url"].ToString();
+                            string Url = Roomdurl["durl"][2]["url"].ToString();
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功");
                             return Url;
 

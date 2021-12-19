@@ -19,6 +19,15 @@ namespace DDTV_Core.SystemAssembly.Log
         /// </summary>
         private static LogClass.LogType LogLevel = LogClass.LogType.All;
         /// <summary>
+        /// 本地日志的记录
+        /// </summary>
+        public static List<string> LogList = new();
+
+        public static event EventHandler<EventArgs> LogAddEvent;
+        public static bool IsEvent = false;
+
+
+        /// <summary>
         /// Log系统初始化
         /// </summary>
         /// <param name="log">日志等级</param>
@@ -63,7 +72,13 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 if (logType <= LogLevel&& logType!= LogClass.LogType.Info_Transcod&& IsDisplay)
                 {
-                    Console.WriteLine($"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}\n");
+                    string _ = $"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}";
+                    if (IsEvent)
+                    {
+                        LogAddEvent.Invoke(_, EventArgs.Empty);
+                    }
+                    LogList.Add(_);
+                    Console.WriteLine($"{_}\n");
                 }
                 if (logType < LogClass.LogType.Trace)
                 {
@@ -99,7 +114,7 @@ namespace DDTV_Core.SystemAssembly.Log
                                 LogDBClasses.RemoveAt(0);
                             }
                         }
-                        Thread.Sleep(50);
+                        Thread.Sleep(10);
                     }
                     catch (Exception)
                     {
@@ -137,7 +152,7 @@ namespace DDTV_Core.SystemAssembly.Log
                             logClasses.RemoveAt(0);
                             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
                         }
-                        Thread.Sleep(50);
+                        Thread.Sleep(10);
                     }
                     catch (Exception)
                     {
