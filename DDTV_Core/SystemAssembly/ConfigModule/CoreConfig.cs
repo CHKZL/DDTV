@@ -11,21 +11,47 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class CoreConfig
     {
-
+        public static bool FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.FirstStart, "true", CoreConfigClass.Group.Core));
         /// <summary>
-        /// 
+        /// 初始化配置文件
         /// </summary>
         public static void ConfigInit(SatrtType satrtType)
         {
+            //初始化读取配置文件
             CoreConfigFile.ReadConfigFile();
+            //初始化读取房间配置
             RoomConfigFile.ReadRoomConfigFile();
-            Rooms.UpdateRoomInfo();
-            //读取完成后最后储存一次配置文件
-            //CoreConfigFile.WriteConfigFile();
-            Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
-            BilibiliUserConfig.Init(satrtType);
-            Task.Run(() => { 
-            while(true)
+
+            switch (satrtType)
+            {
+                case SatrtType.DDTV_GUI:
+                    if(FirstStart)
+                    {
+
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
+                        //初始化哔哩哔哩账号系统
+                        BilibiliUserConfig.Init(satrtType);
+                        //开始房间巡逻
+                        Rooms.UpdateRoomInfo();
+                        RoomPatrolModule.RoomPatrol.Init();
+                    }
+                    break;
+                default:             
+                    Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
+                    //初始化哔哩哔哩账号系统
+                    BilibiliUserConfig.Init(satrtType);
+                    //开始房间巡逻
+                    Rooms.UpdateRoomInfo();
+                    RoomPatrolModule.RoomPatrol.Init();
+                    break;
+            }
+           
+            //开一个线程用于定时自动储存配置
+            Task.Run(() => {
+                while (true)
                 {
                     try
                     {
@@ -35,9 +61,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     {
                         Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Warn, $"配置文件定时储存出现错误", true, e);
                     }
-                    Thread.Sleep(30*1000);
+                    Thread.Sleep(10 * 1000);
                 }
             });
+        }
+        public static void InitConfig()
+        {
+            
         }
         /// <summary>
         /// 获取配置

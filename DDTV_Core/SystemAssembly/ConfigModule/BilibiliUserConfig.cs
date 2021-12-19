@@ -1,10 +1,12 @@
 ﻿using BiliAccount;
 using DDTV_Core.SystemAssembly.BilibiliModule.User;
+using DDTV_Core.SystemAssembly.Log;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
@@ -41,11 +43,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             else
             {
-                login.VerifyLogin.Loing(satrtType);
-                return true;
+                return login.VerifyLogin.Loing(satrtType);
             }
         }
-        internal static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")
+        public static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")
         {
             if (File.Exists(BiliUserFile))
             {
@@ -131,6 +132,46 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             else
             {
                 return false;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public class CheckAccount
+        {
+            public static event EventHandler<EventArgs> CheckAccountChanged;
+            private static bool IsOn = false;
+            private static int IntervalTime = 3600 * 6 * 1000;
+            /// <summary>
+            /// 检查账号有效性
+            /// </summary>
+            public static void CheckLoginValidity()
+            {
+                if (!IsOn)
+                {
+                    IsOn = !IsOn;
+                    Task.Run(() =>
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
+                                {
+                                    if (CheckAccountChanged != null)
+                                    {
+                                        CheckAccountChanged.Invoke(null, EventArgs.Empty);
+                                    }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Log.AddLog(nameof(CheckAccount), LogClass.LogType.Error, "验证账号有效性出现意外错误", true, e);
+                            }
+                            Thread.Sleep(IntervalTime);
+                        }
+                    });
+                }
             }
         }
     }

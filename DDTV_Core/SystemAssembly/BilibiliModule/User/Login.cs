@@ -14,9 +14,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
     {
         public class VerifyLogin
         {
-            public static void Loing(InitDDTV_Core.SatrtType satrtType)
+            public static bool Loing(InitDDTV_Core.SatrtType satrtType)
             {
-               QR.QRInit();
+               QR.QRInit(satrtType);
                 do
                 {
                     if (string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime<DateTime.UtcNow)
@@ -30,23 +30,35 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                 Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，访问"+"https://本设备IP或域名:端口/loginqr"+"，查看二维码，或打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
                                 break;
                             case InitDDTV_Core.SatrtType.DDTV_GUI:
-                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "DDTV正在等待扫码登陆...");
-                                break;
+                                return false;
+                                //Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "DDTV正在等待扫码登陆...");
+                                //break;
                             default:
                                 break;
                         }    
                     Thread.Sleep(6000);
                     }
                 } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
+                return true;
             }
         }
         public class QR
         {
-            public static void QRInit()
+            public static void QRInit(InitDDTV_Core.SatrtType satrtType)
             {
-                ByQRCode.QrCodeStatus_Changed+=ByQRCode_QrCodeStatus_Changed;
-                ByQRCode.QrCodeRefresh +=ByQRCode_QrCodeRefresh; ;
-                ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                switch(satrtType)
+                {
+                    case InitDDTV_Core.SatrtType.DDTV_GUI:
+                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; ;
+                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                        break;
+                    default:
+                        ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; ;
+                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                        break;
+                }
+               
             }
 
             private static void ByQRCode_QrCodeRefresh(System.Drawing.Bitmap newQrCode)

@@ -10,18 +10,69 @@
         ActiveGlowColor="#00a1d6"
         InactiveGlowColor="#fb7299"
         Title="PlayWindow" Width="800" Height="460"
-        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" >
+        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" >
 
-    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" KeyDown="Window_KeyDown">
-        <Grid>
-            <Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
-                <Slider Name="volume" Maximum="100" Margin="40,10,0,0" HorizontalAlignment="Left" Width="200"/>
-                <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Button_Click"/>
-            </Grid>
+    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
+        <Grid MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
+            <Grid.ContextMenu>
+                <ContextMenu Width="150">
+                    <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="打开\关闭弹幕" Click="MenuItem_OpenDamu_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="刷新本窗口" Click="MenuItem_RefreshWindow_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/reload.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="全局静音" Click="MenuItem_SetMute_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/notification.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="自动全屏平铺" Click="MenuItem_WindowSorting_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="关闭本窗口" Click="MenuItem_Exit_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Grid.ContextMenu>
+            <!--<Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
+                <Slider Name="volume" Maximum="100" Margin="40,10,0,0" HorizontalAlignment="Left" Width="200" MouseMove="volume_MouseMove"/>
+                <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Danmu_Send_Button_Click"/>
+            </Grid>-->
             <Grid Name="loading" Background="#7F5B5B5B">
-                <Label Background="White" FontSize="72">loading...</Label>
+                <hc:CircleProgressBar IsIndeterminate="True"/>
+                <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
-            <StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
+
+            <hc:PreviewSlider Name="volume" Height="300" Value="200" Maximum="100" Orientation="Vertical" Margin="10,150,0,10"  VerticalAlignment="Center" HorizontalAlignment="Left" SmallChange="1" MouseMove="volume_MouseMove">
+                <hc:PreviewSlider.PreviewContent>
+                    <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
+                </hc:PreviewSlider.PreviewContent>
+            </hc:PreviewSlider>
+            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2FFFFFF" FontSize="30" Visibility="Collapsed"/>
+
+            <!--<StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
                 <ToggleButton BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" Click="ToggleButton_Click">
                     <hc:StatusSwitchElement.CheckedElement>
                         <Border Background="#00a1d6">
@@ -32,7 +83,8 @@
                         <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
                     </Border>
                 </ToggleButton>
-            </StackPanel>
+            </StackPanel>-->
+
         </Grid>
     </vlc:VideoView>
 </hc:GlowWindow>

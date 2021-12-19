@@ -183,6 +183,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             roomInfo.IsRemind = roomCards.IsRemind;
                             roomInfo.uname = roomCards.name;
                             roomInfo.Like = roomCards.Like;
+                            roomInfo.IsRecDanmu = roomCards.IsRecDanmu;
                         }
                         else
                         {
@@ -191,6 +192,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             roomInfo.IsRemind = roomInfo.IsRemind;
                             roomInfo.uname = roomInfo.uname;
                             roomInfo.Like = roomInfo.Like;
+                            roomInfo.IsRecDanmu = roomInfo.IsRecDanmu;
                             switch (Type)
                             {
                                 case 1:
@@ -207,6 +209,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                     break;
                                 case 5:
                                     roomInfo.Like = roomCards.Like;
+                                    break;
+                                case 6:
+                                    roomInfo.IsRecDanmu = roomCards.IsRecDanmu;
                                     break;
                             }
                         }

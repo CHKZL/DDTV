@@ -411,3 +411,7 @@ healthchecksdb
 .idea
 .vscode
 /BilibiliLiveChatScript
+/DDTV_Server/Ver.ini
+/DDTV_Server/DDTV_Server.Parameters.xml
+/DDTV_Server/DDTV_Server.SetParameters.xml
+/DDTV_Server/DDTV_Server.SourceManifest.xml

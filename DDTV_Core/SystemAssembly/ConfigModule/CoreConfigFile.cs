@@ -86,13 +86,17 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             Enabled=false;
                             ConfigText.Trim('#');
                         }
-                        CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
+                        if(Enum.TryParse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' '), out var Key))
                         {
-                            Enabled=Enabled,
-                            Key=(CoreConfigClass.Key)Enum.Parse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' ')),
-                            Value=ConfigText.Split('=')[1],
-                            Group=Group
-                        });
+                            CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
+                            {
+                                Enabled = Enabled,
+                                Key = (CoreConfigClass.Key)Enum.Parse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' ')),
+                                Value = ConfigText.Split('=')[1],
+                                Group = Group
+                            });
+                        }
+                       
                     }
                 }
                 else

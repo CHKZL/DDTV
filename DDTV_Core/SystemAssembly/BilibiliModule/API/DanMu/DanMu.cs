@@ -17,7 +17,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// </summary>
         /// <param name="roomId">房间号(长房间号)</param>
         /// <param name="Message">发送信息(不能超过20个字符)</param>
-        internal static void Send(string roomId, string Message)
+        public static void Send(string roomId, string Message)
         {
             CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
             Dictionary<string, string> Params = new Dictionary<string, string>

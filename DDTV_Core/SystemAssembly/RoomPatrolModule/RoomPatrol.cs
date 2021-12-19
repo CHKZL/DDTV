@@ -10,6 +10,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
 {
     public class RoomPatrol
     {
+        public static bool IsOn = true;
         /// <summary>
         /// 开始直播事件
         /// </summary>
@@ -51,7 +52,8 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     try
                     {
                         Thread.Sleep(2 * 1000);
-                        Patrol();
+                        if (IsOn)
+                            Patrol();
                         ETime = TimeModule.Time.Operate.GetRunMilliseconds();
                         Thread.Sleep(8 * 1000);
                     }

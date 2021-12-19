@@ -1,5 +1,6 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.Log;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,16 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         {
             Task.Run(() =>
             {
-                RoomInfoClass.RoomInfo roomInfo = WebSocket.WebSocket.ConnectRoomAsync(UID);
-                roomInfo.DanmuFile.TimeStopwatch = new System.Diagnostics.Stopwatch();
-                roomInfo.DanmuFile.TimeStopwatch.Start();
-                roomInfo.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-                roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                //DisposeSent
-               
+                StartRecDanmu(UID);
             });
+        }
+        public static void StartRecDanmu(long UID)
+        {
+            RoomInfoClass.RoomInfo _ = WebSocket.WebSocket.ConnectRoomAsync(UID);
+            _.DanmuFile.TimeStopwatch = new System.Diagnostics.Stopwatch();
+            _.DanmuFile.TimeStopwatch.Start();
+            _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+            _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
         }
 
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
@@ -102,10 +105,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
 
         public static void SevaDanmuFile(RoomInfoClass.RoomInfo roomInfo)
         {
-            SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id);
-            SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
-            SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
-            SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
+            if (Download.IsRecDanmu)
+                SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id);
+            if (Download.IsRecGift)
+                SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
+            if (Download.IsRecGuard)
+                SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
+            if (Download.IsRecSC)
+                SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
         }
         private static void SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo,string FileName,string Name,int roomId)
         {

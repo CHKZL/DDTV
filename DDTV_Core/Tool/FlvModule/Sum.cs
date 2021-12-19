@@ -27,7 +27,7 @@ namespace DDTV_Core.Tool.FlvModule
                     if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].FileName) && File.Exists(roomInfo.DownloadingList[i].FileName))
                     {
                         using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].FileName, FileMode.Open);
-                        string SunTmpFime = FileOperation.CreateAll("./tmp/") + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
+                        string SunTmpFime = FileOperation.CreateAll(SystemAssembly.DownloadModule.Download.TmpPath) + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
                         using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                             if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                             {
@@ -76,7 +76,7 @@ namespace DDTV_Core.Tool.FlvModule
             for (int i = 1 ; i < FilePaht.Count ; i++)
             {
                 using FileStream NewFileStream = new FileStream(FilePaht[i], FileMode.Open);
-                string SunTmpFime = FileOperation.CreateAll("./tmp/") + $"{Name}_{new Random().Next(10000, 99999)}.flv";
+                string SunTmpFime = FileOperation.CreateAll(SystemAssembly.DownloadModule.Download.TmpPath) + $"{Name}_{new Random().Next(10000, 99999)}.flv";
                 using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                     if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                     {

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.Tool.TranscodModule
 {
-    internal class Transcod
+    public class Transcod
     {
         public static bool IsAutoTranscod= bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsAutoTranscod, "false", CoreConfigClass.Group.Core));
         public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.TranscodParmetrs, "-i {Before} -vcodec copy -acodec copy {After}", CoreConfigClass.Group.Core);
