@@ -591,6 +591,8 @@ namespace DDTV_GUI.DDTV_Window
                     if (Directory.Exists(Text))
                     {
                         Download.DefaultPath = Text;
+                        if (Download.DefaultPath.Substring(Download.DefaultPath.Length - 1, 1) != "/")
+                            Download.DefaultPath = Download.DefaultPath + "/";
                         CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DefaultPath, CoreConfigClass.Group.Download);
                         Growl.Success("录制储存文件夹设置成功");
                     }
@@ -617,6 +619,8 @@ namespace DDTV_GUI.DDTV_Window
                     if (Directory.Exists(Text))
                     {
                         Download.TmpPath = Text;
+                        if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+                            Download.TmpPath = Download.TmpPath + "/";
                         CoreConfig.SetValue(CoreConfigClass.Key.TmpPath, Download.TmpPath, CoreConfigClass.Group.Download);
                         Growl.Success("临时文件文件夹设置成功");
                     }

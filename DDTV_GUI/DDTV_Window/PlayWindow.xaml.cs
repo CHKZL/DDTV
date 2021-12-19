@@ -14,6 +14,10 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using System.Net;
 using System.Text;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using System.Collections.Generic;
+using System.IO;
+using DDTV_Core.SystemAssembly.NetworkRequestModule;
+using DDTV_Core.SystemAssembly.DownloadModule;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -34,10 +38,12 @@ namespace DDTV_GUI.DDTV_Window
         int VolumeGridTime = 3;
         public event EventHandler<EventArgs> SendDialogDispose;
         private bool IsOpenDanmu = false;
+        private HttpWebResponse httpWebResponse;
+        private Stream stream;
         private long TmpSize = 0;
-        private WebClient WC = new WebClient();
-        private bool IsWCStart=false;
-        private string FileDirectory=string.Empty;
+        private bool IsDownloadStart = false;
+        private string FileDirectory = string.Empty;
+        private List<string> OldFileDirectoryList = new();
 
         public PlayWindow(long Uid)
         {
@@ -49,6 +55,7 @@ namespace DDTV_GUI.DDTV_Window
             VideoView.MediaPlayer = _mediaPlayer;
             VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
             VideoView.MediaPlayer.Playing += MediaPlayer_Playing;
+            VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
             Task.Run(() =>
             {
                 Thread.Sleep(1000);
@@ -58,6 +65,21 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Tick += VolumeTimer_Tick;
             VolumeTimer.Start();
         }
+
+        private void MediaPlayer_EndReached(object? sender, EventArgs e)
+        {
+            if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+            {
+                RefreshWindow();
+            }
+            else
+            {
+                Growl.Warning("该直播间直播已结束");
+                return;
+            }
+            Thread.Sleep(3000);
+        }
+
         /// <summary>
         /// 设置静音
         /// </summary>
@@ -68,10 +90,10 @@ namespace DDTV_GUI.DDTV_Window
         private void VolumeTimer_Tick(object? sender, EventArgs e)
         {
             VolumeGridTime--;
-            if(VolumeGridTime<0)
+            if (VolumeGridTime < 0)
             {
-                volume.Dispatcher.Invoke(new Action(() => volume.Visibility=Visibility.Collapsed));
-                volumeText.Dispatcher.Invoke(() => volumeText.Visibility=Visibility.Collapsed);
+                volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Collapsed));
+                volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Collapsed);
             }
         }
 
@@ -90,83 +112,120 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="Uid"></param>
         private void Play(long Uid)
         {
-            string Url = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.playUrl(Uid, DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.Quality.DefaultHighest);
-            title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
-            roomId= int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
-            this.Dispatcher.Invoke(() =>
-                this.Title = title
-            );
-            Download(Url);
+            if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+            {
+                string Url = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.playUrl(Uid, DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.Quality.DefaultHighest);
+                title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+                roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
+                this.Dispatcher.Invoke(() =>
+                    this.Title = title
+                );
+                StartDownload(Url);
 
-            Task.Run(() => {
-                Thread.Sleep(3000);
-                VideoView.Dispatcher.Invoke(() =>
+                Task.Run(() =>
                 {
-                    try
+                    Thread.Sleep(3000);
+                    VideoView.Dispatcher.Invoke(() =>
                     {
-                        if (!IsClose && VideoView.MediaPlayer != null)
+                        try
                         {
-                            if (VideoView.MediaPlayer.IsPlaying)
+                            if (!IsClose && VideoView.MediaPlayer != null)
                             {
-                                VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
+                                if (VideoView.MediaPlayer.IsPlaying)
+                                {
+                                    VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
+                                }
+                                VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                SetVolume(MainWindow.DefaultVolume);
                             }
-                            VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
-                            SetVolume(MainWindow.DefaultVolume);
                         }
-                    }
-                    catch (Exception e)
-                    {
-                        throw;
-                    }
+                        catch (Exception e)
+                        {
+                            throw;
+                        }
+                    });
                 });
-            });
-        }
-        public void Download(string Url)
-        {
-            if(IsWCStart)
-            {
-                WC.Dispose();
-                return;
-            }
-            IsWCStart = true;
-            WC = new WebClient();
-            WC.Encoding = Encoding.UTF8;
-            WC.Headers.Add("Accept: */*");
-            WC.Headers.Add("User-Agent: " + DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.UA());
-            WC.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
-            WC.Headers.Add("Accept-Encoding: gzip, deflate, br");
-            WC.Headers.Add("Cache-Control: max-age=0");
-            WC.Headers.Add("Sec-Fetch-Mode: navigate");
-            WC.Headers.Add("Sec-Fetch-Site: none");
-            WC.Headers.Add("Sec-Fetch-User: ?1");
-            WC.Headers.Add("Upgrade-Insecure-Requests: 1");
-            WC.Headers.Add("Cache-Control: max-age=0");
-            WC.Headers.Add("Referer: https://www.bilibili.com/");
-            WC.DownloadProgressChanged += WC_DownloadProgressChanged;
-            WC.DownloadFileCompleted += WC_DownloadFileCompleted;
-            if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
-            {
-                WC.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
-            }
-            FileDirectory = DDTV_Core.Tool.FileOperation.CreateAll(DDTV_Core.SystemAssembly.DownloadModule.Download.TmpPath)+Guid.NewGuid()+".flv";
-            if(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
-            {
-                WC.DownloadFileTaskAsync(new Uri(Url), FileDirectory);
             }
             else
             {
-                Growl.Warning("该直播间直播已结束");
+                Growl.Ask("该直播间已下播，是否关闭本窗口", isConfirmed =>
+                {
+                    if (isConfirmed)
+                    {
+                       this.Close();
+                    }
+                    return true;
+                });
             }
         }
-
-        private void WC_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
+        public void StartDownload(string Url)
         {
-            IsWCStart = false;
+            Task.Run(() =>
+            {
+                if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+                    Download.TmpPath = Download.TmpPath + "/";
+                FileDirectory = DDTV_Core.Tool.FileOperation.CreateAll(Download.TmpPath) + Guid.NewGuid() + ".flv";
+                OldFileDirectoryList.Add(FileDirectory);
+                CancelDownload();
+                IsDownloadStart = true;
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
+                req.Method = "GET";
+                req.ContentType = "application/x-www-form-urlencoded";
+                req.Accept = "*/*";
+                req.UserAgent = NetClass.UA();
+                req.Referer = "https://www.bilibili.com/";
+                if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+                {
+                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
+                }
+                httpWebResponse = (HttpWebResponse)req.GetResponse();
+                stream = httpWebResponse.GetResponseStream();
+                FileStream fileStream = new FileStream(FileDirectory, FileMode.Create);
+                while (true)
+                {
+                    int EndF = 0;
+                    if (stream.CanRead)
+                    {
+                        try
+                        {
+                            EndF = stream.ReadByte();
+                        }
+                        catch (Exception e)
+                        {
+                            EndF = -1;
+                        }
+                    }
+                    else
+                    {
+                        EndF = -1;
+                    }
+                    if (EndF != -1)
+                    {
+                        fileStream.Write(new byte[] { (byte)EndF }, 0, 1);
+                    }
+                    else
+                    {
+                        fileStream.Close();
+                        fileStream.Dispose();
+                        return;
+                    }
+                }
+
+            });
         }
-
-        private void WC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        public void CancelDownload()
         {
-            TmpSize = e.BytesReceived;
+            if (stream != null)
+            {
+                stream.Close();
+                stream.Dispose();
+            }
+            if (httpWebResponse != null)
+            {
+                httpWebResponse.Close();
+                httpWebResponse.Dispose();
+            }
+            IsDownloadStart = false;
         }
 
         /// <summary>
@@ -197,10 +256,10 @@ namespace DDTV_GUI.DDTV_Window
         {
             VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Volume = (int)i);
             volume.Dispatcher.Invoke(() => volume.Value = i);
-            volumeText.Dispatcher.Invoke(() => volumeText.Text=i.ToString());
+            volumeText.Dispatcher.Invoke(() => volumeText.Text = i.ToString());
             //CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play)
             DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SetValue(DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.Group.Play);
-            MainWindow.DefaultVolume=i;
+            MainWindow.DefaultVolume = i;
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
@@ -260,13 +319,15 @@ namespace DDTV_GUI.DDTV_Window
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             IsClose = true;
+            CancelDownload();
+            foreach (var item in OldFileDirectoryList)
+            {
+                DDTV_Core.Tool.FileOperation.Del(item);
+            }
+
             VideoView.Dispatcher.Invoke(() =>
                VideoView.MediaPlayer.Stop()
            );
-            if (IsWCStart)
-            {
-                WC.CancelAsync();
-            }
             if (VideoView != null)
             {
                 VideoView.Dispose();
@@ -386,7 +447,7 @@ namespace DDTV_GUI.DDTV_Window
                         }
                         catch (Exception)
                         {
-                           
+
                         }
                     }
                 }
