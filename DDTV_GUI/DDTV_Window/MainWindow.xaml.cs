@@ -35,6 +35,7 @@ namespace DDTV_GUI.DDTV_Window
         event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static List<PlayWindow> playWindowsList = new();
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
         public MainWindow()
         {
             InitializeComponent();
@@ -106,6 +107,7 @@ namespace DDTV_GUI.DDTV_Window
             TranscodToggle.IsChecked = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
 
             RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 ? 0 : Download.RecQuality == 400 ? 1 : Download.RecQuality == 250 ? 2 : Download.RecQuality==150? 3:4;
+            PlayQualityComboBox.SelectedIndex = PlayQuality == 10000 ? 0 : PlayQuality == 400 ? 1 : PlayQuality == 250 ? 2 : PlayQuality == 150 ? 3 : 4;
             DanmuToggle.IsChecked = Download.IsRecDanmu;
             GiftToggle.IsChecked = Download.IsRecGift;
             GuardToggle.IsChecked = Download.IsRecGuard;
@@ -464,7 +466,7 @@ namespace DDTV_GUI.DDTV_Window
                 if (RoomConfig.ReviseRoom(roomCard, false, 2))
                 {
                     Growl.Success("已" + (!YIsAutoRec ? "打开" : "关闭") + $"[{name}({roomid})]的开播自动录制");
-                    if(bool.Parse(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status)))
+                    if(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status)== "1")
                     {
                         Download.AddDownloadTaskd(uid, true);
                     }
@@ -633,13 +635,18 @@ namespace DDTV_GUI.DDTV_Window
 
         private void TranscodToggle_Click(object sender, RoutedEventArgs e)
         {
+            if(!File.Exists("./plugins/ffmpeg/ffmpeg.exe"))
+            {
+                Growl.Warning($"缺少对应的转码组件！");
+                return;
+            }
             bool IsTranscod = (bool)TranscodToggle.IsChecked ? true : false;
             DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod = IsTranscod;
             CoreConfig.SetValue(CoreConfigClass.Key.IsAutoTranscod, IsTranscod.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((IsTranscod ? "打开" : "关闭") + "自动转码成功");
         }
 
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void RecQualityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (e.AddedItems.Count > 0)
             {
@@ -793,6 +800,35 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.FlvSplitSize, Download.FlvSplitSize.ToString(), CoreConfigClass.Group.Download);
                 Growl.Success("修改文件大小限制为" + (Download.FlvSplitSize == 8482560409 ? "7.9GB" : Download.FlvSplitSize == 6335076761 ? "5.9GB" : Download.FlvSplitSize == 2040109465 ? "1.9GB" : Download.FlvSplitSize == 5368709120 ? "5GB" : Download.FlvSplitSize == 4294967296 ? "4GB" : Download.FlvSplitSize == 3221225472 ? "3GB" : Download.FlvSplitSize == 2147483648 ? "2GB" : "1GB"));
+            }
+        }
+
+        private void PlayQualityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                ComboBoxItem _ = e.AddedItems[0] as ComboBoxItem;
+                int i = int.Parse(_.Tag.ToString());
+                switch (i)
+                {
+                    case 1:
+                        PlayQuality = 10000;
+                        break;
+                    case 2:
+                        PlayQuality = 400;
+                        break;
+                    case 3:
+                        PlayQuality = 250;
+                        break;
+                    case 4:
+                        PlayQuality = 150;
+                        break;
+                    case 5:
+                        PlayQuality = 80;
+                        break;
+                }
+                CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, PlayQuality.ToString(), CoreConfigClass.Group.Play);
+                Growl.Success("修改默认在线观看画质为" + (Download.RecQuality == 10000 ? "原画" : Download.RecQuality == 400 ? "蓝光" : Download.RecQuality == 250 ? "超清" : Download.RecQuality == 150 ? "高清" : "流畅"));
             }
         }
     }
