@@ -59,7 +59,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// 开始时间
             /// </summary>
-            public DateTime StartTime { set; get; }=DateTime.Now;
+            public DateTime StartTime { set; get; } = DateTime.Now;
             /// <summary>
             /// 结束时间
             /// </summary>
@@ -128,7 +128,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="req">下载任务WebRequest对象</param>
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
-            internal void DownFLV_HttpWebRequest(Downloads downloads,HttpWebRequest req, string Path, string FileName, string format)
+            internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format)
             {
                 Task.Run(() =>
                 {
@@ -138,7 +138,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
                         FileName = Path + "/" + FileName + "_" + count + "." + format;
-                        downloads.FileName= FileName;
+                        downloads.FileName = FileName;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -160,7 +160,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
                                         Download.DownloadCompleteTaskd(Uid, false, true);
-                                       
+
                                         return;
                                     }
                                     for (int i = 0 ; i < DataLength ; i++)
@@ -189,7 +189,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         else
                                         {
                                             Clear();
-                                            if(flvTimes.FlvTotalTagCount<3)
+                                            if (flvTimes.FlvTotalTagCount < 3)
                                             {
                                                 Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
                                                 if (File.Exists(fileStream.Name))
@@ -199,7 +199,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             fileStream.Close();
                                             fileStream.Dispose();
-                                           
+
                                             if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                                             {
                                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
@@ -208,7 +208,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     resp.Close();
                                                     resp.Dispose();
                                                 }
-                                                Download.AddDownloadTaskd(Uid,false);
+                                                Download.AddDownloadTaskd(Uid, false);
                                                 return;
                                             }
                                             else
@@ -255,13 +255,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     catch (WebException ex)
                     {
-                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意WEB连接错误，尝试重连",true,ex);
+                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意WEB连接错误，尝试重连", true, ex);
                         Download.AddDownloadTaskd(Uid, false);
                         return;
                     }
                     catch (Exception e)
                     {
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
+                        Download.AddDownloadTaskd(Uid, false);
+                        return;
                     }
                 });
             }
