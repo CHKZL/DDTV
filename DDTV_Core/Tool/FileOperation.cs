@@ -54,6 +54,13 @@ namespace DDTV_Core.Tool
         {
             delEvent.AddFile(File);
         }
+        public static void Del(List<string> File)
+        {
+            foreach (var item in File)
+            {
+                delEvent.AddFile(item);
+            }  
+        }
         /// <summary>
         /// 检查字符串是否符合文件路径标准
         /// </summary>
