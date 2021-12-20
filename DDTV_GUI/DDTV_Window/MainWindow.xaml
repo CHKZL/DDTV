@@ -25,7 +25,6 @@
                 </ContextMenu>
             </hc:NotifyIcon.ContextMenu>
         </hc:NotifyIcon>
-        <!--<hc:RunningBlock Name="TESTB" Content="" Margin="150,0,0,380" AutoReverse="True" Duration="0:0:5"/>-->
         <Grid x:Name="BackGroundGrid" MouseLeftButtonDown="GlowWindow_MouseLeftButtonDown">
             <Image x:Name="BackGroundImage" Source="/Resources/Img/UI/BackGround.jpg" Opacity="0.2" Margin="0,0,-4,0" Stretch="UniformToFill" />
 

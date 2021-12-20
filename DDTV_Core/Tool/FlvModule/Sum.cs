@@ -89,7 +89,7 @@ namespace DDTV_Core.Tool.FlvModule
                         DelList.Add(SunTmpFime);
                         if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                         {
-                            SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自21446992房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                            SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
                             
                            
                         }

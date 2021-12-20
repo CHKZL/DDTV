@@ -30,7 +30,7 @@ namespace DDTV_GUI
                                 Dictionary<string, int> keyValuePairs = new Dictionary<string, int>();
                                 keyValuePairs.Add("Ver", 1);
                                 string WebText = Post("http://api.ddtv.pro/api/Ver", keyValuePairs);
-                             
+
                                 //string WebText = Post("http://127.0.0.1/api/ver", keyValuePairs);
                                 pack<VerClass> jo = JsonConvert.DeserializeObject<pack<VerClass>>(WebText);
                                 if (jo != null)
@@ -82,8 +82,10 @@ namespace DDTV_GUI
                         {
                             try
                             {
-                                Dictionary<string, int> keyValuePairs = new Dictionary<string, int>();
-                                keyValuePairs.Add("Conut", Conut);
+                                Dictionary<string, int> keyValuePairs = new()
+                                {
+                                    { "Conut", Conut }
+                                };
                                 string WebText = Post("http://api.ddtv.pro/api/Ver", keyValuePairs);
                                 Conut++;
                             }
@@ -91,7 +93,7 @@ namespace DDTV_GUI
                             {
 
                             }
-                            Thread.Sleep(60*60 * 1000);
+                            Thread.Sleep(60 * 60 * 1000);
                         }
                     });
                 }
@@ -114,6 +116,7 @@ namespace DDTV_GUI
             #region 添加Post 参数  
             StringBuilder builder = new StringBuilder();
             int i = 0;
+
             foreach (var item in dic)
             {
                 if (item.Key.Length > 20)
