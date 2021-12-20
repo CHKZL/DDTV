@@ -253,9 +253,14 @@ namespace DDTV_GUI.DDTV_Window
         /// <returns></returns>
         private bool APP_EXIT()
         {
-            MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出DDTV会导致未完成的任务数据丢失\n确认退出DDTV?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
             {
+                DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
+                foreach (FileInfo item in root.GetFiles())
+                {
+                    DDTV_Core.Tool.FileOperation.Del(item.FullName);
+                }
                 Application.Current.Shutdown();
                 return true;
             }
@@ -832,7 +837,7 @@ namespace DDTV_GUI.DDTV_Window
                         break;
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, PlayQuality.ToString(), CoreConfigClass.Group.Play);
-                Growl.Success("修改默认在线观看画质为" + (Download.RecQuality == 10000 ? "原画" : Download.RecQuality == 400 ? "蓝光" : Download.RecQuality == 250 ? "超清" : Download.RecQuality == 150 ? "高清" : "流畅"));
+                Growl.Success("修改默认在线观看画质为" + (PlayQuality == 10000 ? "原画" : PlayQuality == 400 ? "蓝光" : PlayQuality == 250 ? "超清" : PlayQuality == 150 ? "高清" : "流畅"));
             }
         }
     }

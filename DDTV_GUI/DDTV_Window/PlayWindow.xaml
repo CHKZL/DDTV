@@ -15,16 +15,40 @@
     <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
         <Grid MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
             <Grid.ContextMenu>
-                <ContextMenu Width="150">
+                <ContextMenu >
                     <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <MenuItem Header="复制直播间地址" Click="MenuItem_CopyLiveRoomUrl_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/code.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="切换备线">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/share.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="主线" Tag="0" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线1" Tag="1" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线2" Tag="2" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线3" Tag="3" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="切换清晰度">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/block.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                        <MenuItem Name="qn10000" Header="原画" Tag="10000" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn400" Header="蓝光" Tag="400" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn250" Header="超清" Tag="250" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn150" Header="高清" Tag="150" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn80" Header="流畅" Tag="80" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="打开\关闭弹幕" Click="MenuItem_OpenDamu_Click">
                         <MenuItem.Icon>
-                            <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
+                            <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
                     <MenuItem Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
