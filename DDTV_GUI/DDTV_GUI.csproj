@@ -13,10 +13,13 @@
   <ItemGroup>
     <None Remove="Resources\Img\UI\add_user.png" />
     <None Remove="Resources\Img\UI\alert.png" />
+    <None Remove="Resources\Img\UI\align-right.png" />
     <None Remove="Resources\Img\UI\BackGround.jpg" />
+    <None Remove="Resources\Img\UI\block.png" />
     <None Remove="Resources\Img\UI\border-outer.png" />
     <None Remove="Resources\Img\UI\close.png" />
     <None Remove="Resources\Img\UI\cloud-download.png" />
+    <None Remove="Resources\Img\UI\code.png" />
     <None Remove="Resources\Img\UI\DDTV.ico" />
     <None Remove="Resources\Img\UI\delete.png" />
     <None Remove="Resources\Img\UI\folder-open.png" />
@@ -28,6 +31,7 @@
     <None Remove="Resources\Img\UI\play-circle.png" />
     <None Remove="Resources\Img\UI\reload _ime.png" />
     <None Remove="Resources\Img\UI\reload.png" />
+    <None Remove="Resources\Img\UI\share.png" />
     <None Remove="Resources\Img\UI\shrink.png" />
     <None Remove="Resources\Img\UI\smile.png" />
     <None Remove="Resources\Img\UI\stop.png" />
@@ -54,7 +58,13 @@
     <Resource Include="Resources\Img\UI\alert.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Img\UI\align-right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\BackGround.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\block.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\border-outer.png">
@@ -64,6 +74,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\cloud-download.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\code.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\DDTV.ico">
@@ -97,6 +110,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\reload.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\share.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\shrink.png">

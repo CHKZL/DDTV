@@ -38,6 +38,28 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             DefaultHighest=10000
         }
+        /// <summary>
+        /// 直播线路
+        /// </summary>
+        public enum Line
+        {
+            /// <summary>
+            /// 主线
+            /// </summary>
+            PrincipalLine = 0,
+            /// <summary>
+            /// 备线1
+            /// </summary>
+            SpareLine1 = 1,
+            /// <summary>
+            /// 备线2
+            /// </summary>
+            SpareLine2 = 2,
+            /// <summary>
+            /// 备线3
+            /// </summary>
+            SpareLine3 = 3,
+        }
         public class RoomInfo
         {
             /// <summary>

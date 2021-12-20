@@ -272,13 +272,65 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             return null;
         }
+        public static List<int> GetQuality(long uid)
+        {
+            string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
+            List<int> _out=new List<int>();
+            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn=10000&platform=web");
+            if (string.IsNullOrEmpty(WebText))
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetQuality获取网络数据为空或超时，开始重试");
+                Thread.Sleep(800);
+                return GetQuality(uid);
+            }
+            JObject JO = new JObject();
+            try
+            {
+                JO = (JObject)JsonConvert.DeserializeObject(WebText);
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"GetQuality获取的数据解析失败，出现未知的错误", true, e);
+                return GetQuality(uid);
+            }
+            try
+            {
+                if (JO != null && JO.ContainsKey("code") && JO["code"] != null)
+                {
+                    if ((int)JO["code"] == 0)
+                    {
+                        if (JO.TryGetValue("data", out var Roomdurl) && Roomdurl != null)
+                        {
+                            foreach (var item in Roomdurl["quality_description"])
+                            {
+                                int.TryParse(item["qn"].ToString(), out int c);
+                                _out.Add(c);
+                            }
+                        }
+                    }
+                    else if ((int)JO["code"] == -400)
+                    {
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetQuality:因为参数错误，{roomId}房间直播视频流获取失败");
+                    }
+                    else if ((int)JO["code"] == 19002003)
+                    {
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetQuality:因为{roomId}房间信息不存在，获取直播视频流失败");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetQuality获取视频流地址失败，失败的json串:\n{JO.ToString()}", true, e);
+            }
+            return _out;
+        }
         /// <summary>
         /// 使用roomId获取房间直播视频流地址
         /// </summary>
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl(long uid, RoomInfoClass.Quality qn)
+        public static string playUrl(long uid, RoomInfoClass.Quality qn,RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine)
         {
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
@@ -287,8 +339,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
-                return playUrl(uid, qn);
-                
+                return playUrl(uid, qn);          
             }
 
             JObject JO =new JObject();
@@ -311,7 +362,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         if (JO.TryGetValue("data", out var Roomdurl) && Roomdurl != null)
                         {
 
-                            string Url = Roomdurl["durl"][2]["url"].ToString();
+                            string Url = Roomdurl["durl"][(int)line]["url"].ToString();
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功");
                             return Url;
 

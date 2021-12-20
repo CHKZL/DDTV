@@ -18,6 +18,12 @@ using System.Collections.Generic;
 using System.IO;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
+using DDTV_Core.SystemAssembly.BilibiliModule.API;
+using System.Drawing;
+using System.Windows.Interop;
+using System.Windows.Forms;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -31,7 +37,7 @@ namespace DDTV_GUI.DDTV_Window
         bool IsClose = false;
         long uid = 0;
         int roomId = 0;
-        string title = string.Empty;
+        //string title = string.Empty;
         private static MediaPlayer _mediaPlayer;
         WPFControl.SendDanmuDialog sendDanmuDialog;
         private DispatcherTimer VolumeTimer = new DispatcherTimer();
@@ -44,11 +50,21 @@ namespace DDTV_GUI.DDTV_Window
         private bool IsDownloadStart = false;
         private string FileDirectory = string.Empty;
         private List<string> OldFileDirectoryList = new();
-
+        private int Quality = 0;
+        private int Line = 0;
+        private List<int> QualityList= new();
+        private int LastWidth;
+        private int LastHeight;
+        public WindowInfo windowInfo = new();
         public PlayWindow(long Uid)
         {
-            uid = Uid;
+           
             InitializeComponent();
+            Quality = MainWindow.PlayQuality;
+            uid = Uid;
+            SetMenuItemSwitchQuality();
+
+
             Core.Initialize("./plugins/vlc");
             vlcVideo = new LibVLC();
             _mediaPlayer = new MediaPlayer(vlcVideo);
@@ -64,6 +80,34 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
             VolumeTimer.Tick += VolumeTimer_Tick;
             VolumeTimer.Start();
+        }
+        public void SetMenuItemSwitchQuality()
+        {
+            QualityList = RoomInfo.GetQuality(uid);
+            if (QualityList == null)
+            {
+                QualityList.Add(10000);
+            }
+            if(QualityList.Contains(10000))
+                qn10000.Visibility= Visibility.Visible;
+            else
+                qn10000.Visibility= Visibility.Collapsed;
+            if (QualityList.Contains(400))
+                qn400.Visibility = Visibility.Visible;
+            else
+                qn400.Visibility = Visibility.Collapsed;
+            if (QualityList.Contains(250))
+                qn250.Visibility = Visibility.Visible;
+            else
+                qn250.Visibility = Visibility.Collapsed;
+            if (QualityList.Contains(150))
+                qn150.Visibility = Visibility.Visible;
+            else
+                qn150.Visibility = Visibility.Collapsed;
+            if (QualityList.Contains(80))
+                qn80.Visibility = Visibility.Visible;
+            else
+                qn80.Visibility = Visibility.Collapsed;
         }
 
         private void MediaPlayer_EndReached(object? sender, EventArgs e)
@@ -114,11 +158,16 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                string Url = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.playUrl(Uid, DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.Quality.DefaultHighest);
-                title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+                if(!QualityList.Contains(Quality))
+                {
+                    Quality = 10000;
+                    Growl.Warning("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
+                }
+                string Url = RoomInfo.playUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
+                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
                 roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
                 this.Dispatcher.Invoke(() =>
-                    this.Title = title
+                    this.Title = windowInfo.title
                 );
                 StartDownload(Url);
 
@@ -152,7 +201,7 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     if (isConfirmed)
                     {
-                       this.Close();
+                        this.Close();
                     }
                     return true;
                 });
@@ -160,14 +209,17 @@ namespace DDTV_GUI.DDTV_Window
         }
         public void StartDownload(string Url)
         {
-            Task.Run(() =>
+
+            if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+                Download.TmpPath = Download.TmpPath + "/";
+            FileDirectory = DDTV_Core.Tool.FileOperation.CreateAll(Download.TmpPath) + Guid.NewGuid() + ".flv";
+            OldFileDirectoryList.Add(FileDirectory);
+            CancelDownload();
+
+           R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
-                    Download.TmpPath = Download.TmpPath + "/";
-                FileDirectory = DDTV_Core.Tool.FileOperation.CreateAll(Download.TmpPath) + Guid.NewGuid() + ".flv";
-                OldFileDirectoryList.Add(FileDirectory);
-                CancelDownload();
-                IsDownloadStart = true;
+                string U2 = RoomInfo.playUrl(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
+
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
                 req.Method = "GET";
                 req.ContentType = "application/x-www-form-urlencoded";
@@ -178,40 +230,63 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
                 }
-                httpWebResponse = (HttpWebResponse)req.GetResponse();
-                stream = httpWebResponse.GetResponseStream();
-                FileStream fileStream = new FileStream(FileDirectory, FileMode.Create);
-                while (true)
+                try
                 {
-                    int EndF = 0;
-                    if (stream.CanRead)
+                    httpWebResponse = (HttpWebResponse)req.GetResponse();
+                }
+                catch (Exception)
+                {
+                    Thread.Sleep(10000);
+                    goto R;
+                }
+                stream = httpWebResponse.GetResponseStream();
+                IsDownloadStart = true;
+                FileStream fileStream = new FileStream(FileDirectory, FileMode.Create);
+                Task.Run(() =>
+                {
+                    while (true)
                     {
-                        try
+                        int EndF = 0;
+                        if (stream.CanRead)
                         {
-                            EndF = stream.ReadByte();
+                            try
+                            {
+                                EndF = stream.ReadByte();
+                            }
+                            catch (Exception e)
+                            {
+                                EndF = -1;
+                            }
                         }
-                        catch (Exception e)
+                        else
                         {
                             EndF = -1;
                         }
+                        if (EndF != -1)
+                        {
+                            fileStream.Write(new byte[] { (byte)EndF }, 0, 1);
+                        }
+                        else
+                        {
+                            fileStream.Close();
+                            fileStream.Dispose();
+                            return;
+                        }
                     }
-                    else
-                    {
-                        EndF = -1;
-                    }
-                    if (EndF != -1)
-                    {
-                        fileStream.Write(new byte[] { (byte)EndF }, 0, 1);
-                    }
-                    else
-                    {
-                        fileStream.Close();
-                        fileStream.Dispose();
-                        return;
-                    }
-                }
 
-            });
+                });
+            }
+            else
+            {
+                Growl.Ask("该直播间已下播，是否关闭本窗口", isConfirmed =>
+                {
+                    if (isConfirmed)
+                    {
+                        this.Close();
+                    }
+                    return true;
+                });
+            }
         }
         public void CancelDownload()
         {
@@ -235,18 +310,18 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            double X = this.Width;
-            double Y = this.Height;
-            if (X / Y > 1.77)
-            {
-                X = (Y - 32) / 9 * 16;
-                this.Width = X;
-            }
-            else
-            {
-                Y = X / 16 * 9;
-                this.Height = Y + 32;
-            }
+            //double X = this.Width;
+            //double Y = this.Height;
+            //if (X / Y > 1.77)
+            //{
+            //    X =Y / 9 * 16;
+            //    this.Width = X;
+            //}
+            //else
+            //{
+            //    Y = X / 16 * 9;
+            //    this.Height = Y;
+            //}
         }
         /// <summary>
         /// 设置音量
@@ -258,7 +333,7 @@ namespace DDTV_GUI.DDTV_Window
             volume.Dispatcher.Invoke(() => volume.Value = i);
             volumeText.Dispatcher.Invoke(() => volumeText.Text = i.ToString());
             //CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play)
-            DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SetValue(DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.Group.Play);
+            CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
             MainWindow.DefaultVolume = i;
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -300,7 +375,8 @@ namespace DDTV_GUI.DDTV_Window
         }
         public void RefreshWindow()
         {
-            loading.Visibility = Visibility.Visible;
+            loading.Dispatcher.Invoke(() => loading.Visibility = Visibility.Visible);
+
             Play(uid);
         }
         private void FullScreenSwitch()
@@ -480,7 +556,238 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_WindowSorting_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Warning("该功能还未完成");
+            WindowSorting();
+        }
+        public void WindowSorting()
+        {
+            Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixRatio = currentGraphics.DpiX / 96;
+            int ScreenHeight = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Height / dpixRatio);
+            int ScreenWidth = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Width / dpixRatio);
+
+
+            if (MainWindow.playWindowsList.Count == 1)
+            {
+                MainWindow.playWindowsList[0].FullScreenSwitch();
+            }
+            else if (MainWindow.playWindowsList.Count > 1 && MainWindow.playWindowsList.Count < 5)
+            {
+                List<int[]> windows_4 = new List<int[]>();
+                windows_4.Add(new int[] { 0, 0 });
+                windows_4.Add(new int[] { ScreenWidth / 2, 0 });
+                windows_4.Add(new int[] { 0, ScreenHeight / 2 });
+                windows_4.Add(new int[] { ScreenWidth / 2, ScreenHeight / 2 });
+                for (int i = 0 ; i < 4 ; i++)
+                {
+                    if (i >= MainWindow.playWindowsList.Count)
+                    {
+                        break;
+                    }
+                    MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo
+                    {
+                        Width = (ScreenWidth / 2),
+                        Height = (ScreenHeight / 2),
+                        X = windows_4[i][0],
+                        Y = windows_4[i][1]
+                    });
+                }
+            }
+            else if (MainWindow.playWindowsList.Count > 4 && MainWindow.playWindowsList.Count < 10)
+            {
+                List<int[]> windows_9 = new List<int[]>();
+                windows_9.Add(new int[] { 0, 0 });
+                windows_9.Add(new int[] { (ScreenWidth / 3), 0 });
+                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), 0 });
+                windows_9.Add(new int[] { 0, (ScreenHeight / 3) });
+                windows_9.Add(new int[] { (ScreenWidth / 3), ScreenHeight / 3 });
+                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), ScreenHeight / 3 });
+                windows_9.Add(new int[] { 0, (ScreenHeight / 3) + (ScreenHeight / 3) });
+                windows_9.Add(new int[] { (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+                for (int i = 0 ; i < 9 ; i++)
+                {
+                    if (i >= MainWindow.playWindowsList.Count)
+                    {
+                        break;
+                    }
+                    MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                    {
+                        Width = (ScreenWidth / 3),
+                        Height = (ScreenHeight / 3),
+                        X = windows_9[i][0],
+                        Y = windows_9[i][1]
+                    });
+                }
+            }
+            else if (MainWindow.playWindowsList.Count > 9)
+            {
+                List<int[]> windows_16 = new List<int[]>();
+                windows_16.Add(new int[] { 0, 0 });
+                windows_16.Add(new int[] { (ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { 0, (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4), ScreenHeight / 4 });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
+                windows_16.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+                for (int i = 0 ; i < 16 ; i++)
+                {
+                    if (i >= MainWindow.playWindowsList.Count)
+                    {
+                        break;
+                    }
+                    MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                    {
+                        Width = (ScreenWidth / 4),
+                        Height = (ScreenHeight / 4),
+                        X = windows_16[i][0],
+                        Y = windows_16[i][1]
+                    });
+                }
+            }
+        }
+        public bool SetWindowInfo(WindowInfo SW)
+        {
+            try
+            {
+                if (SW.X >= 0)
+                {
+                    this.Left = SW.X;
+                }
+                if (SW.Y >= 0)
+                {
+                    this.Top = SW.Y;
+                }
+                
+                if (SW.Height > 0)
+                {
+                    this.Height = SW.Height;
+                }
+                if (SW.Width > 0)
+                {
+                    this.Width = SW.Width;
+                }
+                if (!string.IsNullOrEmpty(SW.title))
+                {
+                    this.Title = SW.title;
+                }
+
+                //if (this.Height != LastHeight)
+                //{
+                //    this.Width = this.Height * 1.75;
+                //}
+                if (this.Width != LastWidth)
+                {
+                    this.Height = this.Width / 1.77;
+                }
+                LastWidth = (int)this.Width;
+                LastHeight = (int)this.Height;
+                UpdateWindowInfo();
+                return true;
+            }
+            catch (Exception)
+            {
+                UpdateWindowInfo();
+                return false;
+            }
+        }
+        public void UpdateWindowInfo()
+        {
+            try
+            {
+                windowInfo.X= this.Left;
+                windowInfo.Y = this.Top;
+                windowInfo.Width = this.Width;
+                windowInfo.Height = this.Height;
+                windowInfo.title = this.Title;
+                this.Focus();
+            }
+            catch (Exception) { }
+        }
+        public class WindowInfo
+        {
+            public double X { set; get; } = -1;
+            public double Y { set; get; } = -1;
+            public double Width { set; get; } = -1;
+            public double Height { set; get; } = -1;
+            public string title { set; get; } = null;
+        }
+        private void MenuItem_CopyLiveRoomUrl_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Clipboard.SetDataObject("https://live.bilibili.com/" + roomId);
+            Growl.Success("已复制直播间Url到粘贴板");
+        }
+
+        /// <summary>
+        /// 右键菜单_切换备线
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_SwitchLine_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem menuItem = e.Source as System.Windows.Controls.MenuItem;
+            if (Line == int.Parse(menuItem.Tag.ToString()))
+            {
+                Growl.Success("当前正处于该线路");
+                return;
+            }
+            switch (menuItem.Tag.ToString())
+            {
+                case "0":
+                    Line = 0;
+                    break;
+                case "1":
+                    Line = 1;
+                    break;
+                case "2":
+                    Line = 2;
+                    break;
+                case "3":
+                    Line = 3;
+                    break;
+            }
+            RefreshWindow();
+        }
+        /// <summary>
+        /// 右键菜单_切换清晰度
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_SwitchQuality_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem menuItem = e.Source as System.Windows.Controls.MenuItem;
+            if (Quality == int.Parse(menuItem.Tag.ToString()))
+            {
+                Growl.Success("当前正处于该清晰度");
+                return;
+            }
+            switch (menuItem.Tag.ToString())
+            {
+                case "10000":
+                    Quality = 10000;
+                    break;
+                case "400":
+                    Quality = 400;
+                    break;
+                case "250":
+                    Quality = 250;
+                    break;
+                case "150":
+                    Quality = 150;
+                    break;
+                case "80":
+                    Quality = 80;
+                    break;
+            }
+            RefreshWindow();
         }
     }
 }

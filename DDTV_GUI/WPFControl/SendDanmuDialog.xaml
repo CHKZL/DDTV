@@ -9,7 +9,7 @@
         CornerRadius="10"
         Width="356"
         Height="190"
-        Background="{DynamicResource RegionBrush}">
+        Background="{DynamicResource RegionBrush}" Opacity="0.5">
     <hc:SimplePanel>
         <Button Width="22" Height="22" Command="hc:ControlCommands.Close" Style="{StaticResource ButtonIcon}" Foreground="{DynamicResource PrimaryBrush}" hc:IconElement.Geometry="{StaticResource ErrorGeometry}" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0"/>
         <TextBlock Style="{StaticResource TextBlockLargeBold}" Text="发送弹幕" Margin="0,28,0,0" VerticalAlignment="Top"/>
