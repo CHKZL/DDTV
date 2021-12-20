@@ -13,7 +13,7 @@
         Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" >
 
     <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
-        <Grid MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
+        <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
             <Grid.ContextMenu>
                 <ContextMenu >
                     <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
@@ -78,6 +78,12 @@
                             <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="关闭全部播放窗口" Click="MenuItem_ExitAll_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </Grid.ContextMenu>
             <!--<Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
@@ -94,8 +100,7 @@
                     <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
-            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2FFFFFF" FontSize="30" Visibility="Collapsed"/>
-
+            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#E5DCDCDC" FontSize="30" Visibility="Collapsed"/>
             <!--<StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
                 <ToggleButton BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" Click="ToggleButton_Click">
                     <hc:StatusSwitchElement.CheckedElement>

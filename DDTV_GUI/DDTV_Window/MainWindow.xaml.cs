@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -32,7 +33,8 @@ namespace DDTV_GUI.DDTV_Window
     {
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
-        event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
+        public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
+        
         public static List<PlayWindow> playWindowsList = new();
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
@@ -40,6 +42,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             InitializeComponent();
             string Title = $"DDTV——你的地表最强B站录播机 {Ver}　({InitDDTV_Core.Ver})";
+            
             this.Title = Title;
             DDTV_ICO.Text = Title;
             //初始化DDTV_Core          
@@ -56,9 +59,9 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.StartLive += RoomPatrol_StartLive;//注册开播提醒事件
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
+            PlayWindow.PlayListExit += MainWindow_PlayListExit;
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
-            
 
             InitMainUI();
 
@@ -68,6 +71,18 @@ namespace DDTV_GUI.DDTV_Window
             TimedTask.CheckUpdate.Check();
             TimedTask.DokiDoki.Check();
         }
+
+        private void MainWindow_PlayListExit(object? sender, EventArgs e)
+        {
+            Task.Run(() => {
+                for (int i = 0 ; i < playWindowsList.Count ; )
+                {
+                    playWindowsList[0].Dispatcher.Invoke(() => playWindowsList[0].Close());
+
+                }
+            });
+        }
+
         /// <summary>
         /// 登陆信息失效事件
         /// </summary>

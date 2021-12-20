@@ -24,6 +24,7 @@ using System.Windows.Interop;
 using System.Windows.Forms;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
+using System.Windows.Controls;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -43,6 +44,7 @@ namespace DDTV_GUI.DDTV_Window
         private DispatcherTimer VolumeTimer = new DispatcherTimer();
         int VolumeGridTime = 3;
         public event EventHandler<EventArgs> SendDialogDispose;
+        public static event EventHandler<EventArgs> PlayListExit;//批量关闭播放窗口事件
         private bool IsOpenDanmu = false;
         private HttpWebResponse httpWebResponse;
         private Stream stream;
@@ -56,6 +58,7 @@ namespace DDTV_GUI.DDTV_Window
         private int LastWidth;
         private int LastHeight;
         public WindowInfo windowInfo = new();
+        private List<RunningBlock> DanmuBlock = new();
         public PlayWindow(long Uid)
         {
            
@@ -64,7 +67,7 @@ namespace DDTV_GUI.DDTV_Window
             uid = Uid;
             SetMenuItemSwitchQuality();
 
-
+            UpdateWindowInfo();
             Core.Initialize("./plugins/vlc");
             vlcVideo = new LibVLC();
             _mediaPlayer = new MediaPlayer(vlcVideo);
@@ -310,6 +313,11 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            UpdateWindowInfo();
+            foreach (var item in DanmuBlock)
+            {
+                item.Visibility = Visibility.Hidden;
+            }
             //double X = this.Width;
             //double Y = this.Height;
             //if (X / Y > 1.77)
@@ -377,7 +385,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             loading.Dispatcher.Invoke(() => loading.Visibility = Visibility.Visible);
 
-            Play(uid);
+            Task.Run(() => Play(uid));
         }
         private void FullScreenSwitch()
         {
@@ -396,6 +404,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             IsClose = true;
             CancelDownload();
+            LiveChatDispose();
             foreach (var item in OldFileDirectoryList)
             {
                 DDTV_Core.Tool.FileOperation.Del(item);
@@ -501,56 +510,65 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Warning("该功能还未完成");
-            return;
+            
             IsOpenDanmu = !IsOpenDanmu;
             if (IsOpenDanmu)
             {
-                var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(roomId);
+                Growl.Info($"启动{roomId}房间的弹幕连接,10秒后开始显示弹幕");
+                var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
                 roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             }
             else
             {
-                if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+                LiveChatDispose();
+            }
+        }
+        public void LiveChatDispose()
+        {
+            
+            if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            {
+                if (roomInfo.roomWebSocket.LiveChatListener != null&& roomInfo.roomWebSocket.LiveChatListener.startIn)
                 {
-                    if (roomInfo.roomWebSocket.LiveChatListener != null)
+                    Growl.Info($"关闭{roomId}房间的弹幕连接");
+                    try
                     {
-                        try
-                        {
-                            roomInfo.roomWebSocket.LiveChatListener.startIn = false;
-                            roomInfo.DanmuFile.TimeStopwatch.Stop();
-                            roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                        }
-                        catch (Exception)
-                        {
+                        roomInfo.roomWebSocket.LiveChatListener.startIn = false;
+                        roomInfo.roomWebSocket.IsConnect = false;
+                        roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                    }
+                    catch (Exception)
+                    {
 
-                        }
                     }
                 }
             }
         }
-
         private void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
+          
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
-                    Console.WriteLine($"{Danmu.Message}");
+                    //Growl.Info("收到弹幕Danmu.Message");
+                    AddDanmu(Danmu.Message);
+                    
+                    //Console.WriteLine($"{Danmu.Message}");
                     break;
-                case SuperchatEventArg SuperchatEvent:
-                    Console.WriteLine($"{SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
-                    break;
-                case GuardBuyEventArgs GuardBuyEvent:
-                    Console.WriteLine($"{GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
-                    break;
-                case SendGiftEventArgs sendGiftEventArgs:
-                    Console.WriteLine($"{sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
-                    break;
-                case EntryEffectEventArgs entryEffectEventArgs:
-                    Console.WriteLine($"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
-                    break;
-                default:
-                    break;
+                //case SuperchatEventArg SuperchatEvent:
+                //    Console.WriteLine($"{SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
+                //    break;
+                //case GuardBuyEventArgs GuardBuyEvent:
+                //    Console.WriteLine($"{GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
+                //    break;
+                //case SendGiftEventArgs sendGiftEventArgs:
+                //    Console.WriteLine($"{sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
+                //    break;
+                //case EntryEffectEventArgs entryEffectEventArgs:
+                //    Console.WriteLine($"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
+                //    break;
+                //default:
+                //    break;
             }
         }
 
@@ -788,6 +806,75 @@ namespace DDTV_GUI.DDTV_Window
                     break;
             }
             RefreshWindow();
+        }
+
+        private void MenuItem_ExitAll_Click(object sender, RoutedEventArgs e)
+        {
+            Growl.Ask("确定要关闭所有播放窗口么？", isConfirmed =>
+            {
+                if (isConfirmed)
+                {
+                    if (PlayListExit != null)
+                    {
+                        PlayListExit.Invoke(null, EventArgs.Empty);
+                    }
+                }
+                return true;
+            });
+           
+        }
+
+        private void AddDanmu(string DanmuText)
+        {
+            Task.Run(() =>
+            {
+                RunningBlock runningBlock=null;
+                PlayGrid.Dispatcher.Invoke(new Action(() => {
+                runningBlock = new();
+                runningBlock.AutoReverse = true;
+                runningBlock.Duration = new Duration(new TimeSpan(0, 0, 10));
+                runningBlock.IsRunning = true;
+                runningBlock.FontSize = 30;
+                runningBlock.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.PaleVioletRed);
+                runningBlock.BorderBrush = null;
+                double Top = new Random().Next(0, (int)windowInfo.Height - 50);
+                runningBlock.Margin = new Thickness(-50, Top, -50, (int)windowInfo.Height - Top - 80);
+                StackPanel stackPanel = new StackPanel();
+                OutlineText outlineText = new OutlineText();
+                outlineText.Text = DanmuText;
+                outlineText.FontWeight = FontWeights.Bold;
+                outlineText.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White);
+                outlineText.Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
+                outlineText.FontSize = 24;
+                outlineText.StrokeThickness = 1;
+                stackPanel.Children.Add(outlineText);
+                runningBlock.Content = stackPanel;
+                DanmuBlock.Add(runningBlock);
+
+                PlayGrid.Children.Add(runningBlock);
+
+            }));
+
+
+
+                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
+                Thread.Sleep(5);
+                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
+                Thread.Sleep(10000);
+                if(runningBlock.Visibility==Visibility.Collapsed)
+                {
+                    runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
+                }
+                Thread.Sleep(10000);
+                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
+                if(DanmuBlock.Contains(runningBlock))
+                {
+                    DanmuBlock.Remove(runningBlock);
+                    PlayGrid.Dispatcher.Invoke(new Action(() => PlayGrid.Children.Remove(runningBlock)));
+                    
+                }
+                
+            });
         }
     }
 }

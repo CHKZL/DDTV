@@ -20,7 +20,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
             {
                 return "";
             }
-            var encoding = Encoding.UTF8;
+            Encoding encoding = Encoding.UTF8;
             MD5 md5 = MD5.Create();
             return HashAlgorithmBase(md5, source, encoding);
         }
@@ -62,7 +62,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
         public static string AesStr(this string source, string keyVal= "rzqIzYmDQFqQmWfr", string ivVal = "itkIBBs5JdCLKqpP")
         {
             //return Base64(source);
-            var encoding = Encoding.UTF8;
+            Encoding encoding = Encoding.UTF8;
             byte[] btKey = keyVal.FormatByte(encoding);
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = encoding.GetBytes(source);
@@ -101,7 +101,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
                 source += B1;
             }
             //return UnBase64(source);
-            var encoding = Encoding.UTF8;
+            Encoding encoding = Encoding.UTF8;
             byte[] btKey = keyVal.FormatByte(encoding);
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = Convert.FromBase64String(source);
@@ -129,7 +129,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
         /// <returns></returns>
         public static string Base64(this string source)
         {
-            var btArray = Encoding.UTF8.GetBytes(source);
+            byte[] btArray = Encoding.UTF8.GetBytes(source);
             string BB = Convert.ToBase64String(btArray, 0, btArray.Length);
             return BB;
         }
@@ -143,7 +143,7 @@ namespace DDTV_Core.SystemAssembly.EncryptionModule
         {
             try
             {
-                var btArray = Convert.FromBase64String(source);
+                byte[] btArray = Convert.FromBase64String(source);
                 return Encoding.UTF8.GetString(btArray);
             }
             catch (Exception)

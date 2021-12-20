@@ -26,7 +26,7 @@ namespace DDTV_Core
             Log.LogInit(LogClass.LogType.Debug);
             TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 512;
+            ServicePointManager.DefaultConnectionLimit = 1024*1024*1024;
             ServicePointManager.Expect100Continue = false;
             SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
            

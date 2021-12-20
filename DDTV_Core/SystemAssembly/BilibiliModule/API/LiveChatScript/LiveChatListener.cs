@@ -170,7 +170,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             {
                 Close();
             }
-            DisposeSent.Invoke(this, EventArgs.Empty);
+            if (DisposeSent != null)
+                DisposeSent.Invoke(this, EventArgs.Empty);
             _disposed = true;
         }
 
