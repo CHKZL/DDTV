@@ -75,6 +75,7 @@ namespace DDTV_Core.Tool.FlvModule
         }
         public static void FlvFileSum(List<string> FilePaht,string Name)
         {
+            List<string> DelList = new List<string>();
             FileStream OldFileStream = new FileStream(FilePaht[0], FileMode.Open);
             for (int i = 1 ; i < FilePaht.Count ; i++)
             {
@@ -85,10 +86,11 @@ namespace DDTV_Core.Tool.FlvModule
                 using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                     if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                     {
+                        DelList.Add(SunTmpFime);
                         if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                         {
                             SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自21446992房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                            FileOperation.Del(SunTmpFime);
+                            
                            
                         }
                         int time = Merge(OldFileStream, fsMerge, true, 0);
@@ -99,7 +101,7 @@ namespace DDTV_Core.Tool.FlvModule
                 OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
             }
             File.Copy(OldFileStream.Name, "./test.flv");
-            FileOperation.Del(OldFileStream.Name);
+            FileOperation.Del(DelList);
             OldFileStream.Close();
             OldFileStream.Dispose();
         }
