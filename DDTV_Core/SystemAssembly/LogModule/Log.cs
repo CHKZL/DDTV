@@ -147,7 +147,7 @@ namespace DDTV_Core.SystemAssembly.Log
                             string ErrorText = $"\n\n{logClasses[0].Time}:[Error][{logClasses[0].Source}][{logClasses[0].RunningTime}]{logClasses[0].Message}";
                             if (logClasses[0].exception != null)
                             {
-                                ErrorText += "错误堆栈\n{logClass.exception.ToString()";
+                                ErrorText += $"错误堆栈\n{logClasses[0].exception.ToString()}";
                             }
                             logClasses.RemoveAt(0);
                             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
