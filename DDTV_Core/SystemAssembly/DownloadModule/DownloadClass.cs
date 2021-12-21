@@ -79,9 +79,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public HttpWebRequest HttpWebRequest { get; set; }
             /// <summary>
-            /// 已下载字节数
+            /// 当前已下载字节数
             /// </summary>
             public long DownloadCount { get; set; }
+            /// <summary>
+            /// 该任务下所有任务的总下载字节数
+            /// </summary>
+            public long TotalDownloadCount { get; set; }
             /// <summary>
             /// 下载状态
             /// </summary>
@@ -138,13 +142,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
-                        FileName = Path + "/" + FileName + "_" + count + "." + format;
-                        downloads.FileName = FileName;
+                        string  _F = Path + "/" + FileName + "_" + count + "." + format;
+                        downloads.FileName = _F;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
                             {
-                                FileStream fileStream = new FileStream(FileName, FileMode.Create);
+                                FileStream fileStream = new FileStream(_F, FileMode.Create);
 
                                 Status = DownloadStatus.Downloading;
                                 uint DataLength = 9;
@@ -186,6 +190,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         {
                                             data[i] = (byte)EndF;
                                             DownloadCount++;
+                                            TotalDownloadCount++;
                                         }
                                         else
                                         {
@@ -233,8 +238,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         count++;
                                         fileStream.Close();
                                         fileStream.Dispose();
-                                        FileName = Path + "/" + FileName + "_" + count + "." + format;
-                                        fileStream = new FileStream(FileName, FileMode.Create);
+                                        string _F2 = Path + "/" + FileName + "_" + count + "." + format;
+                                        fileStream = new FileStream(_F2, FileMode.Create);
                                         byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                         fileStream.Write(buffer, 0, buffer.Length);
                                         fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);

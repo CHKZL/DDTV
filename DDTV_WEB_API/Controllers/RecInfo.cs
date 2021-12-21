@@ -21,7 +21,7 @@ namespace DDTV_WEB_API.Controllers
                     ulong FileSize = 0;
                     foreach (var item in A1.Value.DownloadingList)
                     {
-                        FileSize += (ulong)item.DownloadCount;
+                        FileSize += (ulong)item.TotalDownloadCount;
                     }
 
                     _+=($"{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}\n\r");

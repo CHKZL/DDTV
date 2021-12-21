@@ -182,6 +182,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.EndTime = item.EndTime;
                         }
                         downloads.DownloadCount += item.DownloadCount;
+                        downloads.TotalDownloadCount += item.TotalDownloadCount;
                         downloads.Status = DownloadStatus.DownloadComplete;
                         downloads.FilePath = item.FilePath;
                         if (FileList.Count > 0)

@@ -30,7 +30,7 @@ namespace DDTV_GUI.UpdateInterface
                             starttime = item.StartTime;
                         }
 
-                        FileSize += (ulong)item.DownloadCount;
+                        FileSize += (ulong)item.TotalDownloadCount;
                     }
                     BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid);
                     _.Add(rec);
