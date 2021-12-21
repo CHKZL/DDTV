@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace DDTV_Core.Tool
             foreach (var item in File)
             {
                 delEvent.AddFile(item);
-            }  
+            }
         }
         /// <summary>
         /// 检查字符串是否符合文件路径标准
@@ -80,7 +81,7 @@ namespace DDTV_Core.Tool
         /// </summary>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public static string ReplaceKeyword(long uid,string Text)
+        public static string ReplaceKeyword(long uid, string Text)
         {
             return Text
                 .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
@@ -118,7 +119,8 @@ namespace DDTV_Core.Tool
             }
             private void Del()
             {
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     while (true)
                     {
                         for (int i = DelFilelist.Count - 1 ; i > -1 ; i--)
@@ -145,6 +147,50 @@ namespace DDTV_Core.Tool
                     }
                 });
             }
+        }
+    }
+    public class DownloadList
+    {
+        private static ArrayList dirs = new();
+        public static ArrayList GetRecFileList()
+        {
+            dirs.Add(SystemAssembly.DownloadModule.Download.DefaultPath);
+            GetDirs(SystemAssembly.DownloadModule.Download.DefaultPath);
+            object[] allDir = dirs.ToArray();
+            ArrayList list = new ArrayList();
+            foreach (object o in allDir)
+            {
+                list.AddRange(GetFileName(o.ToString()));
+            }
+            dirs = new();
+            return list;
+        }
+        private static void GetDirs(string dirPath)
+        {
+            if (Directory.GetDirectories(dirPath).Length > 0)
+            {
+                foreach (string path in Directory.GetDirectories(dirPath))
+                {
+                    dirs.Add(path);
+                    GetDirs(path);
+                }
+            }
+        }
+        private static ArrayList GetFileName(string dirPath)
+        {
+            ArrayList list = new ArrayList();
+            if (Directory.Exists(dirPath))
+            {
+                int Conut = Directory.GetFiles(dirPath).Length;
+                string[] _ = new string[Conut];
+                for (int i = 0 ; i < Conut ; i++)
+                {
+                    _[i] = Directory.GetFiles(dirPath)[i].Replace("\\", "/");
+                }
+
+                list.AddRange(_);
+            }
+            return list;
         }
     }
 }

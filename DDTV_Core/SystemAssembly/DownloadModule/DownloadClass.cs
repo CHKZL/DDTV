@@ -16,6 +16,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
         public class Downloads
         {
+            public string Token { get; set; }=Guid.NewGuid().ToString("N");
             /// <summary>
             /// 房间号
             /// </summary>
