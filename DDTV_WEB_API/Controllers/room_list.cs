@@ -4,8 +4,6 @@ using System.Net.Mime;
 
 namespace DDTV_WEB_API.Controllers
 {
-   
-    
     public class room_list : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "room_list")]

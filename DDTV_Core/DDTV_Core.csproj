@@ -18,6 +18,10 @@ ddtv.pro</Description>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\vtbs.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="SystemAssembly\NetworkRequestModule\WebSocket\" />
   </ItemGroup>
 
@@ -33,9 +37,9 @@ ddtv.pro</Description>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\vtbs.json">
+    <Resource Include="Resources\vtbs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Resource>
   </ItemGroup>
 
 </Project>
