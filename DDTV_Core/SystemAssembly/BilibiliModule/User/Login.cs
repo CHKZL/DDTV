@@ -31,12 +31,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                 break;
                             case InitDDTV_Core.SatrtType.DDTV_GUI:
                                 return false;
-                                //Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "DDTV正在等待扫码登陆...");
-                                //break;
+                            break;
+                            case InitDDTV_Core.SatrtType.DDTV_WEB:
+                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，访问" + "[http://本设备IP地址:11419/api/loginqr]查看二维码，或打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
+                                break;
                             default:
                                 break;
                         }    
-                    Thread.Sleep(6000);
+                    Thread.Sleep(5000);
                     }
                 } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
                 return true;

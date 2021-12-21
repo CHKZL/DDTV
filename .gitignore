@@ -417,3 +417,7 @@ healthchecksdb
 /DDTV_Server/DDTV_Server.SourceManifest.xml
 /DDTV_Server
 /DDTV_TEST
+/DDTV_WEB_API/BiliUser.ini
+/DDTV_WEB_API/RoomListConfig.json
+/DDTV_WEB_API/BiliQR.png
+/DDTV_WEB_API/Resources/vtbs.json

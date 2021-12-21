@@ -42,7 +42,7 @@ namespace DDTV_WEB_API.Controllers
         {
             Download.IsRecDanmu = state;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecDanmu, state.ToString(), CoreConfigClass.Group.Download);
-            return MessageBase.Success(nameof(Transcod), (state ? "打开" : "关闭") + "弹幕录制(包括礼物、舰队、SC)");        
+            return MessageBase.Success(nameof(Transcod), (state ? "打开" : "关闭") + "弹幕录制(包括礼物、舰队、SC)  (每个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关)");        
         }
     }
     public class GetFollow : ProcessingControllerBase.ApiControllerBase
@@ -50,7 +50,7 @@ namespace DDTV_WEB_API.Controllers
         [HttpGet(Name = "GetFollow")]
         public string get()
         {
-            if(string.IsNullOrEmpty(BilibiliUserConfig.account.uid))
+            if(!string.IsNullOrEmpty(BilibiliUserConfig.account.uid))
             {
                 int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
                 return MessageBase.Success(nameof(Transcod), $"成功导入{AddConut}个关注列表中的到配置");
