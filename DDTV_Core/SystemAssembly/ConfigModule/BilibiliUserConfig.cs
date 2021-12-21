@@ -141,7 +141,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             public static event EventHandler<EventArgs> CheckAccountChanged;
             private static bool IsOn = false;
-            private static int IntervalTime = 3600 * 6 * 1000;
+            private static int IntervalTime = 3600 * 1 * 1000;
             /// <summary>
             /// 检查账号有效性
             /// </summary>

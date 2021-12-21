@@ -14,7 +14,7 @@ namespace DDTV_WEB_API//DDTVLiveRecWebServer
         public static void Main(string[] args)
         {
             {
-                DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
+               
                 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 builder.Host.ConfigureServices(Services =>
                 {
@@ -71,11 +71,27 @@ namespace DDTV_WEB_API//DDTVLiveRecWebServer
                     FileProvider = new PhysicalFileProvider(DDTV_Core.Tool.FileOperation.CreateAll(Environment.CurrentDirectory + @"/static")),
                     RequestPath = new PathString("/static")
                 });
-                app.Urls.Add("http://0.0.0.0:30086");
-                app.Urls.Add("https://0.0.0.0:30087");
+                app.Urls.Add("http://0.0.0.0:11419");
+                app.Urls.Add("https://0.0.0.0:11451");
                 app.Run();
 
             }
+            DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
+            BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged; ;//注册登陆信息检查失效事件
+        }
+
+        private static void CheckAccount_CheckAccountChanged(object? sender, EventArgs e)
+        {
+            Task.Run(() =>
+            {
+                int i = 0;
+                while (i<360)
+                {
+                    DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Error, "账号登陆失效！请重启DDTV进行登陆！");
+                    Thread.Sleep(10 * 1000);
+                    i++;
+                }
+            });
         }
     }
 }

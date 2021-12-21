@@ -101,7 +101,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             return null;
         }
-
+        /// <summary>
+        /// 检测登录是否有效
+        /// </summary>
+        /// <returns></returns>
         public static bool LoginValidityVerification()
         {
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/nav");

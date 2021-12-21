@@ -92,7 +92,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             {
                                 Enabled = Enabled,
                                 Key = (CoreConfigClass.Key)Enum.Parse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' ')),
-                                Value = ConfigText.Split('=')[1],
+                                Value = ConfigText.Split('=')[1].Trim(' '),
                                 Group = Group
                             });
                         }

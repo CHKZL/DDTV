@@ -113,7 +113,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void AddRoomButton_Click(object sender, RoutedEventArgs e)
         {
-            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
             AddRoomButton.Content = $"已导入{AddConut}个";
             AddRoomButton.IsEnabled= false;
             Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
