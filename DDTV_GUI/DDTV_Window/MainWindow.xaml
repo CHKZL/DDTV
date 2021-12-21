@@ -264,6 +264,7 @@
                                             <ComboBoxItem Content="1.9G" Tag="6"></ComboBoxItem>
                                             <ComboBoxItem Content="5.9G" Tag="7"></ComboBoxItem>
                                             <ComboBoxItem Content="7.9G" Tag="8"></ComboBoxItem>
+                                            <ComboBoxItem Content="10MB(测试用，请勿选择)" Tag="9"></ComboBoxItem>
                                         </hc:ComboBox>
                                     </Grid>
                                     <Grid Width="630" Margin="5">

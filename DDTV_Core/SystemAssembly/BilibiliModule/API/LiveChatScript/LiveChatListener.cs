@@ -575,7 +575,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             //    buffer[i] = messages[i + 16];
             //}
             Array.Copy(messages, 16, buffer, 0, bodyLength);
-            Console.WriteLine($"收到信息：Operation类型{messages[11]}，body内容[{Encoding.Default.GetString(buffer)}]");
+            //Console.WriteLine($"收到信息：Operation类型{messages[11]}，body内容[{Encoding.Default.GetString(buffer)}]");
             switch (protocol.Version)
             {
                 case 1:

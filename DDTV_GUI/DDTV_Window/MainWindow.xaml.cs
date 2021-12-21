@@ -129,7 +129,7 @@ namespace DDTV_GUI.DDTV_Window
             SCToggle.IsChecked = Download.IsRecSC;
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
-            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 8482560409 ? 7 : Download.FlvSplitSize == 6335076761 ? 6 : Download.FlvSplitSize == 2040109465 ? 5 : Download.FlvSplitSize == 5368709120 ? 4 : Download.FlvSplitSize == 4294967296 ? 3 : Download.FlvSplitSize == 3221225472 ? 2 : Download.FlvSplitSize == 2147483648 ? 1 : 0;
+            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760 ? 8 : Download.FlvSplitSize == 8482560409 ? 7 : Download.FlvSplitSize == 6335076761 ? 6 : Download.FlvSplitSize == 2040109465 ? 5 : Download.FlvSplitSize == 5368709120 ? 4 : Download.FlvSplitSize == 4294967296 ? 3 : Download.FlvSplitSize == 3221225472 ? 2 : Download.FlvSplitSize == 2147483648 ? 1 : 0;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -486,7 +486,7 @@ namespace DDTV_GUI.DDTV_Window
                 if (RoomConfig.ReviseRoom(roomCard, false, 2))
                 {
                     Growl.Success("已" + (!YIsAutoRec ? "打开" : "关闭") + $"[{name}({roomid})]的开播自动录制");
-                    if(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status)== "1")
+                    if(!YIsAutoRec && Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status)== "1")
                     {
                         Download.AddDownloadTaskd(uid, true);
                     }
@@ -821,9 +821,12 @@ namespace DDTV_GUI.DDTV_Window
                     case 8:
                         Download.FlvSplitSize = 8482560409;
                         break;
+                    case 9:
+                        Download.FlvSplitSize = 10485760;
+                        break;
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.FlvSplitSize, Download.FlvSplitSize.ToString(), CoreConfigClass.Group.Download);
-                Growl.Success("修改文件大小限制为" + (Download.FlvSplitSize == 8482560409 ? "7.9GB" : Download.FlvSplitSize == 6335076761 ? "5.9GB" : Download.FlvSplitSize == 2040109465 ? "1.9GB" : Download.FlvSplitSize == 5368709120 ? "5GB" : Download.FlvSplitSize == 4294967296 ? "4GB" : Download.FlvSplitSize == 3221225472 ? "3GB" : Download.FlvSplitSize == 2147483648 ? "2GB" : "1GB"));
+                Growl.Success("修改文件大小限制为" + (Download.FlvSplitSize == 10485760 ? "10MB" : Download.FlvSplitSize == 8482560409 ? "7.9GB" : Download.FlvSplitSize == 6335076761 ? "5.9GB" : Download.FlvSplitSize == 2040109465 ? "1.9GB" : Download.FlvSplitSize == 5368709120 ? "5GB" : Download.FlvSplitSize == 4294967296 ? "4GB" : Download.FlvSplitSize == 3221225472 ? "3GB" : Download.FlvSplitSize == 2147483648 ? "2GB" : "1GB"));
             }
         }
 

@@ -21,7 +21,7 @@ namespace DDTV_GUI.UpdateInterface
             {
                 foreach (var item in A1.Value.DownloadedLog)
                 {
-                    BindingData.OverList rec = new(item.Name,item.RoomId, NetClass.ConversionSize(item.DownloadCount),item.StartTime.ToString("MM-dd HH:mm:ss"),item.EndTime.ToString("MM-dd HH:mm:ss"),item.Title,item.Uid,item.FilePath,item.FileName);
+                    BindingData.OverList rec = new(item.Name,item.RoomId, NetClass.ConversionSize(item.TotalDownloadCount),item.StartTime.ToString("MM-dd HH:mm:ss"),item.EndTime.ToString("MM-dd HH:mm:ss"),item.Title,item.Uid,item.FilePath,item.FileName);
                     _.Add(rec);
                 }
             }

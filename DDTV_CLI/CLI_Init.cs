@@ -62,7 +62,7 @@ namespace DDTV_CLI
                                         ulong FileSize = 0;
                                         foreach (var item in A1.Value.DownloadingList)
                                         {
-                                            FileSize += (ulong)item.DownloadCount;
+                                            FileSize += (ulong)item.TotalDownloadCount;
                                         }
                                         i++;
                                         Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");

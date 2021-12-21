@@ -102,7 +102,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 }
             }
         }
-
+        /// <summary>
+        /// 保存弹幕相关信息
+        /// </summary>
+        /// <param name="roomInfo"></param>
         public static void SevaDanmuFile(RoomInfoClass.RoomInfo roomInfo)
         {
             if (Download.IsRecDanmu)
@@ -114,6 +117,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             if (Download.IsRecSC)
                 SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
         }
+        /// <summary>
+        /// 储存弹幕信息到xml文件
+        /// </summary>
+        /// <param name="danmuInfo"></param>
+        /// <param name="FileName"></param>
+        /// <param name="Name"></param>
+        /// <param name="roomId"></param>
         private static void SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo,string FileName,string Name,int roomId)
         {
             string XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
@@ -136,6 +146,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
         }
+        /// <summary>
+        /// 储存礼物信息到文件
+        /// </summary>
+        /// <param name="GiftInfo"></param>
+        /// <param name="FileName"></param>
         public static void SevaGift(List<DanMuClass.GiftInfo> GiftInfo, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,礼物名称,礼物数量,礼物单价,时间戳";
@@ -145,16 +160,26 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             }
             File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
         }
+        /// <summary>
+        /// 储存舰队信息到文件
+        /// </summary>
+        /// <param name="guardBuyInfos"></param>
+        /// <param name="FileName"></param>
         public static void SevaGuardBuy(List<DanMuClass.GuardBuyInfo> guardBuyInfos, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,上舰类型,上舰时间,每月价格,时间戳";
             foreach (var item in guardBuyInfos)
             {
-                string Level = item.GuardLevel == 1 ? "舰长" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "总督" : item.GuardLevel.ToString();
+                string Level = item.GuardLevel == 1 ? "总督" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "舰长" : item.GuardLevel.ToString();
                 Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{Level},{item.Number},{item.Price},{item.Timestamp}";
             }
             File.WriteAllText(FileName + "_舰队.csv", Gift, Encoding.UTF8);
         }
+        /// <summary>
+        /// 储存SC信息到文件
+        /// </summary>
+        /// <param name="superChatInfos"></param>
+        /// <param name="FileName"></param>
         public static void SevaSuperChat(List<DanMuClass.SuperChatInfo> superChatInfos, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,SC金额,消息原文,翻译消息,时间戳";

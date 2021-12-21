@@ -167,7 +167,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             /// </summary>
             public string GuradName { set; get; }
             /// <summary>
-            /// 舰队等级：1-舰长 2-提督 3-总督
+            /// 舰队等级：1-总督 2-提督 3-舰长
             /// </summary>
             public int GuardLevel { set; get; }
             /// <summary>
