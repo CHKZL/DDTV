@@ -161,6 +161,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     foreach (var item in roomInfo.DownloadingList)
                     {
                         item.HttpWebRequest = null;
+                        downloads.Token = item.Token;
                         downloads.HttpWebRequest = null;
                         downloads.RoomId = item.RoomId;
                         downloads.Uid = item.Uid;
