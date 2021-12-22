@@ -267,6 +267,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 弹幕录制对象
             /// </summary>
             public API.DanMu.DanMuClass.DanmuMessage DanmuFile { set; get; } = new API.DanMu.DanMuClass.DanmuMessage();
+            /// <summary>
+            /// 是否正在被编辑
+            /// </summary>
+            public bool IsCliping { set; get; } = false;
            
         }
         public class RoomWebSocket

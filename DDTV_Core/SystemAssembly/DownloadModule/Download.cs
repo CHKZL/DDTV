@@ -87,6 +87,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
+                do
+                {
+                    Thread.Sleep(500);
+                } while (roomInfo.IsCliping);
                 if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
                     DefaultPath = DefaultPath + "/";
                 string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + "/" + $"{DefaultFileName}" + "_{R}.flv");

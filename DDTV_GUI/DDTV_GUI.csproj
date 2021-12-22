@@ -17,6 +17,7 @@
     <None Remove="Resources\Img\UI\BackGround.jpg" />
     <None Remove="Resources\Img\UI\block.png" />
     <None Remove="Resources\Img\UI\border-outer.png" />
+    <None Remove="Resources\Img\UI\box_plot.png" />
     <None Remove="Resources\Img\UI\close.png" />
     <None Remove="Resources\Img\UI\cloud-download.png" />
     <None Remove="Resources\Img\UI\code.png" />
@@ -68,6 +69,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\border-outer.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\box_plot.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\close.png">

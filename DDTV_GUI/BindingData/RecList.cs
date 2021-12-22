@@ -15,6 +15,7 @@ namespace DDTV_GUI.BindingData
         private string starttime;
         private string title;
         private long uid;
+        private string filePath;
         public event PropertyChangedEventHandler PropertyChanged;
         public string Name
         {
@@ -106,7 +107,22 @@ namespace DDTV_GUI.BindingData
                 }
             }
         }
-        public RecList(string name, int roomid, string downszie, string starttime, string title,long uid)
+        public string FilePath
+        {
+            get
+            {
+                return filePath;
+            }
+            set
+            {
+                filePath = value;
+                if (this.PropertyChanged != null)//激发事件，参数为Age属性  
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Age"));
+                }
+            }
+        }
+        public RecList(string name, int roomid, string downszie, string starttime, string title,long uid,string filePath)
         {
             this.name = name;
             this.roomid = roomid;
@@ -114,6 +130,7 @@ namespace DDTV_GUI.BindingData
             this.starttime = starttime;
             this.title = title;
             this.uid = uid;
+            this.filePath = filePath;
         }
     }
 }

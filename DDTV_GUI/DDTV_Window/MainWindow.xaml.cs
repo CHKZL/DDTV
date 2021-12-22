@@ -23,6 +23,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ComboBox = HandyControl.Controls.ComboBox;
 using MessageBox = HandyControl.Controls.MessageBox;
+using DDTV_GUI.WPFControl;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -33,8 +34,10 @@ namespace DDTV_GUI.DDTV_Window
     {
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
+        private Dialog ClipDialog;//切片窗口
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
-        
+        public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
+
         public static List<PlayWindow> playWindowsList = new();
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
@@ -70,6 +73,9 @@ namespace DDTV_GUI.DDTV_Window
             UpdateInterface.Main.ActivationInterface = 0;
             TimedTask.CheckUpdate.Check();
             TimedTask.DokiDoki.Check();
+
+            //ClipWindow clipWindow = new ClipWindow();
+            //clipWindow.Show();
         }
 
         private void MainWindow_PlayListExit(object? sender, EventArgs e)
@@ -857,6 +863,50 @@ namespace DDTV_GUI.DDTV_Window
                 CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, PlayQuality.ToString(), CoreConfigClass.Group.Play);
                 Growl.Success("修改默认在线观看画质为" + (PlayQuality == 10000 ? "原画" : PlayQuality == 400 ? "蓝光" : PlayQuality == 250 ? "超清" : PlayQuality == 150 ? "高清" : "流畅"));
             }
+        }
+        
+        /// <summary>
+        /// 下载窗口鼠标右键菜单_快速切片
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RecList_MenuItem_Clip_Click(object sender, RoutedEventArgs e)
+        {
+            int Index = RecList.SelectedIndex;
+            if (Index > -1 && UpdateInterface.Main.recList.Count > Index)
+            {
+                string filePath = UpdateInterface.Main.recList[Index].FilePath;
+                long uid = UpdateInterface.Main.recList[Index].Uid;
+               
+                if(Rooms.RoomInfo.TryGetValue(uid,out var roomInfo))
+                {
+                    if(roomInfo.DownloadingList.Count>0)
+                    {
+                        FileInfo[] fileInfos = new FileInfo[roomInfo.DownloadingList.Count];
+                        for(int i=0;i< roomInfo.DownloadingList.Count;i++)
+                        {
+                            fileInfos[i] = new FileInfo(roomInfo.DownloadingList[i].FileName);
+                        }
+                        
+                        if (fileInfos.Length==1)
+                        {
+                            ClipWindow clipWindow = new(fileInfos[0].FullName, roomInfo);
+                            clipWindow.Show();
+                        }
+                        else
+                        {
+                            CuttingDialogDispose += MainWindow_CuttingDialogDispose;
+                            SelectCuttingFileDialog selectCuttingFileDialog = new SelectCuttingFileDialog(fileInfos, CuttingDialogDispose, roomInfo);
+                            ClipDialog = Dialog.Show(selectCuttingFileDialog);
+                        }                    
+                    }
+                }
+            }
+        }
+
+        private void MainWindow_CuttingDialogDispose(object? sender, EventArgs e)
+        {
+            ClipDialog.Dispatcher.BeginInvoke(new Action(() => ClipDialog.Close()));
         }
     }
 }

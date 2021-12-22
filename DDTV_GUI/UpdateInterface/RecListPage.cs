@@ -23,8 +23,10 @@ namespace DDTV_GUI.UpdateInterface
                 {
                     ulong FileSize = 0;
                     DateTime starttime = DateTime.MaxValue;
+                    string FilePath = "";
                     foreach (var item in A1.Value.DownloadingList)
                     {
+                        FilePath = item.FilePath;
                         if (item.StartTime < starttime)
                         {
                             starttime = item.StartTime;
@@ -32,13 +34,13 @@ namespace DDTV_GUI.UpdateInterface
 
                         FileSize += (ulong)item.TotalDownloadCount;
                     }
-                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid);
+                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid, FilePath);
                     _.Add(rec);
                 }
             }
             if (_.Count == 0)
             {
-                _.Add(new BindingData.RecList("", 0, "", "", "当前无下载任务",0));
+                _.Add(new BindingData.RecList("", 0, "", "", "当前无下载任务",0,""));
             }
             if (recList.Count != _.Count)
             {
