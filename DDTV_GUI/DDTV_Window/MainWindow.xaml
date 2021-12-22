@@ -175,11 +175,18 @@
                         </ListView.View>
                         <ListView.ContextMenu>
                             <ContextMenu Width="150">
+                                <MenuItem Header="快速切片" Click="RecList_MenuItem_Clip_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/box_plot.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
                                 <MenuItem Header="打开直播间" Click="RecLive_MenuItem_OpenLiveRoomUrl_Click">
                                     <MenuItem.Icon>
                                         <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
+                                <Separator />
                                 <MenuItem Header="取消录制" Click="RecLive_MenuItem_Cancel_Click">
                                     <MenuItem.Icon>
                                         <Image Source="/Resources/Img/UI/stop.png" Width="18" Height="18"/>

@@ -35,11 +35,12 @@ namespace DDTV_GUI.DDTV_Window
     {
 
         LibVLC vlcVideo;
+        private static MediaPlayer _mediaPlayer;
         bool IsClose = false;
         long uid = 0;
         int roomId = 0;
         //string title = string.Empty;
-        private static MediaPlayer _mediaPlayer;
+        
         WPFControl.SendDanmuDialog sendDanmuDialog;
         private DispatcherTimer VolumeTimer = new DispatcherTimer();
         int VolumeGridTime = 3;
@@ -60,8 +61,7 @@ namespace DDTV_GUI.DDTV_Window
         public WindowInfo windowInfo = new();
         private List<RunningBlock> DanmuBlock = new();
         public PlayWindow(long Uid)
-        {
-           
+        {        
             InitializeComponent();
             Quality = MainWindow.PlayQuality;
             uid = Uid;

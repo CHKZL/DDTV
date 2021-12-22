@@ -88,29 +88,36 @@ namespace DDTV_Core.SystemAssembly.Log
             /// <param name="logClass"></param>
             /// <returns></returns>
             public static bool AddDb(LogClass logClass)
-            {
+            {            
                 try
                 {
-                    if (SQLiteConn.State==ConnectionState.Open)
+                    if (logClass.Source != null)
                     {
-                        string sqltext = $"insert into Log(Source, Type, Message, Time, RunningTime) values (@Source, @Type, @Message, @Time ,@RunningTime)";
-                        SqliteCommand cmd = new(sqltext, SQLiteConn);
-                        //构造参数
-                        SqliteParameter[] pms = new SqliteParameter[]
+                        if (SQLiteConn.State == ConnectionState.Open)
                         {
+                            string sqltext = $"insert into Log(Source, Type, Message, Time, RunningTime) values (@Source, @Type, @Message, @Time ,@RunningTime)";
+                            SqliteCommand cmd = new(sqltext, SQLiteConn);
+                            //构造参数
+                            SqliteParameter[] pms = new SqliteParameter[]
+                            {
                             new SqliteParameter("@Source",DbType.String) {Value=logClass.Source },
                             new SqliteParameter("@Type",DbType.String) {Value=logClass.Type },
                             new SqliteParameter("@Message",DbType.String) {Value=logClass.Message },
                             new SqliteParameter("@Time",DbType.DateTime) {Value=logClass.Time },
                             new SqliteParameter("@RunningTime",DbType.Int64) {Value=logClass.RunningTime },
-                        };
-                        //将变量参数加到cmd
-                        cmd.Parameters.AddRange(pms);
-                        //执行
-                        int i = cmd.ExecuteNonQuery();
-                        if (i > 0)
-                        {
-                            return true;
+                            };
+                            //将变量参数加到cmd
+                            cmd.Parameters.AddRange(pms);
+                            //执行
+                            int i = cmd.ExecuteNonQuery();
+                            if (i > 0)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {

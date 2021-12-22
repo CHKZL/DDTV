@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DDTV_Core.Tool.TranscodModule;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -20,15 +21,20 @@ namespace DDTV_Core.Tool.FlvModule
         /// </summary>
         private static FlvClass.FlvTag FlvScriptTag = new();
         private static uint Count = 0;
-        public static void Fix(string FlvFile)
+
+        private static bool IsCuttingPake = true;
+
+        public static event EventHandler<EventArgs> ClipCompleted;
+        public static string Fix(string FlvFile,string AddString="修复",string R="")
         {
             flvTimes=new FlvClass.FlvTimes();
             FlvHeader=new FlvClass.FlvHeader();
             FlvScriptTag=new FlvClass.FlvTag();
             Count = 0;
             uint DataLength = 9;
+            string NewFile = FlvFile.Replace(R+".flv", AddString+".flv");
             FileStream stream = new FileStream(FlvFile,FileMode.Open);
-            FileStream fileStream = new FileStream(FlvFile.Replace(".flv","修复.flv"), FileMode.Create);
+            FileStream fileStream = new FileStream(NewFile, FileMode.Create);
             while (true)
             {
                 byte[] data = new byte[DataLength];
@@ -54,9 +60,10 @@ namespace DDTV_Core.Tool.FlvModule
                         stream.Dispose();
                         fileStream.Close();
                         fileStream.Dispose();
+                        return NewFile;
                     }
                 }
-                byte[] FixData = FixWrite(data, out uint DL);
+                byte[] FixData = FixWrite(data, out uint DL,out uint A,out byte B);
                 DataLength = DL;
                 if(fileStream.CanWrite)
                 {
@@ -64,11 +71,126 @@ namespace DDTV_Core.Tool.FlvModule
                 }
                 else
                 {
-                    return;
+                    return NewFile;
                 }
             }
         }
-        private static byte[] FixWrite(byte[] data, out uint Len)
+        public static void Cutting(uint Start,uint End,string FlvFile)
+        {
+            flvTimes = new FlvClass.FlvTimes();
+            FlvHeader = new FlvClass.FlvHeader();
+            FlvScriptTag = new FlvClass.FlvTag();
+            Count = 0;
+            uint DataLength = 9;
+            string NewFile = FlvFile.Replace(".flv", "CuttingTmp.flv");
+            string TmpFile= FlvFile +"Cutting";
+            File.Copy(FlvFile, TmpFile);
+            FlvFile = TmpFile;
+            FileStream stream = new FileStream(FlvFile, FileMode.Open);
+            FileStream fileStream = new FileStream(NewFile, FileMode.Create);
+            while (true)
+            {
+                byte[] data = new byte[DataLength];
+                for (int i = 0 ; i < DataLength ; i++)
+                {
+                    int EndF = 0;
+                    if (stream.CanRead)
+                    {
+                        EndF = stream.ReadByte();
+                    }
+                    else
+                    {
+                        EndF = -1;
+                    }
+                    if (EndF != -1)
+                    {
+                        data[i] = (byte)EndF;
+                        Count++;
+                    }
+                    else
+                    {
+                        stream.Close();
+                        stream.Dispose();
+                        fileStream.Close();
+                        fileStream.Dispose();
+                        IsCuttingPake = true;
+                        FileOperation.Del(FlvFile);
+                        CuttingFFMPEG(NewFile);
+                        if (ClipCompleted != null)
+                        {
+                            ClipCompleted.Invoke(null, EventArgs.Empty);
+                        }
+                        return;
+                    }
+                }
+                byte[] FixData = FixWrite(data, out uint DL, out uint PakeTime, out byte TagType);
+                if (TagType == 0x08 || TagType == 0x09)
+                {
+                    if(PakeTime==0||(PakeTime>Start&& PakeTime<End))
+                    {
+                        IsCuttingPake = true;
+                        if (fileStream.CanWrite)
+                        {
+                            fileStream.Write(FixData, 0, FixData.Length);
+                        }
+                        else
+                        {
+                            IsCuttingPake = true;
+                            FileOperation.Del(FlvFile);
+                            CuttingFFMPEG(NewFile);
+                            if (ClipCompleted != null)
+                            {
+                                ClipCompleted.Invoke(null, EventArgs.Empty);
+                            }
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        IsCuttingPake = false;
+                    }
+                }
+                else
+                {             
+                    if (IsCuttingPake)
+                    {
+                        if (fileStream.CanWrite)
+                        {
+                            fileStream.Write(FixData, 0, FixData.Length);
+                        }
+                        else
+                        {
+                            IsCuttingPake = true;
+                            FileOperation.Del(FlvFile);
+                            CuttingFFMPEG(NewFile);
+                            if (ClipCompleted != null)
+                            {
+                                ClipCompleted.Invoke(null, EventArgs.Empty);
+                            }
+                            return;
+                        }
+                    }
+                    
+                }
+                DataLength = DL;
+            }
+
+        }
+        private static void CuttingFFMPEG(string FilePath)
+        {
+            string F = Fix(FilePath,"切片", "CuttingTmp");
+            FileOperation.Del(FilePath);
+            TranscodClass transcodClass = new TranscodClass()
+            {
+                AfterFilenameExtension = ".mp4",
+                AfterFilePath = F.Replace(".flv", ".mp4"),
+                BeforeFilePath = F
+            };
+            Transcod.CallFFMPEG(transcodClass);
+            FileOperation.Del(F);
+          
+        }
+        private static byte[] FixWrite(byte[] data, out uint Len,out uint PakeTime,out byte TagType)
         {
             if (Count > 9)
             {
@@ -76,10 +198,12 @@ namespace DDTV_Core.Tool.FlvModule
                 {
                     flvTimes.IsTagHeader = !flvTimes.IsTagHeader;
                     flvTimes.FlvTotalTagCount++;
+                    TagType = data[4];
                     switch (data[4])
                     {
                         case 0x12:
                             {
+                                PakeTime = 0;
                                 //downloads.FlvScriptTag.tag=new byte[data.Length];
                                 //downloads.FlvScriptTag.tag=data;
                                 Len = BitConverter.ToUInt32(new byte[] { data[7], data[6], data[5], 0x00 }, 0);
@@ -125,7 +249,7 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9] = c[1];
                                 data[10] = c[0];
                                 data[11] = c[3];
-
+                                PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
                                 Console.WriteLine($"从文件中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
                                 flvTimes.TagType = 0x08;
                                 if (flvTimes.FlvVideoTagCount == 0)
@@ -152,7 +276,7 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9] = c[1];
                                 data[10] = c[0];
                                 data[11] = c[3];
-
+                                PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
                                 Console.WriteLine($"从文件中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
                                 flvTimes.TagType = 0x09;
                                 if (flvTimes.FlvVideoTagCount == 0)
@@ -167,6 +291,7 @@ namespace DDTV_Core.Tool.FlvModule
                         default:
                             {
                                 Len = 15;
+                                PakeTime = 0;
                                 return data;
                             }
                     }
@@ -174,7 +299,6 @@ namespace DDTV_Core.Tool.FlvModule
                 }
                 else
                 {
-
                     flvTimes.IsTagHeader = !flvTimes.IsTagHeader;
                     if (flvTimes.FlvTotalTagCount < 2)
                     {
@@ -206,6 +330,9 @@ namespace DDTV_Core.Tool.FlvModule
                         flvTimes.FlvAudioTagCount++;
                     }
                     Len = 15;
+                    //IsCuttingPake = false;
+                    TagType = 0x00;
+                    PakeTime = 0;
                     return data;
                 }
             }
@@ -225,6 +352,8 @@ namespace DDTV_Core.Tool.FlvModule
                 FlvHeader.FlvHeaderOffset[2] = data[7];
                 FlvHeader.FlvHeaderOffset[3] = data[8];
                 Len = 15;
+                TagType = 0x00;
+                PakeTime = 0;
                 return data;
             }
         }
