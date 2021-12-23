@@ -30,6 +30,7 @@
     <None Remove="Resources\Img\UI\message.png" />
     <None Remove="Resources\Img\UI\notification.png" />
     <None Remove="Resources\Img\UI\play-circle.png" />
+    <None Remove="Resources\Img\UI\pushpin.png" />
     <None Remove="Resources\Img\UI\reload _ime.png" />
     <None Remove="Resources\Img\UI\reload.png" />
     <None Remove="Resources\Img\UI\share.png" />
@@ -110,6 +111,9 @@
     <Resource Include="Resources\Img\UI\play-circle.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Resources\Img\UI\pushpin.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\Img\UI\reload _ime.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -159,6 +163,10 @@
 
   <ItemGroup>
     <Folder Include="Doc\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
 
 </Project>

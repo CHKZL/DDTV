@@ -36,6 +36,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         }
         public static bool Init(InitDDTV_Core.SatrtType satrtType = InitDDTV_Core.SatrtType.DDTV_Core)
         {
+            Log.Log.AddLog(nameof(BilibiliUserConfig), Log.LogClass.LogType.Info, "加载Userinfo文件");
             ReadUserFile();
             if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
             {

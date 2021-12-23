@@ -26,7 +26,7 @@ namespace DDTV_GUI.DDTV_Window
         private static DateTime Start = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, 0, 0, 0);
         private static DateTime End = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, (int)FlieLen / 3600000, (int)FlieLen % 3600000 / 60000, (int)FlieLen % 3600000 % 60000 / 1000);
         private bool IsClose = false;
-        RoomInfoClass.RoomInfo roomInfo=null;
+        RoomInfoClass.RoomInfo roomInfo=new();
 
 
 
@@ -70,8 +70,11 @@ namespace DDTV_GUI.DDTV_Window
             {
                 while (true)
                 {
-                    VideoView.Dispatcher.Invoke(() => FlieLen = VideoView.MediaPlayer.Length);
-                    FlieSizeLen = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, (int)FlieLen / 3600000, (int)FlieLen % 3600000 / 60000, (int)FlieLen % 3600000 % 60000 / 1000);
+                    //if (VideoView.MediaPlayer != null)
+                    {
+                        VideoView.Dispatcher.Invoke(() => FlieLen = VideoView.MediaPlayer.Length);
+                        FlieSizeLen = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, (int)FlieLen / 3600000, (int)FlieLen % 3600000 / 60000, (int)FlieLen % 3600000 % 60000 / 1000);
+                    }
                     Thread.Sleep(1000);
                 }
             });
@@ -133,13 +136,20 @@ namespace DDTV_GUI.DDTV_Window
         private void FlvTimeBar_TimeChanged(object? sender, HandyControl.Data.FunctionEventArgs<System.DateTime> e)
         {
             double Time = e.Info.TimeOfDay.TotalSeconds;
-            VideoView.MediaPlayer.Time = (long)Time*1000;
+            if(VideoView.MediaPlayer!=null)
+            {
+                VideoView.MediaPlayer.Time = (long)Time * 1000;
+            }
+           
         }
 
         private void Play_Click(object sender, System.Windows.RoutedEventArgs e)
         {
             Pause =! Pause;
-            VideoView.MediaPlayer.SetPause(Pause);
+            if (VideoView.MediaPlayer != null)
+            {
+                VideoView.MediaPlayer.SetPause(Pause);
+            }
         }
 
         private void FlvTimeBar_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
