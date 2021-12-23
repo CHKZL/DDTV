@@ -60,6 +60,8 @@ namespace DDTV_GUI.DDTV_Window
         private int LastHeight;
         public WindowInfo windowInfo = new();
         private List<RunningBlock> DanmuBlock = new();
+        private DispatcherTimer timer;
+        private bool IsTopping = false;
         public PlayWindow(long Uid)
         {        
             InitializeComponent();
@@ -73,7 +75,7 @@ namespace DDTV_GUI.DDTV_Window
             _mediaPlayer = new MediaPlayer(vlcVideo);
             VideoView.MediaPlayer = _mediaPlayer;
             VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
-            VideoView.MediaPlayer.Playing += MediaPlayer_Playing;
+            VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
             VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
             Task.Run(() =>
             {
@@ -83,7 +85,21 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
             VolumeTimer.Tick += VolumeTimer_Tick;
             VolumeTimer.Start();
+            Loaded += new RoutedEventHandler(Topping);
         }
+        void Topping(object sender, RoutedEventArgs e)
+        {
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer1_Tick;
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.Topmost = true;
+        }
+        /// <summary>
+        /// 设置右键菜单清晰度可选项
+        /// </summary>
         public void SetMenuItemSwitchQuality()
         {
             QualityList = RoomInfo.GetQuality(uid);
@@ -113,6 +129,11 @@ namespace DDTV_GUI.DDTV_Window
                 qn80.Visibility = Visibility.Collapsed;
         }
 
+        /// <summary>
+        /// 播放结束事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MediaPlayer_EndReached(object? sender, EventArgs e)
         {
             if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
@@ -134,6 +155,11 @@ namespace DDTV_GUI.DDTV_Window
         {
             SetVolume(0);
         }
+        /// <summary>
+        /// 定时隐藏音量显示UI
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void VolumeTimer_Tick(object? sender, EventArgs e)
         {
             VolumeGridTime--;
@@ -144,12 +170,13 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
-        //public class V
-        //{
-        //    public double Value{ get; set; } = 0;
-        //}
 
-        private void MediaPlayer_Playing(object? sender, EventArgs e)
+        /// <summary>
+        /// 隐藏加载界面事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MediaPlayer_Playloading(object? sender, EventArgs e)
         {
             loading.Dispatcher.Invoke(() => loading.Visibility = Visibility.Collapsed);
         }
@@ -875,6 +902,21 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 
             });
+        }
+
+        private void MenuItem_Topping_Click(object sender, RoutedEventArgs e)
+        {
+            IsTopping = !IsTopping;
+            if(IsTopping)
+            {
+                this.Topmost = true;
+                timer.Start();
+            }
+            else
+            {
+                timer.Stop();
+                this.Topmost = false;
+            }
         }
     }
 }

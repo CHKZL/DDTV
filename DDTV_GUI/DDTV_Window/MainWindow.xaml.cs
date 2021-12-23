@@ -323,6 +323,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (WindowState == WindowState.Minimized)
             {
+                Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
                 UpdateInterface.Main.ActivationInterface = -1;
                 this.Visibility = Visibility.Hidden;
             }

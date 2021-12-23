@@ -51,6 +51,12 @@
                             <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="设置/锁定锁定置顶" Click="MenuItem_Topping_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/pushpin.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>

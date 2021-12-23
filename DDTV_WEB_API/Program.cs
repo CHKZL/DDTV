@@ -31,7 +31,7 @@ namespace DDTV_WEB_API//DDTVLiveRecWebServer
                 Services.AddControllers();
                 //注册Cookie认证服务
                 Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option => 
                     {
                         option.AccessDeniedPath = "/LoginErrer"; //当用户尝试访问资源但没有通过任何授权策略时，这是请求会重定向的相对路径资源
                             option.LoginPath = "/login/";

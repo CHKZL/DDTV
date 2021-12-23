@@ -16,7 +16,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
         {
             public static bool Loing(InitDDTV_Core.SatrtType satrtType)
             {
-               QR.QRInit(satrtType);
+                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "开始生成登陆QR码");
+                QR.QRInit(satrtType);
                 do
                 {
                     if (string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime<DateTime.UtcNow)
@@ -41,6 +42,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     Thread.Sleep(5000);
                     }
                 } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
+                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "登陆流程完成");
                 return true;
             }
         }

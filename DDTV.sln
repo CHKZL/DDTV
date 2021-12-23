@@ -20,6 +20,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_TEST", "DDTV_TEST\DDTV
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Server", "DDTV_Server\DDTV_Server.csproj", "{670E287C-2EEB-493F-913A-B2E6A222804D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_Update", "DDTV_Update\DDTV_Update.csproj", "{6971FDFF-E487-42B3-81BA-924313354CC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DDTV_Push", "DDTV_Push\DDTV_Push.csproj", "{CDC42E53-459F-472A-AFE4-D7DBF428B113}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +54,14 @@ Global
 		{670E287C-2EEB-493F-913A-B2E6A222804D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{670E287C-2EEB-493F-913A-B2E6A222804D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{670E287C-2EEB-493F-913A-B2E6A222804D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6971FDFF-E487-42B3-81BA-924313354CC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6971FDFF-E487-42B3-81BA-924313354CC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6971FDFF-E487-42B3-81BA-924313354CC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6971FDFF-E487-42B3-81BA-924313354CC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

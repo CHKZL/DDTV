@@ -43,6 +43,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
                     //初始化哔哩哔哩账号系统
                     BilibiliUserConfig.Init(satrtType);
+                    Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"哔哩哔哩本地User信息加载完成");
                     //开始房间巡逻
                     Rooms.UpdateRoomInfo();
                     RoomPatrolModule.RoomPatrol.Init();
