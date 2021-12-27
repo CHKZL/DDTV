@@ -21,7 +21,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             CoreConfigFile.ReadConfigFile();
             //初始化读取房间配置
             RoomConfigFile.ReadRoomConfigFile();
-
+            
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:
@@ -37,6 +37,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         //开始房间巡逻
                         Rooms.UpdateRoomInfo();
                         RoomPatrolModule.RoomPatrol.Init();
+                        ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     }
                     break;
                 default:             
@@ -47,9 +48,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     //开始房间巡逻
                     Rooms.UpdateRoomInfo();
                     RoomPatrolModule.RoomPatrol.Init();
+                    ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     break;
             }
-           
+            
             //开一个线程用于定时自动储存配置
             Task.Run(() => {
                 while (true)

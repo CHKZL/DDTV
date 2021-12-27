@@ -63,6 +63,7 @@ namespace DDTV_GUI.WPFControl
                 BilibiliUserConfig.WritUserFile();
                 //开始房间巡逻
                 LoginEndEvent.Invoke(this, EventArgs.Empty);
+                DDTV_Core.InitDDTV_Core.ClientAID = CoreConfig.GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
             }
 
         }

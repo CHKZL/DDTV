@@ -8,6 +8,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using System.Net.WebSockets;
 using DDTV_Core.SystemAssembly.Log;
 using System.Net;
+using DDTV_Core.SystemAssembly.ConfigModule;
 
 namespace DDTV_Core
 {
@@ -17,18 +18,34 @@ namespace DDTV_Core
         /// Core的版本号
         /// </summary>
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        public static string ClientAID = string.Empty;
+
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
+           
             Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
             Log.LogInit(LogClass.LogType.Debug);
-            TestVetInfo();
+            //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 1024*1024*1024;
             ServicePointManager.Expect100Continue = false;
-            SystemAssembly.ConfigModule.CoreConfig.ConfigInit(satrtType);
+            CoreConfig.ConfigInit(satrtType);
+            //switch (satrtType)
+            //{
+            //    case SatrtType.DDTV_Core:
+            //        Tool.DDTV_Update.ComparisonVersion("Core", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            //        break;
+            //    case SatrtType.DDTV_GUI:
+            //        Tool.DDTV_Update.ComparisonVersion("GUI", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            //        break;
+            //    case SatrtType.DDTV_WEB:
+            //        Tool.DDTV_Update.ComparisonVersion("WEB", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            //        break;
+            //}
            
 
             #region 测试代码
@@ -118,16 +135,16 @@ namespace DDTV_Core
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到弹幕信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(Danmu.Timestamp)} {Danmu.UserName}({Danmu.UserId}):{Danmu.Message}");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到弹幕信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(Danmu.Timestamp)} {Danmu.UserName}({Danmu.UserId}):{Danmu.Message}");
                     break;
                 case SuperchatEventArg SuperchatEvent:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到Superchat信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(SuperchatEvent.Timestamp)} {SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到Superchat信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(SuperchatEvent.Timestamp)} {SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
                     break;
                 case GuardBuyEventArgs GuardBuyEvent:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
                     break;
                 case SendGiftEventArgs sendGiftEventArgs:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到礼物]{SystemAssembly.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
+                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到礼物]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
                     break;
                 case EntryEffectEventArgs entryEffectEventArgs:
                     Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");

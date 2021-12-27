@@ -113,7 +113,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 /// </summary>
                 Cancel,
             }
-
+            public Downloads Clone()
+            {
+                Downloads downloads = new Downloads();
+                downloads = this;
+                return downloads;
+            }
             public void Clear()
             {
                 //HttpWebRequest.Abort();

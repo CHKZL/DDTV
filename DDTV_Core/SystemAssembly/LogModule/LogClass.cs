@@ -31,6 +31,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Info_Transcod=31,
             /// <summary>
+            /// API消息
+            /// </summary>
+            Info_API = 32,
+            /// <summary>
             /// 调试信息
             /// </summary>
             Debug = 40,

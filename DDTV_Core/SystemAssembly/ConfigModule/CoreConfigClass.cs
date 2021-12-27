@@ -9,32 +9,31 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     public class CoreConfigClass
     {
 
-        internal static Config config = new();
-        internal class Config
+        public static Config config = new();
+        public class Config
         {
-            internal List<Data> datas = new();
-            internal class Data
+            public List<Data> datas = new();
+            public class Data
             {
                 /// <summary>
                 /// 配置键
                 /// </summary>
-                internal Key Key { set; get; }
+                public Key Key { set; get; }
                 /// <summary>
                 /// 配置分组
                 /// </summary>
-                internal Group Group { set; get; } = Group.Default;
+                public Group Group { set; get; } = Group.Default;
                 /// <summary>
                 /// 配置值
                 /// </summary>
-                internal string Value { set; get; } = "";
+                public string Value { set; get; } = "";
                 /// <summary>
                 /// 是否有效
                 /// </summary>
-                internal bool Enabled { set; get; } = false;
+                public bool Enabled { set; get; } = false;
                 
             }
         }
-        internal static Dictionary<int, string> ConfigType = new Dictionary<int, string>();
         /// <summary>
         /// 配置分组
         /// </summary>
@@ -147,6 +146,34 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 当IsFlvSplit为真时使能，FLV文件切分的大小(应该为long值，切割值应该以byte计算)
             /// </summary>
             FlvSplitSize,
+            /// <summary>
+            /// WEB登陆使用的用户名(string)
+            /// </summary>
+            WebUserName,
+            /// <summary>
+            /// WEB登陆使用的密码(string)
+            /// </summary>
+            WebPassword,
+            /// <summary>
+            /// WEBAPI使用的KeyId(string)
+            /// </summary>
+            AccessKeyId,
+            /// <summary>
+            /// WEBAPI使用的KeySecret(string)
+            /// </summary>
+            AccessKeySecret,
+            /// <summary>
+            /// 用于标记服务器资源ID编号(string)
+            /// </summary>
+            ServerAID,
+            /// <summary>
+            /// 用于标记服务器名称(string)
+            /// </summary>
+            ServerName,
+            /// <summary>
+            /// 客户端唯一标识(string)
+            /// </summary>
+            ClientAID,
         }
     }
 }

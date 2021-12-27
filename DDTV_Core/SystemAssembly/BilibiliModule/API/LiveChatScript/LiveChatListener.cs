@@ -550,7 +550,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             if(Rooms.Rooms.RoomInfo.TryGetValue(mid,out Rooms.RoomInfoClass.RoomInfo roomInfo))
             {
-                roomInfo.roomWebSocket.dokiTime=TimeModule.Time.Operate.GetRunMilliseconds();
+                roomInfo.roomWebSocket.dokiTime= Tool.TimeModule.Time.Operate.GetRunMilliseconds();
             }
                 
 

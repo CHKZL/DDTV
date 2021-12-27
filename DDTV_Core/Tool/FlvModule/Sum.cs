@@ -31,15 +31,16 @@ namespace DDTV_Core.Tool.FlvModule
                         using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].FileName, FileMode.Open);
                         if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
                             Download.TmpPath = Download.TmpPath + "/";
-                        string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";                 
+                        string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
+                        DelList.Add(SunTmpFime);
                         using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
                             if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                             {
-                                DelList.Add(SunTmpFime);
+                              
                                 if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                                 {
                                     SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                                    FileOperation.Del(SunTmpFime);
+                                    FileOperation.Del(DelList);
                                     return "";
                                 }
                                 int time = Merge(OldFileStream, fsMerge, true, 0);
@@ -52,11 +53,12 @@ namespace DDTV_Core.Tool.FlvModule
                     else
                     {
                         SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"来自{roomInfo.room_id}房间的录制结束合并发生错误，{roomInfo.DownloadingList[i].FileName}文件不存在，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}");
+                        FileOperation.Del(DelList);
                         return "";
                     }
                 }
                 File.Copy(OldFileStream.Name, OkFilePath);
-                FileOperation.Del(OldFileStream.Name);
+                DelList.Add(OldFileStream.Name);
                 OldFileStream.Close();
                 OldFileStream.Dispose();         
                 foreach (var item in roomInfo.DownloadingList)

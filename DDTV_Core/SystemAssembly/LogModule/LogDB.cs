@@ -60,7 +60,7 @@ namespace DDTV_Core.SystemAssembly.Log
                         exception = e,
                         IsError = true,
                         Message = "日志数据库初始化失败",
-                        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
+                        RunningTime = Tool.TimeModule.Time.Operate.GetRunMilliseconds(),
                         Source = nameof(LogDB),
                         Time = DateTime.Now,
                         Type = LogClass.LogType.Error
@@ -91,7 +91,7 @@ namespace DDTV_Core.SystemAssembly.Log
             {            
                 try
                 {
-                    if (logClass.Source != null)
+                    if (logClass!=null&&logClass.Source != null)
                     {
                         if (SQLiteConn.State == ConnectionState.Open)
                         {
@@ -136,7 +136,7 @@ namespace DDTV_Core.SystemAssembly.Log
                         exception = e,
                         IsError = true,
                         Message = "日志数据库写入出现未知错误",
-                        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
+                        RunningTime = Tool.TimeModule.Time.Operate.GetRunMilliseconds(),
                         Source = nameof(LogDB),
                         Time = DateTime.Now,
                         Type = LogClass.LogType.Error

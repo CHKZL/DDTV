@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemAssembly.TimeModule
+namespace DDTV_Core.Tool.TimeModule
 {
     public class Time
     {
