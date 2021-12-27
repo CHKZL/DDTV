@@ -2,13 +2,13 @@
 using System.Drawing;
 using System.Net.Mime;
 
-namespace DDTV_WEB_API.Controllers
+namespace DDTV_WEB_Server.Controllers
 {
     [Route("api/[controller]")]
     public class loginqr: ControllerBase
     {
-        [HttpGet(Name = "loginqr")]
-        public ActionResult get()
+        [HttpPost(Name = "loginqr")]
+        public ActionResult post()
         {
             Image bmp = Bitmap.FromFile("./BiliQR.png");
             MemoryStream ms = new MemoryStream();
@@ -17,15 +17,5 @@ namespace DDTV_WEB_API.Controllers
             return File(ms.ToArray(), "image/png");
         }
        
-    }
-    [Route("api/[controller]")]
-    public class test : ControllerBase
-    {
-        [HttpGet(Name = "test")]
-        public string get()
-        {
-
-            return "stsss";
-        }
     }
 }

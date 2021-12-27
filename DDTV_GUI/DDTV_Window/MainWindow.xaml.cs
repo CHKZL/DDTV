@@ -24,6 +24,7 @@ using System.Windows.Shapes;
 using ComboBox = HandyControl.Controls.ComboBox;
 using MessageBox = HandyControl.Controls.MessageBox;
 using DDTV_GUI.WPFControl;
+using System.Reflection;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -39,11 +40,16 @@ namespace DDTV_GUI.DDTV_Window
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
 
         public static List<PlayWindow> playWindowsList = new();
-        public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
         public MainWindow()
         {
             InitializeComponent();
+            if(CheckRepeatedRun())
+            {
+                Application.Current.Shutdown();
+                return;
+            }
             string Title = $"DDTV——你的地表最强B站录播机 {Ver}　({InitDDTV_Core.Ver})";
             
             this.Title = Title;
@@ -63,6 +69,8 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
             PlayWindow.PlayListExit += MainWindow_PlayListExit;
+            Tool.ServerInteraction.Dokidoki.Start();
+            Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
 
@@ -78,6 +86,29 @@ namespace DDTV_GUI.DDTV_Window
             //clipWindow.Show();
         }
 
+        private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
+        {
+            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击更新");
+        }
+
+        private bool CheckRepeatedRun()
+        {
+            Process current = Process.GetCurrentProcess();
+            Process[] processes = Process.GetProcessesByName(current.ProcessName);
+            foreach (Process process in processes)
+            {
+                if (process.Id != current.Id)
+                {
+                    if (process.MainModule.FileName
+                    == current.MainModule.FileName)
+                    {
+                        MessageBox.Show("已经有DDTV_GUI实例正在运行！");
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         private void MainWindow_PlayListExit(object? sender, EventArgs e)
         {
             Task.Run(() => {
@@ -234,7 +265,7 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 else
                 {
-                    Growl.Warning($"该文件路径不存在，打开失败");
+                    Growl.Warning($"该文件路径不存在，复制失败");
                 }
             }
         }
@@ -908,6 +939,48 @@ namespace DDTV_GUI.DDTV_Window
         private void MainWindow_CuttingDialogDispose(object? sender, EventArgs e)
         {
             ClipDialog.Dispatcher.BeginInvoke(new Action(() => ClipDialog.Close()));
+        }
+        
+        
+        /// <summary>
+        /// 录制任务_右键菜单_打开文件夹
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void RecList_CopyFolderPath_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            int Index = RecList.SelectedIndex;
+            if (Index > -1 && UpdateInterface.Main.recList.Count > Index)
+            {
+                string filePath = UpdateInterface.Main.recList[Index].FilePath;
+                if (Directory.Exists(filePath))
+                {
+                    //Environment.CurrentDirectory
+                    if (filePath.Length > 2 && filePath[..1] == ".")
+                    {
+                        filePath = Environment.CurrentDirectory + filePath.Substring(1, filePath.Length - 1);
+                    }
+                    Clipboard.SetDataObject(filePath);
+                    Growl.Success("已复制路径到粘贴板");
+                }
+                else
+                {
+                    Growl.Warning($"该文件路径不存在，复制失败");
+                }
+            }
+        }
+
+        private void DDTV_UPDATE_Button_Click(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult dr = MessageBox.Show($"确定要开始更新DDTV吗？\n确定后会结束DDTV全部任务并退出DDTV开始更新", "更新DDTV", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                if(File.Exists("./DDTV_Update.exe"))
+                {
+                    Process.Start("./DDTV_Update.exe");
+                    Application.Current.Shutdown();
+                } 
+            }
         }
     }
 }

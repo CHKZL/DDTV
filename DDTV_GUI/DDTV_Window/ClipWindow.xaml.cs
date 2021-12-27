@@ -213,6 +213,11 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     S1 = 0;
                 }
+                if(S1+60000>E1)
+                {
+                    MessageBox.Show("因为FLV文件I帧差的原因，剪切长度至少要60秒，请重新选择");
+                    return;
+                }
                 DDTV_Core.Tool.FlvModule.FileFix.Cutting(S1, E1, FilePath);
             });
 

@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace DDTV_WEB_API
+namespace DDTV_Core.Tool.ServerMessageClass
 {
     public class MessageBase
     {
-        public static string Success<T>(string cmd, T data,string massage="",code code=code.ok)
+        public static pack<T> Success<T>(string cmd, T data,string massage="",code code=code.ok)
         {
             pack<T> pack = new pack<T>()
             {
@@ -13,7 +14,7 @@ namespace DDTV_WEB_API
                 data = data,
                 massage = massage
             };
-            return JsonConvert.SerializeObject(pack);
+            return pack;
         }
         public enum code
         {

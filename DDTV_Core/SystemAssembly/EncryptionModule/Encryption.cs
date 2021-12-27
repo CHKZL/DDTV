@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.EncryptionModule
 {
-    internal static class Encryption
+    public static class Encryption
     {
         #region MD5加解
         /// <summary>

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
 {
-    internal class Get
+    public class Get
     {
         /// <summary>
         /// 通过get请求获取返回信息
         /// </summary>
         /// <param name="url">目标网页地址</param>
         /// <returns></returns>
-        internal static string GetRequest(string url, bool IsCookie = true)
+        public static string GetRequest(string url, bool IsCookie = true)
         {
             if (string.IsNullOrEmpty(url))
             {

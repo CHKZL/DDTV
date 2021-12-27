@@ -239,7 +239,10 @@ namespace DDTV_GUI.DDTV_Window
         }
         public void StartDownload(string Url)
         {
-
+            if(!string.IsNullOrEmpty(FileDirectory))
+            {
+                DDTV_Core.Tool.FileOperation.Del(FileDirectory);
+            }
             if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
                 Download.TmpPath = Download.TmpPath + "/";
             FileDirectory = DDTV_Core.Tool.FileOperation.CreateAll(Download.TmpPath) + Guid.NewGuid() + ".flv";

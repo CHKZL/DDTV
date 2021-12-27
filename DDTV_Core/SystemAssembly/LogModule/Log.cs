@@ -35,7 +35,7 @@ namespace DDTV_Core.SystemAssembly.Log
         {
            
             LogLevel = log;
-            TimeModule.Time.Config.Init();
+            Tool.TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
 
            
@@ -57,7 +57,7 @@ namespace DDTV_Core.SystemAssembly.Log
             {
                 LogClass logClass = new()
                 {
-                    RunningTime =TimeModule.Time.Operate.GetRunMilliseconds(),
+                    RunningTime = Tool.TimeModule.Time.Operate.GetRunMilliseconds(),
                     Message = Message,
                     Source = Source,
                     Time = DateTime.Now,

@@ -426,3 +426,8 @@ healthchecksdb
 /DDTV_Push
 /DDTV_WEB_API/BiliUser.ini1111
 /DDTV_WEB_API/DDTV_Config.ini1111
+/DDTV_WEB_Server/BiliUser.ini
+/DDTV_WEB_Server/DDTV_Config.ini
+/DDTV_WEB_Server/BiliQR.png
+/DDTV_WEB_Server/RoomListConfig.json
+/DDTV - 副本.sln

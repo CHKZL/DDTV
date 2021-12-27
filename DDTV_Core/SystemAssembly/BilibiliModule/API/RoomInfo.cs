@@ -332,6 +332,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         public static string playUrl(long uid, RoomInfoClass.Quality qn,RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine)
         {
+            if(!GetQuality(uid).Contains((int)qn))
+            {
+                qn = RoomInfoClass.Quality.OriginalPainting;
+            }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
 

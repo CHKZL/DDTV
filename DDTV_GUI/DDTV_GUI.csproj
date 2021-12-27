@@ -41,6 +41,7 @@
     <None Remove="Resources\Img\UI\video.png" />
     <None Remove="Resources\Img\UI\View.png" />
     <None Remove="Resources\Img\UI\wrench.png" />
+    <None Remove="Resources\Img\蒂蒂媞薇.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -142,6 +143,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\wrench.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\蒂蒂媞薇.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

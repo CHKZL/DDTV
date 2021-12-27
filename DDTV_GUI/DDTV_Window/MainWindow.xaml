@@ -181,6 +181,11 @@
                                     </MenuItem.Icon>
                                 </MenuItem>
                                 <Separator />
+                                <MenuItem Header="复制路径" Click="RecList_CopyFolderPath_MenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/folder-open.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                                 <MenuItem Header="打开直播间" Click="RecLive_MenuItem_OpenLiveRoomUrl_Click">
                                     <MenuItem.Icon>
                                         <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
@@ -331,13 +336,37 @@
                 </TabItem>
                 <TabItem Header="关于">
                     <Grid>
-                        <Button Style="{StaticResource ButtonDanger}" Content="查看系统日志" Margin="578,405,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
-                    </Grid>
 
+                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,4" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-39" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-64" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+
+                        <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="534,10,0,0" VerticalAlignment="Top"/>
+                        <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">
+                            <hc:AdornerElement.Instance>
+                                <hc:Poptip Content="点击该按钮会结束DDTV全部任务并退出DDTV开始更新" PlacementType="BottomLeft"/>
+                            </hc:AdornerElement.Instance>
+                        </Button>
+                        <Button Visibility="Collapsed" Style="{StaticResource ButtonDanger}" Content="查看系统日志" Margin="578,394,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
+                    </Grid>
                 </TabItem>
             </TabControl>
         </Grid>
-
+        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+            <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                    
+                    <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-40,0,0" Height="340"></Image>
+                    
+                        <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                </Grid>
+            </Border>
+        </hc:Drawer>
     </Grid>
-
+    
 </hc:GlowWindow>
