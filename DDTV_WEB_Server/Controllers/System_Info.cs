@@ -1,4 +1,5 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.Tool.SystemResource;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.Mime;
@@ -141,8 +142,38 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "SystemConfig")]
         //[Consumes("application/json")]
         public string Post([FromForm] string cmd)
-        { 
+        {
             return MessageBase.Success(nameof(System_Config), DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.config.datas);
+        }
+    }
+    public class System_Resources : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "System_Resources")]
+        public string Post([FromForm] string cmd)
+        {
+            SystemResourceClass systemResourceClass = new();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                systemResourceClass = new()
+                {
+                    CPU_usage = GetCPUInfo.GetLinux(),
+                    HDDInfo=GetHDDInfo.GetLinux(),
+                    Memory=GetMemInfo.GetLiunx(),
+                    Platform="Linux"
+                };
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                systemResourceClass = new()
+                {
+                    CPU_usage = GetCPUInfo.GetWindows(),
+                    Memory = GetMemInfo.GetWindows(),
+                    Platform = "Windows"
+                };
+                string DriveLetter = Path.GetFullPath(DDTV_Core.SystemAssembly.DownloadModule.Download.DefaultPath)[..1];
+                systemResourceClass.HDDInfo=GetHDDInfo.GetWindows(DriveLetter);
+            }
+                return MessageBase.Success(nameof(System_Resources), systemResourceClass);
         }
     }
 }
