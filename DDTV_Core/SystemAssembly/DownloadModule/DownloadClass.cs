@@ -138,7 +138,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="req">下载任务WebRequest对象</param>
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
-            internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format)
+            internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format, RoomInfoClass.RoomInfo roomInfo)
             {
                 Task.Run(() =>
                 {
@@ -169,6 +169,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         resp.Dispose();
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
+                                        roomInfo.IsDownload = false;
                                         Download.DownloadCompleteTaskd(Uid, false, true);
 
                                         return;
@@ -219,6 +220,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     resp.Close();
                                                     resp.Dispose();
                                                 }
+                                                roomInfo.IsDownload = false;
                                                 Download.AddDownloadTaskd(Uid, false);
                                                 return;
                                             }
@@ -230,6 +232,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     resp.Close();
                                                     resp.Dispose();
                                                 }
+                                                roomInfo.IsDownload = false;
                                                 Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
                                                 return;
                                             }
@@ -267,12 +270,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     catch (WebException ex)
                     {
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意WEB连接错误，尝试重连", true, ex);
+                        roomInfo.IsDownload = false;
                         Download.AddDownloadTaskd(Uid, false);
                         return;
                     }
                     catch (Exception e)
                     {
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
+                        roomInfo.IsDownload = false;
                         Download.AddDownloadTaskd(Uid, false);
                         return;
                     }

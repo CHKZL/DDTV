@@ -8,7 +8,7 @@
     <AssemblyVersion></AssemblyVersion>
     <FileVersion>3.0.1.1</FileVersion>
     <Authors>ami</Authors>
-    <Version>3.0.1-Dev</Version>
+    <Version>3.0.1.2</Version>
     <Description>这是DDTV3.0的核心库，详细内容请查看DDTV官网
 ddtv.pro</Description>
     <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>
@@ -35,6 +35,7 @@ ddtv.pro</Description>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="6.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.0.7" />
+    <PackageReference Include="System.Management" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -276,7 +276,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FilePath = Path;
                             downloadClass.FlvSplit = IsFlvSplit;
                             downloadClass.FlvSplitSize = FlvSplitSize;
-                            downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv");
+                            downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
                             //录制弹幕
                             if (IsNewTask && IsRecDanmu && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
