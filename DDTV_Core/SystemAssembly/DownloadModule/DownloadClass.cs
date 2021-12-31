@@ -147,7 +147,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
-                        string  _F = Path + "/" + FileName + "_" + count + "." + format;
+                        string  _F = Path + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {

@@ -271,6 +271,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 是否正在被编辑
             /// </summary>
             public bool IsCliping { set; get; } = false;
+            /// <summary>
+            /// 该房间当前的任务时间
+            /// </summary>
+            public DateTime CreationTime { set; get; } = DateTime.Now;
            
         }
         public class RoomWebSocket

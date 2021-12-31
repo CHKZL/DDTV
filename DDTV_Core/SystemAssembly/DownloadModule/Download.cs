@@ -93,7 +93,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 } while (roomInfo.IsCliping);
                 if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
                     DefaultPath = DefaultPath + "/";
-                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + "/" + $"{DefaultFileName}" + "_{R}.flv");
+                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + $"{DefaultFileName}" + "_{R}.flv");
 
                 //弹幕录制结束处理
                 if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
@@ -233,6 +233,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     DownloadClass.Downloads DL = roomInfo.DownloadingList.Find(e => e.IsDownloading);
                     if (DL == null)// && Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.roomStatus) == "1")
                     {
+                        
                         Rooms.RoomInfo[uid].DownloadingList.Add(downloadClass);
                         downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
                         downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
@@ -259,6 +260,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
                         {
+                            roomInfo.CreationTime = DateTime.Now;
                             downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
                             string StarText = $"\n开始录制任务:\n===================\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
@@ -276,12 +278,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FilePath = Path;
                             downloadClass.FlvSplit = IsFlvSplit;
                             downloadClass.FlvSplitSize = FlvSplitSize;
+                            Tool.FileOperation.CreateAll(Path+ $"/{roomInfo.CreationTime.ToString("MM_d")}");
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
                             //录制弹幕
                             if (IsNewTask && IsRecDanmu && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
                                 roomInfo.DanmuFile = new();
-                                roomInfo.DanmuFile.FileName = Path + "/" + FileName;
+                                roomInfo.DanmuFile.FileName = Path + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + FileName;
                                 BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
                             }
                         }

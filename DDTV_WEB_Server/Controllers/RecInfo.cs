@@ -1,4 +1,5 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -109,6 +110,31 @@ namespace DDTV_WEB_Server.Controllers
                 }
             }
             return MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads);
+        }
+    }
+    public class Rec_CancelDownload : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Rec_CancelDownload")]
+        public string post([FromForm]long UID)
+        {
+            if(UID!=0)
+            {
+                if (Download.CancelDownload(UID))
+                {
+                    
+                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"已取消UID[{UID}]的录制任务", $"已取消UID[{UID}]的录制任务",MessageBase.code.CancelDownloadFailed);
+                }
+                else
+                {
+                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"取消UID[{UID}]的录制任务出现未知问题，取消失败");
+                }
+                
+            }
+            else
+            {
+                return MessageBase.Success(nameof(Rec_RecordCompleteInfon), "输入的UID不正确","输入的UID不正确",MessageBase.code.UIDFailed);
+            }
+           
         }
     }
 }

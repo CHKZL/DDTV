@@ -16,7 +16,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// </summary>
         /// <param name="url">目标网页地址</param>
         /// <returns></returns>
-        public static string GetRequest(string url, bool IsCookie = true)
+        public static string GetRequest(string url, bool IsCookie = true, string R = "")
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -31,7 +31,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = NetClass.UA();
             req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
-           
+            if (!string.IsNullOrEmpty(R))
+            {
+                req.Referer = R;// "https://Update.ddtv.pro/";
+            }
             if (IsCookie)
             {
                 if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
@@ -91,6 +94,18 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             //    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Error, $"GetRequest发生未知错误", true, e);
             //    return null;
             //}
+
+        }
+        public static void GetFile(string URL, string File)
+        {
+            var wc = new WebClient();
+            wc.Headers.Add("Referer: Update.ddtv.pro");
+            string P = Path.GetDirectoryName(File);
+            if (!string.IsNullOrEmpty(P))
+            {
+                Directory.CreateDirectory(P);
+            }
+            wc.DownloadFile(URL, File);
 
         }
     }

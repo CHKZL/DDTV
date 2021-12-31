@@ -492,7 +492,7 @@ namespace DDTV_GUI.DDTV_Window
                 long Uid = UpdateInterface.Main.recList[Index].Uid;
                 string name = UpdateInterface.Main.recList[Index].Name;
                 int roomid = UpdateInterface.Main.recList[Index].RoomId;
-                if (DDTV_Core.SystemAssembly.DownloadModule.Download.CancelDownload(Uid))
+                if (Download.CancelDownload(Uid))
                 {
                     Growl.Success($"已取消[{name}({roomid})]录制任务");
                 }
