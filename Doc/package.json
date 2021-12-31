@@ -1,0 +1,24 @@
+{
+  "name": "ddtv",
+  "version": "1.0.6",
+  "description": "DDTV",
+  "author": "",
+  "main": "index.js",
+  "keywords": [
+    "DDTV",
+    "bilibili",
+    "录播机",
+    "B站录播机",
+    "bilibili自动录制"
+  ],
+  "homepage": "https://github.com/openHacking/vuepress-template",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/openHacking/vuepress-template.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  }
+}
