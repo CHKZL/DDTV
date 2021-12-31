@@ -12,15 +12,66 @@ namespace DDTV_WEB_Server.Controllers
         public string Post([FromForm] string cmd)
         {
             //Response.ContentType = "application/json";
-            Dictionary<long, RoomInfoClass.RoomInfo> keyValuePairs = Rooms.RoomInfo;
-            foreach (var pair in keyValuePairs)
+            
+            List<RoomInfoClass.RoomInfo> roomInfos = new();
+            foreach (var item in Rooms.RoomInfo)
             {
-                pair.Value.roomWebSocket = null;
-                pair.Value.DownloadedLog = null;
-                pair.Value.DownloadingList = null;
-                pair.Value.DanmuFile = null;
+                roomInfos.Add(new RoomInfoClass.RoomInfo { 
+                    area=item.Value.area,
+                    area_name=item.Value.area_name,
+                    area_v2_id=item.Value.area_v2_id,
+                    area_v2_name=item.Value.area_v2_name,
+                    area_v2_parent_id=item.Value.area_v2_parent_id,
+                    area_v2_parent_name=item.Value.area_v2_parent_name,
+                    attention=item.Value.attention,
+                    IsAutoRec=item.Value.IsAutoRec,
+                    broadcast_type=item.Value.broadcast_type,
+                    cover_from_user=item.Value.cover_from_user,
+                    DanmuFile=item.Value.DanmuFile,
+                    description=item.Value.description,
+                    Description=item.Value.Description,
+                    encrypted=item.Value.encrypted,
+                    face=item.Value.face,
+                    hidden_till=item.Value.hidden_till,
+                    IsCliping=item.Value.IsCliping,
+                    IsDownload=item.Value.IsDownload,
+                    IsRecDanmu=item.Value.IsRecDanmu,
+                    IsRemind=item.Value.IsRemind,
+                    is_hidden=item.Value.is_hidden,
+                    is_locked=item.Value.is_locked,
+                    is_portrait=item.Value.is_portrait,
+                    is_sp=item.Value.is_sp,
+                    keyframe=item.Value.keyframe,
+                    level=item.Value.level,
+                    Like=item.Value.Like,
+                    live_status=item.Value.live_status,
+                    live_time=item.Value.live_time,
+                    live_time_T=item.Value.live_time_T,
+                    lock_till=item.Value.lock_till,
+                    need_p2p=item.Value.need_p2p,
+                    online=item.Value.online,
+                    pwd_verified=item.Value.pwd_verified,
+                    roomStatus=item.Value.roomStatus,
+                    room_id=item.Value.room_id,
+                    room_shield=item.Value.room_shield,
+                    roundStatus=item.Value.roundStatus,
+                    sex=item.Value.sex,
+                    short_id=item.Value.short_id,
+                    sign=item.Value.sign,
+                    special_type=item.Value.special_type,
+                    tags=item.Value.tags,
+                    tag_name=item.Value.tag_name,
+                    title=item.Value.title,
+                    uid=item.Value.uid,
+                    uname=item.Value.uname,
+                    url=item.Value.url,
+                    roomWebSocket=null,
+                    DownloadedLog=null,
+                    DownloadingList=null,
+                });
             }
-            return MessageBase.Success(nameof(Room_Info), keyValuePairs);
+           
+            return MessageBase.Success(nameof(Room_Info), roomInfos);
         }
     }
     public class Room_Add : ProcessingControllerBase.ApiControllerBase

@@ -29,9 +29,13 @@ namespace DDTV_WEB_Server
             /// </summary>
             ok = 0,
             /// <summary>
+            /// UID不存在
+            /// </summary>
+            UIDFailed=-2,
+            /// <summary>
             /// 登陆信息失效
             /// </summary>
-            LoginInfoFailure=6000,
+            LoginInfoFailure =6000,
             /// <summary>
             /// 登陆验证失败
             /// </summary>
@@ -52,6 +56,10 @@ namespace DDTV_WEB_Server
             /// 修改房间弹幕录制设置失败
             /// </summary>
             DanmuRecRoomFailed = 7002,
+            /// <summary>
+            /// 取消下载任务失败
+            /// </summary>
+            CancelDownloadFailed=7003,
         }
         public class pack<T>
         {

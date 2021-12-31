@@ -56,6 +56,7 @@ namespace DDTV_WEB_Server.Controllers
                     Downloading = Downloading,
                     Completed_Downloads = DownloadComplete
                 },
+                
             };
             return MessageBase.Success(nameof(System_Info), systemInfo);
         }
