@@ -73,11 +73,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         /// <param name="uid">用户UID</param>
         /// <param name="Split">任务是否切片(当自动切片使能时，自动转码和flv文件合并取消)</param>
-        /// <param name="IsSun">是否合并和转码</param>
-        /// <param name="IsTranscod">是否转码</param>
+        /// <param name="IsCancel">该任务是否已经取消</param>
         internal static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsCancel = false)
         {
-            bool IsSun = true, IsTranscod = true;
+            bool IsSun = true, IsTranscod = Tool.TranscodModule.Transcod.IsAutoTranscod;
             if(IsCancel)
             {
                 IsSun = false;
@@ -280,7 +279,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FlvSplitSize = FlvSplitSize;
                             Tool.FileOperation.CreateAll(Path+ $"/{roomInfo.CreationTime.ToString("MM_d")}");
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
-                            //录制弹幕
+                            //录制弹幕(是否是新任务 && 弹幕录制总开关 && 房间弹幕录制设置)
                             if (IsNewTask && IsRecDanmu && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
                                 roomInfo.DanmuFile = new();
