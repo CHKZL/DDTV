@@ -120,7 +120,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// <summary>
             /// 默认在线观看的分辨率(应该为有限的int值，可选值为 80:流畅  150:高清  250:超清  400:蓝光  10000:原画)
             /// </summary>
-            /// </summary>
             PlayQuality,
             /// <summary>
             /// 全局弹幕录制开关(布尔值，每个房间自己在房间配置列表单独设置，这个是是否启用弹幕录制功能的总共开关)

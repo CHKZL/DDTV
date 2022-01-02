@@ -70,10 +70,6 @@ module.exports = {
             '文件合并',
             '自动转码',
             '弹幕录制',
-            'WEB服务器',
-            '自动上传',
-            'Debug模式',
-            'WebSocket服务器',
             'API'
           ]
         }

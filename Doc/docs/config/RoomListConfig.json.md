@@ -2,33 +2,32 @@
 
 ## 房间配置文件的格式介绍
 
-默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且`DDTVLiveRec`和`DDTV`通用  
-`DDTVLiveRec`和`DDTV`的房间配置文件可以互相复制通用  
-如果是`DDTVLiveRec`，在下载的压缩包里附带了一个参考的文件，也可以参考那个文件进行手动编写  
+默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且`DDTV_GUI`和`DDTV_WEB_Server`通用  
+`DDTV_GUI`和`DDTV_WEB_Server`的房间配置文件可以互相复制通用  
 完整的房间配置文件是由多个房间配置组合成的，完整的文件格式如下  
 房间配置文件完整格式为
-```
+```json
 {
     "data": [
         {
-            "Name": "绯赤艾莉欧",
-            "OfficialName": "緋赤エリオ",
-            "RoomNumber": "21396545",
-            "Types": "bilibili",
-            "status": false,
-            "VideoStatus": false,
-            "RemindStatus": false,
-            "LiveStatus": false
+            "name": "未来明-MiraiAkari",
+            "Description": "",
+            "RoomId": 6792401,
+            "UID": 238537745,
+            "IsAutoRec": false,
+            "IsRemind": false,
+            "IsRecDanmu": false,
+            "Like": false
         },
         {
-            "Name": "奥斯曼人谢谢你",
-            "OfficialName": "夢乃栞",
-            "RoomNumber": "14052636",
-            "Types": "bilibili",
-            "status": false,
-            "VideoStatus": false,
-            "RemindStatus": false,
-            "LiveStatus": false
+            "name": "AIChannel官方",
+            "Description": "",
+            "RoomId": 1485080,
+            "UID": 1473830,
+            "IsAutoRec": false,
+            "IsRemind": false,
+            "IsRecDanmu": false,
+            "Like": false
         }
     ]
 }
@@ -36,14 +35,14 @@
 ### 房间配置文件中，单个房间配置信息说明 
 ```json
 {
-    "Name": "奥斯曼人谢谢你",//为翻译名称
-    "OfficialName": "夢乃栞",//为官方名称
-    "RoomNumber": "14052636",//为B站直播的房间号
-    "Types": "bilibili",//为多平台支持预留，现在默认并必须为"bilibili"
-    "status": false,//为是否开播自动录制的标识，false为检测到开播后不录制，true为检测到开播后自动录制
-    "VideoStatus": false,//为DDTV开播弹窗提醒标识，false为检测到开播后系统气泡提醒，true为检测到开播后不提醒
-    "RemindStatus": false,//为房间状态缓存信息，默认为false，不用手动修改
-    "LiveStatus": false//为房间状态缓存信息，默认为false，不用手动修改
+            "name": "未来明-MiraiAkari",//昵称
+            "Description": "",//备注
+            "RoomId": 6792401,//房间号
+            "UID": 238537745,//账号UID
+            "IsAutoRec": false,//开播后是否自动录制
+            "IsRemind": false,//开播后是否提醒(DDTV_GUI特有，在WEB中无效)
+            "IsRecDanmu": false,//是否录制该房间弹幕(需要打开总弹幕录制开关)
+            "Like": false///特别标注(功能未开发完成，当前无效)
 }
 ```
 
