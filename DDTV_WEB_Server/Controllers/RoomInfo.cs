@@ -27,7 +27,7 @@ namespace DDTV_WEB_Server.Controllers
                     IsAutoRec=item.Value.IsAutoRec,
                     broadcast_type=item.Value.broadcast_type,
                     cover_from_user=item.Value.cover_from_user,
-                    DanmuFile=item.Value.DanmuFile,
+                    DanmuFile=null,
                     description=item.Value.description,
                     Description=item.Value.Description,
                     encrypted=item.Value.encrypted,
