@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DDTV_WEB_Server.Controllers
 {
-   
+   /// <summary>
+   /// 自动转码开关接口
+   /// </summary>
     public class Config_Transcod : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Config_Transcod")]
@@ -17,6 +19,9 @@ namespace DDTV_WEB_Server.Controllers
             return MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "自动转码成功");
         }
     }
+    /// <summary>
+    /// 自动切片接口
+    /// </summary>
     public class Config_FileSplit : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Config_FileSplit")]
@@ -36,6 +41,9 @@ namespace DDTV_WEB_Server.Controllers
             }
         }
     }
+    /// <summary>
+    /// 弹幕总开关接口
+    /// </summary>
     public class Config_DanmuRec : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Config_DanmuRec")]

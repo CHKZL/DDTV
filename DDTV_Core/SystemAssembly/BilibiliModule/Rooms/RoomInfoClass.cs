@@ -90,7 +90,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 开播时间(未开播时为-62170012800,live_status为1时有效)
             /// </summary>
             public long live_time { get; set; }
-            public DateTime live_time_T { set; get; }
             /// <summary>
             /// 直播状态(1为正在直播，2为轮播中)
             /// </summary>
@@ -274,8 +273,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// <summary>
             /// 该房间当前的任务时间
             /// </summary>
-            public DateTime CreationTime { set; get; } = DateTime.Now;
-           
+            public DateTime CreationTime { set; get; } = DateTime.Now; 
         }
         public class RoomWebSocket
         {

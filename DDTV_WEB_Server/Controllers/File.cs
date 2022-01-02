@@ -4,22 +4,24 @@ using System.Collections;
 
 namespace DDTV_WEB_Server.Controllers
 {
+    /// <summary>
+    /// 获取已录制的文件总列表
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-   
-    public class File_GetFileList : ProcessingControllerBase.ApiControllerBase
+    public class File_GetAllFileList : ProcessingControllerBase.ApiControllerBase
     {   
-        [HttpPost(Name = "File_GetFileList")]
+        [HttpPost(Name = "File_GetAllFileList")]
         public string post([FromForm] string cmd)
         {        
-            return MessageBase.Success(nameof(File_GetFileList), DDTV_Core.Tool.DownloadList.GetRecFileList());
+            return MessageBase.Success(nameof(File_GetAllFileList), DDTV_Core.Tool.DownloadList.GetRecFileList());
         }   
     }
     [Route("api/[controller]")]
     [ApiController]
-    public class File_GetRecFile : ProcessingControllerBase.ApiControllerBase
+    public class File_GetFile : ProcessingControllerBase.ApiControllerBase
     {
-        [HttpGet(Name = "File_GetRecFile")]
+        [HttpGet(Name = "File_GetFile")]
         public ActionResult get([FromForm] string cmd,string FileName)
         {
             var _ = DDTV_Core.Tool.DownloadList.GetRecFileList();
@@ -42,14 +44,14 @@ namespace DDTV_WEB_Server.Controllers
                         case "csv":
                             return File(bts, "text/plain", Name);
                         default:
-                            return Content(MessageBase.Success(nameof(File_GetRecFile), "该文件不在支持列表内"), "application/json");
+                            return Content(MessageBase.Success(nameof(File_GetFile), "该文件不在支持列表内"), "application/json");
 
                     }
                 }      
             }
             else
             {
-                return Content(MessageBase.Success(nameof(File_GetRecFile), "该文件不存在"), "application/json");
+                return Content(MessageBase.Success(nameof(File_GetFile), "该文件不存在"), "application/json");
             }    
         }     
     }

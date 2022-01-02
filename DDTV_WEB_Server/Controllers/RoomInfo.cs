@@ -6,9 +6,9 @@ using System.Net.Mime;
 
 namespace DDTV_WEB_Server.Controllers
 {
-    public class Room_Info : ProcessingControllerBase.ApiControllerBase
+    public class Room_AllInfo : ProcessingControllerBase.ApiControllerBase
     {
-        [HttpPost(Name = "Room_Info")]
+        [HttpPost(Name = "Room_AllInfo")]
         public string Post([FromForm] string cmd)
         {
             //Response.ContentType = "application/json";
@@ -28,8 +28,8 @@ namespace DDTV_WEB_Server.Controllers
                     broadcast_type=item.Value.broadcast_type,
                     cover_from_user=item.Value.cover_from_user,
                     DanmuFile=null,
-                    description=item.Value.description,
-                    Description=item.Value.Description,
+                    description= null,
+                    Description= null,
                     encrypted=item.Value.encrypted,
                     face=item.Value.face,
                     hidden_till=item.Value.hidden_till,
@@ -46,7 +46,6 @@ namespace DDTV_WEB_Server.Controllers
                     Like=item.Value.Like,
                     live_status=item.Value.live_status,
                     live_time=item.Value.live_time,
-                    live_time_T=item.Value.live_time_T,
                     lock_till=item.Value.lock_till,
                     need_p2p=item.Value.need_p2p,
                     online=item.Value.online,
@@ -71,7 +70,7 @@ namespace DDTV_WEB_Server.Controllers
                 });
             }
            
-            return MessageBase.Success(nameof(Room_Info), roomInfos);
+            return MessageBase.Success(nameof(Room_AllInfo), roomInfos);
         }
     }
     public class Room_Add : ProcessingControllerBase.ApiControllerBase
@@ -120,7 +119,7 @@ namespace DDTV_WEB_Server.Controllers
             }
             else
             {
-                return MessageBase.Success(nameof(Room_AutoRec), $"修改UID为{uid}的开播自动录制出现问题，修改失败", $"修改UID为{uid}的开播自动录制出现问题，修改失败",MessageBase.code.AutoRecRoomFailed);
+                return MessageBase.Success(nameof(Room_AutoRec), $"修改UID为{uid}的开播自动录制出现问题，修改失败", $"修改UID为{uid}的开播自动录制出现问题，修改失败",MessageBase.code.OperationFailed);
             }
         }
     }
@@ -140,7 +139,7 @@ namespace DDTV_WEB_Server.Controllers
             }
             else
             {
-                return MessageBase.Success(nameof(Room_DanmuRec), $"修改UID为{uid}的弹幕录制出现问题，修改失败", $"修改UID为{uid}的弹幕录制出现问题，修改失败", MessageBase.code.DanmuRecRoomFailed);
+                return MessageBase.Success(nameof(Room_DanmuRec), $"修改UID为{uid}的弹幕录制出现问题，修改失败", $"修改UID为{uid}的弹幕录制出现问题，修改失败", MessageBase.code.OperationFailed);
             }
         }
     }

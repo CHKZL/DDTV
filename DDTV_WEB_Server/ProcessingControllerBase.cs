@@ -50,7 +50,7 @@ namespace DDTV_WEB_Server
                         {
                             { "accesskeyid", accesskeyid },
                             { "accesskeysecret", RuntimeConfig.AccessKeySecret },
-                            { "cmd", cmd },
+                            { "cmd", cmd.ToLower() },
                             { "time", time }
                         };
                             string Original = string.Empty;

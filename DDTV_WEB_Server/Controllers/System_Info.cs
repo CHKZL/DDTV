@@ -140,7 +140,7 @@ namespace DDTV_WEB_Server.Controllers
     }
     public class System_Config : ProcessingControllerBase.ApiControllerBase
     {
-        [HttpPost(Name = "SystemConfig")]
+        [HttpPost(Name = "System_Config")]
         //[Consumes("application/json")]
         public string Post([FromForm] string cmd)
         {

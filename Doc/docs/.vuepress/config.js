@@ -81,7 +81,8 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'WebHook'
+            'API',
+            'WEB'
           ]
         }
       ], 
@@ -112,7 +113,6 @@ module.exports = {
           children: [
             '',
             '免责声明',
-            '隐私声明',
             '捐赠'
           ]
         }
