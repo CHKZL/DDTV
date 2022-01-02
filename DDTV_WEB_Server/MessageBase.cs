@@ -22,6 +22,9 @@ namespace DDTV_WEB_Server
             string B = JsonConvert.SerializeObject(pack);
             return B;
         }
+        /// <summary>
+        /// 返回的状态码
+        /// </summary>
         public enum code
         {
             /// <summary>
@@ -45,27 +48,28 @@ namespace DDTV_WEB_Server
             /// </summary>
             APIAuthenticationFailed=6002,
             /// <summary>
-            /// 删除房间失败
+            /// 操作失败
             /// </summary>
-            DelRoomFailed = 7000,
-            /// <summary>
-            /// 修改房间自动录制状态失败
-            /// </summary>
-            AutoRecRoomFailed = 7001,
-            /// <summary>
-            /// 修改房间弹幕录制设置失败
-            /// </summary>
-            DanmuRecRoomFailed = 7002,
-            /// <summary>
-            /// 取消下载任务失败
-            /// </summary>
-            CancelDownloadFailed=7003,
+            OperationFailed = 7000,
+          
         }
         public class pack<T>
         {
+            /// <summary>
+            /// 状态码
+            /// </summary>
             public code code { get; set; }
+            /// <summary>
+            /// 接口名称
+            /// </summary>
             public string cmd { get; set; }
+            /// <summary>
+            /// 信息
+            /// </summary>
             public string massage { get; set; }
+            /// <summary>
+            /// 对应的接口数据
+            /// </summary>
             public T data { get; set; }
         }
       

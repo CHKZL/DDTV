@@ -65,6 +65,10 @@ namespace DDTV_WEB_Server.Controllers
                             TotalDownloadCount=item.TotalDownloadCount,
                             Uid=item.Uid,
                             Url =item.Url,
+                            FlvHeader=null,
+                            FlvScriptTag=null,
+                            flvTimes=null,
+                            HttpWebRequest=null,
                         };
 
                         downloads.Add(_);
@@ -104,6 +108,10 @@ namespace DDTV_WEB_Server.Controllers
                             TotalDownloadCount = item.TotalDownloadCount,
                             Uid = item.Uid,
                             Url = item.Url,
+                            FlvHeader = null,
+                            FlvScriptTag = null,
+                            flvTimes = null,
+                            HttpWebRequest = null,
                         };
                         downloads.Add(_);
                     }      
@@ -122,11 +130,11 @@ namespace DDTV_WEB_Server.Controllers
                 if (Download.CancelDownload(UID))
                 {
                     
-                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"已取消UID[{UID}]的录制任务", $"已取消UID[{UID}]的录制任务",MessageBase.code.CancelDownloadFailed);
+                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"已取消UID[{UID}]的录制任务", $"已取消UID[{UID}]的录制任务");
                 }
                 else
                 {
-                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"取消UID[{UID}]的录制任务出现未知问题，取消失败");
+                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"取消UID[{UID}]的录制任务出现未知问题，取消失败", $"取消UID[{UID}]的录制任务出现未知问题，取消失败", MessageBase.code.OperationFailed);
                 }
                 
             }

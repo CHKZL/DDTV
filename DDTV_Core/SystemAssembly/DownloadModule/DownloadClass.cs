@@ -246,7 +246,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         count++;
                                         fileStream.Close();
                                         fileStream.Dispose();
-                                        string _F2 = Path + "/" + FileName + "_" + count + "." + format;
+                                        string _F2 = Path + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + FileName + "_" + count + "." + format;
                                         fileStream = new FileStream(_F2, FileMode.Create);
                                         byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                         fileStream.Write(buffer, 0, buffer.Length);
