@@ -39,10 +39,10 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'DDTV',
-            'DDTVLiveRecForWindows',
-            'DDTVLiveRecForLinux',
-            'DDTVLiveRecForMacOS',
+            'DDTV_GUI',
+            'DDTV_WEB_Server(Windows)',
+            'DDTV_WEB_Server(Linux)',
+            'DDTV_WEB_Server(MacOS)',
             'Docker'
           ]
         }
@@ -54,7 +54,7 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'exe.config',
+            'DDTV_Config',
             'RoomListConfig.json',
           ]
         }
@@ -70,10 +70,6 @@ module.exports = {
             '文件合并',
             '自动转码',
             '弹幕录制',
-            'WEB服务器',
-            '自动上传',
-            'Debug模式',
-            'WebSocket服务器',
             'API'
           ]
         }
@@ -85,7 +81,8 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'WebHook'
+            'API',
+            'WEB'
           ]
         }
       ], 
@@ -116,7 +113,6 @@ module.exports = {
           children: [
             '',
             '免责声明',
-            '隐私声明',
             '捐赠'
           ]
         }

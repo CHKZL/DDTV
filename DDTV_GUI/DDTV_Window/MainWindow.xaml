@@ -1,0 +1,381 @@
+﻿<hc:GlowWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:local="clr-namespace:DDTV_GUI"
+        xmlns:Forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"  x:Class="DDTV_GUI.DDTV_Window.MainWindow"
+        mc:Ignorable="d"
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
+        Title="MainWindow" Width="800" Height="460"
+        Icon="/Resources/Img/UI/DDTV.ico"
+        Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="460" MaxHeight="460" ResizeMode="CanMinimize" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged">
+
+    <Grid Background="White">
+        <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">
+            <hc:NotifyIcon.ContextMenu>
+                <ContextMenu  Width="150">
+                    <MenuItem Header="退出" Click="ICO_MenuItem_EXIT_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </hc:NotifyIcon.ContextMenu>
+        </hc:NotifyIcon>
+        <Grid x:Name="BackGroundGrid" MouseLeftButtonDown="GlowWindow_MouseLeftButtonDown">
+            <Image x:Name="BackGroundImage" Source="/Resources/Img/UI/BackGround.jpg" Opacity="0.2" Margin="0,0,-4,0" Stretch="UniformToFill" />
+
+        </Grid>
+        <Grid x:Name="TestGrid" Visibility="Collapsed">
+            <ToggleButton Content="Left" IsChecked="{Binding IsOpen, ElementName=About}" Height="60" Width="82"/>
+            <Button Command="{Binding InfoGlobalCmd}" Content="测试提示功能" Margin="478,154,0,0" Style="{StaticResource ButtonPrimary}" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click" Height="56" Width="168"/>
+        </Grid>
+        <Grid x:Name="DrawerGrid">
+            <hc:Drawer x:Name="About" Dock="Left" ShowMode="Push">
+                <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <TextBlock Margin="10,0,0,0" Text="关于DDTV" Style="{StaticResource TextBlockTitle}" HorizontalAlignment="Left"/>
+                        <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                    </Grid>
+                </Border>
+            </hc:Drawer>
+        </Grid>
+        <Grid x:Name="SideMenuGrid" Width="120" HorizontalAlignment="Left">
+            <hc:SideMenu BorderThickness="1" SelectionChanged="SideMenu_SelectionChanged" Background="#99FFFFFF" BorderBrush="#7FE0E0E0" >
+                <hc:Interaction.Triggers>
+                    <hc:EventTrigger EventName="SelectionChanged">
+                        <hc:EventToCommand Command="{Binding SwitchItemCmd}" PassEventArgsToCommand="True" />
+                    </hc:EventTrigger>
+                </hc:Interaction.Triggers>
+                <hc:SideMenuItem Header="首页" Background="#99FFFFFF">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/home.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="监控列表">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/unordered-list.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="录制任务">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/cloud-download.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="完成记录">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/reload _ime.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="其他功能">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/indent.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="设置">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/wrench.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+                <hc:SideMenuItem Header="关于">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>
+            </hc:SideMenu>
+        </Grid>
+        <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
+            <TabControl x:Name="MainWindowTab" Margin="0,10,0,0" Style="{StaticResource TabControlInLine}" Background="{x:Null}">
+                <TabItem Header="首页">
+
+                    <Grid>
+                        <hc:Carousel Margin="24,58,306,0" IsCenter="True" AutoRun="True" Width="350" Height="200" VerticalAlignment="Top">
+                            <Image Name="Notice_I_1" Width="350" Stretch="UniformToFill" />
+                            <Image Name="Notice_I_2" Width="350" Stretch="UniformToFill" />
+                            <Image Name="Notice_I_3" Width="350" Stretch="UniformToFill" />
+                        </hc:Carousel>
+                        <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="397,0,0,11" Foreground="#FF2F2F2F" HorizontalAlignment="Left" Width="273" Height="409" VerticalAlignment="Bottom" />
+                        <TextBlock x:Name="MonitoringCount" Margin="133,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="LiveBroadcastingCount" Margin="133,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="RecCount" Margin="133,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+
+                        <TextBlock Margin="38,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock Margin="38,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock Margin="38,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="监控列表">
+                    <ListView x:Name="LiveList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing"  >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="名称" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="状态" Width="50" DisplayMemberBinding="{Binding State}"/>
+                                <GridViewColumn Header="开播提醒" Width="80" DisplayMemberBinding="{Binding IsRemind}"/>
+                                <GridViewColumn Header="自动录制" Width="80" DisplayMemberBinding="{Binding IsRec}"/>
+                                <GridViewColumn Header="录制弹幕" Width="80" DisplayMemberBinding="{Binding IsDanmu}"/>
+                                <GridViewColumn Header="房间号" Width="120" DisplayMemberBinding="{Binding RoomId}"/>
+                            </GridView>
+                        </ListView.View>
+                        <ListView.ContextMenu>
+                            <ContextMenu Width="150">
+                                <MenuItem Header="在DDTV中观看" Click="LiveList_MenuItem_Play_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="打开直播间" Click="LiveList_MenuItem_OpenLiveRoomUrl_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="设置开播提醒" Click="LiveList_MenuItem_SetIsRemind_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="设置自动录制" Click="LiveList_MenuItem_SetIsRec_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/video.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="设置录制弹幕" Click="LiveList_MenuItem_SetIsDanmu_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="删除房间" Click="LiveList_MenuItem_DelRoom_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/delete.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="增加房间" Click="LiveList_MenuItem_AddRoom_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/add_user.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="录制任务">
+                    <ListView x:Name="RecList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="RecList_ContextMenuOpening" ContextMenuClosing="RecList_ContextMenuClosing"  >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="房间号" Width="80" DisplayMemberBinding="{Binding RoomId}"/>
+                                <GridViewColumn Header="已下载" Width="80" DisplayMemberBinding="{Binding DownSzie}"/>
+                                <GridViewColumn Header="开始时间" Width="110" DisplayMemberBinding="{Binding StartTime}"/>
+                                <GridViewColumn Header="标题" Width="210" DisplayMemberBinding="{Binding Title}"/>
+                            </GridView>
+                        </ListView.View>
+                        <ListView.ContextMenu>
+                            <ContextMenu Width="150">
+                                <MenuItem Header="快速切片" Click="RecList_MenuItem_Clip_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/box_plot.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="复制路径" Click="RecList_CopyFolderPath_MenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/folder-open.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="打开直播间" Click="RecLive_MenuItem_OpenLiveRoomUrl_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <Separator />
+                                <MenuItem Header="取消录制" Click="RecLive_MenuItem_Cancel_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/stop.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="完成记录">
+                    <ListView x:Name="OverList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="OverList_ContextMenuOpening" ContextMenuClosing="OverList_ContextMenuClosing"  >
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding Name}"/>
+                                <GridViewColumn Header="房间号" Width="80" DisplayMemberBinding="{Binding RoomId}"/>
+                                <GridViewColumn Header="已下载" Width="70" DisplayMemberBinding="{Binding DownSzie}"/>
+                                <GridViewColumn Header="开始时间" Width="110" DisplayMemberBinding="{Binding StartTime}"/>
+                                <GridViewColumn Header="结束时间" Width="110" DisplayMemberBinding="{Binding EndTime}"/>
+                                <GridViewColumn Header="标题" Width="130" DisplayMemberBinding="{Binding Title}"/>
+                            </GridView>
+                        </ListView.View>
+                        <ListView.ContextMenu>
+                            <ContextMenu Width="150">
+                                <MenuItem Header="复制路径" Click="OverList_CopyFolderPath_MenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/folder-open.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <!--<MenuItem Header="播放视频" Click="OverList_Play_MenuItem_Click">
+                                    <MenuItem.Icon>
+                                        <Image Source="/Resources/Img/UI/play-circle.png" Width="18" Height="18"/>
+                                    </MenuItem.Icon>
+                                </MenuItem>-->
+                            </ContextMenu>
+                        </ListView.ContextMenu>
+                    </ListView>
+                </TabItem>
+                <TabItem Header="其他功能">
+                    <Grid>
+                        <TextBlock Text="子功能模块未开发完成" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="设置">
+                    <Grid>
+                        <Grid Margin="20,0,20,0" Background="#4C797979" Height="400">
+                            <ScrollViewer>
+                                <WrapPanel Orientation="Horizontal">
+                                    <Grid Width="630" Margin="5">
+                                        <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  (可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </TextBox>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBox x:Name="RecPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="录制储存路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" LostFocus="RecPathTextBox_LostFocus" />
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBox x:Name="TmpPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="临时文件路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" LostFocus="TmpPathTextBox_LostFocus">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="用于储存录制、下载、转码、播放等操作可能产生的临时文件，DDTV会自动定期清理" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </TextBox>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="88,4,506,6" Click="TranscodToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="录制完成后将自动转码为MP4" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="630" Height="40">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="启用单个文件大小限制(自动分割)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="IsFlvSplitToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="247,9,347,9" Click="IsFlvSplitToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="注意1：该功能启用后，自动合并、自动转码、快速剪辑功能将无效；注意2：任务开始的时候开关状态就决定了该任务限制的大小，任务开始后该开关和对应的值的变化和任务无关" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                        <hc:ComboBox Name="FlvSplitSizeComboBox" hc:InfoElement.TitleWidth="55" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="文件大小" Margin="311,5,90,5" SelectionChanged="FlvSplitSizeComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="1GB" Tag="1"></ComboBoxItem>
+                                            <ComboBoxItem Content="2GB" Tag="2"></ComboBoxItem>
+                                            <ComboBoxItem Content="3GB" Tag="3"></ComboBoxItem>
+                                            <ComboBoxItem Content="4GB" Tag="4"></ComboBoxItem>
+                                            <ComboBoxItem Content="5GB" Tag="5"></ComboBoxItem>
+                                            <ComboBoxItem Content="1.9G" Tag="6"></ComboBoxItem>
+                                            <ComboBoxItem Content="5.9G" Tag="7"></ComboBoxItem>
+                                            <ComboBoxItem Content="7.9G" Tag="8"></ComboBoxItem>
+                                            <ComboBoxItem Content="10MB(测试用，请勿选择)" Tag="9"></ComboBoxItem>
+                                        </hc:ComboBox>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" Margin="0,0,460,0" SelectionChanged="RecQualityComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
+                                            <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
+                                            <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
+                                            <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
+                                            <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
+                                        </hc:ComboBox>
+                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="205,0,255,0" SelectionChanged="PlayQualityComboBox_SelectionChanged">
+                                            <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
+                                            <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
+                                            <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
+                                            <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
+                                            <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
+                                        </hc:ComboBox>
+                                    </Grid>
+
+                                    <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="录制的同时储存弹幕信息" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="190,5,404,5" Click="DanmuToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="弹幕录制的全局开关(每个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关)" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="GiftToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="GiftToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存上舰记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="GuardToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="GuardToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存SC记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="SCToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="SCToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                </WrapPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </Grid>
+
+                </TabItem>
+                <TabItem Header="关于">
+                    <Grid>
+                        <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
+                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,4" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-39" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-64" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+
+                        <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="534,10,0,0" VerticalAlignment="Top"/>
+                        <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">
+                            <hc:AdornerElement.Instance>
+                                <hc:Poptip Content="点击该按钮会结束DDTV全部任务并退出DDTV开始更新" PlacementType="BottomLeft"/>
+                            </hc:AdornerElement.Instance>
+                        </Button>
+                        <Button Visibility="Collapsed" Style="{StaticResource ButtonDanger}" Content="查看系统日志" Margin="578,394,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+            <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+
+                    <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-40,0,0" Height="340"></Image>
+
+                    <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+                </Grid>
+            </Border>
+        </hc:Drawer>
+    </Grid>
+
+</hc:GlowWindow>

@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# SYSLIB0014: 类型或成员已过时
+dotnet_diagnostic.SYSLIB0014.severity = none

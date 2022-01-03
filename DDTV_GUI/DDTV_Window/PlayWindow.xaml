@@ -1,0 +1,125 @@
+﻿<hc:GlowWindow  x:Class="DDTV_GUI.DDTV_Window.PlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        xmlns:local="clr-namespace:DDTV_GUI"
+        mc:Ignorable="d"      
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
+        Title="PlayWindow" Width="800" Height="460"
+        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" >
+
+    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
+        <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
+            <Grid.ContextMenu>
+                <ContextMenu >
+                    <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="复制直播间地址" Click="MenuItem_CopyLiveRoomUrl_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/code.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="切换备线">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/share.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="主线" Tag="0" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线1" Tag="1" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线2" Tag="2" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                        <MenuItem Header="备线3" Tag="3" Width="90" Click="MenuItem_SwitchLine_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="切换清晰度">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/block.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                        <MenuItem Name="qn10000" Header="原画" Tag="10000" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn400" Header="蓝光" Tag="400" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn250" Header="超清" Tag="250" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn150" Header="高清" Tag="150" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                        <MenuItem Name="qn80" Header="流畅" Tag="80" Width="90" Click="MenuItem_SwitchQuality_Click"/>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="打开\关闭弹幕" Click="MenuItem_OpenDamu_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="设置/锁定锁定置顶" Click="MenuItem_Topping_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/pushpin.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="刷新本窗口" Click="MenuItem_RefreshWindow_Send_Button_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/reload.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="全局静音" Click="MenuItem_SetMute_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/notification.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="自动全屏平铺" Click="MenuItem_WindowSorting_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="关闭本窗口" Click="MenuItem_Exit_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="关闭全部播放窗口" Click="MenuItem_ExitAll_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
+            </Grid.ContextMenu>
+            <!--<Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
+                <Slider Name="volume" Maximum="100" Margin="40,10,0,0" HorizontalAlignment="Left" Width="200" MouseMove="volume_MouseMove"/>
+                <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Danmu_Send_Button_Click"/>
+            </Grid>-->
+            <Grid Name="loading" Background="#7F5B5B5B">
+                <hc:CircleProgressBar IsIndeterminate="True"/>
+                <!--<Label Background="White" FontSize="72">loading...</Label>-->
+            </Grid>
+
+            <hc:PreviewSlider Name="volume" Height="300" Value="200" Maximum="100" Orientation="Vertical" Margin="10,150,0,10"  VerticalAlignment="Center" HorizontalAlignment="Left" SmallChange="1" MouseMove="volume_MouseMove">
+                <hc:PreviewSlider.PreviewContent>
+                    <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
+                </hc:PreviewSlider.PreviewContent>
+            </hc:PreviewSlider>
+            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#E5DCDCDC" FontSize="30" Visibility="Collapsed"/>
+            <!--<StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
+                <ToggleButton BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" Click="ToggleButton_Click">
+                    <hc:StatusSwitchElement.CheckedElement>
+                        <Border Background="#00a1d6">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
+                        </Border>
+                    </hc:StatusSwitchElement.CheckedElement>
+                    <Border Background="#fb7299">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
+                    </Border>
+                </ToggleButton>
+            </StackPanel>-->
+
+        </Grid>
+    </vlc:VideoView>
+</hc:GlowWindow>

@@ -33,6 +33,7 @@ bld/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
+.github/
 DDTV_TCP服务端/
 demo/
 播放器/
@@ -409,3 +410,24 @@ healthchecksdb
 # Editor directories and files
 .idea
 .vscode
+/BilibiliLiveChatScript
+/DDTV_Server/Ver.ini
+/DDTV_Server/DDTV_Server.Parameters.xml
+/DDTV_Server/DDTV_Server.SetParameters.xml
+/DDTV_Server/DDTV_Server.SourceManifest.xml
+/DDTV_Server
+/DDTV_TEST
+/DDTV_WEB_API/BiliUser.ini
+/DDTV_WEB_API/RoomListConfig.json
+/DDTV_WEB_API/BiliQR.png
+/DDTV_WEB_API/Resources/vtbs.json
+/DDTV_WEB_API/Rec
+/DDTV_WEB_API/DDTV_Config.ini
+/DDTV_Push
+/DDTV_WEB_API/BiliUser.ini1111
+/DDTV_WEB_API/DDTV_Config.ini1111
+/DDTV_WEB_Server/BiliUser.ini
+/DDTV_WEB_Server/DDTV_Config.ini
+/DDTV_WEB_Server/BiliQR.png
+/DDTV_WEB_Server/RoomListConfig.json
+/DDTV - 副本.sln
