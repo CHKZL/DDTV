@@ -16,5 +16,13 @@ namespace DDTV_Core.Tool.ServerMessageClass
         {
             public string Log { get; set; }
         }
+        public class NoticeVer
+        {
+            public string Ver { set; get; }
+        }
+        public class NoticeText
+        {
+            public string Text { set; get; }
+        }
     }
 }

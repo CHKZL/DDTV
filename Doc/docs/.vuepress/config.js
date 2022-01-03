@@ -39,10 +39,10 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'DDTV',
-            'DDTVLiveRecForWindows',
-            'DDTVLiveRecForLinux',
-            'DDTVLiveRecForMacOS',
+            'DDTV_GUI',
+            'DDTV_WEB_Server(Windows)',
+            'DDTV_WEB_Server(Linux)',
+            'DDTV_WEB_Server(MacOS)',
             'Docker'
           ]
         }
@@ -54,7 +54,7 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'exe.config',
+            'DDTV_Config',
             'RoomListConfig.json',
           ]
         }

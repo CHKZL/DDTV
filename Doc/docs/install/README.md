@@ -5,6 +5,7 @@ DDTV提供了`DDTV_GUI`和`DDTV_WEB_Server`两个版本方便给不同需求的�
 
 :::tip DDTV_GUI
 是在Core的基础上还提供了可交互的GUI界面，并且提供友好的初始化引导教程并且支持直播直接多开观看等功能  
+<img :src="$withBase('/DDTV_GUI.png')" alt="mixureSecure">
 :::
 
 :::tip DDTV_WEB_Server
