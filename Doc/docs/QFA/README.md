@@ -25,8 +25,8 @@
 :::
 
 
-## WEB端无法登陆或卡在登陆界面
+<!-- ## WEB端无法登陆或卡在登陆界面
 ::: details WEB端无法登陆或卡在登陆界面
 * 确认WEB端apiUrl配置正确
 >请确认在DDTV文件夹里的`\static\config.js`文件中的`apiUrl`为你服务器的域名或IP，并根据有无证书修改为`http`或`https`
-:::
+::: -->
