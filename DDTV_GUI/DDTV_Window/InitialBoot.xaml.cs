@@ -126,5 +126,10 @@ namespace DDTV_GUI.DDTV_Window
             AddRoomButton.IsEnabled = false;
             NextStep.IsEnabled = true;
         }
+
+        private void ExitBoot_Click(object sender, RoutedEventArgs e)
+        {
+            Environment.Exit(0);
+        }
     }
 }

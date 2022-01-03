@@ -992,5 +992,16 @@ namespace DDTV_GUI.DDTV_Window
                 } 
             }
         }
+
+        /// <summary>
+        /// 根据关注列表对比导入V
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_GetFollow(object sender, RoutedEventArgs e)
+        {
+            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+            Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
+        }
     }
 }
