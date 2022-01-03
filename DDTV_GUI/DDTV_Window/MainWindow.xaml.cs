@@ -69,8 +69,9 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
             PlayWindow.PlayListExit += MainWindow_PlayListExit;
-            Tool.ServerInteraction.Dokidoki.Start();
+            Tool.ServerInteraction.Start();
             Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;
+            Tool.ServerInteraction.Notice.NewNotice += Notice_NewNotice;
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
 
@@ -86,9 +87,18 @@ namespace DDTV_GUI.DDTV_Window
             //clipWindow.Show();
         }
 
+        private void Notice_NewNotice(object? sender, EventArgs e)
+        {
+            string N = "";
+            N= sender as string;
+            Notice.Dispatcher.Invoke(() => {
+                Notice.Text= N;
+            });
+        }
+
         private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
         {
-            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击更新");
+            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中进行");
         }
 
         private bool CheckRepeatedRun()

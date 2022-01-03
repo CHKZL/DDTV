@@ -1,4 +1,7 @@
-﻿using System;
+﻿using DDTV_Core.Tool.ServerMessageClass;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +12,16 @@ namespace DDTV_GUI.Tool
 {
     public class ServerInteraction
     {
+        public static void Start()
+        {
+            CheckUpdates.Update();
+            Notice.Start();
+            Dokidoki.Start();
+        }
         public class CheckUpdates
         {
             public static event EventHandler<EventArgs> NewUpdate;
+           
             /// <summary>
             /// 间隔时间(ms)
             /// </summary>
@@ -53,6 +63,39 @@ namespace DDTV_GUI.Tool
                             }
                             catch (Exception)
                             {
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        public class Notice
+        {
+            public static event EventHandler<EventArgs> NewNotice;
+            private static bool Is = false;
+            public static int ReminderInterval = 60 * 60 * 1 * 1000;
+            public static void Start()
+            {
+                if (!Is)
+                {
+                    Is = true;
+                    Task.Run(() =>
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                string N = DDTV_Core.Tool.Notice.GetNotice("GUI");
+                                MessageBase.pack<MessageClass.NoticeText> pack = JsonConvert.DeserializeObject<MessageBase.pack<MessageClass.NoticeText>>(N);
+                                if (NewNotice != null)
+                                {
+                                    NewNotice.Invoke(pack.data.Text, EventArgs.Empty);
+                                }
+                                Thread.Sleep(ReminderInterval);
+                            }
+                            catch (Exception)
+                            {
+
                             }
                         }
                     });

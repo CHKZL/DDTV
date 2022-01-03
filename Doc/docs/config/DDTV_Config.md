@@ -28,7 +28,7 @@ IsRecGift=true
 IsRecGuard=true
 IsRecSC=true
 IsFlvSplit=False
-FlvSplitSize=1073741824
+FlvSplitSize=0
 ```
 ### 配置说明
 ```csharp

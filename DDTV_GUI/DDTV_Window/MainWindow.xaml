@@ -96,14 +96,19 @@
                 <TabItem Header="首页">
 
                     <Grid>
-                        <TextBlock x:Name="MonitoringCount" Margin="100,14,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="LiveBroadcastingCount" Margin="100,54,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="RecCount" Margin="100,94,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
-                        <TextBlock Text="已知的问题：&#13;1：播放窗口平铺通能还没写好&#13;2：播放窗口弹幕功能还没写好"   Height="103" Margin="40,291,340,0" VerticalAlignment="Top"/>
-                        <TextBlock Margin="10,14,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock Margin="10,54,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock Margin="10,94,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <hc:Carousel Margin="24,58,306,0" IsCenter="True" AutoRun="True" Width="350" Height="200" VerticalAlignment="Top">
+                            <Image Name="Notice_I_1" Width="350" Stretch="UniformToFill" />
+                            <Image Name="Notice_I_2" Width="350" Stretch="UniformToFill" />
+                            <Image Name="Notice_I_3" Width="350" Stretch="UniformToFill" />
+                        </hc:Carousel>
+                        <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="397,0,0,11" Foreground="#FF2F2F2F" HorizontalAlignment="Left" Width="273" Height="409" VerticalAlignment="Bottom" />
+                        <TextBlock x:Name="MonitoringCount" Margin="133,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="LiveBroadcastingCount" Margin="133,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock x:Name="RecCount" Margin="133,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+
+                        <TextBlock Margin="38,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock Margin="38,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <TextBlock Margin="38,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="监控列表">
@@ -229,7 +234,11 @@
                         </ListView.ContextMenu>
                     </ListView>
                 </TabItem>
-                <TabItem Header="其他功能"/>
+                <TabItem Header="其他功能">
+                    <Grid>
+                        <TextBlock Text="子功能模块未开发完成" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
+                    </Grid>
+                </TabItem>
                 <TabItem Header="设置">
                     <Grid>
                         <Grid Margin="20,0,20,0" Background="#4C797979" Height="400">
@@ -336,7 +345,7 @@
                 </TabItem>
                 <TabItem Header="关于">
                     <Grid>
-
+                        <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
                         <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,4" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
                         <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-39" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
                         <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-64" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
@@ -360,13 +369,13 @@
                         <RowDefinition/>
                     </Grid.RowDefinitions>
                     <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-                    
+
                     <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-40,0,0" Height="340"></Image>
-                    
-                        <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
+
+                    <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
         </hc:Drawer>
     </Grid>
-    
+
 </hc:GlowWindow>
