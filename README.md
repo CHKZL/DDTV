@@ -22,3 +22,7 @@
 如果有更多功能欢迎加交流群 进行交流  
 Q群	338182356	功能咨询和反馈  
 Q群	307156949	聊天吹水的地方  
+
+Q&A
+如果提示缺少.NET6环境，请先安装.NET6环境
+微软官方下载地址:https://dotnet.microsoft.com/en-us/download/dotnet/6.0
