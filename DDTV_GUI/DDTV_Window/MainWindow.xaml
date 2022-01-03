@@ -236,7 +236,7 @@
                 </TabItem>
                 <TabItem Header="其他功能">
                     <Grid>
-                        <TextBlock Text="子功能模块未开发完成" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
+                        <Button Content="匹配导入关注列表中的V" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置">

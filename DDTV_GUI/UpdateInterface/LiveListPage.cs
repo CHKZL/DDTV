@@ -36,7 +36,7 @@ namespace DDTV_GUI.UpdateInterface
             Rooms.RoomInfo = IsLive;
             foreach (var item in Rooms.RoomInfo)
             {
-                BindingData.LiveList live = new(item.Value.uname, item.Value.live_status == 1 ? "直播中" : "未直播", item.Value.IsRemind ? "√" : "×", item.Value.IsAutoRec ? "√" : "×", item.Value.room_id, item.Value.uid, item.Value.live_status, item.Value.IsRecDanmu ? "√" : "×");
+                BindingData.LiveList live = new(item.Value.uname, item.Value.live_status == 1 ? "直播中" : "摸了", item.Value.IsRemind ? "√" : "×", item.Value.IsAutoRec ? "√" : "×", item.Value.room_id, item.Value.uid, item.Value.live_status, item.Value.IsRecDanmu ? "√" : "×");
                 _.Add(live);
             }
             if (_.Count == 0)
