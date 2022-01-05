@@ -61,6 +61,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         public static RoomInfoClass.RoomInfo SelectAPI(long uid, DataCacheModule.DataCacheClass.CacheType cacheType)
         {
            NetworkRequestModule.NetClass.SelectAPICountAdd(cacheType);
+            
             switch (cacheType)
             {
                 case DataCacheModule.DataCacheClass.CacheType.area:

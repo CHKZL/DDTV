@@ -1,5 +1,6 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using DDTV_Core.SystemAssembly.Log;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,7 +30,9 @@ namespace DDTV_Core.Tool
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(Url));
                 httpWebRequest.Accept = "*/*";
                 httpWebRequest.UserAgent = SystemAssembly.NetworkRequestModule.NetClass.UA();
-                httpWebRequest.Headers.Add("Accept-Language: zh-CN,zh;q=0.8,en;q=0.6,ja;q=0.4");
+                httpWebRequest.Method = "GET";
+                httpWebRequest.ContentType = "application/x-www-form-urlencoded";
+                httpWebRequest.Referer = "https://www.bilibili.com/";
                 if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
                 {
                     httpWebRequest.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
@@ -44,6 +47,8 @@ namespace DDTV_Core.Tool
             }
             catch (Exception e)
             {
+                Log.AddLog(nameof(FileOperation), LogClass.LogType.Warn, e.Message);
+                Log.AddLog(nameof(FileOperation),LogClass.LogType.Warn, "请求的网络路径地址:\n" + Url, false, null, false);
                 return false;
             }
         }

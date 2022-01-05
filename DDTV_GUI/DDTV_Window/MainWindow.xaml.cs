@@ -8,20 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using ComboBox = HandyControl.Controls.ComboBox;
 using MessageBox = HandyControl.Controls.MessageBox;
 using DDTV_GUI.WPFControl;
 using System.Reflection;
@@ -82,9 +72,10 @@ namespace DDTV_GUI.DDTV_Window
             UpdateInterface.Main.ActivationInterface = 0;
             TimedTask.CheckUpdate.Check();
             TimedTask.DokiDoki.Check();
-
             //ClipWindow clipWindow = new ClipWindow();
             //clipWindow.Show();
+            
+            //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
@@ -183,18 +174,21 @@ namespace DDTV_GUI.DDTV_Window
         {
             DownloadClass.Downloads downloads = (DownloadClass.Downloads)sender;
             Growl.InfoGlobal($"{downloads.Name}的直播[{downloads.Title}]录制完成");
+            System.Media.SystemSounds.Hand.Play();
         }
 
         private void RoomPatrol_StartRec(object? sender, EventArgs e)
         {
             RoomInfoClass.RoomInfo roomInfo = (RoomInfoClass.RoomInfo)sender;
             Growl.InfoGlobal($"开始录制{roomInfo.room_id}({roomInfo.uname})的直播");
+            System.Media.SystemSounds.Hand.Play();
         }
 
         private void RoomPatrol_StartLive(object? sender, EventArgs e)
         {
             RoomInfoClass.RoomInfo roomInfo = (RoomInfoClass.RoomInfo)sender;
             Growl.InfoGlobal($"房间{roomInfo.room_id}({roomInfo.uname})开始直播了");
+            System.Media.SystemSounds.Hand.Play();
         }
 
         private void SideMenu_SelectionChanged(object sender, HandyControl.Data.FunctionEventArgs<object> e)
@@ -989,7 +983,11 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     Process.Start("./DDTV_Update.exe");
                     Application.Current.Shutdown();
-                } 
+                }
+                else
+                {
+                    Growl.Error($"找不到自动更新脚本程序DDTV_Update.exe");
+                }
             }
         }
 

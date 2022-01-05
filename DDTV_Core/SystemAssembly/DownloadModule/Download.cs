@@ -340,16 +340,23 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     if (Tool.FileOperation.IsExistsNetFile(Url))
                     {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求的网络路径文件存在",false,null,false);
                         return 0;
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求的网络路径文件不存在，未检测到推流信息，3秒后重试");
                     }
                     if (conut > 5)
                     {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求网络文件超时，等待任务自动充值..");
                         return -1;
                     }
                     Thread.Sleep(3000);
                 }
                 else
                 {
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求的网络路径绑定的房间号已经下播，放弃请求");
                     return 1;
                 }
                 conut++;
