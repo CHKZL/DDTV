@@ -7,7 +7,7 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Img\UI\DDTV.ico</ApplicationIcon>
     <AssemblyVersion></AssemblyVersion>
-    <Version>3.0.1.6</Version>
+    <Version>3.0.1.7</Version>
   </PropertyGroup>
 
   <ItemGroup>

@@ -352,7 +352,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求网络文件超时，等待任务自动充值..");
                         return -1;
                     }
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
                 }
                 else
                 {

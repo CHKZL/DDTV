@@ -20,8 +20,9 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 ServerInteraction.CheckUpdates.Update();
                 ServerInteraction.Dokidoki.Start();
             });
-
-            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Console.WriteLine(Ver);
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.Host.ConfigureServices(Services =>
             {
                 Services.AddControllers();

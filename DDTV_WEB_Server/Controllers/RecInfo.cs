@@ -81,7 +81,7 @@ namespace DDTV_WEB_Server.Controllers
     public class Rec_RecordCompleteInfon : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordCompleteInfon")]
-        public string post()
+        public string post([FromForm] string cmd)
         {
             List<Downloads> downloads = new List<Downloads>();
             foreach (var A1 in Rooms.RoomInfo)
@@ -123,7 +123,7 @@ namespace DDTV_WEB_Server.Controllers
     public class Rec_CancelDownload : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_CancelDownload")]
-        public string post([FromForm]long UID)
+        public string post([FromForm] string cmd,[FromForm]long UID)
         {
             if(UID!=0)
             {

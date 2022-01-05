@@ -7,8 +7,8 @@ namespace DDTV_WEB_Server.Controllers
     [Route("api/[controller]")]
     public class loginqr: ControllerBase
     {
-        [HttpPost(Name = "loginqr")]
-        public ActionResult post()
+        [HttpGet(Name = "loginqr")]
+        public ActionResult get()
         {
             Image bmp = Bitmap.FromFile("./BiliQR.png");
             MemoryStream ms = new MemoryStream();
