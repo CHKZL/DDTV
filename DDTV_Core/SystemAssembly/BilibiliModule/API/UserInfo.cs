@@ -107,13 +107,16 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         public static bool LoginValidityVerification()
         {
+            if(string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+            {
+                return false;
+            }
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/nav");
             JObject root= (JObject)JsonConvert.DeserializeObject(WebText);
             if(root.TryGetValue("data",out var data))
             {
                 try
                 {
-    
                     if (bool.TryParse(data["isLogin"].ToString(),out bool T))
                     {
                         if (T)
@@ -142,8 +145,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 return true;
             }
         }
-        //如果好用，请收藏地址，帮忙分享。
-
 
         internal class Root
         {
@@ -177,7 +178,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public static int follow(long uid)
+        public static List<followClass> follow(long uid)
         {
             int AddCount = 0;
             List<User.follow.ListItem> FollowList = new();
@@ -197,6 +198,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 }
                 total = root.data.total;
             } while (pg * 50 < total);
+            List<followClass> followClasses = new List<followClass>();
             if (File.Exists("./Resources/vtbs.json"))
             {
                 JArray keyValuePairs = (JArray)JsonConvert.DeserializeObject(File.ReadAllText("./Resources/vtbs.json"));
@@ -213,6 +215,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         name = Tool.FileOperation.CheckFilenames(item["uname"].ToString());
                         if(FollowList.Any(e => e.mid == mid)&& mid!=0&&roomid!=0)
                         {
+                            followClasses.Add(new followClass()
+                            {
+                                mid = mid,
+                                name = name,
+                                roomid = roomid
+                            });
                             RoomConfig.AddRoom(mid, roomid, name);
                             AddCount++;
                         }
@@ -223,7 +231,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 }
                 RoomConfigFile.WriteRoomConfigFile();
             }
-            return AddCount;
+            return followClasses;
+        }
+        public class followClass
+        {
+            public long mid;
+            public int roomid;
+            public string name;
         }
     }
 }

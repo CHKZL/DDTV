@@ -16,6 +16,9 @@
 |POST|System_Info|JSON|[获取系统运行情况](./#post-api-system-info)|
 |POST|System_Config|JSON|[获取系统配置文件信息](./#post-api-system-config)|
 |POST|System_Resources|JSON|[获取系统硬件资源使用情况](./#post-api-system-resources)|
+|POST|System_QueryWebFirstStart|JSON|[返回一个可以自行设定的初始化状态值](./#post-api-system-querywebfirststart)|
+|POST|System_SetWebFirstStart|JSON|[设置初始化状态值](./#post-api-system-setsebfirststart)|
+|POST|System_QueryUserState|JSON|[用于判断用户登陆状态是否有效](./#post-api-system-queryuserstate)|
 |POST|Config_Transcod|JSON|[设置自动转码总开关](./#post-api-config-Transcod)|
 |POST|Config_FileSplit|JSON|[根据文件大小自动切片](./#post-api-config-filesplit)|
 |POST|Config_DanmuRec|JSON|[弹幕录制总共开关(包括礼物、舰队、SC)](./#post-api-config-danmurec)|
@@ -25,7 +28,9 @@
 |POST|Login|JSON|[WEB登陆](./#post-api-login)|
 |POST|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#post-api-loginqr)|
 |POST|Rec_RecordingInfo|JSON|[获取下载中的任务情况详细情况](./#post-api-rec-recordinginfo)|
+|POST|Rec_RecordingInfo_Lite|JSON|[获取下载中的任务情况简略情况](./#post-api-rec-recordinginfo-lite)|
 |POST|Rec_RecordCompleteInfon|JSON|[获取已经完成的任务详细情况](./#post-api-rec-recordcompleteinfon)|
+|POST|Rec_RecordCompleteInfon_Lite|JSON|[获取已经完成的任务简略情况](./#post-api-rec-recordcompleteinfon-lite)|
 |POST|Rec_CancelDownload|JSON|[取消某个下载任务](./#post-api-rec-canceldownload)|
 |POST|Room_AllInfo|JSON|[获取全部房间配置信息](./#post-api-room-allinfo)|
 |POST|Room_Add|JSON|[增一个加房间配置](./#post-api-room-add)|
@@ -389,6 +394,53 @@
 ```
 :::
 
+### `POST /api/System_QueryWebFirstStart`
+::: details 返回一个可以自行设定的初始化状态值(用于前端自行判断)
+- 私有变量  
+
+无
+
+- 注意事项
+该接口用于前端自行判断，启动后默认值都为真，不能作为DDTV是否正在运行的参考
+
+- 返回数据说明
+```C#
+return bool;//直接指示当前的WEB_FirstStart值为多少
+
+```
+:::
+
+### `POST /api/System_SetWebFirstStart`
+::: details 设置初始化状态值
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|state|bool|是|设置初始化状态值|
+
+- 注意事项
+用于设置初始化状态值(WEB_FirstStart)；该值无实际的逻辑处理，用于前端自行判断使用。
+
+- 返回数据说明
+```C#
+return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}");
+```
+:::
+
+### `POST /api/System_QueryUserState`
+::: details 用于判断用户登陆状态是否有效
+- 私有变量  
+无
+
+
+- 返回数据说明
+```C#
+return bool;//直接指示当前的登陆状态
+
+```
+:::
+
+
 ### `POST /api/Config_Transcod`
 ::: details 设置自动转码总开关
 - 私有变量  
@@ -419,7 +471,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 
 - 返回数据说明
 ```C#
-MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "自动转码成功");
+MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "根据文件大小自动切片成功");
 ```
 :::
 
@@ -437,7 +489,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 
 - 返回数据说明
 ```C#
-MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "自动转码成功");
+MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "弹幕录制总共开关成功(注:该弹幕录制接口总共开关包括礼物、舰队、SC的录制开关，并且个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关，要录制某个房间除了打开这个设置还需要房间配置启动打开录制)");
 ```
 :::
 
@@ -453,7 +505,14 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 
 - 返回数据说明
 ```C#
-MessageBase.Success(nameof(Config_GetFollow), $"成功导入{AddConut}个关注列表中的到配置");
+List<followClass>;
+
+  public class followClass
+        {
+            public long mid;
+            public int roomid;
+            public string name;
+        }
 ```
 :::
 
@@ -622,6 +681,50 @@ return List<Downloads>;
 ```
 :::
 
+### `POST /api/Rec_RecordingInfo_Lite`
+::: details 获取下载中的任务情况简略情况
+- 私有变量  
+无
+
+- 返回数据说明
+```C#
+return List<LiteDownloads>;
+
+    public class LiteDownloads
+    {
+        public string Token { get; set; }
+        /// <summary>
+        /// 房间号
+        /// </summary>
+        public string RoomId { get; set; }
+        /// <summary>
+        /// 用户UID
+        /// </summary>
+        public long Uid { set; get; }
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// 文件夹路径
+        /// </summary>
+        public string FilePath { set; get; }
+        /// <summary>
+        /// 开始时间(秒，Unix时间戳)
+        /// </summary>
+        public long StartTime { set; get; }
+        /// <summary>
+        /// 结束时间(秒，Unix时间戳)
+        /// </summary>
+        public long EndTime { set; get; }
+        /// <summary>
+        /// 该任务下所有子任务的总下载字节数
+        /// </summary>
+        public long TotalDownloadCount { get; set; }
+    }
+```
+:::
+
 ### `POST /api/Rec_RecordCompleteInfon`
 ::: details 获取已经完成的任务详细情况
 - 私有变量  
@@ -731,6 +834,50 @@ return List<Downloads>;
                 Cancel,
             }
         }
+```
+:::
+
+### `POST /api/Rec_RecordCompleteInfon_Lite`
+::: details 获取已经完成的任务简略情况
+- 私有变量  
+无
+
+- 返回数据说明
+```C#
+return List<LiteDownloads>;
+
+    public class LiteDownloads
+    {
+        public string Token { get; set; }
+        /// <summary>
+        /// 房间号
+        /// </summary>
+        public string RoomId { get; set; }
+        /// <summary>
+        /// 用户UID
+        /// </summary>
+        public long Uid { set; get; }
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// 文件夹路径
+        /// </summary>
+        public string FilePath { set; get; }
+        /// <summary>
+        /// 开始时间(秒，Unix时间戳)
+        /// </summary>
+        public long StartTime { set; get; }
+        /// <summary>
+        /// 结束时间(秒，Unix时间戳)
+        /// </summary>
+        public long EndTime { set; get; }
+        /// <summary>
+        /// 该任务下所有子任务的总下载字节数
+        /// </summary>
+        public long TotalDownloadCount { get; set; }
+    }
 ```
 :::
 

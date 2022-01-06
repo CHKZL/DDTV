@@ -107,13 +107,14 @@ namespace DDTV_GUI.DDTV_Window
         {
             Rooms.UpdateRoomInfo();
             DDTV_Core.SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
-            CoreConfig.SetValue(CoreConfigClass.Key.FirstStart, "false", CoreConfigClass.Group.Core);
+            CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, "false", CoreConfigClass.Group.Core);
+            CoreConfig.GUI_FirstStart = false;
             this.Close();
         }
 
         private void AddRoomButton_Click(object sender, RoutedEventArgs e)
         {
-            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
             AddRoomButton.Content = $"已导入{AddConut}个";
             AddRoomButton.IsEnabled= false;
             Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");

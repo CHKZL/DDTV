@@ -48,8 +48,11 @@ namespace DDTV_GUI.DDTV_Window
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_GUI);
 
             DefaultVolume = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play));
-
-            if (CoreConfig.FirstStart)
+            if(!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+            {
+                CoreConfig.GUI_FirstStart = false;
+            }
+            if (CoreConfig.GUI_FirstStart)
             {
                 InitialBoot IB = new InitialBoot();
                 IB.ShowDialog();
@@ -344,10 +347,10 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void DDTV_ICO_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            this.Visibility = Visibility.Visible;
-            this.Activate();
-            this.Focus();
-            UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
+            //this.Visibility = Visibility.Visible;
+            //this.Activate();
+            //this.Focus();
+            //UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
         }
         /// <summary>
         /// 窗口状态改变事件
@@ -356,12 +359,12 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void GlowWindow_StateChanged(object sender, EventArgs e)
         {
-            if (WindowState == WindowState.Minimized)
-            {
-                Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
-                UpdateInterface.Main.ActivationInterface = -1;
-                this.Visibility = Visibility.Hidden;
-            }
+            //if (WindowState == WindowState.Minimized)
+            //{
+            //    Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
+            //    UpdateInterface.Main.ActivationInterface = -1;
+            //    this.Visibility = Visibility.Hidden;
+            //}
         }
         /// <summary>
         /// 录制任务打开右键菜单事件
@@ -998,7 +1001,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Button_GetFollow(object sender, RoutedEventArgs e)
         {
-            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
             Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
         }
     }

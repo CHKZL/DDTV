@@ -11,10 +11,8 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 
         public static void Main(string[] args)
         {
-
-            //StartWebServices(args);
-
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
                 ServerInteraction.CheckUpdates.Update();
@@ -22,24 +20,35 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             });
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(Ver);
-        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            var corsPolicyName = "AllowSpecificOrigins";
             builder.Host.ConfigureServices(Services =>
             {
                 Services.AddControllers();
                 Services.AddEndpointsApiExplorer();
                 Services.AddSwaggerGen();
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy(name: corsPolicyName,
+                                      builder =>
+                                      {
+                                          builder.WithOrigins("http://*.*.*.*", "https://*.*.*.*")//.SetIsOriginAllowedToAllowWildcardSubdomains()//设置允许访问的域
+                                            .AllowAnyHeader()
+                                            .AllowAnyMethod();
+                                      });
+                });
                 Services.AddMvc();
                 //注册Cookie认证服务
                 Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option => 
+                    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
                     {
                         option.AccessDeniedPath = "api/LoginErrer"; //当用户尝试访问资源但没有通过任何授权策略时，这是请求会重定向的相对路径资源
-                            option.LoginPath = "api/Login/";
+                        option.LoginPath = "api/Login/";
                         option.Cookie.Name = "UserTEST";//设置存储用户登录信息（用户Token信息）的Cookie名称
-                            option.Cookie.HttpOnly = true;//设置存储用户登录信息（用户Token信息）的Cookie，无法通过客户端浏览器脚本(如JavaScript等)访问到
-                                                          //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
-                                                          //设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
-                        });
+                        option.Cookie.HttpOnly = true;//设置存储用户登录信息（用户Token信息）的Cookie，无法通过客户端浏览器脚本(如JavaScript等)访问到
+                                                      //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
+                                                      //设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
+                    });
 
             });
             //builder.Host.ConfigureWebHost(webBuilder =>
@@ -59,6 +68,8 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                     });
                 });
             }
+            
+           
             var app = builder.Build();
 
             //用于检测是否为开发环境
@@ -67,7 +78,8 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors(corsPolicyName);
+            app.UseMiddleware<CorsMiddleware.AccessControlAllowOrigin>();
             //app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
@@ -90,7 +102,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             Task.Run(() =>
             {
                 int i = 0;
-                while (i<360)
+                while (i < 360)
                 {
                     DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Error, "账号登陆失效！请重启DDTV进行登陆！");
                     Thread.Sleep(10 * 1000);
@@ -100,8 +112,9 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
         }
         private static void StartWebServices(string[] args)
         {
-            Task.Run(async () => {
-               
+            Task.Run(async () =>
+            {
+
             });
         }
     }

@@ -110,9 +110,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             DefaultVolume,
             /// <summary>
-            /// 首次启动标志位(应该是一个布尔值第一次启动为真)
+            /// GUI首次启动标志位(应该是一个布尔值第一次启动为真)
             /// </summary>
-            FirstStart,
+            GUI_FirstStart,
+            /// <summary>
+            /// WEB首次启动标志位(应该是一个布尔值第一次启动为真)
+            /// </summary>
+            WEB_FirstStart,
             /// <summary>
             /// 录制分辨率(应该为有限的int值，可选值为 80:流畅  150:高清  250:超清  400:蓝光  10000:原画)
             /// </summary>
@@ -173,6 +177,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 客户端唯一标识(string)
             /// </summary>
             ClientAID,
+            /// <summary>
+            /// 是否需要初始化
+            /// </summary>
+            InitializationStatus,
         }
     }
 }

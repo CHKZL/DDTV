@@ -11,7 +11,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class CoreConfig
     {
-        public static bool FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.FirstStart, "true", CoreConfigClass.Group.Core));
+        public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "true", CoreConfigClass.Group.Core));
+        public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -25,7 +26,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:
-                    if(FirstStart)
+                    if(GUI_FirstStart)
                     {
 
                     }
