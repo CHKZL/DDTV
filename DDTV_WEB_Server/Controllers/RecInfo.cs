@@ -78,6 +78,37 @@ namespace DDTV_WEB_Server.Controllers
             return MessageBase.Success(nameof(Rec_RecordingInfo), downloads);
         }
     }
+    public class Rec_RecordingInfo_Lite : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Rec_RecordingInfo_Lite")]
+        public string post([FromForm] string cmd)
+        {
+            List<LiteDownloads> downloads = new List<LiteDownloads>();
+            foreach (var A1 in Rooms.RoomInfo)
+            {
+                if (A1.Value.DownloadingList.Count > 0)
+                {
+                    foreach (var item in A1.Value.DownloadingList)
+                    {
+                        LiteDownloads _ = new()
+                        {
+                            EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
+                            FilePath = item.FilePath,
+                            RoomId = item.RoomId,
+                            StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
+                            Title = item.Title,
+                            Token = item.Token,
+                            TotalDownloadCount = item.TotalDownloadCount,
+                            Uid = item.Uid,
+                        };
+
+                        downloads.Add(_);
+                    }
+                }
+            }
+            return MessageBase.Success(nameof(Rec_RecordingInfo), downloads);
+        }
+    }
     public class Rec_RecordCompleteInfon : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordCompleteInfon")]
@@ -120,6 +151,37 @@ namespace DDTV_WEB_Server.Controllers
             return MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads);
         }
     }
+    public class Rec_RecordCompleteInfon_Lite : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Rec_RecordCompleteInfon_Lite")]
+        public string post([FromForm] string cmd)
+        {
+            List<LiteDownloads> downloads = new List<LiteDownloads>();
+            foreach (var A1 in Rooms.RoomInfo)
+            {
+                if (A1.Value.DownloadedLog.Count > 0)
+                {
+                    foreach (var item in A1.Value.DownloadedLog)
+                    {
+                        LiteDownloads _ = new()
+                        {
+                            EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
+                            FilePath = item.FilePath,
+                            RoomId = item.RoomId,
+                            StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
+                            Title = item.Title,
+                            Token = item.Token,
+                            TotalDownloadCount = item.TotalDownloadCount,
+                            Uid = item.Uid,   
+                        };
+                        downloads.Add(_);
+                    }
+                }
+            }
+            return MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads);
+        }
+      
+    }
     public class Rec_CancelDownload : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_CancelDownload")]
@@ -144,5 +206,37 @@ namespace DDTV_WEB_Server.Controllers
             }
            
         }
+    }
+    public class LiteDownloads
+    {
+        public string Token { get; set; }
+        /// <summary>
+        /// 房间号
+        /// </summary>
+        public string RoomId { get; set; }
+        /// <summary>
+        /// 用户UID
+        /// </summary>
+        public long Uid { set; get; }
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// 文件夹路径
+        /// </summary>
+        public string FilePath { set; get; }
+        /// <summary>
+        /// 开始时间(秒，Unix时间戳)
+        /// </summary>
+        public long StartTime { set; get; }
+        /// <summary>
+        /// 结束时间(秒，Unix时间戳)
+        /// </summary>
+        public long EndTime { set; get; }
+        /// <summary>
+        /// 该任务下所有子任务的总下载字节数
+        /// </summary>
+        public long TotalDownloadCount { get; set; }
     }
 }

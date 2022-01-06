@@ -1,4 +1,5 @@
-﻿using DDTV_Core.SystemAssembly.ConfigModule;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.API;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using Microsoft.AspNetCore.Http;
@@ -61,8 +62,8 @@ namespace DDTV_WEB_Server.Controllers
         {
             if(!string.IsNullOrEmpty(BilibiliUserConfig.account.uid))
             {
-                int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
-                return MessageBase.Success(nameof(Config_GetFollow), $"成功导入{AddConut}个关注列表中的到配置");
+                List<UserInfo.followClass> AddConut = UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+                return MessageBase.Success(nameof(Config_GetFollow), AddConut);
             }
             else
             {

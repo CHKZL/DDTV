@@ -15,7 +15,6 @@ namespace DDTV_WEB_Server.Controllers
             bmp.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
             bmp.Dispose();
             return File(ms.ToArray(), "image/png");
-        }
-       
+        }  
     }
 }

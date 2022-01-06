@@ -349,7 +349,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     if (conut > 5)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求网络文件超时，等待任务自动充值..");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求网络文件超时，等待任务自动重置..");
                         return -1;
                     }
                     Thread.Sleep(5000);

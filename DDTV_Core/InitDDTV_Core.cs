@@ -20,7 +20,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static string ClientAID = string.Empty;
-
+        
         /// <summary>
         /// 初始化COre
         /// </summary>
@@ -35,6 +35,7 @@ namespace DDTV_Core
             ServicePointManager.Expect100Continue = false;
             CoreConfig.ConfigInit(satrtType);
             Tool.DDTV_Update.CheckTheUpdateProgramForUpdates();
+
             //switch (satrtType)
             //{
             //    case SatrtType.DDTV_Core:

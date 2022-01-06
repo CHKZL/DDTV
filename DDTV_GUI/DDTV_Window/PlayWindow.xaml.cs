@@ -343,10 +343,13 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UpdateWindowInfo();
-            foreach (var item in DanmuBlock)
+            UpdateWindowInfo(false);
+            if (DanmuBlock.Count > 0)
             {
-                item.Visibility = Visibility.Hidden;
+                foreach (var item in DanmuBlock)
+                {
+                    item.Visibility = Visibility.Hidden;
+                }
             }
             //double X = this.Width;
             //double Y = this.Height;
@@ -747,7 +750,7 @@ namespace DDTV_GUI.DDTV_Window
                 return false;
             }
         }
-        public void UpdateWindowInfo()
+        public void UpdateWindowInfo(bool IsF = true)
         {
             try
             {
@@ -756,7 +759,10 @@ namespace DDTV_GUI.DDTV_Window
                 windowInfo.Width = this.Width;
                 windowInfo.Height = this.Height;
                 windowInfo.title = this.Title;
-                this.Focus();
+                if (IsF)
+                {
+                    this.Focus();
+                }
             }
             catch (Exception) { }
         }

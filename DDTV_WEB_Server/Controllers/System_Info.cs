@@ -1,4 +1,5 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.Tool.SystemResource;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -31,7 +32,7 @@ namespace DDTV_WEB_Server.Controllers
                     }
                 }
             }
-           
+
             Info systemInfo = new Info()
             {
                 DDTVCore_Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(),
@@ -56,7 +57,7 @@ namespace DDTV_WEB_Server.Controllers
                     Downloading = Downloading,
                     Completed_Downloads = DownloadComplete
                 },
-                
+
             };
             return MessageBase.Success(nameof(System_Info), systemInfo);
         }
@@ -158,9 +159,9 @@ namespace DDTV_WEB_Server.Controllers
                 systemResourceClass = new()
                 {
                     CPU_usage = GetCPUInfo.GetLinux(),
-                    HDDInfo=GetHDDInfo.GetLinux(),
-                    Memory=GetMemInfo.GetLiunx(),
-                    Platform="Linux"
+                    HDDInfo = GetHDDInfo.GetLinux(),
+                    Memory = GetMemInfo.GetLiunx(),
+                    Platform = "Linux"
                 };
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -172,9 +173,46 @@ namespace DDTV_WEB_Server.Controllers
                     Platform = "Windows"
                 };
                 string DriveLetter = Path.GetFullPath(DDTV_Core.SystemAssembly.DownloadModule.Download.DefaultPath)[..1];
-                systemResourceClass.HDDInfo=GetHDDInfo.GetWindows(DriveLetter);
+                systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
             }
-                return MessageBase.Success(nameof(System_Resources), systemResourceClass);
+            return MessageBase.Success(nameof(System_Resources), systemResourceClass);
+        }
+    }
+    public class System_QueryWebFirstStart : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "System_QueryWebFirstStart")]
+        //[Consumes("application/json")]
+        public string Post([FromForm] string cmd)
+        {
+            return MessageBase.Success(nameof(System_Config), CoreConfig.WEB_FirstStart);
+        }
+    }
+    public class System_SetWEBFirstStart : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "System_SetWebFirstStart")]
+        //[Consumes("application/json")]
+        public string Post([FromForm] string cmd, [FromForm] bool state)
+        {
+            CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, state.ToString(), CoreConfigClass.Group.Core);
+            CoreConfig.GUI_FirstStart = state;
+            return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}");
+        }
+    }
+    public class System_QueryUserState : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "System_QueryUserState")]
+        //[Consumes("application/json")]
+        public string Post([FromForm] string cmd)
+        {
+            if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
+            {
+                return MessageBase.Success(nameof(System_Config), false, $"未登录或登陆已失效");
+            }
+            else
+            {
+                return MessageBase.Success(nameof(System_Config), true, $"登陆有效");
+            }
+
         }
     }
 }
