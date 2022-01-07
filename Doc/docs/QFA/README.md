@@ -13,6 +13,8 @@
 >```bash
 >sudo apt install libgdiplus
 >```
+>PS:如果提示无法找到该库，根据微软官方说明，需要将 Mono 存储库添加到系统来安装最新版 libgdiplus
+>[说明文档](https://www.mono-project.com/download/stable/)
 
 * 终端中提示`Could Not find '/xxxxxxxxx/BiliQR.png'`  
 >请检查DDTV是否有权限向当前目录写入文件
