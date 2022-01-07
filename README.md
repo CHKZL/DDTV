@@ -26,3 +26,7 @@ Q群	307156949	聊天吹水的地方
 # Q&A
 如果提示缺少.NET6环境，请先安装.NET6环境
 请根据官网的教程进行操作
+
+
+# 使用到的第三方组件
+* [BiliAccount](https://github.com/LeoChen98/BiliAccount)
