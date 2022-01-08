@@ -261,18 +261,19 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// <summary>
         /// 删除房间
         /// </summary>
-        /// <param name="uidLis"></param>
-        public static bool DeleteRoom(long uidLis)
+        /// <param name="UID"></param>
+        public static bool DeleteRoom(long UID)
         {
             bool IsOK = false;
-            if (Rooms.RoomInfo.TryGetValue(uidLis, out RoomInfoClass.RoomInfo roomInfo))
+            if (Rooms.RoomInfo.TryGetValue(UID, out RoomInfoClass.RoomInfo roomInfo))
             {
-                Rooms.RoomInfo.Remove(uidLis);
+                DownloadModule.Download.CancelDownload(UID);
+                Rooms.RoomInfo.Remove(UID);
                 IsOK = true;
             }
             else
             {
-                Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"想要删除的房间不存在于配置中(UID:{uidLis})，删除失败");
+                Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"想要删除的房间不存在于配置中(UID:{UID})，删除失败");
                 IsOK = false;
             }
             RoomConfigFile.WriteRoomConfigFile();

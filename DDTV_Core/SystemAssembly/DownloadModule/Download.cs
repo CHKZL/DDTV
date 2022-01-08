@@ -30,6 +30,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static bool IsRecSC = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsRecSC, "true", CoreConfigClass.Group.Download));
         public static bool IsFlvSplit = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsFlvSplit, "false", CoreConfigClass.Group.Download));
         public static long FlvSplitSize = long.Parse(CoreConfig.GetValue(CoreConfigClass.Key.FlvSplitSize, "1073741824", CoreConfigClass.Group.Download));
+       
         /// <summary>
         /// 下载完成事件
         /// </summary>
@@ -92,7 +93,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 } while (roomInfo.IsCliping);
                 if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
                     DefaultPath = DefaultPath + "/";
-                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + $"{DefaultFileName}" + "_{R}.flv");
+                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + $"{DefaultFileName}" + "_{R}.flv");
 
                 //弹幕录制结束处理
                 if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
@@ -277,13 +278,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FilePath = Path;
                             downloadClass.FlvSplit = IsFlvSplit;
                             downloadClass.FlvSplitSize = FlvSplitSize;
-                            Tool.FileOperation.CreateAll(Path+ $"/{roomInfo.CreationTime.ToString("MM_d")}");
+                            Tool.FileOperation.CreateAll(Path+ $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}");
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
                             //录制弹幕(是否是新任务 && 弹幕录制总开关 && 房间弹幕录制设置)
                             if (IsNewTask && IsRecDanmu && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
                                 roomInfo.DanmuFile = new();
-                                roomInfo.DanmuFile.FileName = Path + $"/{roomInfo.CreationTime.ToString("MM_d")}/" + FileName;
+                                roomInfo.DanmuFile.FileName = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName;
                                 BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
                             }
                         }

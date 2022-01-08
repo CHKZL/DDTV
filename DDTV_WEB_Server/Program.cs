@@ -21,22 +21,12 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(Ver);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            var corsPolicyName = "AllowSpecificOrigins";
             builder.Host.ConfigureServices(Services =>
             {
                 Services.AddControllers();
                 Services.AddEndpointsApiExplorer();
                 Services.AddSwaggerGen();
-                builder.Services.AddCors(options =>
-                {
-                    options.AddPolicy(name: corsPolicyName,
-                                      builder =>
-                                      {
-                                          builder.WithOrigins("http://*.*.*.*", "https://*.*.*.*")//.SetIsOriginAllowedToAllowWildcardSubdomains()//设置允许访问的域
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod();
-                                      });
-                });
+               
                 Services.AddMvc();
                 //注册Cookie认证服务
                 Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -78,7 +68,6 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-            app.UseCors(corsPolicyName);
             app.UseMiddleware<CorsMiddleware.AccessControlAllowOrigin>();
             //app.UseHttpsRedirection();
             app.UseAuthorization();
