@@ -16,7 +16,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// </summary>
         /// <param name="url">目标网页地址</param>
         /// <returns></returns>
-        public static string GetRequest(string url, bool IsCookie = true, string R = "", string referer = "")
+        public static string GetRequest(string url, bool IsCookie = true, string R = "", string referer = "",string ContentType = "application/x-www-form-urlencoded")
         {
             Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
             if (string.IsNullOrEmpty(url))
@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
-            req.ContentType = "application/x-www-form-urlencoded";
+            req.ContentType = ContentType;
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = NetClass.UA();
             req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
