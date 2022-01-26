@@ -52,11 +52,19 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 }
                 else
                 {
+                    int T_roomId = 0;
+                    if(item.RoomId == 0 )
+                    {
+                        if(int.TryParse(item.RoomNumber, out T_roomId))
+                        {
+                            T_roomId = item.RoomId;
+                        }
+                    }
                     Rooms.RoomInfo.Add(item.UID,new RoomInfoClass.RoomInfo() 
                     { 
                         uname = string.IsNullOrEmpty(item.name) ? item.Name : item.name,
                         Description = item.Description,
-                        room_id = item.RoomId==0 ? int.Parse(item.RoomNumber) : item.RoomId,
+                        room_id = T_roomId,
                         IsAutoRec = (item.IsAutoRec||item.VideoStatus),
                         IsRemind =(item.IsRemind||item.RemindStatus),
                         Like = item.Like,
