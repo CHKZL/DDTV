@@ -26,6 +26,7 @@ namespace DDTV_GUI.DDTV_Window
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
+        private static bool HideIconState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.HideIconState, "false", CoreConfigClass.Group.GUI));
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
 
@@ -155,6 +156,9 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.IsOn = true;
         }
 
+        /// <summary>
+        /// 初始化UI组件
+        /// </summary>
         private void InitMainUI()
         {
             DefaultFileNameTextBox.Text = Download.DefaultFileName;
@@ -347,10 +351,15 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void DDTV_ICO_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            //this.Visibility = Visibility.Visible;
-            //this.Activate();
-            //this.Focus();
-            //UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
+            if(HideIconState)
+            {
+                this.Visibility = Visibility.Visible;
+                this.Activate();
+                this.Focus();
+                UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
+            }
+
+
         }
         /// <summary>
         /// 窗口状态改变事件
@@ -359,12 +368,16 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void GlowWindow_StateChanged(object sender, EventArgs e)
         {
-            //if (WindowState == WindowState.Minimized)
-            //{
-            //    Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
-            //    UpdateInterface.Main.ActivationInterface = -1;
-            //    this.Visibility = Visibility.Hidden;
-            //}
+            if (HideIconState)
+            {
+                if (WindowState == WindowState.Minimized)
+                {
+                    Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
+                    UpdateInterface.Main.ActivationInterface = -1;
+                    this.Visibility = Visibility.Hidden;
+                }
+            }
+
         }
         /// <summary>
         /// 录制任务打开右键菜单事件
@@ -1003,6 +1016,13 @@ namespace DDTV_GUI.DDTV_Window
         {
             int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
             Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
+        }
+
+        private void HideIcon_Click(object sender, RoutedEventArgs e)
+        {
+            HideIconState = (bool)HideIcon.IsChecked ? true : false;
+
+            CoreConfig.SetValue(CoreConfigClass.Key.HideIconState, HideIconState.ToString(), CoreConfigClass.Group.GUI);
         }
     }
 }

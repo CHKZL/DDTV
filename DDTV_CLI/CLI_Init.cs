@@ -13,6 +13,7 @@ namespace DDTV_CLI
         {
 
             #region Flv修复demo
+            //DDTV_Core.Tool.FlvModule.FileFix.CuttingFFMPEG(@"F:\Users\寒曦朦\OneDrive - hanximeng\OneList\录播/星宮汐Official/02_5/22-37-52_【B限】101_5931.flv");
             //List<string> args = new List<string>();
             //Console.WriteLine("输入需要修复的flv路径，或者直接拖拽文件到本窗口..");
             //while (true)

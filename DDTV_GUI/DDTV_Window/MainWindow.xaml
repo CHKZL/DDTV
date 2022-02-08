@@ -245,6 +245,14 @@
                             <ScrollViewer>
                                 <WrapPanel Orientation="Horizontal">
                                     <Grid Width="630" Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="缩小后隐藏到托盘" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="HideIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="138,6,456,4" Click="HideIcon_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开开关后，缩小DDTV窗口回从任务栏中消失、隐藏到角落后台托盘中，双击托盘中的ico恢复到任务栏" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="630" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  (可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>

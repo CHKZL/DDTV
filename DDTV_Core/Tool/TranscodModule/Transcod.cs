@@ -36,11 +36,11 @@ namespace DDTV_Core.Tool.TranscodModule
                 }
                 if (!string.IsNullOrEmpty(transcodClass.Parameters))
                 {
-                    process.StartInfo.Arguments = transcodClass.Parameters.Replace("{After}", transcodClass.AfterFilePath).Replace("{Before}", transcodClass.BeforeFilePath);
+                    process.StartInfo.Arguments = transcodClass.Parameters.Replace("\"{After}\"", transcodClass.AfterFilePath).Replace("\"{Before}\"", transcodClass.BeforeFilePath);
                 }
                 else
                 {
-                    process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", transcodClass.AfterFilePath.Replace(".flv",".mp4")).Replace("{Before}", transcodClass.BeforeFilePath);
+                    process.StartInfo.Arguments = TranscodParmetrs.Replace("\"{After}\"", transcodClass.AfterFilePath.Replace(".flv",".mp4")).Replace("\"{Before}\"", transcodClass.BeforeFilePath);
                 }
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
