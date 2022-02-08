@@ -59,6 +59,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 播放器相关设置
             /// </summary>
             Play,
+            /// <summary>
+            /// GUI相关设置
+            /// </summary>
+            GUI,
         }
         /// <summary>
         /// 配置键
@@ -181,6 +185,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 是否需要初始化
             /// </summary>
             InitializationStatus,
+            /// <summary>
+            /// DDTVGUI缩放是否隐藏到托盘
+            /// </summary>
+            HideIconState,
         }
     }
 }
