@@ -84,7 +84,7 @@ DDTV_WEB_Server是免安装的，把下载下来的压缩包解压到任意当�
 >在终端中执行以安装libgdiplus库  
 >* Centos
 >```bash
->sudo yun install libgdiplus-devel
+>sudo yum install libgdiplus-devel
 >```
 >* Ubuntu
 >```bash
