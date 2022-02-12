@@ -26,7 +26,7 @@ namespace DDTV_GUI.DDTV_Window
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
-        private static bool HideIconState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.HideIconState, "false", CoreConfigClass.Group.GUI));
+        private static bool HideIconState = false;
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
 
@@ -49,6 +49,7 @@ namespace DDTV_GUI.DDTV_Window
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_GUI);
 
             DefaultVolume = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play));
+            HideIconState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.HideIconState, "false", CoreConfigClass.Group.GUI));
             if(!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
                 CoreConfig.GUI_FirstStart = false;
@@ -165,6 +166,7 @@ namespace DDTV_GUI.DDTV_Window
             RecPathTextBox.Text = Download.DefaultPath;
             TmpPathTextBox.Text = Download.TmpPath;
             TranscodToggle.IsChecked = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
+            HideIcon.IsChecked = HideIconState;
 
             RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 ? 0 : Download.RecQuality == 400 ? 1 : Download.RecQuality == 250 ? 2 : Download.RecQuality==150? 3:4;
             PlayQualityComboBox.SelectedIndex = PlayQuality == 10000 ? 0 : PlayQuality == 400 ? 1 : PlayQuality == 250 ? 2 : PlayQuality == 150 ? 3 : 4;
@@ -600,7 +602,11 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void LiveList_MenuItem_Play_Click(object sender, RoutedEventArgs e)
         {
-            if(!File.Exists("./plugins/vlc/libvlc.dll"))
+            Play_Click();
+        }
+        private void Play_Click()
+        {
+            if (!File.Exists("./plugins/vlc/libvlc.dll"))
             {
                 Growl.Warning($"缺少对应的播放器解码组件！");
                 return;
@@ -1023,6 +1029,11 @@ namespace DDTV_GUI.DDTV_Window
             HideIconState = (bool)HideIcon.IsChecked ? true : false;
 
             CoreConfig.SetValue(CoreConfigClass.Key.HideIconState, HideIconState.ToString(), CoreConfigClass.Group.GUI);
+        }
+
+        private void LiveList_Play_MouseDouble_Click(object sender, MouseButtonEventArgs e)
+        {
+            Play_Click();
         }
     }
 }
