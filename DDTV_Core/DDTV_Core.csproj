@@ -8,7 +8,7 @@
     <AssemblyVersion></AssemblyVersion>
     <FileVersion>3.0.1.1</FileVersion>
     <Authors>ami</Authors>
-    <Version>3.0.1.7</Version>
+    <Version>3.0.1.9</Version>
     <Description>这是DDTV3.0的核心库，详细内容请查看DDTV官网
 ddtv.pro</Description>
     <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>

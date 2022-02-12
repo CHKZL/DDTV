@@ -7,7 +7,7 @@
 >在终端中执行以安装libgdiplus库  
 >* Centos
 >```bash
->sudo yun install libgdiplus-devel
+>sudo yum install libgdiplus-devel
 >```
 >* Ubuntu
 >```bash
