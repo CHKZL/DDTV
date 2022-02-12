@@ -112,60 +112,64 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="监控列表">
-                    <ListView x:Name="LiveList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing"  >
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="名称" Width="150" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="状态" Width="50" DisplayMemberBinding="{Binding State}"/>
-                                <GridViewColumn Header="开播提醒" Width="80" DisplayMemberBinding="{Binding IsRemind}"/>
-                                <GridViewColumn Header="自动录制" Width="80" DisplayMemberBinding="{Binding IsRec}"/>
-                                <GridViewColumn Header="录制弹幕" Width="80" DisplayMemberBinding="{Binding IsDanmu}"/>
-                                <GridViewColumn Header="房间号" Width="120" DisplayMemberBinding="{Binding RoomId}"/>
-                            </GridView>
-                        </ListView.View>
-                        <ListView.ContextMenu>
-                            <ContextMenu Width="150">
-                                <MenuItem Header="在DDTV中观看" Click="LiveList_MenuItem_Play_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="打开直播间" Click="LiveList_MenuItem_OpenLiveRoomUrl_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="设置开播提醒" Click="LiveList_MenuItem_SetIsRemind_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="设置自动录制" Click="LiveList_MenuItem_SetIsRec_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/video.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="设置录制弹幕" Click="LiveList_MenuItem_SetIsDanmu_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="删除房间" Click="LiveList_MenuItem_DelRoom_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/delete.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="增加房间" Click="LiveList_MenuItem_AddRoom_Click">
-                                    <MenuItem.Icon>
-                                        <Image Source="/Resources/Img/UI/add_user.png" Width="18" Height="18"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </ListView.ContextMenu>
-                    </ListView>
+                    <Grid>
+                        <ListView x:Name="LiveList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing" MouseDoubleClick="LiveList_Play_MouseDouble_Click"  >
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="名称" Width="150" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="状态" Width="50" DisplayMemberBinding="{Binding State}"/>
+                                    <GridViewColumn Header="开播提醒" Width="72" DisplayMemberBinding="{Binding IsRemind}"/>
+                                    <GridViewColumn Header="自动录制" Width="72" DisplayMemberBinding="{Binding IsRec}"/>
+                                    <GridViewColumn Header="录制弹幕" Width="72" DisplayMemberBinding="{Binding IsDanmu}"/>
+                                    <GridViewColumn Header="房间号" Width="120" DisplayMemberBinding="{Binding RoomId}"/>
+                                </GridView>
+                            </ListView.View>
+                            <ListView.ContextMenu>
+                                <ContextMenu Width="150">
+                                    <MenuItem Header="在DDTV中观看" Click="LiveList_MenuItem_Play_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="打开直播间" Click="LiveList_MenuItem_OpenLiveRoomUrl_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/View.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="设置开播提醒" Click="LiveList_MenuItem_SetIsRemind_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="设置自动录制" Click="LiveList_MenuItem_SetIsRec_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/video.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="设置录制弹幕" Click="LiveList_MenuItem_SetIsDanmu_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="删除房间" Click="LiveList_MenuItem_DelRoom_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/delete.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="增加房间" Click="LiveList_MenuItem_AddRoom_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/add_user.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                        <TextBlock Text="注:鼠标右键增删改" FontSize="14" TextWrapping="Wrap" Margin="549,0,0,382" Foreground="#FF828282" HorizontalAlignment="Left" Width="121" Height="25" VerticalAlignment="Bottom" />
+                    </Grid>
+
                 </TabItem>
                 <TabItem Header="录制任务">
                     <ListView x:Name="RecList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="RecList_ContextMenuOpening" ContextMenuClosing="RecList_ContextMenuClosing"  >
