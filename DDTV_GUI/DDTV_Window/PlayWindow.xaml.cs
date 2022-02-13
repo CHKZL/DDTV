@@ -846,18 +846,21 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_ExitAll_Click(object sender, RoutedEventArgs e)
         {
-            Growl.Ask("确定要关闭所有播放窗口么？", isConfirmed =>
+            Task.Run(() =>
             {
-                if (isConfirmed)
+                Growl.AskGlobal("确定要关闭所有播放窗口么？", isConfirmed =>
                 {
-                    if (PlayListExit != null)
+                    if (isConfirmed)
                     {
-                        PlayListExit.Invoke(null, EventArgs.Empty);
+                        if (PlayListExit != null)
+                        {
+                            PlayListExit.Invoke(null, EventArgs.Empty);
+                        }
                     }
-                }
-                return true;
+                    return true;
+                });
             });
-           
+
         }
 
         private void AddDanmu(string DanmuText)
