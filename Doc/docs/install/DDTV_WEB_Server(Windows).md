@@ -16,7 +16,7 @@ DDTV_WEB_Server是免安装的，把下载下来的压缩包解压到任意位�
 ### (1)运行环境准备
 >DDTV_WEB_Server依赖于`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`环境运行，请先安装`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`：  
 [下载.NET Runtime(x64)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
-[下载ASP.NET Core Runtime(x64)]https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-6.0.1-windows-x64-installer)  
+[下载ASP.NET Core Runtime(x64)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-6.0.1-windows-x64-installer)  
 如果你的操作系统不是`64位Windows10`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/windows?tabs=net60)进行环境的安装  
 
 ### 配置房间文件
