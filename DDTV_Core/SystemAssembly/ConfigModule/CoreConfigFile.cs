@@ -76,6 +76,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 
             foreach (var ConfigText in ConfigLine)
             {
+                if (ConfigText=="") continue;
                 if (ConfigText[..1]!="[")
                 {
                     if (ConfigText.Split('=').Length==2&&ConfigText.Split('=')[0].Length>0&&ConfigText.Split('=')[1].Length>0)
