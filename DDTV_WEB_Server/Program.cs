@@ -18,6 +18,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 ServerInteraction.CheckUpdates.Update();
                 ServerInteraction.Dokidoki.Start();
             });
+            Thread.Sleep(3000);
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(Ver);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -58,7 +59,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                     });
                 });
             }
-            
+
            
             var app = builder.Build();
 

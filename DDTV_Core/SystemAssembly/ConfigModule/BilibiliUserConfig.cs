@@ -44,7 +44,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             else
             {
-                return login.VerifyLogin.Loing(satrtType);
+                return login.VerifyLogin.QRLoing(satrtType);
             }
         }
         public static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")
@@ -150,9 +150,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 if (!IsOn)
                 {
+                   
                     IsOn = !IsOn;
                     Task.Run(() =>
                     {
+                        Thread.Sleep(8 * 1000);
                         while (true)
                         {
                             try

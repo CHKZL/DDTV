@@ -126,7 +126,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <param name="roomId"></param>
         private static void SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo,string FileName,string Name,int roomId)
         {
-            string XML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
+            string XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<i>" +
                 "<chatserver>chat.bilibili.com</chatserver>" +
                 "<chatid>0</chatid>" +
@@ -140,11 +140,24 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             int i = 1;
             foreach (var item in danmuInfo)
             {
-                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp/1000},{item.pool},{item.uid},{i}\">{item.Message}</d>";
+                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp/1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
                 i++;
             }
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
+        }
+        /// <summary>
+        /// 对XML特殊字符进行转义
+        /// </summary>
+        /// <param name="Message">待转义消息</param>
+        /// <returns></returns>
+        private static string XMLEscape(string Message)
+        {
+           return Message.Replace("<", "&lt;")
+                .Replace(">", "&gt;")
+                .Replace("&", "&amp;")
+                .Replace("'", "&apos;")
+                .Replace("\"", "&quot;");
         }
         /// <summary>
         /// 储存礼物信息到文件

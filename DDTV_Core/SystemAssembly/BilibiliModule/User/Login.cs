@@ -14,7 +14,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
     {
         public class VerifyLogin
         {
-            public static bool Loing(InitDDTV_Core.SatrtType satrtType)
+            public static bool QRLoing(InitDDTV_Core.SatrtType satrtType)
             {
                 Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "开始生成登陆QR码");
                 QR.QRInit(satrtType);
