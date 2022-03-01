@@ -12,12 +12,28 @@ namespace DDTV_WEB_Server.Controllers
     public class Login : ControllerBase
     {
         [HttpPost(Name = "Login")]
-        public string Post([FromForm] string UserName, [FromForm] string Password)
+        public string Post([FromForm] string UserName, [FromForm] string Password,[FromForm] bool CookieExpires=false)
         {
             if (UserName == RuntimeConfig.WebUserName && Password == RuntimeConfig.WebPassword)
             {
                 RuntimeConfig.Cookis = Guid.NewGuid().ToString();
-                HttpContext.Response.Cookies.Append("DDTVUser", RuntimeConfig.Cookis);
+                if(CookieExpires)
+                {
+                    HttpContext.Response.Cookies.Append(
+                  "DDTVUser",
+                  RuntimeConfig.Cookis,
+                  new CookieOptions() 
+                  {
+                      Expires = new DateTimeOffset(0, 0, 7, 0, 0, 0, TimeSpan.MinValue),
+                      //Domain = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AccessControlAllowOrigin
+                  } 
+                  );
+                }
+                else
+                {
+                    HttpContext.Response.Cookies.Append("DDTVUser",RuntimeConfig.Cookis);
+                }
+              
                 return MessageBase.Success(nameof(Login), new LoginOK()
                 {
                     Cookie= RuntimeConfig.Cookis

@@ -13,6 +13,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     {
         public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "true", CoreConfigClass.Group.Core));
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
+        public static string AccessControlAllowOrigin = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowOrigin, "*", CoreConfigClass.Group.WEB_API);
+        public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "true", CoreConfigClass.Group.WEB_API);
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -22,7 +24,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             CoreConfigFile.ReadConfigFile();
             //初始化读取房间配置
             RoomConfigFile.ReadRoomConfigFile();
-            
+
+          
+
+
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:

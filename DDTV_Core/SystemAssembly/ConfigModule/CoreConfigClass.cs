@@ -189,6 +189,15 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// DDTVGUI缩放是否隐藏到托盘
             /// </summary>
             HideIconState,
+            /// <summary>
+            /// DDTV_WEB跨域设置路径
+            /// </summary>
+            AccessControlAllowOrigin,
+            /// <summary>
+            /// DDTV_WEB的Credentials设置
+            /// </summary>
+            AccessControlAllowCredentials,
+
         }
     }
 }
