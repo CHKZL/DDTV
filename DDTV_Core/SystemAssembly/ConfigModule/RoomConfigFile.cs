@@ -112,7 +112,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 DataCache.SetCache(CacheType.uid, item.Value.uid.ToString(), item.Value.uid.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRecDanmu, item.Value.uid.ToString(), item.Value.IsRecDanmu.ToString(), int.MaxValue);
             }
-            File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards));
+            File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards, Formatting.Indented));
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.data.Count}]个房间配置");
         }
         public class RoomWrite
