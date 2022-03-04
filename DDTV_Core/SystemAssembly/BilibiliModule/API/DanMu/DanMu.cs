@@ -19,8 +19,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <param name="Message">发送信息(不能超过20个字符)</param>
         public static void Send(string roomId, string Message)
         {
-            CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
-            Dictionary<string, string> Params = new Dictionary<string, string>
+            Task.Run(() =>{
+                CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
+                Dictionary<string, string> Params = new Dictionary<string, string>
                 {
                     { "color", "16777215" },
                     { "fontsize", "25" },
@@ -31,8 +32,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                     { "csrf_token", BilibiliUserConfig.account.csrf },
                     { "csrf", BilibiliUserConfig.account.csrf }
                 };
-            JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest_SendDanmu("https://api.live.bilibili.com/msg/send", Params, CK));
-            Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"弹幕发送成功");
+                JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest_SendDanmu("https://api.live.bilibili.com/msg/send", Params, CK));
+                Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"弹幕发送成功");
+            });
         }
         /// <summary>
         /// 获取直播间弹幕连接(wss长连接)

@@ -176,7 +176,7 @@ namespace DDTV_Core.Tool
             }
             dirs = new();
             return list;
-        }
+        } 
         private static void GetDirs(string dirPath)
         {
             if (Directory.GetDirectories(dirPath).Length > 0)
