@@ -79,8 +79,9 @@ namespace DDTV_GUI.DDTV_Window
             TimedTask.DokiDoki.Check();
             //ClipWindow clipWindow = new ClipWindow();
             //clipWindow.Show();
-            
+
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
+           
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
