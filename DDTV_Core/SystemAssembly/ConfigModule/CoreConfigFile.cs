@@ -67,8 +67,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             if (!File.Exists(ConfigFile))
             {
-                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Warn, "配置文件不存在，读取失败");
                 File.WriteAllText(ConfigFile, "");
+                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Warn, String.Format("配置文件不存在，新建{0}文件", ConfigFile));
             }
             CoreConfigClass.config=new CoreConfigClass.Config();
             string[] ConfigLine = File.ReadAllLines(ConfigFile);
