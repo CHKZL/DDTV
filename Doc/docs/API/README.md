@@ -24,6 +24,7 @@
 |POST|Config_DanmuRec|JSON|[弹幕录制总共开关(包括礼物、舰队、SC)](./#post-api-config-danmurec)|
 |POST|Config_GetFollow|JSON|[导入关注列表中的V](./#post-api-config-getfollow)|
 |POST|File_GetAllFileList|JSON|[获取已录制的文件列表](./#post-api-file-getallfilelist)|
+|POST|File_GetTypeFileList|JSON|[分类获取已录制的文件总列表](./#post-api-file-gettypefilelist)|
 |POST|File_GetFile|FileStram|[下载对应的文件](./#post-api-file-getfile)|
 |POST|Login|JSON|[WEB登陆](./#post-api-login)|
 |POST|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#post-api-loginqr)|
@@ -37,6 +38,7 @@
 |POST|Room_Del|JSON|[删除一个房间配置](./#post-api-room-del)|
 |POST|Room_AutoRec|JSON|[修改房间自动录制配置信息](./#post-api-room-autorec)|
 |POST|Room_DanmuRec|JSON|[修改房间弹幕录制配置信息](./#post-api-room-danmurec)|
+|POST|User_Search|JSON|[通过B站搜索搜索直播用户](./#post-api-user-search)|
 
 ## 返回数据内容格式
 
@@ -594,6 +596,25 @@ List<string> FileList;
 - 返回数据说明
 ```C#
 return File();    
+```
+:::
+
+### `POST /api/File_GetTypeFileList`
+::: details 分类获取已录制的文件总列表
+- 私有变量  
+无
+
+- 返回数据说明
+```C#
+    public class TypeFileList
+    {
+        public List<FileList> fileLists =new List<FileList>();
+        public class FileList
+        {
+            public string Type { set; get; }
+            public List<string> files = new List<string>();
+        }
+    }
 ```
 :::
 
@@ -1248,4 +1269,34 @@ return string;
 ```C#
 return string;
 ```
+:::
+
+
+### `POST /api/User_Search`
+::: details 通过B站搜索搜索直播用户
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|keyword|string|是|需要搜索的关键词|
+
+- 返回数据说明
+
+| 字段        | 类型  | 内容           | 备注                                                   |
+| ----------- | ----- | -------------- | ------------------------------------------------------ |
+| type        | str   | 结果类型       | 固定为live_user                                        |
+| rank_offset | num   | 搜索结果排名值 |                                                        |
+| uid         | num   | 主播mid        |                                                        |
+| tas         | str   | 直播间TAG      | 多个用`,`分隔                                          |
+| live_time   | str   | 开播时间       | YYYY-MM-DD HH:MM:SS<br />如未开播为0000-00-00 00:00:00 |
+| hit_columns | array | 关键字匹配类型 |                                                        |
+| live_status | num   | 是否开播       | 0：未开播<br />1：已开播                               |
+| area        | num   | 1              | **作用尚不明确**                                       |
+| is_live     | bool  | 是否开播       | false：未开播<br />true：已开播                        |
+| uname       | str   | 主播昵称       | 关键字用xml标签`<em class="keyword">`标注              |
+| uface       | str   | 主播头像url    |                                                        |
+| rank_index  | num   | 0              | **作用尚不明确**                                       |
+| rank_score  | num   | 结果排序量化值 |                                                        |
+| attentions  | num   | 主播粉丝数     |                                                        |
+
 :::

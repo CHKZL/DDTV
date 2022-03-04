@@ -32,11 +32,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            if(liveChatListener.startIn)
+            if (liveChatListener.startIn)
             {
-                Log.Log.AddLog(nameof(DanMuRec),LogClass.LogType.Info,$"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
+                Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
                 Rec(liveChatListener.mid);
-            }      
+            }
         }
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
@@ -109,7 +109,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         public static void SevaDanmuFile(RoomInfoClass.RoomInfo roomInfo)
         {
             if (Download.IsRecDanmu)
-                SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id);
+                SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
             if (Download.IsRecGift)
                 SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
             if (Download.IsRecGuard)
@@ -124,7 +124,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <param name="FileName"></param>
         /// <param name="Name"></param>
         /// <param name="roomId"></param>
-        private static void SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo,string FileName,string Name,int roomId)
+        private static void SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, string FileName, string Name, int roomId,long time)
         {
             string XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<i>" +
@@ -136,11 +136,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 $"<app>{InitDDTV_Core.Ver}</app>" +
                 $"<real_name>{Name}</real_name>" +
                 $"<roomid>{roomId}</roomid>" +
+                $"<time>{time}</time>" +
                 $"<source>k-v</source>";
             int i = 1;
             foreach (var item in danmuInfo)
             {
-                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp/1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
+                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
                 i++;
             }
             XML += "</i>";
@@ -153,11 +154,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <returns></returns>
         private static string XMLEscape(string Message)
         {
-           return Message.Replace("<", "&lt;")
+            return Message.Replace("&", "&amp;")
+                .Replace("<", "&lt;")
                 .Replace(">", "&gt;")
-                .Replace("&", "&amp;")
                 .Replace("'", "&apos;")
-                .Replace("\"", "&quot;");
+                .Replace("\"", "&quot;")
+                .Replace(" ", "&nbsp;")
+                .Replace(" ", "&nbsp;")
+                .Replace("×", "&times;")
+                .Replace("÷", "&divde;");
         }
         /// <summary>
         /// 储存礼物信息到文件

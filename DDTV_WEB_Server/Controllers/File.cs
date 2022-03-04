@@ -17,6 +17,63 @@ namespace DDTV_WEB_Server.Controllers
             return MessageBase.Success(nameof(File_GetAllFileList), DDTV_Core.Tool.DownloadList.GetRecFileList());
         }   
     }
+    /// <summary>
+    /// 分类获取已录制的文件总列表
+    /// </summary>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class File_GetTypeFileList : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "File_GetTypeFileList")]
+        public string post([FromForm] string cmd)
+        {
+            ArrayList arrayList = DDTV_Core.Tool.DownloadList.GetRecFileList();
+           
+            TypeFileList.FileList flvList = new() { Type="flv"};
+            TypeFileList.FileList mp4List = new() { Type = "mp4" };
+            TypeFileList.FileList xmlList = new() { Type = "xml" };
+            TypeFileList.FileList csvList = new() { Type = "csv" };
+            TypeFileList.FileList otherList = new() { Type = "other" };
+            foreach (var item in arrayList)
+            {
+                string type = item.ToString().Split('.')[item.ToString().Split('.').Length - 1];
+                switch(type)
+                {
+                    case "flv":
+                        flvList.files.Add(item.ToString());
+                        break;
+                    case "mp4":
+                        mp4List.files.Add(item.ToString());
+                        break;
+                    case "xml":
+                        xmlList.files.Add(item.ToString());
+                        break;
+                    case "csv":
+                        csvList.files.Add(item.ToString());
+                        break;
+                    default:
+                        otherList.files.Add(item.ToString());
+                        break;
+                }
+            }
+            TypeFileList typeFileList = new();
+            typeFileList.fileLists.Add(flvList);
+            typeFileList.fileLists.Add(mp4List);
+            typeFileList.fileLists.Add(xmlList);
+            typeFileList.fileLists.Add(csvList);
+            typeFileList.fileLists.Add(otherList);
+            return MessageBase.Success(nameof(File_GetTypeFileList), typeFileList);
+        }
+    }
+    public class TypeFileList
+    {
+        public List<FileList> fileLists =new List<FileList>();
+        public class FileList
+        {
+            public string Type { set; get; }
+            public List<string> files = new List<string>();
+        }
+    }
     [Route("api/[controller]")]
     [ApiController]
     public class File_GetFile : ProcessingControllerBase.ApiControllerBase
