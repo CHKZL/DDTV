@@ -35,31 +35,23 @@ namespace DDTV_Core.Tool.SystemResource
             }
         }
         public static double GetLinux(int @decimal = 2)
-        {
-            string result = RunCommandAsync("awk '{u=$2+$4; t=$2+$4+$5; if (NR==1){u1=u; t1=t;} else print ($2+$4-u1) * 100 / (t-t1); }' <(grep 'cpu ' /proc/stat) <(sleep 1;grep 'cpu ' /proc/stat)");
-            double value = double.Parse(result);
+        {   // bin/bash -c "awk '{u=$2+$4; t=$2+$4+$5; if (NR==1){u1=u; t1=t;} else print (u-u1) * 100 / (t-t1); }' <(grep 'cpu ' /proc/stat) <(sleep 1;grep 'cpu ' /proc/stat)"
+            const string CPU_FILE_PATH = "/proc/stat";
+            var cpu_file_info = System.IO.File.ReadAllLines(CPU_FILE_PATH);
+            double[] L1 = Array.ConvertAll(cpu_file_info[0][5..].Split(" "), double.Parse);
+            System.Threading.Thread.Sleep(1000);
+
+            cpu_file_info = System.IO.File.ReadAllLines(CPU_FILE_PATH);
+            double[] L2 = Array.ConvertAll(cpu_file_info[0][5..].Split(" "), double.Parse);
+            double value = (L2[0] + L2[2] - L1[0] - L1[2]) * 100 / (L2[0] + L2[2] + L2[3] - L1[0] - L1[2] - L1[3]);
             if (@decimal >= 0) value = Math.Round(value, @decimal);
             return value;
         }
-        private static string RunCommandAsync(string command)
+        /*
+        public static double GetMacOS
         {
-            string escapedCommand = command.Replace("\"", "\\\"");
-
-            Process process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "/bin/bash",
-                    Arguments = $"-c \"{escapedCommand}\"",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
-            process.Start();
-            string result = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return result;
+            // 听说Mac OS X下没/proc，可以用system_profiler (先放一个在这，到时需要米姐可以直接修)
         }
+        */
     }
 }

@@ -361,6 +361,17 @@
             /// 组：GUI       默认值：false
             /// </summary>
             HideIconState,
+            /// <summary>
+            /// DDTV_WEB跨域设置路径（应为前端网址，必须带协议和端口号，如：http://127.0.0.1:5500）
+            /// 组：WEB_API   默认值：*
+            /// </summary>
+            AccessControlAllowOrigin,
+            /// <summary>
+            /// DDTV_WEB的Credentials设置 (布尔值)
+            /// 组：WEB_API   默认值：true
+            /// </summary>
+            AccessControlAllowCredentials,
+
         }
 ```
 :::

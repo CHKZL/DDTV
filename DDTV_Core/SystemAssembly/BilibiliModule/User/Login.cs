@@ -53,12 +53,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                 switch(satrtType)
                 {
                     case InitDDTV_Core.SatrtType.DDTV_GUI:
-                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; ;
+                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                         ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
                         break;
                     default:
+                        AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
                         ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; ;
+                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                         ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
                         break;
                 }

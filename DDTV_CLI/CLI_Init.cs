@@ -11,7 +11,7 @@ namespace DDTV_CLI
     {
         public static void Main(string[] args)
         {
-
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             #region Flv修复demo
             //DDTV_Core.Tool.FlvModule.FileFix.CuttingFFMPEG(@"F:\Users\寒曦朦\OneDrive - hanximeng\OneList\录播/星宮汐Official/02_5/22-37-52_【B限】101_5931.flv");
             //List<string> args = new List<string>();
