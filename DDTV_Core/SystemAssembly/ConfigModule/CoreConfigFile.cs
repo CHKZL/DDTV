@@ -18,10 +18,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// </summary>
         public static void WriteConfigFile(string ConfigFile = "./DDTV_Config.ini")
         {
-            if (File.Exists(ConfigFile))
-            {
-                File.Delete(ConfigFile);
-            }
             List<ConfigTmp> configTmp = new List<ConfigTmp>();
 
             foreach (var datas in CoreConfigClass.config.datas)
@@ -50,13 +46,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     configTmp.Add(configTmp1);
                 }
             }
-            using StreamWriter streamWriter = File.AppendText(ConfigFile);
+            using FileStream fileStream = File.Create(ConfigFile);
             foreach (var item1 in configTmp)
             {
-                streamWriter.WriteLine($"[{item1.G}]");
+                fileStream.Write(Encoding.UTF8.GetBytes($"[{item1.G}]\r\n"));
                 foreach (var item2 in item1.datas)
                 {
-                    streamWriter.WriteLine((item2.Enabled ? "" : "# ")+$"{item2.Key}={item2.Value}");
+                    fileStream.Write(Encoding.UTF8.GetBytes((item2.Enabled ? "" : "# ")+$"{item2.Key}={item2.Value}\r\n"));
                 }
             }
         }

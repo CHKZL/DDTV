@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.Tool
 {
@@ -22,7 +23,7 @@ namespace DDTV_Core.Tool
             {
                 string Ver = SystemAssembly.NetworkRequestModule.Post.Post.HttpPost("http://api.ddtv.pro/api/Ver", Parameters);
                 ServerMessageClass.MessageBase.pack<ServerMessageClass.MessageClass.VerClass> pack = JsonConvert.DeserializeObject<ServerMessageClass.MessageBase.pack<ServerMessageClass.MessageClass.VerClass>>(Ver);
-                if(pack.data.Ver== LocalVersion)
+                if (pack.data.Ver == LocalVersion)
                 {
                     return true;
                 }
@@ -41,38 +42,52 @@ namespace DDTV_Core.Tool
         /// </summary>
         public static void CheckTheUpdateProgramForUpdates()
         {
-            string Type = "Update";
-            string PushUrl = "https://update.ddtv.pro/";
-            string _A = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(PushUrl + $"{Type}_Update.json",false, "https://Update.ddtv.pro/");
-            FileInfoClass OldUpdateInfo = JsonConvert.DeserializeObject<FileInfoClass>(_A);
-            FileInfoClass files = new FileInfoClass()
+            Task.Run(() =>
             {
-                Bucket = OldUpdateInfo.Bucket,
-                Description = OldUpdateInfo.Description,
-                Type = Type,
-                Ver = OldUpdateInfo.Ver,
-            };
-            foreach (var item in OldUpdateInfo.files)
-            {
-                if (File.Exists(item.FilePath))
+                while (true)
                 {
-                    if (item.FileMd5 != SystemAssembly.EncryptionModule.Encryption.GetMD5HashFromFile(item.FilePath))
+                    try
                     {
-                        files.files.Add(item);
+                        string Type = "Update";
+                        string PushUrl = "https://update.ddtv.pro/";
+                        string _A = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(PushUrl + $"{Type}_Update.json", false, "https://Update.ddtv.pro/");
+                        FileInfoClass OldUpdateInfo = JsonConvert.DeserializeObject<FileInfoClass>(_A);
+                        FileInfoClass files = new FileInfoClass()
+                        {
+                            Bucket = OldUpdateInfo.Bucket,
+                            Description = OldUpdateInfo.Description,
+                            Type = Type,
+                            Ver = OldUpdateInfo.Ver,
+                        };
+                        foreach (var item in OldUpdateInfo.files)
+                        {
+                            if (File.Exists(item.FilePath))
+                            {
+                                if (item.FileMd5 != SystemAssembly.EncryptionModule.Encryption.GetMD5HashFromFile(item.FilePath))
+                                {
+                                    files.files.Add(item);
+                                }
+                            }
+                            else
+                            {
+                                files.files.Add(item);
+                            }
+                        }
+                        foreach (var file in files.files)
+                        {
+                            string DownloadUrl = PushUrl + Type + "/" + file.FilePath;
+                            //Console.WriteLine($"正在下载大小{file.Size}字节的文件:{file.FilePath}");
+                            SystemAssembly.NetworkRequestModule.Get.Get.GetFile(DownloadUrl, file.FilePath);
+                            //Console.WriteLine("下载完成\n");
+                        }
+                        Thread.Sleep(3600 * 1000);
+                    }
+                    catch (Exception)
+                    {
+                        Thread.Sleep(30 * 1000);
                     }
                 }
-                else
-                {
-                    files.files.Add(item);
-                }
-            }
-            foreach (var file in files.files)
-            {
-                string DownloadUrl = PushUrl + Type + "/" + file.FilePath;
-                //Console.WriteLine($"正在下载大小{file.Size}字节的文件:{file.FilePath}");
-                SystemAssembly.NetworkRequestModule.Get.Get.GetFile(DownloadUrl, file.FilePath);
-                //Console.WriteLine("下载完成\n");
-            }
+            });
         }
         public class FileInfoClass
         {

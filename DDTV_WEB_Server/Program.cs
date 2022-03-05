@@ -12,10 +12,13 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
 
+            Task.Run(() =>
+            {
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
                 ServerInteraction.CheckUpdates.Update();
                 ServerInteraction.Dokidoki.Start();
+            });
           
             Thread.Sleep(3000);
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
@@ -74,7 +77,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             app.MapControllers();
             app.UseFileServer(new FileServerOptions()
             {
-                EnableDirectoryBrowsing = false,//关闭目录结构树访问权限
+                EnableDirectoryBrowsing = false,
                 FileProvider = new PhysicalFileProvider(DDTV_Core.Tool.FileOperation.CreateAll(Environment.CurrentDirectory + @"/static")),
                 RequestPath = new PathString("/static")
             });
