@@ -21,15 +21,23 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// </summary>
         internal static void ReadRoomConfigFile()
         {
+            string RoomFile = RoomConfig.RoomFile;
             var rlc = new RoomListDiscard();
             try
             {
-                rlc = JsonConvert.DeserializeObject<RoomListDiscard>(File.ReadAllText(RoomConfig.RoomFile));
+                rlc = JsonConvert.DeserializeObject<RoomListDiscard>(File.ReadAllText(RoomFile));
             }
             catch (Exception)
             {
                 rlc = JsonConvert.DeserializeObject<RoomListDiscard>("{}");
-                Log.Log.AddLog(nameof(RoomConfigFile),Log.LogClass.LogType.Error, "房间json配置文件格式错误！请检测核对！");
+                if (!File.Exists(RoomFile))
+                {
+                    Log.Log.AddLog(nameof(CoreConfigFile), Log.LogClass.LogType.Warn, String.Format("房间json配置文件不存在，新建{0}文件", RoomFile));
+                }
+                else
+                {
+                    Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Error, "房间json配置文件格式错误！请检测核对！");
+                }
             }
             List<RoomCardDiscard> RoomConfigList = rlc?.data;
             //RoomConfigList = rlc?.data;
@@ -112,7 +120,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 DataCache.SetCache(CacheType.uid, item.Value.uid.ToString(), item.Value.uid.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRecDanmu, item.Value.uid.ToString(), item.Value.IsRecDanmu.ToString(), int.MaxValue);
             }
-            File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards));
+            File.WriteAllText(RoomConfig.RoomFile, JsonConvert.SerializeObject(roomCards, Formatting.Indented));
             Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"更新写入房间配置文件完成,当前房间配置文件有[{roomCards.data.Count}]个房间配置");
         }
         public class RoomWrite

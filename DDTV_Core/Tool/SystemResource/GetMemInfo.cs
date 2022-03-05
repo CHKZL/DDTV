@@ -41,8 +41,8 @@ namespace DDTV_Core.Tool.SystemResource
         public static MemInfo GetLiunx()
         {
             MemInfo memInfo = new MemInfo();
-            const string CPU_FILE_PATH = "/proc/meminfo";
-            var mem_file_info = System.IO.File.ReadAllText(CPU_FILE_PATH);
+            const string MEM_FILE_PATH = "/proc/meminfo";
+            var mem_file_info = System.IO.File.ReadAllText(MEM_FILE_PATH);
             var lines = mem_file_info.Split(new[] { '\n' });
             mem_file_info = string.Empty;
 

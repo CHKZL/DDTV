@@ -1,5 +1,4 @@
-
-using Microsoft.AspNetCore.Authentication.Cookies;
+ï»¿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.FileProviders;
 using System.Security.Cryptography.X509Certificates;
 using DDTV_Core.SystemAssembly.ConfigModule;
@@ -11,9 +10,10 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 
         public static void Main(string[] args)
         {
-            
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//å°†å½“å‰è·¯å¾„ä» å¼•ç”¨è·¯å¾„ ä¿®æ”¹è‡³ ç¨‹åºæ‰€åœ¨ç›®å½•
+
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
-                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//×¢²áµÇÂ½ĞÅÏ¢¼ì²éÊ§Ğ§ÊÂ¼ş
+                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//æ³¨å†Œç™»é™†ä¿¡æ¯æ£€æŸ¥å¤±æ•ˆäº‹ä»¶
                 ServerInteraction.CheckUpdates.Update();
                 ServerInteraction.Dokidoki.Start();
           
@@ -28,16 +28,16 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 Services.AddSwaggerGen();
                
                 Services.AddMvc();
-                //×¢²áCookieÈÏÖ¤·şÎñ
+                //æ³¨å†ŒCookieè®¤è¯æœåŠ¡
                 Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                     .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
                     {
-                        option.AccessDeniedPath = "api/LoginErrer"; //µ±ÓÃ»§³¢ÊÔ·ÃÎÊ×ÊÔ´µ«Ã»ÓĞÍ¨¹ıÈÎºÎÊÚÈ¨²ßÂÔÊ±£¬ÕâÊÇÇëÇó»áÖØ¶¨ÏòµÄÏà¶ÔÂ·¾¶×ÊÔ´
+                        option.AccessDeniedPath = "api/LoginErrer"; //å½“ç”¨æˆ·å°è¯•è®¿é—®èµ„æºä½†æ²¡æœ‰é€šè¿‡ä»»ä½•æˆæƒç­–ç•¥æ—¶ï¼Œè¿™æ˜¯è¯·æ±‚ä¼šé‡å®šå‘çš„ç›¸å¯¹è·¯å¾„èµ„æº
                         option.LoginPath = "api/Login/";
-                        option.Cookie.Name = "UserTEST";//ÉèÖÃ´æ´¢ÓÃ»§µÇÂ¼ĞÅÏ¢£¨ÓÃ»§TokenĞÅÏ¢£©µÄCookieÃû³Æ
-                        option.Cookie.HttpOnly = true;//ÉèÖÃ´æ´¢ÓÃ»§µÇÂ¼ĞÅÏ¢£¨ÓÃ»§TokenĞÅÏ¢£©µÄCookie£¬ÎŞ·¨Í¨¹ı¿Í»§¶Ëä¯ÀÀÆ÷½Å±¾(ÈçJavaScriptµÈ)·ÃÎÊµ½
+                        option.Cookie.Name = "UserTEST";//è®¾ç½®å­˜å‚¨ç”¨æˆ·ç™»å½•ä¿¡æ¯ï¼ˆç”¨æˆ·Tokenä¿¡æ¯ï¼‰çš„Cookieåç§°
+                        option.Cookie.HttpOnly = true;//è®¾ç½®å­˜å‚¨ç”¨æˆ·ç™»å½•ä¿¡æ¯ï¼ˆç”¨æˆ·Tokenä¿¡æ¯ï¼‰çš„Cookieï¼Œæ— æ³•é€šè¿‡å®¢æˆ·ç«¯æµè§ˆå™¨è„šæœ¬(å¦‚JavaScriptç­‰)è®¿é—®åˆ°
                                                       //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
-                                                      //ÉèÖÃ´æ´¢ÓÃ»§µÇÂ¼ĞÅÏ¢£¨ÓÃ»§TokenĞÅÏ¢£©µÄCookie£¬Ö»»áÍ¨¹ıHTTPSĞ­Òé´«µİ£¬Èç¹ûÊÇHTTPĞ­Òé£¬Cookie²»»á±»·¢ËÍ¡£×¢Òâ£¬option.Cookie.SecurePolicyÊôĞÔµÄÄ¬ÈÏÖµÊÇMicrosoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
+                                                      //è®¾ç½®å­˜å‚¨ç”¨æˆ·ç™»å½•ä¿¡æ¯ï¼ˆç”¨æˆ·Tokenä¿¡æ¯ï¼‰çš„Cookieï¼Œåªä¼šé€šè¿‡HTTPSåè®®ä¼ é€’ï¼Œå¦‚æœæ˜¯HTTPåè®®ï¼ŒCookieä¸ä¼šè¢«å‘é€ã€‚æ³¨æ„ï¼Œoption.Cookie.SecurePolicyå±æ€§çš„é»˜è®¤å€¼æ˜¯Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
                     });
 
             });
@@ -62,7 +62,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
            
             var app = builder.Build();
 
-            //ÓÃÓÚ¼ì²âÊÇ·ñÎª¿ª·¢»·¾³
+            //ç”¨äºæ£€æµ‹æ˜¯å¦ä¸ºå¼€å‘ç¯å¢ƒ
             //if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -74,7 +74,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             app.MapControllers();
             app.UseFileServer(new FileServerOptions()
             {
-                EnableDirectoryBrowsing = false,//¹Ø±ÕÄ¿Â¼½á¹¹Ê÷·ÃÎÊÈ¨ÏŞ
+                EnableDirectoryBrowsing = false,//å…³é—­ç›®å½•ç»“æ„æ ‘è®¿é—®æƒé™
                 FileProvider = new PhysicalFileProvider(DDTV_Core.Tool.FileOperation.CreateAll(Environment.CurrentDirectory + @"/static")),
                 RequestPath = new PathString("/static")
             });
@@ -93,7 +93,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 int i = 0;
                 while (i < 360)
                 {
-                    DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Error, "ÕËºÅµÇÂ½Ê§Ğ§£¡ÇëÖØÆôDDTV½øĞĞµÇÂ½£¡");
+                    DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Error, "è´¦å·ç™»é™†å¤±æ•ˆï¼è¯·é‡å¯DDTVè¿›è¡Œç™»é™†ï¼");
                     Thread.Sleep(10 * 1000);
                     i++;
                 }
