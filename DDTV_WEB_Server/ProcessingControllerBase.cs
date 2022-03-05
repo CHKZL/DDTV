@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System.Net;
 using System.Net.Mime;
 
 namespace DDTV_WEB_Server
@@ -82,16 +83,14 @@ namespace DDTV_WEB_Server
                     string cookis = filterContext.HttpContext.Request.Cookies["DDTVUser"];
                     if (string.IsNullOrEmpty(cookis))
                     {
-                        filterContext.HttpContext.Response.Cookies.Append("DDTVUser", "");
-                        filterContext.HttpContext.Response.Redirect("/api/LoginErrer");
+                        LoginErrer(filterContext);
                         return;
                     }
                     else
                     {
                         if (cookis != RuntimeConfig.Cookis)
                         {
-                            filterContext.HttpContext.Response.Cookies.Append("DDTVUser", "");
-                            filterContext.HttpContext.Response.Redirect("/api/LoginErrer");
+                            LoginErrer(filterContext);
                             return;
                         }
                         else
@@ -102,11 +101,16 @@ namespace DDTV_WEB_Server
                 }
                 else
                 {
-                    filterContext.HttpContext.Response.Cookies.Append("DDTVUser", "");
-                    filterContext.HttpContext.Response.Redirect("/api/LoginErrer");
+                    LoginErrer(filterContext);
                     return;
                 }
             }
+        }
+        private static void LoginErrer(ActionExecutingContext filterContext)
+        {
+            filterContext.HttpContext.Response.Cookies.Append("DDTVUser", "");
+            filterContext.HttpContext.Response.Redirect("/api/LoginErrer");
+            filterContext.Result = new EmptyResult();
         }
     }
 }

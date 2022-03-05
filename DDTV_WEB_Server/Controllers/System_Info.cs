@@ -143,10 +143,27 @@ namespace DDTV_WEB_Server.Controllers
     {
         [HttpPost(Name = "System_Config")]
         //[Consumes("application/json")]
-        public string Post([FromForm] string cmd)
+        public string Post([FromForm] string cmd,[FromForm] bool IsPrivacy=true)
         {
-            return MessageBase.Success(nameof(System_Config), DDTV_Core.SystemAssembly.ConfigModule.CoreConfigClass.config.datas);
+            ConfigData configData = new ConfigData();
+            foreach (var item in CoreConfigClass.config.datas)
+            {
+                if(IsPrivacy && (item.Key == CoreConfigClass.Key.WebUserName|| item.Key == CoreConfigClass.Key.WebPassword))
+                {
+                    configData.datas.Add(item);
+                }
+                else
+                {
+                    configData.datas.Add(item);
+                }
+                
+            }
+            return MessageBase.Success(nameof(System_Config), CoreConfigClass.config.datas);
         }
+    }
+    public class ConfigData
+    {
+        public List<CoreConfigClass.Config.Data> datas = new();
     }
     public class System_Resources : ProcessingControllerBase.ApiControllerBase
     {
