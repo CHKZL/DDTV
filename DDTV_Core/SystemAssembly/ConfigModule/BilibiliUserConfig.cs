@@ -49,16 +49,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         }
         public static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")
         {
-            if (File.Exists(BiliUserFile))
+            using FileStream fileStream = File.Create(BiliUserFile);
             {
-                File.Delete(BiliUserFile);      
+                fileStream.Write(Encoding.UTF8.GetBytes($"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}"+"\r\n"));
+                fileStream.Write(Encoding.UTF8.GetBytes($"ExTime={account.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}" + "\r\n"));
+                fileStream.Write(Encoding.UTF8.GetBytes($"csrf={account.csrf}" + "\r\n"));
+                fileStream.Write(Encoding.UTF8.GetBytes($"uid={account.uid}" + "\r\n"));
             }
-            File.WriteAllLines(BiliUserFile, new string[] {
-                    $"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}",
-                    $"ExTime={account.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}",
-                    $"csrf={account.csrf}",
-                    $"uid={account.uid}",
-                }, Encoding.UTF8);
             return true;
         }
         /// <summary>
