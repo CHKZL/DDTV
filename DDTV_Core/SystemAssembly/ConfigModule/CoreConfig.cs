@@ -24,10 +24,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             CoreConfigFile.ReadConfigFile();
             //初始化读取房间配置
             RoomConfigFile.ReadRoomConfigFile();
-
-          
-
-
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:
@@ -57,7 +53,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     break;
             }
-            
+            Tool.Dokidoki.DoNotSleepWhileDownloading();
             //开一个线程用于定时自动储存配置
             Task.Run(() => {
                 while (true)
@@ -73,10 +69,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Thread.Sleep(10 * 1000);
                 }
             });
-        }
-        public static void InitConfig()
-        {
-            
         }
         /// <summary>
         /// 获取配置

@@ -255,6 +255,12 @@
                                                 <hc:Poptip Content="打开开关后，缩小DDTV窗口回从任务栏中消失、隐藏到角落后台托盘中，双击托盘中的ico恢复到任务栏" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                        <TextBlock HorizontalAlignment="Left" Margin="221,0,0,0" Text="阻止系统休眠" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="DoNotSleepWhileDownloadingIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="322,6,272,4" Click="DoNotSleepWhileDownloadingIcon_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开后会阻止系统进入休眠模式（不阻止屏幕休眠）防止录制任务失败，关闭本设置或者退出DDTV后恢复" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
                                     </Grid>
                                     <Grid Width="630" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
