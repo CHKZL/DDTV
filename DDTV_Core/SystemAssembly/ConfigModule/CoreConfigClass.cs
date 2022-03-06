@@ -229,7 +229,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：WEB_API   默认值：true
             /// </summary>
             AccessControlAllowCredentials,
-
+            /// <summary>
+            /// 用于控制下载时时候阻止系统休眠 (布尔值)
+            /// 组：Download   默认值：true
+            /// </summary>
+            DoNotSleepWhileDownloading,
         }
     }
 }

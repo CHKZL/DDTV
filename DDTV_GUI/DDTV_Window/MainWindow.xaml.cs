@@ -70,6 +70,7 @@ namespace DDTV_GUI.DDTV_Window
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
 
+            //初始化UI组件显示内容
             InitMainUI();
 
             //定时更新界面数据
@@ -178,6 +179,7 @@ namespace DDTV_GUI.DDTV_Window
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
             FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760 ? 8 : Download.FlvSplitSize == 8482560409 ? 7 : Download.FlvSplitSize == 6335076761 ? 6 : Download.FlvSplitSize == 2040109465 ? 5 : Download.FlvSplitSize == 5368709120 ? 4 : Download.FlvSplitSize == 4294967296 ? 3 : Download.FlvSplitSize == 3221225472 ? 2 : Download.FlvSplitSize == 2147483648 ? 1 : 0;
+            DoNotSleepWhileDownloadingIcon.IsChecked = DDTV_Core.Tool.Dokidoki.IsDoNotSleepState;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1035,6 +1037,13 @@ namespace DDTV_GUI.DDTV_Window
         private void LiveList_Play_MouseDouble_Click(object sender, MouseButtonEventArgs e)
         {
             Play_Click();
+        }
+
+        private void DoNotSleepWhileDownloadingIcon_Click(object sender, RoutedEventArgs e)
+        {
+            DDTV_Core.Tool.Dokidoki.IsDoNotSleepState = (bool)DoNotSleepWhileDownloadingIcon.IsChecked ? true : false;
+
+            CoreConfig.SetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, DDTV_Core.Tool.Dokidoki.IsDoNotSleepState.ToString(), CoreConfigClass.Group.Download);
         }
     }
 }
