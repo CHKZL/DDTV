@@ -47,31 +47,34 @@ namespace DDTV_WEB_Server.Controllers
                 {
                     foreach (var item in A1.Value.DownloadingList)
                     {
-                        Downloads _ = new()
+                        if (item.Status != Downloads.DownloadStatus.DownloadComplete && item.Status != Downloads.DownloadStatus.Cancel)
                         {
-                            DownloadCount=item.DownloadCount,
-                            EndTime=item.EndTime,
-                            FileName=item.FileName,
-                            FilePath=item.FilePath,
-                            FlvSplit=item.FlvSplit,
-                            FlvSplitSize=item.FlvSplitSize,
-                            IsDownloading=item.IsDownloading,
-                            Name=item.Name,
-                            RoomId=item.RoomId,
-                            StartTime=item.StartTime,
-                            Status=item.Status,
-                            Title=item.Title,
-                            Token=item.Token,
-                            TotalDownloadCount=item.TotalDownloadCount,
-                            Uid=item.Uid,
-                            Url =item.Url,
-                            FlvHeader=null,
-                            FlvScriptTag=null,
-                            flvTimes=null,
-                            HttpWebRequest=null,
-                        };
+                            Downloads _ = new()
+                            {
+                                DownloadCount = item.DownloadCount,
+                                EndTime = item.EndTime,
+                                FileName = item.FileName,
+                                FilePath = item.FilePath,
+                                FlvSplit = item.FlvSplit,
+                                FlvSplitSize = item.FlvSplitSize,
+                                IsDownloading = item.IsDownloading,
+                                Name = item.Name,
+                                RoomId = item.RoomId,
+                                StartTime = item.StartTime,
+                                Status = item.Status,
+                                Title = item.Title,
+                                Token = item.Token,
+                                TotalDownloadCount = item.TotalDownloadCount,
+                                Uid = item.Uid,
+                                Url = item.Url,
+                                FlvHeader = null,
+                                FlvScriptTag = null,
+                                flvTimes = null,
+                                HttpWebRequest = null,
+                            };
 
-                        downloads.Add(_);
+                            downloads.Add(_);
+                        }
                     }
                 }
             }   
@@ -90,19 +93,22 @@ namespace DDTV_WEB_Server.Controllers
                 {
                     foreach (var item in A1.Value.DownloadingList)
                     {
-                        LiteDownloads _ = new()
+                        if (item.Status != Downloads.DownloadStatus.DownloadComplete && item.Status != Downloads.DownloadStatus.Cancel)
                         {
-                            EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
-                            FilePath = item.FilePath,
-                            RoomId = item.RoomId,
-                            StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
-                            Title = item.Title,
-                            Token = item.Token,
-                            TotalDownloadCount = item.TotalDownloadCount,
-                            Uid = item.Uid,
-                        };
+                            LiteDownloads _ = new()
+                            {
+                                EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
+                                FilePath = item.FilePath,
+                                RoomId = item.RoomId,
+                                StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
+                                Title = item.Title,
+                                Token = item.Token,
+                                TotalDownloadCount = item.TotalDownloadCount,
+                                Uid = item.Uid,
+                            };
 
-                        downloads.Add(_);
+                            downloads.Add(_);
+                        }
                     }
                 }
             }
@@ -163,18 +169,21 @@ namespace DDTV_WEB_Server.Controllers
                 {
                     foreach (var item in A1.Value.DownloadedLog)
                     {
-                        LiteDownloads _ = new()
+                        if (item.Status == Downloads.DownloadStatus.DownloadComplete)
                         {
-                            EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
-                            FilePath = item.FilePath,
-                            RoomId = item.RoomId,
-                            StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
-                            Title = item.Title,
-                            Token = item.Token,
-                            TotalDownloadCount = item.TotalDownloadCount,
-                            Uid = item.Uid,   
-                        };
-                        downloads.Add(_);
+                            LiteDownloads _ = new()
+                            {
+                                EndTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.EndTime),
+                                FilePath = item.FilePath,
+                                RoomId = item.RoomId,
+                                StartTime = DDTV_Core.Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(item.StartTime),
+                                Title = item.Title,
+                                Token = item.Token,
+                                TotalDownloadCount = item.TotalDownloadCount,
+                                Uid = item.Uid,
+                            };
+                            downloads.Add(_);
+                        }
                     }
                 }
             }

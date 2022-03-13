@@ -115,6 +115,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                     }
                 }
+                else
+                {
+                    if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"{uid}的直播结束，检测到IsAutoRec为false，将不会储存弹幕相关数据");
+                    }
+                    if(!roomInfo.roomWebSocket.IsConnect)
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"{uid}的直播结束，检测到WebSocket未连接，将不会储存弹幕相关数据");
+                    }
+                   
+                }
                 //当自动切片使能时，自动转码和flv文件合并取消
                 if (Split)
                 {

@@ -25,7 +25,7 @@ namespace DDTV_WEB_Server.Controllers
                   new CookieOptions() 
                   {
                       Expires = new DateTimeOffset(0, 0, 7, 0, 0, 0, TimeSpan.MinValue),
-                      //Domain = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AccessControlAllowOrigin
+                      Domain = HttpContext.Request.Host.Host
                   } 
                   );
                 }

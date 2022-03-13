@@ -15,6 +15,7 @@ using System.Windows.Input;
 using MessageBox = HandyControl.Controls.MessageBox;
 using DDTV_GUI.WPFControl;
 using System.Reflection;
+using DDTV_Core.SystemAssembly.Log;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -474,7 +475,7 @@ namespace DDTV_GUI.DDTV_Window
                 MessageBoxResult dr = HandyControl.Controls.MessageBox.Show($"确定要删除房间[{name}({roomid})]吗？", "删除房间", MessageBoxButton.OKCancel, MessageBoxImage.Question);
                 if (dr == MessageBoxResult.OK)
                 {
-                    if (DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.DeleteRoom(uid))
+                    if (RoomConfig.DeleteRoom(uid))
                     {
                         Growl.Success($"删除[{name}({roomid})]成功");
                     }
@@ -659,6 +660,7 @@ namespace DDTV_GUI.DDTV_Window
                     Download.DefaultFileName = Text;
                     CoreConfig.SetValue(CoreConfigClass.Key.DownloadFileName, Download.DefaultFileName, CoreConfigClass.Group.Download);
                     Growl.Success("默认文件名设置成功");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认文件名设置成功:"+ Download.DefaultFileName, false, null, false);
                 }
                 else
                 {
@@ -710,6 +712,7 @@ namespace DDTV_GUI.DDTV_Window
                             Download.TmpPath = Download.TmpPath + "/";
                         CoreConfig.SetValue(CoreConfigClass.Key.TmpPath, Download.TmpPath, CoreConfigClass.Group.Download);
                         Growl.Success("临时文件文件夹设置成功");
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "临时文件文件夹设置成功：" + Download.TmpPath, false, null, false);
                     }
                     else
                     {
@@ -735,6 +738,7 @@ namespace DDTV_GUI.DDTV_Window
             DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod = IsTranscod;
             CoreConfig.SetValue(CoreConfigClass.Key.IsAutoTranscod, IsTranscod.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((IsTranscod ? "打开" : "关闭") + "自动转码成功");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (IsTranscod ? "打开" : "关闭") + "自动转码成功", false, null, false);
         }
 
         private void RecQualityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -763,7 +767,9 @@ namespace DDTV_GUI.DDTV_Window
                         break;
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.RecQuality, Download.RecQuality.ToString(), CoreConfigClass.Group.Download);
-                Growl.Success("修改录制默认分辨率为"+ (Download.RecQuality == 10000 ? "原画" : Download.RecQuality == 400 ? "蓝光" : Download.RecQuality==250?"超清": Download.RecQuality == 150 ? "高清" : "流畅"));
+                string Message = "修改录制默认分辨率为" + (Download.RecQuality == 10000 ? "原画" : Download.RecQuality == 400 ? "蓝光" : Download.RecQuality == 250 ? "超清" : Download.RecQuality == 150 ? "高清" : "流畅");
+                Growl.Success(Message);
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, Message, false, null, false);
             }
         }
         /// <summary>
@@ -788,6 +794,7 @@ namespace DDTV_GUI.DDTV_Window
                 if (RoomConfig.ReviseRoom(roomCard, false, 6))
                 {
                     Growl.Success("已" + (!YIsRecDanmu ? "打开" : "关闭") + $"[{name}({roomid})]的弹幕录制");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "已" + (!YIsRecDanmu ? "打开" : "关闭") + $"[{name}({roomid})]的弹幕录制", false, null, false);
                 }
                 else
                 {
@@ -802,7 +809,8 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsRecDanmu = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecDanmu, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "弹幕录制总开关");
-            if(Is)
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "弹幕录制总开关",false,null,false);
+            if (Is)
             {
                 GiftToggle.IsEnabled = true;
                 GuardToggle.IsEnabled = true;
@@ -822,6 +830,7 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsRecGift = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecGift, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "礼物录制");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "礼物录制", false, null, false);
         }
 
         private void GuardToggle_Click(object sender, RoutedEventArgs e)
@@ -830,6 +839,7 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsRecGuard = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecGuard, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "上舰录制");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "上舰录制", false, null, false);
         }
 
         private void SCToggle_Click(object sender, RoutedEventArgs e)
@@ -838,6 +848,7 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsRecSC = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecSC, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "SC录制");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "SC录制", false, null, false);
         }
 
         private void IsFlvSplitToggle_Click(object sender, RoutedEventArgs e)
@@ -846,7 +857,8 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsFlvSplit = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsFlvSplit, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "启用录制文件大小限制(自动分割)");
-            if(Is)
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "启用录制文件大小限制(自动分割)", false, null, false);
+            if (Is)
             {
                 FlvSplitSizeComboBox.Visibility = Visibility.Visible;
             }
@@ -893,7 +905,9 @@ namespace DDTV_GUI.DDTV_Window
                         break;
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.FlvSplitSize, Download.FlvSplitSize.ToString(), CoreConfigClass.Group.Download);
-                Growl.Success("修改文件大小限制为" + (Download.FlvSplitSize == 10485760 ? "10MB" : Download.FlvSplitSize == 8482560409 ? "7.9GB" : Download.FlvSplitSize == 6335076761 ? "5.9GB" : Download.FlvSplitSize == 2040109465 ? "1.9GB" : Download.FlvSplitSize == 5368709120 ? "5GB" : Download.FlvSplitSize == 4294967296 ? "4GB" : Download.FlvSplitSize == 3221225472 ? "3GB" : Download.FlvSplitSize == 2147483648 ? "2GB" : "1GB"));
+                string Message = "修改文件大小限制为" + (Download.FlvSplitSize == 10485760 ? "10MB" : Download.FlvSplitSize == 8482560409 ? "7.9GB" : Download.FlvSplitSize == 6335076761 ? "5.9GB" : Download.FlvSplitSize == 2040109465 ? "1.9GB" : Download.FlvSplitSize == 5368709120 ? "5GB" : Download.FlvSplitSize == 4294967296 ? "4GB" : Download.FlvSplitSize == 3221225472 ? "3GB" : Download.FlvSplitSize == 2147483648 ? "2GB" : "1GB");
+                Growl.Success(Message);
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, Message, false, null, false);
             }
         }
 
@@ -922,7 +936,9 @@ namespace DDTV_GUI.DDTV_Window
                         break;
                 }
                 CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, PlayQuality.ToString(), CoreConfigClass.Group.Play);
-                Growl.Success("修改默认在线观看画质为" + (PlayQuality == 10000 ? "原画" : PlayQuality == 400 ? "蓝光" : PlayQuality == 250 ? "超清" : PlayQuality == 150 ? "高清" : "流畅"));
+                string Message = "修改默认在线观看画质为" + (PlayQuality == 10000 ? "原画" : PlayQuality == 400 ? "蓝光" : PlayQuality == 250 ? "超清" : PlayQuality == 150 ? "高清" : "流畅");
+                Growl.Success(Message);
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, Message, false, null, false);
             }
         }
         
@@ -1004,7 +1020,8 @@ namespace DDTV_GUI.DDTV_Window
             MessageBoxResult dr = MessageBox.Show($"确定要开始更新DDTV吗？\n确定后会结束DDTV全部任务并退出DDTV开始更新", "更新DDTV", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
             {
-                if(File.Exists("./DDTV_Update.exe"))
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"用户点击自动更新", false, null, false);
+                if (File.Exists("./DDTV_Update.exe"))
                 {
                     Process.Start("./DDTV_Update.exe");
                     Application.Current.Shutdown();
@@ -1012,6 +1029,7 @@ namespace DDTV_GUI.DDTV_Window
                 else
                 {
                     Growl.Error($"找不到自动更新脚本程序DDTV_Update.exe");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"找不到自动更新脚本程序DDTV_Update.exe", false, null, false);
                 }
             }
         }
@@ -1025,6 +1043,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
             Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的V到配置", false, null, false);
         }
 
         private void HideIcon_Click(object sender, RoutedEventArgs e)
