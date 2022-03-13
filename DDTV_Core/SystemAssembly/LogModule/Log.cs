@@ -51,6 +51,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message">日志内容</param>
         /// <param name="IsError">是否是错误(错误内容会出了数据库外另外写一份txt文本记录详细错误日志和堆栈)</param>
         /// <param name="exception">IsError为真时有效，错误日志的Exception信息</param>
+        /// <param name="IsDisplay">该记录是否在终端打印</param>
         public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null,bool IsDisplay=true)
         {
             Task.Run(() =>
