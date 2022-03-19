@@ -24,6 +24,7 @@ namespace DDTV_GUI.DDTV_Window
     /// </summary>
     public partial class MainWindow : GlowWindow
     {
+        public static int linkDMNum = 0;
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
@@ -36,8 +37,10 @@ namespace DDTV_GUI.DDTV_Window
         public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
         public MainWindow()
         {
+           
             InitializeComponent();
-            if(CheckRepeatedRun())
+
+            if (CheckRepeatedRun())
             {
                 Application.Current.Shutdown();
                 return;
@@ -83,7 +86,6 @@ namespace DDTV_GUI.DDTV_Window
             //clipWindow.Show();
 
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
-           
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
@@ -120,13 +122,13 @@ namespace DDTV_GUI.DDTV_Window
         }
         private void MainWindow_PlayListExit(object? sender, EventArgs e)
         {
-            Task.Run(() => {
-                for (int i = 0 ; i < playWindowsList.Count ; )
-                {
-                    playWindowsList[0].Dispatcher.Invoke(() => playWindowsList[0].Close());
 
-                }
-            });
+            for (int i = 0; i < playWindowsList.Count;)
+            {
+                playWindowsList[0].Dispatcher.Invoke(() => playWindowsList[0].Close());
+
+            }
+
         }
 
         /// <summary>
@@ -750,8 +752,7 @@ namespace DDTV_GUI.DDTV_Window
                 switch (i)
                 {
                     case 1:
-                        Download.RecQuality = 10000;
-                        
+                        Download.RecQuality = 10000;   
                         break;
                     case 2:
                         Download.RecQuality = 400;

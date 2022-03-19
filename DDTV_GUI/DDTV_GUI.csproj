@@ -27,6 +27,7 @@
     <None Remove="Resources\Img\UI\fullscreen.png" />
     <None Remove="Resources\Img\UI\home.png" />
     <None Remove="Resources\Img\UI\indent.png" />
+    <None Remove="Resources\Img\UI\logo1.png" />
     <None Remove="Resources\Img\UI\message.png" />
     <None Remove="Resources\Img\UI\notification.png" />
     <None Remove="Resources\Img\UI\play-circle.png" />
@@ -101,6 +102,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\indent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\logo1.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\message.png">

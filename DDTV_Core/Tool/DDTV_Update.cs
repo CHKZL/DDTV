@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DDTV_Core.SystemAssembly.Log;
 
 namespace DDTV_Core.Tool
 {
@@ -48,6 +49,7 @@ namespace DDTV_Core.Tool
                 {
                     try
                     {
+                        Log.AddLog("Check",LogClass.LogType.Info,"核心服务心跳报文：OK",false,null,true);
                         string Type = "Update";
                         string PushUrl = "https://update.ddtv.pro/";
                         string _A = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(PushUrl + $"{Type}_Update.json", false, "https://Update.ddtv.pro/");

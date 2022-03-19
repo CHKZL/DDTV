@@ -22,6 +22,7 @@ namespace DDTV_GUI.UpdateInterface
             {
                 if(item.Value.live_status==1)
                 {
+                    
                     IsLive.Add(item.Key, item.Value);
                 }
                 else
@@ -29,14 +30,28 @@ namespace DDTV_GUI.UpdateInterface
                     NotLive.Add(item.Key, item.Value);
                 }
             }
-            foreach (var item in NotLive)
+            Dictionary<long, RoomInfoClass.RoomInfo> keyValuePairs = new Dictionary<long, RoomInfoClass.RoomInfo>();
+            foreach (var item in NotLive.OrderBy(p => p.Value.uname).ToDictionary(p => p.Key, o => o.Value))
             {
+                if (item.Value.IsRemind || item.Value.IsAutoRec || item.Value.IsRecDanmu)
+                {
+                    IsLive.Add(item.Key, item.Value);
+                }
+                else
+                {
+                    keyValuePairs.Add(item.Key, item.Value);
+                }
+            }
+            foreach (var item in keyValuePairs)
+            {
+
                 IsLive.Add(item.Key, item.Value);
+
             }
             Rooms.RoomInfo = IsLive;
             foreach (var item in Rooms.RoomInfo)
             {
-                BindingData.LiveList live = new(item.Value.uname, item.Value.live_status == 1 ? "直播中" : "摸了", item.Value.IsRemind ? "√" : "×", item.Value.IsAutoRec ? "√" : "×", item.Value.room_id, item.Value.uid, item.Value.live_status, item.Value.IsRecDanmu ? "√" : "×");
+                BindingData.LiveList live = new(item.Value.uname, item.Value.live_status == 1 ? "直播中" : " 摸了", item.Value.IsRemind ? "     √" : "     ×", item.Value.IsAutoRec ? "     √" : "     ×", item.Value.room_id, item.Value.uid, item.Value.live_status, item.Value.IsRecDanmu ? "     √" : "     ×");
                 _.Add(live);
             }
             if (_.Count == 0)

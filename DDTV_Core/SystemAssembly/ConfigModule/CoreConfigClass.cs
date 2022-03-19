@@ -234,6 +234,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：true
             /// </summary>
             DoNotSleepWhileDownloading,
+            /// <summary>
+            /// 用于控制cookie作用域（字符串）
+            /// 组：WEB_API   默认值：string.Empty
+            /// </summary>
+            CookieDomain,
         }
     }
 }

@@ -59,9 +59,9 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     }
                     catch (Exception e)
                     {
-                        if ((ETime + 40000) < Tool.TimeModule.Time.Operate.GetRunMilliseconds())
+                        if ((ETime + 60000) < Tool.TimeModule.Time.Operate.GetRunMilliseconds())
                         {
-                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Warn_RoomPatrol, $"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试", true, e);
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Warn_RoomPatrol, $"房间巡逻出现错误，错误信息已写入日志文件，2秒后重试", true, e,false);
                         }                     
                     }
                 }

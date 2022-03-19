@@ -107,6 +107,33 @@ namespace DDTV_Core.Tool
             return Path;
         }
         /// <summary>
+        /// 通过盘符获取剩余空间
+        /// </summary>
+        /// <param name="str_HardDiskName">盘符 如 C D E</param>
+        /// <param name="Type">1为总空间，2为剩余空间</param>
+        /// <returns></returns>
+        public static long GetHardDiskSpace(string str_HardDiskName,int Type)
+        {
+            long totalSize = 0;
+            str_HardDiskName = str_HardDiskName + ":\\";
+            DriveInfo[] drives = DriveInfo.GetDrives();
+            foreach (DriveInfo drive in drives)
+            {
+                if (drive.Name == str_HardDiskName)
+                {
+                    switch (Type)
+                    {
+                        case 1:
+                            return drive.TotalSize;
+                        case 2:
+                            return drive.TotalFreeSpace;
+                    }
+                }
+            }
+            return totalSize;
+        }
+
+        /// <summary>
         /// 文件删除服务
         /// </summary>
         private class DelEvent
@@ -205,4 +232,5 @@ namespace DDTV_Core.Tool
             return list;
         }
     }
+
 }

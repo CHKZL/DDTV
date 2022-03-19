@@ -9,9 +9,9 @@
         mc:Ignorable="d"
         ActiveGlowColor="#00a1d6"
         InactiveGlowColor="#fb7299"
-        Title="MainWindow" Width="800" Height="460"
+        Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
-        Background="Transparent" MinWidth="800" MaxWidth="800" MinHeight="460" MaxHeight="460" ResizeMode="CanMinimize" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged">
+        Background="Transparent" MinWidth="1000" MaxWidth="1000" MinHeight="563" MaxHeight="563" ResizeMode="CanMinimize" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged">
 
     <Grid Background="White">
         <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">
@@ -96,32 +96,51 @@
                 <TabItem Header="首页">
 
                     <Grid>
-                        <hc:Carousel Margin="24,58,306,0" IsCenter="True" AutoRun="True" Width="350" Height="200" VerticalAlignment="Top">
-                            <Image Name="Notice_I_1" Width="350" Stretch="UniformToFill" />
-                            <Image Name="Notice_I_2" Width="350" Stretch="UniformToFill" />
-                            <Image Name="Notice_I_3" Width="350" Stretch="UniformToFill" />
-                        </hc:Carousel>
-                        <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="397,0,0,11" Foreground="#FF2F2F2F" HorizontalAlignment="Left" Width="273" Height="409" VerticalAlignment="Bottom" />
-                        <TextBlock x:Name="MonitoringCount" Margin="133,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="LiveBroadcastingCount" Margin="133,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock x:Name="RecCount" Margin="133,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        <Grid Margin="500,0,0,0" Width="350" Height="480" Background="#59A5A5A5">
+                            <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="10" Foreground="#FF2B2B2B" HorizontalAlignment="Left" Width="330" Height="460" VerticalAlignment="Center" />
+                        </Grid>
+                        <Grid Margin="10,26,640,383" Background="#59A5A5A5">
+                            <TextBlock Margin="10,10,0,0" Text="监控中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
+                            <TextBlock x:Name="MonitoringCount" Margin="45,47,45,23" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="10,383,640,26" Background="#59A5A5A5">
+                            <TextBlock x:Name="SavePathSize" Margin="10,37,5,50" Text="999.99GB/888.88GB" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock Margin="10,5,0,0" Text="储存盘容量" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="149" HorizontalAlignment="Left" FontSize="20"/>
+                            <TextBlock x:Name="TmpPathSize" Margin="10,95,5,-19" Text="999.99GB/888.88GB" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock Margin="10,65,0,0" Text="缓存盘容量" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="149" HorizontalAlignment="Left" FontSize="20"/>
+                        </Grid>
+                        <Grid Margin="10,204,640,205" Background="#59A5A5A5">
+                            <TextBlock x:Name="RecCount" Margin="45,47,45,23" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock Margin="10,10,0,0" Text="录制中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
 
-                        <TextBlock Margin="38,287,0,0" Text="监控中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock Margin="38,322,0,0" Text="直播中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
-                        <TextBlock Margin="38,357,0,0" Text="录制中:" Style="{StaticResource TextBlockLargeBold}" Foreground="#FFFB7299" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left"/>
+                        </Grid>
+                        <Grid Margin="263,27,387,383" Background="#59A5A5A5">
+                            <TextBlock Margin="10,10,0,0" Text="直播中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
+                            <TextBlock x:Name="LiveBroadcastingCount" Margin="45,47,45,22" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                        </Grid>
+                        <Grid Margin="263,384,387,26" Background="#59A5A5A5">
+                            <TextBlock Margin="10,10,0,0" Text="Power By" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="40" VerticalAlignment="Top" Width="153" HorizontalAlignment="Left" FontSize="26"/>
+                            <Image Margin="53,50,53,15" Source="/Resources/Img/UI/logo1.png" Stretch="Fill"/>
+                        </Grid>
+                        <Grid Margin="263,205,387,205" Background="#59A5A5A5">
+                            <TextBlock x:Name="RecCompleteCount" Margin="45,47,45,22" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock Margin="10,10,0,0" Text="已录制" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
+                        </Grid>
+
                     </Grid>
                 </TabItem>
                 <TabItem Header="监控列表">
+
                     <Grid>
-                        <ListView x:Name="LiveList" Margin="10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing" MouseDoubleClick="LiveList_Play_MouseDouble_Click"  >
+                        <ListView x:Name="LiveList" Margin="10,10,10,10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing" MouseDoubleClick="LiveList_Play_MouseDouble_Click"  >
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn Header="名称" Width="150" DisplayMemberBinding="{Binding Name}"/>
-                                    <GridViewColumn Header="状态" Width="50" DisplayMemberBinding="{Binding State}"/>
-                                    <GridViewColumn Header="开播提醒" Width="72" DisplayMemberBinding="{Binding IsRemind}"/>
-                                    <GridViewColumn Header="自动录制" Width="72" DisplayMemberBinding="{Binding IsRec}"/>
-                                    <GridViewColumn Header="录制弹幕" Width="72" DisplayMemberBinding="{Binding IsDanmu}"/>
-                                    <GridViewColumn Header="房间号" Width="120" DisplayMemberBinding="{Binding RoomId}"/>
+                                    <GridViewColumn Header="昵称" Width="200" DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn Header="状态" Width="80" DisplayMemberBinding="{Binding State}"/>
+                                    <GridViewColumn Header="开播提醒" Width="90" DisplayMemberBinding="{Binding IsRemind}"/>
+                                    <GridViewColumn Header="自动录制" Width="90" DisplayMemberBinding="{Binding IsRec}"/>
+                                    <GridViewColumn Header="录制弹幕" Width="90" DisplayMemberBinding="{Binding IsDanmu}"/>
+                                    <GridViewColumn Header="房间号" Width="130" DisplayMemberBinding="{Binding RoomId}"/>
                                 </GridView>
                             </ListView.View>
                             <ListView.ContextMenu>
@@ -167,7 +186,7 @@
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
-                        <TextBlock Text="注:鼠标右键增删改" FontSize="14" TextWrapping="Wrap" Margin="549,0,0,382" Foreground="#FF828282" HorizontalAlignment="Left" Width="121" Height="25" VerticalAlignment="Bottom" />
+                        <TextBlock Text="注:鼠标右键增删改" FontSize="14" TextWrapping="Wrap" Margin="724,0,0,504" Foreground="#FF737373" HorizontalAlignment="Left" Width="121" Height="25" VerticalAlignment="Bottom" />
                     </Grid>
 
                 </TabItem>
@@ -176,10 +195,10 @@
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="房间号" Width="80" DisplayMemberBinding="{Binding RoomId}"/>
-                                <GridViewColumn Header="已下载" Width="80" DisplayMemberBinding="{Binding DownSzie}"/>
-                                <GridViewColumn Header="开始时间" Width="110" DisplayMemberBinding="{Binding StartTime}"/>
-                                <GridViewColumn Header="标题" Width="210" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="房间号" Width="90" DisplayMemberBinding="{Binding RoomId}"/>
+                                <GridViewColumn Header="已下载大小" Width="110" DisplayMemberBinding="{Binding DownSzie}"/>
+                                <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
+                                <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
@@ -215,11 +234,11 @@
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding Name}"/>
-                                <GridViewColumn Header="房间号" Width="80" DisplayMemberBinding="{Binding RoomId}"/>
-                                <GridViewColumn Header="已下载" Width="70" DisplayMemberBinding="{Binding DownSzie}"/>
-                                <GridViewColumn Header="开始时间" Width="110" DisplayMemberBinding="{Binding StartTime}"/>
-                                <GridViewColumn Header="结束时间" Width="110" DisplayMemberBinding="{Binding EndTime}"/>
-                                <GridViewColumn Header="标题" Width="130" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="房间号" Width="90" DisplayMemberBinding="{Binding RoomId}"/>
+                                <GridViewColumn Header="已下载大小" Width="110" DisplayMemberBinding="{Binding DownSzie}"/>
+                                <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
+                                <GridViewColumn Header="结束时间" Width="120" DisplayMemberBinding="{Binding EndTime}"/>
+                                <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
@@ -245,7 +264,7 @@
                 </TabItem>
                 <TabItem Header="设置">
                     <Grid>
-                        <Grid Margin="20,0,20,0" Background="#4C797979" Height="400">
+                        <Grid Margin="20,10,10,10" Background="#4C797979">
                             <ScrollViewer>
                                 <WrapPanel Orientation="Horizontal">
                                     <Grid Width="630" Margin="5">
@@ -379,21 +398,21 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                    <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了关注一下吧[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
 
                     <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-40,0,0" Height="340"></Image>
 
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>
+        </hc:Drawer>-->
     </Grid>
 
 </hc:GlowWindow>

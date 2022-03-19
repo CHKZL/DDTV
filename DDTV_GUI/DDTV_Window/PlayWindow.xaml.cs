@@ -191,7 +191,7 @@ namespace DDTV_GUI.DDTV_Window
                 if(!QualityList.Contains(Quality))
                 {
                     Quality = 10000;
-                    Growl.Warning("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
+                    Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
                 }
                 string Url = RoomInfo.playUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
                 windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
@@ -220,14 +220,14 @@ namespace DDTV_GUI.DDTV_Window
                         }
                         catch (Exception e)
                         {
-                            throw;
+
                         }
                     });
                 });
             }
             else
             {
-                Growl.Ask("该直播间已下播，是否关闭本窗口", isConfirmed =>
+                Growl.AskGlobal($"直播间【{roomId}】已下播，是否关闭本窗口", isConfirmed =>
                 {
                     if (isConfirmed)
                     {
@@ -311,7 +311,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.Ask("该直播间已下播，是否关闭本窗口", isConfirmed =>
+                Growl.AskGlobal($"直播间【{roomId}】已下播，是否关闭本窗口", isConfirmed =>
                 {
                     if (isConfirmed)
                     {
@@ -543,18 +543,25 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
-            
+            if(MainWindow.linkDMNum>=3)
+            {
+                Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
+                return;
+            }
             IsOpenDanmu = !IsOpenDanmu;
-            if (IsOpenDanmu)
-            {
-                Growl.Info($"启动{roomId}房间的弹幕连接,10秒后开始显示弹幕");
-                var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
-                roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-            }
-            else
-            {
-                LiveChatDispose();
-            }
+            Task.Run(() => {
+                if (IsOpenDanmu)
+                {
+                    MainWindow.linkDMNum++;
+                    Growl.InfoGlobal($"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕");
+                    var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
+                    roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                }
+                else
+                {
+                    LiveChatDispose();
+                }
+            });
         }
         public void LiveChatDispose()
         {
@@ -563,7 +570,8 @@ namespace DDTV_GUI.DDTV_Window
             {
                 if (roomInfo.roomWebSocket.LiveChatListener != null&& roomInfo.roomWebSocket.LiveChatListener.startIn)
                 {
-                    Growl.Info($"关闭{roomId}房间的弹幕连接");
+                    MainWindow.linkDMNum++;
+                    Growl.InfoGlobal($"关闭{roomId}房间的弹幕连接");
                     try
                     {
                         roomInfo.roomWebSocket.LiveChatListener.startIn = false;
@@ -777,7 +785,7 @@ namespace DDTV_GUI.DDTV_Window
         private void MenuItem_CopyLiveRoomUrl_Click(object sender, RoutedEventArgs e)
         {
             System.Windows.Clipboard.SetDataObject("https://live.bilibili.com/" + roomId);
-            Growl.Success("已复制直播间Url到粘贴板");
+            Growl.SuccessGlobal("已复制直播间Url到粘贴板");
         }
 
         /// <summary>
@@ -790,7 +798,7 @@ namespace DDTV_GUI.DDTV_Window
             System.Windows.Controls.MenuItem menuItem = e.Source as System.Windows.Controls.MenuItem;
             if (Line == int.Parse(menuItem.Tag.ToString()))
             {
-                Growl.Success("当前正处于该线路");
+                Growl.SuccessGlobal("当前正处于该线路");
                 return;
             }
             switch (menuItem.Tag.ToString())
@@ -820,7 +828,7 @@ namespace DDTV_GUI.DDTV_Window
             System.Windows.Controls.MenuItem menuItem = e.Source as System.Windows.Controls.MenuItem;
             if (Quality == int.Parse(menuItem.Tag.ToString()))
             {
-                Growl.Success("当前正处于该清晰度");
+                Growl.SuccessGlobal("当前正处于该清晰度");
                 return;
             }
             switch (menuItem.Tag.ToString())
@@ -846,21 +854,18 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_ExitAll_Click(object sender, RoutedEventArgs e)
         {
-            Task.Run(() =>
-            {
-                Growl.AskGlobal("确定要关闭所有播放窗口么？", isConfirmed =>
-                {
-                    if (isConfirmed)
-                    {
-                        if (PlayListExit != null)
-                        {
-                            PlayListExit.Invoke(null, EventArgs.Empty);
-                        }
-                    }
-                    return true;
-                });
-            });
 
+            Growl.AskGlobal("确定要关闭所有播放窗口么？", isConfirmed =>
+            {
+                if (isConfirmed)
+                {
+                    if (PlayListExit != null)
+                    {
+                        PlayListExit.Invoke(null, EventArgs.Empty);
+                    }
+                }
+                return true;
+            });
         }
 
         private void AddDanmu(string DanmuText)

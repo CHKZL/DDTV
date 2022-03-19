@@ -32,13 +32,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         public LiveChatListener()
         {
-            m_ReceiveBuffer = new byte[8192*1024];
+            
         }
 
         public async void Connect(int roomId,long uid)
         {
             try
             {
+                m_ReceiveBuffer = new byte[8192 * 1024];
                 TroomId = roomId;
                 startIn = true;
                 mid= uid;
@@ -119,7 +120,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
         public void Close()
         {
-
+            m_ReceiveBuffer = null;
 
             try
             {

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
 {
@@ -48,7 +49,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 uid=uid
             };
             string RoomId = Rooms.Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
-            JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id="+RoomId,false));
+            string data = "";
+            do
+            {
+                Thread.Sleep(1000 * new Random().Next(1, 5));
+                data = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, false);
+                if(!string.IsNullOrEmpty(data))
+                {
+                    break;
+                }
+                Thread.Sleep(1000*new Random().Next(7,14));
+            } while (string.IsNullOrEmpty(data));
+            JObject JO = (JObject)JsonConvert.DeserializeObject(data);
             if (JO!=null&&JO.ContainsKey("code")&&JO["code"]!=null&&(int)JO["code"]==0)
             {
                 if(JO.ContainsKey("data")&&JO["data"].Count()>0)
