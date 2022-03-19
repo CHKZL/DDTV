@@ -12,36 +12,26 @@ namespace DDTV_WEB_Server.Controllers
     public class Login : ControllerBase
     {
         [HttpPost(Name = "Login")]
-        public string Post([FromForm] string UserName, [FromForm] string Password,[FromForm] bool CookieExpires=false)
+        public ActionResult Post([FromForm] string UserName, [FromForm] string Password,[FromForm] bool CookieExpires=false)
         {
             if (UserName == RuntimeConfig.WebUserName && Password == RuntimeConfig.WebPassword)
             {
                 RuntimeConfig.Cookis = Guid.NewGuid().ToString();
-                if(CookieExpires)
+                CookieOptions cookieOptions = new CookieOptions();
+                if (CookieExpires)
                 {
-                    HttpContext.Response.Cookies.Append(
-                  "DDTVUser",
-                  RuntimeConfig.Cookis,
-                  new CookieOptions() 
-                  {
-                      Expires = new DateTimeOffset(0, 0, 7, 0, 0, 0, TimeSpan.MinValue),
-                      Domain = HttpContext.Request.Host.Host
-                  } 
-                  );
+                    cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddDays(7));
                 }
-                else
+                if(!string.IsNullOrEmpty(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.CookieDomain))
                 {
-                    HttpContext.Response.Cookies.Append("DDTVUser",RuntimeConfig.Cookis);
+                    cookieOptions.Domain = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.CookieDomain;
                 }
-              
-                return MessageBase.Success(nameof(Login), new LoginOK()
-                {
-                    Cookie= RuntimeConfig.Cookis
-                });
+                HttpContext.Response.Cookies.Append("DDTVUser", RuntimeConfig.Cookis, cookieOptions);
+                return Content(MessageBase.Success(nameof(Login), new LoginOK(){Cookie = RuntimeConfig.Cookis}), "application/json");
             }
             else
             {
-                return MessageBase.Success(nameof(Login), "µÇÂ½ÑéÖ¤Ê§°Ü", "µÇÂ½ÑéÖ¤Ê§°Ü",MessageBase.code.LoginVeriicationFailed);
+                return Content(MessageBase.Success(nameof(Login), "µÇÂ½ÑéÖ¤Ê§°Ü", "µÇÂ½ÑéÖ¤Ê§°Ü", MessageBase.code.LoginVeriicationFailed), "application/json");
             }
         }
         private class LoginOK

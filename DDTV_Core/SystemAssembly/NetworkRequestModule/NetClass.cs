@@ -94,6 +94,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule
             }
             return CK;
         }
+        /// <summary>
+        /// 文件大小单位转换
+        /// </summary>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public static string ConversionSize(double size)
         {
             if (size < 0)

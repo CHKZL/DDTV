@@ -92,8 +92,6 @@ namespace DDTV_GUI.UpdateInterface
                     }
                     catch (Exception)
                     {
-
-                        throw;
                     }
                 }
             });

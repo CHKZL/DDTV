@@ -4,6 +4,7 @@ using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace DDTV_CLI
 {
@@ -41,59 +42,65 @@ namespace DDTV_CLI
             //ServicePointManager.Expect100Continue = false;
             #endregion
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
-            while (true)
-            {
-                if (Console.ReadKey().Key.Equals(ConsoleKey.I))
+            Task.Run(() => {
+                while (true)
                 {
-                    Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
-                         $"a：查看下载中的任务情况\n" +
-                         $"b：查看调用阿B的API次数(已禁用)\n" +
-                         $"c：查看API查询次数(已禁用)\n" +
-                         $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
-                    switch (Console.ReadKey().Key)
+                    if (Console.ReadKey().Key.Equals(ConsoleKey.I))
                     {
-                        case ConsoleKey.A:
-                            {
-                                int i = 0;
-                                Console.WriteLine($"下载中的任务:");
-                                foreach (var A1 in Rooms.RoomInfo)
+                        Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
+                             $"a：查看下载中的任务情况\n" +
+                             $"b：查看调用阿B的API次数(已禁用)\n" +
+                             $"c：查看API查询次数(已禁用)\n" +
+                             $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
+                        switch (Console.ReadKey().Key)
+                        {
+                            case ConsoleKey.A:
                                 {
-                                    if (A1.Value.DownloadingList.Count > 0)
+                                    int i = 0;
+                                    Console.WriteLine($"下载中的任务:");
+                                    foreach (var A1 in Rooms.RoomInfo)
                                     {
-                                        ulong FileSize = 0;
-                                        foreach (var item in A1.Value.DownloadingList)
+                                        if (A1.Value.DownloadingList.Count > 0)
                                         {
-                                            FileSize += (ulong)item.TotalDownloadCount;
+                                            ulong FileSize = 0;
+                                            foreach (var item in A1.Value.DownloadingList)
+                                            {
+                                                FileSize += (ulong)item.TotalDownloadCount;
+                                            }
+                                            i++;
+                                            Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
                                         }
-                                        i++;
-                                        Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
                                     }
+                                    break;
                                 }
+                            case ConsoleKey.B:
+                                {
+                                    //Console.WriteLine("API使用统计:");
+                                    //foreach (var item in NetClass.API_Usage_Count)
+                                    //{
+                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                    //}
+                                    break;
+                                }
+                            case ConsoleKey.C:
+                                {
+                                    //Console.WriteLine("查询API统计:");
+                                    //foreach (var item in NetClass.SelectAPI_Count)
+                                    //{
+                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                    //}
+                                    break;
+                                }
+                            case ConsoleKey.D:
+                                DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
                                 break;
-                            }
-                        case ConsoleKey.B:
-                            {
-                                //Console.WriteLine("API使用统计:");
-                                //foreach (var item in NetClass.API_Usage_Count)
-                                //{
-                                //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                //}
-                                break;
-                            }
-                        case ConsoleKey.C:
-                            {
-                                //Console.WriteLine("查询API统计:");
-                                //foreach (var item in NetClass.SelectAPI_Count)
-                                //{
-                                //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                //}
-                                break;
-                            }
-                        case ConsoleKey.D:
-                            DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-                            break;
+                        }
                     }
                 }
+            });
+            while(true)
+            {
+                Thread.Sleep(60000);
             }
         }
     }

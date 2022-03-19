@@ -15,6 +15,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
         public static string AccessControlAllowOrigin = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowOrigin, "*", CoreConfigClass.Group.WEB_API);
         public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "true", CoreConfigClass.Group.WEB_API);
+        public static string CookieDomain = CoreConfig.GetValue(CoreConfigClass.Key.CookieDomain, string.Empty, CoreConfigClass.Group.WEB_API);
         /// <summary>
         /// 初始化配置文件
         /// </summary>

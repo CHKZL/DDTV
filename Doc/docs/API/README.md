@@ -588,6 +588,7 @@ List<string> FileList;
 ### `POST /api/File_GetFile`
 ::: details 下载对应的文件
 - 私有变量  
+
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
 |FileName|string|是|根据提交的文件路径和文件名下载该文件|
@@ -621,6 +622,7 @@ return File();
 ### `POST /api/Login`
 ::: details WEB登陆
 - 私有变量  
+
 |参数名|格式|是否必须|解释|
 |:--:|:--:|:--:|--|
 |UserName|string|是|用于登陆的用户名，默认设置为ami，在配置文件中进行设置|

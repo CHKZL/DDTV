@@ -24,7 +24,7 @@ namespace DDTV_WEB_Server
                 }
                 if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
                 {
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", CoreConfig.AccessControlAllowOrigin);
+                    context.Response.Headers.Add("Access-Control-Allow-Origin", "localhost");// CoreConfig.AccessControlAllowOrigin);
                 }
                 await _next(context);
             }

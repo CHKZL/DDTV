@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace DDTV_WEB_Server
 {
@@ -11,7 +11,7 @@ namespace DDTV_WEB_Server
             {
                 MESS=data as string;
             }
-            DDTV_Core.SystemAssembly.Log.Log.AddLog(nameof(MessageBase), DDTV_Core.SystemAssembly.Log.LogClass.LogType.Info_API, MESS,false,null,false);
+            DDTV_Core.SystemAssembly.Log.Log.AddLog(nameof(MessageBase), DDTV_Core.SystemAssembly.Log.LogClass.LogType.Info_API, cmd+" "+ code, false,null,false);
             pack<T> pack = new pack<T>()
             {
                 cmd = cmd,
@@ -19,7 +19,8 @@ namespace DDTV_WEB_Server
                 data = data,
                 massage = massage
             };
-            string B = JsonConvert.SerializeObject(pack);
+            //string B = JsonConvert.SerializeObject(pack);
+            string B= JsonSerializer.Serialize(pack);
             return B;
         }
         /// <summary>
