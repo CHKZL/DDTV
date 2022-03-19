@@ -107,42 +107,57 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         public static bool LoginValidityVerification()
         {
-            if(string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+            int i = 0;
+            if(i>10)
+            {
+                Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Error, $"请求账号nav信息出现解析错误并超时超过10次",true);
+                return true;
+            }
+            start: if(string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
                 return false;
             }
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/nav");
-            JObject root= (JObject)JsonConvert.DeserializeObject(WebText);
-            if(root.TryGetValue("data",out var data))
+            try
             {
-                try
+                JObject root = (JObject)JsonConvert.DeserializeObject(WebText);
+                if (root.TryGetValue("data", out var data))
                 {
-                    if (bool.TryParse(data["isLogin"].ToString(),out bool T))
+                    try
                     {
-                        if (T)
+                        if (bool.TryParse(data["isLogin"].ToString(), out bool T))
                         {
-                            return true;
+                            if (T)
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                         else
                         {
-                            return false;
+                            Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息isLogin值是出现未知问题,请求到的数据为:{WebText}");
+                            return true;
                         }
                     }
-                    else
+                    catch (Exception)
                     {
-                        Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息isLogin值是出现未知问题,请求到的数据为:{WebText}");
+                        Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息出现解析错误,请求到的数据为:{WebText}");
                         return true;
                     }
                 }
-                catch (Exception)
+                else
                 {
-                    Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"请求账号nav信息出现解析错误,请求到的数据为:{WebText}");
                     return true;
                 }
             }
-            else
+            catch (Exception)
             {
-                return true;
+                i++;
+                Thread.Sleep(1000 * new Random().Next(5, 12));
+                goto start;
             }
         }
 

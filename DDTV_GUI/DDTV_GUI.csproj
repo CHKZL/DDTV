@@ -7,7 +7,8 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Img\UI\DDTV.ico</ApplicationIcon>
     <AssemblyVersion></AssemblyVersion>
-    <Version>3.0.1.9</Version>
+    <Version>3.0.2.1</Version>
+    <Authors>ami</Authors>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,6 +50,7 @@
     <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="LibVLCSharp" Version="3.6.4" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.6.4" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
 
   <ItemGroup>

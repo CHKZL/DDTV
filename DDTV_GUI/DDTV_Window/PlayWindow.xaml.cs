@@ -543,26 +543,32 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
-            if(MainWindow.linkDMNum>=3)
+            if (MainWindow.linkDMNum >= 3)
             {
                 Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
                 return;
             }
             IsOpenDanmu = !IsOpenDanmu;
-            Task.Run(() => {
-                if (IsOpenDanmu)
+
+            if (IsOpenDanmu)
+            {
+                Growl.InfoGlobal($"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕");
+                Task.Run(() =>
                 {
                     MainWindow.linkDMNum++;
-                    Growl.InfoGlobal($"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕");
                     var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
                     roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                }
-                else
-                {
-                    LiveChatDispose();
-                }
-            });
+                });
+            }
+            else
+            {
+                LiveChatDispose();
+            }
+
         }
+        /// <summary>
+        /// 直播间消息连接回收
+        /// </summary>
         public void LiveChatDispose()
         {
             
@@ -570,7 +576,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 if (roomInfo.roomWebSocket.LiveChatListener != null&& roomInfo.roomWebSocket.LiveChatListener.startIn)
                 {
-                    MainWindow.linkDMNum++;
+                    MainWindow.linkDMNum--;
                     Growl.InfoGlobal($"关闭{roomId}房间的弹幕连接");
                     try
                     {
@@ -935,5 +941,6 @@ namespace DDTV_GUI.DDTV_Window
                 this.Topmost = false;
             }
         }
+
     }
 }

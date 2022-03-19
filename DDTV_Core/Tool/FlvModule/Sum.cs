@@ -12,70 +12,78 @@ namespace DDTV_Core.Tool.FlvModule
     {
         public static string FlvFileSum(SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo roomInfo,string OkFilePath)
         {
-            List<string> DelList=new List<string>();
-            for (int i = 0 ; i < roomInfo.DownloadingList.Count ; i++)
+            try
             {
-                if(!File.Exists(roomInfo.DownloadingList[i].FileName))
+                List<string> DelList = new List<string>();
+                for (int i = 0; i < roomInfo.DownloadingList.Count; i++)
                 {
-                    roomInfo.DownloadingList.RemoveAt(i);
-                    i--;
-                }
-            }
-            if (roomInfo.DownloadingList.Count>1)
-            {
-                FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].FileName, FileMode.Open);
-                for (int i = 1 ; i < roomInfo.DownloadingList.Count ; i++)
-                {
-                    if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].FileName) && File.Exists(roomInfo.DownloadingList[i].FileName))
+                    if (!File.Exists(roomInfo.DownloadingList[i].FileName))
                     {
-                        using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].FileName, FileMode.Open);
-                        if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
-                            Download.TmpPath = Download.TmpPath + "/";
-                        string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
-                        DelList.Add(SunTmpFime);
-                        using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
-                            if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
-                            {
-                              
-                                if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+                        roomInfo.DownloadingList.RemoveAt(i);
+                        i--;
+                    }
+                }
+                if (roomInfo.DownloadingList.Count > 1)
+                {
+                    FileStream OldFileStream = new FileStream(roomInfo.DownloadingList[0].FileName, FileMode.Open);
+                    for (int i = 1; i < roomInfo.DownloadingList.Count; i++)
+                    {
+                        if (!string.IsNullOrEmpty(roomInfo.DownloadingList[i].FileName) && File.Exists(roomInfo.DownloadingList[i].FileName))
+                        {
+                            using FileStream NewFileStream = new FileStream(roomInfo.DownloadingList[i].FileName, FileMode.Open);
+                            if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+                                Download.TmpPath = Download.TmpPath + "/";
+                            string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{roomInfo.room_id}_{new Random().Next(10000, 99999)}.flv";
+                            DelList.Add(SunTmpFime);
+                            using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
+                                if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
                                 {
-                                    SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"来自{roomInfo.room_id}房间的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                                    FileOperation.Del(DelList);
-                                    return "";
+
+                                    if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+                                    {
+                                        SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"【{ roomInfo.uname}({roomInfo.room_id})】的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
+                                        FileOperation.Del(DelList);
+                                        return "";
+                                    }
+                                    int time = Merge(OldFileStream, fsMerge, true, 0);
+                                    time = Merge(NewFileStream, fsMerge, false, time);
+                                    OldFileStream.Close();
+                                    OldFileStream.Dispose();
                                 }
-                                int time = Merge(OldFileStream, fsMerge, true, 0);
-                                time = Merge(NewFileStream, fsMerge, false, time);
-                                OldFileStream.Close();
-                                OldFileStream.Dispose();
-                            }
-                        OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
+                            OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
+                        }
+                        else
+                        {
+                            SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"【{ roomInfo.uname}({roomInfo.room_id})】的录制结束合并发生错误，{roomInfo.DownloadingList[i].FileName}文件不存在，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}");
+                            FileOperation.Del(DelList);
+                            return "";
+                        }
                     }
-                    else
+                    File.Copy(OldFileStream.Name, OkFilePath);
+                    DelList.Add(OldFileStream.Name);
+                    OldFileStream.Close();
+                    OldFileStream.Dispose();
+                    foreach (var item in roomInfo.DownloadingList)
                     {
-                        SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"来自{roomInfo.room_id}房间的录制结束合并发生错误，{roomInfo.DownloadingList[i].FileName}文件不存在，错误的队列[roomInfo.DownloadingList]长度为{roomInfo.DownloadingList.Count}");
-                        FileOperation.Del(DelList);
-                        return "";
+                        FileOperation.Del(item.FileName);
                     }
+                    FileOperation.Del(DelList);
+                    return OkFilePath;
                 }
-                File.Copy(OldFileStream.Name, OkFilePath);
-                DelList.Add(OldFileStream.Name);
-                OldFileStream.Close();
-                OldFileStream.Dispose();         
-                foreach (var item in roomInfo.DownloadingList)
+                else if (roomInfo.DownloadingList.Count == 1)
                 {
-                    FileOperation.Del(item.FileName);
+                    SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
+                    return roomInfo.DownloadingList[0].FileName;
                 }
-                FileOperation.Del(DelList);
+                else
+                {
+                    return "";
+                }
+            }
+            catch (Exception e)
+            {
+                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Error, $"【{ roomInfo.uname}({roomInfo.room_id})】合并任务发生未知错误！错误已写入文本日志",true,e,true);
                 return OkFilePath;
-            }
-            else if(roomInfo.DownloadingList.Count==1)
-            {
-                SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Info, $"[{roomInfo.room_id}]合并任务放弃，该任务只有一个flv文件，直接返回原始flv文件数据");
-                return roomInfo.DownloadingList[0].FileName;
-            }
-            else
-            {
-                return "";
             }
         }
         public static void FlvFileSum(List<string> FilePaht,string Name)

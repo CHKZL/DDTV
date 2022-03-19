@@ -90,6 +90,7 @@ DDTV_WEB_Server是免安装的，把下载下来的压缩包解压到任意当�
 >```bash
 >sudo apt install libgdiplus
 >```
+ ::: 
 
 ## 4.启动&初始化
 1.根据你所使用的linux发行版本使用`dotnet ./DDTV_WEB_Server.dll`命令直接启动，如果要在无GUI的linux服务器上后台运行请使用`screen`进行启动，**请勿使用`nohup`的方式进行启动**。   

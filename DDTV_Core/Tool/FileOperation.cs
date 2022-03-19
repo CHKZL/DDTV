@@ -47,8 +47,8 @@ namespace DDTV_Core.Tool
             }
             catch (Exception e)
             {
-                Log.AddLog(nameof(FileOperation), LogClass.LogType.Warn, e.Message);
-                Log.AddLog(nameof(FileOperation),LogClass.LogType.Warn, "请求的网络路径地址:\n" + Url, false, null, false);
+                Log.AddLog(nameof(FileOperation), LogClass.LogType.Warn, Url+"   " + e.Message,false,null,false);
+                //Log.AddLog(nameof(FileOperation),LogClass.LogType.Warn, "请求的网络路径地址:\n" + Url, false, null, false);
                 return false;
             }
         }

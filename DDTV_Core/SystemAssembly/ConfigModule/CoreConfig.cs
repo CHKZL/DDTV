@@ -93,12 +93,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             if(item.Enabled)
                             {
                                 Value=item.Value;
-                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值成功，返回值[{Value}]");
+                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值成功，返回值[{Value}]",false,null,false);
                                 return Value;
                             }
                             else
                             {
-                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，因为该值当前为[注释属性]返回值默认值[{Value}]");
+                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，因为该值当前为[注释属性]返回值默认值[{Value}]", false, null, false);
                                 return Value;
                             }
                         }   
@@ -108,7 +108,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             if (Group!=CoreConfigClass.Group.Default)
             {
                 SetValue(Key, Value, Group);
-                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，未找到该值，已经把默认值[{Value}]增加到配置文件");
+                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，未找到该值，已经把默认值[{Value}]增加到配置文件", false, null, false);
             }
             return Value;
         }

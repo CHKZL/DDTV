@@ -281,22 +281,25 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
+                                    <Grid Width="850" Margin="5">
+                                        <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  (可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  请使用半角字符!!!(可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBox x:Name="RecPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="录制储存路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" LostFocus="RecPathTextBox_LostFocus" />
+                                    <Grid Width="850" Margin="5">
+                                        <TextBox x:Name="RecPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="录制储存路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,120,0" Background="{x:Null}" BorderBrush="White" LostFocus="RecPathTextBox_LostFocus" IsEnabled="False" />
+
+                                        <Button Content="选择新路径" Margin="750,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Select_Save_Path_Button_Click"/>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBox x:Name="TmpPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="临时文件路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,315,0" Background="{x:Null}" BorderBrush="White" LostFocus="TmpPathTextBox_LostFocus">
+                                    <Grid Width="850" Margin="5">
+                                        <TextBox x:Name="TmpPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="临时文件路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,120,0" Background="{x:Null}" BorderBrush="White" LostFocus="TmpPathTextBox_LostFocus" IsEnabled="False"/>
+                                        <Button Content="选择新路径" Margin="750,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Select_Tmp_Path_Button_Click">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="用于储存录制、下载、转码、播放等操作可能产生的临时文件，DDTV会自动定期清理" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="用于储存录制、下载、转码、播放等操作可能产生的临时文件，DDTV会自动定期清理，无需手动删除或管理" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
-                                        </TextBox>
+                                        </Button>
                                     </Grid>
                                     <Grid Width="630" Margin="5">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
@@ -398,21 +401,21 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition/>
                     </Grid.RowDefinitions>
-                    <TextBlock Margin="0,365,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了关注一下吧[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                    <TextBlock Margin="0,400,0,0" Text="　　图上这是蒂蒂媞薇，她并没有怎么样，我只是觉得你们都应该看看(求你了关注一下吧[UID:408490081 房间号:21446992]" FontSize="16" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
 
-                    <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-40,0,0" Height="340"></Image>
+                    <Image Source="/Resources/Img/蒂蒂媞薇.png" Margin="0,-60,0,0" Height="340"></Image>
 
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>-->
+        </hc:Drawer>
     </Grid>
 
 </hc:GlowWindow>

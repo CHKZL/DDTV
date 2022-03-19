@@ -9,6 +9,9 @@ using System.Net.WebSockets;
 using DDTV_Core.SystemAssembly.Log;
 using System.Net;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.NetworkRequestModule;
+using System.Runtime.InteropServices;
 
 namespace DDTV_Core
 {
@@ -26,15 +29,25 @@ namespace DDTV_Core
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-           
-            Console.WriteLine($"========================\nDDTV_Core启动，当前版本:{Ver}\n========================");
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
+            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}\n========================");
             Log.LogInit(LogClass.LogType.Debug);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 1024*1024*1024;
+            ServicePointManager.DefaultConnectionLimit = 1024*1024;
             ServicePointManager.Expect100Continue = false;
             CoreConfig.ConfigInit(satrtType);
             Tool.DDTV_Update.CheckTheUpdateProgramForUpdates();
+
+            var c = RuntimeInformation.RuntimeIdentifier;
+            Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
+            if (satrtType!= SatrtType.DDTV_GUI)
+            {
+                SeKey();
+            }
+           
+
+
 
             //switch (satrtType)
             //{
@@ -48,7 +61,7 @@ namespace DDTV_Core
             //        Tool.DDTV_Update.ComparisonVersion("WEB", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
             //        break;
             //}
-           
+
 
             #region 测试代码
 
@@ -168,7 +181,65 @@ namespace DDTV_Core
             DDTV_Other = int.MaxValue
         }
 
-
+        private static void SeKey()
+        {
+            Task.Run(() => {
+                while (true)
+                {
+                    if (Console.ReadKey().Key.Equals(ConsoleKey.I))
+                    {
+                        Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
+                             $"a：查看下载中的任务情况\n" +
+                             $"b：查看调用阿B的API次数(已禁用)\n" +
+                             $"c：查看API查询次数(已禁用)\n" +
+                             $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
+                        switch (Console.ReadKey().Key)
+                        {
+                            case ConsoleKey.A:
+                                {
+                                    int i = 0;
+                                    Console.WriteLine($"下载中的任务:");
+                                    foreach (var A1 in Rooms.RoomInfo)
+                                    {
+                                        if (A1.Value.DownloadingList.Count > 0)
+                                        {
+                                            ulong FileSize = 0;
+                                            foreach (var item in A1.Value.DownloadingList)
+                                            {
+                                                FileSize += (ulong)item.TotalDownloadCount;
+                                            }
+                                            i++;
+                                            Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
+                                        }
+                                    }
+                                    break;
+                                }
+                            case ConsoleKey.B:
+                                {
+                                    //Console.WriteLine("API使用统计:");
+                                    //foreach (var item in NetClass.API_Usage_Count)
+                                    //{
+                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                    //}
+                                    break;
+                                }
+                            case ConsoleKey.C:
+                                {
+                                    //Console.WriteLine("查询API统计:");
+                                    //foreach (var item in NetClass.SelectAPI_Count)
+                                    //{
+                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
+                                    //}
+                                    break;
+                                }
+                            case ConsoleKey.D:
+                                DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+                                break;
+                        }
+                    }
+                }
+            });
+        }
 
     }
 }

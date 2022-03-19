@@ -12,7 +12,6 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 
         public static void Main(string[] args)
         {
-            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Task.Run(() =>
             {
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
@@ -21,7 +20,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 ServerInteraction.Dokidoki.Start();
             });    
             Thread.Sleep(3000);
-            SeKey();
+
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(Ver);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -107,64 +106,6 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 
             });
         }
-        private static void SeKey()
-        {
-            Task.Run(() => {
-                while (true)
-                {
-                    if (Console.ReadKey().Key.Equals(ConsoleKey.I))
-                    {
-                        Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
-                             $"a：查看下载中的任务情况\n" +
-                             $"b：查看调用阿B的API次数(已禁用)\n" +
-                             $"c：查看API查询次数(已禁用)\n" +
-                             $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
-                        switch (Console.ReadKey().Key)
-                        {
-                            case ConsoleKey.A:
-                                {
-                                    int i = 0;
-                                    Console.WriteLine($"下载中的任务:");
-                                    foreach (var A1 in Rooms.RoomInfo)
-                                    {
-                                        if (A1.Value.DownloadingList.Count > 0)
-                                        {
-                                            ulong FileSize = 0;
-                                            foreach (var item in A1.Value.DownloadingList)
-                                            {
-                                                FileSize += (ulong)item.TotalDownloadCount;
-                                            }
-                                            i++;
-                                            Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
-                                        }
-                                    }
-                                    break;
-                                }
-                            case ConsoleKey.B:
-                                {
-                                    //Console.WriteLine("API使用统计:");
-                                    //foreach (var item in NetClass.API_Usage_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
-                                    break;
-                                }
-                            case ConsoleKey.C:
-                                {
-                                    //Console.WriteLine("查询API统计:");
-                                    //foreach (var item in NetClass.SelectAPI_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
-                                    break;
-                                }
-                            case ConsoleKey.D:
-                                DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-                                break;
-                        }
-                    }
-                }
-            });
-        }
+
     }
 }
