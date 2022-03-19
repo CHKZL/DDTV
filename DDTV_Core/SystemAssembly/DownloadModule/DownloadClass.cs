@@ -168,7 +168,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         resp.Close();
                                         resp.Dispose();
                                         Status = DownloadStatus.Cancel;
-                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{RoomId}]的录制任务，该任务取消");
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的录制任务，该任务取消");
                                         roomInfo.IsDownload = false;
                                         Download.DownloadCompleteTaskd(Uid, false, true);
 
@@ -214,7 +214,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                             if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"检测到录制完成的[{RoomId}]直播状态还为“开播中”持续监听中");
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{roomInfo.uname}({roomInfo.room_id})]录制流已断开，但监测到直播状态还为“开播中”持续监听中，尝试继续监听");
                                                 if (resp != null)
                                                 {
                                                     resp.Close();
@@ -226,7 +226,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             else
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{RoomId}]房间的录制子任务已完成");
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
                                                 if (resp != null)
                                                 {
                                                     resp.Close();

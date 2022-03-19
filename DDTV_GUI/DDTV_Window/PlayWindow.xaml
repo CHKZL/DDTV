@@ -62,12 +62,12 @@
                             <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
                     <MenuItem Header="刷新本窗口" Click="MenuItem_RefreshWindow_Send_Button_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/reload.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <Separator/>
                     <MenuItem Header="全局静音" Click="MenuItem_SetMute_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/notification.png" Width="18" Height="18"/>
@@ -107,18 +107,7 @@
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
             <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#E5DCDCDC" FontSize="30" Visibility="Collapsed"/>
-            <!--<StackPanel VerticalAlignment="Bottom" Margin="0,0,3,3" Opacity="0.5" HorizontalAlignment="Right" Width="30">
-                <ToggleButton BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" Click="ToggleButton_Click">
-                    <hc:StatusSwitchElement.CheckedElement>
-                        <Border Background="#00a1d6">
-                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
-                        </Border>
-                    </hc:StatusSwitchElement.CheckedElement>
-                    <Border Background="#fb7299">
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
-                    </Border>
-                </ToggleButton>
-            </StackPanel>-->
+           
 
         </Grid>
     </vlc:VideoView>

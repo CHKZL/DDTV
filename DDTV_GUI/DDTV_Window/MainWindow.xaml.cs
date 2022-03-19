@@ -16,6 +16,7 @@ using MessageBox = HandyControl.Controls.MessageBox;
 using DDTV_GUI.WPFControl;
 using System.Reflection;
 using DDTV_Core.SystemAssembly.Log;
+using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -862,10 +863,20 @@ namespace DDTV_GUI.DDTV_Window
             if (Is)
             {
                 FlvSplitSizeComboBox.Visibility = Visibility.Visible;
+                TranscodToggle.IsEnabled = false;
+                DanmuToggle.IsEnabled = false;
+                GiftToggle.IsEnabled= false;
+                GuardToggle.IsEnabled = false;
+                SCToggle.IsEnabled = false;
             }
             else
             {
                 FlvSplitSizeComboBox.Visibility = Visibility.Collapsed;
+                TranscodToggle.IsEnabled = true;
+                DanmuToggle.IsEnabled = true;
+                GiftToggle.IsEnabled = true;
+                GuardToggle.IsEnabled = true;
+                SCToggle.IsEnabled = true;
             }
         }
 
@@ -1064,6 +1075,72 @@ namespace DDTV_GUI.DDTV_Window
             DDTV_Core.Tool.Dokidoki.IsDoNotSleepState = (bool)DoNotSleepWhileDownloadingIcon.IsChecked ? true : false;
 
             CoreConfig.SetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, DDTV_Core.Tool.Dokidoki.IsDoNotSleepState.ToString(), CoreConfigClass.Group.Download);
+        }
+
+        private void Select_Save_Path_Button_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;//设置为选择文件夹
+            dialog.ShowDialog();
+            string path = dialog.FileName;
+           
+
+            
+            if (Download.DefaultPath != path)
+            {
+                if (!string.IsNullOrEmpty(path))
+                {
+                    if (Directory.Exists(path))
+                    {
+                        RecPathTextBox.Text = path;
+                        Download.DefaultPath = path;
+                        CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DefaultPath, CoreConfigClass.Group.Download);
+                        Growl.Success("录制储存文件夹设置成功");
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "录制储存文件夹设置成功：" + Download.DefaultPath, false, null, false);
+                    }
+                    else
+                    {
+                        Growl.Warning("设置的录制储存文件夹路径文件夹不存在，设置失败！");
+                    }
+                }
+                else
+                {
+                    RecPathTextBox.Text = Download.DefaultPath;
+                    Growl.Warning("录制储存文件夹不能为空");
+                }
+            }
+        }
+
+        private void Select_Tmp_Path_Button_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.IsFolderPicker = true;//设置为选择文件夹
+            dialog.ShowDialog();
+
+            string path = dialog.FileName;
+            if (Download.TmpPath != path)
+            {
+                if (!string.IsNullOrEmpty(path))
+                {
+                    if (Directory.Exists(path))
+                    {
+                        TmpPathTextBox.Text = path;
+                        Download.TmpPath = path;
+                        CoreConfig.SetValue(CoreConfigClass.Key.TmpPath, Download.TmpPath, CoreConfigClass.Group.Download);
+                        Growl.Success("临时文件文件夹设置成功");
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "临时文件文件夹设置成功：" + Download.TmpPath, false, null, false);
+                    }
+                    else
+                    {
+                        Growl.Warning("设置的临时文件文件夹路径文件夹不存在，设置失败！");
+                    }
+                }
+                else
+                {
+                    TmpPathTextBox.Text = Download.TmpPath;
+                    Growl.Warning("临时文件文件夹不能为空");
+                }
+            }
         }
     }
 }

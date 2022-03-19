@@ -57,6 +57,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     foreach (var item in roomInfo.DownloadingList)
                     {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
                         item.Cancel();
                         return true;
                     }
@@ -65,7 +66,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"取消下载任务出现未知错误！", true, e);
+                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"[UID:{uid}]取消下载任务出现未知错误！", true, e);
                 return false;
             }
         }
@@ -103,7 +104,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         try
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{ Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)})的直播已结束，LiveChat连接中断，储存相关数据");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】的直播已结束，LiveChat连接中断，储存相关数据");
                             roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                             roomInfo.DanmuFile.TimeStopwatch.Stop();
                             roomInfo.roomWebSocket.LiveChatListener.Dispose();
@@ -111,7 +112,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         catch (Exception e)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"结束LiveChat连接时发生未知错误", true, e);
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"【{ roomInfo.uname}({roomInfo.room_id})】结束LiveChat连接时发生未知错误", true, e);
                         }
                     }
                 }
@@ -119,11 +120,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"{uid}的直播结束，检测到IsAutoRec为false，将不会储存弹幕相关数据");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{ roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec为false，将不会储存弹幕相关数据");
                     }
                     if(!roomInfo.roomWebSocket.IsConnect)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"{uid}的直播结束，检测到WebSocket未连接，将不会储存弹幕相关数据");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{ roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到WebSocket未连接，将不会储存弹幕相关数据");
                     }
                    
                 }
@@ -136,19 +137,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 //合并flv文件
                 if (IsSun)
                 {
-                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})录制任务结束，开始检测并合并flv文件");
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】录制任务结束，开始检测并合并flv文件");
                     string SunFileName = Tool.FlvModule.Sum.FlvFileSum(roomInfo, OkFileName);
                     if (!string.IsNullOrEmpty(SunFileName))
                     {
                         FileList.Add(SunFileName);
                     }
-
                 }
                 if (IsTranscod)
                 {
                     if (FileList.Count > 0)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})合并flv文件任务结束，开始转码");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】合并flv文件任务结束，开始转码");
                         foreach (var item in FileList)
                         {
                             if (!string.IsNullOrEmpty(item))
@@ -165,9 +165,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     else
                     {
                         if (IsSun)
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})合并返回的flv文件数量为0，放弃转码，保留原始数据或环境");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】合并返回的flv文件数量为0，放弃转码，保留原始数据或环境");
                     }
-
                 }
                 if (!IsCancel)
                 {
@@ -213,7 +212,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         DownloadCompleted.Invoke(downloads, EventArgs.Empty);
                     }
 
-                    string EndText = $"\n录制任务完成:\n===================\n" +
+                    string EndText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})录制任务完成:\n===================\n" +
                                $"直播间:{roomInfo.room_id}\n" +
                                $"UID:{roomInfo.uid}\n" +
                                $"昵称:{roomInfo.uname}\n" +
@@ -268,13 +267,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         downloadClass.Status = DownloadClass.Downloads.DownloadStatus.Standby;
                         //if (IsNewTask)
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}({Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)})的下载请求，等待数据流中...");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到【{ roomInfo.uname}({roomInfo.room_id})】的下载请求，等待数据流中...");
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
                         {
                             roomInfo.CreationTime = DateTime.Now;
                             downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
-                            string StarText = $"\n开始录制任务:\n===================\n" +
+                            string StarText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n===================\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
                                 $"UID:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uid)}\n" +
                                 $"昵称:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}\n" +
@@ -302,7 +301,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else if (Ok == 1)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}已下播，录制任务取消");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】已下播，录制任务取消");
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                             DownloadCompleteTaskd(uid, IsFlvSplit);
                             return;
@@ -317,12 +316,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if (DL != null)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}已有录制任务，放弃新建");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】已有录制任务，放弃新建");
                             return;
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}检测不存在，请检查提交的用户uid");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】检测不存在，请检查提交的用户uid");
                             return;
                         }
                     }
@@ -353,16 +352,16 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     if (Tool.FileOperation.IsExistsNetFile(Url))
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求的网络路径文件存在",false,null,false);
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"已确认房间【{roomInfo.uname}({roomInfo.room_id})】的推流数据，转交信息给下载进程");
                         return 0;
                     }
                     else
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求的网络路径文件不存在，未检测到推流信息，3秒后重试");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
                     }
-                    if (conut > 5)
+                    if (conut > 6)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"请求网络文件超时，等待任务自动重置..");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】请求网络文件超时，等待任务自动重置..");
                         return -1;
                     }
                     Thread.Sleep(5000);

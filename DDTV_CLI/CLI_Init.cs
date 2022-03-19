@@ -12,7 +12,7 @@ namespace DDTV_CLI
     {
         public static void Main(string[] args)
         {
-            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
+            
             #region Flv修复demo
             //DDTV_Core.Tool.FlvModule.FileFix.CuttingFFMPEG(@"F:\Users\寒曦朦\OneDrive - hanximeng\OneList\录播/星宮汐Official/02_5/22-37-52_【B限】101_5931.flv");
             //List<string> args = new List<string>();
@@ -42,62 +42,6 @@ namespace DDTV_CLI
             //ServicePointManager.Expect100Continue = false;
             #endregion
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
-            Task.Run(() => {
-                while (true)
-                {
-                    if (Console.ReadKey().Key.Equals(ConsoleKey.I))
-                    {
-                        Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
-                             $"a：查看下载中的任务情况\n" +
-                             $"b：查看调用阿B的API次数(已禁用)\n" +
-                             $"c：查看API查询次数(已禁用)\n" +
-                             $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
-                        switch (Console.ReadKey().Key)
-                        {
-                            case ConsoleKey.A:
-                                {
-                                    int i = 0;
-                                    Console.WriteLine($"下载中的任务:");
-                                    foreach (var A1 in Rooms.RoomInfo)
-                                    {
-                                        if (A1.Value.DownloadingList.Count > 0)
-                                        {
-                                            ulong FileSize = 0;
-                                            foreach (var item in A1.Value.DownloadingList)
-                                            {
-                                                FileSize += (ulong)item.TotalDownloadCount;
-                                            }
-                                            i++;
-                                            Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
-                                        }
-                                    }
-                                    break;
-                                }
-                            case ConsoleKey.B:
-                                {
-                                    //Console.WriteLine("API使用统计:");
-                                    //foreach (var item in NetClass.API_Usage_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
-                                    break;
-                                }
-                            case ConsoleKey.C:
-                                {
-                                    //Console.WriteLine("查询API统计:");
-                                    //foreach (var item in NetClass.SelectAPI_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
-                                    break;
-                                }
-                            case ConsoleKey.D:
-                                DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-                                break;
-                        }
-                    }
-                }
-            });
             while(true)
             {
                 Thread.Sleep(60000);
