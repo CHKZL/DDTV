@@ -142,22 +142,35 @@ namespace DDTV_Core.SystemAssembly.Log
                 {
                     try
                     {
-
-                        if (logClasses.Count > 0)
+                        if (logClasses != null && logClasses.Count > 0)
                         {
-                            string ErrorText = $"\n\n{logClasses[0].Time}:[Error][{logClasses[0].Source}][{logClasses[0].RunningTime}]{logClasses[0].Message}";
-                            if (logClasses[0].exception != null)
+                            LogClass logClass = new LogClass()
                             {
-                                ErrorText += $"错误堆栈\n{logClasses[0].exception.ToString()}";
-                            }
+                                exception= logClasses[0].exception,
+                                IsError= logClasses[0].IsError,
+                                Message= logClasses[0].Message,
+                                RunningTime=logClasses[0].RunningTime,
+                                Source=logClasses[0].Source,
+                                Time=logClasses[0].Time,
+                                Type= logClasses[0].Type,
+                            };
                             logClasses.RemoveAt(0);
+                            string ErrorText = $"\n\n{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}";
+                            if (logClass.exception != null)
+                            {
+                                ErrorText += $"错误堆栈\n{logClass.exception.ToString()}";
+                            }
                             File.AppendAllText(LogDB.ErrorFilePath, ErrorText, Encoding.UTF8);
+                            Thread.Sleep(100);
                         }
-                        Thread.Sleep(10);
+                        else
+                        {
+                            Thread.Sleep(1000);
+                        }
                     }
                     catch (Exception)
                     {
-
+                        Thread.Sleep(10);
                     }
                 }
             });

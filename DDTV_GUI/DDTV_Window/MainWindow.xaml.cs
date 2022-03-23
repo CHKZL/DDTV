@@ -212,7 +212,8 @@ namespace DDTV_GUI.DDTV_Window
             SideMenu sideMenu = (SideMenu)sender;
             int Index = sideMenu.Items.IndexOf(e.Info);
             this.MainWindowTab.SelectedIndex = Index;
-            UpdateInterface.Main.ActivationInterface = Index;
+            if (Index >= 0)
+                UpdateInterface.Main.ActivationInterface = Index;
         }
 
 
@@ -1017,6 +1018,7 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         filePath = Environment.CurrentDirectory + filePath.Substring(1, filePath.Length - 1);
                     }
+                    //System.Diagnostics.Process.Start(filePath);
                     Clipboard.SetDataObject(filePath);
                     Growl.Success("已复制路径到粘贴板");
                 }

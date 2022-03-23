@@ -92,6 +92,7 @@ namespace DDTV_GUI.UpdateInterface
                     }
                     catch (Exception)
                     {
+                        Thread.Sleep(1);
                     }
                 }
             });

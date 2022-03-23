@@ -142,6 +142,7 @@
                                     <GridViewColumn Header="录制弹幕" Width="90" DisplayMemberBinding="{Binding IsDanmu}"/>
                                     <GridViewColumn Header="房间号" Width="130" DisplayMemberBinding="{Binding RoomId}"/>
                                 </GridView>
+
                             </ListView.View>
                             <ListView.ContextMenu>
                                 <ContextMenu Width="150">
@@ -185,8 +186,10 @@
                                     </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
+                            <hc:AdornerElement.Instance>
+                                <hc:Poptip Content="增删改等更多功能在鼠标右键菜单中" PlacementType="BottomLeft"/>
+                            </hc:AdornerElement.Instance>
                         </ListView>
-                        <TextBlock Text="注:鼠标右键增删改" FontSize="14" TextWrapping="Wrap" Margin="724,0,0,504" Foreground="#FF737373" HorizontalAlignment="Left" Width="121" Height="25" VerticalAlignment="Bottom" />
                     </Grid>
 
                 </TabItem>
@@ -227,6 +230,9 @@
                                 </MenuItem>
                             </ContextMenu>
                         </ListView.ContextMenu>
+                        <hc:AdornerElement.Instance>
+                            <hc:Poptip Content="高级功能在鼠标右键菜单中" PlacementType="BottomLeft"/>
+                        </hc:AdornerElement.Instance>
                     </ListView>
                 </TabItem>
                 <TabItem Header="完成记录">
@@ -235,10 +241,10 @@
                             <GridView>
                                 <GridViewColumn Header="名称" Width="120" DisplayMemberBinding="{Binding Name}"/>
                                 <GridViewColumn Header="房间号" Width="90" DisplayMemberBinding="{Binding RoomId}"/>
-                                <GridViewColumn Header="已下载大小" Width="110" DisplayMemberBinding="{Binding DownSzie}"/>
+                                <GridViewColumn Header="已下载大小" Width="100" DisplayMemberBinding="{Binding DownSzie}"/>
                                 <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
                                 <GridViewColumn Header="结束时间" Width="120" DisplayMemberBinding="{Binding EndTime}"/>
-                                <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="标题" Width="270" DisplayMemberBinding="{Binding Title}"/>
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
@@ -255,11 +261,18 @@
                                 </MenuItem>-->
                             </ContextMenu>
                         </ListView.ContextMenu>
+                        <hc:AdornerElement.Instance>
+                            <hc:Poptip Content="更多功能在鼠标右键菜单中" PlacementType="BottomLeft"/>
+                        </hc:AdornerElement.Instance>
                     </ListView>
                 </TabItem>
                 <TabItem Header="其他功能">
                     <Grid>
-                        <Button Content="匹配导入关注列表中的V" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow" />
+                        <Button Content="匹配导入关注列表中的V" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow">
+                            <hc:AdornerElement.Instance>
+                                <hc:Poptip Content="该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少" PlacementType="BottomLeft"/>
+                            </hc:AdornerElement.Instance>
+                        </Button>
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置">
@@ -393,7 +406,7 @@
                         <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="534,10,0,0" VerticalAlignment="Top"/>
                         <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">
                             <hc:AdornerElement.Instance>
-                                <hc:Poptip Content="点击该按钮会结束DDTV全部任务并退出DDTV开始更新" PlacementType="BottomLeft"/>
+                                <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新" PlacementType="BottomLeft"/>
                             </hc:AdornerElement.Instance>
                         </Button>
                         <Button Visibility="Collapsed" Style="{StaticResource ButtonDanger}" Content="查看系统日志" Margin="578,394,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />

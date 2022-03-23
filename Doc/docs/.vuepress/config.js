@@ -40,6 +40,8 @@ module.exports = {
           children: [
             '',
             'DDTV_GUI',
+            'DDTV_CLI(Linux)',
+            'DDTV_CLI(Windows)',
             'DDTV_WEB_Server(Windows)',
             'DDTV_WEB_Server(Linux)',
             'DDTV_WEB_Server(MacOS)',

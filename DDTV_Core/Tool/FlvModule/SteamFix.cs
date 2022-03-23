@@ -94,8 +94,8 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
-                                
-                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                downloads.RecordingDuration = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
+                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{downloads.RecordingDuration}]");
                                 downloads.flvTimes.TagType=0x09;
                                 if(downloads.flvTimes.FlvVideoTagCount==0)
                                 {

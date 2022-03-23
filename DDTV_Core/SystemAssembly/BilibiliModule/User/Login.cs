@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                 Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，请用bilibili手机客户端扫描[./BiliQR.png]进行登录");
                                 break;
                             case InitDDTV_Core.SatrtType.DDTV_CLI:
-                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，访问"+"https://本设备IP或域名:端口/loginqr"+"，查看二维码，或打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
+                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，请打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
                                 break;
                             case InitDDTV_Core.SatrtType.DDTV_GUI:
                                 return false;
