@@ -52,6 +52,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     try
                     {
                         Thread.Sleep(2 * 1000);
+
                         if (IsOn)
                             Patrol();
                         ETime = Tool.TimeModule.Time.Operate.GetRunMilliseconds();
@@ -89,7 +90,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         //开播了
                         if(item.Value.IsAutoRec)
                         {
-                            //自动录制警告！
+                            //自动录制
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                             DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
                             if(StartRec!=null)
@@ -100,7 +101,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         }
                         if (item.Value.IsRemind)
                         {
-                            //开播提醒警告！
+                            //开播提醒
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"开播提醒:【{item.Value.room_id}-{item.Value.uname}】");
                             if (StartLive != null)
                             {

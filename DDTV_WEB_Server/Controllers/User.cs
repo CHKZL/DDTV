@@ -15,7 +15,7 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "User_Search")]
         public string post([FromForm] string cmd, [FromForm] string keyword)
         {
-            return MessageBase.Success(nameof(File_GetAllFileList), DDTV_Core.SystemAssembly.BilibiliModule.API.Search.Search.TypeSearch(keyword));
+            return MessageBase.Success(nameof(User_Search), DDTV_Core.SystemAssembly.BilibiliModule.API.Search.Search.TypeSearch(keyword));
         }
     }
 

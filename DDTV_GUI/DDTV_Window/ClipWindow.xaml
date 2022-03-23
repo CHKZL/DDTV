@@ -14,14 +14,22 @@
         <Grid>
             <Grid Width="720" Margin="0,0,209,0">
                 <vlc:VideoView x:Name="VideoView" Height="405" VerticalAlignment="Top" />
-                <hc:TimeBar Name="FlvTimeBar" TimeFormat="HH:mm:ss" ShowSpeStr="True"  BorderThickness="0" Height="60" VerticalAlignment="Top" Margin="0,405,0,0" MouseDown="FlvTimeBar_MouseDown" MouseUp="FlvTimeBar_MouseUp"/>
+                <!--<hc:TimeBar Name="FlvTimeBar" TimeFormat="HH:mm:ss" ShowSpeStr="True"  BorderThickness="0" Height="60" VerticalAlignment="Top" Margin="0,405,0,0" MouseDown="FlvTimeBar_MouseDown" MouseUp="FlvTimeBar_MouseUp"/>-->
+                <TextBlock Name="ClipTimeStamp" Text="剪辑标记范围: 00:00:00-00:00:05" FontSize="16" TextWrapping="Wrap" Margin="10,405,10,0" Foreground="Black" />
+                <hc:RangeSlider Name="ClipSlider" Minimum="0" Maximum="10" IsSnapToTickEnabled="True" ValueStart="0" ValueEnd="5" Margin="10,425,10,56"/>
+                <hc:PreviewSlider Name="FlvTimeSlider" Value="0" Maximum="52" Margin="10,449,10,18" SmallChange="1">
+                    <hc:PreviewSlider.PreviewContent>
+                        <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
+                    </hc:PreviewSlider.PreviewContent>
+                </hc:PreviewSlider>
+                <TextBlock Name="FlvTimeStamp" Text="" FontSize="16" TextWrapping="Wrap" Margin="10,475,10,0" Foreground="Black" />
             </Grid>
             <Grid Margin="720,0,0,0">
                 <Button Content="标记" Click="Button_SetSstartTime_Click" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Margin="105,40,0,0" VerticalAlignment="Top"></Button>
                 <hc:TextBox Name="CheckSstartTime" IsEnabled="False" Text="" hc:InfoElement.Title="标记开始时间" hc:InfoElement.Necessary="True" Margin="0,46,0,395"/>
                 <Button Content="标记" Click="Button_SetEndTime_Click" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Margin="105,116,0,0" VerticalAlignment="Top"/>
                 <hc:TextBox Name="CheckEndTime" IsEnabled="False" Text="" hc:InfoElement.Title="标记结束时间" hc:InfoElement.Necessary="True" Margin="0,122,0,320"/>
-                <TextBlock Text="教程: &#13; 1.因为无法获取正在录制的视频长度，所以请自行确认总时长 &#13; 2.在时间轴上滚动鼠标滚轮调整时间轴间隔 &#13; 3.鼠标拖动时间轴寻找开始\结束时间 &#13; 4.标记开始时间 &#13; 5.标记结束时间 &#13; 6.点击'开始剪裁'导出视频" FontSize="16" TextWrapping="Wrap" Margin="10,183,10,39" Foreground="#FF828282" />
+                <TextBlock Text="说明：下方两个进度条分别是剪辑范围和进度条&#13;&#13;　　拖动剪辑范围或拖动进度条后点击右上角标记均可修改开始\结束时间&#13;&#13;　　标记结束后点击右下角开始剪裁即可在录制路径生成对应的MP4文件&#13;&#13;　　推荐剪辑时长前后留余量并大于一分钟" FontSize="16" TextWrapping="Wrap" Margin="10,183,10,39" Foreground="#FF828282" />
                 <Button Content="开始剪裁" Click="Button_Click" Style="{StaticResource ButtonSuccess}" Margin="0,467,0,0" VerticalAlignment="Top" Width="156"/>
                 <Button x:Name="Play" Content="播放/暂停" Click="Play_Click" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
             </Grid>

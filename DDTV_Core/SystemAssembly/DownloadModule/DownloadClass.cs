@@ -65,6 +65,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 结束时间
             /// </summary>
             public DateTime EndTime { set; get; }
+            /// <summary>
+            /// 当前录制的文件视频时长
+            /// </summary>
+            public uint RecordingDuration { set; get; } = 0;
             public Tool.FlvModule.FlvClass.FlvTimes flvTimes { set; get; } = new();
             /// <summary>
             /// FLV文件头

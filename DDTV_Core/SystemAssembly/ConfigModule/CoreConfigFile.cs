@@ -103,6 +103,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             Log.Log.AddLog(nameof(CoreConfigFile), Log.LogClass.LogType.Info, $"读取配置文件成功");
         }
+        /// <summary>
+        /// 初始化配置文件的加载
+        /// </summary>
+        private static void InitConfigLoad()
+        {
+
+        }
 
         internal class ConfigTmp : CoreConfigClass.Config
         {
