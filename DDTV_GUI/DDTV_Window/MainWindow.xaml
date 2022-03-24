@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:hc="https://handyorg.github.io/handycontrol"
         xmlns:local="clr-namespace:DDTV_GUI"
-        xmlns:Forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"  x:Class="DDTV_GUI.DDTV_Window.MainWindow"
+        x:Class="DDTV_GUI.DDTV_Window.MainWindow"
         mc:Ignorable="d"
         ActiveGlowColor="#00a1d6"
         InactiveGlowColor="#fb7299"

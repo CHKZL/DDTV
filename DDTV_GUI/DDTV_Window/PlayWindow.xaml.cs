@@ -21,7 +21,6 @@ using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using System.Drawing;
 using System.Windows.Interop;
-using System.Windows.Forms;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
@@ -627,8 +626,8 @@ namespace DDTV_GUI.DDTV_Window
         {
             Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
             double dpixRatio = currentGraphics.DpiX / 96;
-            int ScreenHeight = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Height / dpixRatio);
-            int ScreenWidth = Convert.ToInt32(Screen.PrimaryScreen.Bounds.Width / dpixRatio);
+            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
+            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
 
 
             if (MainWindow.playWindowsList.Count == 1)
