@@ -601,7 +601,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void LiveList_MenuItem_AddRoom_Click(object sender, RoutedEventArgs e)
         {
-            Dialog.Show<WPFControl.AddRoomDialog>();
+            Dialog.Show<AddRoomDialog>();
         }
         /// <summary>
         /// 监控列表_右键菜单_在DDTV中观看

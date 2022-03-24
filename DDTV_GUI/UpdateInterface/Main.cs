@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
+using DDTV_Core.SystemAssembly.Log;
 
 namespace DDTV_GUI.UpdateInterface
 {
@@ -90,8 +91,10 @@ namespace DDTV_GUI.UpdateInterface
                         }
 
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        Log.AddLog("activationinterface", LogClass.LogType.Error, "主界面UI刷新出现未知错误！错误日志已提交到文本记录。", true, e, false);
+                        activationinterface = 0;
                         Thread.Sleep(1);
                     }
                 }
