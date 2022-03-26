@@ -330,16 +330,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl(long uid, RoomInfoClass.Quality qn,RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine)
+        public static string playUrl(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine)
         {
-            if(!GetQuality(uid).Contains((int)qn))
+            List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
+            PlayR: if (!GetQuality(uid).Contains((int)qn))
             {
                 qn = RoomInfoClass.Quality.OriginalPainting;
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
 
-            if(string.IsNullOrEmpty(WebText))
+            if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
@@ -365,7 +366,31 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     {
                         if (JO.TryGetValue("data", out var Roomdurl) && Roomdurl != null)
                         {
-
+                            if((int)Roomdurl["current_quality"]==0)
+                            {
+                                NotQU.Add(qn);
+                                if(!NotQU.Contains(RoomInfoClass.Quality.OriginalPainting))
+                                {
+                                    qn = RoomInfoClass.Quality.OriginalPainting;
+                                }
+                                else if (!NotQU.Contains(RoomInfoClass.Quality.BluRay))
+                                {
+                                    qn = RoomInfoClass.Quality.BluRay;
+                                }
+                                else if (!NotQU.Contains(RoomInfoClass.Quality.HighDefinition))
+                                {
+                                    qn = RoomInfoClass.Quality.HighDefinition;
+                                }
+                                else if (!NotQU.Contains(RoomInfoClass.Quality.Fluency))
+                                {
+                                    qn = RoomInfoClass.Quality.Fluency;
+                                }
+                                else
+                                {
+                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"获取用户[{uid}]的直播房间清晰度时所有清晰度均无数据源！这是一个来自BILIBILI的内部错误，DDTV无法解决",true,null,true);
+                                }
+                                goto PlayR;
+                            }
                             string Url = Roomdurl["durl"][(int)line]["url"].ToString();
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功");
                             return Url;
