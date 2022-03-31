@@ -40,7 +40,6 @@ namespace DDTV_GUI.DDTV_Window
         {
            
             InitializeComponent();
-
             if (CheckRepeatedRun())
             {
                 Application.Current.Shutdown();

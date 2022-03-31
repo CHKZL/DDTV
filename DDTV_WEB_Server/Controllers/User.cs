@@ -13,9 +13,9 @@ namespace DDTV_WEB_Server.Controllers
     public class User_Search : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "User_Search")]
-        public string post([FromForm] string cmd, [FromForm] string keyword)
+        public ActionResult post([FromForm] string cmd, [FromForm] string keyword)
         {
-            return MessageBase.Success(nameof(User_Search), DDTV_Core.SystemAssembly.BilibiliModule.API.Search.Search.TypeSearch(keyword));
+            return Content(MessageBase.Success(nameof(User_Search), DDTV_Core.SystemAssembly.BilibiliModule.API.Search.Search.TypeSearch(keyword)), "application/json");
         }
     }
 

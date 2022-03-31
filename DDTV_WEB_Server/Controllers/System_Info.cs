@@ -12,7 +12,7 @@ namespace DDTV_WEB_Server.Controllers
     public class System_Info : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_Info")]
-        public string Post([FromForm] string cmd)
+        public ActionResult Post([FromForm] string cmd)
         {
             int Downloading = 0, DownloadComplete = 0;
             foreach (var A1 in Rooms.RoomInfo)
@@ -59,7 +59,7 @@ namespace DDTV_WEB_Server.Controllers
                 },
 
             };
-            return MessageBase.Success(nameof(System_Info), systemInfo);
+            return Content(MessageBase.Success(nameof(System_Info), systemInfo), "application/json");
         }
         public class Info
         {
@@ -143,7 +143,7 @@ namespace DDTV_WEB_Server.Controllers
     {
         [HttpPost(Name = "System_Config")]
         //[Consumes("application/json")]
-        public string Post([FromForm] string cmd,[FromForm] bool IsPrivacy=true)
+        public ActionResult Post([FromForm] string cmd,[FromForm] bool IsPrivacy=true)
         {
             ConfigData configData = new ConfigData();
             foreach (var item in CoreConfigClass.config.datas)
@@ -158,7 +158,7 @@ namespace DDTV_WEB_Server.Controllers
                 }
                 
             }
-            return MessageBase.Success(nameof(System_Config), CoreConfigClass.config.datas);
+            return Content(MessageBase.Success(nameof(System_Config), CoreConfigClass.config.datas), "application/json");
         }
     }
     public class ConfigData
@@ -168,7 +168,7 @@ namespace DDTV_WEB_Server.Controllers
     public class System_Resources : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_Resources")]
-        public string Post([FromForm] string cmd)
+        public ActionResult Post([FromForm] string cmd)
         {
             SystemResourceClass systemResourceClass = new();
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
@@ -192,42 +192,42 @@ namespace DDTV_WEB_Server.Controllers
                 string DriveLetter = Path.GetFullPath(DDTV_Core.SystemAssembly.DownloadModule.Download.DefaultPath)[..1];
                 systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
             }
-            return MessageBase.Success(nameof(System_Resources), systemResourceClass);
+            return Content(MessageBase.Success(nameof(System_Resources), systemResourceClass), "application/json");
         }
     }
     public class System_QueryWebFirstStart : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_QueryWebFirstStart")]
         //[Consumes("application/json")]
-        public string Post([FromForm] string cmd)
+        public ActionResult Post([FromForm] string cmd)
         {
-            return MessageBase.Success(nameof(System_Config), CoreConfig.WEB_FirstStart);
+            return Content(MessageBase.Success(nameof(System_Config), CoreConfig.WEB_FirstStart), "application/json");
         }
     }
     public class System_SetWEBFirstStart : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_SetWebFirstStart")]
         //[Consumes("application/json")]
-        public string Post([FromForm] string cmd, [FromForm] bool state)
+        public ActionResult Post([FromForm] string cmd, [FromForm] bool state)
         {
             CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, state.ToString(), CoreConfigClass.Group.Core);
             CoreConfig.GUI_FirstStart = state;
-            return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}");
+            return Content(MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}"), "application/json");
         }
     }
     public class System_QueryUserState : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_QueryUserState")]
         //[Consumes("application/json")]
-        public string Post([FromForm] string cmd)
+        public ActionResult Post([FromForm] string cmd)
         {
             if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
             {
-                return MessageBase.Success(nameof(System_Config), false, $"未登录或登陆已失效");
+                return Content(MessageBase.Success(nameof(System_Config), false, $"未登录或登陆已失效"), "application/json");
             }
             else
             {
-                return MessageBase.Success(nameof(System_Config), true, $"登陆有效");
+                return Content(MessageBase.Success(nameof(System_Config), true, $"登陆有效"), "application/json");
             }
 
         }

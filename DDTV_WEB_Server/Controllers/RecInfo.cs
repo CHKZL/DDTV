@@ -11,7 +11,7 @@ namespace DDTV_WEB_Server.Controllers
     {
         
         [HttpGet(Name = "Rec_RecordingInfo_Text")]
-        public string get()
+        public ActionResult get()
         {
             string _= "UID　　　房间号　　　昵称　　　标题　　　已下载大小";
             foreach (var A1 in Rooms.RoomInfo)
@@ -31,14 +31,14 @@ namespace DDTV_WEB_Server.Controllers
             {
                 _ = "当前无下载任务";
             }
-            return _;
+            return Content(_, "application/json");
         }
     }
 
     public class Rec_RecordingInfo : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordingInfo")]
-        public string post([FromForm] string cmd)
+        public ActionResult post([FromForm] string cmd)
         {
             List<Downloads> downloads = new List<Downloads>();
             foreach (var A1 in Rooms.RoomInfo)
@@ -77,14 +77,14 @@ namespace DDTV_WEB_Server.Controllers
                         }
                     }
                 }
-            }   
-            return MessageBase.Success(nameof(Rec_RecordingInfo), downloads);
+            }
+            return Content(MessageBase.Success(nameof(Rec_RecordingInfo), downloads), "application/json");
         }
     }
     public class Rec_RecordingInfo_Lite : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordingInfo_Lite")]
-        public string post([FromForm] string cmd)
+        public ActionResult post([FromForm] string cmd)
         {
             List<LiteDownloads> downloads = new List<LiteDownloads>();
             foreach (var A1 in Rooms.RoomInfo)
@@ -112,13 +112,13 @@ namespace DDTV_WEB_Server.Controllers
                     }
                 }
             }
-            return MessageBase.Success(nameof(Rec_RecordingInfo), downloads);
+            return Content(MessageBase.Success(nameof(Rec_RecordingInfo), downloads), "application/json");
         }
     }
     public class Rec_RecordCompleteInfon : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordCompleteInfon")]
-        public string post([FromForm] string cmd)
+        public ActionResult post([FromForm] string cmd)
         {
             List<Downloads> downloads = new List<Downloads>();
             foreach (var A1 in Rooms.RoomInfo)
@@ -154,13 +154,13 @@ namespace DDTV_WEB_Server.Controllers
                     }      
                 }
             }
-            return MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads);
+            return Content(MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads), "application/json");
         }
     }
     public class Rec_RecordCompleteInfon_Lite : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_RecordCompleteInfon_Lite")]
-        public string post([FromForm] string cmd)
+        public ActionResult post([FromForm] string cmd)
         {
             List<LiteDownloads> downloads = new List<LiteDownloads>();
             foreach (var A1 in Rooms.RoomInfo)
@@ -187,31 +187,31 @@ namespace DDTV_WEB_Server.Controllers
                     }
                 }
             }
-            return MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads);
+            return Content(MessageBase.Success(nameof(Rec_RecordCompleteInfon), downloads), "application/json");
         }
       
     }
     public class Rec_CancelDownload : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Rec_CancelDownload")]
-        public string post([FromForm] string cmd,[FromForm]long UID)
+        public ActionResult post([FromForm] string cmd,[FromForm]long UID)
         {
             if(UID!=0)
             {
                 if (Download.CancelDownload(UID))
                 {
-                    
-                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"已取消UID[{UID}]的录制任务", $"已取消UID[{UID}]的录制任务");
+
+                    return Content(MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"已取消UID[{UID}]的录制任务", $"已取消UID[{UID}]的录制任务"), "application/json");
                 }
                 else
                 {
-                    return MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"取消UID[{UID}]的录制任务出现未知问题，取消失败", $"取消UID[{UID}]的录制任务出现未知问题，取消失败", MessageBase.code.OperationFailed);
+                    return Content(MessageBase.Success(nameof(Rec_RecordCompleteInfon), $"取消UID[{UID}]的录制任务出现未知问题，取消失败", $"取消UID[{UID}]的录制任务出现未知问题，取消失败", MessageBase.code.OperationFailed), "application/json");
                 }
                 
             }
             else
             {
-                return MessageBase.Success(nameof(Rec_RecordCompleteInfon), "输入的UID不正确","输入的UID不正确",MessageBase.code.UIDFailed);
+                return Content(MessageBase.Success(nameof(Rec_RecordCompleteInfon), "输入的UID不正确","输入的UID不正确",MessageBase.code.UIDFailed), "application/json");
             }
            
         }

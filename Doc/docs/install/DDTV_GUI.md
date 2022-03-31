@@ -13,7 +13,7 @@ DDTV功能反馈讨论群:`338182356`
 DDTV_GUI本体是免安装的，把下载下来的压缩包解压到任意位置即可  
 ### 运行环境准备  
 >DDTV_GUI依赖于`.NET Desktop Runtime 6.0`环境运行，请先安装`.NET Desktop Runtime 6.0`：  
->请在[微软官方下载地址](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.1-windows-x64-installer)进行环境的下载和安装  
+>请在[微软官方下载地址](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.3-windows-x64-installer)进行环境的下载和安装  
 
 
 ## 3.启动&初始化

@@ -45,9 +45,9 @@ namespace DDTV_WEB_Server.Controllers
     public class LoginErrer : ControllerBase
     {
         [HttpGet(Name = "LoginErrer")]
-        public string get()
+        public ActionResult get()
         {
-            return MessageBase.Success(nameof(LoginErrer), "WEBµÇÂ½Ê§Ð§ÇëÖØÐÂµÇÂ½", "WEBµÇÂ½Ê§Ð§ÇëÖØÐÂµÇÂ½", MessageBase.code.LoginInfoFailure);
+            return Content(MessageBase.Success(nameof(LoginErrer), "WEBµÇÂ½Ê§Ð§ÇëÖØÐÂµÇÂ½", "WEBµÇÂ½Ê§Ð§ÇëÖØÐÂµÇÂ½", MessageBase.code.LoginInfoFailure), "application/json");
         }
     }
     [Route("api/[controller]")]
@@ -56,9 +56,9 @@ namespace DDTV_WEB_Server.Controllers
     public class AuthenticationFailed : ControllerBase
     {
         [HttpGet(Name = "AuthenticationFailed")]
-        public string get(MessageBase.code code,string message)
+        public ActionResult get(MessageBase.code code,string message)
         {
-            return MessageBase.Success(nameof(LoginErrer), message, message, code);
+            return Content(MessageBase.Success(nameof(LoginErrer), message, message, code), "application/json");
         }
     }
 }
