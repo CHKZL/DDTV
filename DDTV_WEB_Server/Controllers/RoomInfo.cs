@@ -9,7 +9,7 @@ namespace DDTV_WEB_Server.Controllers
     public class Room_AllInfo : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_AllInfo")]
-        public string Post([FromForm] string cmd)
+        public ActionResult Post([FromForm] string cmd)
         {
             //Response.ContentType = "application/json";
             
@@ -69,39 +69,39 @@ namespace DDTV_WEB_Server.Controllers
                     DownloadingList=null,
                 });
             }
-           
-            return MessageBase.Success(nameof(Room_AllInfo), roomInfos);
+
+            return Content(MessageBase.Success(nameof(Room_AllInfo), roomInfos), "application/json");
         }
     }
     public class Room_Add : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_Add")]
-        public string Post([FromForm] long uid, [FromForm] string cmd)
+        public ActionResult Post([FromForm] long uid, [FromForm] string cmd)
         {
             int RoomId = int.Parse(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
             DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(uid, RoomId, "", true);
-            return MessageBase.Success(nameof(Room_Add), "添加完成");
+            return Content(MessageBase.Success(nameof(Room_Add), "添加完成"), "application/json");
         }
     }
     public class Room_Del : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_Del")]
-        public string Post([FromForm] long uid, [FromForm] string cmd)
+        public ActionResult Post([FromForm] long uid, [FromForm] string cmd)
         {
             if(RoomConfig.DeleteRoom(uid))
             {
-                return MessageBase.Success(nameof(Room_Del), "删除完成");
+                return Content(MessageBase.Success(nameof(Room_Del), "删除完成"), "application/json");
             }
             else
             {
-                return MessageBase.Success(nameof(Room_Del), "该房间不存在或出现未知错误，删除失败", "该房间不存在或出现未知错误，删除失败",MessageBase.code.APIAuthenticationFailed);
+                return Content(MessageBase.Success(nameof(Room_Del), "该房间不存在或出现未知错误，删除失败", "该房间不存在或出现未知错误，删除失败",MessageBase.code.APIAuthenticationFailed), "application/json");
             }         
         }
     }
     public class Room_AutoRec : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_AutoRec")]
-        public string Post([FromForm] long uid, [FromForm] bool IsAutoRec, [FromForm] string cmd)
+        public ActionResult Post([FromForm] long uid, [FromForm] bool IsAutoRec, [FromForm] string cmd)
         {
             RoomConfigClass.RoomCard roomCard = new RoomConfigClass.RoomCard()
             {
@@ -115,18 +115,18 @@ namespace DDTV_WEB_Server.Controllers
                 {
                     Download.AddDownloadTaskd(uid, true);
                 }
-                return MessageBase.Success(nameof(Room_AutoRec), "已" + (IsAutoRec ? "打开" : "关闭") + $"UID为{uid}的房间开播自动录制");
+                return Content(MessageBase.Success(nameof(Room_AutoRec), "已" + (IsAutoRec ? "打开" : "关闭") + $"UID为{uid}的房间开播自动录制"), "application/json");
             }
             else
             {
-                return MessageBase.Success(nameof(Room_AutoRec), $"修改UID为{uid}的开播自动录制出现问题，修改失败", $"修改UID为{uid}的开播自动录制出现问题，修改失败",MessageBase.code.OperationFailed);
+                return Content(MessageBase.Success(nameof(Room_AutoRec), $"修改UID为{uid}的开播自动录制出现问题，修改失败", $"修改UID为{uid}的开播自动录制出现问题，修改失败",MessageBase.code.OperationFailed), "application/json");
             }
         }
     }
     public class Room_DanmuRec : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_DanmuRec")]
-        public string Post([FromForm] long uid, [FromForm] bool IsRecDanmu, [FromForm] string cmd)
+        public ActionResult Post([FromForm] long uid, [FromForm] bool IsRecDanmu, [FromForm] string cmd)
         {
             RoomConfigClass.RoomCard roomCard = new RoomConfigClass.RoomCard()
             {
@@ -135,11 +135,11 @@ namespace DDTV_WEB_Server.Controllers
             };
             if (RoomConfig.ReviseRoom(roomCard, false, 6))
             {
-                return MessageBase.Success(nameof(Room_DanmuRec), "已" + (IsRecDanmu ? "打开" : "关闭") + $"UID为{uid}的弹幕录制");
+                return Content(MessageBase.Success(nameof(Room_DanmuRec), "已" + (IsRecDanmu ? "打开" : "关闭") + $"UID为{uid}的弹幕录制"), "application/json");
             }
             else
             {
-                return MessageBase.Success(nameof(Room_DanmuRec), $"修改UID为{uid}的弹幕录制出现问题，修改失败", $"修改UID为{uid}的弹幕录制出现问题，修改失败", MessageBase.code.OperationFailed);
+                return Content(MessageBase.Success(nameof(Room_DanmuRec), $"修改UID为{uid}的弹幕录制出现问题，修改失败", $"修改UID为{uid}的弹幕录制出现问题，修改失败", MessageBase.code.OperationFailed), "application/json");
             }
         }
     }

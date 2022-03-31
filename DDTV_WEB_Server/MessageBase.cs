@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace DDTV_WEB_Server
 {
@@ -19,8 +19,8 @@ namespace DDTV_WEB_Server
                 data = data,
                 massage = massage
             };
-            //string B = JsonConvert.SerializeObject(pack);
-            string B= JsonSerializer.Serialize(pack);
+            string B = JsonConvert.SerializeObject(pack);
+            //string B= JsonSerializer.Serialize<pack<T>>(pack);
             return B;
         }
         /// <summary>

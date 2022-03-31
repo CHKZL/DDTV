@@ -12,9 +12,9 @@ namespace DDTV_WEB_Server.Controllers
     public class File_GetAllFileList : ProcessingControllerBase.ApiControllerBase
     {   
         [HttpPost(Name = "File_GetAllFileList")]
-        public string post([FromForm] string cmd)
-        {        
-            return MessageBase.Success(nameof(File_GetAllFileList), DDTV_Core.Tool.DownloadList.GetRecFileList());
+        public ActionResult post([FromForm] string cmd)
+        {
+            return Content(MessageBase.Success(nameof(File_GetAllFileList), DDTV_Core.Tool.DownloadList.GetRecFileList()), "application/json");
         }   
     }
     /// <summary>
@@ -25,7 +25,7 @@ namespace DDTV_WEB_Server.Controllers
     public class File_GetTypeFileList : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "File_GetTypeFileList")]
-        public string post([FromForm] string cmd)
+        public ActionResult post([FromForm] string cmd)
         {
             ArrayList arrayList = DDTV_Core.Tool.DownloadList.GetRecFileList();
            
@@ -62,7 +62,7 @@ namespace DDTV_WEB_Server.Controllers
             typeFileList.fileLists.Add(xmlList);
             typeFileList.fileLists.Add(csvList);
             typeFileList.fileLists.Add(otherList);
-            return MessageBase.Success(nameof(File_GetTypeFileList), typeFileList);
+            return Content(MessageBase.Success(nameof(File_GetTypeFileList), typeFileList), "application/json");
         }
     }
     public class TypeFileList

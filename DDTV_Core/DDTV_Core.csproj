@@ -6,15 +6,20 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyVersion></AssemblyVersion>
-    <FileVersion>3.0.1.1</FileVersion>
+    <FileVersion>3.0.2.0</FileVersion>
     <Authors>ami</Authors>
-    <Version>3.0.2.0</Version>
-    <Description>这是DDTV3.0的核心库，详细内容请查看DDTV官网
-ddtv.pro</Description>
+    <Version>3.0.2.1</Version>
+    <Description>这是DDTV3.0的核心库，提供如无人值守、稳定的开播自动录制功能；
+并且对主播开播中任何断流导致的文件分段提供自动合并功能，如果需要也能进行录制完成后自动转码功能
+
+更多详细内容请到DDTV官网ddtv.pro进行查看</Description>
     <RepositoryUrl>https://github.com/CHKZL/DDTV</RepositoryUrl>
     <Copyright></Copyright>
     <PackageTags></PackageTags>
     <OutputType>Library</OutputType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>DDTV.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/CHKZL/DDTV</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,6 +28,14 @@ ddtv.pro</Description>
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="F:\DDTV.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="F:\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
