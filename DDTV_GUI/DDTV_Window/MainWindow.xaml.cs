@@ -953,9 +953,9 @@ namespace DDTV_GUI.DDTV_Window
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, Message, false, null, false);
             }
         }
-        
+
         /// <summary>
-        /// 下载窗口鼠标右键菜单_快速切片
+        /// 下载窗口鼠标右键菜单_激光切片
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -971,9 +971,15 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     if(roomInfo.DownloadingList.Count>0)
                     {
+                        
                         FileInfo[] fileInfos = new FileInfo[roomInfo.DownloadingList.Count];
                         for(int i=0;i< roomInfo.DownloadingList.Count;i++)
                         {
+                            if(roomInfo.DownloadingList[i].FlvSplit)
+                            {
+                                Growl.WarningGlobal("该任务已启动自动分P功能，无法使用激光切片");
+                                return;
+                            }
                             fileInfos[i] = new FileInfo(roomInfo.DownloadingList[i].FileName);
                         }
                         

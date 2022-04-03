@@ -40,7 +40,8 @@ namespace DDTV_Core.Tool.TranscodModule
                 }
                 else
                 {
-                    process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\""+ transcodClass.AfterFilePath.Replace(".flv",".mp4")+ "\"").Replace("{Before}", "\""+transcodClass.BeforeFilePath+ "\"");
+                    transcodClass.AfterFilePath = transcodClass.AfterFilePath.Replace(".flv", ".mp4");
+                    process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\""+ transcodClass.AfterFilePath+ "\"").Replace("{Before}", "\""+transcodClass.BeforeFilePath+ "\"");
                 }
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;

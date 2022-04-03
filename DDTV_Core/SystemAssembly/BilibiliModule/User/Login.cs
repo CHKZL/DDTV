@@ -7,6 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using System.Drawing;
+using SkiaSharp;
+using System.IO;
+using static BiliAccount.Core.ByQRCode;
+using DDTV_Core.Tool;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
@@ -16,29 +21,35 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
         {
             public static bool QRLoing(InitDDTV_Core.SatrtType satrtType)
             {
+               
                 Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "开始生成登陆QR码");
                 QR.QRInit(satrtType);
+                bool F = true;
                 do
                 {
                     if (string.IsNullOrEmpty(BilibiliUserConfig.account.csrf)||string.IsNullOrEmpty(BilibiliUserConfig.account.uid)||string.IsNullOrEmpty(BilibiliUserConfig.account.cookie)||BilibiliUserConfig.account.ExTime<DateTime.UtcNow)
                     {
-                        switch (satrtType)
+                        if (F)
                         {
-                            case InitDDTV_Core.SatrtType.DDTV_Core:
-                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，请用bilibili手机客户端扫描[./BiliQR.png]进行登录");
-                                break;
-                            case InitDDTV_Core.SatrtType.DDTV_CLI:
-                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，请打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
-                                break;
-                            case InitDDTV_Core.SatrtType.DDTV_GUI:
-                                return false;
-                            break;
-                            case InitDDTV_Core.SatrtType.DDTV_WEB:
-                                Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "等待登陆中，访问" + "[http://本设备IP地址:11419/api/loginqr]查看二维码，或打开DDTV根目录中生成的[./BiliQR.png]文件，并使用bilibili手机客户端扫描进行登录");
-                                break;
-                            default:
-                                break;
-                        }    
+                            F = !F;
+                            Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, $"启动登陆流程，等待登陆，登陆类型为:{satrtType}");
+                            switch (satrtType)
+                            {
+                                case InitDDTV_Core.SatrtType.DDTV_Core:
+                                    Console.WriteLine("等待登陆中，请用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误，请打开文件[./BiliQR.png]进行登录");
+                                    break;
+                                case InitDDTV_Core.SatrtType.DDTV_CLI:
+                                    Console.WriteLine("等待登陆中，请用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误，请打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
+                                    break;
+                                case InitDDTV_Core.SatrtType.DDTV_GUI:
+                                    return false;
+                                case InitDDTV_Core.SatrtType.DDTV_WEB:
+                                    Console.WriteLine("等待登陆中，访问" + "[http://本设备IP地址:11419/api/loginqr]查看二维码\r\n或者使用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
                     Thread.Sleep(5000);
                     }
                 } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
@@ -50,25 +61,38 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
         {
             public static void QRInit(InitDDTV_Core.SatrtType satrtType)
             {
-                switch(satrtType)
+                QR_Object sKData;
+                switch (satrtType)
                 {
                     case InitDDTV_Core.SatrtType.DDTV_GUI:
-                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                        break;
+                        {
+                            ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                            QR_Object GUI = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
+                            sKData = GUI;
+                            break;
+                        }
                     default:
-                        AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
-                        ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                        ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
-                        ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-                        break;
+                        {
+                            ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                            ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                            QR_Object DEF = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
+                            sKData=DEF;
+                            break;
+                        }
                 }
-               
+                QRConsole.Output(sKData.OriginalString);
+                using (var stream = File.OpenWrite(@"QRCode.png"))
+                {
+                    sKData.SKData.SaveTo(stream);
+                }
             }
 
-            private static void ByQRCode_QrCodeRefresh(System.Drawing.Bitmap newQrCode)
+            private static void ByQRCode_QrCodeRefresh(QR_Object newQrCode)
             {
-                newQrCode.Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
+                using (var stream = File.OpenWrite("./BiliQR.png"))
+                {
+                    newQrCode.SKData.SaveTo(stream);
+                }
             }
 
             private static void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, Account account)

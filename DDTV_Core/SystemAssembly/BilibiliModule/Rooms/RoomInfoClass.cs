@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
@@ -259,6 +260,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public List<Downloads> DownloadingList { set; get; } = new List<Downloads>();
             /// <summary>
+            /// 是否被用户取消操作
+            /// </summary>
+            public bool IsUserCancel { set; get; }=false;
+            /// <summary>
             /// 房间历史下载记录
             /// </summary>
             public List<Downloads> DownloadedLog { set; get; } = new List<Downloads>();
@@ -274,6 +279,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 该房间当前的任务时间
             /// </summary>
             public DateTime CreationTime { set; get; } = DateTime.Now; 
+            /// <summary>
+            /// 该房间最近一次完成的下载任务的文件信息
+            /// </summary>
+            public DownloadedFileInfo DownloadedFileInfo { set; get; }=new DownloadedFileInfo();
+            /// <summary>
+            /// 该房间录制完成后会执行的Shell命令
+            /// </summary>
+            public string Shell { set; get; }
         }
         public class RoomWebSocket
         {
@@ -286,6 +299,16 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// WbdScket服务器信息
             /// </summary>
             public API.LiveChatScript.LiveChatListener LiveChatListener { set; get; } = new API.LiveChatScript.LiveChatListener();
+        }
+        public class DownloadedFileInfo
+        {
+
+            public FileInfo FlvFile { set; get; }
+            public FileInfo Mp4File { set; get; }
+            public FileInfo DanMuFile { set; get; }
+            public FileInfo SCFile { set; get; }
+            public FileInfo GuardFile { set; get; }
+            public FileInfo GiftFile { set; get; }
         }
     }
 }
