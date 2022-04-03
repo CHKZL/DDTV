@@ -17,7 +17,8 @@
             "IsAutoRec": false,
             "IsRemind": false,
             "IsRecDanmu": false,
-            "Like": false
+            "Like": false,
+            "Shell": ""
         },
         {
             "name": "AIChannel官方",
@@ -27,7 +28,8 @@
             "IsAutoRec": false,
             "IsRemind": false,
             "IsRecDanmu": false,
-            "Like": false
+            "Like": false,
+            "Shell": ""
         }
     ]
 }
@@ -42,7 +44,8 @@
             "IsAutoRec": false,//开播后是否自动录制
             "IsRemind": false,//开播后是否提醒(DDTV_GUI特有，在WEB中无效)
             "IsRecDanmu": false,//是否录制该房间弹幕(需要打开总弹幕录制开关)
-            "Like": false///特别标注(功能未开发完成，当前无效)
+            "Like": false,///特别标注(功能未开发完成，当前无效)
+            "Shell": ""//该房间录制完成后会执行的Shell命令，详细内容请查看高级功能中详细说明(高级功能，如果不了解请勿随意填写！)
 }
 ```
 

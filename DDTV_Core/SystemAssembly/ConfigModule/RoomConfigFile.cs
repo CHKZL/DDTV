@@ -57,6 +57,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Rooms.RoomInfo[item.UID].IsRemind = (item.IsRemind||item.RemindStatus);
                     Rooms.RoomInfo[item.UID].Like = item.Like;
                     Rooms.RoomInfo[item.UID].IsRecDanmu = item.IsRecDanmu;
+                    Rooms.RoomInfo[item.UID].Shell = item.Shell;
                 }
                 else
                 {
@@ -78,6 +79,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         Like = item.Like,
                         uid = item.UID,
                         IsRecDanmu=item.IsRecDanmu,
+                        Shell = item.Shell,
                     });
                 }
                 DataCache.SetCache(CacheType.uname, item.UID.ToString(), Rooms.RoomInfo[item.UID].uname.ToString(), int.MaxValue);
@@ -109,7 +111,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     name=item.Value.uname,
                     RoomId=item.Value.room_id,
                     UID=item.Value.uid,
-                    IsRecDanmu=item.Value.IsRecDanmu
+                    IsRecDanmu=item.Value.IsRecDanmu,
+                    Shell=item.Value.Shell,
                 });
                 DataCache.SetCache(CacheType.uname, item.Value.uid.ToString(), item.Value.uname.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.Description, item.Value.uid.ToString(), item.Value.Description != null ? item.Value.Description.ToString() : "", int.MaxValue);

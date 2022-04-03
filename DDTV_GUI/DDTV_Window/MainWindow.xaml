@@ -206,7 +206,7 @@
                         </ListView.View>
                         <ListView.ContextMenu>
                             <ContextMenu Width="150">
-                                <MenuItem Header="快速切片" Click="RecList_MenuItem_Clip_Click">
+                                <MenuItem Header="激光切片" Click="RecList_MenuItem_Clip_Click">
                                     <MenuItem.Icon>
                                         <Image Source="/Resources/Img/UI/box_plot.png" Width="18" Height="18"/>
                                     </MenuItem.Icon>

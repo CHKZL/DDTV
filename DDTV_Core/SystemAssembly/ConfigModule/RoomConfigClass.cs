@@ -8,10 +8,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class RoomConfigClass
     {
-       public class RoomList
-        {
-            public List<RoomCard> data { set; get; } = new List<RoomCard>();
-        }
         public class RoomListDiscard
         {
             public List<RoomCardDiscard> data { set; get; } = new List<RoomCardDiscard>();
@@ -49,6 +45,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 优先标记
             /// </summary>
             public bool Like;
+            /// <summary>
+            /// 该房间录制任务后会执行的命令内容
+            /// </summary>
+            public string Shell;
         }
         public class RoomCardDiscard: RoomCard
         {  

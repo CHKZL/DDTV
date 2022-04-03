@@ -62,19 +62,19 @@ namespace DDTV_WEB_Server
                             string NewSig = DDTV_Core.SystemAssembly.EncryptionModule.Encryption.SHA1_Encrypt(Original);
                             if (NewSig != sig)
                             {
-                                filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=sig计算鉴权失败");
+                                filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
                                 return;
                             }
                         }
                         else
                         {
-                            filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=sig计算鉴权失败");
+                            filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
                             return;
                         }
                     }
                     else
                     {
-                        filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=sig计算鉴权失败");
+                        filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
                         return;
                     }
                 }

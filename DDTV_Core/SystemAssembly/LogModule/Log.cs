@@ -22,11 +22,14 @@ namespace DDTV_Core.SystemAssembly.Log
         /// 本地日志的记录
         /// </summary>
         public static List<string> LogList = new();
-
+        /// <summary>
+        /// 新增日志事件
+        /// </summary>
         public static event EventHandler<EventArgs> LogAddEvent;
+        /// <summary>
+        /// 是否启用外部日志事件调用
+        /// </summary>
         public static bool IsEvent = false;
-
-
         /// <summary>
         /// Log系统初始化
         /// </summary>
@@ -101,6 +104,9 @@ namespace DDTV_Core.SystemAssembly.Log
             });
         }
         private static List<LogClass> LogDBClasses = new List<LogClass>();
+        /// <summary>
+        /// 启用sqlite数据库写入
+        /// </summary>
         private static void WeritDB()
         {
             Task.Run(() => {
@@ -126,7 +132,7 @@ namespace DDTV_Core.SystemAssembly.Log
         }
         private static List<LogClass> logClasses = new List<LogClass>();
         /// <summary>
-        /// 错误日志
+        /// 增加错误日志
         /// </summary>
         /// <param name="Source"></param>
         /// <param name="Message"></param>
@@ -134,7 +140,9 @@ namespace DDTV_Core.SystemAssembly.Log
         {
             logClasses.Add(logClass);     
         }
-       
+        /// <summary>
+        /// 写错误日志堆栈详情到本地文本
+        /// </summary>
         private static void WriteErrorLogFile()
         {
             Task.Run(() => {

@@ -88,13 +88,28 @@ namespace DDTV_Core.Tool
         /// <returns></returns>
         public static string ReplaceKeyword(long uid, string Text)
         {
-            return Text
+            Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo);
+
+            if (roomInfo.DownloadedFileInfo.FlvFile != null)
+                Text = Text.Replace("{FlvFile}", roomInfo.DownloadedFileInfo.FlvFile.FullName);
+            if (roomInfo.DownloadedFileInfo.Mp4File != null)
+                Text = Text.Replace("{MP4File}", roomInfo.DownloadedFileInfo.Mp4File.FullName);
+            if (roomInfo.DownloadedFileInfo.DanMuFile != null)
+                Text = Text.Replace("{DanMuFile}", roomInfo.DownloadedFileInfo.DanMuFile.FullName);
+            if (roomInfo.DownloadedFileInfo.SCFile != null)
+                Text = Text.Replace("{SCFile}", roomInfo.DownloadedFileInfo.SCFile.FullName);
+            if (roomInfo.DownloadedFileInfo.GuardFile != null)
+                Text = Text.Replace("{GuardFile}", roomInfo.DownloadedFileInfo.GuardFile.FullName);
+            if (roomInfo.DownloadedFileInfo.GiftFile != null)
+                Text = Text.Replace("{GiftFile}", roomInfo.DownloadedFileInfo.GiftFile.FullName);
+            Text = Text
                 .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
                 .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
                 .Replace("{DATE}", DateTime.Now.ToString("yyMMdd"))
                 .Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss"))
                 .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
                 .Replace("{R}", new Random().Next(1000, 9999).ToString());
+            return Text;
         }
         /// <summary>
         /// 在指定路径中创建所有目录

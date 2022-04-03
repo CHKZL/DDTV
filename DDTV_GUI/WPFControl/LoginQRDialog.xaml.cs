@@ -3,6 +3,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.Log;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,6 +20,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static BiliAccount.Core.ByQRCode;
 
 namespace DDTV_GUI.WPFControl
 {
@@ -37,13 +39,13 @@ namespace DDTV_GUI.WPFControl
             ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; 
             //ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
 
-            LoginQR.Source = ChangeBitmapToImageSource(ByQRCode.LoginByQrCode());
+            LoginQR.Source = ChangeBitmapToImageSource(ByQRCode.LoginByQrCode().SKData);
             
         }
 
-        private void ByQRCode_QrCodeRefresh(Bitmap newQrCode)
+        private void ByQRCode_QrCodeRefresh(QR_Object newQrCode)
         {
-            LoginQR.Source = ChangeBitmapToImageSource(newQrCode);
+            LoginQR.Source = ChangeBitmapToImageSource(newQrCode.SKData);
         }
 
         private void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, BiliAccount.Account account = null)
@@ -70,8 +72,9 @@ namespace DDTV_GUI.WPFControl
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
 
-        public static ImageSource ChangeBitmapToImageSource(Bitmap bitmap)
+        public static ImageSource ChangeBitmapToImageSource(SKData AT)
         {
+            Bitmap bitmap = new Bitmap(AT.AsStream());
             IntPtr hBitmap = bitmap.GetHbitmap();
             ImageSource wpfBitmap = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                 hBitmap,

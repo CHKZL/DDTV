@@ -57,6 +57,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     foreach (var item in roomInfo.DownloadingList)
                     {
+                        roomInfo.IsUserCancel = true;
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
                         item.Cancel();
                         return true;
@@ -92,6 +93,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     Thread.Sleep(500);
                 } while (roomInfo.IsCliping);
+                roomInfo.IsUserCancel = false;
                 if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
                     DefaultPath = DefaultPath + "/";
                 string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + $"{DefaultFileName}" + "_{R}.flv");
@@ -141,6 +143,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     string SunFileName = Tool.FlvModule.Sum.FlvFileSum(roomInfo, OkFileName);
                     if (!string.IsNullOrEmpty(SunFileName))
                     {
+                        roomInfo.DownloadedFileInfo.FlvFile = new FileInfo(SunFileName);
                         FileList.Add(SunFileName);
                     }
                 }
@@ -153,12 +156,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             if (!string.IsNullOrEmpty(item))
                             {
-                                Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
+                                var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                                 {
                                     AfterFilenameExtension = ".mp4",
                                     BeforeFilePath = item,
                                     AfterFilePath = item,
                                 });
+                                roomInfo.DownloadedFileInfo.FlvFile = new FileInfo(tm.AfterFilePath);
                             }
                         }
                     }
@@ -211,7 +215,20 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         DownloadCompleted.Invoke(downloads, EventArgs.Empty);
                     }
-
+                    if(!string.IsNullOrEmpty(roomInfo.Shell))
+                    {
+                        Console.WriteLine($"{roomInfo.uname}直播间录制完成，开始执行预设的Shell命令");
+                        Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, roomInfo.Shell, false, null, false);
+                        try
+                        {
+                            Tool.SystemResource.ExternalCommand.Shell(roomInfo.Shell);
+                            Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成");
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Log.AddLog("Shell", Log.LogClass.LogType.Error, "Shell命令执行失败！详细堆栈信息已写入日志。",true, e, true);
+                        } 
+                    }
                     string EndText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})录制任务完成:\n===================\n" +
                                $"直播间:{roomInfo.room_id}\n" +
                                $"UID:{roomInfo.uid}\n" +
@@ -306,6 +323,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             DownloadCompleteTaskd(uid, IsFlvSplit);
                             return;
                         }
+                        else if (Ok == -2)
+                        {
+                            Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                            DownloadCompleteTaskd(uid, IsFlvSplit);
+                            return;
+                        }
                         else
                         {
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
@@ -348,6 +371,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             int conut = 0;
             while (true)
             {
+                if(roomInfo.IsUserCancel)
+                {
+                    roomInfo.IsUserCancel = !roomInfo.IsUserCancel;
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"检测到用户取消请求，放弃继续监听网络文件状态请求");
+                    return -2;
+                }
                 if (Rooms.GetValue(roomInfo.uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                 {
                     if (Tool.FileOperation.IsExistsNetFile(Url))
