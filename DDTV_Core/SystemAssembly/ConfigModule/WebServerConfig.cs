@@ -1,10 +1,13 @@
-﻿using DDTV_Core.SystemAssembly.ConfigModule;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DDTV_WEB_Server
+namespace DDTV_Core.SystemAssembly.ConfigModule
 {
-    public class RuntimeConfig
+    public class WebServerConfig
     {
-        public static bool IsSSL = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WEB_API_SSL, "false", CoreConfigClass.Group.WEB_API));
         private static string _pfxFileName = string.Empty;
         private static string _pfxPasswordFileName = string.Empty;
         private static string _WebUserName = string.Empty;
@@ -14,6 +17,10 @@ namespace DDTV_WEB_Server
         private static string _AccessKeySecret = string.Empty;
         private static string _ServerAID = string.Empty;
         private static string _ServerName = string.Empty;
+        public static bool IsSSL = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WEB_API_SSL, "false", CoreConfigClass.Group.WEB_API));
+        public static string AccessControlAllowOrigin = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowOrigin, "*", CoreConfigClass.Group.WEB_API);
+        public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "true", CoreConfigClass.Group.WEB_API);
+        public static string CookieDomain = CoreConfig.GetValue(CoreConfigClass.Key.CookieDomain, string.Empty, CoreConfigClass.Group.WEB_API);
 
         public static string pfxFileName
         {
@@ -65,12 +72,12 @@ namespace DDTV_WEB_Server
                 CoreConfig.SetValue(CoreConfigClass.Key.WebUserName, _WebUserName, CoreConfigClass.Group.WEB_API);
             }
         }
-       
+
         public static string WebPassword
         {
             get
             {
-                if(string.IsNullOrEmpty(_WebPassword))
+                if (string.IsNullOrEmpty(_WebPassword))
                 {
                     _WebPassword = CoreConfig.GetValue(CoreConfigClass.Key.WebPassword, "ddtv", CoreConfigClass.Group.WEB_API);
                 }
@@ -78,16 +85,16 @@ namespace DDTV_WEB_Server
             }
             set
             {
-                _WebPassword=value;
+                _WebPassword = value;
                 CoreConfig.SetValue(CoreConfigClass.Key.WebPassword, _WebPassword, CoreConfigClass.Group.WEB_API);
             }
         }
-      
+
         public static string Cookis
         {
             get
             {
-                if(string.IsNullOrEmpty(_Cookis))
+                if (string.IsNullOrEmpty(_Cookis))
                 {
                     _Cookis = Guid.NewGuid().ToString();
                 }
@@ -95,7 +102,7 @@ namespace DDTV_WEB_Server
             }
             set
             {
-                _Cookis= value;
+                _Cookis = value;
             }
         }
         public static string AccessKeyId

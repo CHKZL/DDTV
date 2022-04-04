@@ -37,8 +37,8 @@ namespace DDTV_WEB_Server.Controllers
             {
                 DDTVCore_Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(),
                 Room_Quantity = Rooms.RoomInfo.Count,
-                ServerAID = RuntimeConfig.ServerAID,
-                ServerName = RuntimeConfig.ServerName,
+                ServerAID = WebServerConfig.ServerAID,
+                ServerName = WebServerConfig.ServerName,
                 os_Info = new OS_Info()
                 {
                     Associated_Users = Environment.UserName,
@@ -189,7 +189,7 @@ namespace DDTV_WEB_Server.Controllers
                     Memory = GetMemInfo.GetWindows(),
                     Platform = "Windows"
                 };
-                string DriveLetter = Path.GetFullPath(DDTV_Core.SystemAssembly.DownloadModule.Download.DefaultPath)[..1];
+                string DriveLetter = Path.GetFullPath(DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadPath)[..1];
                 systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
             }
             return Content(MessageBase.Success(nameof(System_Resources), systemResourceClass), "application/json");

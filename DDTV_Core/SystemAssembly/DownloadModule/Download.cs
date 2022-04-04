@@ -19,9 +19,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 {
     public class Download
     {
-        public static string DefaultPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "./Rec/", CoreConfigClass.Group.Download);
-        public static string DefaultDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
-        public static string DefaultFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}", CoreConfigClass.Group.Download);
+        public static string DownloadPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "./Rec/", CoreConfigClass.Group.Download);
+        public static string DownloadDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
+        public static string DownloadFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}", CoreConfigClass.Group.Download);
         public static string TmpPath = CoreConfig.GetValue(CoreConfigClass.Key.TmpPath, "./tmp/", CoreConfigClass.Group.Download);
         public static int RecQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.RecQuality, "10000", CoreConfigClass.Group.Download));
         public static bool IsRecDanmu = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsRecDanmu, "true", CoreConfigClass.Group.Download));
@@ -94,9 +94,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     Thread.Sleep(500);
                 } while (roomInfo.IsCliping);
                 roomInfo.IsUserCancel = false;
-                if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
-                    DefaultPath = DefaultPath + "/";
-                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}" + $"{DefaultDirectoryName}" + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + $"{DefaultFileName}" + "_{R}.flv");
+                if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
+                    DownloadPath = DownloadPath + "/";
+                string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + $"{DownloadFileName}" + "_{R}.flv");
 
                 //弹幕录制结束处理
                 if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
@@ -162,7 +162,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     BeforeFilePath = item,
                                     AfterFilePath = item,
                                 });
-                                roomInfo.DownloadedFileInfo.FlvFile = new FileInfo(tm.AfterFilePath);
+                                roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
                             }
                         }
                     }
@@ -215,20 +215,29 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         DownloadCompleted.Invoke(downloads, EventArgs.Empty);
                     }
-                    if(!string.IsNullOrEmpty(roomInfo.Shell))
+
+                    #region 房间Shell命令
+                    if (!string.IsNullOrEmpty(roomInfo.Shell))
                     {
                         Console.WriteLine($"{roomInfo.uname}直播间录制完成，开始执行预设的Shell命令");
-                        Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, roomInfo.Shell, false, null, false);
-                        try
+                        Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" +roomInfo.Shell, false, null, false);
+                        Task.Run(() =>
                         {
-                            Tool.SystemResource.ExternalCommand.Shell(roomInfo.Shell);
-                            Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成");
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Log.AddLog("Shell", Log.LogClass.LogType.Error, "Shell命令执行失败！详细堆栈信息已写入日志。",true, e, true);
-                        } 
+                            try
+                            {
+                                string Shell = Tool.FileOperation.ReplaceKeyword(uid, roomInfo.Shell);
+                                string result = Tool.SystemResource.ExternalCommand.Shell(Shell);
+                                Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成，执行返回结果:\n{result}");
+                                Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令结束，返回信息:{result}", false, null, false);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Log.AddLog("Shell", Log.LogClass.LogType.Error, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令失败！详细堆栈信息已写入日志。", true, e, true);
+                            }
+                        });
                     }
+                    #endregion
+
                     string EndText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})录制任务完成:\n===================\n" +
                                $"直播间:{roomInfo.room_id}\n" +
                                $"UID:{roomInfo.uid}\n" +
@@ -298,10 +307,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 $"===================";
                             Console.WriteLine(StarText);
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n", "　"), false, null, false);
-                            if (DefaultPath.Substring(DefaultPath.Length - 1, 1) != "/")
-                                DefaultPath = DefaultPath + "/";
-                            string Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultPath}{DefaultDirectoryName}");
-                            string FileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DefaultFileName}" + "_{R}");
+                            if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
+                                DownloadPath = DownloadPath + "/";
+                            string Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}{DownloadDirectoryName}");
+                            string FileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}" + "_{R}");
                             //执行下载任务
                             downloadClass.FilePath = Path;
                             downloadClass.FlvSplit = IsFlvSplit;

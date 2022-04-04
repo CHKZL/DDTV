@@ -26,9 +26,9 @@ namespace DDTV_GUI.UpdateInterface
             int _LiveBroadcastingCount = 0;
             int _RecCompleteCount = 0;
             int _MonitoringCount = Rooms.RoomInfo.Count;
-            string _SavePathName = Download.DefaultPath.Split(':').Length>1?Download.DefaultPath.Split(':')[0]:Path.GetFullPath(Download.DefaultPath).Split(':')[0];
+            string _SavePathName = Download.DownloadPath.Split(':').Length>1?Download.DownloadPath.Split(':')[0]:Path.GetFullPath(Download.DownloadPath).Split(':')[0];
             string _SavePathSize = DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_SavePathName,2))+"/"+ DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_SavePathName, 1));
-            string _TmpPathName = Download.DefaultPath.Split(':').Length > 1 ? Download.DefaultPath.Split(':')[0] : Path.GetFullPath(Download.DefaultPath).Split(':')[0];
+            string _TmpPathName = Download.DownloadPath.Split(':').Length > 1 ? Download.DownloadPath.Split(':')[0] : Path.GetFullPath(Download.DownloadPath).Split(':')[0];
             string _TmpPathSize = DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_TmpPathName, 2)) + "/" + DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_TmpPathName, 1));
 
             foreach (var A1 in Rooms.RoomInfo)

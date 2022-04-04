@@ -210,11 +210,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             ClientAID,
             /// <summary>
-            /// 是否需要初始化
-            /// 组：  默认值：
-            /// </summary>
-            InitializationStatus,
-            /// <summary>
             /// DDTVGUI缩放是否隐藏到托盘
             /// 组：GUI       默认值：false
             /// </summary>
@@ -239,6 +234,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             CookieDomain,
+            /// <summary>
+            /// 用于控制下载完成后是否执行对应房间的Shell命令（布尔值）
+            /// 组：Download   默认值：false
+            /// </summary>
+            Shell,
         }
     }
 }

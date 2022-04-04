@@ -13,9 +13,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     {
         public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "true", CoreConfigClass.Group.Core));
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
-        public static string AccessControlAllowOrigin = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowOrigin, "*", CoreConfigClass.Group.WEB_API);
-        public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "true", CoreConfigClass.Group.WEB_API);
-        public static string CookieDomain = CoreConfig.GetValue(CoreConfigClass.Key.CookieDomain, string.Empty, CoreConfigClass.Group.WEB_API);
+        public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "true", CoreConfigClass.Group.Download));
+        public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "false", CoreConfigClass.Group.Download));
+        
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -25,6 +25,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             CoreConfigFile.ReadConfigFile();
             //初始化读取房间配置
             RoomConfigFile.ReadRoomConfigFile();
+            //预生成所有配置项
+            BuildConfig();
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:
@@ -70,6 +72,45 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Thread.Sleep(10 * 1000);
                 }
             });
+        }
+        /// <summary>
+        /// 生成所有配置项，用户打开配置文件时配置信息缺失
+        /// </summary>
+        public static void BuildConfig()
+        {
+            var _RoomFile = DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.RoomFile;
+            var _DownloadPath = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadPath;
+            var _TmpPath= DDTV_Core.SystemAssembly.DownloadModule.Download.TmpPath;
+            var _DownloadDirectoryName= DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadDirectoryName;
+            var _DownloadFileName = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadFileName;
+            var _TranscodParmetrs = DDTV_Core.Tool.TranscodModule.Transcod.TranscodParmetrs;
+            var _IsAutoTranscod = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
+            var _WEB_API_SSL= DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.IsSSL;
+            var _pfxFileName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.pfxFileName;
+            var _pfxPasswordFileName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.pfxPasswordFileName;
+            var _GUI_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.GUI_FirstStart;
+            var _WEB_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WEB_FirstStart;
+            var _RecQuality = DDTV_Core.SystemAssembly.DownloadModule.Download.RecQuality;
+            var _PlayQuality = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.PlayQuality;
+            var _IsRecDanmu = DDTV_Core.SystemAssembly.DownloadModule.Download.IsRecDanmu;
+            var _IsRecGift = DDTV_Core.SystemAssembly.DownloadModule.Download.IsRecGift;
+            var _IsRecGuard = DDTV_Core.SystemAssembly.DownloadModule.Download.IsRecGuard;
+            var _IsRecSC = DDTV_Core.SystemAssembly.DownloadModule.Download.IsRecSC;
+            var _IsFlvSplit = DDTV_Core.SystemAssembly.DownloadModule.Download.IsFlvSplit;
+            var _FlvSplitSize = DDTV_Core.SystemAssembly.DownloadModule.Download.FlvSplitSize;
+            var _WebUserName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.WebUserName;
+            var _WebPassword = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.WebPassword;
+            var _AccessKeyId = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessKeyId;
+            var _AccessKeySecret = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessKeySecret;
+            var _ServerAID = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.ServerAID;
+            var _ServerName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.ServerName;
+            var _HideIconState = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.HideIconState;
+            var _DefaultVolume = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DefaultVolume;
+            var _AccessControlAllowOrigin = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessControlAllowOrigin;
+            var _AccessControlAllowCredentials = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessControlAllowCredentials;
+            var _IsDoNotSleepState = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDoNotSleepState;
+            var _CookieDomain = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.CookieDomain;
+            var _Shell = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Shell;
         }
         /// <summary>
         /// 获取配置
