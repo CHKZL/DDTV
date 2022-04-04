@@ -59,8 +59,4 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\BiliAccount\BiliAccount.csproj" />
-  </ItemGroup>
-
 </Project>
