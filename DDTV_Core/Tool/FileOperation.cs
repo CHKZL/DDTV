@@ -92,16 +92,22 @@ namespace DDTV_Core.Tool
 
             if (roomInfo.DownloadedFileInfo.FlvFile != null)
                 Text = Text.Replace("{FlvFile}", roomInfo.DownloadedFileInfo.FlvFile.FullName);
+
             if (roomInfo.DownloadedFileInfo.Mp4File != null)
                 Text = Text.Replace("{MP4File}", roomInfo.DownloadedFileInfo.Mp4File.FullName);
+
             if (roomInfo.DownloadedFileInfo.DanMuFile != null)
                 Text = Text.Replace("{DanMuFile}", roomInfo.DownloadedFileInfo.DanMuFile.FullName);
+
             if (roomInfo.DownloadedFileInfo.SCFile != null)
                 Text = Text.Replace("{SCFile}", roomInfo.DownloadedFileInfo.SCFile.FullName);
+
             if (roomInfo.DownloadedFileInfo.GuardFile != null)
                 Text = Text.Replace("{GuardFile}", roomInfo.DownloadedFileInfo.GuardFile.FullName);
+
             if (roomInfo.DownloadedFileInfo.GiftFile != null)
                 Text = Text.Replace("{GiftFile}", roomInfo.DownloadedFileInfo.GiftFile.FullName);
+
             Text = Text
                 .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
                 .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
@@ -208,8 +214,8 @@ namespace DDTV_Core.Tool
         private static ArrayList dirs = new();
         public static ArrayList GetRecFileList()
         {
-            dirs.Add(SystemAssembly.DownloadModule.Download.DefaultPath);
-            GetDirs(SystemAssembly.DownloadModule.Download.DefaultPath);
+            dirs.Add(SystemAssembly.DownloadModule.Download.DownloadPath);
+            GetDirs(SystemAssembly.DownloadModule.Download.DownloadPath);
             object[] allDir = dirs.ToArray();
             ArrayList list = new ArrayList();
             foreach (object o in allDir)

@@ -1,6 +1,7 @@
 # DDTV Core通用配置文件
 ## Core配置文件说明
-配置文件`DDTV_Config.ini`为DDTV核心初始化配置文件，在DDTV_GUI和DDTV_WEB_Server中都存在  
+配置文件`DDTV_Config.ini`为DDTV核心初始化配置文件，在DDTV_GUI和DDTV_WEB_Server中都存在   
+配置文件所属的分组必须正确，如果放错了分组，是不会被读取的  
 
 ## 完整的配置文件示例
 :::tip
@@ -9,62 +10,47 @@
 ```ini
 [Core]
 RoomListConfig=./RoomListConfig.json
-ClientAID=cad1c1a170144da2ae60b739f60b2066
+ClientAID=9cc4fd9c-1116-4a92-8428-24a4b83c608d
+GUI_FirstStart=false
+WEB_FirstStart=false
+IsAutoTranscod=True
+TranscodParmetrs=-i {Before} -vcodec copy -acodec copy {After}
 [WEB_API]
 WEB_API_SSL=false
-WEB_API_SSL=false
+AccessControlAllowOrigin=http://127.0.0.1:5500
+AccessControlAllowCredentials=true
 WebUserName=ami
 WebPassword=ddtv
-ServerAID=895fff67-149a-447f-bc7b-129379b4e4f8
+CookieDomain=
+pfxFileName=pfxFileName
+pfxPasswordFileName=pfxPasswordFileName
+AccessKeyId=3fce1282b6104887ba494eaf4f714147
+AccessKeySecret=2f9fda70a48c4b2eb3d60ff07ddc67ab
+ServerAID=e3545f6d-63d9-4898-81dd-9be9c6439d6f
 ServerName=DDTV_Server
 [Download]
-DownloadPath=./Rec/
+DoNotSleepWhileDownloading=true
+DownloadPath=.\Rec
 DownloadDirectoryName={ROOMID}_{NAME}
 DownloadFileName={DATE}_{TIME}_{TITLE}
-TmpPath=./tmp/
+TmpPath=.\Tmp
 RecQuality=10000
 IsRecDanmu=true
 IsRecGift=true
 IsRecGuard=true
 IsRecSC=true
 IsFlvSplit=False
-FlvSplitSize=0
+FlvSplitSize=1073741824
+Shell=false
+[Play]
+DefaultVolume=100
+PlayQuality=250
+[GUI]
+HideIconState=false
+
 ```
 ### 配置说明
 ```csharp
-        /// <summary>
-        /// 配置分组(每个值对应的组是固定的，请勿随意填写)
-        /// </summary>
-        public enum Group
-        {
-            /// <summary>
-            /// 缺省配置组(按道理应该给每个配置都设置组，不应该在缺省组里)
-            /// </summary>
-            Default,
-            /// <summary>
-            /// DDTV_Core运行相关的配置
-            /// </summary>
-            Core,
-            /// <summary>
-            /// 下载系统运行相关的配置
-            /// </summary>
-            Download,
-            /// <summary>
-            /// WEBAPI相关的配置
-            /// </summary>
-            WEB_API,
-            /// <summary>
-            /// 播放器相关设置
-            /// </summary>
-            Play,
-            /// <summary>
-            /// GUI相关设置
-            /// </summary>
-            GUI,
-        }
-        /// <summary>
-        /// 配置键
-        /// </summary>
         public enum Key
         {
             /// <summary>
@@ -208,11 +194,6 @@ FlvSplitSize=0
             /// </summary>
             ClientAID,
             /// <summary>
-            /// 是否需要初始化
-            /// 组：  默认值：
-            /// </summary>
-            InitializationStatus,
-            /// <summary>
             /// DDTVGUI缩放是否隐藏到托盘
             /// 组：GUI       默认值：false
             /// </summary>
@@ -227,6 +208,20 @@ FlvSplitSize=0
             /// 组：WEB_API   默认值：true
             /// </summary>
             AccessControlAllowCredentials,
-
+            /// <summary>
+            /// 用于控制下载时时候阻止系统休眠 (布尔值)
+            /// 组：Download   默认值：true
+            /// </summary>
+            DoNotSleepWhileDownloading,
+            /// <summary>
+            /// 用于控制cookie作用域（字符串）
+            /// 组：WEB_API   默认值：string.Empty
+            /// </summary>
+            CookieDomain,
+            /// <summary>
+            /// 用于控制下载完成后是否执行对应房间的Shell命令（布尔值）
+            /// 组：Download   默认值：false
+            /// </summary>
+            Shell,
         }
 ```

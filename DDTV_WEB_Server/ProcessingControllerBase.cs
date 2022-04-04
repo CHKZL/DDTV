@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using DDTV_Core.SystemAssembly.ConfigModule;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
@@ -45,12 +46,12 @@ namespace DDTV_WEB_Server
                 {
                     if (!string.IsNullOrEmpty(time) || !string.IsNullOrEmpty(cmd) || !string.IsNullOrEmpty(accesskeyid))
                     {
-                        if (accesskeyid == RuntimeConfig.AccessKeyId)
+                        if (accesskeyid == WebServerConfig.AccessKeyId)
                         {
                             Dictionary<string, string> parameters = new Dictionary<string, string>
                         {
                             { "accesskeyid", accesskeyid },
-                            { "accesskeysecret", RuntimeConfig.AccessKeySecret },
+                            { "accesskeysecret", WebServerConfig.AccessKeySecret },
                             { "cmd", cmd.ToLower() },
                             { "time", time }
                         };
@@ -88,7 +89,7 @@ namespace DDTV_WEB_Server
                     }
                     else
                     {
-                        if (cookis != RuntimeConfig.Cookis)
+                        if (cookis != WebServerConfig.Cookis)
                         {
                             LoginErrer(filterContext);
                             return;

@@ -41,7 +41,7 @@ namespace DDTV_Core.Tool
             if (!DoNotSleepWhileDownloadingIsRun && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 DoNotSleepWhileDownloadingIsRun = !DoNotSleepWhileDownloadingIsRun;
-                IsDoNotSleepState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "true", CoreConfigClass.Group.Download));
+                IsDoNotSleepState = CoreConfig.IsDoNotSleepState;
                 Task.Run(() => {
                     while (true)
                     {

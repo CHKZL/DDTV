@@ -49,14 +49,14 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             //    SetAPP(webBuilder);
             //});
             builder.Services.AddSwaggerGen();
-            if (RuntimeConfig.IsSSL)
+            if (WebServerConfig.IsSSL)
             {
                 builder.WebHost.ConfigureKestrel(options =>
                 {
                     options.ConfigureHttpsDefaults(httpsOptions =>
                     {
-                        var certPath = Path.Combine(builder.Environment.ContentRootPath, RuntimeConfig.pfxFileName);
-                        var keyPath = Path.Combine(builder.Environment.ContentRootPath, RuntimeConfig.pfxPasswordFileName);
+                        var certPath = Path.Combine(builder.Environment.ContentRootPath, WebServerConfig.pfxFileName);
+                        var keyPath = Path.Combine(builder.Environment.ContentRootPath, WebServerConfig.pfxPasswordFileName);
                         httpsOptions.ServerCertificate = X509Certificate2.CreateFromPemFile(certPath, keyPath);
                     });
                 });
@@ -79,7 +79,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 RequestPath = new PathString("/static")
             });
             app.Urls.Add("http://0.0.0.0:11419");
-            if (RuntimeConfig.IsSSL)
+            if (WebServerConfig.IsSSL)
             {
                 app.Urls.Add("https://0.0.0.0:11451");
             }

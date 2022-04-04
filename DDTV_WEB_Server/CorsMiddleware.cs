@@ -20,7 +20,7 @@ namespace DDTV_WEB_Server
                
                 if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Credentials"))
                 {
-                    context.Response.Headers.Add("Access-Control-Allow-Credentials", CoreConfig.AccessControlAllowCredentials);
+                    context.Response.Headers.Add("Access-Control-Allow-Credentials", WebServerConfig.AccessControlAllowCredentials);
                 }
                 if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
                 {

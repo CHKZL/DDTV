@@ -35,7 +35,7 @@ namespace DDTV_GUI.DDTV_Window
 
         public static List<PlayWindow> playWindowsList = new();
         public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-        public static int PlayQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.PlayQuality, "250", CoreConfigClass.Group.Play));
+       
         public MainWindow()
         {
            
@@ -52,9 +52,9 @@ namespace DDTV_GUI.DDTV_Window
             //初始化DDTV_Core          
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_GUI);
 
-            DefaultVolume = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play));
-            HideIconState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.HideIconState, "false", CoreConfigClass.Group.GUI));
-            if(!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+            DefaultVolume = GUIConfig.DefaultVolume;
+            HideIconState = GUIConfig.HideIconState;
+            if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
                 CoreConfig.GUI_FirstStart = false;
             }
@@ -167,14 +167,14 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void InitMainUI()
         {
-            DefaultFileNameTextBox.Text = Download.DefaultFileName;
-            RecPathTextBox.Text = Download.DefaultPath;
+            DefaultFileNameTextBox.Text = Download.DownloadFileName;
+            RecPathTextBox.Text = Download.DownloadPath;
             TmpPathTextBox.Text = Download.TmpPath;
             TranscodToggle.IsChecked = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
             HideIcon.IsChecked = HideIconState;
 
             RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 ? 0 : Download.RecQuality == 400 ? 1 : Download.RecQuality == 250 ? 2 : Download.RecQuality==150? 3:4;
-            PlayQualityComboBox.SelectedIndex = PlayQuality == 10000 ? 0 : PlayQuality == 400 ? 1 : PlayQuality == 250 ? 2 : PlayQuality == 150 ? 3 : 4;
+            PlayQualityComboBox.SelectedIndex = GUIConfig.PlayQuality == 10000 ? 0 : GUIConfig.PlayQuality == 400 ? 1 : GUIConfig.PlayQuality == 250 ? 2 : GUIConfig.PlayQuality == 150 ? 3 : 4;
             DanmuToggle.IsChecked = Download.IsRecDanmu;
             GiftToggle.IsChecked = Download.IsRecGift;
             GuardToggle.IsChecked = Download.IsRecGuard;
@@ -656,18 +656,18 @@ namespace DDTV_GUI.DDTV_Window
         private void DefaultFileNameTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             string Text = DefaultFileNameTextBox.Text.Trim();
-            if (Download.DefaultFileName != Text)
+            if (Download.DownloadFileName != Text)
             {
                 if (!string.IsNullOrEmpty(Text))
                 {
-                    Download.DefaultFileName = Text;
-                    CoreConfig.SetValue(CoreConfigClass.Key.DownloadFileName, Download.DefaultFileName, CoreConfigClass.Group.Download);
+                    Download.DownloadFileName = Text;
+                    CoreConfig.SetValue(CoreConfigClass.Key.DownloadFileName, Download.DownloadFileName, CoreConfigClass.Group.Download);
                     Growl.Success("默认文件名设置成功");
-                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认文件名设置成功:"+ Download.DefaultFileName, false, null, false);
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认文件名设置成功:"+ Download.DownloadFileName, false, null, false);
                 }
                 else
                 {
-                    DefaultFileNameTextBox.Text = Download.DefaultFileName;
+                    DefaultFileNameTextBox.Text = Download.DownloadFileName;
                     Growl.Warning("默认文件名不能为空");
                 }
             }
@@ -676,16 +676,16 @@ namespace DDTV_GUI.DDTV_Window
         private void RecPathTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
             string Text = RecPathTextBox.Text.Trim();
-            if (Download.DefaultPath != Text)
+            if (Download.DownloadPath != Text)
             {
                 if (!string.IsNullOrEmpty(Text))
                 {
                     if (Directory.Exists(Text))
                     {
-                        Download.DefaultPath = Text;
-                        if (Download.DefaultPath.Substring(Download.DefaultPath.Length - 1, 1) != "/")
-                            Download.DefaultPath = Download.DefaultPath + "/";
-                        CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DefaultPath, CoreConfigClass.Group.Download);
+                        Download.DownloadPath = Text;
+                        if (Download.DownloadPath.Substring(Download.DownloadPath.Length - 1, 1) != "/")
+                            Download.DownloadPath = Download.DownloadPath + "/";
+                        CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DownloadPath, CoreConfigClass.Group.Download);
                         Growl.Success("录制储存文件夹设置成功");
                     }
                     else
@@ -695,7 +695,7 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 else
                 {
-                    RecPathTextBox.Text = Download.DefaultPath;
+                    RecPathTextBox.Text = Download.DownloadPath;
                     Growl.Warning("录制储存文件夹不能为空");
                 }
             }
@@ -932,23 +932,23 @@ namespace DDTV_GUI.DDTV_Window
                 switch (i)
                 {
                     case 1:
-                        PlayQuality = 10000;
+                        GUIConfig.PlayQuality = 10000;
                         break;
                     case 2:
-                        PlayQuality = 400;
+                        GUIConfig.PlayQuality = 400;
                         break;
                     case 3:
-                        PlayQuality = 250;
+                        GUIConfig.PlayQuality = 250;
                         break;
                     case 4:
-                        PlayQuality = 150;
+                        GUIConfig.PlayQuality = 150;
                         break;
                     case 5:
-                        PlayQuality = 80;
+                        GUIConfig.PlayQuality = 80;
                         break;
                 }
-                CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, PlayQuality.ToString(), CoreConfigClass.Group.Play);
-                string Message = "修改默认在线观看画质为" + (PlayQuality == 10000 ? "原画" : PlayQuality == 400 ? "蓝光" : PlayQuality == 250 ? "超清" : PlayQuality == 150 ? "高清" : "流畅");
+                CoreConfig.SetValue(CoreConfigClass.Key.PlayQuality, GUIConfig.PlayQuality.ToString(), CoreConfigClass.Group.Play);
+                string Message = "修改默认在线观看画质为" + (GUIConfig.PlayQuality == 10000 ? "原画" : GUIConfig.PlayQuality == 400 ? "蓝光" : GUIConfig.PlayQuality == 250 ? "超清" : GUIConfig.PlayQuality == 150 ? "高清" : "流畅");
                 Growl.Success(Message);
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, Message, false, null, false);
             }
@@ -1093,17 +1093,17 @@ namespace DDTV_GUI.DDTV_Window
            
 
             
-            if (Download.DefaultPath != path)
+            if (Download.DownloadPath != path)
             {
                 if (!string.IsNullOrEmpty(path))
                 {
                     if (Directory.Exists(path))
                     {
                         RecPathTextBox.Text = path;
-                        Download.DefaultPath = path;
-                        CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DefaultPath, CoreConfigClass.Group.Download);
+                        Download.DownloadPath = path;
+                        CoreConfig.SetValue(CoreConfigClass.Key.DownloadPath, Download.DownloadPath, CoreConfigClass.Group.Download);
                         Growl.Success("录制储存文件夹设置成功");
-                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "录制储存文件夹设置成功：" + Download.DefaultPath, false, null, false);
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "录制储存文件夹设置成功：" + Download.DownloadPath, false, null, false);
                     }
                     else
                     {
@@ -1112,7 +1112,7 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 else
                 {
-                    RecPathTextBox.Text = Download.DefaultPath;
+                    RecPathTextBox.Text = Download.DownloadPath;
                     Growl.Warning("录制储存文件夹不能为空");
                 }
             }

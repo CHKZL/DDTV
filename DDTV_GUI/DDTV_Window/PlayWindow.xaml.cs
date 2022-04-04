@@ -64,7 +64,7 @@ namespace DDTV_GUI.DDTV_Window
         public PlayWindow(long Uid)
         {        
             InitializeComponent();
-            Quality = MainWindow.PlayQuality;
+            Quality = GUIConfig.PlayQuality;
             uid = Uid;
             SetMenuItemSwitchQuality();
 

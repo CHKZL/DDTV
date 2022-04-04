@@ -1,4 +1,5 @@
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
@@ -14,20 +15,20 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "Login")]
         public ActionResult Post([FromForm] string UserName, [FromForm] string Password,[FromForm] bool CookieExpires=false)
         {
-            if (UserName == RuntimeConfig.WebUserName && Password == RuntimeConfig.WebPassword)
+            if (UserName == WebServerConfig.WebUserName && Password == WebServerConfig.WebPassword)
             {
-                RuntimeConfig.Cookis = Guid.NewGuid().ToString();
+                WebServerConfig.Cookis = Guid.NewGuid().ToString();
                 CookieOptions cookieOptions = new CookieOptions();
                 if (CookieExpires)
                 {
                     cookieOptions.Expires = new DateTimeOffset(DateTime.Now.AddDays(7));
                 }
-                if(!string.IsNullOrEmpty(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.CookieDomain))
+                if(!string.IsNullOrEmpty(WebServerConfig.CookieDomain))
                 {
-                    cookieOptions.Domain = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.CookieDomain;
+                    cookieOptions.Domain = WebServerConfig.CookieDomain;
                 }
-                HttpContext.Response.Cookies.Append("DDTVUser", RuntimeConfig.Cookis, cookieOptions);
-                return Content(MessageBase.Success(nameof(Login), new LoginOK(){Cookie = RuntimeConfig.Cookis}), "application/json");
+                HttpContext.Response.Cookies.Append("DDTVUser", WebServerConfig.Cookis, cookieOptions);
+                return Content(MessageBase.Success(nameof(Login), new LoginOK(){Cookie = WebServerConfig.Cookis}), "application/json");
             }
             else
             {
