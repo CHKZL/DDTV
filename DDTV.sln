@@ -22,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Update", "DDTV_Update\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_Push", "DDTV_Push\DDTV_Push.csproj", "{CDC42E53-459F-472A-AFE4-D7DBF428B113}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiliAccount", "BiliAccount\BiliAccount.csproj", "{333AA5CB-D067-4074-8735-463ACF8523F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,10 @@ Global
 		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CDC42E53-459F-472A-AFE4-D7DBF428B113}.Release|Any CPU.Build.0 = Release|Any CPU
+		{333AA5CB-D067-4074-8735-463ACF8523F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{333AA5CB-D067-4074-8735-463ACF8523F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{333AA5CB-D067-4074-8735-463ACF8523F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{333AA5CB-D067-4074-8735-463ACF8523F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
