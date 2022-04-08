@@ -35,17 +35,24 @@ namespace DDTV_GUI.WPFControl
                 return;
             }
             if (long.TryParse(_UID, out long UID))
-            {  
+            {
                 if (UID <= 0)
                 {
                     Growl.Warning($"房间号或UID不能为负数！");
                     return;
                 }
-                int RoomId = int.Parse(DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
-                string Name = DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
-                DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(UID, RoomId, Name,true);
-                Growl.Success($"添加成功");
-                UIDInputBox.Clear();
+                if (int.TryParse(DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), out int RoomId))
+                {
+                    string Name = DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
+                    DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(UID, RoomId, Name, true);
+                    Growl.Success($"添加成功");
+                    UIDInputBox.Clear();
+                }
+                else
+                {
+                    Growl.Warning($"该UID不存在！");
+                    return;
+                }
             }
             else
             {

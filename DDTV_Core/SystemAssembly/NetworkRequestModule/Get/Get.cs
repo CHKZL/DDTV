@@ -62,7 +62,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                         }
                     }
                 }
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起GetRequest请求完成");
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request, $"发起GetRequest请求完成:{url}", false, null, false);
             }
             catch (Exception)
             {

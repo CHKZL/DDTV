@@ -42,7 +42,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         {
             Task.Run(() =>
             {
-                AddDownLoad(uid, IsNewTask);
+                if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+                {
+                    if(!roomInfo.IsUserCancel)
+                    {
+                        AddDownLoad(uid, IsNewTask);
+                    }
+                    else
+                    {
+                        roomInfo.IsUserCancel = false;
+                    }
+                }
+                
             });
         }
         /// <summary>
@@ -55,9 +66,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
+                    roomInfo.IsUserCancel = true;
                     foreach (var item in roomInfo.DownloadingList)
                     {
-                        roomInfo.IsUserCancel = true;
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
                         item.Cancel();
                         return true;
@@ -89,6 +100,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
+                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                 do
                 {
                     Thread.Sleep(500);

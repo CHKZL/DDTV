@@ -78,9 +78,15 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "Room_Add")]
         public ActionResult Post([FromForm] long uid, [FromForm] string cmd)
         {
-            int RoomId = int.Parse(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
-            DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(uid, RoomId, "", true);
-            return Content(MessageBase.Success(nameof(Room_Add), "添加完成"), "application/json");
+            if (int.TryParse(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), out int RoomId))
+            {
+                RoomConfig.AddRoom(uid, RoomId, "", true);
+                return Content(MessageBase.Success(nameof(Room_Add), "添加完成"), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(Room_Add), "该UID不存在！", "该UID不存在！",MessageBase.code.UIDFailed), "application/json");
+            }
         }
     }
     public class Room_Del : ProcessingControllerBase.ApiControllerBase

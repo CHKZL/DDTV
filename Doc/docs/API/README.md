@@ -18,7 +18,7 @@
 |POST|System_Resources|JSON|[获取系统硬件资源使用情况](./#post-api-system-resources)|
 |POST|System_QueryWebFirstStart|JSON|[返回一个可以自行设定的初始化状态值](./#post-api-system-querywebfirststart)|
 |POST|System_SetWebFirstStart|JSON|[设置初始化状态值](./#post-api-system-setsebfirststart)|
-|POST|System_QueryUserState|JSON|[用于判断用户登陆状态是否有效](./#post-api-system-queryuserstate)|
+|POST|System_QueryUserState|JSON|[查询B站接口返回数据判断用户登陆状态是否有效](./#post-api-system-queryuserstate)|
 |POST|Config_Transcod|JSON|[设置自动转码总开关](./#post-api-config-Transcod)|
 |POST|Config_FileSplit|JSON|[根据文件大小自动切片](./#post-api-config-filesplit)|
 |POST|Config_DanmuRec|JSON|[弹幕录制总共开关(包括礼物、舰队、SC)](./#post-api-config-danmurec)|
@@ -28,6 +28,8 @@
 |POST|File_GetFile|FileStram|[下载对应的文件](./#post-api-file-getfile)|
 |POST|Login|JSON|[WEB登陆](./#post-api-login)|
 |POST|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#post-api-loginqr)|
+|POST|Login_Reset|JSON|[重新登陆哔哩哔哩账号](./#post-api-login-reset)|
+|POST|Login_State|JSON|[查询内部登陆状态](./#post-api-login-state)|
 |POST|Rec_RecordingInfo|JSON|[获取下载中的任务情况详细情况](./#post-api-rec-recordinginfo)|
 |POST|Rec_RecordingInfo_Lite|JSON|[获取下载中的任务情况简略情况](./#post-api-rec-recordinginfo-lite)|
 |POST|Rec_RecordCompleteInfon|JSON|[获取已经完成的任务详细情况](./#post-api-rec-recordcompleteinfon)|
@@ -82,7 +84,7 @@
 
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
     public class SystemResourceClass
     {
@@ -150,7 +152,7 @@
 
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
         public class Config
         {
@@ -385,7 +387,7 @@
 - 注意事项
 该接口消耗的系统硬件资源较高，请勿频繁调用！！！！！
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
     public class SystemResourceClass
     {
@@ -461,7 +463,7 @@
 - 注意事项
 该接口用于前端自行判断，启动后默认值都为真，不能作为DDTV是否正在运行的参考
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return bool;//直接指示当前的WEB_FirstStart值为多少
 
@@ -479,7 +481,7 @@ return bool;//直接指示当前的WEB_FirstStart值为多少
 - 注意事项
 用于设置初始化状态值(WEB_FirstStart)；该值无实际的逻辑处理，用于前端自行判断使用。
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}");
 ```
@@ -490,8 +492,11 @@ return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志
 - 私有变量  
 无
 
+- 注意事项  
+该接口应该是用于登陆状态是否有效的检测，检测到登陆状态失效就应该停止调用本接口，直到登陆状态恢复  
+检测登陆中时是否登陆成功，应该使用`/api/LoingState`进行查询
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return bool;//直接指示当前的登陆状态
 
@@ -510,7 +515,7 @@ return bool;//直接指示当前的登陆状态
 - 注意事项
 该接口需要依赖ffmpeg，请根据`进阶功能说明`中的`自动转码`页面的内容进行检查是否已经安装ffmpeg
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "自动转码成功");
 ```
@@ -527,7 +532,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 - 注意事项
 请勿输入1-10485760(1MB)的数值，在某些清晰度较高的直播间中，初始数据包会大于这个数值，这种情况下会报错
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "根据文件大小自动切片成功");
 ```
@@ -545,7 +550,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 - 注意事项
 该弹幕录制接口总共开关包括礼物、舰队、SC的录制开关，并且个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关，要录制某个房间除了打开这个设置还需要房间配置启动打开录制
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "弹幕录制总共开关成功(注:该弹幕录制接口总共开关包括礼物、舰队、SC的录制开关，并且个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关，要录制某个房间除了打开这个设置还需要房间配置启动打开录制)");
 ```
@@ -561,7 +566,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 - 注意事项
 该接口需要依赖哔哩哔哩账号登陆，使用前请确认已经扫码登陆
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 List<followClass>;
 
@@ -579,7 +584,7 @@ List<followClass>;
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 List<string> FileList;
 ```
@@ -594,7 +599,7 @@ List<string> FileList;
 |FileName|string|是|根据提交的文件路径和文件名下载该文件|
 
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return File();    
 ```
@@ -605,7 +610,7 @@ return File();
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
     public class TypeFileList
     {
@@ -628,7 +633,7 @@ return File();
 |UserName|string|是|用于登陆的用户名，默认设置为ami，在配置文件中进行设置|
 |Password|string|是|用于登陆的密码，默认设置为ddtv，在配置文件中进行设置|
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
  private class LoginOK
         {
@@ -642,10 +647,62 @@ return File();
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return File(ms.ToArray(), "image/png");
 ```
+:::
+
+### `POST /api/Login_Reset`
+::: details 重新登陆哔哩哔哩账号  
+- 私有变量  
+
+无
+
+- 返回数据说明     
+
+直接返回操作结果说明的字符串
+
+:::
+
+### `POST /api/Login_State`
+::: details 查询内部登陆状态  
+- 私有变量  
+
+无
+
+- 返回数据说明     
+
+```C#  
+
+        internal class LoginC
+        {       
+            internal LoginStatus LoginState { get; set; }
+        }
+
+        public enum LoginStatus
+        {
+            /// <summary>
+            /// 未登录
+            /// </summary>
+            NotLoggedIn = 0,
+            /// <summary>
+            /// 已登陆
+            /// </summary>
+            LoggedIn = 1,
+            /// <summary>
+            /// 登陆失效
+            /// </summary>
+            LoginFailure = 2,
+            /// <summary>
+            /// 登陆中
+            /// </summary>
+            LoggingIn = 3
+        }
+
+```
+
+
 :::
 
 ### `POST /api/Rec_RecordingInfo`
@@ -653,7 +710,7 @@ return File(ms.ToArray(), "image/png");
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明     
 ```C#
 return List<Downloads>;
 
@@ -765,7 +822,7 @@ return List<Downloads>;
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return List<LiteDownloads>;
 
@@ -809,7 +866,7 @@ return List<LiteDownloads>;
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return List<Downloads>;
 
@@ -921,7 +978,7 @@ return List<Downloads>;
 - 私有变量  
 无
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return List<LiteDownloads>;
 
@@ -971,7 +1028,7 @@ return List<LiteDownloads>;
 - 注意事项
 注意！是UID！是UID！
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return string;
 ```
@@ -985,7 +1042,7 @@ return string;
 - 注意事项
 该接口根据服务器上房间配置的多少决定，数据量可能会较多；在启动成功前30秒最好不要调用，该阶段属于API请求更新数据阶段，可能为空的数据较多。
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return List<RoomInfoClass.RoomInfo>;
 
@@ -1219,7 +1276,7 @@ return List<RoomInfoClass.RoomInfo>;
 该接口的调用频率不能超过3秒/次，该接口后面封装的B站原生API较为复杂，如果请求过多，可能会造成频率过高导致412鉴权错误导致IP被黑名单半小时左右。
 
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return string;
 ```
@@ -1233,7 +1290,7 @@ return string;
 |:--:|:--:|:--:|--|
 |UID|long|是|要从房间配置中删除的账号UID|
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return string;
 ```
@@ -1248,7 +1305,7 @@ return string;
 |UID|long|是|要修改自动录制配置的账号UID|
 |IsAutoRec|bool|是|打开\关闭开播自动录制|
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return string;
 ```
@@ -1267,7 +1324,7 @@ return string;
 - 注意事项
 该功能收到总弹幕录制配置的限制，如要打开该房间的弹幕录制功能，请确认总开关已经启动
 
-- 返回数据说明
+- 返回数据说明   
 ```C#
 return string;
 ```
@@ -1282,7 +1339,7 @@ return string;
 |:--:|:--:|:--:|--|
 |keyword|string|是|需要搜索的关键词|
 
-- 返回数据说明
+- 返回数据说明   
 
 | 字段        | 类型  | 内容           | 备注                                                   |
 | ----------- | ----- | -------------- | ------------------------------------------------------ |

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 using System.Security.Claims;
+using static DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig;
 
 namespace DDTV_WEB_Server.Controllers
 {
@@ -59,7 +60,41 @@ namespace DDTV_WEB_Server.Controllers
         [HttpGet(Name = "AuthenticationFailed")]
         public ActionResult get(MessageBase.code code,string message)
         {
-            return Content(MessageBase.Success(nameof(LoginErrer), message, message, code), "application/json");
+            return Content(MessageBase.Success(nameof(AuthenticationFailed), message, message, code), "application/json");
+        }
+    }
+    /// <summary>
+    /// 重新登陆
+    /// </summary>
+    public class Login_Reset : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Login_Reset")]
+        public ActionResult post([FromForm] string cmd)
+        {
+            if(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.loginStatus!= BilibiliUserConfig.LoginStatus.LoggingIn)
+            {
+                DDTV_Core.SystemAssembly.BilibiliModule.User.login.ReLogin.Login();
+            }
+            return Content(MessageBase.Success(nameof(Login_Reset), "请访问 api/login 接口进行扫码登陆"), "application/json");
+        }
+    }
+    /// <summary>
+    /// 查询内部登陆状态
+    /// </summary>
+    public class Login_State : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Login_State ")]
+        public ActionResult post([FromForm] string cmd)
+        {
+            LoginC login = new LoginC()
+            {
+                LoginState = BilibiliUserConfig.account.loginStatus, 
+            };
+            return Content(MessageBase.Success(nameof(Login_State), login), "application/json");
+        }
+        public class LoginC
+        {
+            public LoginStatus LoginState { get; set; }
         }
     }
 }

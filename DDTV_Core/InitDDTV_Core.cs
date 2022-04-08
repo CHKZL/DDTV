@@ -12,6 +12,8 @@ using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using System.Runtime.InteropServices;
+using ConsoleTables;
+using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
 namespace DDTV_Core
 {
@@ -23,15 +25,19 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static string ClientAID = string.Empty;
+
+
         
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
+            ///SatrtType satrtType = SatrtType.DDTV_Core
+            
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}\n========================");
-            Log.LogInit(LogClass.LogType.Debug);
+            Log.LogInit(LogClass.LogType.Debug_Request);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 1024*1024;
@@ -188,30 +194,36 @@ namespace DDTV_Core
                 {
                     if (Console.ReadKey().Key.Equals(ConsoleKey.I))
                     {
-                        Console.WriteLine($"请按对应的按键查看或修改配置：\n" +
-                             $"a：查看下载中的任务情况\n" +
-                             $"b：查看调用阿B的API次数(已禁用)\n" +
-                             $"c：查看API查询次数(已禁用)\n" +
-                             $"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
+                        Console.WriteLine($"请按对应的按键查看或修改配置：");
+                        Console.WriteLine($"a：查看下载中的任务情况");
+                        Console.WriteLine($"b：查看调用阿B的API次数(已禁用)");
+                        Console.WriteLine($"c：查看API查询次数(已禁用)");
+                        Console.WriteLine($"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
                         switch (Console.ReadKey().Key)
                         {
                             case ConsoleKey.A:
                                 {
                                     int i = 0;
+                                    ConsoleTable tables = new ConsoleTable("序号","UID", "房间号", "昵称","直播标题","已下载大小", "状态","开始时间", "是否录制弹幕信息");
                                     Console.WriteLine($"下载中的任务:");
                                     foreach (var A1 in Rooms.RoomInfo)
                                     {
                                         if (A1.Value.DownloadingList.Count > 0)
                                         {
+                                            DateTime StartTime=DateTime.Now;
+                                            DownloadStatus downloadStatus=DownloadStatus.Standby;
                                             ulong FileSize = 0;
                                             foreach (var item in A1.Value.DownloadingList)
                                             {
+                                                StartTime = item.StartTime;
+                                                downloadStatus = item.Status;
                                                 FileSize += (ulong)item.TotalDownloadCount;
                                             }
                                             i++;
-                                            Console.WriteLine($"{i}：{A1.Value.uid}  {A1.Value.room_id}  {A1.Value.uname}  {A1.Value.title}  {NetClass.ConversionSize(FileSize)}");
+                                            tables.AddRow(i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title,  NetClass.ConversionSize(FileSize), downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"),A1.Value.IsRecDanmu?"YES":"NO");
                                         }
                                     }
+                                    tables.Write();
                                     break;
                                 }
                             case ConsoleKey.B:
@@ -233,7 +245,11 @@ namespace DDTV_Core
                                     break;
                                 }
                             case ConsoleKey.D:
-                                DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+                                Console.WriteLine("确定一键导入关注列表中的V吗？按'Y'导入，按任意键取消");
+                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                {
+                                    DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+                                }
                                 break;
                         }
                     }
