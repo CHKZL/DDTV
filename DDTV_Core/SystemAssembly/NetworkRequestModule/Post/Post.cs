@@ -53,7 +53,8 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                 {
                     response.Dispose();
                 }
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
+                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
+                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug_Request, $"发起POST请求完成：{url}",false,null,false);
                 return strValue;
             }
         }
@@ -118,7 +119,8 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                     {
                         result = reader.ReadToEnd();
                     }
-                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
+                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
+                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug_Request, $"发起POST请求完成：{url}", false, null, false);
                     if (resp != null)
                     {
                         resp.Dispose();
@@ -163,6 +165,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                 reqStream.Close();
             }
             #endregion
+            Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug_Request, $"发起POST请求完成：{url}", false, null, false);
             HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
             Stream stream = resp.GetResponseStream();
             //获取响应内容  

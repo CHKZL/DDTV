@@ -63,19 +63,22 @@ namespace DDTV_WEB_Server
                             string NewSig = DDTV_Core.SystemAssembly.EncryptionModule.Encryption.SHA1_Encrypt(Original);
                             if (NewSig != sig)
                             {
-                                filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
+                                filterContext.HttpContext.Response.WriteAsync(MessageBase.Success("AuthenticationFailed", "sig校验失败", "sig校验失败", MessageBase.code.APIAuthenticationFailed),System.Text.Encoding.UTF8);
+                                filterContext.Result = new EmptyResult();
                                 return;
                             }
                         }
                         else
                         {
-                            filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
+                            filterContext.HttpContext.Response.WriteAsync(MessageBase.Success("AuthenticationFailed", "sig校验失败", "sig校验失败", MessageBase.code.APIAuthenticationFailed), System.Text.Encoding.UTF8);
+                            filterContext.Result = new EmptyResult();
                             return;
                         }
                     }
                     else
                     {
-                        filterContext.HttpContext.Response.Redirect($"/api/AuthenticationFailed?code={MessageBase.code.APIAuthenticationFailed}&message=SIG Authentication failed");
+                        filterContext.HttpContext.Response.WriteAsync(MessageBase.Success("AuthenticationFailed", "sig校验失败", "sig校验失败", MessageBase.code.APIAuthenticationFailed), System.Text.Encoding.UTF8);
+                        filterContext.Result = new EmptyResult();
                         return;
                     }
                 }

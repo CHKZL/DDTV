@@ -167,10 +167,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     byte[] data = new byte[DataLength];
                                     if (IsCancel)
                                     {
-                                        stream.Close();
-                                        stream.Dispose();
-                                        resp.Close();
-                                        resp.Dispose();
+                                        try
+                                        {
+                                            stream.Close();
+                                            stream.Dispose();
+                                            resp.Close();
+                                            resp.Dispose();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志",true,e,true);
+                                        }
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的录制任务，该任务取消");
                                         roomInfo.IsDownload = false;

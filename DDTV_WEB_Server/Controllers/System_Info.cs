@@ -218,7 +218,6 @@ namespace DDTV_WEB_Server.Controllers
     public class System_QueryUserState : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_QueryUserState")]
-        //[Consumes("application/json")]
         public ActionResult Post([FromForm] string cmd)
         {
             if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())

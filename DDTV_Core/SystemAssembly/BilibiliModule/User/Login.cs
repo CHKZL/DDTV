@@ -12,6 +12,8 @@ using SkiaSharp;
 using System.IO;
 using static BiliAccount.Core.ByQRCode;
 using DDTV_Core.Tool;
+using System.Runtime.InteropServices;
+using DDTV_Core.SystemAssembly.Log;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
@@ -61,6 +63,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
         {
             public static void QRInit(InitDDTV_Core.SatrtType satrtType)
             {
+                BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggingIn;
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+                }
                 QR_Object sKData;
                 switch (satrtType)
                 {
@@ -102,6 +109,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     BilibiliUserConfig.AccClass=account;
                     Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "QR扫码登陆bilibili成功");
                     BilibiliUserConfig.account.uid= account.Uid;
+                    BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
                     foreach (var item in account.Cookies)
                     {
                         BilibiliUserConfig.account.cookie = BilibiliUserConfig.account.cookie + item + ";";
@@ -112,7 +120,50 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     BilibiliUserConfig.WritUserFile();
                 }
             }
-        } 
-       
+        }
+
+        public class ReLogin
+        {
+            public static void Login()
+            {
+                BilibiliUserConfig.account.loginStatus= BilibiliUserConfig.LoginStatus.LoggingIn;
+                ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                QR_Object GUI = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
+                using (var stream = File.OpenWrite("./BiliQR.png"))
+                {
+                    GUI.SKData.SaveTo(stream);
+                }
+            }
+
+            private static void ByQRCode_QrCodeRefresh(QR_Object newQrCode)
+            {
+                using (var stream = File.OpenWrite("./BiliQR.png"))
+                {
+                    newQrCode.SKData.SaveTo(stream);
+                }
+            }
+
+            private static void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, BiliAccount.Account account = null)
+            {
+                if (status == ByQRCode.QrCodeStatus.Success)
+                {
+                    BilibiliUserConfig.AccClass = account;
+                    BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
+                    Log.Log.AddLog(nameof(login), LogClass.LogType.Info, "QR扫码登陆bilibili成功");
+                    BilibiliUserConfig.account.uid = account.Uid;
+                    foreach (var item in account.Cookies)
+                    {
+                        BilibiliUserConfig.account.cookie = BilibiliUserConfig.account.cookie + item + ";";
+                    }
+                    BilibiliUserConfig.account.ExTime = account.Expires_Cookies;
+                    BilibiliUserConfig.account.csrf = account.CsrfToken;
+
+                    BilibiliUserConfig.WritUserFile();
+                    DDTV_Core.InitDDTV_Core.ClientAID = CoreConfig.GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
+                }
+
+            }
+        }
     }
 }

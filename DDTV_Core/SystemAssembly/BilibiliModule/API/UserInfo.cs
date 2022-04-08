@@ -129,10 +129,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         {
                             if (T)
                             {
+                                BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
                                 return true;
                             }
                             else
                             {
+                                BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoginFailure;
                                 return false;
                             }
                         }
@@ -195,6 +197,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         public static List<followClass> follow(long uid)
         {
+            Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, "添加关注列表中的V到本地房间配置文件");
             int AddCount = 0;
             List<User.follow.ListItem> FollowList = new();
             int pg = 0;

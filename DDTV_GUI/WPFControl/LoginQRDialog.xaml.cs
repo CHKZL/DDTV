@@ -54,6 +54,7 @@ namespace DDTV_GUI.WPFControl
             {
                 BilibiliUserConfig.AccClass = account;
                 Log.AddLog(nameof(login), LogClass.LogType.Info, "QR扫码登陆bilibili成功");
+                DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.CheckAccount.IsState = true;
                 BilibiliUserConfig.account.uid = account.Uid;
                 foreach (var item in account.Cookies)
                 {

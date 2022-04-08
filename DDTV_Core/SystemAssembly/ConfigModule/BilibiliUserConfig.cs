@@ -33,6 +33,29 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 对应的账号UID
             /// </summary>
             public string uid { set; get; }
+            /// <summary>
+            /// 当前登陆状态
+            /// </summary>
+            public LoginStatus loginStatus { set; get; }= LoginStatus.NotLoggedIn;
+        }
+        public enum LoginStatus
+        {
+            /// <summary>
+            /// 未登录
+            /// </summary>
+            NotLoggedIn = 0,
+            /// <summary>
+            /// 已登陆
+            /// </summary>
+            LoggedIn = 1,
+            /// <summary>
+            /// 登陆失效
+            /// </summary>
+            LoginFailure = 2,
+            /// <summary>
+            /// 登陆中
+            /// </summary>
+            LoggingIn = 3
         }
         public static bool Init(InitDDTV_Core.SatrtType satrtType = InitDDTV_Core.SatrtType.DDTV_Core)
         {
@@ -40,6 +63,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             ReadUserFile();
             if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
             {
+                account.loginStatus = LoginStatus.LoggedIn;
                 return true;
             }
             else
@@ -139,6 +163,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             public static event EventHandler<EventArgs> CheckAccountChanged;
             private static bool IsOn = false;
+            public static bool IsState = true;
+            /// <summary>
+            /// 账号登陆状态监测间隔时间
+            /// </summary>
             private static int IntervalTime = 3600 * 1 * 1000;
             /// <summary>
             /// 检查账号有效性
@@ -154,19 +182,23 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         Thread.Sleep(8 * 1000);
                         while (true)
                         {
-                            try
+                            if (IsState)
                             {
-                                if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
+                                try
                                 {
-                                    if (CheckAccountChanged != null)
+                                    if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
                                     {
-                                        CheckAccountChanged.Invoke(null, EventArgs.Empty);
+                                        if (CheckAccountChanged != null)
+                                        {
+                                            CheckAccountChanged.Invoke(null, EventArgs.Empty);
+                                            IsState = false;
+                                        }
                                     }
                                 }
-                            }
-                            catch (Exception e)
-                            {
-                                Log.Log.AddLog(nameof(CheckAccount), LogClass.LogType.Error, "验证账号有效性出现意外错误", true, e);
+                                catch (Exception e)
+                                {
+                                    Log.Log.AddLog(nameof(CheckAccount), LogClass.LogType.Error, "验证账号有效性出现意外错误", true, e);
+                                }
                             }
                             Thread.Sleep(IntervalTime);
                         }

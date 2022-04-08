@@ -286,7 +286,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// <summary>
             /// 该房间录制完成后会执行的Shell命令
             /// </summary>
-            public string Shell { set; get; }
+            public string Shell { set; get; } = "";
         }
         public class RoomWebSocket
         {
