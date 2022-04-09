@@ -24,6 +24,7 @@
 |DDTV_WEB_Server|.NET 6 & ASP.NET 6|对CLI进行更进一步封装集成了WEB服务与API接口|
 |DDTV_GUI|.NET6 Desktop|为Windows独占，带GUI以及在线观看等高级功能|
 |DDTV_Core|.NET 6|核心录制与数据处理等核心功能，以基础库的形式发布|
+|[DDTV_Client](https://github.com/FishMagic/DDTV_Client)|Kotlin|基于WEB API开发的客户端，适用于Windows、Linux、MacOS和Android|
 
 # 官网和文档
 **强烈建议**使用前推荐在 **[DDTV官网](https://ddtv.pro/)** 查看说明。
