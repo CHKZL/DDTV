@@ -32,6 +32,11 @@
 Q群	338182356	功能咨询和反馈  
 Q群	307156949	聊天吹水的地方  
 
+# 第三方客户端
+|名称|说明|主页|
+|---|---|---|
+|DDTV_Clent|基于WEB API开发的客户端，适用于Windows、Linux、MacOS和Android|[FishMagic/DDTV_Client](https://github.com/FishMagic/DDTV_Client)|
+
 # Q&A
 如果提示缺少.NET6环境，请先安装.NET6环境
 请根据官网的教程进行操作
