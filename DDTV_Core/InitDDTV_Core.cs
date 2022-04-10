@@ -25,16 +25,16 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static string ClientAID = string.Empty;
+        public static SatrtType InitType= SatrtType.DDTV_Core;
 
 
-        
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             ///SatrtType satrtType = SatrtType.DDTV_Core
-            
+            InitType= satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}\n========================");
             Log.LogInit(LogClass.LogType.Debug_Request);

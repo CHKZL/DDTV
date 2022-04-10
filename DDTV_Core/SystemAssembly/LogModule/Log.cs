@@ -14,6 +14,7 @@ namespace DDTV_Core.SystemAssembly.Log
     /// </summary>
     public class Log
     {
+       
         /// <summary>
         /// 日志等级(向下包含)
         /// </summary>
@@ -36,7 +37,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="log">日志等级</param>
         public static void LogInit(LogClass.LogType log = LogClass.LogType.All)
         {
-           
+            //Console.ForegroundColor = ConsoleColor.DarkYellow;
             LogLevel = log;
             Tool.TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);

@@ -239,6 +239,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：false
             /// </summary>
             Shell,
+            /// <summary>
+            /// WebHook的目标地址（字符串）
+            /// 组：Core   默认值：string.Empty
+            /// </summary>
+            WebHookUrl,
         }
     }
 }

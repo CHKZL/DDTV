@@ -2,6 +2,7 @@
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -109,13 +110,25 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         public static void SevaDanmuFile(RoomInfoClass.RoomInfo roomInfo)
         {
             if (Download.IsRecDanmu)
+            {
+                WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
                 roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
+            }
             if (Download.IsRecGift)
+            {
+                WebHook.SendHook(WebHook.HookType.SaveGiftComplete, roomInfo.uid);
                 roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
+            }
             if (Download.IsRecGuard)
+            {
+                WebHook.SendHook(WebHook.HookType.SaveGiftComplete, roomInfo.uid);
                 roomInfo.DownloadedFileInfo.GuardFile = SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
+            }
             if (Download.IsRecSC)
+            {
+                WebHook.SendHook(WebHook.HookType.SaveSCComplete, roomInfo.uid);
                 roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
+            }
         }
         /// <summary>
         /// 储存弹幕信息到xml文件
@@ -126,6 +139,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <param name="roomId"></param>
         private static FileInfo SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, string FileName, string Name, int roomId,long time)
         {
+           
             string XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<i>" +
                 "<chatserver>chat.bilibili.com</chatserver>" +

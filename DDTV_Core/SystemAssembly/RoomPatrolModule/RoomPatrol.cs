@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 
 namespace DDTV_Core.SystemAssembly.RoomPatrolModule
 {
@@ -29,7 +30,6 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             {
                 if (item.Value.live_status==1)
                 {
-                    //Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
                     if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                     {
                         //自动录制
@@ -40,8 +40,10 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     else
                     {
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-：[{item.Value.title}]，根据配置忽略");
+                       
                         //StartLive.Invoke(item.Value, EventArgs.Empty);
                     }
+                    WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
                 }
             }
             Task.Run(() => 
@@ -82,22 +84,23 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             Rooms.UpdateRoomInfo();
             foreach (var item in Rooms.RoomInfo)
             {
-                if(item.Value.live_status==1)
+                if (item.Value.live_status == 1 && keyValuePairs[item.Value.uid] != 1)
                 {
-                    if(keyValuePairs[item.Value.uid]!=1)
+                    if (keyValuePairs[item.Value.uid] != 1)
                     {
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
                         //开播了
-                        if(item.Value.IsAutoRec)
+                        if (item.Value.IsAutoRec)
                         {
                             //自动录制
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
                             DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
-                            if(StartRec!=null)
+
+                            if (StartRec != null)
                             {
                                 StartRec.Invoke(item.Value, EventArgs.Empty);
                             }
-                            
+
                         }
                         if (item.Value.IsRemind)
                         {
@@ -108,10 +111,15 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                                 StartLive.Invoke(item.Value, EventArgs.Empty);
                             }
                         }
+                        WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
                     }
                 }
+                else if (item.Value.live_status == 0 && keyValuePairs[item.Value.uid] != 0)
+                {
+                    WebHook.SendHook(WebHook.HookType.StopLive, item.Value.uid);
+                }
+                Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.TmpInfo, $"周期性更新房间信息成功");
             }
-            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.TmpInfo, $"周期性更新房间信息成功");
         }
     }
 }

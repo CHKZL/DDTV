@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -69,6 +70,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     roomInfo.IsUserCancel = true;
                     foreach (var item in roomInfo.DownloadingList)
                     {
+                        WebHook.SendHook(WebHook.HookType.CancelRec, uid);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
                         item.Cancel();
                         return true;
@@ -100,6 +102,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             List<string> FileList = new List<string>();
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
+                WebHook.SendHook(WebHook.HookType.RecComplete, uid);
                 Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                 do
                 {
@@ -159,6 +162,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         FileList.Add(SunFileName);
                     }
                 }
+                //转码
                 if (IsTranscod)
                 {
                     if (FileList.Count > 0)
@@ -175,6 +179,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     AfterFilePath = item,
                                 });
                                 roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
+                                WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
                             }
                         }
                     }
@@ -235,6 +240,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" +roomInfo.Shell, false, null, false);
                         Task.Run(() =>
                         {
+                            WebHook.SendHook(WebHook.HookType.RunShellComplete, roomInfo.uid);
                             try
                             {
                                 string Shell = Tool.FileOperation.ReplaceKeyword(uid, roomInfo.Shell);

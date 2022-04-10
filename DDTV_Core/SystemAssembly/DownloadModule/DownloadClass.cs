@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -148,6 +149,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     try
                     {
+                        WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
