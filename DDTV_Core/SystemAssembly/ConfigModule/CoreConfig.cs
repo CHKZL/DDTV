@@ -15,7 +15,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
         public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "true", CoreConfigClass.Group.Download));
         public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "false", CoreConfigClass.Group.Download));
-        
+        public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
+
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -111,6 +112,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _IsDoNotSleepState = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDoNotSleepState;
             var _CookieDomain = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.CookieDomain;
             var _Shell = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Shell;
+            var _WebHookUrl = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WebHookUrl;
         }
         /// <summary>
         /// 获取配置
