@@ -34,12 +34,21 @@ namespace DDTV_WEB_Server.Controllers
                 CoreConfig.SetValue(CoreConfigClass.Key.IsFlvSplit, Download.IsFlvSplit.ToString(), CoreConfigClass.Group.Download);
                 return Content(MessageBase.Success(nameof(Config_FileSplit), $"启用录制文件大小限制(自动分割)，设置大小为:{NetClass.ConversionSize(Size)}"), "application/json");
             }
-            else
+            else if(Size == 0)
             {
                 Download.IsFlvSplit = false;
                 CoreConfig.SetValue(CoreConfigClass.Key.IsFlvSplit, Download.IsFlvSplit.ToString(), CoreConfigClass.Group.Download);
                 return Content(MessageBase.Success(nameof(Config_FileSplit), $"已关闭文件大小限制(自动分割)"), "application/json");
             }
+            else
+            {
+                Size = 0;
+                Download.IsFlvSplit = false;
+                CoreConfig.SetValue(CoreConfigClass.Key.IsFlvSplit, Download.IsFlvSplit.ToString(), CoreConfigClass.Group.Download);
+                return Content(MessageBase.Success(nameof(Config_FileSplit), $"收到的Size为负数，自动设置为0，并关闭文件大小限制(自动分割)"), "application/json");
+            }
+            Download.FlvSplitSize = Size;
+            CoreConfig.SetValue(CoreConfigClass.Key.FlvSplitSize, Download.FlvSplitSize.ToString(), CoreConfigClass.Group.Download);
         }
     }
     /// <summary>

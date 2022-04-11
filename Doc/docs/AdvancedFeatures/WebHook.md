@@ -1,89 +1,65 @@
-﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass;
-using static DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook.WebHook;
+# Webhook
+* 本Webhook会在触发特定事件的时候，会主动向配置文件中的地址发送HTTP / POST请求
+## 注意事项
+* 如果请求发送返回的结果不是http状态不是2xx，会判定为发送失败，失败状态最多会尝试三次，如果三次都失败，该请求会被抛弃  
+* 因为本身自带网络延迟和代码处理延迟，并且每次失败都会有等待时间，所以http请求的内容时效性不能做到保证。
 
-namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
-{
-    public class MessageProcessing
-    {
-        public static string Processing(HookType hookType, long uid, string id)
+## 怎么启用WebHook
+给配置文件中的`WebHookURL`添加上对应的地址后生效，当`WebHookURL`为空时WebHook功能关闭
+
+## HookType
+```c#
+        public enum HookType
         {
-            if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
-            {
-                string msg = JsonConvert.SerializeObject(new Message()
-                {
-                    id = id,
-                    type = hookType,
-                    hook_time = DateTime.Now,
-                    uid = uid,
-                    user_info=new user_info()
-                    {
-                        attention= roomInfo.attention,
-                        face= roomInfo.face,
-                        name= roomInfo.uname,
-                        sign= roomInfo.sign,
-                        uid= roomInfo.uid,
-                    },
-                    room_Info=new room_info()
-                    {
-                        area= roomInfo.area,
-                        attention= roomInfo.attention,
-                        area_name= roomInfo.area_name,
-                        area_v2_id= roomInfo.area_v2_id,
-                        area_v2_name= roomInfo.area_v2_name,
-                        area_v2_parent_id= roomInfo.area_v2_parent_id,
-                        area_v2_parent_name= roomInfo.area_v2_parent_name,
-                        uid = uid,
-                        IsAutoRec= roomInfo.IsAutoRec,
-                        broadcast_type= roomInfo.broadcast_type,
-                        cover_from_user= roomInfo.cover_from_user,
-                        description= roomInfo.description,
-                        DownloadedFileInfo= roomInfo.DownloadedFileInfo,
-                        encrypted= roomInfo.encrypted,
-                        face= roomInfo.face,
-                        hidden_till= roomInfo.hidden_till,
-                        IsRecDanmu= roomInfo.IsRecDanmu,
-                        IsRemind    = roomInfo.IsRemind,
-                        is_hidden= roomInfo.is_hidden,
-                        is_locked= roomInfo.is_locked,
-                        is_portrait= roomInfo.is_portrait,
-                        is_sp= roomInfo.is_sp,
-                        keyframe= roomInfo.keyframe,
-                        level= roomInfo.level,
-                        live_status= roomInfo.live_status,
-                        live_time= roomInfo.live_time,
-                        lock_till= roomInfo.lock_till,
-                        need_p2p= roomInfo.need_p2p,
-                        online= roomInfo.online,
-                        pwd_verified= roomInfo.pwd_verified,
-                        roomStatus= roomInfo.roomStatus,
-                        room_id= roomInfo.room_id,
-                        roundStatus= roomInfo.roundStatus,
-                        sex= roomInfo.sex,
-                        Shell= roomInfo.Shell,
-                        short_id= roomInfo.short_id,
-                        sign= roomInfo.sign,
-                        special_type= roomInfo.special_type,
-                        tags= roomInfo.tags,
-                        tag_name= roomInfo.tag_name,
-                        title= roomInfo.title,
-                        uname= roomInfo.uname,
-                        url= roomInfo.url,
-                    }
-                });
-                return msg;
-            }
-            else
-            {
-                return null;
-            }
+            /// <summary>
+            /// 开播
+            /// </summary>
+            StartLive,
+            /// <summary>
+            /// 下播
+            /// </summary>
+            StopLive,
+            /// <summary>
+            /// 开始录制
+            /// </summary>
+            StartRec,
+            /// <summary>
+            /// 录制结束
+            /// </summary>
+            RecComplete,
+            /// <summary>
+            /// 录制被取消
+            /// </summary>
+            CancelRec,
+            /// <summary>
+            /// 完成转码
+            /// </summary>
+            TranscodingComplete,
+            /// <summary>
+            /// 保存弹幕文件完成
+            /// </summary>
+            SaveDanmuComplete,
+            /// <summary>
+            /// 保存SC文件完成
+            /// </summary>
+            SaveSCComplete,
+            /// <summary>
+            /// 保存礼物文件完成
+            /// </summary>
+            SaveGiftComplete,
+            /// <summary>
+            /// 保存大航海文件完成
+            /// </summary>
+            SaveGuardComplete,
+            /// <summary>
+            /// 执行Shell命令完成
+            /// </summary>
+            RunShellComplete,
         }
+```
+
+## 返回信息
+```C#  
         public class Message
         {
             /// <summary>
@@ -294,5 +270,4 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// </summary>
             public string Shell { set; get; } = "";
         }
-    }
-}
+```
