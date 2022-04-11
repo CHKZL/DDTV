@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 if (string.IsNullOrEmpty(_pfxFileName))
                 {
-                    _pfxFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxFileName, "pfxFileName", CoreConfigClass.Group.WEB_API);
+                    _pfxFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxFileName, "", CoreConfigClass.Group.WEB_API);
                 }
                 return _pfxFileName;
             }
@@ -45,7 +45,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 if (string.IsNullOrEmpty(_pfxPasswordFileName))
                 {
-                    _pfxPasswordFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxPasswordFileName, "pfxPasswordFileName", CoreConfigClass.Group.WEB_API);
+                    _pfxPasswordFileName = CoreConfig.GetValue(CoreConfigClass.Key.pfxPasswordFileName, "", CoreConfigClass.Group.WEB_API);
                 }
                 return _pfxPasswordFileName;
             }
