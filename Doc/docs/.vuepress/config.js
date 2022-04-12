@@ -74,6 +74,7 @@ module.exports = {
             '弹幕录制',
             'API',
             '房间Shell命令',
+            'Webhook',
           ]
         }
       ],
