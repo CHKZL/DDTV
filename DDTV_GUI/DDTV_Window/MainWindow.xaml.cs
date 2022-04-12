@@ -99,7 +99,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
         {
-            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中进行");
+            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击[更新DDTV]进行自动更新");
         }
 
         private bool CheckRepeatedRun()
@@ -1036,6 +1036,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void DDTV_UPDATE_Button_Click(object sender, RoutedEventArgs e)
         {
+            DDTV_Core.Tool.DDTV_Update.CheckUpdateProgram(true);
             MessageBoxResult dr = MessageBox.Show($"确定要开始更新DDTV吗？\n确定后会结束DDTV全部任务并退出DDTV开始更新", "更新DDTV", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
             {
