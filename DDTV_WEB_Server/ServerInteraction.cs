@@ -21,7 +21,7 @@ namespace DDTV_WEB_Server
                             {
                                 if (IsChecked)
                                 {
-                                    Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序");
+                                    Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序[10分钟后再次提示]");
                                     Thread.Sleep(60 * 10 * 1000);
                                 }
                                 else
@@ -29,7 +29,7 @@ namespace DDTV_WEB_Server
                                     if (!DDTV_Core.Tool.DDTV_Update.ComparisonVersion("WEB", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()))
                                     {
                                         IsChecked = true;
-                                        Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序");
+                                        Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序[10分钟后再次提示]");
                                     }
                                     Thread.Sleep(60 * 10 * 1000);
                                 }
