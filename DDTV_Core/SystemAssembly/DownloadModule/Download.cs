@@ -45,12 +45,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    if(!roomInfo.IsUserCancel)
+                    if(IsNewTask || !roomInfo.IsUserCancel)
                     {
+                        roomInfo.IsUserCancel = false;
                         AddDownLoad(uid, IsNewTask);
                     }
                     else
                     {
+                        if(!IsNewTask)
+                        {
+                            DownloadCompleteTaskd(uid, IsFlvSplit);
+                        }
                         roomInfo.IsUserCancel = false;
                     }
                 }

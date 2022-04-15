@@ -50,7 +50,9 @@ namespace DDTV_Core.Tool
                 {
                     try
                     {
+                        Log.AddLog("Check", LogClass.LogType.Info, "开始手动更新更新器", false, null, false);
                         CheckTheUpdateProgramForUpdates();
+                        Log.AddLog("Check", LogClass.LogType.Info, "手动更新更新器OK", false, null, false);
                     }
                     catch (Exception){}
                 });
@@ -85,7 +87,7 @@ namespace DDTV_Core.Tool
         {
             try
             {
-                Log.AddLog("Check", LogClass.LogType.Info, "开始手动更新更新器", false, null, true);
+               
                 string Type = "Update";
                 string PushUrl = "https://update.ddtv.pro/";
                 string _A = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(PushUrl + $"{Type}_Update.json", false, "https://Update.ddtv.pro/");
@@ -118,7 +120,7 @@ namespace DDTV_Core.Tool
                     SystemAssembly.NetworkRequestModule.Get.Get.GetFile(DownloadUrl, file.FilePath);
                     //Console.WriteLine("下载完成\n");
                 }
-                Log.AddLog("Check", LogClass.LogType.Info, "手动更新更新器OK", false, null, true);
+               
             }
             catch (Exception)
             {

@@ -1,5 +1,7 @@
 # Webhook
+
 * 本Webhook会在触发特定事件的时候，会主动向配置文件中的地址发送HTTP / POST请求
+
 ## 注意事项
 * 如果请求发送返回的结果不是http状态不是2xx，会判定为发送失败，失败状态最多会尝试三次，如果三次都失败，该请求会被抛弃  
 * 因为本身自带网络延迟和代码处理延迟，并且每次失败都会有等待时间，所以http请求的内容时效性不能做到保证。
@@ -7,7 +9,11 @@
 ## 怎么启用WebHook
 给配置文件中的`WebHookURL`添加上对应的地址后生效，当`WebHookURL`为空时WebHook功能关闭
 
-## HookType
+::: tip  
+`WebHookURL`参数为启动时加载，如果修改需要重启生效
+:::
+
+## 事件类型
 ```c#
         public enum HookType
         {
@@ -58,7 +64,77 @@
         }
 ```
 
-## 返回信息
+## 返回数据例子
+
+```json
+{
+    "id":"3a3485e2-8e17-4446-ad49-8e423c16ee7f",
+    "type":0,
+    "uid":7855561,
+    "hook_time":"2022-04-11T01:45:49.0457189+08:00",
+    "user_info":{
+        "name":"灬莱瓦汀",
+        "face":"https://i1.hdslb.com/bfs/face/8f6e9c1a5c178b9437b8584292ef5881febe43a2.png",
+        "uid":7855561,
+        "sign":null,
+        "attention":0
+    },
+    "room_Info":{
+        "title":"【转播】GPU架构（试讲）",
+        "description":"",
+        "attention":0,
+        "room_id":50443,
+        "uid":7855561,
+        "online":0,
+        "live_time":1649612744,
+        "live_status":1,
+        "short_id":0,
+        "area":6,
+        "area_name":"生活娱乐",
+        "area_v2_id":375,
+        "area_v2_name":"科技科普",
+        "area_v2_parent_name":"学习",
+        "area_v2_parent_id":11,
+        "uname":"灬莱瓦汀",
+        "face":"https://i1.hdslb.com/bfs/face/8f6e9c1a5c178b9437b8584292ef5881febe43a2.png",
+        "tag_name":"日常,学习,萌宠,厨艺,手机直播",
+        "tags":"",
+        "cover_from_user":"https://i0.hdslb.com/bfs/live/b739712a6923b96c48374567c1111a112129f3eb.jpg",
+        "keyframe":"https://i0.hdslb.com/bfs/live-key-frame/keyframe012200350000000504434p17rf.jpg",
+        "lock_till":"0000-00-00 00:00:00",
+        "hidden_till":"0000-00-00 00:00:00",
+        "broadcast_type":0,
+        "need_p2p":0,
+        "is_hidden":false,
+        "is_locked":false,
+        "is_portrait":false,
+        "encrypted":false,
+        "pwd_verified":false,
+        "is_sp":0,
+        "special_type":0,
+        "roomStatus":0,
+        "roundStatus":0,
+        "url":"",
+        "IsAutoRec":true,
+        "IsRemind":true,
+        "IsRecDanmu":false,
+        "level":0,
+        "sex":null,
+        "sign":null,
+        "DownloadedFileInfo":{
+            "FlvFile":null,
+            "Mp4File":null,
+            "DanMuFile":null,
+            "SCFile":null,
+            "GuardFile":null,
+            "GiftFile":null
+        },
+        "Shell":""
+    }
+}
+```
+## 返回数据说明
+
 ```C#  
         public class Message
         {

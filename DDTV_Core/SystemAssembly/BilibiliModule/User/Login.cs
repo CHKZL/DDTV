@@ -88,7 +88,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                         }
                 }
                 QRConsole.Output(sKData.OriginalString);
-                using (var stream = File.OpenWrite(@"QRCode.png"))
+                using (var stream = File.OpenWrite(@"./BiliQR.png"))
                 {
                     sKData.SKData.SaveTo(stream);
                 }
