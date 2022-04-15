@@ -18,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// <returns></returns>
         public static string GetRequest(string url, bool IsCookie = true, string R = "", string referer = "",string ContentType = "application/x-www-form-urlencoded")
         {
-            Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
+            //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
             if (string.IsNullOrEmpty(url))
             {
                 Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Error, $"GetRequest请求错误！\nURL请求为空！\nGetRequest请求错误！");

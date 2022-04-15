@@ -284,6 +284,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意WEB连接错误，尝试重连", true, ex);
                         roomInfo.IsDownload = false;
+                        IsDownloading = false;
+                        Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
+
+
                         Download.AddDownloadTaskd(Uid, false);
                         return;
                     }
@@ -291,6 +295,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
                         roomInfo.IsDownload = false;
+                        IsDownloading = false;
                         Download.AddDownloadTaskd(Uid, false);
                         return;
                     }
