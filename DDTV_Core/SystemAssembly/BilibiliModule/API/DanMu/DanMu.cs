@@ -80,7 +80,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         }
                         Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"获取【[UID]：{uid}】的直播间wss长连接服务器信息成功");
                     }
-                }             
+                    else
+                    {
+                        Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"获取【[UID]：{uid}】的直播间wss信息失败，返回的host_list长度为0或空");
+                    }
+                }
+                else
+                {
+                    Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"获取【[UID]：{uid}】的直播间wss信息失败，返回的data长度为0或空");
+                }
             }
             else
             {

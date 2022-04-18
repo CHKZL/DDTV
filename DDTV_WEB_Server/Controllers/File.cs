@@ -18,6 +18,72 @@ namespace DDTV_WEB_Server.Controllers
         }   
     }
     /// <summary>
+    /// 获取已录制的文件总列表
+    /// </summary>
+    [Route("api/[controller]")]
+    [ApiController]
+    public class File_GetFilePathList : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "File_GetFilePathList")]
+        public ActionResult post([FromForm] string cmd)
+        {
+            string Path = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadPath;
+
+            List<FileNames> T0 = GetSystemAllPath.GetallDirectory(new List<FileNames>(),Path);
+            return Content(MessageBase.Success(nameof(File_GetAllFileList), T0), "application/json");
+        }
+        public class FileNames
+        {
+            public string Name { get; set; }
+            public string FileType { get; set; }
+            public List<FileNames> children { get; set; }
+        }
+        public class state
+        {
+            public bool opened { get; set; }
+        }
+        //以上字段为树形控件中需要的属性
+        public class GetSystemAllPath : Controller
+        {
+            //获得指定路径下所有文件名
+            public static List<FileNames> getFileName(List<FileNames> list, string filepath)
+            {
+                DirectoryInfo root = new DirectoryInfo(filepath);
+                foreach (FileInfo f in root.GetFiles())
+                {
+                    list.Add(new FileNames
+                    {
+                        Name = f.Name,
+                        FileType=f.Extension
+                    });
+                }
+                return list;
+            }
+            //获得指定路径下的所有子目录名
+            // <param name="list">文件列表</param>
+            // <param name="path">文件夹路径</param>
+            public static List<FileNames> GetallDirectory(List<FileNames> list, string path)
+            {
+                DirectoryInfo root = new DirectoryInfo(path);
+                var dirs = root.GetDirectories();
+                if (dirs.Count() !=0)
+                {
+                    foreach (DirectoryInfo d in dirs)
+                    {
+                        list.Add(new FileNames
+                        {
+                            Name = d.Name,
+                            FileType = d.Extension,
+                            children = GetallDirectory(new List<FileNames>(), d.FullName)
+                        });
+                    }
+                }
+                list = getFileName(list, path);
+                return list;
+            }
+        }
+    }
+    /// <summary>
     /// 分类获取已录制的文件总列表
     /// </summary>
     [Route("api/[controller]")]

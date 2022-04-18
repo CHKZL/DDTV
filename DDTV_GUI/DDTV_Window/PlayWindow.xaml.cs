@@ -581,6 +581,7 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                         roomInfo.roomWebSocket.IsConnect = false;
+                        roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
                         roomInfo.roomWebSocket.LiveChatListener.Dispose();
                     }
                     catch (Exception)
