@@ -33,11 +33,27 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            if (liveChatListener.startIn)
+            try
             {
-                Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
-                Rec(liveChatListener.mid);
+                if (!liveChatListener.IsUserDispose)
+                {
+                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
+                    Rec(liveChatListener.mid);
+                }
+                else
+                {
+                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}请求重连，但是用户已经取消该操作，取消重连");
+                }
             }
+            catch (Exception)
+            {
+            }
+          
+            //if (!liveChatListener.startIn)
+            //{
+              
+            //}
+         
         }
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)

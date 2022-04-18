@@ -26,7 +26,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType= SatrtType.DDTV_Core;
-
+        public static string CompiledVersion ="2022-04-17 17:57:29";
 
         /// <summary>
         /// 初始化COre
@@ -34,9 +34,10 @@ namespace DDTV_Core
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             ///SatrtType satrtType = SatrtType.DDTV_Core
+            ///
             InitType= satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}\n========================");
+            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}({CompiledVersion})\n========================");
             Log.LogInit(LogClass.LogType.Debug_Request);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -47,6 +48,7 @@ namespace DDTV_Core
 
             var c = RuntimeInformation.RuntimeIdentifier;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
+
             if (satrtType!= SatrtType.DDTV_GUI)
             {
                 SeKey();
@@ -256,6 +258,8 @@ namespace DDTV_Core
                 }
             });
         }
+
+      
 
     }
 }

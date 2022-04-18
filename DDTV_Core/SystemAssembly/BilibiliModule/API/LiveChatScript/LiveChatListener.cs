@@ -29,6 +29,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         public bool startIn = false;
         public string wss_S = "";
         public long mid = 0;
+        public bool IsUserDispose=false;
 
         public LiveChatListener()
         {

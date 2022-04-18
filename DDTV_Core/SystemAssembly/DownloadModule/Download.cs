@@ -126,6 +126,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         try
                         {
+                            roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】的直播已结束，LiveChat连接中断，储存相关数据");
                             roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                             roomInfo.DanmuFile.TimeStopwatch.Stop();
@@ -343,9 +344,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             //录制弹幕(是否是新任务 && 弹幕录制总开关 && 房间弹幕录制设置)
                             if (IsNewTask && IsRecDanmu && bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)))
                             {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                                 roomInfo.DanmuFile = new();
                                 roomInfo.DanmuFile.FileName = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName;
                                 BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
+                            }
+                            else
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】录制任务不进行弹幕录制，理由：IsNewTask:{IsNewTask},IsRecDanmu:{IsRecDanmu}");
                             }
                         }
                         else if (Ok == 1)
