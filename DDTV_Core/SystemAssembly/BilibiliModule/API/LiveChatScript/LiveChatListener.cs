@@ -288,6 +288,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 case "SEND_GIFT":
                     MessageReceived(this, new SendGiftEventArgs(obj));
                     break;
+                //舰组信息(上舰)
+                case "GUARD_BUY":
+                    MessageReceived(this, new GuardBuyEventArgs(obj));
+                    break;
+                //小时榜单变动通知
+                case "ACTIVITY_BANNER_UPDATE_V2":
+                    MessageReceived(this, new ActivityBannerEventArgs(obj));
+                    break;
                 //礼物combo
                 case "COMBO_SEND":               
                     break;
@@ -295,11 +303,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 case "ENTRY_EFFECT":
                     MessageReceived(this, new EntryEffectEventArgs(obj));
                     break;
-                //舰组信息(上舰)
-                case "GUARD_BUY":
-                    //Debug.Log("guraddd\n"+obj);
-                    MessageReceived(this, new GuardBuyEventArgs(obj));
-                    break;
+             
                 //续费舰长
                 case "USER_TOAST_MSG":
                     break;
@@ -310,10 +314,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 case "WELCOME":
                     MessageReceived(this, new WelcomeEventArgs(obj));
                     break;
-                //小时榜单变动通知
-                case "ACTIVITY_BANNER_UPDATE_V2":
-                    MessageReceived(this, new ActivityBannerEventArgs(obj));
-                    break;
+             
                 //人气值(心跳数据)
                 case "LiveP":
                     MessageReceived(this, new LivePopularity(obj));
