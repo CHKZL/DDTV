@@ -370,7 +370,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         else
                         {
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            AddDownloadTaskd(uid, false);
+                            AddDownloadTaskd(uid, IsNewTask);
                         }
                     }
                     else
