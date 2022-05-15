@@ -70,8 +70,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             }
             catch (Exception e)
             {
-                //InfoLog.InfoPrintf("WSS连接发生错误:" + e.ToString(), InfoLog.InfoClass.Debug);
-                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e);
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e,false);
                 Dispose();
                 //Console.WriteLine(e.ToString());
             }

@@ -50,7 +50,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 if (Rooms.RoomInfo.TryGetValue(item.UID, out var roomInfo))
                 {
-                    Rooms.RoomInfo[item.UID].uname =string.IsNullOrEmpty(item.name)?item.Name: item.name;
+                    Rooms.RoomInfo[item.UID].uname =string.IsNullOrEmpty(item.name) ? (string.IsNullOrEmpty(item.Name) ? "未保存昵称" : item.Name) : item.name;
                     Rooms.RoomInfo[item.UID].Description=item.Description;
                     Rooms.RoomInfo[item.UID].room_id=item.RoomId==0?int.Parse(item.RoomNumber) :item.RoomId;
                     Rooms.RoomInfo[item.UID].IsAutoRec = (item.IsAutoRec||item.VideoStatus);
@@ -71,7 +71,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     }
                     Rooms.RoomInfo.Add(item.UID,new RoomInfoClass.RoomInfo() 
                     { 
-                        uname = string.IsNullOrEmpty(item.name) ? item.Name : item.name,
+                        uname = string.IsNullOrEmpty(item.name) ? (string.IsNullOrEmpty(item.Name)?"未保存昵称": item.Name) : item.name,
                         Description = item.Description,
                         room_id = T_roomId,
                         IsAutoRec = (item.IsAutoRec||item.VideoStatus),

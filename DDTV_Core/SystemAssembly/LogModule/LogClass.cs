@@ -43,6 +43,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Debug_Request = 41,
             /// <summary>
+            /// DDcenter请求
+            /// </summary>
+            Debug_DDcenter = 42,
+            /// <summary>
             /// 一些追踪数据
             /// </summary>
             Trace = 50,

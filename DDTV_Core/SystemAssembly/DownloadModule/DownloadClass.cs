@@ -253,7 +253,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     }
                                     byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
                                     DataLength = DL;
-                                    fileStream.Write(FixData, 0, FixData.Length);
+                                    if (FixData != null)
+                                    {
+                                        fileStream.Write(FixData, 0, FixData.Length);
+                                    }
                                     if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize && DataLength == 15)
                                     {
                                         count++;

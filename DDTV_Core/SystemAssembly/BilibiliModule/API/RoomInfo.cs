@@ -1,4 +1,5 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DataCacheModule;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -13,6 +14,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 {
     public class RoomInfo
     {
+        public static bool ForceCDNResolution = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ForceCDNResolution, "false", CoreConfigClass.Group.Download));
+
         /// <summary>
         /// 使用uids获取房间状态信息
         /// </summary>
@@ -221,9 +224,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        internal static RoomInfoClass.RoomInfo get_info(long uid)
+        public static RoomInfoClass.RoomInfo get_info(long uid,long RoomId=0,bool IsAddedToForm=true)
         {
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/get_info?id=" + Rooms.Rooms.GetValue(uid, CacheType.room_id));
+            string WebText=String.Empty;
+            if (RoomId==0)
+            {
+                WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/room/v1/Room/get_info?id={Rooms.Rooms.GetValue(uid, CacheType.room_id)}");
+            }
+            else
+            {
+                WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/room/v1/Room/get_info?id={RoomId}");
+            }
+           
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_info获取网络数据为空或超时");
@@ -238,36 +250,43 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 
                     string ri = RoomInit.ToString();
                     ri = ri.Replace("\"live_time\"", "\"live_time_t\"").Replace("0000-00-00 00:00:00", "1970-01-01 08:00:01");
-                    if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
+                    if (IsAddedToForm)
                     {
-                        Rooms.Rooms.RoomInfo[uid].room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).room_id;
-                        Rooms.Rooms.RoomInfo[uid].short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).short_id;
-                        Rooms.Rooms.RoomInfo[uid].attention = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).attention;
-                        Rooms.Rooms.RoomInfo[uid].online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).online;
-                        Rooms.Rooms.RoomInfo[uid].description = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).description;
-                        Rooms.Rooms.RoomInfo[uid].live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).live_status;
-                        Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).title);
-                        Rooms.Rooms.RoomInfo[uid].cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).user_cover;
-                        Rooms.Rooms.RoomInfo[uid].keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).keyframe;
-                        Rooms.Rooms.RoomInfo[uid].area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).area_name;
+                        if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
+                        {
+                            Rooms.Rooms.RoomInfo[uid].room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).room_id;
+                            Rooms.Rooms.RoomInfo[uid].short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).short_id;
+                            Rooms.Rooms.RoomInfo[uid].attention = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).attention;
+                            Rooms.Rooms.RoomInfo[uid].online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).online;
+                            Rooms.Rooms.RoomInfo[uid].description = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).description;
+                            Rooms.Rooms.RoomInfo[uid].live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).live_status;
+                            Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).title);
+                            Rooms.Rooms.RoomInfo[uid].cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).user_cover;
+                            Rooms.Rooms.RoomInfo[uid].keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).keyframe;
+                            Rooms.Rooms.RoomInfo[uid].area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri).area_name;
+                        }
+                        else
+                        {
+                            Rooms.Rooms.RoomInfo.Add(uid, JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri));
+                        }
+                        DataCache.SetCache(CacheType.room_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].room_id.ToString(), int.MaxValue);
+                        DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
+                        DataCache.SetCache(CacheType.attention, uid.ToString(), Rooms.Rooms.RoomInfo[uid].attention.ToString(), 5 * 1000);
+                        DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 5 * 1000);
+                        DataCache.SetCache(CacheType.description, uid.ToString(), Rooms.Rooms.RoomInfo[uid].description.ToString(), 300 * 1000);
+                        DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);
+                        DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
+                        DataCache.SetCache(CacheType.cover_from_user, uid.ToString(), Rooms.Rooms.RoomInfo[uid].user_cover.ToString(), 60 * 1000);
+                        DataCache.SetCache(CacheType.keyframe, uid.ToString(), Rooms.Rooms.RoomInfo[uid].keyframe.ToString(), 60 * 1000);
+                        DataCache.SetCache(CacheType.area_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_name.ToString(), 60 * 1000);
+                        return Rooms.Rooms.RoomInfo[uid];
                     }
                     else
                     {
-                        Rooms.Rooms.RoomInfo.Add(uid, JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri));
+                        return JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri);
                     }
-                    DataCache.SetCache(CacheType.room_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].room_id.ToString(), int.MaxValue);
-                    DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
-                    DataCache.SetCache(CacheType.attention, uid.ToString(), Rooms.Rooms.RoomInfo[uid].attention.ToString(), 5 * 1000);
-                    DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 5 * 1000);
-                    DataCache.SetCache(CacheType.description, uid.ToString(), Rooms.Rooms.RoomInfo[uid].description.ToString(), 300 * 1000);
-                    DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);
-                    DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
-                    DataCache.SetCache(CacheType.cover_from_user, uid.ToString(), Rooms.Rooms.RoomInfo[uid].user_cover.ToString(), 60 * 1000);
-                    DataCache.SetCache(CacheType.keyframe, uid.ToString(), Rooms.Rooms.RoomInfo[uid].keyframe.ToString(), 60 * 1000);
-                    DataCache.SetCache(CacheType.area_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_name.ToString(), 60 * 1000);
-
                     //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间get_info信息成功");
-                    return Rooms.Rooms.RoomInfo[uid];
+                    
                 }
             }
             return null;
@@ -324,8 +343,87 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             return _out;
         }
+
         /// <summary>
-        /// 使用roomId获取房间直播视频流地址
+        /// 获取房间直播视频流地址
+        /// </summary>
+        /// <param name="uid">用户mid</param>
+        /// <param name="qn">画质</param>
+        /// <returns></returns>
+        public static string playUrl_Mandatory(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine,bool IsPlay=false)
+        {
+            List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
+        PlayR: if (!GetQuality(uid).Contains((int)qn))
+            {
+                qn = RoomInfoClass.Quality.OriginalPainting;
+            }
+            string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
+            string WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)qn}&platform=web&ptype=8");
+
+            if (string.IsNullOrEmpty(WebText))
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
+                Thread.Sleep(800);
+                return playUrl_Mandatory(uid, qn);
+            }
+            try
+            {
+                var BA = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(WebText);
+                switch (BA.Code)
+                {
+                    case 0:
+                        var url_data = BA?.Data?.PlayurlInfo?.Playurl?.Streams;
+                        var url_http_stream_flv_avc =
+                            url_data.FirstOrDefault(x => x.ProtocolName == "http_stream")?.Formats?.FirstOrDefault(x => x.FormatName == "flv")?.Codecs?.FirstOrDefault(x => x.CodecName == "avc");
+                        foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                        {
+                            if(!IsPlay && ForceCDNResolution)
+                            {
+                                if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
+                                {
+                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
+                                    return item.Host + url_http_stream_flv_avc.BaseUrl+ item.Extra;
+                                }
+                            }
+                            else
+                            {
+                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
+                                return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                            }
+                        }
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到主CDN地址，2秒后重试(如果一直失败，那还是把强制主CDN设置给关了吧)");
+#if DEBUG
+                        string uu = "";
+                        foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                        {
+                            uu += item.Host + "\n";
+                        }
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
+#endif
+                        Thread.Sleep(3000);
+                        return playUrl_Mandatory(uid, qn);
+                    case 1002002:
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"因为参数错误，{roomId}房间直播视频流获取失败");
+                        break;
+                    case 60004:
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"因为{roomId}房间信息不存在，获取直播视频流失败");
+                        break;
+                    default:
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误1，出现错误的字符串:{WebText}", true, null, false);
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误2，出现错误的字符串:{WebText}", true, e,false);
+                return playUrl_Mandatory(uid, qn);
+            }  
+            return null;
+        }
+
+
+        /// <summary>
+        /// 获取房间直播视频流地址
         /// </summary>
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
@@ -338,6 +436,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 qn = RoomInfoClass.Quality.OriginalPainting;
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
+            
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
 
             if (string.IsNullOrEmpty(WebText))

@@ -66,7 +66,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule
         }
         public static string UA()
         {
-            return $"Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 DDTV/{InitDDTV_Core.Ver}";
+            return $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36";
         }
         /// <summary>
         /// 将cookie字符串转换为CookieContainer对象

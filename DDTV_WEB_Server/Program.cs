@@ -5,6 +5,7 @@ using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
+using DDTV_Core.Tool;
 
 namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 {
@@ -17,8 +18,8 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             {
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
-                ServerInteraction.CheckUpdates.Update();
-                ServerInteraction.Dokidoki.Start();
+                //ServerInteraction.CheckUpdates.Update();
+                //ServerInteraction.Dokidoki.Start("WEB");
             });    
             Thread.Sleep(3000);
 

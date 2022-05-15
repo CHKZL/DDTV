@@ -67,7 +67,8 @@ namespace DDTV_Core.Tool.FlvModule
                 DataLength = DL;
                 if(fileStream.CanWrite)
                 {
-                    fileStream.Write(FixData, 0, FixData.Length);
+                    if (FixData != null)
+                        fileStream.Write(FixData, 0, FixData.Length);
                 }
                 else
                 {
@@ -176,7 +177,7 @@ namespace DDTV_Core.Tool.FlvModule
             }
 
         }
-        private static void CuttingFFMPEG(string FilePath)
+        public static void CuttingFFMPEG(string FilePath)
         {
             string F = Fix(FilePath,"切片", "CuttingTmp");
             FileOperation.Del(FilePath);
@@ -190,6 +191,11 @@ namespace DDTV_Core.Tool.FlvModule
             FileOperation.Del(F);
           
         }
+
+        private static long FlvAudioFPS = 0;
+        private static long FlvVideoFPS = 0;
+        private static long ErrorAudioFPS = 0;
+        private static long ErrorVideoFPS = 0;
         private static byte[] FixWrite(byte[] data, out uint Len,out uint PakeTime,out byte TagType)
         {
             if (Count > 9)
@@ -244,20 +250,36 @@ namespace DDTV_Core.Tool.FlvModule
                                     flvTimes.ErrorAudioTimes = Time;
                                 }
                                 data[4] = 0x08;
-                                byte[] c = BitConverter.GetBytes(Time - flvTimes.ErrorAudioTimes);
+                                byte[] c = BitConverter.GetBytes(Time - flvTimes.ErrorAudioTimes- ErrorAudioFPS);
                                 data[8] = c[2];
                                 data[9] = c[1];
                                 data[10] = c[0];
                                 data[11] = c[3];
                                 PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
-                                //Console.WriteLine($"从文件中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
-                                flvTimes.TagType = 0x08;
-                                if (flvTimes.FlvAudioTagCount == 0)
+//#if DEBUG
+                                if (PakeTime - FlvAudioFPS > 500)
                                 {
-                                    FlvScriptTag.FistAbody = new byte[data.Length];
-                                    FlvScriptTag.FistAbody = data;
+                                    data = null;
+                                    ErrorAudioFPS = PakeTime - FlvAudioFPS;
+                                    FlvAudioFPS = PakeTime;
+                                    return data;
                                 }
-                                flvTimes.FlvAudioTagCount++;
+                                else
+                                {
+                                    //Console.WriteLine($"从文件中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                }
+//#endif
+                                FlvAudioFPS = PakeTime;
+                                if (data != null)
+                                {
+                                    flvTimes.TagType = 0x08;
+                                    if (flvTimes.FlvAudioTagCount == 0)
+                                    {
+                                        FlvScriptTag.FistAbody = new byte[data.Length];
+                                        FlvScriptTag.FistAbody = data;
+                                    }
+                                    flvTimes.FlvAudioTagCount++;
+                                }
                                 return data;
                             }
                         case 0x09:
@@ -271,21 +293,38 @@ namespace DDTV_Core.Tool.FlvModule
                                     flvTimes.ErrorVideoTimes = Time;
                                 }
                                 data[4] = 0x09;
-                                byte[] c = BitConverter.GetBytes(Time - flvTimes.ErrorVideoTimes);
+                                byte[] c = BitConverter.GetBytes(Time - flvTimes.ErrorVideoTimes- ErrorVideoFPS);
                                 data[8] = c[2];
                                 data[9] = c[1];
                                 data[10] = c[0];
                                 data[11] = c[3];
                                 PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
-                                //Console.WriteLine($"从文件中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
-                                flvTimes.TagType = 0x09;
-                                if (flvTimes.FlvVideoTagCount == 0)
-                                {
-                                    FlvScriptTag.FistVbody = new byte[data.Length];
-                                    FlvScriptTag.FistVbody = data;
-                                }
 
-                                flvTimes.FlvVideoTagCount++;
+//#if DEBUG
+                                if (PakeTime - FlvVideoFPS > 500)
+                                {
+                                    data = null;
+                                    ErrorVideoFPS = PakeTime - FlvVideoFPS;
+                                    FlvVideoFPS = PakeTime;
+                                    return data;
+                                }
+                                else
+                                {
+                                    //Console.WriteLine($"从文件中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                }
+//#endif
+                                FlvVideoFPS= PakeTime;
+
+
+                                flvTimes.TagType = 0x09;
+                                    if (flvTimes.FlvVideoTagCount == 0)
+                                    {
+                                        FlvScriptTag.FistVbody = new byte[data.Length];
+                                        FlvScriptTag.FistVbody = data;
+                                    }
+
+                                   flvTimes.FlvVideoTagCount++;
+                                
                                 return data;
                             }
                         default:

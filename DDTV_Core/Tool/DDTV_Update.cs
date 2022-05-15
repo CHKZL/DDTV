@@ -24,7 +24,9 @@ namespace DDTV_Core.Tool
             {
                 string Ver = SystemAssembly.NetworkRequestModule.Post.Post.HttpPost("http://api.ddtv.pro/api/Ver", Parameters);
                 ServerMessageClass.MessageBase.pack<ServerMessageClass.MessageClass.VerClass> pack = JsonConvert.DeserializeObject<ServerMessageClass.MessageBase.pack<ServerMessageClass.MessageClass.VerClass>>(Ver);
-                if (pack.data.Ver == LocalVersion)
+                Version v1 = new Version(pack.data.Ver);
+                Version v2 = new Version(LocalVersion);
+                if (v1 > v2)
                 {
                     return true;
                 }
@@ -35,7 +37,7 @@ namespace DDTV_Core.Tool
             }
             catch (Exception)
             {
-                return true;
+                return false;
             }
         }
         public static bool IsOn = false;

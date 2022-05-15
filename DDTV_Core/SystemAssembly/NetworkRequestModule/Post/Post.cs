@@ -55,6 +55,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                 }
                 Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
                 Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug_Request, $"发起POST请求完成：{url}",false,null,false);
+                try
+                {
+                    if (request != null) request.Abort();
+                }
+                catch (Exception){}
                 return strValue;
             }
         }
@@ -125,6 +130,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                     {
                         resp.Dispose();
                     }
+                    try
+                    {
+                        if (req != null) req.Abort();
+                    }
+                    catch (Exception) { }
                     return result;
                 }
             }
@@ -173,6 +183,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 result = reader.ReadToEnd();
             }
+            try
+            {
+                if (req != null) req.Abort();
+            }
+            catch (Exception) { }
             return result;
         }
     }

@@ -42,18 +42,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 }
                 else
                 {
-                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}请求重连，但是用户已经取消该操作，取消重连");
+                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}请求重连，但该房间的录制已经标记不再连接，取消重连");
                 }
             }
             catch (Exception)
             {
-            }
-          
-            //if (!liveChatListener.startIn)
-            //{
-              
-            //}
-         
+            }   
         }
 
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)

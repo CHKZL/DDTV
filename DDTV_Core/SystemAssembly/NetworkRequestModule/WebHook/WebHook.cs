@@ -41,6 +41,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
                             if ((int)resp.StatusCode >= 200 && (int)resp.StatusCode < 300)
                             {
                                 Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送完成:{cmd}-{uid}");
+                                try
+                                {
+                                    if (request != null) request.Abort();
+                                }
+                                catch (Exception) { }
                                 return;
                             }
                         }
@@ -101,6 +106,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// 执行Shell命令完成
             /// </summary>
             RunShellComplete,
+            /// <summary>
+            /// 下载任务成功结束
+            /// </summary>
+            DownloadEndMissionSuccess
         }
     }
 }

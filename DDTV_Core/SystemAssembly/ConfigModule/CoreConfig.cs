@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
-using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using System.Threading.Tasks;
 using static DDTV_Core.InitDDTV_Core;
 
 namespace DDTV_Core.SystemAssembly.ConfigModule
@@ -16,6 +14,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "true", CoreConfigClass.Group.Download));
         public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "false", CoreConfigClass.Group.Download));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
+        public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
+
 
         /// <summary>
         /// 初始化配置文件
@@ -31,7 +31,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             switch (satrtType)
             {
                 case SatrtType.DDTV_GUI:
-                    if(GUI_FirstStart)
+                    if (GUI_FirstStart)
                     {
 
                     }
@@ -46,7 +46,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     }
                     break;
-                default:             
+                default:
                     Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
                     //初始化哔哩哔哩账号系统
                     BilibiliUserConfig.Init(satrtType);
@@ -59,7 +59,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             Tool.Dokidoki.DoNotSleepWhileDownloading();
             //开一个线程用于定时自动储存配置
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 while (true)
                 {
                     try
@@ -81,12 +82,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             var _RoomFile = DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.RoomFile;
             var _DownloadPath = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadPath;
-            var _TmpPath= DDTV_Core.SystemAssembly.DownloadModule.Download.TmpPath;
-            var _DownloadDirectoryName= DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadDirectoryName;
+            var _TmpPath = DDTV_Core.SystemAssembly.DownloadModule.Download.TmpPath;
+            var _DownloadDirectoryName = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadDirectoryName;
             var _DownloadFileName = DDTV_Core.SystemAssembly.DownloadModule.Download.DownloadFileName;
             var _TranscodParmetrs = DDTV_Core.Tool.TranscodModule.Transcod.TranscodParmetrs;
             var _IsAutoTranscod = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
-            var _WEB_API_SSL= DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.IsSSL;
+            var _WEB_API_SSL = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.IsSSL;
             var _pfxFileName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.pfxFileName;
             var _pfxPasswordFileName = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.pfxPasswordFileName;
             var _GUI_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.GUI_FirstStart;
@@ -113,6 +114,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _CookieDomain = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.CookieDomain;
             var _Shell = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Shell;
             var _WebHookUrl = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WebHookUrl;
+            var _InstanceAID = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.InstanceAID;
+            var _DDcenterSwitch = DDTV_Core.Tool.DDcenter.DDcenterSwitch;
+            var _TranscodingCompleteAutoDeleteFiles = DDTV_Core.Tool.TranscodModule.Transcod.TranscodingCompleteAutoDeleteFiles;
         }
         /// <summary>
         /// 获取配置
@@ -125,18 +129,18 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             string Value = DefaultValue;
 
-            if(CoreConfigClass.config.datas.Count()>0)
+            if (CoreConfigClass.config.datas.Count() > 0)
             {
                 foreach (var item in CoreConfigClass.config.datas)
                 {
-                    if(item.Key==Key)
+                    if (item.Key == Key)
                     {
-                        if (item.Group==Group&&Group!=CoreConfigClass.Group.Default)
+                        if (item.Group == Group && Group != CoreConfigClass.Group.Default)
                         {
-                            if(item.Enabled)
+                            if (item.Enabled)
                             {
-                                Value=item.Value;
-                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值成功，返回值[{Value}]",false,null,false);
+                                Value = item.Value;
+                                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值成功，返回值[{Value}]", false, null, false);
                                 return Value;
                             }
                             else
@@ -144,11 +148,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                 Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，因为该值当前为[注释属性]返回值默认值[{Value}]", false, null, false);
                                 return Value;
                             }
-                        }   
+                        }
                     }
                 }
             }
-            if (Group!=CoreConfigClass.Group.Default)
+            if (Group != CoreConfigClass.Group.Default)
             {
                 SetValue(Key, Value, Group);
                 Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，未找到该值，已经把默认值[{Value}]增加到配置文件", false, null, false);
@@ -166,17 +170,18 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             foreach (var item in CoreConfigClass.config.datas)
             {
-                if(item.Key==Key&& item.Group==Group)
+                if (item.Key == Key && item.Group == Group)
                 {
-                    item.Value=Value;
+                    item.Value = Value;
                     return true;
                 }
             }
-            CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data() {
-                Key=Key,
-                Group=Group,
-                Value=Value,
-                Enabled=IsEnabled
+            CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
+            {
+                Key = Key,
+                Group = Group,
+                Value = Value,
+                Enabled = IsEnabled
             });
             Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"为配置文件增加[{Group}]组下[{Key}]的值成功，返回值[{Value}]");
             return false;
