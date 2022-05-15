@@ -1,4 +1,4 @@
-name: DDTV_New
+name: DDTV_GUI
 
 on:
   push:
