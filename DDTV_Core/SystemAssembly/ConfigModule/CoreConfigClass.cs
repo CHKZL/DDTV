@@ -244,6 +244,26 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：string.Empty
             /// </summary>
             WebHookUrl,
+            /// <summary>
+            /// 实例AID用于在联网情况下区分客户端（字符串）
+            /// 组：Core   默认值：随机字符串
+            /// </summary>
+            InstanceAID,
+            /// <summary>
+            /// DDC的采集开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            DDcenterSwitch,
+            /// <summary>
+            /// 转码完成后自动删除文件开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            TranscodingCompleteAutoDeleteFiles,
+            /// <summary>
+            /// 是否强使用主CDN下载地址 (布尔值)
+            /// 组：Download   默认值：false
+            /// </summary>
+            ForceCDNResolution,
         }
     }
 }

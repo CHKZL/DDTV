@@ -14,6 +14,7 @@ using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using System.Runtime.InteropServices;
 using ConsoleTables;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
+using DDTV_Core.Tool;
 
 namespace DDTV_Core
 {
@@ -26,29 +27,51 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType= SatrtType.DDTV_Core;
-        public static string CompiledVersion ="2022-04-17 17:57:29";
+        public static string CompiledVersion ="2022-05-15 14:03:04";
 
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            ///SatrtType satrtType = SatrtType.DDTV_Core
-            ///
             InitType= satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}({CompiledVersion})\n========================");
-            Log.LogInit(LogClass.LogType.Debug_Request);
+            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}(编译时间:{CompiledVersion})\n========================");
+            Log.LogInit(LogClass.LogType.Debug);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 1024*1024;
+            ServicePointManager.DefaultConnectionLimit = 1024*1024*8;
             ServicePointManager.Expect100Continue = false;
             CoreConfig.ConfigInit(satrtType);
             Tool.DDTV_Update.CheckUpdateProgram();
-
-            var c = RuntimeInformation.RuntimeIdentifier;
+            Task.Run(() => Tool.DDcenter.Init(satrtType));
+            //var c = RuntimeInformation.RuntimeIdentifier;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
-
+            
+            switch(satrtType)
+            {
+                case SatrtType.DDTV_Core:
+                    ServerInteraction.CheckUpdates.Update("Core");
+                    ServerInteraction.Dokidoki.Start("Core");
+                    break;
+                case SatrtType.DDTV_CLI:
+                    ServerInteraction.CheckUpdates.Update("CLI");
+                    ServerInteraction.Dokidoki.Start("CLI");
+                    break;
+                case SatrtType.DDTV_WEB:
+                    ServerInteraction.CheckUpdates.Update("WEB");
+                    ServerInteraction.Dokidoki.Start("WEB");
+                    break;
+                case SatrtType.DDTV_GUI:
+                    ServerInteraction.CheckUpdates.Update("GUI");
+                    ServerInteraction.Dokidoki.Start("GUI");
+                    break;
+                default:
+                    ServerInteraction.CheckUpdates.Update("Core");
+                    ServerInteraction.Dokidoki.Start("Core");
+                    break;
+            }
+           
             if (satrtType!= SatrtType.DDTV_GUI)
             {
                 SeKey();

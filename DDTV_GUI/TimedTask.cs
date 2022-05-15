@@ -99,6 +99,40 @@ namespace DDTV_GUI
                 }
             }
         }
+
+        public class DDCTIME
+        {
+            private static bool IsOn = false;
+            public static void Check()
+            {
+                if (!IsOn)
+                {
+                    IsOn = !IsOn;
+                    int Conut = 0;
+                    Task.Run(() =>
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                Dictionary<string, int> keyValuePairs = new()
+                                {
+                                    { "Conut", Conut }
+                                };
+                                string WebText = Post("http://api.ddtv.pro/api/DDcenterWaitingTime", keyValuePairs);
+                                Conut++;
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                            Thread.Sleep(60 * 60 * 1000);
+                        }
+                    });
+                }
+            }
+        }
+
         private class pack<T>
         {
             public int code { get; set; }
@@ -149,6 +183,11 @@ namespace DDTV_GUI
             {
                 result = reader.ReadToEnd();
             }
+            try
+            {
+                if (req != null) req.Abort();
+            }
+            catch (Exception) { }
             return result;
         }
     }

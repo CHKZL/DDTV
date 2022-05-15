@@ -17,6 +17,9 @@ using DDTV_GUI.WPFControl;
 using System.Reflection;
 using DDTV_Core.SystemAssembly.Log;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using DDTV_Core.SystemAssembly.BilibiliModule.API;
+using DDTV_Core.Tool.TranscodModule;
+using DDTV_Core.Tool;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -81,11 +84,12 @@ namespace DDTV_GUI.DDTV_Window
             UpdateInterface.Main.update(this);
             UpdateInterface.Main.ActivationInterface = 0;
             TimedTask.CheckUpdate.Check();
-            TimedTask.DokiDoki.Check();
+            //TimedTask.DokiDoki.Check();
             //ClipWindow clipWindow = new ClipWindow();
             //clipWindow.Show();
 
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
+
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
@@ -170,19 +174,42 @@ namespace DDTV_GUI.DDTV_Window
             DefaultFileNameTextBox.Text = Download.DownloadFileName;
             RecPathTextBox.Text = Download.DownloadPath;
             TmpPathTextBox.Text = Download.TmpPath;
-            TranscodToggle.IsChecked = DDTV_Core.Tool.TranscodModule.Transcod.IsAutoTranscod;
+            TranscodToggle.IsChecked = Transcod.IsAutoTranscod;
             HideIcon.IsChecked = HideIconState;
 
-            RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 ? 0 : Download.RecQuality == 400 ? 1 : Download.RecQuality == 250 ? 2 : Download.RecQuality==150? 3:4;
-            PlayQualityComboBox.SelectedIndex = GUIConfig.PlayQuality == 10000 ? 0 : GUIConfig.PlayQuality == 400 ? 1 : GUIConfig.PlayQuality == 250 ? 2 : GUIConfig.PlayQuality == 150 ? 3 : 4;
+            RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 
+                ? 0 : Download.RecQuality == 400 
+                ? 1 : Download.RecQuality == 250 
+                ? 2 : Download.RecQuality==150
+                ? 3:4;
+
+            PlayQualityComboBox.SelectedIndex = GUIConfig.PlayQuality == 10000 
+                ? 0 : GUIConfig.PlayQuality == 400 
+                ? 1 : GUIConfig.PlayQuality == 250 
+                ? 2 : GUIConfig.PlayQuality == 150 
+                ? 3 : 4;
+
             DanmuToggle.IsChecked = Download.IsRecDanmu;
             GiftToggle.IsChecked = Download.IsRecGift;
             GuardToggle.IsChecked = Download.IsRecGuard;
             SCToggle.IsChecked = Download.IsRecSC;
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
-            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760 ? 8 : Download.FlvSplitSize == 8482560409 ? 7 : Download.FlvSplitSize == 6335076761 ? 6 : Download.FlvSplitSize == 2040109465 ? 5 : Download.FlvSplitSize == 5368709120 ? 4 : Download.FlvSplitSize == 4294967296 ? 3 : Download.FlvSplitSize == 3221225472 ? 2 : Download.FlvSplitSize == 2147483648 ? 1 : 0;
-            DoNotSleepWhileDownloadingIcon.IsChecked = DDTV_Core.Tool.Dokidoki.IsDoNotSleepState;
+
+            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760 
+                ? 8 : Download.FlvSplitSize == 8482560409 
+                ? 7 : Download.FlvSplitSize == 6335076761 
+                ? 6 : Download.FlvSplitSize == 2040109465 
+                ? 5 : Download.FlvSplitSize == 5368709120 
+                ? 4 : Download.FlvSplitSize == 4294967296 
+                ? 3 : Download.FlvSplitSize == 3221225472 
+                ? 2 : Download.FlvSplitSize == 2147483648 
+                ? 1 : 0;
+
+            DoNotSleepWhileDownloadingIcon.IsChecked = Dokidoki.IsDoNotSleepState;
+            ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
+            TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
+            DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1149,6 +1176,33 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.Warning("临时文件文件夹不能为空");
                 }
             }
+        }
+
+        private void ForceCDNResolution_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)ForceCDNResolution.IsChecked ? true : false;
+            RoomInfo.ForceCDNResolution = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.ForceCDNResolution, Is.ToString(), CoreConfigClass.Group.Download);
+            Growl.Success((Is ? "打开" : "关闭") + "强制主CDN开关");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "强制主CDN开关", false, null, false);
+        }
+
+        private void TranscodingCompleteAutoDeleteFiles_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)TranscodingCompleteAutoDeleteFiles.IsChecked ? true : false;
+            Transcod.TranscodingCompleteAutoDeleteFiles = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.TranscodingCompleteAutoDeleteFiles, Is.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success((Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件", false, null, false);
+        }
+
+        private void DDcenterSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)DDcenterSwitch.IsChecked ? true : false;
+            DDcenter.DDcenterSwitch = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.DDcenterSwitch, Is.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success((Is ? "打开" : "关闭") + "DDC数据采集开关");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "DDC数据采集开关", false, null, false);
         }
     }
 }

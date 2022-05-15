@@ -10,8 +10,13 @@ namespace DDTV_Core.Tool.FlvModule
 {
     public class SteamFix
     {
+        private static long FlvAudioFPS = 0;
+        private static long FlvVideoFPS = 0;
+        private static long ErrorAudioFPS = 0;
+        private static long ErrorVideoFPS = 0;
         public static byte[] FixWrite(byte[] data, Downloads downloads, out uint Len)
         {
+            uint PakeTime = 0;
             if (downloads.DownloadCount>9)
             {
                 if (downloads.flvTimes.IsTagHeader)
@@ -67,8 +72,16 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
-                                
-                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                //PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
+
+                                //if (PakeTime - FlvAudioFPS > 500)
+                                //{
+                                //    data = null;
+                                //    ErrorAudioFPS = PakeTime - FlvAudioFPS;
+                                //    FlvAudioFPS = PakeTime;
+                                //    return data;
+                                //}
+
                                 downloads.flvTimes.TagType=0x08;
                                 if (downloads.flvTimes.FlvVideoTagCount==0)
                                 {
@@ -94,8 +107,15 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
-                                downloads.RecordingDuration = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
-                                SystemAssembly.Log.Log.AddLog(nameof(SteamFix), SystemAssembly.Log.LogClass.LogType.Trace, $"从网络流中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{downloads.RecordingDuration}]");
+                                //PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
+                                //if (PakeTime - FlvVideoFPS > 500)
+                                //{
+                                //    data = null;
+                                //    ErrorVideoFPS = PakeTime - FlvVideoFPS;
+                                //    FlvVideoFPS = PakeTime;
+                                //    return data;
+                                //}
+
                                 downloads.flvTimes.TagType=0x09;
                                 if(downloads.flvTimes.FlvVideoTagCount==0)
                                 {

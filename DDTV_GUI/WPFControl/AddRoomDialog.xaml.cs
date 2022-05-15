@@ -28,7 +28,10 @@ namespace DDTV_GUI.WPFControl
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            bool UIDCK = UIDRadio.IsChecked.Value;
+            bool RoomIdCK = RoomIdRadio.IsChecked.Value;
             string _UID = UIDInputBox.Text;
+           
             if (string.IsNullOrEmpty(_UID))
             {
                 Growl.Warning($"UID不能为空");
@@ -36,6 +39,21 @@ namespace DDTV_GUI.WPFControl
             }
             if (long.TryParse(_UID, out long UID))
             {
+
+                if (RoomIdCK)
+                {
+                    var RoomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.get_info(0, UID, false);
+                    if(RoomInfo!=null)
+                    {
+                        UID=RoomInfo.uid;
+                    }
+                    else
+                    {
+                        Growl.Warning($"该房间号或UID不存在！");
+                        return;
+                    }
+                }
+
                 if (UID <= 0)
                 {
                     Growl.Warning($"房间号或UID不能为负数！");
@@ -50,7 +68,7 @@ namespace DDTV_GUI.WPFControl
                 }
                 else
                 {
-                    Growl.Warning($"该UID不存在！");
+                    Growl.Warning($"该房间号或UID不存在！");
                     return;
                 }
             }

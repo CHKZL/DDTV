@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using System.Runtime.InteropServices;
+using Newtonsoft.Json;
 
 namespace DDTV_Core.Tool
 {
@@ -27,6 +28,58 @@ namespace DDTV_Core.Tool
             catch (Exception)
             {
 
+            }
+        }
+        public static string GetDDCtime(string Type)
+        {
+            string Time = "";
+            Dictionary<string, string> Parameters = new Dictionary<string, string>()
+            {
+                {"Type",Type }
+            };
+            try
+            {
+                Time = SystemAssembly.NetworkRequestModule.Post.Post.HttpPost("http://api.ddtv.pro/api/DDcenterWaitingTime", Parameters);
+            }
+            catch (Exception)
+            {
+
+            }
+            return Time;
+        }
+
+        public class DDCtime
+        {
+            private static bool Is = false;
+            public static void Start()
+            {
+                if (!Is)
+                {
+                    Is = true;
+                    Task.Run(() =>
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                string Time = GetDDCtime("DDcenterWaitingTime");
+                                ServerMessageClass.MessageBase.pack<string> pack = JsonConvert.DeserializeObject<ServerMessageClass.MessageBase.pack<string>>(Time);
+                                if (int.TryParse(pack.data, out int T))
+                                {
+                                    if (T > 0)
+                                    {
+                                        DDTV_Core.Tool.DDcenter.TimeIntervalBetween = T * 1000;
+                                    }
+                                }
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                            Thread.Sleep(30 * 1000);
+                        }
+                    });
+                }
             }
         }
         public static bool IsDoNotSleepState = false;

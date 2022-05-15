@@ -86,38 +86,36 @@ namespace DDTV_Core.Tool.FlvModule
                 return OkFilePath;
             }
         }
-        public static void FlvFileSum(List<string> FilePaht,string Name)
-        {
-            List<string> DelList = new List<string>();
-            FileStream OldFileStream = new FileStream(FilePaht[0], FileMode.Open);
-            for (int i = 1 ; i < FilePaht.Count ; i++)
-            {
-                using FileStream NewFileStream = new FileStream(FilePaht[i], FileMode.Open);
-                if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
-                    Download.TmpPath = Download.TmpPath + "/";
-                string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{Name}_{new Random().Next(10000, 99999)}.flv";
-                using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
-                    if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
-                    {
-                        DelList.Add(SunTmpFime);
-                        if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
-                        {
-                            SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                            
-                           
-                        }
-                        int time = Merge(OldFileStream, fsMerge, true, 0);
-                        time = Merge(NewFileStream, fsMerge, false, time);
-                        OldFileStream.Close();
-                        OldFileStream.Dispose();
-                    }
-                OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
-            }
-            File.Copy(OldFileStream.Name, "./test.flv");
-            FileOperation.Del(DelList);
-            OldFileStream.Close();
-            OldFileStream.Dispose();
-        }
+        //public static void FlvFileSum(List<string> FilePaht,string Name)
+        //{
+        //    List<string> DelList = new List<string>();
+        //    FileStream OldFileStream = new FileStream(FilePaht[0], FileMode.Open);
+        //    for (int i = 1 ; i < FilePaht.Count ; i++)
+        //    {
+        //        using FileStream NewFileStream = new FileStream(FilePaht[i], FileMode.Open);
+        //        if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+        //            Download.TmpPath = Download.TmpPath + "/";
+        //        string SunTmpFime = FileOperation.CreateAll(Download.TmpPath) + $"{Name}_{new Random().Next(10000, 99999)}.flv";
+        //        using (FileStream fsMerge = new FileStream(SunTmpFime, FileMode.Create))
+        //            if (GetFLVFileInfo(OldFileStream) != null && GetFLVFileInfo(NewFileStream) != null)
+        //            {
+        //                DelList.Add(SunTmpFime);
+        //                if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
+        //                {
+        //                    SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");   
+        //                }
+        //                int time = Merge(OldFileStream, fsMerge, true, 0);
+        //                time = Merge(NewFileStream, fsMerge, false, time);
+        //                OldFileStream.Close();
+        //                OldFileStream.Dispose();
+        //            }
+        //        OldFileStream = new FileStream(SunTmpFime, FileMode.Open);
+        //    }
+        //    File.Copy(OldFileStream.Name, "./test.flv");
+        //    FileOperation.Del(DelList);
+        //    OldFileStream.Close();
+        //    OldFileStream.Dispose();
+        //}
 
         const int FLV_HEADER_SIZE = 9;
         const int FLV_TAG_HEADER_SIZE = 11;
@@ -129,15 +127,34 @@ namespace DDTV_Core.Tool.FlvModule
             public byte soundSize;
             public byte soundType;
             public byte videoCodecID;
+            public byte[] tagH;
         }
 
         static bool IsSuitableToMerge(FLVContext flvCtx1, FLVContext flvCtx2)
         {
+
             return (flvCtx1.soundFormat == flvCtx2.soundFormat) &&
               (flvCtx1.soundRate == flvCtx2.soundRate) &&
               (flvCtx1.soundSize == flvCtx2.soundSize) &&
               (flvCtx1.soundType == flvCtx2.soundType) &&
-              (flvCtx1.videoCodecID == flvCtx2.videoCodecID);
+              (flvCtx1.videoCodecID == flvCtx2.videoCodecID) &&
+              (PasswordEquals(flvCtx1.tagH, flvCtx2.tagH));
+        }
+
+        /// <summary>
+        /// ⽐较两个字节数组是否相等
+        /// </summary>
+        /// <param name="b1">byte数组1</param>
+        /// <param name="b2">byte数组2</param>
+        /// <returns>是否相等</returns>
+        private static bool PasswordEquals(byte[] b1, byte[] b2)
+        {
+            if (b1 == null || b2 == null) return false;
+            if (b1.Length != b2.Length) return false;
+            for (int i = 0; i < b1.Length; i++)
+                if (b1[i] != b2[i])
+                    return false;
+            return true;
         }
 
         static bool IsFLVFile(FileStream fs)
@@ -187,6 +204,9 @@ namespace DDTV_Core.Tool.FlvModule
                     case 9:
                         flvCtx.videoCodecID = (byte)((tmp[FLV_TAG_HEADER_SIZE] & 0x0f));
                         hasVideoParams = true;
+                        break;
+                    case 18:
+                        flvCtx.tagH = tmp;
                         break;
                     default:
                         break;

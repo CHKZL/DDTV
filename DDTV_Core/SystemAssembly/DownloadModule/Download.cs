@@ -13,8 +13,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
-// Disable the warning.
-//#pragma warning disable SYSLIB0014
 
 namespace DDTV_Core.SystemAssembly.DownloadModule
 {
@@ -261,7 +259,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         });
                     }
                     #endregion
-
+                    WebHook.SendHook(WebHook.HookType.DownloadEndMissionSuccess, uid);
                     string EndText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})录制任务完成:\n===================\n" +
                                $"直播间:{roomInfo.room_id}\n" +
                                $"UID:{roomInfo.uid}\n" +
@@ -300,7 +298,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                         roomInfo.IsDownload = true;
                         downloadClass.Uid = uid;
-                        downloadClass.Url = BilibiliModule.API.RoomInfo.playUrl(uid, (RoomInfoClass.Quality)RecQuality);
+                        downloadClass.Url = BilibiliModule.API.RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)RecQuality);
                         downloadClass.IsDownloading = true;
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(downloadClass.Url);
                         req.Method = "GET";
@@ -424,7 +422,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
+                        //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
                     }
                     if (conut > 6)
                     {

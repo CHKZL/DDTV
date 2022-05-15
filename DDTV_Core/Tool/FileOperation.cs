@@ -43,6 +43,11 @@ namespace DDTV_Core.Tool
                 {
 
                 }
+                try
+                {
+                    if (httpWebRequest != null) httpWebRequest.Abort();
+                }
+                catch (Exception){}
                 return true;
             }
             catch (Exception e)

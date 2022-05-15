@@ -16,7 +16,8 @@ namespace DDTV_GUI.Tool
         {
             CheckUpdates.Update();
             Notice.Start();
-            Dokidoki.Start();
+            //Dokidoki.Start();
+            
         }
         public class CheckUpdates
         {
@@ -50,7 +51,7 @@ namespace DDTV_GUI.Tool
                                 }
                                 else
                                 {
-                                    if (!DDTV_Core.Tool.DDTV_Update.ComparisonVersion("GUI", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()))
+                                    if (DDTV_Core.Tool.DDTV_Update.ComparisonVersion("GUI", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()))
                                     {
                                         IsChecked = true;
                                         if (NewUpdate != null)
@@ -58,12 +59,13 @@ namespace DDTV_GUI.Tool
                                             NewUpdate.Invoke(null, EventArgs.Empty);
                                         }
                                     }
-                                    Thread.Sleep(60 * 10 * 1000);
+                                    
                                 }
                             }
                             catch (Exception)
                             {
                             }
+                            Thread.Sleep(60 * 10 * 1000);
                         }
                     });
                 }
@@ -91,41 +93,13 @@ namespace DDTV_GUI.Tool
                                 {
                                     NewNotice.Invoke(pack.data.Text, EventArgs.Empty);
                                 }
-                                Thread.Sleep(ReminderInterval);
+                                
                             }
                             catch (Exception)
                             {
 
                             }
-                        }
-                    });
-                }
-            }
-        }
-
-        public class Dokidoki
-        {
-            private static bool Is = false;
-            private static int i = 0;
-            public static void Start()
-            {
-                if (!Is)
-                {
-                    Is = true;
-                    Task.Run(() =>
-                    {
-                        while (true)
-                        {
-                            try
-                            {
-                                DDTV_Core.Tool.Dokidoki.SendDokidoki("GUI", i.ToString());
-                                i++;
-                                Thread.Sleep(60 * 30 * 1000);
-                            }
-                            catch (Exception)
-                            {
-
-                            }
+                            Thread.Sleep(ReminderInterval);
                         }
                     });
                 }

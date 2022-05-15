@@ -18,7 +18,7 @@ namespace DDTV_WEB_Server.Controllers
         }   
     }
     /// <summary>
-    /// 获取已录制的文件总列表
+    /// 根据文件树结构返回已录制的文件总列表
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
@@ -145,7 +145,7 @@ namespace DDTV_WEB_Server.Controllers
     public class File_GetFile : ProcessingControllerBase.ApiControllerBase
     {
         [HttpGet(Name = "File_GetFile")]
-        public ActionResult get([FromForm] string cmd,string FileName)
+        public ActionResult get(string FileName)
         {
             var _ = DDTV_Core.Tool.DownloadList.GetRecFileList();
             if(_.Contains(FileName))

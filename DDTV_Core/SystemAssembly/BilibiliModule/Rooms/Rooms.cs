@@ -34,22 +34,30 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         {
             if (DataCacheModule.DataCache.GetCache(cacheType, uid.ToString(), out string Value))
             {
-                return Value;
+                switch (cacheType)
+                {
+                    case DataCacheModule.DataCacheClass.CacheType.uname:
+                        if(!string.IsNullOrEmpty(Value))
+                        {
+                            return Value;
+                        }
+                        break;
+                    default:
+                        return Value;
+                }
+                
+            }
+            var roominfo = SelectAPI(uid, cacheType);
+            if (roominfo != null)
+            {
+                string value = roominfo.GetType().GetProperty(Enum.GetName(typeof(DataCacheModule.DataCacheClass.CacheType), cacheType)).GetValue(roominfo, null).ToString();
+                Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.TmpInfo, $"获取用户[{uid}]直播房间的[{cacheType}]信息成功:{value}");
+                return value;
             }
             else
             {
-                var roominfo = SelectAPI(uid, cacheType);
-                if (roominfo!=null)
-                {
-                    string value = roominfo.GetType().GetProperty(Enum.GetName(typeof(DataCacheModule.DataCacheClass.CacheType), cacheType)).GetValue(roominfo, null).ToString();
-                    Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.TmpInfo, $"获取用户[{uid}]直播房间的[{cacheType}]信息成功:{value}");
-                    return value;
-                }
-                else
-                {
-                    Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Error, "获取信息失败");
-                    return null;
-                }
+                Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Error, "获取信息失败");
+                return null;
             }
         }
         /// <summary>

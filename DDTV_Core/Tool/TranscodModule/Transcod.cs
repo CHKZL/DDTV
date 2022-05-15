@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -14,6 +15,7 @@ namespace DDTV_Core.Tool.TranscodModule
     {
         public static bool IsAutoTranscod= bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsAutoTranscod, "false", CoreConfigClass.Group.Core));
         public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.TranscodParmetrs, "-i {Before} -vcodec copy -acodec copy {After}", CoreConfigClass.Group.Core);
+        public static bool TranscodingCompleteAutoDeleteFiles = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.TranscodingCompleteAutoDeleteFiles, "false", CoreConfigClass.Group.Core));
         /// <summary>
         /// 调用ffmpeg进行转码
         /// </summary>
@@ -92,6 +94,18 @@ namespace DDTV_Core.Tool.TranscodModule
                 
                 process.WaitForExit();
                 process.Close();
+                if(TranscodingCompleteAutoDeleteFiles && File.Exists(transcodClass.AfterFilePath))
+                {
+                    try
+                    {
+                        File.Delete(transcodClass.BeforeFilePath);
+                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, $"转码后删除文件:{transcodClass.BeforeFilePath}成功");
+                    }
+                    catch (Exception e)
+                    {
+                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Warn, $"转码后删除文件:{transcodClass.BeforeFilePath}失败，详细日志已写入。",true,e);
+                    }
+                }
                 transcodClass.IsTranscod = false;
                 GC.Collect();
                 return transcodClass;

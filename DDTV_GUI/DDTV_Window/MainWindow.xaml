@@ -321,6 +321,13 @@
                                                 <hc:Poptip Content="录制完成后将自动转码为MP4" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="170,0,0,0" Text="转码完成后自动删除原始FLV文件" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="411,5,183,5" Click="TranscodingCompleteAutoDeleteFiles_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="在网络比较差的情况下原始flv文件可能会有问题，但是能修复；如果使用有问题的flv转码并且删除了原始文件，该操作是不可逆的，请注意！" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
                                     </Grid>
                                     <Grid Width="630" Height="40">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="启用单个文件大小限制(自动分割)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
@@ -356,37 +363,49 @@
                                             <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="565,32,29,3" Click="ForceCDNResolution_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
                                     </Grid>
 
-                                    <Grid Width="630" Margin="5">
+                                    <Grid Width="815"  Margin="5">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="录制的同时储存弹幕信息" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="190,5,404,5" Click="DanmuToggle_Click">
+                                        <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="190,5,0,5" Click="DanmuToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="弹幕录制的全局开关(每个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关)" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                    </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="GiftToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="GiftToggle_Click">
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="260,0,0,0" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="GiftToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="361,5,0,5" Click="GiftToggle_Click" HorizontalAlignment="Left" Width="36">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="424,0,0,0" Text="储存上舰记录" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="GuardToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="525,6,0,4" Click="GuardToggle_Click" HorizontalAlignment="Left" Width="36">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="590,0,0,0" Text="储存SC记录" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="SCToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="679,6,0,4" Click="SCToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存上舰记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="GuardToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="GuardToggle_Click">
+                                    <Grid Width="815"  Margin="5">
+                                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集（请仔细查看开关说明）" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DDcenterSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="417,10,0,0" HorizontalAlignment="Left" Width="36" Click="DDcenterSwitch_Click">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
-                                            </hc:AdornerElement.Instance>
-                                        </ToggleButton>
-                                    </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="储存SC记录" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="SCToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="110,5,484,5" Click="SCToggle_Click">
-                                            <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加B站API调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
@@ -403,13 +422,13 @@
                         <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-39" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
                         <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-64" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
 
-                        <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="534,10,0,0" VerticalAlignment="Top"/>
+                        <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="764,10,0,0" VerticalAlignment="Top"/>
                         <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">
                             <hc:AdornerElement.Instance>
                                 <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新" PlacementType="BottomLeft"/>
                             </hc:AdornerElement.Instance>
                         </Button>
-                        <Button Visibility="Collapsed" Style="{StaticResource ButtonDanger}" Content="查看系统日志" Margin="578,394,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
+                        <Button Content="查看系统日志" Margin="776,508,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>
             </TabControl>

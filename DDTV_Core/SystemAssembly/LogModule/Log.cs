@@ -42,7 +42,7 @@ namespace DDTV_Core.SystemAssembly.Log
             Tool.TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
 
-            AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.Ver}({InitDDTV_Core.CompiledVersion})");
+            AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.InitType}{InitDDTV_Core.Ver}({InitDDTV_Core.CompiledVersion})");
             AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
             WeritDB();
             WriteErrorLogFile();

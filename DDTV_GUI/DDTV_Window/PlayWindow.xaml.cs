@@ -192,7 +192,7 @@ namespace DDTV_GUI.DDTV_Window
                     Quality = 10000;
                     Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
                 }
-                string Url = RoomInfo.playUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
+                string Url = RoomInfo.playUrl_Mandatory(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line,true);
                 windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
                 roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
                 this.Dispatcher.Invoke(() =>
@@ -250,7 +250,7 @@ namespace DDTV_GUI.DDTV_Window
 
            R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                string U2 = RoomInfo.playUrl(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
+                //string U2 = RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
                 req.Method = "GET";
@@ -300,6 +300,11 @@ namespace DDTV_GUI.DDTV_Window
                         }
                         else
                         {
+                            try
+                            {
+                                if (req != null) req.Abort();
+                            }
+                            catch (Exception) { }
                             fileStream.Close();
                             fileStream.Dispose();
                             return;
@@ -350,18 +355,30 @@ namespace DDTV_GUI.DDTV_Window
                     item.Visibility = Visibility.Hidden;
                 }
             }
-            //double X = this.Width;
-            //double Y = this.Height;
-            //if (X / Y > 1.77)
-            //{
-            //    X =Y / 9 * 16;
-            //    this.Width = X;
-            //}
-            //else
-            //{
-            //    Y = X / 16 * 9;
-            //    this.Height = Y;
-            //}
+            if(this.Width / 16.0 > this.Height / 9.0)
+            {
+                if (this.Width > LastWidth)
+                {
+                    this.Height = this.Width / 1.7755;
+                }
+                else
+                {
+                    this.Width = this.Height * 1.7755;
+                }
+            }
+            else
+            {
+                if (this.Height > LastHeight)
+                {
+                    this.Width= this.Height * 1.7755;
+                }
+                else
+                {
+                    this.Height = this.Width / 1.7755;
+                }
+            }
+            LastWidth = (int)this.Width;
+            LastHeight = (int)this.Height;
         }
         /// <summary>
         /// 设置音量
@@ -513,7 +530,14 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                this.DragMove();
+                try
+                {
+                    this.DragMove();
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
 
