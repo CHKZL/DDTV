@@ -1,4 +1,4 @@
-name: CLI
+name: DDTV_CLI
 
 on:
   push:
