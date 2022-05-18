@@ -15,19 +15,23 @@ GUI_FirstStart=false
 WEB_FirstStart=false
 IsAutoTranscod=True
 TranscodParmetrs=-i {Before} -vcodec copy -acodec copy {After}
+InstanceAID=956050d3
+TranscodingCompleteAutoDeleteFiles=false
+DDcenterSwitch=false
+WebHookUrl=
 [WEB_API]
 WEB_API_SSL=false
 AccessControlAllowOrigin=http://127.0.0.1:5500
 AccessControlAllowCredentials=true
 WebUserName=ami
 WebPassword=ddtv
-CookieDomain=
 pfxFileName=pfxFileName
 pfxPasswordFileName=pfxPasswordFileName
 AccessKeyId=3fce1282b6104887ba494eaf4f714147
 AccessKeySecret=2f9fda70a48c4b2eb3d60ff07ddc67ab
 ServerAID=e3545f6d-63d9-4898-81dd-9be9c6439d6f
 ServerName=DDTV_Server
+CookieDomain=
 [Download]
 DoNotSleepWhileDownloading=true
 DownloadPath=.\Rec
@@ -42,15 +46,50 @@ IsRecSC=true
 IsFlvSplit=False
 FlvSplitSize=1073741824
 Shell=false
+ForceCDNResolution=False
 [Play]
 DefaultVolume=100
-PlayQuality=250
+PlayQuality=10000
 [GUI]
 HideIconState=false
+
 
 ```
 ### 配置说明
 ```csharp
+        /// <summary>
+        /// 配置分组(每个值对应的组是固定的，请勿随意填写)
+        /// </summary>
+        public enum Group
+        {
+            /// <summary>
+            /// 缺省配置组(按道理应该给每个配置都设置组，不应该在缺省组里)
+            /// </summary>
+            Default,
+            /// <summary>
+            /// DDTV_Core运行相关的配置
+            /// </summary>
+            Core,
+            /// <summary>
+            /// 下载系统运行相关的配置
+            /// </summary>
+            Download,
+            /// <summary>
+            /// WEBAPI相关的配置
+            /// </summary>
+            WEB_API,
+            /// <summary>
+            /// 播放器相关设置
+            /// </summary>
+            Play,
+            /// <summary>
+            /// GUI相关设置
+            /// </summary>
+            GUI,
+        }
+        /// <summary>
+        /// 配置键
+        /// </summary>
         public enum Key
         {
             /// <summary>
@@ -223,5 +262,30 @@ HideIconState=false
             /// 组：Download   默认值：false
             /// </summary>
             Shell,
+            /// <summary>
+            /// WebHook的目标地址（字符串）
+            /// 组：Core   默认值：string.Empty
+            /// </summary>
+            WebHookUrl,
+            /// <summary>
+            /// 实例AID用于在联网情况下区分客户端（字符串）
+            /// 组：Core   默认值：随机字符串
+            /// </summary>
+            InstanceAID,
+            /// <summary>
+            /// DDC的采集开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            DDcenterSwitch,
+            /// <summary>
+            /// 转码完成后自动删除文件开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            TranscodingCompleteAutoDeleteFiles,
+            /// <summary>
+            /// 是否强使用主CDN下载地址 (布尔值)
+            /// 组：Download   默认值：false
+            /// </summary>
+            ForceCDNResolution,
         }
 ```

@@ -48,7 +48,7 @@ namespace DDTV_GUI.DDTV_Window
                 Application.Current.Shutdown();
                 return;
             }
-            string Title = $"DDTV——你的地表最强B站录播机 {Ver}　({InitDDTV_Core.Ver})";
+            string Title = $"DDTV——你的地表最强B站播放器 {Ver}　({InitDDTV_Core.Ver})";
             
             this.Title = Title;
             DDTV_ICO.Text = Title;

@@ -117,6 +117,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _InstanceAID = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.InstanceAID;
             var _DDcenterSwitch = DDTV_Core.Tool.DDcenter.DDcenterSwitch;
             var _TranscodingCompleteAutoDeleteFiles = DDTV_Core.Tool.TranscodModule.Transcod.TranscodingCompleteAutoDeleteFiles;
+            var _ForceCDNResolution = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.ForceCDNResolution;
         }
         /// <summary>
         /// 获取配置
