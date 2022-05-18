@@ -1,0 +1,28 @@
+name: Doc
+on:
+  push:
+    branches:    
+      - master
+jobs:
+  Explore-GitHub-Actions:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🎉 触发动作：${{ github.event_name }}"
+      - run: echo "🐧 托管服务器：${{ runner.os }} server hosted by GitHub!"
+      - run: echo "🔎 当前分支：${{ github.ref }} "
+      - run: echo "🏠 当前仓库：${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - run: echo "💡 获取源码：The ${{ github.repository }} repository has been cloned to the runner."
+      - run: echo "🖥️ 工作流准备：The workflow is now ready to test your code on the runner."
+      - name: Build and Deploy
+        run: |
+          yarn install
+          yarn build
+      - run: echo "✅依赖安装并编译完成"
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # 默认环境变量
+          publish_dir: DOC/docs/.vuepress/dist # 发布本地文件地址
+      - run: echo "🍏 This job's status is ${{ job.status }}."
