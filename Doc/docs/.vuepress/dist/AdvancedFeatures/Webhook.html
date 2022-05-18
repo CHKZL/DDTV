@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Webhook | DDTV 你的地表最强B站播放器</title>
+    <meta name="generator" content="VuePress 1.7.1">
+    
+    <meta name="description" content="DDTV-你的地表最强B站播放器。一个可进行B站直播多窗口观看、开播提醒、自动录制、直播状态查看、跨平台部署的绿色工具。">
+    <meta name="keywords" content="DDTV,bilibili,bili,live,播放器,录播机,B站录播机,bilibili自动录制">
+    
+    <link rel="preload" href="/assets/css/0.styles.7cdc15ec.css" as="style"><link rel="preload" href="/assets/js/app.44baa36e.js" as="script"><link rel="preload" href="/assets/js/3.eee5d938.js" as="script"><link rel="preload" href="/assets/js/16.99b60e60.js" as="script"><link rel="prefetch" href="/assets/js/10.8a80f0f7.js"><link rel="prefetch" href="/assets/js/11.85ea460e.js"><link rel="prefetch" href="/assets/js/12.89eaf89a.js"><link rel="prefetch" href="/assets/js/13.78a8b488.js"><link rel="prefetch" href="/assets/js/14.0b7c7daf.js"><link rel="prefetch" href="/assets/js/15.421e4508.js"><link rel="prefetch" href="/assets/js/17.3a3b0e4d.js"><link rel="prefetch" href="/assets/js/18.20a1ebc5.js"><link rel="prefetch" href="/assets/js/19.53cbb4bf.js"><link rel="prefetch" href="/assets/js/20.e29f743f.js"><link rel="prefetch" href="/assets/js/21.6e7ed913.js"><link rel="prefetch" href="/assets/js/22.d96d5134.js"><link rel="prefetch" href="/assets/js/23.b31db209.js"><link rel="prefetch" href="/assets/js/24.0db4a52c.js"><link rel="prefetch" href="/assets/js/25.e9c2acd1.js"><link rel="prefetch" href="/assets/js/26.4d9d5eab.js"><link rel="prefetch" href="/assets/js/27.896d62b0.js"><link rel="prefetch" href="/assets/js/28.07fe4450.js"><link rel="prefetch" href="/assets/js/29.db4fb848.js"><link rel="prefetch" href="/assets/js/30.5b386dca.js"><link rel="prefetch" href="/assets/js/31.70b6f1d4.js"><link rel="prefetch" href="/assets/js/32.59280680.js"><link rel="prefetch" href="/assets/js/33.9d7a02fe.js"><link rel="prefetch" href="/assets/js/34.00fee394.js"><link rel="prefetch" href="/assets/js/35.2ca96e9f.js"><link rel="prefetch" href="/assets/js/36.bde814b1.js"><link rel="prefetch" href="/assets/js/37.f111625e.js"><link rel="prefetch" href="/assets/js/38.c945dd2f.js"><link rel="prefetch" href="/assets/js/39.d906f272.js"><link rel="prefetch" href="/assets/js/4.198eda1c.js"><link rel="prefetch" href="/assets/js/40.7176575e.js"><link rel="prefetch" href="/assets/js/5.37a0f75b.js"><link rel="prefetch" href="/assets/js/6.ab6b8616.js"><link rel="prefetch" href="/assets/js/7.9c6f8c2b.js"><link rel="prefetch" href="/assets/js/8.81bb258a.js"><link rel="prefetch" href="/assets/js/9.823530dc.js"><link rel="prefetch" href="/assets/js/vendors~docsearch.883d461f.js">
+    <link rel="stylesheet" href="/assets/css/0.styles.7cdc15ec.css">
+  </head>
+  <body>
+    <div id="app" data-server-rendered="true"><div class="theme-container"><header class="navbar"><div class="sidebar-button"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" viewBox="0 0 448 512" class="icon"><path fill="currentColor" d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path></svg></div> <a href="/" class="home-link router-link-active"><img src="/DDTV.png" alt="DDTV 你的地表最强B站播放器" class="logo"> <span class="site-name can-hide">DDTV 你的地表最强B站播放器</span></a> <div class="links"><div class="search-box"><input aria-label="Search" autocomplete="off" spellcheck="false" value=""> <!----></div> <nav class="nav-links can-hide"><div class="nav-item"><a href="/" class="nav-link">
+  主页
+</a></div><div class="nav-item"><a href="/install/" class="nav-link">
+  安装
+</a></div><div class="nav-item"><a href="/config/" class="nav-link">
+  配置说明
+</a></div><div class="nav-item"><a href="/AdvancedFeatures/" class="nav-link router-link-active">
+  进阶功能说明
+</a></div><div class="nav-item"><a href="/API/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/QFA/" class="nav-link">
+  常见问题
+</a></div><div class="nav-item"><a href="/CHANGELOG/" class="nav-link">
+  更新日志
+</a></div><div class="nav-item"><a href="/about/" class="nav-link">
+  关于项目
+</a></div> <a href="https://github.com/CHKZL/DDTV" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav></div></header> <div class="sidebar-mask"></div> <aside class="sidebar"><nav class="nav-links"><div class="nav-item"><a href="/" class="nav-link">
+  主页
+</a></div><div class="nav-item"><a href="/install/" class="nav-link">
+  安装
+</a></div><div class="nav-item"><a href="/config/" class="nav-link">
+  配置说明
+</a></div><div class="nav-item"><a href="/AdvancedFeatures/" class="nav-link router-link-active">
+  进阶功能说明
+</a></div><div class="nav-item"><a href="/API/" class="nav-link">
+  API
+</a></div><div class="nav-item"><a href="/QFA/" class="nav-link">
+  常见问题
+</a></div><div class="nav-item"><a href="/CHANGELOG/" class="nav-link">
+  更新日志
+</a></div><div class="nav-item"><a href="/about/" class="nav-link">
+  关于项目
+</a></div> <a href="https://github.com/CHKZL/DDTV" target="_blank" rel="noopener noreferrer" class="repo-link">
+    GitHub
+    <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></a></nav>  <ul class="sidebar-links"><li><section class="sidebar-group depth-0"><p class="sidebar-heading open"><span>进阶功能说明</span> <!----></p> <ul class="sidebar-links sidebar-group-items"><li><a href="/AdvancedFeatures/" aria-current="page" class="sidebar-link">进阶功能</a></li><li><a href="/AdvancedFeatures/时间轴修复.html" class="sidebar-link">时间轴修复</a></li><li><a href="/AdvancedFeatures/文件合并.html" class="sidebar-link">文件合并</a></li><li><a href="/AdvancedFeatures/自动转码.html" class="sidebar-link">自动转码</a></li><li><a href="/AdvancedFeatures/弹幕录制.html" class="sidebar-link">弹幕录制</a></li><li><a href="/AdvancedFeatures/API.html" class="sidebar-link">API</a></li><li><a href="/AdvancedFeatures/房间Shell命令.html" class="sidebar-link">房间Shell命令</a></li><li><a href="/AdvancedFeatures/Webhook.html" aria-current="page" class="active sidebar-link">Webhook</a><ul class="sidebar-sub-headers"><li class="sidebar-sub-header"><a href="/AdvancedFeatures/Webhook.html#注意事项" class="sidebar-link">注意事项</a></li><li class="sidebar-sub-header"><a href="/AdvancedFeatures/Webhook.html#怎么启用webhook" class="sidebar-link">怎么启用WebHook</a></li><li class="sidebar-sub-header"><a href="/AdvancedFeatures/Webhook.html#事件类型" class="sidebar-link">事件类型</a></li><li class="sidebar-sub-header"><a href="/AdvancedFeatures/Webhook.html#返回数据例子" class="sidebar-link">返回数据例子</a></li><li class="sidebar-sub-header"><a href="/AdvancedFeatures/Webhook.html#返回数据说明" class="sidebar-link">返回数据说明</a></li></ul></li></ul></section></li></ul> </aside> <main class="page"> <div class="theme-default-content content__default"><h1 id="webhook"><a href="#webhook" class="header-anchor">#</a> Webhook</h1> <ul><li>本Webhook会在触发特定事件的时候，会主动向配置文件中的地址发送HTTP / POST请求</li></ul> <h2 id="注意事项"><a href="#注意事项" class="header-anchor">#</a> 注意事项</h2> <ul><li>如果请求发送返回的结果不是http状态不是2xx，会判定为发送失败，失败状态最多会尝试三次，如果三次都失败，该请求会被抛弃</li> <li>因为本身自带网络延迟和代码处理延迟，并且每次失败都会有等待时间，所以http请求的内容时效性不能做到保证。</li></ul> <h2 id="怎么启用webhook"><a href="#怎么启用webhook" class="header-anchor">#</a> 怎么启用WebHook</h2> <p>给配置文件中的<code>WebHookURL</code>添加上对应的地址后生效，当<code>WebHookURL</code>为空时WebHook功能关闭</p> <div class="custom-block tip"><p class="custom-block-title">TIP</p> <p><code>WebHookURL</code>参数为启动时加载，如果修改需要重启生效</p></div> <h2 id="事件类型"><a href="#事件类型" class="header-anchor">#</a> 事件类型</h2> <div class="language-c# extra-class"><pre class="language-text"><code>        public enum HookType
+        {
+            /// &lt;summary&gt;
+            /// 开播
+            /// &lt;/summary&gt;
+            StartLive,
+            /// &lt;summary&gt;
+            /// 下播
+            /// &lt;/summary&gt;
+            StopLive,
+            /// &lt;summary&gt;
+            /// 开始录制
+            /// &lt;/summary&gt;
+            StartRec,
+            /// &lt;summary&gt;
+            /// 录制结束
+            /// &lt;/summary&gt;
+            RecComplete,
+            /// &lt;summary&gt;
+            /// 录制被取消
+            /// &lt;/summary&gt;
+            CancelRec,
+            /// &lt;summary&gt;
+            /// 完成转码
+            /// &lt;/summary&gt;
+            TranscodingComplete,
+            /// &lt;summary&gt;
+            /// 保存弹幕文件完成
+            /// &lt;/summary&gt;
+            SaveDanmuComplete,
+            /// &lt;summary&gt;
+            /// 保存SC文件完成
+            /// &lt;/summary&gt;
+            SaveSCComplete,
+            /// &lt;summary&gt;
+            /// 保存礼物文件完成
+            /// &lt;/summary&gt;
+            SaveGiftComplete,
+            /// &lt;summary&gt;
+            /// 保存大航海文件完成
+            /// &lt;/summary&gt;
+            SaveGuardComplete,
+            /// &lt;summary&gt;
+            /// 执行Shell命令完成
+            /// &lt;/summary&gt;
+            RunShellComplete,
+        }
+</code></pre></div><h2 id="返回数据例子"><a href="#返回数据例子" class="header-anchor">#</a> 返回数据例子</h2> <div class="language-json extra-class"><pre class="language-json"><code><span class="token punctuation">{</span>
+    <span class="token property">&quot;id&quot;</span><span class="token operator">:</span><span class="token string">&quot;3a3485e2-8e17-4446-ad49-8e423c16ee7f&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;type&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;uid&quot;</span><span class="token operator">:</span><span class="token number">7855561</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;hook_time&quot;</span><span class="token operator">:</span><span class="token string">&quot;2022-04-11T01:45:49.0457189+08:00&quot;</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;user_info&quot;</span><span class="token operator">:</span><span class="token punctuation">{</span>
+        <span class="token property">&quot;name&quot;</span><span class="token operator">:</span><span class="token string">&quot;灬莱瓦汀&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;face&quot;</span><span class="token operator">:</span><span class="token string">&quot;https://i1.hdslb.com/bfs/face/8f6e9c1a5c178b9437b8584292ef5881febe43a2.png&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;uid&quot;</span><span class="token operator">:</span><span class="token number">7855561</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;sign&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;attention&quot;</span><span class="token operator">:</span><span class="token number">0</span>
+    <span class="token punctuation">}</span><span class="token punctuation">,</span>
+    <span class="token property">&quot;room_Info&quot;</span><span class="token operator">:</span><span class="token punctuation">{</span>
+        <span class="token property">&quot;title&quot;</span><span class="token operator">:</span><span class="token string">&quot;【转播】GPU架构（试讲）&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;description&quot;</span><span class="token operator">:</span><span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;attention&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;room_id&quot;</span><span class="token operator">:</span><span class="token number">50443</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;uid&quot;</span><span class="token operator">:</span><span class="token number">7855561</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;online&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;live_time&quot;</span><span class="token operator">:</span><span class="token number">1649612744</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;live_status&quot;</span><span class="token operator">:</span><span class="token number">1</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;short_id&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area&quot;</span><span class="token operator">:</span><span class="token number">6</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area_name&quot;</span><span class="token operator">:</span><span class="token string">&quot;生活娱乐&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area_v2_id&quot;</span><span class="token operator">:</span><span class="token number">375</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area_v2_name&quot;</span><span class="token operator">:</span><span class="token string">&quot;科技科普&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area_v2_parent_name&quot;</span><span class="token operator">:</span><span class="token string">&quot;学习&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;area_v2_parent_id&quot;</span><span class="token operator">:</span><span class="token number">11</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;uname&quot;</span><span class="token operator">:</span><span class="token string">&quot;灬莱瓦汀&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;face&quot;</span><span class="token operator">:</span><span class="token string">&quot;https://i1.hdslb.com/bfs/face/8f6e9c1a5c178b9437b8584292ef5881febe43a2.png&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;tag_name&quot;</span><span class="token operator">:</span><span class="token string">&quot;日常,学习,萌宠,厨艺,手机直播&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;tags&quot;</span><span class="token operator">:</span><span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;cover_from_user&quot;</span><span class="token operator">:</span><span class="token string">&quot;https://i0.hdslb.com/bfs/live/b739712a6923b96c48374567c1111a112129f3eb.jpg&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;keyframe&quot;</span><span class="token operator">:</span><span class="token string">&quot;https://i0.hdslb.com/bfs/live-key-frame/keyframe012200350000000504434p17rf.jpg&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;lock_till&quot;</span><span class="token operator">:</span><span class="token string">&quot;0000-00-00 00:00:00&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;hidden_till&quot;</span><span class="token operator">:</span><span class="token string">&quot;0000-00-00 00:00:00&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;broadcast_type&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;need_p2p&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;is_hidden&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;is_locked&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;is_portrait&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;encrypted&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;pwd_verified&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;is_sp&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;special_type&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;roomStatus&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;roundStatus&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;url&quot;</span><span class="token operator">:</span><span class="token string">&quot;&quot;</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;IsAutoRec&quot;</span><span class="token operator">:</span><span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;IsRemind&quot;</span><span class="token operator">:</span><span class="token boolean">true</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;IsRecDanmu&quot;</span><span class="token operator">:</span><span class="token boolean">false</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;level&quot;</span><span class="token operator">:</span><span class="token number">0</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;sex&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;sign&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;DownloadedFileInfo&quot;</span><span class="token operator">:</span><span class="token punctuation">{</span>
+            <span class="token property">&quot;FlvFile&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;Mp4File&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;DanMuFile&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;SCFile&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;GuardFile&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span><span class="token punctuation">,</span>
+            <span class="token property">&quot;GiftFile&quot;</span><span class="token operator">:</span><span class="token null keyword">null</span>
+        <span class="token punctuation">}</span><span class="token punctuation">,</span>
+        <span class="token property">&quot;Shell&quot;</span><span class="token operator">:</span><span class="token string">&quot;&quot;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre></div><h2 id="返回数据说明"><a href="#返回数据说明" class="header-anchor">#</a> 返回数据说明</h2> <div class="language-C# extra-class"><pre class="language-text"><code>        public class Message
+        {
+            /// &lt;summary&gt;
+            /// WebHook请求的唯一标识
+            /// &lt;/summary&gt;
+            public string id { get; set; }
+            /// &lt;summary&gt;
+            /// 类型
+            /// &lt;/summary&gt;
+            public HookType type { set; get; }
+            /// &lt;summary&gt;
+            /// 用户UID
+            /// &lt;/summary&gt;
+            public long uid { set; get; }
+            /// &lt;summary&gt;
+            /// 发起该WebHook请求的时间
+            /// &lt;/summary&gt;
+            public DateTime hook_time { set; get; }
+            /// &lt;summary&gt;
+            /// 用户信息
+            /// &lt;/summary&gt;
+            public user_info user_info { set; get; }
+            /// &lt;summary&gt;
+            /// 直播间信息
+            /// &lt;/summary&gt;
+            public room_info room_Info { set; get; }
+        }
+        public class user_info
+        {
+            public string name { set; get; }
+            public string face { set; get; }
+            public long uid { get; set; }
+            public string sign { set; get; }
+            public int attention { set; get; }
+        }
+        public class room_info
+        {
+            /// &lt;summary&gt;
+            /// 标题
+            /// &lt;/summary&gt;
+            public string title { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 主播简介
+            /// &lt;/summary&gt;
+            public string description { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 关注数
+            /// &lt;/summary&gt;
+            public int attention { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间房间号(直播间实际房间号)
+            /// &lt;/summary&gt;
+            public int room_id { get; set; }
+            /// &lt;summary&gt;
+            /// 主播mid
+            /// &lt;/summary&gt;
+            public long uid { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间在线人数
+            /// &lt;/summary&gt;
+            public int online { get; set; }
+            /// &lt;summary&gt;
+            /// 开播时间(未开播时为-62170012800,live_status为1时有效)
+            /// &lt;/summary&gt;
+            public long live_time { get; set; }
+            /// &lt;summary&gt;
+            /// 直播状态(1为正在直播，2为轮播中)
+            /// &lt;/summary&gt;
+            public int live_status { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间房间号(直播间短房间号，常见于签约主播)
+            /// &lt;/summary&gt;
+            public int short_id { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间分区id
+            /// &lt;/summary&gt;
+            public int area { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间分区名
+            /// &lt;/summary&gt;
+            public string area_name { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播间新版分区id
+            /// &lt;/summary&gt;
+            public int area_v2_id { get; set; }
+            /// &lt;summary&gt;
+            /// 直播间新版分区名
+            /// &lt;/summary&gt;
+            public string area_v2_name { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播间父分区名
+            /// &lt;/summary&gt;
+            public string area_v2_parent_name { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播间父分区id
+            /// &lt;/summary&gt;
+            public int area_v2_parent_id { get; set; }
+            /// &lt;summary&gt;
+            /// 用户名
+            /// &lt;/summary&gt;
+            public string uname { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 主播头像url
+            /// &lt;/summary&gt;
+            public string face { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 系统tag列表(以逗号分割)
+            /// &lt;/summary&gt;
+            public string tag_name { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 用户自定义tag列表(以逗号分割)
+            /// &lt;/summary&gt;
+            public string tags { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播封面图
+            /// &lt;/summary&gt;
+            public string cover_from_user { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播关键帧图
+            /// &lt;/summary&gt;
+            public string keyframe { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播间封禁信息
+            /// &lt;/summary&gt;
+            public string lock_till { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播间隐藏信息
+            /// &lt;/summary&gt;
+            public string hidden_till { get; set; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 直播类型(0:普通直播，1：手机直播)
+            /// &lt;/summary&gt;
+            public int broadcast_type { get; set; }
+            /// &lt;summary&gt;
+            /// 是否p2p
+            /// &lt;/summary&gt;
+            public int need_p2p { set; get; }
+            /// &lt;summary&gt;
+            /// 是否隐藏
+            /// &lt;/summary&gt;
+            public bool is_hidden { set; get; }
+            /// &lt;summary&gt;
+            /// 是否锁定
+            /// &lt;/summary&gt;
+            public bool is_locked { set; get; }
+            /// &lt;summary&gt;
+            /// 是否竖屏
+            /// &lt;/summary&gt;
+            public bool is_portrait { set; get; }
+            /// &lt;summary&gt;
+            /// 是否加密
+            /// &lt;/summary&gt;
+            public bool encrypted { set; get; }
+            /// &lt;summary&gt;
+            /// 加密房间是否通过密码验证(encrypted=true时才有意义)
+            /// &lt;/summary&gt;
+            public bool pwd_verified { set; get; }
+            /// &lt;summary&gt;
+            /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
+            /// &lt;/summary&gt;
+            public int is_sp { set; get; }
+            /// &lt;summary&gt;
+            /// 特殊直播间标志(0：普通直播间 1：付费直播间 2：拜年祭直播间)
+            /// &lt;/summary&gt;
+            public int special_type { set; get; }
+            /// &lt;summary&gt;
+            /// 直播间状态(0:无房间 1:有房间)
+            /// &lt;/summary&gt;
+            public int roomStatus { set; get; }
+            /// &lt;summary&gt;
+            /// 轮播状态(0：未轮播 1：轮播)
+            /// &lt;/summary&gt;
+            public int roundStatus { set; get; }
+            /// &lt;summary&gt;
+            /// 直播间网页url
+            /// &lt;/summary&gt;
+            public string url { set; get; } = &quot;&quot;;
+            /// &lt;summary&gt;
+            /// 是否自动录制(Local值)
+            /// &lt;/summary&gt;
+            public bool IsAutoRec { set; get; }
+            /// &lt;summary&gt;
+            /// 是否开播提醒(Local值)
+            /// &lt;/summary&gt;
+            public bool IsRemind { set; get; }
+            /// &lt;summary&gt;
+            /// 是否录制弹幕(Local值)
+            /// &lt;/summary&gt;
+            public bool IsRecDanmu { set; get; }
+            /// &lt;summary&gt;
+            /// 用户等级
+            /// &lt;/summary&gt;
+            public int level { set; get; }
+            /// &lt;summary&gt;
+            /// 主播性别
+            /// &lt;/summary&gt;
+            public string sex { set; get; }
+            /// &lt;summary&gt;
+            /// 主播简介
+            /// &lt;/summary&gt;
+            public string sign { set; get; }
+            /// &lt;summary&gt;
+            /// 该房间最近一次完成的下载任务的文件信息
+            /// &lt;/summary&gt;
+            public DownloadedFileInfo DownloadedFileInfo { set; get; } = new DownloadedFileInfo();
+            /// &lt;summary&gt;
+            /// 该房间录制完成后会执行的Shell命令
+            /// &lt;/summary&gt;
+            public string Shell { set; get; } = &quot;&quot;;
+        }
+</code></pre></div></div> <footer class="page-edit"><div class="edit-link"><a href="https://github.com/CHKZL/DDTV/edit/master/Doc/docs/AdvancedFeatures/Webhook.md" target="_blank" rel="noopener noreferrer">在 GitHub 上编辑此页</a> <span><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> <span class="sr-only">(opens new window)</span></span></div> <!----></footer> <div class="page-nav"><p class="inner"><span class="prev">
+      ←
+      <a href="/AdvancedFeatures/房间Shell命令.html" class="prev">
+        房间Shell命令
+      </a></span> <!----></p></div> </main></div><div class="global-ui"></div></div>
+    <script src="/assets/js/app.44baa36e.js" defer></script><script src="/assets/js/3.eee5d938.js" defer></script><script src="/assets/js/16.99b60e60.js" defer></script>
+  </body>
+</html>
