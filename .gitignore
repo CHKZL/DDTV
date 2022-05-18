@@ -30,7 +30,6 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
-Doc/docs/.vuepress/dist/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
