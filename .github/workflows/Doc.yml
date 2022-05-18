@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: DOC
+name: Doc
 
 # Controls when the action will run. 
 on:
@@ -51,4 +51,4 @@ jobs:
           # 部署到 gh-pages 分支
           BRANCH: gh-pages
           # 部署目录为 VuePress 的默认输出目录，这里需要根据项目的目录进行修改
-          FOLDER: DOC/docs/.vuepress/dist
+          FOLDER: Doc/docs/.vuepress/dist
