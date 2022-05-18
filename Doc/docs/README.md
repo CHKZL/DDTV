@@ -2,7 +2,7 @@
 home: true
 heroImage: /DDTV.png
 heroText: DDTV
-tagline: 你的地表最强B站录播机
+tagline: 你的地表最强B站播放器
 actionText: 开始使用
 actionLink: /install/
 features:
