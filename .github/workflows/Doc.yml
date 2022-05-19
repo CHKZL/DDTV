@@ -47,7 +47,7 @@ jobs:
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
         env:
-          REPO: git@github.com:CHKZL/CHKZL.github.io
+          REPO: git@github.com:CHKZL/CHKZL.github.io.git
           # 部署到 gh-pages 分支
           BRANCH: gh-pages
           # 部署目录为 VuePress 的默认输出目录
