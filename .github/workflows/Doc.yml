@@ -6,7 +6,7 @@ name: Doc
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -46,9 +46,12 @@ jobs:
  
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@releases/v3
-        with:
-          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+        env:
+         # 部署到你的目标仓库，这里就是你的仓库名
+          REPO: git@github.com:CHKZL/CHKZL.github.io.git
           # 部署到 gh-pages 分支
           BRANCH: gh-pages
-          # 部署目录为 VuePress 的默认输出目录，这里需要根据项目的目录进行修改
+          # 部署目录为 VuePress 的默认输出目录
           FOLDER: Doc/docs/.vuepress/dist
+          # 当前仓库的密钥
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_PRIVATE_KEY }}
