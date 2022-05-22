@@ -4,8 +4,16 @@ name: DDTV_WEB_Server
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'DDTV_WEB_Server/**'
+      - '.github/workflows/DDTV_WEB_Server.yml'
+      - '!**/README.md'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'DDTV_WEB_Server/**'
+      - '.github/workflows/DDTV_WEB_Server.yml'
+      - '!**/README.md'
 
 jobs:
   build:
