@@ -15,6 +15,7 @@ using System.Runtime.InteropServices;
 using ConsoleTables;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 using DDTV_Core.Tool;
+using DDTV_Core.SystemAssembly.RoomPatrolModule;
 
 namespace DDTV_Core
 {
@@ -45,6 +46,10 @@ namespace DDTV_Core
             CoreConfig.ConfigInit(satrtType);
             Tool.DDTV_Update.CheckUpdateProgram();
             Task.Run(() => Tool.DDcenter.Init(satrtType));
+            if (satrtType != SatrtType.DDTV_GUI)
+            {
+                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
+            }
             //var c = RuntimeInformation.RuntimeIdentifier;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
             
@@ -156,6 +161,39 @@ namespace DDTV_Core
         }
 
 
+        /// <summary>
+        /// 登陆状态失效
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private static void CheckAccount_CheckAccountChanged(object? sender, EventArgs e)
+        {
+            RoomPatrol.IsOn = false;
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    switch (BilibiliUserConfig.account.loginStatus)
+                    {
+                        case BilibiliUserConfig.LoginStatus.NotLoggedIn:
+                            Log.AddLog("Login", LogClass.LogType.Warn, "未登录", false, null, false);
+                            break;
+                        case BilibiliUserConfig.LoginStatus.LoggedIn:
+                            Log.AddLog("Login", LogClass.LogType.Info, "登陆成功", false, null, false);
+                            BilibiliUserConfig.CheckAccount.IsState = true;
+                            RoomPatrol.IsOn = true;
+                            return;
+                        case BilibiliUserConfig.LoginStatus.LoginFailure:
+                            Log.AddLog("Login", LogClass.LogType.Warn, "账号登陆失效！请进入[i]键菜单根据提示重新登陆", false, null, true);
+                            break;
+                        case BilibiliUserConfig.LoginStatus.LoggingIn:
+                            Log.AddLog("Login", LogClass.LogType.Info, "等待登陆中...", false, null, false);
+                            break;
+                    }
+                    Thread.Sleep(10 * 1000);
+                }
+            });
+        }
         private static void TestVetInfo()
         {
             Task.Run(() =>
@@ -221,9 +259,9 @@ namespace DDTV_Core
                     {
                         Console.WriteLine($"请按对应的按键查看或修改配置：");
                         Console.WriteLine($"a：查看下载中的任务情况");
-                        Console.WriteLine($"b：查看调用阿B的API次数(已禁用)");
-                        Console.WriteLine($"c：查看API查询次数(已禁用)");
-                        Console.WriteLine($"d: 一键导入关注列表中的V(可能不全需要自己补一下)");
+                        Console.WriteLine($"b：一键导入关注列表中的V(可能不全需要自己补一下)");
+                        Console.WriteLine($"c：重登登陆");
+
                         switch (Console.ReadKey().Key)
                         {
                             case ConsoleKey.A:
@@ -253,28 +291,39 @@ namespace DDTV_Core
                                 }
                             case ConsoleKey.B:
                                 {
-                                    //Console.WriteLine("API使用统计:");
-                                    //foreach (var item in NetClass.API_Usage_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
+                                    Console.WriteLine("确定一键导入关注列表中的V吗？按'Y'导入，按任意键取消");
+                                    switch (Console.ReadKey().Key)
+                                    {
+                                        case ConsoleKey.Y:
+                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+                                            break;
+                                        case ConsoleKey.F12://隐藏操作
+                                            //一键导入所有关注列表
+                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                            break;
+                                        default:
+                                            Console.WriteLine("放弃导入");
+                                            break;
+                                    }
                                     break;
                                 }
                             case ConsoleKey.C:
                                 {
-                                    //Console.WriteLine("查询API统计:");
-                                    //foreach (var item in NetClass.SelectAPI_Count)
-                                    //{
-                                    //    Console.WriteLine($"{item.Value}次，来源：{item.Key}");
-                                    //}
+                                  Console.WriteLine("按[Y]确认进入重新登陆流程，按其他键退出菜单");
+                                    if(Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                    {
+                                        if (SystemAssembly.BilibiliModule.User.login.VerifyLogin.QRLogin(InitType))
+                                        {
+                                            //重新登陆完成的操作，已经在QRLogin方法里面进行日志和控制台消息的打印，这里就不进行再操作了
+                                        }
+                                        else
+                                        {
+                                            //这里如果为false说明InitType为GUI，走单独的UI登陆流程，控制台不打印二维码
+                                        }
+                                    }
                                     break;
                                 }
-                            case ConsoleKey.D:
-                                Console.WriteLine("确定一键导入关注列表中的V吗？按'Y'导入，按任意键取消");
-                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
-                                {
-                                    DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-                                }
+                            default:
                                 break;
                         }
                     }

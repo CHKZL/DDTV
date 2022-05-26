@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DataCacheModule;
+using DDTV_Core.SystemAssembly.Log;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -195,7 +196,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public static List<followClass> follow(long uid)
+        public static List<followClass> follow(long uid, bool IsAll = false)
         {
             Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, "添加关注列表中的V到本地房间配置文件");
             int AddCount = 0;
@@ -217,38 +218,64 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 total = root.data.total;
             } while (pg * 50 < total);
             List<followClass> followClasses = new List<followClass>();
-            if (File.Exists("./Resources/vtbs.json"))
+            if (IsAll)
             {
-                JArray keyValuePairs = (JArray)JsonConvert.DeserializeObject(File.ReadAllText("./Resources/vtbs.json"));
-                List<User.VtbsFile> vtbsFiles = new();
-                foreach (var item in keyValuePairs)
+                foreach (var item in FollowList)
                 {
-                    long mid = 0;
-                    int roomid = 0;
-                    string name = "";
-                    try
+                    if (item.mid != 0)
                     {
-                        mid = long.Parse(item["mid"].ToString());
-                        roomid = int.Parse(item["roomid"].ToString());
-                        name = Tool.FileOperation.CheckFilenames(item["uname"].ToString());
-                        if(FollowList.Any(e => e.mid == mid)&& mid!=0&&roomid!=0)
+                        followClasses.Add(new followClass()
                         {
-                            followClasses.Add(new followClass()
-                            {
-                                mid = mid,
-                                name = name,
-                                roomid = roomid
-                            });
-                            RoomConfig.AddRoom(mid, roomid, name);
+                            mid = item.mid,
+                            name = item.uname,
+                            roomid = 0
+                        });
+                        if (RoomConfig.AddRoom(item.mid, 0, item.uname))
+                        {
                             AddCount++;
                         }
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    }         
                 }
                 RoomConfigFile.WriteRoomConfigFile();
             }
+            else
+            {
+                if (File.Exists("./Resources/vtbs.json"))
+                {
+                    JArray keyValuePairs = (JArray)JsonConvert.DeserializeObject(File.ReadAllText("./Resources/vtbs.json"));
+                    List<User.VtbsFile> vtbsFiles = new();
+                    foreach (var item in keyValuePairs)
+                    {
+                        long mid = 0;
+                        int roomid = 0;
+                        string name = "";
+                        try
+                        {
+                            mid = long.Parse(item["mid"].ToString());
+                            roomid = int.Parse(item["roomid"].ToString());
+                            name = Tool.FileOperation.CheckFilenames(item["uname"].ToString());
+                            if (FollowList.Any(e => e.mid == mid) && mid != 0 && roomid != 0)
+                            {
+                                followClasses.Add(new followClass()
+                                {
+                                    mid = mid,
+                                    name = name,
+                                    roomid = roomid
+                                });
+                                if (RoomConfig.AddRoom(mid, roomid, name))
+                                {
+                                    AddCount++;
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    RoomConfigFile.WriteRoomConfigFile();
+                }
+            }
+            Log.Log.AddLog(nameof(UserInfo), LogClass.LogType.Info, $"导入{AddCount}个主播");
             return followClasses;
         }
         public class followClass

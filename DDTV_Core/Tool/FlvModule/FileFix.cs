@@ -266,7 +266,7 @@ namespace DDTV_Core.Tool.FlvModule
                                 }
                                 else
                                 {
-                                    //Console.WriteLine($"从文件中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                    Console.WriteLine($"从文件中加载FlvTag包属性:[音频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
                                 }
 //#endif
                                 FlvAudioFPS = PakeTime;
@@ -310,7 +310,7 @@ namespace DDTV_Core.Tool.FlvModule
                                 }
                                 else
                                 {
-                                    //Console.WriteLine($"从文件中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
+                                    Console.WriteLine($"从文件中加载FlvTag包属性:[视频包]，TagData数据长度[{Len}],检测到时间戳错误，修复时间戳为[{BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0)}]");
                                 }
 //#endif
                                 FlvVideoFPS= PakeTime;
