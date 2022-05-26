@@ -17,7 +17,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             Task.Run(() =>
             {
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
-                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
+               
                 //ServerInteraction.CheckUpdates.Update();
                 //ServerInteraction.Dokidoki.Start("WEB");
             });    
@@ -88,38 +88,5 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             app.Run();
         }
 
-        /// <summary>
-        /// 登陆状态失效
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private static void CheckAccount_CheckAccountChanged(object? sender, EventArgs e)
-        {
-            RoomPatrol.IsOn = false;
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    switch(BilibiliUserConfig.account.loginStatus)
-                    {
-                        case BilibiliUserConfig.LoginStatus.NotLoggedIn:
-                            DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Warn, "未登录", false, null, false);
-                            break;
-                        case BilibiliUserConfig.LoginStatus.LoggedIn:
-                            DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Info, "登陆成功", false, null, false);
-                            DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.CheckAccount.IsState = true;
-                            RoomPatrol.IsOn = true;
-                            return;
-                        case BilibiliUserConfig.LoginStatus.LoginFailure:
-                            DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Warn, "账号登陆失效！等待登陆操作",false,null,true);
-                            break;
-                        case BilibiliUserConfig.LoginStatus.LoggingIn:
-                            DDTV_Core.SystemAssembly.Log.Log.AddLog("Login", DDTV_Core.SystemAssembly.Log.LogClass.LogType.Info, "等待登陆中...", false, null, false);
-                            break;
-                    }
-                    Thread.Sleep(10 * 1000);
-                }
-            });
-        }
     }
 }

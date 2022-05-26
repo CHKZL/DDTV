@@ -68,7 +68,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             else
             {
-                return login.VerifyLogin.QRLoing(satrtType);
+                return login.VerifyLogin.QRLogin(satrtType);
             }
         }
         public static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")

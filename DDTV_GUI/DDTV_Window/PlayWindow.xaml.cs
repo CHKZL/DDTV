@@ -24,6 +24,7 @@ using System.Windows.Interop;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
+using DDTV_Core.SystemAssembly.Log;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -85,6 +86,7 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Tick += VolumeTimer_Tick;
             VolumeTimer.Start();
             Loaded += new RoutedEventHandler(Topping);
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -576,6 +578,7 @@ namespace DDTV_GUI.DDTV_Window
             if (IsOpenDanmu)
             {
                 Growl.InfoGlobal($"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕");
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕", false);
                 Task.Run(() =>
                 {
                     MainWindow.linkDMNum++;
@@ -599,14 +602,22 @@ namespace DDTV_GUI.DDTV_Window
             {
                 if (roomInfo.roomWebSocket.LiveChatListener != null&& roomInfo.roomWebSocket.LiveChatListener.startIn)
                 {
-                    MainWindow.linkDMNum--;
-                    Growl.InfoGlobal($"关闭{roomId}房间的弹幕连接");
+                    MainWindow.linkDMNum--;  
                     try
                     {
-                        roomInfo.roomWebSocket.LiveChatListener.startIn = false;
-                        roomInfo.roomWebSocket.IsConnect = false;
-                        roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
-                        roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                        if (!roomInfo.IsDownload)
+                        {
+                            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口关闭，断开弹幕连接", false);
+                            roomInfo.roomWebSocket.LiveChatListener.startIn = false;
+                            roomInfo.roomWebSocket.IsConnect = false;
+                            roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
+                            roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                            Growl.InfoGlobal($"关闭{roomId}房间的弹幕连接");
+                        }
+                        else
+                        {
+                            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口关闭，但是还有录制任务，不断开弹幕连接", false);
+                        }
                     }
                     catch (Exception)
                     {
@@ -814,8 +825,10 @@ namespace DDTV_GUI.DDTV_Window
         }
         private void MenuItem_CopyLiveRoomUrl_Click(object sender, RoutedEventArgs e)
         {
-            System.Windows.Clipboard.SetDataObject("https://live.bilibili.com/" + roomId);
+            string url = "https://live.bilibili.com/" + roomId;
+            System.Windows.Clipboard.SetDataObject(url);
             Growl.SuccessGlobal("已复制直播间Url到粘贴板");
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"制直播间Url到粘贴板[URL:{url}]", false);
         }
 
         /// <summary>
@@ -846,6 +859,7 @@ namespace DDTV_GUI.DDTV_Window
                     Line = 3;
                     break;
             }
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"切换线路到[{Line}]", false);
             RefreshWindow();
         }
         /// <summary>
@@ -879,6 +893,7 @@ namespace DDTV_GUI.DDTV_Window
                     Quality = 80;
                     break;
             }
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"切换清晰度到[{Quality}]", false);
             RefreshWindow();
         }
 
@@ -887,6 +902,7 @@ namespace DDTV_GUI.DDTV_Window
 
             Growl.AskGlobal("确定要关闭所有播放窗口么？", isConfirmed =>
             {
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"关闭所有播放窗口", false);
                 if (isConfirmed)
                 {
                     if (PlayListExit != null)

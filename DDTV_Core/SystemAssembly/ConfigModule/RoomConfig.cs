@@ -77,8 +77,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// <param name="uid"></param>
         /// <param name="RoomId"></param>
         /// <param name="Name"></param>
-        public static void AddRoom(long uid, int RoomId, string Name,bool IsSave=false)
+        public static bool AddRoom(long uid, int RoomId, string Name,bool IsSave=false)
         {
+            bool IsEx = false;
             if (!Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
                 Rooms.RoomInfo.Add(uid, new RoomInfoClass.RoomInfo()
@@ -92,11 +93,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     uid = uid,
                     IsRecDanmu = false,
                 });
+                IsEx = true;
             }
             if (IsSave)
             {
                 RoomConfigFile.WriteRoomConfigFile();
             }
+            return IsEx;
         }
 
         /// <summary>
