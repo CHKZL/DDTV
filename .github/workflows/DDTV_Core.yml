@@ -4,8 +4,18 @@ name: DDTV_Core
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'DDTV_Core/**'
+      - 'BiliAccount/**'
+      - '.github/workflows/DDTV_Core.yml'
+      - '!**/README.md'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'DDTV_Core/**'
+      - 'BiliAccount/**'
+      - '.github/workflows/DDTV_Core.yml'
+      - '!**/README.md'
 
 jobs:
   build:
