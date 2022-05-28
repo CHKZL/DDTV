@@ -85,5 +85,9 @@ namespace DDTV_Core.SystemAssembly.Log
         /// IsError为真时有效，记录错误详细信息
         /// </summary>
         public Exception exception { set; get; }
+        /// <summary>
+        /// 是否应该打印到终端
+        /// </summary>
+        public bool IsDisplay { set; get; } =false;
     }
 }

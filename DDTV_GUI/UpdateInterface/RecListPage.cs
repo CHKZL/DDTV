@@ -24,6 +24,7 @@ namespace DDTV_GUI.UpdateInterface
                     ulong FileSize = 0;
                     DateTime starttime = DateTime.MaxValue;
                     string FilePath = "";
+                    string Spe = "";
                     foreach (var item in A1.Value.DownloadingList)
                     {
                         FilePath = item.FilePath;
@@ -31,16 +32,16 @@ namespace DDTV_GUI.UpdateInterface
                         {
                             starttime = item.StartTime;
                         }
-
                         FileSize += (ulong)item.TotalDownloadCount;
+                        Spe = NetClass.ConversionSize(item.DownloadSpe, NetClass.ConversionSizeType.BitRate);
                     }
-                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid, FilePath);
+                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid, FilePath, Spe);
                     _.Add(rec);
                 }
             }
             if (_.Count == 0)
             {
-                _.Add(new BindingData.RecList("", 0, "", "", "当前无下载任务",0,""));
+                _.Add(new BindingData.RecList("", 0, "", "", "当前无下载任务",0,"","0bps"));
             }
             if (recList.Count != _.Count)
             {
@@ -54,7 +55,8 @@ namespace DDTV_GUI.UpdateInterface
                     || recList[i].RoomId != _[i].RoomId
                     || recList[i].DownSzie != _[i].DownSzie
                     || recList[i].StartTime != _[i].StartTime
-                    || recList[i].Title != _[i].Title)
+                    || recList[i].Title != _[i].Title
+                    || recList[i].DownloadSpe != _[i].DownloadSpe)
                     {
                         IsUpdate = true;
                     }

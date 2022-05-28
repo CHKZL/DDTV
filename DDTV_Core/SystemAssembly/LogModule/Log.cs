@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Diagnostics;
 using System.IO;
+using ColorConsole;
 
 namespace DDTV_Core.SystemAssembly.Log
 {
@@ -22,7 +23,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <summary>
         /// 本地日志的记录
         /// </summary>
-        public static List<string> LogList = new();
+        public static List<LogClass> LogList = new();
         /// <summary>
         /// 新增日志事件
         /// </summary>
@@ -31,6 +32,13 @@ namespace DDTV_Core.SystemAssembly.Log
         /// 是否启用外部日志事件调用
         /// </summary>
         public static bool IsEvent = false;
+        /// <summary>
+        /// 需要写入数据库的日志队列
+        /// </summary>
+        private static List<LogClass> LogDBClasses = new List<LogClass>();
+
+
+        private static ConsoleWriter console = new ConsoleWriter();
         /// <summary>
         /// Log系统初始化
         /// </summary>
@@ -42,10 +50,11 @@ namespace DDTV_Core.SystemAssembly.Log
             Tool.TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
 
-            AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.InitType}{InitDDTV_Core.Ver}({InitDDTV_Core.CompiledVersion})");
+            AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.InitType}|{InitDDTV_Core.Ver}({InitDDTV_Core.CompiledVersion})");
             AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
             WeritDB();
             WriteErrorLogFile();
+            PrintThread();//新增打印线程，把并行日志打印方法修改为串行，为之后控制台颜色区分做准备
         }
         /// <summary>
         /// 增加日志
@@ -68,43 +77,99 @@ namespace DDTV_Core.SystemAssembly.Log
                     Time = DateTime.Now,
                     Type = logType,
                     IsError= IsError,
-                    exception= exception
+                    exception= exception,
+                    IsDisplay=IsDisplay,
                 };
-                if (IsError)
+                LogList.Add(logClass);
+            });
+        }
+
+        /// <summary>
+        /// 日志打印线程
+        /// </summary>
+        private static void PrintThread()
+        {
+            Task.Run(() => {
+                while (true)
                 {
-                    ErrorLogFileWrite(logClass);// Source, $"{Message},错误堆栈:\n{exception.ToString()}");
-                    Message = Message + " 详细信息已写入txt文本日志中";
+                    try
+                    {
+                        while (LogList.Count > 0)
+                        {
+                            _LogPrint(LogList[0]);
+                            LogList.Remove(LogList[0]);
+                        }
+                    }
+                    catch (Exception) { }
+                    if (LogList.Count > 10)
+                    {
+                        Thread.Sleep(5);
+                    }
+                    else
+                    {
+                        Thread.Sleep(30);
+                    }
                 }
-                if (logType <= LogLevel&& logType!= LogClass.LogType.Info_Transcod&& IsDisplay)
+            });
+        }
+
+        private static void _LogPrint(LogClass logClass)
+        {
+            if (logClass != null)
+            {
+                if (logClass.IsError)
                 {
-                    string _ = $"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logType)}][{Source}]{Message}";
+                    ErrorLogFileWrite(logClass);
+                    logClass.Message = logClass.Message + " ,详细信息已写入txt文本日志中";
+                }
+                if (logClass.Type <= LogLevel && logClass.Type != LogClass.LogType.Info_Transcod && logClass.IsDisplay)
+                {
+
+                    string _ = $"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}][{logClass.Source}]{logClass.Message}";
+                    console.Write($"{logClass.Time}:", ConsoleColor.White);
+
+                    switch (logClass.Type)
+                    {
+                        case LogClass.LogType.Error:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Red);
+                            break;
+                        case LogClass.LogType.Warn:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Yellow);
+                            break;
+                        case LogClass.LogType.Warn_RoomPatrol:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Yellow);
+                            break;
+                        case LogClass.LogType.Info:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Green);
+                            break;
+                        case LogClass.LogType.Info_Transcod:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Green);
+                            break;
+                        case LogClass.LogType.Info_API:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Green);
+                            break;
+                        default:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.DarkGray);
+                            break;
+                    }
+                    console.Write($"[{logClass.Source}]", ConsoleColor.DarkGray);
+                    console.WriteLine($"{logClass.Message}", ConsoleColor.White);
                     if (IsEvent)
                     {
                         LogAddEvent.Invoke(_, EventArgs.Empty);
                     }
-                    LogList.Add(_);
-                    Console.WriteLine($"{_}\n");
+
+                    //Console.WriteLine($"{_}\n");
                 }
-                if (logType < LogClass.LogType.Trace)
+                if (logClass.Type < LogClass.LogType.Trace)
                 {
                     LogDBClasses.Add(logClass);
-                    //if (!LogDB.Operate.AddDb(logClass))
-                    //{
-                    //    ErrorLogFileWrite(new LogClass()
-                    //    {
-                    //        exception = exception,
-                    //        IsError = true,
-                    //        Message = "日志数据库写入失败",
-                    //        RunningTime = TimeModule.Time.Operate.GetRunMilliseconds(),
-                    //        Source = nameof(Log),
-                    //        Time = DateTime.Now,
-                    //        Type = LogClass.LogType.Error
-                    //    });
-                    //}
+
                 }
-            });
+            }
         }
-        private static List<LogClass> LogDBClasses = new List<LogClass>();
+
+        
         /// <summary>
         /// 启用sqlite数据库写入
         /// </summary>
@@ -115,19 +180,16 @@ namespace DDTV_Core.SystemAssembly.Log
                 {
                     try
                     {
-                        if(LogDBClasses.Count>0)
+                        while(LogDBClasses.Count > 0)
                         {
-                            if(LogDB.Operate.AddDb(LogDBClasses[0]))
+                            if (LogDB.Operate.AddDb(LogDBClasses[0]))
                             {
                                 LogDBClasses.RemoveAt(0);
                             }
-                        }
-                        Thread.Sleep(10);
+                        }  
                     }
-                    catch (Exception)
-                    {
-
-                    }
+                    catch (Exception){}
+                    Thread.Sleep(30);
                 }
             });
         }

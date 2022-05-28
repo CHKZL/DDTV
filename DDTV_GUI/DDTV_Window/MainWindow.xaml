@@ -201,7 +201,9 @@
                                 <GridViewColumn Header="房间号" Width="90" DisplayMemberBinding="{Binding RoomId}"/>
                                 <GridViewColumn Header="已下载大小" Width="110" DisplayMemberBinding="{Binding DownSzie}"/>
                                 <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
+                                <GridViewColumn Header="下载速度" Width="80" DisplayMemberBinding="{Binding DownloadSpe}"/>
                                 <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
+                               
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
