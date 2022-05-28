@@ -1,5 +1,5 @@
 module.exports = {
-  base: '/',
+  base: '/DDTV/',
   locales: {
     '/': {
       lang: 'zh-CN',
