@@ -95,6 +95,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 下载状态
             /// </summary>
             public DownloadStatus Status { get; set; } = DownloadStatus.NewTask;
+            /// <summary>
+            /// 下载速度
+            /// </summary>
+            public long DownloadSpe { get; set; }
             public enum DownloadStatus
             {
                 /// <summary>
@@ -164,6 +168,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Status = DownloadStatus.Downloading;
                                 uint DataLength = 9;
                                 uint TagLen = 0;
+                                DateTime SpeedCalibration_Time = DateTime.Now;
+                                long SpeedCalibration_Size = 0;
                                 while (true)
                                 {
                                     byte[] data = new byte[DataLength];
@@ -278,7 +284,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         flvTimes.IsTagHeader = true;
                                         DownloadCount = TagLen;
                                     }
+                                    TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
+                                    if(ts.TotalMilliseconds>1000)
+                                    {
+                                        double Proportion = ts.TotalMilliseconds / 1000.0;
+                                        long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
+                                        double T = CurrentDownloadSize / Proportion;
+                                        DownloadSpe = Convert.ToInt64(T);
+                                        SpeedCalibration_Size = TotalDownloadCount;
+                                        SpeedCalibration_Time = DateTime.Now;
+                                    }
                                 }
                             }
                         }

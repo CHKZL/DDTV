@@ -349,7 +349,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                             else
                             {
-                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】录制任务不进行弹幕录制，理由：IsNewTask:{IsNewTask},IsRecDanmu:{IsRecDanmu}");
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】录制任务不进行弹幕录制，理由：是否为重连任务:{!IsNewTask},弹幕总开关:{IsRecDanmu},房间弹幕录制设置:{bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu))}");
                             }
                         }
                         else if (Ok == 1)

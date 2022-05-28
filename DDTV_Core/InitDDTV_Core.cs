@@ -267,7 +267,7 @@ namespace DDTV_Core
                             case ConsoleKey.A:
                                 {
                                     int i = 0;
-                                    ConsoleTable tables = new ConsoleTable("序号","UID", "房间号", "昵称","直播标题","已下载大小", "状态","开始时间", "是否录制弹幕信息");
+                                    ConsoleTable tables = new ConsoleTable("序号","UID", "房间号", "昵称","直播标题","已下载大小","下载速率", "状态","开始时间", "是否录制弹幕信息");
                                     Console.WriteLine($"下载中的任务:");
                                     foreach (var A1 in Rooms.RoomInfo)
                                     {
@@ -276,14 +276,16 @@ namespace DDTV_Core
                                             DateTime StartTime=DateTime.Now;
                                             DownloadStatus downloadStatus=DownloadStatus.Standby;
                                             ulong FileSize = 0;
+                                            string spe = "";
                                             foreach (var item in A1.Value.DownloadingList)
                                             {
                                                 StartTime = item.StartTime;
                                                 downloadStatus = item.Status;
                                                 FileSize += (ulong)item.TotalDownloadCount;
+                                                spe = NetClass.ConversionSize(item.DownloadSpe, NetClass.ConversionSizeType.BitRate);
                                             }
                                             i++;
-                                            tables.AddRow(i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title,  NetClass.ConversionSize(FileSize), downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"),A1.Value.IsRecDanmu?"YES":"NO");
+                                            tables.AddRow(i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title,  NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"),A1.Value.IsRecDanmu?"YES":"NO");
                                         }
                                     }
                                     tables.Write();
