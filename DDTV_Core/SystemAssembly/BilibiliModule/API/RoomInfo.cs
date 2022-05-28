@@ -372,36 +372,45 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 switch (BA.Code)
                 {
                     case 0:
-                        var url_data = BA?.Data?.PlayurlInfo?.Playurl?.Streams;
-                        var url_http_stream_flv_avc =
-                            url_data.FirstOrDefault(x => x.ProtocolName == "http_stream")?.Formats?.FirstOrDefault(x => x.FormatName == "flv")?.Codecs?.FirstOrDefault(x => x.CodecName == "avc");
-                        foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                        if (BA?.Data.LiveStatus == 1)
                         {
-                            if(!IsPlay && ForceCDNResolution)
+                            var url_data = BA?.Data?.PlayurlInfo?.Playurl?.Streams;
+                            var url_http_stream_flv_avc =
+                                url_data.FirstOrDefault(x => x.ProtocolName == "http_stream")?.Formats?.FirstOrDefault(x => x.FormatName == "flv")?.Codecs?.FirstOrDefault(x => x.CodecName == "avc");
+                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
                             {
-                                if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
+                                if (!IsPlay && ForceCDNResolution)
                                 {
-                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
-                                    return item.Host + url_http_stream_flv_avc.BaseUrl+ item.Extra;
+                                    if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
+                                    {
+                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
+                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                                    }
+                                }
+                                else
+                                {
+                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
+                                    return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
                                 }
                             }
-                            else
-                            {
-                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
-                                return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
-                            }
-                        }
-                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到主CDN地址，2秒后重试(如果一直失败，那还是把强制主CDN设置给关了吧)");
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到主CDN地址，2秒后重试(如果一直失败，那还是把强制主CDN设置给关了吧)");
 #if DEBUG
-                        string uu = "";
-                        foreach (var item in url_http_stream_flv_avc.UrlInfos)
-                        {
-                            uu += item.Host + "\n";
-                        }
-                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
+                            string uu = "";
+                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                            {
+                                uu += item.Host + "\n";
+                            }
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
 #endif
-                        Thread.Sleep(3000);
-                        return playUrl_Mandatory(uid, qn);
+                            Thread.Sleep(3000);
+                            return playUrl_Mandatory(uid, qn);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取直播流地时发现直播间已经不再开播状态，放弃获取");
+                            return null;
+                        }
+                        
                     case 1002002:
                         Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"因为参数错误，{roomId}房间直播视频流获取失败");
                         break;

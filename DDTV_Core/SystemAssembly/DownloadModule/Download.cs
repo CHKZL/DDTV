@@ -314,7 +314,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                         downloadClass.Status = DownloadClass.Downloads.DownloadStatus.Standby;
-                        //if (IsNewTask)
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"收到【{ roomInfo.uname}({roomInfo.room_id})】的下载请求，等待数据流中...");
                         int Ok = IsOk(roomInfo, downloadClass.Url);
                         if (Ok == 0)
