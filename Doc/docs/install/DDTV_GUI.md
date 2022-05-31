@@ -3,11 +3,12 @@
 DDTV_GUI仅支持Windows平台运行，其他平台需要录制请使用DDTV_WEB_Server
 :::
 ## 1.下载
-从以下地方选一个下载DDTV最新版本  
-[GitHub](https://hub.fastgit.xyz/CHKZL/DDTV/releases/latest)  
+从以下地方选一个下载DDTV最新版本    
+[GitHub](https://github.com/CHKZL/DDTV/releases/latest)   
+[GitHub(fastgit镜像)](https://hub.fastgit.xyz/CHKZL/DDTV/releases/latest)  
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  
-DDTV功能反馈讨论群:`338182356`
-聊天吹水群:`307156949`  
+DDTV功能反馈讨论群:`338182356`  
+DDTV聊天吹水群:`307156949`  
 
 ## 2.安装
 DDTV_GUI本体是免安装的，把下载下来的压缩包解压到任意位置即可  

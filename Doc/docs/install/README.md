@@ -1,16 +1,16 @@
 # 版本介绍
 DDTV提供了`DDTV_GUI`、`DDTV_WEB_Server`、`DDTV_CLI`三个版本方便给不同需求的用户自行选择使用  
   
-  
-
-:::tip DDTV_GUI
-是在Core的基础上还提供了可交互的GUI界面，并且提供友好的初始化引导教程并且支持直播直接多开观看等功能  
-<img :src="$withBase('/DDTV_GUI.png')" alt="mixureSecure">
+三个版本的关系:  
+<img :src="$withBase('/版本关系.png')" alt="mixureSecure">  
+:::warning DDTV Core
+三个版本都基于DDTV_Core。  
+Core为DDTV的核心，提供DDTV的基本核心服务  
 :::
 
 :::tip DDTV_CLI
-是在Core的基础上还提供了跨平台(Windows、MacOS、linux)支持。  
-对服务器用户来说比较友好，占用内存最低，没有那些花里胡哨的功能，理论上只要能跑linux并且剩余内存大于200M都可以跑（我测试在一百块钱的香橙派Zero2上跑5个直播间都完全没问题）。  
+是在Core的基础应用封装，提供了跨平台(Windows、MacOS、linux)支持。  
+是最纯净的编译版本，对服务器用户来说比较友好，占用内存最低，没有那些花里胡哨的功能，理论上只要能跑linux并且剩余内存大于200M都可以跑（我测试在一百块钱的香橙派Zero2上跑5个直播间都完全没问题）。  
 适合需要特定长期稳定录制的用户。  
 :::
 
@@ -18,15 +18,10 @@ DDTV提供了`DDTV_GUI`、`DDTV_WEB_Server`、`DDTV_CLI`三个版本方便给不
 是在DDTV_CLI的基础上增加了WEB服务相关的一套支持，方便进行二次开发和包装
 :::
 
-
-  
-    
-#### 三个版本都是基于`DDTV_Core`
-:::warning DDTV Core
-为DDTV的核心，为本服提供如可以无人值守、稳定的开播自动录制功能  
-并且提供了可能产生的文件分段自动合并功能，如果需要也能进行录制完成后自动转码功能   
+:::tip DDTV_GUI
+是在DDTV_CLI的基础上还提供了可交互的GUI界面和在线播放功能，并提供友好的初始化引导教程并且支持直播直接多开观看等功能  
+<img :src="$withBase('/DDTV_GUI.png')" alt="mixureSecure">
 :::
-    
 
   
 ### 版本区别详情  

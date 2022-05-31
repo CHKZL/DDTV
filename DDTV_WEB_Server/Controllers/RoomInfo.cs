@@ -73,6 +73,34 @@ namespace DDTV_WEB_Server.Controllers
             return Content(MessageBase.Success(nameof(Room_AllInfo), roomInfos), "application/json");
         }
     }
+
+    public class Room_SummaryInfo : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Room_SummaryInfo")]
+        public ActionResult Post([FromForm] string cmd)
+        {
+            //Response.ContentType = "application/json";
+
+            List<RoomInfoClass.RoomInfo> roomInfos = new();
+            foreach (var item in Rooms.RoomInfo)
+            {
+                roomInfos.Add(new RoomInfoClass.RoomInfo
+                {
+                    IsAutoRec = item.Value.IsAutoRec,
+                    IsDownload = item.Value.IsDownload,
+                    IsRecDanmu = item.Value.IsRecDanmu,
+                    IsRemind = item.Value.IsRemind,           
+                    Like = item.Value.Like,
+                    room_id = item.Value.room_id,
+                    uid = item.Value.uid,
+                    uname = item.Value.uname,
+                });
+            }
+
+            return Content(MessageBase.Success(nameof(Room_AllInfo), roomInfos), "application/json");
+        }
+    }
+
     public class Room_Add : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_Add")]
