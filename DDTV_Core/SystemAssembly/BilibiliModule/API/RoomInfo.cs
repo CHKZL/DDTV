@@ -389,8 +389,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 }
                                 else
                                 {
-                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
-                                    return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                                    if (!item.Host.Contains(".mcdn."))
+                                    {
+                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
+                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                                    }
+                                  
                                 }
                             }
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到主CDN地址，2秒后重试(如果一直失败，那还是把强制主CDN设置给关了吧)");

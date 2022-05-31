@@ -55,6 +55,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public string FileName { set; get; }
             /// <summary>
+            /// 该任务下载的flv文件列表
+            /// </summary>
+            public List<string> FlvFileList { get; set; }= new List<string>();
+            /// <summary>
             /// 文件夹路径
             /// </summary>
             public string FilePath { set; get; }
@@ -159,6 +163,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Path = Tool.FileOperation.CreateAll(Path);
                         string  _F = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
+                        downloads.FlvFileList.Add(_F);
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -269,6 +274,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         fileStream.Close();
                                         fileStream.Dispose();
                                         string _F2 = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName + "_" + count + "." + format;
+                                        downloads.FlvFileList.Add(_F2);
                                         fileStream = new FileStream(_F2, FileMode.Create);
                                         byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                         fileStream.Write(buffer, 0, buffer.Length);
