@@ -35,7 +35,7 @@ namespace DDTV_GUI.DDTV_Window
         private static bool HideIconState = false;
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
-
+        public NotifyIcon notifyIcon=new();
         public static List<PlayWindow> playWindowsList = new();
         public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
        
@@ -83,13 +83,25 @@ namespace DDTV_GUI.DDTV_Window
             //定时更新界面数据
             UpdateInterface.Main.update(this);
             UpdateInterface.Main.ActivationInterface = 0;
-            TimedTask.CheckUpdate.Check();
+
+            //系统托盘提示
+            //UpdateInterface.Notify.NotifyUpdate += Notify_NotifyUpdate;
+
+            
+
+            //TimedTask.CheckUpdate.Check();
             //TimedTask.DokiDoki.Check();
             //ClipWindow clipWindow = new ClipWindow();
             //clipWindow.Show();
 
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
 
+        }
+
+        private void Notify_NotifyUpdate(object? sender, EventArgs e)
+        {
+            UpdateInterface.Notify.InfoC A = (UpdateInterface.Notify.InfoC)sender;
+            notifyIcon.ShowBalloonTip(A.Title,A.Content,HandyControl.Data.NotifyIconInfoType.Info);
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
@@ -1063,6 +1075,8 @@ namespace DDTV_GUI.DDTV_Window
 
         private void DDTV_UPDATE_Button_Click(object sender, RoutedEventArgs e)
         {
+            //UpdateInterface.Notify.Add("标题","测试文本内容");
+            //return;
             DDTV_Core.Tool.DDTV_Update.CheckUpdateProgram(true);
             MessageBoxResult dr = MessageBox.Show($"确定要开始更新DDTV吗？\n确定后会结束DDTV全部任务并退出DDTV开始更新", "更新DDTV", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)

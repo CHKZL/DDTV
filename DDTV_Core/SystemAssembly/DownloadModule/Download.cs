@@ -99,7 +99,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             if(IsCancel)
             {
                 IsSun = false;
-                IsTranscod = false;
+                //IsTranscod = false;
                 Split = false;
             }
             List<string> FileList = new List<string>();
@@ -169,6 +169,16 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 //转码
                 if (IsTranscod)
                 {
+                    foreach (var DLIST in roomInfo.DownloadingList)
+                    {
+                        foreach (var item in DLIST.FlvFileList)
+                        {
+                            if(File.Exists(item))
+                            {
+                                FileList.Add((string)item);
+                            }
+                        }
+                    }
                     if (FileList.Count > 0)
                     {
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】合并flv文件任务结束，开始转码");
