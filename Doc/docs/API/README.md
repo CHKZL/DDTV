@@ -35,7 +35,8 @@
 |POST|Rec_RecordCompleteInfon|JSON|[获取已经完成的任务详细情况](./#post-api-rec-recordcompleteinfon)|
 |POST|Rec_RecordCompleteInfon_Lite|JSON|[获取已经完成的任务简略情况](./#post-api-rec-recordcompleteinfon-lite)|
 |POST|Rec_CancelDownload|JSON|[取消某个下载任务](./#post-api-rec-canceldownload)|
-|POST|Room_AllInfo|JSON|[获取全部房间配置信息](./#post-api-room-allinfo)|
+|POST|Room_AllInfo|JSON|[获取房间详细配置信息](./#post-api-room-allinfo)|
+|POST|Room_SummaryInfo|JSON|[获取房间简要配置信息](./#post-api-room-summaryinfo)|
 |POST|Room_Add|JSON|[增一个加房间配置](./#post-api-room-add)|
 |POST|Room_Del|JSON|[删除一个房间配置](./#post-api-room-del)|
 |POST|Room_AutoRec|JSON|[修改房间自动录制配置信息](./#post-api-room-autorec)|
@@ -1035,7 +1036,7 @@ return string;
 :::
 
 ### `POST /api/Room_AllInfo`
-::: details 获取全部房间配置信息
+::: details 获取房间详细配置信息
 - 私有变量  
 无
 
@@ -1260,6 +1261,57 @@ return List<RoomInfoClass.RoomInfo>;
             /// 该房间当前的任务时间
             /// </summary>
             public DateTime CreationTime { set; get; } = DateTime.Now; 
+        }
+```
+:::
+
+
+### `POST /api/Room_SummaryInfo`
+::: details 获取房间简要配置信息
+- 私有变量  
+无
+
+- 注意事项
+该接口根据服务器上房间配置的多少决定，数据量可能会较多；在启动成功前30秒最好不要调用，该阶段属于API请求更新数据阶段，可能为空的数据较多。
+
+- 返回数据说明   
+```C#
+return List<RoomInfoClass.RoomInfo>;
+
+        public class RoomInfo
+        {
+            /// <summary>
+            /// 直播间房间号(直播间实际房间号)
+            /// </summary>
+            public int room_id { get; set; }
+            /// <summary>
+            /// 主播mid
+            /// </summary>
+            public long uid { get; set; }
+            /// <summary>
+            /// 用户名
+            /// </summary>
+            public string uname { get; set; } = "";
+            /// <summary>
+            /// 是否自动录制(Local值)
+            /// </summary>
+            public bool IsAutoRec { set; get; }
+            /// <summary>
+            /// 是否开播提醒(Local值)
+            /// </summary>
+            public bool IsRemind { set; get; }
+            /// <summary>
+            /// 是否录制弹幕(Local值)
+            /// </summary>
+            public bool IsRecDanmu { set; get; }
+            /// <summary>
+            /// 特殊标记(Local值)
+            /// </summary>
+            public bool Like { set; get; }
+            /// <summary>
+            /// 下载标识符
+            /// </summary>
+            public bool IsDownload { set; get; } = false;
         }
 ```
 :::
