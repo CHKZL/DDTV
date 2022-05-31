@@ -181,7 +181,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     if (FileList.Count > 0)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】合并flv文件任务结束，开始转码");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】直播结束。开始转码，待转码文件数：${FileList.Count}");
                         foreach (var item in FileList)
                         {
                             if (!string.IsNullOrEmpty(item))
@@ -196,6 +196,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
                             }
                         }
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{ roomInfo.uname}({roomInfo.room_id})】转码任务已全部完成，转码文件数：${FileList.Count}");
                     }
                     else
                     {
