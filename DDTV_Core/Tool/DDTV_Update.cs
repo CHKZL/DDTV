@@ -71,11 +71,11 @@ namespace DDTV_Core.Tool
                             try
                             {
                                 CheckTheUpdateProgramForUpdates();
-                                Thread.Sleep(30 * 1000);
+                                Thread.Sleep(3600 * 1000);
                             }
                             catch (Exception)
                             {
-                                Thread.Sleep(30 * 1000);
+                                Thread.Sleep(60 * 1000);
                             }
                         }
                     }
@@ -88,8 +88,7 @@ namespace DDTV_Core.Tool
         public static void CheckTheUpdateProgramForUpdates()
         {
             try
-            {
-               
+            {    
                 string Type = "Update";
                 string PushUrl = "https://update.ddtv.pro/";
                 string _A = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(PushUrl + $"{Type}_Update.json", false, "https://Update.ddtv.pro/");

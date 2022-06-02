@@ -291,9 +291,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         DownloadCount = TagLen;
                                     }
                                     TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
-                                    if(ts.TotalMilliseconds>1000)
+                                    if(ts.TotalMilliseconds>5000)
                                     {
-                                        double Proportion = ts.TotalMilliseconds / 1000.0;
+                                        double Proportion = ts.TotalMilliseconds / 5000.0;
                                         long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
                                         double T = CurrentDownloadSize / Proportion;

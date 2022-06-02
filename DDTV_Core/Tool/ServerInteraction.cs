@@ -62,7 +62,7 @@ namespace DDTV_Core.Tool
                             {
                                 DDTV_Core.Tool.Dokidoki.SendDokidoki(Type, i.ToString());
                                 i++;
-                                Thread.Sleep(60*30 * 1000);
+                                Thread.Sleep(3600 * 1000);
                             }
                             catch (Exception)
                             {

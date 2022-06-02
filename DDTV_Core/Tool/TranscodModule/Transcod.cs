@@ -113,7 +113,7 @@ namespace DDTV_Core.Tool.TranscodModule
             catch (Exception e)
             {
                 transcodClass.IsTranscod = false;
-                SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "转码出现致命错误！错误信息:\n" + e.ToString());
+                SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Warn, "转码出现致命错误！错误信息:\n" + e.ToString(), true, e, true);
                 return transcodClass;
             }
 
