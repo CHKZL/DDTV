@@ -75,7 +75,7 @@ namespace DDTV_GUI.Tool
         {
             public static event EventHandler<EventArgs> NewNotice;
             private static bool Is = false;
-            public static int ReminderInterval = 60 * 60 * 1 * 1000;
+            public static int ReminderInterval = 60 * 60 * 1000;
             public static void Start()
             {
                 if (!Is)
