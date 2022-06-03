@@ -273,6 +273,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             }
             catch (Exception) { return; }
             string cmd = (string)obj["cmd"];
+            if(cmd.Contains("DANMU_MSG"))
+            {
+                MessageReceived(this, new DanmuMessageEventArgs(obj));
+            }
+            else if (cmd.Contains("SUPER_CHAT_MESSAGE"))
+            {
+                MessageReceived(this, new SuperchatEventArg(obj));
+            }
+            else
             switch (cmd)
             {
                 //弹幕信息
@@ -301,8 +310,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //进场特效
                 case "ENTRY_EFFECT":
                     MessageReceived(this, new EntryEffectEventArgs(obj));
-                    break;
-             
+                    break;        
                 //续费舰长
                 case "USER_TOAST_MSG":
                     break;

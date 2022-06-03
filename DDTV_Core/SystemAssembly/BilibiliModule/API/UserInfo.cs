@@ -48,7 +48,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Warn, $"房间信息获取失败，错误json字符串内容:\n{RoomInit.ToString()}", true, e);
                         return null;
                     }
-
+                    if(data.live_room==null)
+                    {
+                        Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, $"房间信息");
+                        return null;
+                    }
 
                     if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
                     {
