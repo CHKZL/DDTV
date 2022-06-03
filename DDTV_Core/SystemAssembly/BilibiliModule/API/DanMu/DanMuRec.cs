@@ -185,7 +185,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 .Replace("'", "&apos;")
                 .Replace("\"", "&quot;")
                 .Replace(" ", "&nbsp;")
-                .Replace(" ", "&nbsp;")
                 .Replace("×", "&times;")
                 .Replace("÷", "&divde;");
         }

@@ -414,6 +414,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <returns></returns>
         private static int IsOk(RoomInfoClass.RoomInfo roomInfo, string Url)
         {
+            if(string.IsNullOrEmpty(Url))
+            {
+                return -1;
+            }
             int conut = 0;
             while (true)
             {

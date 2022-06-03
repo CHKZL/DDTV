@@ -49,32 +49,32 @@ namespace DDTV_GUI.WPFControl
                     }
                     else
                     {
-                        Growl.Warning($"该房间号或UID不存在！");
+                        Growl.WarningGlobal($"该房间号或UID不存在！");
                         return;
                     }
                 }
 
                 if (UID <= 0)
                 {
-                    Growl.Warning($"房间号或UID不能为负数！");
+                    Growl.WarningGlobal($"房间号或UID不能为负数！");
                     return;
                 }
                 if (int.TryParse(DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), out int RoomId))
                 {
                     string Name = DDTV_Core.SystemAssembly.BilibiliModule.Rooms.Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
                     DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(UID, RoomId, Name, true);
-                    Growl.Success($"添加成功");
+                    Growl.SuccessGlobal($"添加成功");
                     UIDInputBox.Clear();
                 }
                 else
                 {
-                    Growl.Warning($"该房间号或UID不存在！");
+                    Growl.WarningGlobal($"该房间号或UID不存在！");
                     return;
                 }
             }
             else
             {
-                Growl.Warning($"UID不符合规范！");
+                Growl.WarningGlobal($"UID不符合规范！");
                 return;
             }
         }
