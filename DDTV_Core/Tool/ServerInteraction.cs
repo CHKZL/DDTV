@@ -37,7 +37,7 @@ namespace DDTV_Core.Tool
                             catch (Exception)
                             {
                             }
-                            Thread.Sleep(60 * 10 * 1000);
+                            Thread.Sleep(60 * 30 * 1000);
                         }
                     });
                 }

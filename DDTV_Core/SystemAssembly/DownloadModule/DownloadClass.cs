@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.SystemAssembly.DownloadModule
 {
@@ -17,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
         public class Downloads
         {
-            public string Token { get; set; }=Guid.NewGuid().ToString("N");
+            public string Token { get; set; } = Guid.NewGuid().ToString("N");
             /// <summary>
             /// 房间号
             /// </summary>
@@ -57,7 +58,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// 该任务下载的flv文件列表
             /// </summary>
-            public List<string> FlvFileList { get; set; }= new List<string>();
+            public List<string> FlvFileList { get; set; } = new List<string>();
             /// <summary>
             /// 文件夹路径
             /// </summary>
@@ -153,7 +154,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="FileName">保存文件名</param>
             internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format, RoomInfoClass.RoomInfo roomInfo)
             {
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     try
                     {
@@ -161,7 +162,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
-                        string  _F = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName + "_" + count + "." + format;
+                        string _F = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         downloads.FlvFileList.Add(_F);
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
@@ -189,7 +190,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         }
                                         catch (Exception e)
                                         {
-                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志",true,e,true);
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志", true, e, true);
                                         }
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的录制任务，该任务取消");
@@ -198,7 +199,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                         return;
                                     }
-                                    for (int i = 0 ; i < DataLength ; i++)
+
+                                    for (int i = 0; i < DataLength; i++)
                                     {
                                         int EndF = 0;
                                         if (stream.CanRead)
@@ -207,10 +209,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             {
                                                 EndF = stream.ReadByte();
                                             }
-                                            catch (Exception e)
+                                            catch (NotSupportedException e)
                                             {
+                                                //流不支持读取
                                                 EndF = -1;
                                             }
+                                            catch (ObjectDisposedException e)
+                                            {
+                                                //被关闭了
+                                                EndF = -1;
+                                            }
+                                            
                                         }
                                         else
                                         {
@@ -262,6 +271,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                         }
                                     }
+
                                     byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
                                     DataLength = DL;
                                     if (FixData != null)
@@ -291,12 +301,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         DownloadCount = TagLen;
                                     }
                                     TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
-                                    if(ts.TotalMilliseconds>5000)
+                                    if (ts.TotalMilliseconds > 3000)
                                     {
-                                        double Proportion = ts.TotalMilliseconds / 5000.0;
+                                        double Proportion = ts.TotalMilliseconds / 3000.0;
                                         long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
-                                        double T = CurrentDownloadSize / Proportion;
+                                        double T = CurrentDownloadSize / Proportion/3;
                                         DownloadSpe = Convert.ToInt64(T);
                                         SpeedCalibration_Size = TotalDownloadCount;
                                         SpeedCalibration_Time = DateTime.Now;
@@ -325,6 +335,25 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         return;
                     }
                 });
+            }
+
+            public static byte[] TrimNullByte(byte[] oldByte)
+            {
+                var list = new List<byte>();
+                list.AddRange(oldByte);
+                for (var i = list.Count - 1; i >= 0; i--)
+                {
+                    if (list[i] == 0x00)
+                        list.RemoveAt(i);
+                    else
+                        break;
+                }
+                var lastbyte = new byte[list.Count];
+                for (var i = 0; i < list.Count; i++)
+                {
+                    lastbyte[i] = list[i];
+                }
+                return lastbyte;
             }
         }
     }

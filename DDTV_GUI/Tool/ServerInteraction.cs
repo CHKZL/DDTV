@@ -65,7 +65,7 @@ namespace DDTV_GUI.Tool
                             catch (Exception)
                             {
                             }
-                            Thread.Sleep(60 * 10 * 1000);
+                            Thread.Sleep(60 * 30 * 1000);
                         }
                     });
                 }
