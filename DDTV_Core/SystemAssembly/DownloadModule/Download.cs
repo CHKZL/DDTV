@@ -91,7 +91,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// 下载任务结束处理
         /// </summary>
         /// <param name="uid">用户UID</param>
-        /// <param name="Split">任务是否切片(当自动切片使能时，自动转码和flv文件合并取消)</param>
+        /// <param name="Split">任务是否切片(当自动切片使能时，FLV文件合并功能会跳过)</param>
         /// <param name="IsCancel">该任务是否已经取消</param>
         internal static void DownloadCompleteTaskd(long uid, bool Split = false, bool IsCancel = false)
         {
