@@ -311,6 +311,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.Uid = uid;
                         downloadClass.Url = BilibiliModule.API.RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)RecQuality);
                         downloadClass.IsDownloading = true;
+                        if(string.IsNullOrEmpty(downloadClass.Url))
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"获取【{ roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】的直播流时返回空内容，有可能直播间已经下播，开始重试任务确定状态");
+                            Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                            DownloadCompleteTaskd(uid, IsFlvSplit);
+                            return;
+                        }
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(downloadClass.Url);
                         req.Method = "GET";
                         req.ContentType = "application/x-www-form-urlencoded";
