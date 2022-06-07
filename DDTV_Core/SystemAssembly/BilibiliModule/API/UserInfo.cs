@@ -200,7 +200,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public static List<followClass> follow(long uid, bool IsAll = false)
+        public static List<followClass> follow(long uid, bool IsAll = false,bool IsAllVrbsList=false)
         {
             Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, "添加关注列表中的V到本地房间配置文件");
             int AddCount = 0;
@@ -222,7 +222,28 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 total = root.data.total;
             } while (pg * 50 < total);
             List<followClass> followClasses = new List<followClass>();
-            if (IsAll)
+            if(IsAllVrbsList)
+            {
+                List<vtbsClass> keyValuePairs = JsonConvert.DeserializeObject<List<vtbsClass>>(File.Exists("./Resources/vtbs.json") ? File.ReadAllText("./Resources/vtbs.json") : "{}") ;
+                foreach (var item in keyValuePairs)
+                {
+                    if(item.mid!=0&& item.roomid!=0)
+                    {
+                        followClasses.Add(new followClass()
+                        {
+                            mid = item.mid,
+                            name = item.uname,
+                            roomid = item.roomid
+                        });
+                        if (RoomConfig.AddRoom(item.mid, item.roomid, item.uname))
+                        {
+                            AddCount++;
+                        }
+                    }
+                }
+                RoomConfigFile.WriteRoomConfigFile();
+            }
+            else if (IsAll)
             {
                 foreach (var item in FollowList)
                 {
@@ -281,6 +302,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             Log.Log.AddLog(nameof(UserInfo), LogClass.LogType.Info, $"导入{AddCount}个主播");
             return followClasses;
+        }
+        public class vtbsClass
+        {
+            public long mid;
+            public string uname;
+            public int roomid;
         }
         public class followClass
         {

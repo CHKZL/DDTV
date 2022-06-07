@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using System.Threading;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
 {
@@ -16,12 +17,30 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// </summary>
         public static void UpdateRoomInfo()
         {
+            int P = 1;
+            int APageCpunt = RoomInfo.Count();
+            int OKConut = 0;
+            while(RoomInfo.Count()/ P>1500)
+            {
+                P++;
+                APageCpunt = RoomInfo.Count() / P;
+            }
             List<long> mids = new List<long>();
             foreach (var item in RoomInfo)
             {
                 mids.Add(item.Value.uid);
+                OKConut++;
+                if(OKConut>=APageCpunt)
+                {
+                    API.RoomInfo.get_status_info_by_uids(mids);
+                    mids = new List<long>();
+                    OKConut = 0;
+                    if(P!=1)
+                    {
+                        Thread.Sleep(500);
+                    }
+                }
             }
-            API.RoomInfo.get_status_info_by_uids(mids);
         }
 
         /// <summary>

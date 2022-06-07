@@ -1131,7 +1131,15 @@ namespace DDTV_GUI.DDTV_Window
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;//设置为选择文件夹
             dialog.ShowDialog();
-            string path = dialog.FileName;
+            string path = string.Empty;
+
+            try
+            {
+                path = dialog.FileName;
+            }
+            catch (Exception){
+                return;
+            }
            
 
             
@@ -1166,7 +1174,17 @@ namespace DDTV_GUI.DDTV_Window
             dialog.IsFolderPicker = true;//设置为选择文件夹
             dialog.ShowDialog();
 
-            string path = dialog.FileName;
+            string path = string.Empty;
+
+            try
+            {
+                path = dialog.FileName;
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
             if (Download.TmpPath != path)
             {
                 if (!string.IsNullOrEmpty(path))

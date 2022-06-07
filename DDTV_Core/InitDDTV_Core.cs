@@ -28,7 +28,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType= SatrtType.DDTV_Core;
-        public static string CompiledVersion ="2022-06-04 01:34:08";
+        public static string CompiledVersion ="2022-06-07 02:31:29";
 
         /// <summary>
         /// 初始化COre
@@ -299,7 +299,11 @@ namespace DDTV_Core
                                         case ConsoleKey.Y:
                                             SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
                                             break;
-                                        case ConsoleKey.F12://隐藏操作
+                                        case ConsoleKey.W://隐藏操作
+                                            //一键导入本地vtbs文件中的所有V
+                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true,true);
+                                            break;
+                                        case ConsoleKey.Q://隐藏操作
                                             //一键导入所有关注列表
                                             SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
                                             break;

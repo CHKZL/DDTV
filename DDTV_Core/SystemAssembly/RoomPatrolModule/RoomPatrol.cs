@@ -33,13 +33,13 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                     {
                         //自动录制
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到开播根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】：[{item.Value.title}]");
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●录制】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
                         DownloadModule.Download.AddDownloadTaskd(item.Value.uid,true);
                         //StartRec.Invoke(item.Value, EventArgs.Empty);
                     }
                     else
                     {
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-：[{item.Value.title}]，根据配置忽略");
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【◎忽略】检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
                        
                         //StartLive.Invoke(item.Value, EventArgs.Empty);
                     }
@@ -86,36 +86,45 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             {
                 if (item.Value.live_status == 1 && keyValuePairs[item.Value.uid] != 1)
                 {
-                    if (keyValuePairs[item.Value.uid] != 1)
+                    //Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
+                    //开播了
+                    if (item.Value.IsAutoRec)
                     {
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题[{item.Value.title}]");
-                        //开播了
-                        if (item.Value.IsAutoRec)
-                        {
-                            //自动录制
-                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流");
-                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
+                        //自动录制
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●录制】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
+                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
 
-                            if (StartRec != null)
-                            {
-                                StartRec.Invoke(item.Value, EventArgs.Empty);
-                            }
-
-                        }
-                        if (item.Value.IsRemind)
+                        if (StartRec != null)
                         {
-                            //开播提醒
-                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"开播提醒:【{item.Value.room_id}-{item.Value.uname}】");
-                            if (StartLive != null)
-                            {
-                                StartLive.Invoke(item.Value, EventArgs.Empty);
-                            }
+                            StartRec.Invoke(item.Value, EventArgs.Empty);
                         }
-                        WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
+
                     }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【◎忽略】检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
+                    }
+                    if (item.Value.IsRemind)
+                    {
+                        //开播提醒
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"开播提醒:【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
+                        if (StartLive != null)
+                        {
+                            StartLive.Invoke(item.Value, EventArgs.Empty);
+                        }
+                    }
+                    WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
                 }
                 else if (item.Value.live_status == 0 && keyValuePairs[item.Value.uid] != 0)
                 {
+                    if (item.Value.IsAutoRec)
+                    {
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【■下播】设定的录制对象【{item.Value.room_id}-{item.Value.uname}】结束直播-标题：[{item.Value.title}]");
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【□下播】未设置录制任务的对象【{item.Value.room_id}-{item.Value.uname}】结束直播-标题：[{item.Value.title}]");
+                    }
                     WebHook.SendHook(WebHook.HookType.StopLive, item.Value.uid);
                 }
                 Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.TmpInfo, $"周期性更新房间信息成功");

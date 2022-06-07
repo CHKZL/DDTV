@@ -41,7 +41,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         //初始化哔哩哔哩账号系统
                         BilibiliUserConfig.Init(satrtType);
                         //开始房间巡逻
-                        Rooms.UpdateRoomInfo();
+                        //Rooms.UpdateRoomInfo();
                         RoomPatrolModule.RoomPatrol.Init();
                         ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     }
@@ -52,7 +52,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     BilibiliUserConfig.Init(satrtType);
                     Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"哔哩哔哩本地User信息加载完成");
                     //开始房间巡逻
-                    Rooms.UpdateRoomInfo();
+                    //Rooms.UpdateRoomInfo();
                     RoomPatrolModule.RoomPatrol.Init();
                     ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     break;
