@@ -120,7 +120,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"SendRequest_GetWebInfo_JsonClass请求成功，但是返回的data为空，状态获取失败");
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"更新房间开播状态失败，稍后重试（偶尔提示可以无视本消息）");
                             return null;
                         }
                     }
@@ -271,7 +271,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         }
                         DataCache.SetCache(CacheType.room_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].room_id.ToString(), int.MaxValue);
                         DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
-                        DataCache.SetCache(CacheType.attention, uid.ToString(), Rooms.Rooms.RoomInfo[uid].attention.ToString(), 5 * 1000);
+                        DataCache.SetCache(CacheType.attention, uid.ToString(), Rooms.Rooms.RoomInfo[uid].attention.ToString(), 60 * 1000);
                         DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 5 * 1000);
                         DataCache.SetCache(CacheType.description, uid.ToString(), Rooms.Rooms.RoomInfo[uid].description.ToString(), 300 * 1000);
                         DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);

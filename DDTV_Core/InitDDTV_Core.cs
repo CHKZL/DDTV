@@ -16,6 +16,7 @@ using ConsoleTables;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 using DDTV_Core.Tool;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
+using ConsoleTableExt;
 
 namespace DDTV_Core
 {
@@ -27,21 +28,21 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static string ClientAID = string.Empty;
-        public static SatrtType InitType= SatrtType.DDTV_Core;
-        public static string CompiledVersion ="2022-06-07 02:31:29";
+        public static SatrtType InitType = SatrtType.DDTV_Core;
+        public static string CompiledVersion = "2022-06-08 01:38:27";
 
         /// <summary>
         /// 初始化COre
         /// </summary>
         public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
-            InitType= satrtType;
+            InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}(编译时间:{CompiledVersion})\n========================");
             Log.LogInit(LogClass.LogType.Debug);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 1024*1024*8;
+            ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;
             ServicePointManager.Expect100Continue = false;
             CoreConfig.ConfigInit(satrtType);
             Tool.DDTV_Update.CheckUpdateProgram();
@@ -52,8 +53,8 @@ namespace DDTV_Core
             }
             //var c = RuntimeInformation.RuntimeIdentifier;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
-            
-            switch(satrtType)
+
+            switch (satrtType)
             {
                 case SatrtType.DDTV_Core:
                     ServerInteraction.CheckUpdates.Update("Core");
@@ -76,12 +77,12 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("Core");
                     break;
             }
-           
-            if (satrtType!= SatrtType.DDTV_GUI)
+
+            if (satrtType != SatrtType.DDTV_GUI)
             {
                 SeKey();
             }
-           
+
 
 
 
@@ -252,7 +253,8 @@ namespace DDTV_Core
 
         private static void SeKey()
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 while (true)
                 {
                     if (Console.ReadKey().Key.Equals(ConsoleKey.I))
@@ -261,20 +263,20 @@ namespace DDTV_Core
                         Console.WriteLine($"a：查看下载中的任务情况");
                         Console.WriteLine($"b：一键导入关注列表中的V(可能不全需要自己补一下)");
                         Console.WriteLine($"c：重登登陆");
-
+                        Console.WriteLine($"z：控制台监控模式开关");
                         switch (Console.ReadKey().Key)
                         {
                             case ConsoleKey.A:
                                 {
                                     int i = 0;
-                                    ConsoleTable tables = new ConsoleTable("序号","UID", "房间号", "昵称","直播标题","已下载大小","下载速率", "状态","开始时间", "是否录制弹幕信息");
-                                    Console.WriteLine($"下载中的任务:");
+                                    //ConsoleTable tables = new ConsoleTable("序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息");
+                                    var tableData = new List<List<object>> { new List<object> { "序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息" } };
                                     foreach (var A1 in Rooms.RoomInfo)
                                     {
                                         if (A1.Value.DownloadingList.Count > 0)
                                         {
-                                            DateTime StartTime=DateTime.Now;
-                                            DownloadStatus downloadStatus=DownloadStatus.Standby;
+                                            DateTime StartTime = DateTime.Now;
+                                            DownloadStatus downloadStatus = DownloadStatus.Standby;
                                             ulong FileSize = 0;
                                             string spe = "";
                                             foreach (var item in A1.Value.DownloadingList)
@@ -285,10 +287,17 @@ namespace DDTV_Core
                                                 spe = NetClass.ConversionSize(item.DownloadSpe, NetClass.ConversionSizeType.BitRate);
                                             }
                                             i++;
-                                            tables.AddRow(i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title,  NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"),A1.Value.IsRecDanmu?"YES":"NO");
+
+                                            tableData.Add(new List<object> { i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title, NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"), A1.Value.IsRecDanmu ? "YES" : "NO" });
+
+
+
+                                            //tables.AddRow(i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title, NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"), A1.Value.IsRecDanmu ? "YES" : "NO");
                                         }
                                     }
-                                    tables.Write();
+                                    ConsoleTableBuilder.From(tableData).WithTitle("下载中的任务列表").ExportAndWriteLine();
+
+                                    //tables.Write();
                                     break;
                                 }
                             case ConsoleKey.B:
@@ -301,7 +310,7 @@ namespace DDTV_Core
                                             break;
                                         case ConsoleKey.W://隐藏操作
                                             //一键导入本地vtbs文件中的所有V
-                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true,true);
+                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true, true);
                                             break;
                                         case ConsoleKey.Q://隐藏操作
                                             //一键导入所有关注列表
@@ -315,8 +324,8 @@ namespace DDTV_Core
                                 }
                             case ConsoleKey.C:
                                 {
-                                  Console.WriteLine("按[Y]确认进入重新登陆流程，按其他键退出菜单");
-                                    if(Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                    Console.WriteLine("按[Y]确认进入重新登陆流程，按其他键退出菜单");
+                                    if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
                                     {
                                         if (SystemAssembly.BilibiliModule.User.login.VerifyLogin.QRLogin(InitType))
                                         {
@@ -329,6 +338,10 @@ namespace DDTV_Core
                                     }
                                     break;
                                 }
+                            case ConsoleKey.Z:
+                                CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
+                                Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
+                                break;
                             default:
                                 break;
                         }
@@ -337,7 +350,7 @@ namespace DDTV_Core
             });
         }
 
-      
+
 
     }
 }

@@ -287,6 +287,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 该房间录制完成后会执行的Shell命令
             /// </summary>
             public string Shell { set; get; } = "";
+            /// <summary>
+            /// 用于房间监控系统，记录的是监控系统检测到开始直播的时间
+            /// </summary>
+            public DateTime MonitoringSystem_Airtime = DateTime.Now;
+            /// <summary>
+            ///  用于房间监控系统，记录开播时的关注数
+            /// </summary>
+            public int MonitoringSystem_Attention = 0;
         }
         public class RoomWebSocket
         {
