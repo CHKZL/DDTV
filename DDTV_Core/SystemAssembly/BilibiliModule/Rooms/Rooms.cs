@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using System.Reflection;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using System.Threading;
+using ConsoleTables;
+using ConsoleTableExt;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
 {
@@ -20,7 +22,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             int P = 1;
             int APageCpunt = RoomInfo.Count();
             int OKConut = 0;
-            while(RoomInfo.Count()/ P>1500)
+            while (RoomInfo.Count() / P > 1500)
             {
                 P++;
                 APageCpunt = RoomInfo.Count() / P;
@@ -30,17 +32,91 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             {
                 mids.Add(item.Value.uid);
                 OKConut++;
-                if(OKConut>=APageCpunt)
+                if (OKConut >= APageCpunt)
                 {
                     API.RoomInfo.get_status_info_by_uids(mids);
                     mids = new List<long>();
                     OKConut = 0;
-                    if(P!=1)
+                    if (P != 1)
                     {
                         Thread.Sleep(500);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// 获取房间控制台简报信息
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="IsLive"></param>
+        /// <returns></returns>
+        public static void GetRoomInfoBrief(long UID, bool IsLive)
+        {
+            try
+            {
+
+                Thread.Sleep(50);
+                if (RoomInfo.TryGetValue(UID, out RoomInfoClass.RoomInfo roomInfo))
+                {
+                    if (roomInfo.attention < 1)
+                    {
+                        int.TryParse(GetValue(UID, DataCacheModule.DataCacheClass.CacheType.attention), out int att);
+                        roomInfo.attention = att;
+                    }
+                 
+                    TimeSpan ts1 = new TimeSpan(DateTime.Now.Ticks);
+                    TimeSpan ts2 = new TimeSpan(roomInfo.MonitoringSystem_Airtime.Ticks);
+                    TimeSpan timeLoop = ts1.Subtract(ts2).Duration();
+                    int ChangeFansnum = roomInfo.attention - roomInfo.MonitoringSystem_Attention;
+                    var tableData = new List<List<object>>
+                    {
+                        new List<object> {"昵称",
+                        "标题",
+                        "房间号",
+                        "UID",
+                        "分区",
+                        "粉丝数",
+                        "类型",
+                        "加密",
+                        "隐藏",
+                        "付费",
+                        "mcdn",
+                        "标记",
+                        "时长",
+                        "本次直播粉丝数" },
+                        new List<object> {
+                    roomInfo.uname,
+                        roomInfo.title,
+                        roomInfo.room_id,
+                        roomInfo.uid,
+                        roomInfo.area_v2_name,
+                        roomInfo.attention,
+                        roomInfo.broadcast_type == 0 ? "普通直播" : "手机直播",
+                        roomInfo.encrypted ? "是" : "否",
+                        roomInfo.is_hidden ? "是" : "否",
+                        roomInfo.is_sp == 1 ? "是" : "否",
+                        roomInfo.need_p2p == 1 ? "已启用" : "未启用",
+                        roomInfo.special_type == 0 ? "普通直播间" : roomInfo.special_type == 1 ? "付费直播间" : "拜年祭直播间",
+                        IsLive?"才开播": timeLoop.ToString(@"hh\:mm\:ss"),
+                       IsLive?"开播不统计本数据": ChangeFansnum < 0 ? $"-{ChangeFansnum}" : $"+{ChangeFansnum}"
+                    }
+                    };
+                    if(IsLive)
+                    {
+                        ConsoleTableBuilder.From(tableData).WithTitle("∧开播信息", ConsoleColor.White, ConsoleColor.DarkRed).ExportAndWriteLine();
+                    }
+                    else
+                    {
+                        ConsoleTableBuilder.From(tableData).WithTitle("∨下播信息", ConsoleColor.White, ConsoleColor.DarkGray).ExportAndWriteLine();
+                        //
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
         }
 
         /// <summary>
@@ -56,15 +132,24 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 switch (cacheType)
                 {
                     case DataCacheModule.DataCacheClass.CacheType.uname:
-                        if(!string.IsNullOrEmpty(Value))
+                        if (!string.IsNullOrEmpty(Value))
                         {
                             return Value;
+                        }
+                        break;
+                    case DataCacheModule.DataCacheClass.CacheType.attention:
+                        if (int.TryParse(Value, out int att))
+                        {
+                            if (att != 0)
+                            {
+                                return Value;
+                            }
                         }
                         break;
                     default:
                         return Value;
                 }
-                
+
             }
             var roominfo = SelectAPI(uid, cacheType);
             if (roominfo != null)
@@ -87,8 +172,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// <returns></returns>
         public static RoomInfoClass.RoomInfo SelectAPI(long uid, DataCacheModule.DataCacheClass.CacheType cacheType)
         {
-           NetworkRequestModule.NetClass.SelectAPICountAdd(cacheType);
-            
+            NetworkRequestModule.NetClass.SelectAPICountAdd(cacheType);
+
             switch (cacheType)
             {
                 case DataCacheModule.DataCacheClass.CacheType.area:

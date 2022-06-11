@@ -264,6 +264,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：false
             /// </summary>
             ForceCDNResolution,
+            /// <summary>
+            /// 控制台监控模式开关，打开后控制台会输出每个在列表中的任务开始和结束相信信息（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            ConsoleMonitorMode,
         }
     }
 }

@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "false", CoreConfigClass.Group.Download));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
         public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
-
+        public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "false", CoreConfigClass.Group.Core));
 
         /// <summary>
         /// 初始化配置文件
@@ -118,6 +118,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DDcenterSwitch = DDTV_Core.Tool.DDcenter.DDcenterSwitch;
             var _TranscodingCompleteAutoDeleteFiles = DDTV_Core.Tool.TranscodModule.Transcod.TranscodingCompleteAutoDeleteFiles;
             var _ForceCDNResolution = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.ForceCDNResolution;
+            var _ConsoleMonitorMode = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ConsoleMonitorMode;
         }
         /// <summary>
         /// 获取配置
