@@ -69,7 +69,7 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("WEB");
                     break;
                 case SatrtType.DDTV_GUI:
-                    ServerInteraction.CheckUpdates.Update("GUI");
+                    //ServerInteraction.CheckUpdates.Update("GUI");
                     ServerInteraction.Dokidoki.Start("GUI");
                     break;
                 default:

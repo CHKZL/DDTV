@@ -76,7 +76,7 @@ namespace DDTV_Core.Tool
                             {
 
                             }
-                            Thread.Sleep(3600 * 1000);
+                            Thread.Sleep(10800 * 1000);
                         }
                     });
                 }
