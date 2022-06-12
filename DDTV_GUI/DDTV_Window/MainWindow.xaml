@@ -203,7 +203,7 @@
                                 <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
                                 <GridViewColumn Header="下载速度" Width="80" DisplayMemberBinding="{Binding DownloadSpe}"/>
                                 <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
-                               
+
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
@@ -269,12 +269,28 @@
                     </ListView>
                 </TabItem>
                 <TabItem Header="其他功能">
-                    <Grid>
-                        <Button Content="匹配导入关注列表中的V" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow">
-                            <hc:AdornerElement.Instance>
-                                <hc:Poptip Content="该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少" PlacementType="BottomLeft"/>
-                            </hc:AdornerElement.Instance>
-                        </Button>
+                    <Grid Margin="20,10,10,10" Background="#4C797979">
+                        <ScrollViewer>
+                            <WrapPanel Orientation="Horizontal">
+                                <Grid Width="630" Margin="5">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="匹配导入关注列表中的V：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Content="导入" Margin="191,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow">
+                                        <hc:AdornerElement.Instance>
+                                            <hc:Poptip Content="该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少" PlacementType="BottomLeft"/>
+                                        </hc:AdornerElement.Instance>
+                                    </Button>
+                                </Grid>
+                                <Grid Width="825"  Margin="5">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="对文件进行手动转码：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Name="TranscodingSelectFilesManual" Content="选择文件" Margin="167,0,0,0" HorizontalAlignment="Left" Click="Button_TranscodingSelectFilesManual">
+                                        <hc:AdornerElement.Instance>
+                                            <hc:Poptip Content="点击按钮，选择文件后会自动进行转码操作" PlacementType="BottomLeft"/>
+                                        </hc:AdornerElement.Instance>
+                                    </Button>
+                                    <TextBlock Name="ManualTranscodingProgress" HorizontalAlignment="Left" Margin="242,0,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" Width="583"/>
+                                </Grid>
+                            </WrapPanel>
+                        </ScrollViewer>
                     </Grid>
                 </TabItem>
                 <TabItem Header="设置">
@@ -420,9 +436,9 @@
                 <TabItem Header="关于">
                     <Grid>
                         <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
-                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,4" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
-                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-39" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
-                        <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-64" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-96" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-135" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-158" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
 
                         <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="764,10,0,0" VerticalAlignment="Top"/>
                         <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">

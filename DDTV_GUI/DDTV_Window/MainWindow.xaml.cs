@@ -20,6 +20,7 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.Tool.TranscodModule;
 using DDTV_Core.Tool;
+using System.Threading;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -1102,9 +1103,17 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Button_GetFollow(object sender, RoutedEventArgs e)
         {
-            int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
-            Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的V到配置", false, null, false);
+            MessageBoxResult dr = MessageBox.Show($"确定要导入关注列表中的VUP/VTB的房间信息么？\n该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少需要手动补充", "导入列表", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            { 
+                if (File.Exists("./DDTV_Update.exe"))
+                {
+                    int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
+                    Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的V到配置", false, null, false);
+                }
+            }
+            
         }
 
         private void HideIcon_Click(object sender, RoutedEventArgs e)
@@ -1235,6 +1244,55 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.DDcenterSwitch, Is.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((Is ? "打开" : "关闭") + "DDC数据采集开关");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "DDC数据采集开关", false, null, false);
+        }
+
+        private static Task ManualTranscodingTask = null;
+        private static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private bool IsTranscoding = false;
+        /// <summary>
+        /// 手动转码选择文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button_TranscodingSelectFilesManual(object sender, RoutedEventArgs e)
+        {
+            if(!IsTranscoding)
+            {     
+                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok && File.Exists(dialog.FileName))
+                {
+                    FileInfo fileInfo = new FileInfo(dialog.FileName);
+                    if (fileInfo.Extension.ToLower() != ".flv")
+                    {
+                        MessageBox.Show("选择的文件不是DDTV录制的FVL文件！");
+                        return;
+                    }
+                    ManualTranscodingProgress.Text = $"后台正在进行文件转码:{fileInfo.Name}";
+                    IsTranscoding = true;
+                    TranscodingSelectFilesManual.Content = "转码中";
+                    Task.Factory.StartNew(() => {
+                        var TR = Transcod.CallFFMPEG(new TranscodClass()
+                        {
+                            AfterFilenameExtension = ".mp4",
+                            AfterFilePath = dialog.FileName,
+                            BeforeFilePath = dialog.FileName
+                        });
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ManualTranscodingProgress.Text = $"手动文件转码完成";
+                            IsTranscoding = false;
+                            TranscodingSelectFilesManual.Content = "选择文件";
+                        }));
+                    }, cancellationTokenSource.Token);
+                }
+            }
+            //else
+            //{
+            //    IsTranscoding = false;
+            //    cancellationTokenSource.Cancel();
+            //    ManualTranscodingProgress.Text = $"手动已经取消转码操作";
+            //    TranscodingSelectFilesManual.Content = "选择文件";
+            //}
         }
     }
 }
