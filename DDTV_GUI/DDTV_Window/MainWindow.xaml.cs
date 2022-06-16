@@ -88,7 +88,7 @@ namespace DDTV_GUI.DDTV_Window
             //系统托盘提示
             //UpdateInterface.Notify.NotifyUpdate += Notify_NotifyUpdate;
 
-            
+
 
             //TimedTask.CheckUpdate.Check();
             //TimedTask.DokiDoki.Check();
@@ -96,6 +96,8 @@ namespace DDTV_GUI.DDTV_Window
             //clipWindow.Show();
 
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
+            
+            //Sprite.Show(new DDTV_Sprite());
 
         }
 
@@ -649,7 +651,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void LiveList_MenuItem_Play_Click(object sender, RoutedEventArgs e)
         {
-            Play_Click();
+            Task.Run(() => Play_Click());
         }
         private void Play_Click()
         {

@@ -52,7 +52,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if(!IsNewTask)
                         {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载，并且不是新任务");
                             DownloadCompleteTaskd(uid, IsFlvSplit);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载，本任务是新任务");
                         }
                         roomInfo.IsUserCancel = false;
                     }
@@ -287,6 +292,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"录制结束操作：UID:{uid}的任务触发IsCancel操作，跳过任务结束操作操作");
                     }
+                    roomInfo.live_status = 0;
                     roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
                     //任务结束流程完成
                 }
