@@ -29,7 +29,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-06-08 01:38:27";
+        public static string CompiledVersion = "2022-06-16 01:59:08";
 
         /// <summary>
         /// 初始化COre
@@ -308,13 +308,21 @@ namespace DDTV_Core
                                         case ConsoleKey.Y:
                                             SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
                                             break;
-                                        case ConsoleKey.W://隐藏操作
-                                            //一键导入本地vtbs文件中的所有V
-                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true, true);
+                                        case ConsoleKey.W://隐藏操作             
+                                            Console.WriteLine("触发隐藏操作，按Y导入vtbs列表中的所有V，按其他键取消");
+                                            if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                            {
+                                                //一键导入本地vtbs文件中的所有V
+                                                SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true, true);
+                                            }     
                                             break;
                                         case ConsoleKey.Q://隐藏操作
+                                            Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有V，按其他键取消");
                                             //一键导入所有关注列表
-                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                            if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                            {
+                                                SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                            }
                                             break;
                                         default:
                                             Console.WriteLine("放弃导入");

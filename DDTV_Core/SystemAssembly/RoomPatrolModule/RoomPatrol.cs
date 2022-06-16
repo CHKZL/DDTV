@@ -176,9 +176,9 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                 }
                 Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.TmpInfo, $"周期性更新房间信息成功");
             }
-            if(IsChange)
+            if (IsChange && CoreConfig.ConsoleMonitorMode)
             {
-                Console.WriteLine($"{(double)RoomIntroducingNumber[1]}/{(double)RoomIntroducingNumber[0]}   "+ $"{(((double)RoomIntroducingNumber[1] / (double)RoomIntroducingNumber[0]) * 100).ToString("f3")}%");
+                Console.WriteLine($"{(double)RoomIntroducingNumber[1]}/{(double)RoomIntroducingNumber[0]}   " + $"{(((double)RoomIntroducingNumber[1] / (double)RoomIntroducingNumber[0]) * 100).ToString("f3")}%");
             }
         }
     }

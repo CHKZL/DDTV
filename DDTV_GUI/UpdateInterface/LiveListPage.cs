@@ -78,12 +78,15 @@ namespace DDTV_GUI.UpdateInterface
                     }
                 }
             }
+            first = false;
             if ((first || !Main.ContextMenuState.LiveListPage) && IsUpdate)
             {
                 liveList = _;
-                mainWindow.LiveList.Dispatcher.Invoke(() => mainWindow.LiveList.ItemsSource = liveList);
+                mainWindow.LiveList.Dispatcher.Invoke(() =>
+                {                
+                    mainWindow.LiveList.ItemsSource = liveList;              
+                });
             }
-            first = false;
             return liveList;
         }
     }

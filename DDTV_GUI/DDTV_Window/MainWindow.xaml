@@ -132,7 +132,7 @@
                 <TabItem Header="监控列表">
 
                     <Grid>
-                        <ListView x:Name="LiveList" Margin="10,10,10,10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing" MouseDoubleClick="LiveList_Play_MouseDouble_Click"  >
+                        <ListView x:Name="LiveList" Margin="10,10,10,10" Width="auto" Background="#7FEEEEEE" BorderBrush="#7FE0E0E0" d:ItemsSource="{d:SampleData ItemCount=5}" ContextMenuOpening="LiveList_ContextMenuOpening" ContextMenuClosing="LiveList_ContextMenuClosing" MouseDoubleClick="LiveList_Play_MouseDouble_Click" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling" VirtualizingPanel.ScrollUnit="Item" ScrollViewer.CanContentScroll="True" >
                             <ListView.View>
                                 <GridView>
                                     <GridViewColumn Header="昵称" Width="200" DisplayMemberBinding="{Binding Name}"/>
