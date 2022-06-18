@@ -28,14 +28,14 @@ jobs:
     outputs:
       verall: ${{ steps.version.outputs.all }} # all="3.0.1.9"
       vertwo: ${{ steps.version.outputs.two }} # two="3.0"
-      DOTNET_VERSION: '6.0' # 只允许 '*.*'
+      DOTNET_VERSION: '6.0'
       DOCKER_DIR: ./Docker
+      PLATFORMS: linux/amd64, linux/arm64, linux/arm/v7
       DEPS_REPO: ddtv/deps
       CLI_REPO: ddtv/cli
       BACK_END_REPO: ddtv/webserver
       FRONT_END_REPO: ddtv/webui
-      PLATFORMS: linux/amd64, linux/arm64, linux/arm/v7
-# *_REPO 为仓库名兼路径名，更改后记得修改 文件存放位置、prepare.GitHubActions.sh、Docker_Build_Push.yml
+# *_REPO 为仓库名兼路径名，更改后记得修改 文件存放位置、prepare.GitHubActions.sh、Docker_Build_Push.yml、Update_description_of_container_repo.yml
 
 # jobs.<job_id>.with.<with_id>上下文不支持env, 仅支持 github, needs
   WEBUI_nginx-alpine:

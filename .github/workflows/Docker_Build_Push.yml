@@ -59,7 +59,9 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/${{ github.actor }}/${{ inputs.repo }}
+          images: |
+            ${{ inputs.repo }}
+            ghcr.io/${{ github.actor }}/${{ inputs.repo }}
           flavor: |
             latest=${{ env.is_latest }}
           tags:   |
