@@ -1,0 +1,32 @@
+name: Update Description (Docker Hub)
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - README.md
+      - .github/workflows/Update_description_of_container_repo.yml
+
+jobs:
+  Docker_Hub:
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@master
+      - name: ddtv/deps
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ddtv/deps
+          short_description: ${{ github.event.repository.description }}
+      - name: ddtv/cli
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ddtv/cli
+          short_description: ${{ github.event.repository.description }}
+      - name: ddtv/webserver
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ddtv/webserver
+          short_description: ${{ github.event.repository.description }}
