@@ -1,0 +1,26 @@
+version: '3'
+services:
+# 使用 CLI 或者 WEBServer
+#  DDTV.CLI:
+#   image: ghcr.io/chkzl/ddtv/cli
+#   container_name: DDTV_CLI
+  DDTV.WEBServer:
+    image: ghcr.io/chkzl/ddtv/webserver
+    container_name: DDTV_WEB_Server
+#   command: ["--no-update", "--verbose"]
+    restart: unless-stopped
+    ports:
+      - "11419:11419"
+    environment:
+      - "PUID=0"
+      - "PGID=0"
+      - "WebUserName=ami"
+      - "WebPassword=ddtv"
+      - "RoomListConfig=./RoomListConfig.json"
+    volumes:
+#     - DDTV:/DDTV
+      - DDTV_Rec:/DDTV/Rec
+
+volumes:
+  DDTV_Rec:
+# DDTV:
