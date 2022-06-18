@@ -17,9 +17,9 @@ tmp_vault=$(grep -A 10000 'public class Config' $CoreConfigClass_path | grep -n 
 
 
 # 获取组名数组
-mapfile -t array_group_name    < <(grep -A "$num_key_start_to_end" 'public enum Key' $CoreConfigClass_path | sed 's/\r//g' | grep '组' | awk -F "：" '/默认值/{print $2}' | awk -F "\t" '{print $1}' | sed 's/组：//g')
+mapfile -t array_group_name    < <(grep -A "$num_key_start_to_end" 'public enum Key' $CoreConfigClass_path | sed 's/\r//g' | grep '组' | awk -F "：" '/默认值/{print $2}' | awk '{print $1}')
 # 获取默认值数组
-mapfile -t array_default_value < <(grep -A "$num_key_start_to_end" 'public enum Key' $CoreConfigClass_path | sed 's/\r//g' | grep '组' | awk -F "：" '/默认值/{print $3}' | awk -F "\t" '{print $1}' | sed 's/默认值：//g')
+mapfile -t array_default_value < <(grep -A "$num_key_start_to_end" 'public enum Key' $CoreConfigClass_path | sed 's/\r//g' | grep '组' | awk -F "：" '/默认值/{print $3}' | sed 's/可选值//g' | sed 's/随机字符串/string.Empty/g' | awk '{$1=$1}1')
 # 获取键名数组
 mapfile -t array_key_name      < <(grep -A "$num_key_start_to_end" 'public enum Key' $CoreConfigClass_path | sed 's/\r//g' | awk '/,/{print $1}' | sed 's/,//g')
 if [[ "${#array_group_name[*]}" != "${#array_default_value[*]}" || "${#array_group_name[*]}" != "${#array_key_name[*]}" ]]; then

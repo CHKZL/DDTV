@@ -21,6 +21,11 @@ on:
         type: string
       build-args:
         type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
 
 jobs:
   Build_and_push:
@@ -59,7 +64,9 @@ jobs:
         id: metadata
         uses: docker/metadata-action@v3
         with:
-          images: ghcr.io/${{ github.actor }}/${{ inputs.repo }}
+          images: |
+            ${{ inputs.repo }}
+            ghcr.io/${{ github.actor }}/${{ inputs.repo }}
           flavor: |
             latest=${{ env.is_latest }}
           tags:   |

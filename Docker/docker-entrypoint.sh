@@ -15,13 +15,13 @@ case "$ARGs" in
             case "$file" in
                 *.sh)
                     if [ -x "$file" ]; then
-                        say_verbose "Launching $file $*";
+                        say_verbose "运行文件 $file $*";
                         "$file" "$@"
                     else
-                        say_verbose "Ignoring $file, not executable";
+                        say_verbose "忽略不可执行文件 $file";
                     fi
                     ;;
-                *)      say_verbose "Ignoring $file"
+                *)      say_verbose "忽略非.sh后缀文件 $file"
                     ;;
             esac
         done
@@ -30,7 +30,7 @@ case "$ARGs" in
         [[ "$ARGs" == *"--no-update"* ]] || (dotnet DDTV_Update.dll docker || echo "更新失败，请稍候重试！")
         ;;
         # 运行测试用命令
-    *)  echo "eval $ARGs" && eval "$ARGs" && exit $?
+    *)  echo "提示：运行参数可能输入错误" && echo "eval $ARGs" && eval "$ARGs" && exit $?
         ;;
 esac
 
@@ -41,7 +41,7 @@ esac
 #   $DownloadPath
 #   $TmpPath
 . /etc/os-release
-echo "Running as UID ${PUID:=$UID} and GID ${PGID:=$PUID}."
+echo "使用 UID ${PUID:=$UID} 和 GID ${PGID:=$PUID} 运行 ${DDTV_Docker_Project:-DDTV}"
 mkdir -p "${DownloadPath:=./Rec/}" "${TmpPath:=./tmp/}"
 chown -R "$PUID:$PGID" /DDTV "$DownloadPath" "$TmpPath"
 

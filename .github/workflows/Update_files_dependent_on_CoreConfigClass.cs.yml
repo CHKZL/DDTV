@@ -14,12 +14,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: update
+    - name: Update
       run: |
         mkdir ./tmp.d
         cp ./DDTV_Core/SystemAssembly/ConfigModule/CoreConfigClass.cs ./tmp.d/CoreConfigClass.cs
         chmod +x ./Docker/update.GitHubActions.sh && ./Docker/update.GitHubActions.sh
 
-    - uses: stefanzweifel/git-auto-commit-action@v4
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v4
       with:
-        commit_message: 更新依赖于CoreConfigClass.cs的文件
+        commit-message: 更新依赖于CoreConfigClass.cs的文件
+        title: 自动更新依赖于CoreConfigClass.cs的文件
+        body: |
+          请检查以下 4 个文件：
+          `Doc\docs\API\README.md`
+          `Doc\docs\config\DDTV_Config.md`
+          `Docker\01-checkup.sh`
+          `docker-ddtv.env`
+        branch: auto-update
+        delete-branch: true
