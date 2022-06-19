@@ -3,7 +3,7 @@ name: Update Files (CoreConfigClass.cs)
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [ docker ]
     paths:
       - 'Docker/update.GitHubActions.sh'
       - 'DDTV_Core/SystemAssembly/ConfigModule/CoreConfigClass.cs'

@@ -2,10 +2,8 @@ name: Docker_Release
 
 on:
   workflow_dispatch:
-  release:
-    types: [released]
   push:
-    branches: [master]
+    branches: [docker]
     paths:
       - 'Docker/**'
       - '!Docker/**/README.md'
