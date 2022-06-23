@@ -153,7 +153,10 @@
 
 无
 
-- 返回数据说明   
+- 返回数据说明
+
+[CoreConfigClass.cs]: Start
+
 ```C#
         public class Config
         {
@@ -377,6 +380,9 @@
 
         }
 ```
+
+[CoreConfigClass.cs]: End
+
 :::
 
 ### `POST /api/System_Resources`

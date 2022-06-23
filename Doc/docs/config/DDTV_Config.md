@@ -56,7 +56,10 @@ HideIconState=false
 
 ```
 ### 配置说明
-```csharp
+
+[CoreConfigClass.cs]: Start
+
+```C#
         /// <summary>
         /// 配置分组(每个值对应的组是固定的，请勿随意填写)
         /// </summary>
@@ -289,3 +292,5 @@ HideIconState=false
             ForceCDNResolution,
         }
 ```
+
+[CoreConfigClass.cs]: End

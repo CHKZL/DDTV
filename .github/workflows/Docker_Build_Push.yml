@@ -1,0 +1,81 @@
+name: Docker_Build_Push
+
+on:
+  workflow_call:
+    inputs:
+      docker-dir:
+        required: true
+        type: string
+      repo:
+        required: true
+        type: string
+      os_id:
+        required: true
+        type: string
+      platforms:
+        required: true
+        type: string
+      verall:
+        type: string
+      vertwo:
+        type: string
+      build-args:
+        type: string
+
+jobs:
+  Build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if ${{ inputs.os_id == 'debian' || inputs.repo == 'ddtv/webui' }}; then
+              echo "is_latest=true"              >> $GITHUB_ENV
+          else
+              echo "is_latest=false"             >> $GITHUB_ENV
+              echo "suffix=-${{ inputs.os_id }}" >> $GITHUB_ENV
+          fi
+      - uses: actions/checkout@v2
+      - uses: docker/setup-qemu-action@v1
+      - uses: docker/setup-buildx-action@v1
+
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+# ./prepare.GitHubActions.sh
+# $1: $*_REPO in Docker_Release.yml#L28-40
+      - name: Prepare
+        run: |
+          cd "$(shopt -s globstar nullglob && chmod -v +x Docker/**/*.sh | awk '/prepare.GitHubActions.sh/{print $2}' FS="'|prepare.GitHubActions.sh")"
+          ./prepare.GitHubActions.sh "${{ inputs.repo }}"
+
+      - name: Metadata for images
+        id: metadata
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            ${{ inputs.repo }}
+            ghcr.io/${{ github.actor }}/${{ inputs.repo }}
+          flavor: |
+            latest=${{ env.is_latest }}
+          tags:   |
+            ${{ inputs.verall }}${{ env.suffix }}
+            ${{ inputs.vertwo }}${{ env.suffix }}
+            ${{ inputs.os_id }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ inputs.docker-dir }}/${{ inputs.repo }}/
+          file:    ${{ inputs.docker-dir }}/${{ inputs.repo }}/Dockerfile
+          push:    false
+          tags:    ${{ steps.metadata.outputs.tags }}
+          labels:  ${{ steps.metadata.outputs.labels }}
+          platforms:  ${{ inputs.platforms }}
+          build-args: ${{ inputs.build-args }}

@@ -111,12 +111,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             WEB_API_SSL,
             /// <summary>
             /// WEB_API启用HTTPS后调用的pfx证书文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxFileName,
             /// <summary>
             /// WEB_API启用后HTTPS调用的pfx证书秘钥文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxPasswordFileName,
             /// <summary>
@@ -186,17 +186,17 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             WebPassword,
             /// <summary>
             /// WEBAPI使用的KeyId (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeyId,
             /// <summary>
             /// WEBAPI使用的KeySecret (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeySecret,
             /// <summary>
             /// 用于标记服务器资源ID编号 (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             ServerAID,
             /// <summary>
@@ -206,7 +206,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             ServerName,
             /// <summary>
             /// 客户端唯一标识 (string)
-            /// 组：Core      默认值：(随机字符串)
+            /// 组：Core      默认值：随机字符串
             /// </summary>
             ClientAID,
             /// <summary>
@@ -270,5 +270,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             ConsoleMonitorMode,
         }
+            /// 注意脚本使用的分隔符为全角冒号：
     }
 }
