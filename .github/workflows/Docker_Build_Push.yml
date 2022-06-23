@@ -21,6 +21,11 @@ on:
         type: string
       build-args:
         type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
 
 jobs:
   Build_and_push:
