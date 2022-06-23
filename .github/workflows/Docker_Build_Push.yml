@@ -79,7 +79,7 @@ jobs:
         with:
           context: ${{ inputs.docker-dir }}/${{ inputs.repo }}/
           file:    ${{ inputs.docker-dir }}/${{ inputs.repo }}/Dockerfile
-          push:    false
+          push:    true
           tags:    ${{ steps.metadata.outputs.tags }}
           labels:  ${{ steps.metadata.outputs.labels }}
           platforms:  ${{ inputs.platforms }}
