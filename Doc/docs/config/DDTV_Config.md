@@ -137,12 +137,12 @@ HideIconState=false
             WEB_API_SSL,
             /// <summary>
             /// WEB_API启用HTTPS后调用的pfx证书文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxFileName,
             /// <summary>
             /// WEB_API启用后HTTPS调用的pfx证书秘钥文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxPasswordFileName,
             /// <summary>
@@ -212,17 +212,17 @@ HideIconState=false
             WebPassword,
             /// <summary>
             /// WEBAPI使用的KeyId (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeyId,
             /// <summary>
             /// WEBAPI使用的KeySecret (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeySecret,
             /// <summary>
             /// 用于标记服务器资源ID编号 (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             ServerAID,
             /// <summary>
@@ -232,7 +232,7 @@ HideIconState=false
             ServerName,
             /// <summary>
             /// 客户端唯一标识 (string)
-            /// 组：Core      默认值：(随机字符串)
+            /// 组：Core      默认值：随机字符串
             /// </summary>
             ClientAID,
             /// <summary>
@@ -290,6 +290,11 @@ HideIconState=false
             /// 组：Download   默认值：false
             /// </summary>
             ForceCDNResolution,
+            /// <summary>
+            /// 控制台监控模式开关，打开后控制台会输出每个在列表中的任务开始和结束相信信息（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            ConsoleMonitorMode,
         }
 ```
 
