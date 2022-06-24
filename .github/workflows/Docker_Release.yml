@@ -74,7 +74,7 @@ jobs:
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       platforms:  linux/amd64 # ${{ needs.Prepare.outputs.PLATFORMS }}
       docker-dir: ${{ needs.Prepare.outputs.DOCKER_DIR }}
-      build-args: REPO=ghcr.io/${{ github.actor }}/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
+      build-args: REPO=ghcr.io/chkzl/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
     secrets:    inherit
 
   WEBServer_alpine:
@@ -87,7 +87,7 @@ jobs:
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       platforms:  linux/amd64 # ${{ needs.Prepare.outputs.PLATFORMS }}
       docker-dir: ${{ needs.Prepare.outputs.DOCKER_DIR }}
-      build-args: REPO=ghcr.io/${{ github.actor }}/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
+      build-args: REPO=ghcr.io/chkzl/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
     secrets:    inherit
 
 # debian
@@ -114,7 +114,7 @@ jobs:
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       platforms:  ${{ needs.Prepare.outputs.PLATFORMS }}
       docker-dir: ${{ needs.Prepare.outputs.DOCKER_DIR }}
-      build-args: REPO=ghcr.io/${{ github.actor }}/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
+      build-args: REPO=ghcr.io/chkzl/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
     secrets:    inherit
 
   WEBServer_debian:
@@ -127,5 +127,5 @@ jobs:
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       platforms:  ${{ needs.Prepare.outputs.PLATFORMS }}
       docker-dir: ${{ needs.Prepare.outputs.DOCKER_DIR }}
-      build-args: REPO=ghcr.io/${{ github.actor }}/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
+      build-args: REPO=ghcr.io/chkzl/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
     secrets:    inherit
