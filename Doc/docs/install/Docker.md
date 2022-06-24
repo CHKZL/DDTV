@@ -1,10 +1,10 @@
-# DDTV Docker版安装教程（CLI / WEB_Server<!--/WEBUI-->）
+# DDTV Docker版安装教程
 
 ## 先决条件
   - Linux
   - 容器引擎，如 Docker-ce 18.03 或更高版本 ([安装教程](https://mirrors.tuna.tsinghua.edu.cn/help/docker-ce/))、Podman 等
 
-:::tip DockerHub 更换镜像源方法
+:::tip 首次安装 Docker-ce 建议更换镜像源
 [DockerHub 更换镜像源教程](https://www.daocloud.io/mirror)
 :::
 
@@ -16,14 +16,14 @@
 | :---- | :---- |
 | DDTV_CLI | 重启容器即可更新 DDTV |
 | DDTV_WEB_Server | 重启容器即可更新 DDTV |
-| DDTV_Deps | 只含 DDTV 必须依赖，<br>支持`arm64v8`和`arm32v7`架构 |
+| DDTV_Deps | 只含 DDTV 必须依赖，`alpine`标签支持`arm64v8`和`arm32v7`架构 |
 <!--
 | DDTV_WEBUI | 支持`amd64` `arm64v8` `arm32v7` `386` `arm32v6` `ppc64le` `s390x`架构 |
 -->
 
 #### 镜像名
 
-| Docker 项目名 | GHCR 镜像名 | Docker Hub 镜像名 |
+| Docker 项目名 | [GHCR](https://github.com/CHKZL?tab=packages&repo_name=DDTV) 镜像名 | [Docker Hub](https://hub.docker.com/u/ddtv) 镜像名 |
 | :---- | :---- | :---- |
 | DDTV_CLI | ghcr.io/chkzl/ddtv/cli | ddtv/cli |
 | DDTV_WEB_Server | ghcr.io/chkzl/ddtv/webserver | ddtv/webserver |
@@ -36,8 +36,10 @@
 
 | 系统 \ 架构 | amd64 | arm64v8 | arm32v7 | 可用标签 |
 | :---- | :----: | :----: | :----: | :---- |
-| alpine <sup>1</sup> | ✅ | ❌ | ❌ | `alpine` `3.0-alpine` `3.0.*.*-alpine` |
-| debian | ✅ | ✅ | ✅ | `latest` `debian` `3.0` `3.0.*.*` |
+| debian | ✅ | ✅ | ✅ | **`latest`** `debian` `3.0` `3.0.*.*` |
+| alpine <sup>[1](#tip1)</sup> | ✅ | ❌ | ❌ | `alpine` `3.0-alpine` `3.0.*.*-alpine` |
+
+<a id='tip1'></a>
 
 :::warning Tip 1
 受 DDTV 依赖影响，目前 alpine arm 下 DDTV 的`日志功能`、`控制台打印二维码功能`无法使用，并因此存在内存泄露问题；若有需要，可使用`DDTV_Deps`运行 DDTV。
@@ -45,9 +47,9 @@
 
 ## 最佳实践
 
-查阅修改`docker-ddtv.env`后运行
+查阅修改[`docker-ddtv.env`](https://github.com/CHKZL/DDTV/blob/master/docker-ddtv.env)后运行
 
-#### 方法一：修改`docker-compose.yml`后自行运行
+#### 方法一：修改[**`docker-compose.yml`**](https://github.com/CHKZL/DDTV/blob/master/docker-compose.yml)后自行运行
 
 ```shell
 wget https://raw.githubusercontent.com/CHKZL/DDTV/master/Docker/docker-ddtv.env
@@ -79,14 +81,14 @@ sudo docker-compose --env-file ./docker-ddtv.env up
 ```
 -->
 
-- docker cli
+- 命令行（省略的命令见[下节](#命令行运行容器)）
 ```shell
 wget https://raw.githubusercontent.com/CHKZL/DDTV/master/Docker/docker-ddtv.env
 vi docker-ddtv.env
 sudo docker run --env-file=./docker-ddtv.env ...
 ```
 
-## docker cli 运行容器
+## 命令行运行容器
 
 #### 运行 DDTV_WEB_Server
 
@@ -97,8 +99,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
         -v ${CONFIG_DIR}:/DDTV    \ # 可选，持久化 DDTV_WEB_Server 与 配置文件
         -e PUID=$(id -u)          \
         -e PGID=$(id -g)          \
-        --name DDTV_WEB_Server    \
-        ghcr.io/chkzl/ddtv/webserver
+        --name DDTV_WEB_Server ddtv/webserver
 # 删除容器
 sudo docker rm -f DDTV_WEB_Server
 # 删除录制文件
@@ -114,8 +115,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
         -v ${CONFIG_DIR}:/DDTV    \ # 可选，持久化 DDTV_CLI 与 配置文件
         -e PUID=$(id -u)          \
         -e PGID=$(id -g)          \
-        --name DDTV_CLI           \
-        ghcr.io/chkzl/ddtv/cli
+        --name DDTV_CLI ddtv/cli
 # 删除容器
 sudo docker rm -f DDTV_CLI
 # 删除录制文件
@@ -137,7 +137,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
         -e PUID=$(id -u)          \
         -e PGID=$(id -g)          \
         --name DDTV_${Project}    \
-        ghcr.io/chkzl/ddtv/deps:alpine /bin/bash -c "dotnet /DDTV/DDTV_${Project}.dll"
+        ddtv/deps:alpine /bin/bash -c "dotnet /DDTV/DDTV_${Project}.dll"
 ```
 
 ## 单独挂载配置文件
@@ -154,7 +154,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 -v ${PWD}/DDTV/BiliUser.ini:/DDTV/BiliUser.ini               \
 ```
 
-::: tip
+:::tip 注意
 变量RoomList、变量BiliUser 和 CLI / WEB_Server 配置文件变量将不可用。
 :::
 
@@ -185,14 +185,14 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 | TZ | `州/城市` | `Asia/Shanghai` | 时区 | `cli` `webserver` <!--`webui`--> |
 | PUID | `num` | `0` | 运行 DDTV 的用户 ID | `cli` `webserver` |
 | PGID | `num` | `0` | 运行 DDTV 的用户组 ID | `cli` `webserver` |
-| RoomList <sup>2</sup> | `json` | `{"data":[]}` | 来自同名配置文件 | `cli` `webserver` |
-| BiliUser <sup>2</sup> | `ini` | 无 | 来自同名配置文件 | `cli` `webserver` |
+| RoomList <sup>[2](#tip2)</sup> | `json` | `{"data":[]}` | 来自同名配置文件 | `cli` `webserver` |
+| BiliUser <sup>[2](#tip2)</sup> | `ini` | 无 | 来自同名配置文件 | `cli` `webserver` |
 <!--
 | WEBUI_Path | 路径 | `/DDTV/static` | WEBUI的文件夹路径 | `webui` |
 | PROXY_PASS | `http(s)://you.host:port` | `http://127.0.0.1:11419` | 需要反代的后端地址, apiUrl=false 时 WEBUI 从反代地址联系 WEB_Server | `webui`|
 -->
 
-::: tip RoomList \ BiliUser 的食用方法
+:::tip RoomList \ BiliUser 的食用方法
 务必使用`单引号`括起变量；使用`\n`转义换行符，例如：
 ```shell
 -e RoomList='{"data":[{"name":"蒂蒂媞薇_Official", "Description":"", "RoomId":21446992, "UID":408490081, "IsAutoRec":false, "IsRemind":false, "IsRecDanmu":false, "Like":false, "Shell":""}]}' \
@@ -200,7 +200,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 ```
 :::
 
-#### CLI / WEB_Server 配置文件常用变量 <sup>2</sup>
+#### CLI / WEB_Server 配置文件常用变量 <sup>[2](#tip2)</sup>
 
 | 参数名 | 格式 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
@@ -217,7 +217,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 | Shell | `bool` | `false` | 用于控制下载完成后是否执行对应房间的Shell命令 |
 
 <!--
-#### WEBUI 配置文件变量<sup>3</sup>
+#### WEBUI 配置文件变量<sup>[3](#tip3)</sup>
 
 | 参数名 | 格式 | 默认值 | 说明 |
 | ---- | ---- | ---- | ---- |
@@ -235,11 +235,13 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 | GAlink | `string` | 无 | 公网安备信息跳转链接 |
 -->
 
-更多可用变量见 [官网配置说明](/config/) 与 [docker-ddtv.env](https://github.com/CHKZL/DDTV/blob/master/docker-ddtv.env)。
+<a id='tip2'></a>
 
 :::warning Tip 2
 变量只在 `配置文件不存在时` 可用。
 :::
+
+<a id='tip3'></a>
 
 <!--
 :::warning Tip 3
@@ -247,8 +249,11 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 :::
 -->
 
-## CLI / WEB_Server 可用运行参数
+更多可用变量见 [官网配置说明](/config/) 与 [docker-ddtv.env](https://github.com/CHKZL/DDTV/blob/master/docker-ddtv.env)。
 
+## 可用运行参数
+
+#### CLI / WEB_Server 可用运行参数
 ```shell
 sudo docker run ... \
      --no-update # 容器重启后不更新 DDTV
