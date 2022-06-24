@@ -259,12 +259,12 @@
             WEB_API_SSL,
             /// <summary>
             /// WEB_API启用HTTPS后调用的pfx证书文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxFileName,
             /// <summary>
             /// WEB_API启用后HTTPS调用的pfx证书秘钥文件路径 (应该是一个绝对\相对路径文件地址)
-            /// 组：WEB_API   默认值：
+            /// 组：WEB_API   默认值：string.Empty
             /// </summary>
             pfxPasswordFileName,
             /// <summary>
@@ -334,17 +334,17 @@
             WebPassword,
             /// <summary>
             /// WEBAPI使用的KeyId (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeyId,
             /// <summary>
             /// WEBAPI使用的KeySecret (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             AccessKeySecret,
             /// <summary>
             /// 用于标记服务器资源ID编号 (string)
-            /// 组：WEB_API   默认值：(随机字符串)
+            /// 组：WEB_API   默认值：随机字符串
             /// </summary>
             ServerAID,
             /// <summary>
@@ -354,14 +354,9 @@
             ServerName,
             /// <summary>
             /// 客户端唯一标识 (string)
-            /// 组：Core      默认值：(随机字符串)
+            /// 组：Core      默认值：随机字符串
             /// </summary>
             ClientAID,
-            /// <summary>
-            /// 是否需要初始化
-            /// 组：  默认值：
-            /// </summary>
-            InitializationStatus,
             /// <summary>
             /// DDTVGUI缩放是否隐藏到托盘
             /// 组：GUI       默认值：false
@@ -377,7 +372,51 @@
             /// 组：WEB_API   默认值：true
             /// </summary>
             AccessControlAllowCredentials,
-
+            /// <summary>
+            /// 用于控制下载时时候阻止系统休眠 (布尔值)
+            /// 组：Download   默认值：true
+            /// </summary>
+            DoNotSleepWhileDownloading,
+            /// <summary>
+            /// 用于控制cookie作用域（字符串）
+            /// 组：WEB_API   默认值：string.Empty
+            /// </summary>
+            CookieDomain,
+            /// <summary>
+            /// 用于控制下载完成后是否执行对应房间的Shell命令（布尔值）
+            /// 组：Download   默认值：false
+            /// </summary>
+            Shell,
+            /// <summary>
+            /// WebHook的目标地址（字符串）
+            /// 组：Core   默认值：string.Empty
+            /// </summary>
+            WebHookUrl,
+            /// <summary>
+            /// 实例AID用于在联网情况下区分客户端（字符串）
+            /// 组：Core   默认值：随机字符串
+            /// </summary>
+            InstanceAID,
+            /// <summary>
+            /// DDC的采集开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            DDcenterSwitch,
+            /// <summary>
+            /// 转码完成后自动删除文件开关 (布尔值)
+            /// 组：Core   默认值：false
+            /// </summary>
+            TranscodingCompleteAutoDeleteFiles,
+            /// <summary>
+            /// 是否强使用主CDN下载地址 (布尔值)
+            /// 组：Download   默认值：false
+            /// </summary>
+            ForceCDNResolution,
+            /// <summary>
+            /// 控制台监控模式开关，打开后控制台会输出每个在列表中的任务开始和结束相信信息（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            ConsoleMonitorMode,
         }
 ```
 

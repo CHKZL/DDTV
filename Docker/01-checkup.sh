@@ -121,25 +121,16 @@ check_file_DDTV_Config_ini() {
         echo "
 [Core]
 ${RoomListConfig:+"RoomListConfig=$RoomListConfig"}
+${TranscodParmetrs:+"TranscodParmetrs=$TranscodParmetrs"}
+${IsAutoTranscod:+"IsAutoTranscod=$IsAutoTranscod"}
 ${GUI_FirstStart:+"GUI_FirstStart=$GUI_FirstStart"}
 ${WEB_FirstStart:+"WEB_FirstStart=$WEB_FirstStart"}
-${IsAutoTranscod:+"IsAutoTranscod=$IsAutoTranscod"}
-${TranscodParmetrs:+"TranscodParmetrs=$TranscodParmetrs"}
-${WebHookUrl:+"WebHookUrl=$WebHookUrl"}
 ${ClientAID:+"ClientAID=$ClientAID"}
-[WEB_API]
-${WEB_API_SSL:+"WEB_API_SSL=$WEB_API_SSL"}
-${pfxFileName:+"pfxFileName=$pfxFileName"}
-${pfxPasswordFileName:+"pfxPasswordFileName=$pfxPasswordFileName"}
-${WebUserName:+"WebUserName=$WebUserName"}
-${WebPassword:+"WebPassword=$WebPassword"}
-${AccessKeyId:+"AccessKeyId=$AccessKeyId"}
-${AccessKeySecret:+"AccessKeySecret=$AccessKeySecret"}
-${ServerAID:+"ServerAID=$ServerAID"}
-${ServerName:+"ServerName=$ServerName"}
-${AccessControlAllowOrigin:+"AccessControlAllowOrigin=$AccessControlAllowOrigin"}
-${AccessControlAllowCredentials:+"AccessControlAllowCredentials=$AccessControlAllowCredentials"}
-${CookieDomain:+"CookieDomain=$CookieDomain"}
+${WebHookUrl:+"WebHookUrl=$WebHookUrl"}
+${InstanceAID:+"InstanceAID=$InstanceAID"}
+${DDcenterSwitch:+"DDcenterSwitch=$DDcenterSwitch"}
+${TranscodingCompleteAutoDeleteFiles:+"TranscodingCompleteAutoDeleteFiles=$TranscodingCompleteAutoDeleteFiles"}
+${ConsoleMonitorMode:+"ConsoleMonitorMode=$ConsoleMonitorMode"}
 [Download]
 ${DownloadPath:+"DownloadPath=$DownloadPath"}
 ${TmpPath:+"TmpPath=$TmpPath"}
@@ -154,6 +145,25 @@ ${IsFlvSplit:+"IsFlvSplit=$IsFlvSplit"}
 ${FlvSplitSize:+"FlvSplitSize=$FlvSplitSize"}
 ${DoNotSleepWhileDownloading:+"DoNotSleepWhileDownloading=$DoNotSleepWhileDownloading"}
 ${Shell:+"Shell=$Shell"}
+${ForceCDNResolution:+"ForceCDNResolution=$ForceCDNResolution"}
+[GUI]
+${HideIconState:+"HideIconState=$HideIconState"}
+[Play]
+${DefaultVolume:+"DefaultVolume=$DefaultVolume"}
+${PlayQuality:+"PlayQuality=$PlayQuality"}
+[WEB_API]
+${WEB_API_SSL:+"WEB_API_SSL=$WEB_API_SSL"}
+${pfxFileName:+"pfxFileName=$pfxFileName"}
+${pfxPasswordFileName:+"pfxPasswordFileName=$pfxPasswordFileName"}
+${WebUserName:+"WebUserName=$WebUserName"}
+${WebPassword:+"WebPassword=$WebPassword"}
+${AccessKeyId:+"AccessKeyId=$AccessKeyId"}
+${AccessKeySecret:+"AccessKeySecret=$AccessKeySecret"}
+${ServerAID:+"ServerAID=$ServerAID"}
+${ServerName:+"ServerName=$ServerName"}
+${AccessControlAllowOrigin:+"AccessControlAllowOrigin=$AccessControlAllowOrigin"}
+${AccessControlAllowCredentials:+"AccessControlAllowCredentials=$AccessControlAllowCredentials"}
+${CookieDomain:+"CookieDomain=$CookieDomain"}
 " > "$File_Path" &&
 # CoreConfigClass.cs End
     echo "已写入 $File_Path 。"
