@@ -21,6 +21,11 @@ on:
         type: string
       build-args:
         type: string
+    secrets:
+      DOCKERHUB_USERNAME:
+        required: true
+      DOCKERHUB_PASSWORD:
+        required: true
 
 jobs:
   Build_and_push:
@@ -74,7 +79,7 @@ jobs:
         with:
           context: ${{ inputs.docker-dir }}/${{ inputs.repo }}/
           file:    ${{ inputs.docker-dir }}/${{ inputs.repo }}/Dockerfile
-          push:    false
+          push:    true
           tags:    ${{ steps.metadata.outputs.tags }}
           labels:  ${{ steps.metadata.outputs.labels }}
           platforms:  ${{ inputs.platforms }}
