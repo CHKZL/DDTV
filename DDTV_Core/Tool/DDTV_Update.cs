@@ -117,9 +117,11 @@ namespace DDTV_Core.Tool
                 foreach (var file in files.files)
                 {
                     string DownloadUrl = PushUrl + Type + "/" + file.FilePath;
+
                     //Console.WriteLine($"正在下载大小{file.Size}字节的文件:{file.FilePath}");
+                    Log.AddLog("DDTV_Update", LogClass.LogType.Debug, $"检测到更新器文件变化，开始下载文件[{file.FilePath}({SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(file.Size)})]", false, null, false);
                     SystemAssembly.NetworkRequestModule.Get.Get.GetFile(DownloadUrl, file.FilePath);
-                    //Console.WriteLine("下载完成\n");
+                    Log.AddLog("DDTV_Update", LogClass.LogType.Debug, $"下载文件[{file.FilePath}]完成", false, null, false);
                 }
                
             }

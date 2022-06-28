@@ -29,7 +29,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-06-16 01:59:08";
+        public static string CompiledVersion = "2022-06-18 01:43:55";
 
         /// <summary>
         /// 初始化COre
@@ -348,7 +348,7 @@ namespace DDTV_Core
                                 }
                             case ConsoleKey.Z:
                                 CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
-                                Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
+                                Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
                                 break;
                             default:
                                 break;
