@@ -46,6 +46,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     configTmp.Add(configTmp1);
                 }
             }
+            //using FileStream OldfileStream = File.Create(ConfigFile+"new");
             using FileStream fileStream = File.Create(ConfigFile);
             foreach (var item1 in configTmp)
             {

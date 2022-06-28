@@ -74,6 +74,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             //app.UseHttpsRedirection();
             app.UseAuthorization();
             app.MapControllers();
+            //app.MapRazorPages();
             app.UseFileServer(new FileServerOptions()
             {
                 EnableDirectoryBrowsing = false,

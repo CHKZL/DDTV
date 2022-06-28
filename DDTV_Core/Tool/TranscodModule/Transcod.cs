@@ -94,7 +94,8 @@ namespace DDTV_Core.Tool.TranscodModule
                 };
                 if (process.HasExited)
                 {
-                    process.WaitForExit();
+                    //如果超过20分钟都没有等待到exit信息，就跳过
+                    process.WaitForExit(1200);
                 }
                 process.Close();
                 Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");

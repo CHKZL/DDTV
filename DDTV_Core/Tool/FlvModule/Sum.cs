@@ -42,7 +42,6 @@ namespace DDTV_Core.Tool.FlvModule
                                     if (IsSuitableToMerge(GetFLVFileInfo(OldFileStream), GetFLVFileInfo(NewFileStream)) == false)
                                     {
                                         SystemAssembly.Log.Log.AddLog(nameof(FlvModule), SystemAssembly.Log.LogClass.LogType.Warn, $"【{ roomInfo.uname}({roomInfo.room_id})】的录制任务在直播过程中主播切换了码率或分辨率，合并会造成文件错误，放弃本次合并任务");
-                                        string PromptInfoFileName = $"未合并flv的原因.txt";
                                         FileOperation.Del(DelList);
                                         return "";
                                     }

@@ -660,16 +660,25 @@ namespace DDTV_GUI.DDTV_Window
                 Growl.Warning($"缺少对应的播放器解码组件！");
                 return;
             }
-            int Index = LiveList.SelectedIndex;
+            int Index = 0;
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                Index = LiveList.SelectedIndex;
+            }));
+
             if (Index > -1 && UpdateInterface.Main.liveList.Count > Index)
             {
                 long uid = UpdateInterface.Main.liveList[Index].Uid;
                 if (UpdateInterface.Main.liveList[Index].LiveState == 1)
                 {
-                    PlayWindow playWindow = new PlayWindow(uid);
-                    playWindowsList.Add(playWindow);
-                    playWindow.Closed += PlayWindow_Closed;
-                    playWindow.Show();
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        PlayWindow playWindow = new PlayWindow(uid);
+                        playWindowsList.Add(playWindow);
+                        playWindow.Closed += PlayWindow_Closed;
+                        playWindow.Show();
+                    }));
+                   
 
                 }
                 else
@@ -1127,7 +1136,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void LiveList_Play_MouseDouble_Click(object sender, MouseButtonEventArgs e)
         {
-            Play_Click();
+            Task.Run(() => Play_Click());
         }
 
         private void DoNotSleepWhileDownloadingIcon_Click(object sender, RoutedEventArgs e)
