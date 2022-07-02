@@ -46,7 +46,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     configTmp.Add(configTmp1);
                 }
             }
-            //using FileStream OldfileStream = File.Create(ConfigFile+"new");
+            if(!Tool.FileOperation.SpaceWillBeEnough(ConfigFile,0,10,0,0))
+            {
+                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Error, "配置文件储存路径所属盘符剩余空间不足10MB！放弃更新储存配置文件！", true, null, true);
+                return;
+            }
+
             using FileStream fileStream = File.Create(ConfigFile);
             foreach (var item1 in configTmp)
             {

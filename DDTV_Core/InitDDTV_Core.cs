@@ -17,6 +17,8 @@ using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 using DDTV_Core.Tool;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using ConsoleTableExt;
+using DDTV_Core.SystemAssembly.DownloadModule;
+using System.IO;
 
 namespace DDTV_Core
 {
@@ -49,8 +51,11 @@ namespace DDTV_Core
             Task.Run(() => Tool.DDcenter.Init(satrtType));
             if (satrtType != SatrtType.DDTV_GUI)
             {
+                SeKey();
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
+                FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//硬盘空间不足事件
             }
+            FileOperation.RemainingSpaceWarningDetection();
             //var c = RuntimeInformation.RuntimeIdentifier;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
 
@@ -77,90 +82,14 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("Core");
                     break;
             }
-
-            if (satrtType != SatrtType.DDTV_GUI)
-            {
-                SeKey();
-            }
-
-
-
-
-            //switch (satrtType)
-            //{
-            //    case SatrtType.DDTV_Core:
-            //        Tool.DDTV_Update.ComparisonVersion("Core", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            //        break;
-            //    case SatrtType.DDTV_GUI:
-            //        Tool.DDTV_Update.ComparisonVersion("GUI", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            //        break;
-            //    case SatrtType.DDTV_WEB:
-            //        Tool.DDTV_Update.ComparisonVersion("WEB", System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            //        break;
-            //}
-
-
-            #region 测试代码
-
-
-            //SystemAssembly.ConfigModule.RoomConfig.AddRoom(473244363,"");
-
-            //while (true)
-            //{
-            //    if (Console.ReadKey().Key.Equals(ConsoleKey.I))
-            //    {
-            //        Console.WriteLine($"请输入UID");
-            //        long uid = long.Parse(Console.ReadLine());
-            //        SystemAssembly.DownloadModule.Download.CancelDownload(uid);
-            //    }
-            //}
-            //SystemAssembly.DownloadModule.Download.AddDownloadTaskd(408490081);
-            //List<long> vs = new List<long>()
-            //{
-            //    17661166,
-            //    1081765694,
-            //    269415357,
-            //    36576761,
-            //    2096422,
-            //    8041302
-            //};
-            //Task.Run((Action)(() =>
-            //{
-            //    foreach (var item in vs)
-            //    {
-            //        BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(item.Value.uid);
-            //var roomInfo = SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(122459);
-            //roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-            //        Thread.Sleep(1000);
-            //    }
-            //}));
-            //while (true)
-            //{
-            //    int i = 1;
-            //    foreach (var item in BilibiliModule.Rooms.Rooms.RoomInfo)
-            //    {
-            //        if (item.Value.roomWebSocket.IsConnect)
-            //        {
-            //            long Time = TimeModule.Time.Operate.GetRunMilliseconds()-item.Value.roomWebSocket.dokiTime;
-            //            Console.WriteLine(Time>35000 ? "no■"+Time : "ko□"+Time+$" {i} {item.Value.room_id} {item.Value.roomWebSocket.LiveChatListener.host.host_list[0].host}");
-            //            i++;
-            //        }
-
-            //    }
-            //    Thread.Sleep(10000);
-            //}
-
-            //BilibiliModule.API.DanMu.getDanmuInfo(411812743);
-            //var ttt = BilibiliModule.Rooms.Rooms.GetValue(125555553, DataCacheModule.DataCacheClass.CacheType.is_sp);
-            //Console.WriteLine(BilibiliModule.Rooms.Rooms.AddRoom(494850406, "test"));
-            //BilibiliModule.API.RoomInfo.room_init(2299184);
-            //string url = BilibiliModule.API.RoomInfo.playUrl(2299184, BilibiliModule.Rooms.RoomInfoClass.PlayQuality.OriginalPainting);
-            //DownloadModule.Download.DownFLV_WebClient(url);
-            //BilibiliModule.API.DanMu.send(BilibiliModule.Rooms.Rooms.GetValue(408490081, DataCacheModule.DataCacheClass.CacheType.room_id), "DDTV3.0弹幕发送测试");
-            #endregion
-
         }
 
+        private static void FileOperation_PathAlmostFull(object? sender, string e)
+        {
+            Log.AddLog("HardDisk", LogClass.LogType.Error_IsAboutToHappen, e);
+        }
+
+       
 
         /// <summary>
         /// 登陆状态失效
@@ -314,7 +243,7 @@ namespace DDTV_Core
                                             {
                                                 //一键导入本地vtbs文件中的所有V
                                                 SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true, true);
-                                            }     
+                                            }
                                             break;
                                         case ConsoleKey.Q://隐藏操作
                                             Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有V，按其他键取消");
