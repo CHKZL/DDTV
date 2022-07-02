@@ -71,10 +71,11 @@ namespace DDTV_GUI.DDTV_Window
             RoomPatrol.StartLive += RoomPatrol_StartLive;//注册开播提醒事件
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
-            PlayWindow.PlayListExit += MainWindow_PlayListExit;
+            PlayWindow.PlayListExit += MainWindow_PlayListExit;//注册批量关闭播放窗口事件
+            FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//硬盘空间不足事件
             Tool.ServerInteraction.Start();
-            Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;
-            Tool.ServerInteraction.Notice.NewNotice += Notice_NewNotice;
+            Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;//检查更新事件
+            Tool.ServerInteraction.Notice.NewNotice += Notice_NewNotice;//更新首页说明事件
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
 
@@ -99,6 +100,11 @@ namespace DDTV_GUI.DDTV_Window
             
             //Sprite.Show(new DDTV_Sprite());
 
+        }
+
+        private void FileOperation_PathAlmostFull(object? sender, string e)
+        {
+            Growl.WarningGlobal(e);
         }
 
         private void Notify_NotifyUpdate(object? sender, EventArgs e)

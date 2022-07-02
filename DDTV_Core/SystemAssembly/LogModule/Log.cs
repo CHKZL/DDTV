@@ -133,6 +133,9 @@ namespace DDTV_Core.SystemAssembly.Log
                         case LogClass.LogType.Error:
                             console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Red);
                             break;
+                        case LogClass.LogType.Error_IsAboutToHappen:
+                            console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Red);
+                            break;
                         case LogClass.LogType.Warn:
                             console.Write($"[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}]", ConsoleColor.Yellow);
                             break;

@@ -11,9 +11,13 @@ namespace DDTV_Core.SystemAssembly.Log
         public enum LogType
         {
             /// <summary>
-            /// 会造成整个系统无法运行的严重错误
+            /// 会造成整个DDTV无法运行的严重错误
             /// </summary>
             Error = 10,
+            /// <summary>
+            /// 虽然现在还没发生问题，但是不管这个问题之后肯定会导致严重错误
+            /// </summary>
+            Error_IsAboutToHappen = 11,
             /// <summary>
             /// 会造成错误，但是不影响运行的警告
             /// </summary>
