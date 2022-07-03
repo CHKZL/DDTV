@@ -14,7 +14,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 {
     public class RoomInfo
     {
-        public static bool ForceCDNResolution = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ForceCDNResolution, "false", CoreConfigClass.Group.Download));
+        public static bool ForceCDNResolution = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ForceCDNResolution, "False", CoreConfigClass.Group.Download));
 
         /// <summary>
         /// 使用uids获取房间状态信息

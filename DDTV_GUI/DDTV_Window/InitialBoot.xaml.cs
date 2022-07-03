@@ -107,7 +107,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             Rooms.UpdateRoomInfo();
             DDTV_Core.SystemAssembly.RoomPatrolModule.RoomPatrol.Init();
-            CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, "false", CoreConfigClass.Group.Core);
+            CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, "False", CoreConfigClass.Group.Core);
             CoreConfig.GUI_FirstStart = false;
             this.Close();
         }

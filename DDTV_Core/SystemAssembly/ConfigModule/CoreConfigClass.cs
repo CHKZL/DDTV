@@ -16,9 +16,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             public class Data
             {
                 /// <summary>
-                /// 配置键
+                /// 配置键编号(已废弃)
                 /// </summary>
                 public Key Key { set; get; }
+                /// <summary>
+                /// 配置键名称
+                /// </summary>
+                public string KeyName { set; get; }
                 /// <summary>
                 /// 配置分组
                 /// </summary>
