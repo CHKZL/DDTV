@@ -143,20 +143,25 @@ namespace DDTV_WEB_Server.Controllers
     {
         [HttpPost(Name = "System_Config")]
         //[Consumes("application/json")]
-        public ActionResult Post([FromForm] string cmd,[FromForm] bool IsPrivacy=true)
+        public ActionResult Post([FromForm] string cmd)
         {
             ConfigData configData = new ConfigData();
+            List<CoreConfigClass.Key> ToRuleOut = new List<CoreConfigClass.Key>()
+            { 
+                CoreConfigClass.Key.WebPassword,
+                CoreConfigClass.Key.WebUserName,
+                CoreConfigClass.Key.WEB_API_SSL,
+                CoreConfigClass.Key.pfxFileName,
+                CoreConfigClass.Key.pfxPasswordFileName,
+                CoreConfigClass.Key.AccessKeyId,
+                CoreConfigClass.Key.AccessKeySecret,
+            };
             foreach (var item in CoreConfigClass.config.datas)
             {
-                if(IsPrivacy && (item.Key == CoreConfigClass.Key.WebUserName|| item.Key == CoreConfigClass.Key.WebPassword))
+                if (!ToRuleOut.Contains(item.Key))
                 {
                     configData.datas.Add(item);
                 }
-                else
-                {
-                    configData.datas.Add(item);
-                }
-                
             }
             return Content(MessageBase.Success(nameof(System_Config), CoreConfigClass.config.datas), "application/json");
         }

@@ -15,8 +15,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             public List<Data> datas = new();
             public class Data
             {
+                //[Obsolete]
                 /// <summary>
-                /// 配置键编号(已废弃)
+                /// 配置键编号(对外已废弃)
                 /// </summary>
                 public Key Key { set; get; }
                 /// <summary>

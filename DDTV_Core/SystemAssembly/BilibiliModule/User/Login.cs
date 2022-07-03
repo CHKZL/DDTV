@@ -14,6 +14,7 @@ using static BiliAccount.Core.ByQRCode;
 using DDTV_Core.Tool;
 using System.Runtime.InteropServices;
 using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core.SystemAssembly.RoomPatrolModule;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
@@ -55,6 +56,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     Thread.Sleep(5000);
                     }
                 } while (string.IsNullOrEmpty(BilibiliUserConfig.account.cookie));
+                RoomPatrol.IsOn = true;
                 Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "登陆流程完成");
                 return true;
             }
@@ -107,6 +109,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                 if (status == ByQRCode.QrCodeStatus.Success)
                 {
                     BilibiliUserConfig.AccClass=account;
+                    RoomPatrol.IsOn = true;
                     Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "QR扫码登陆bilibili成功");
                     BilibiliUserConfig.account.uid= account.Uid;
                     BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
