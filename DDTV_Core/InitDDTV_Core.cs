@@ -47,7 +47,7 @@ namespace DDTV_Core
             ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;
             ServicePointManager.Expect100Continue = false;
             CoreConfig.ConfigInit(satrtType);
-            Tool.DDTV_Update.CheckUpdateProgram();
+            DDTV_Update.CheckUpdateProgram();
             Task.Run(() => Tool.DDcenter.Init(satrtType));
             if (satrtType != SatrtType.DDTV_GUI)
             {

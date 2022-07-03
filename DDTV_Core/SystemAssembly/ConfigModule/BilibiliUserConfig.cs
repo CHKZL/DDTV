@@ -186,7 +186,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             {
                                 try
                                 {
-                                    if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
+                                    if (!BilibiliModule.API.UserInfo.LoginValidityVerification())
                                     {
                                         if (CheckAccountChanged != null)
                                         {
