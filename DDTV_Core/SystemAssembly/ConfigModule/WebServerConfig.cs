@@ -17,9 +17,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         private static string _AccessKeySecret = string.Empty;
         private static string _ServerAID = string.Empty;
         private static string _ServerName = string.Empty;
-        public static bool IsSSL = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WEB_API_SSL, "false", CoreConfigClass.Group.WEB_API));
+        public static bool IsSSL = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WEB_API_SSL, "False", CoreConfigClass.Group.WEB_API));
         public static string AccessControlAllowOrigin = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowOrigin, "*", CoreConfigClass.Group.WEB_API);
-        public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "true", CoreConfigClass.Group.WEB_API);
+        public static string AccessControlAllowCredentials = CoreConfig.GetValue(CoreConfigClass.Key.AccessControlAllowCredentials, "True", CoreConfigClass.Group.WEB_API);
         public static string CookieDomain = CoreConfig.GetValue(CoreConfigClass.Key.CookieDomain, string.Empty, CoreConfigClass.Group.WEB_API);
 
         public static string pfxFileName

@@ -9,13 +9,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class CoreConfig
     {
-        public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "true", CoreConfigClass.Group.Core));
-        public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "true", CoreConfigClass.Group.Core));
-        public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "true", CoreConfigClass.Group.Download));
-        public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "false", CoreConfigClass.Group.Download));
+        public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "True", CoreConfigClass.Group.Core));
+        public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "True", CoreConfigClass.Group.Core));
+        public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "True", CoreConfigClass.Group.Download));
+        public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "False", CoreConfigClass.Group.Download));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
         public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
-        public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "false", CoreConfigClass.Group.Core));
+        public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "False", CoreConfigClass.Group.Core));
 
         /// <summary>
         /// 初始化配置文件
@@ -181,6 +181,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
             {
                 Key = Key,
+                KeyName=Key.ToString(),
                 Group = Group,
                 Value = Value,
                 Enabled = IsEnabled

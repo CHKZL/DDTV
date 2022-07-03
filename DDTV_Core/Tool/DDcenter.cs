@@ -17,7 +17,7 @@ namespace DDTV_Core.Tool
 {
     public static class DDcenter
     {
-        public static bool DDcenterSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DDcenterSwitch, "false", CoreConfigClass.Group.Core));
+        public static bool DDcenterSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DDcenterSwitch, "False", CoreConfigClass.Group.Core));
         public static int TimeIntervalBetween = 60 * 1000;
         private static ClientWebSocket _webSocket = null;
         private static CancellationToken _cancellation = new CancellationToken();

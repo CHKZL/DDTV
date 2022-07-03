@@ -39,6 +39,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         Enabled=datas.Enabled,
                         Group=datas.Group,
                         Key=datas.Key,
+                        KeyName=datas.KeyName,
                         Value =datas.Value,
                     };
                     ConfigTmp configTmp1 = new ConfigTmp() { G=datas.Group, datas=new List<CoreConfigClass.Config.Data>() };
@@ -94,6 +95,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
                             {
                                 Enabled = Enabled,
+                                KeyName = Key.ToString(),
                                 Key = (CoreConfigClass.Key)Enum.Parse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' ')),
                                 Value = ConfigText.Split('=')[1].Trim(' '),
                                 Group = Group
