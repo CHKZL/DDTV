@@ -31,7 +31,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-06-18 01:43:55";
+        public static string CompiledVersion = "2022-07-04 00:08:44";
 
         /// <summary>
         /// 初始化COre
