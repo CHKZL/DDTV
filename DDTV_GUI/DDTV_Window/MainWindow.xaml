@@ -311,6 +311,12 @@
                                                 <hc:Poptip Content="打开后会阻止系统进入休眠模式（不阻止屏幕休眠）防止录制任务失败，关闭本设置或者退出DDTV后恢复" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                        <TextBlock HorizontalAlignment="Left" Margin="400,0,0,0" Text="检测剩余空间并警告" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="SpaceIsInsufficientWarn" Style="{StaticResource ToggleButtonSwitch}" Margin="550,6,44,4" Click="SpaceIsInsufficientWarn_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="当录制的盘符剩余空间低于百分之5时，会每5分钟弹出一次提示，警告剩余空间不足" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">

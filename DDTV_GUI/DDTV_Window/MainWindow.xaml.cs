@@ -231,6 +231,8 @@ namespace DDTV_GUI.DDTV_Window
             ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
             TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
             DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
+            SpaceIsInsufficientWarn.IsChecked= DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
+
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1310,6 +1312,13 @@ namespace DDTV_GUI.DDTV_Window
             //    ManualTranscodingProgress.Text = $"手动已经取消转码操作";
             //    TranscodingSelectFilesManual.Content = "选择文件";
             //}
+        }
+
+        private void SpaceIsInsufficientWarn_Click(object sender, RoutedEventArgs e)
+        {
+            FileOperation.SpaceIsInsufficientWarn = (bool)SpaceIsInsufficientWarn.IsChecked ? true : false;
+
+            CoreConfig.SetValue(CoreConfigClass.Key.SpaceIsInsufficientWarn, FileOperation.SpaceIsInsufficientWarn.ToString(), CoreConfigClass.Group.Core);
         }
     }
 }

@@ -119,6 +119,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _TranscodingCompleteAutoDeleteFiles = DDTV_Core.Tool.TranscodModule.Transcod.TranscodingCompleteAutoDeleteFiles;
             var _ForceCDNResolution = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.ForceCDNResolution;
             var _ConsoleMonitorMode = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ConsoleMonitorMode;
+            var _SpaceIsInsufficientWarn = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
         }
         /// <summary>
         /// 获取配置

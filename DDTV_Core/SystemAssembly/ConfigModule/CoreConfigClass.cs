@@ -274,6 +274,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：false
             /// </summary>
             ConsoleMonitorMode,
+            /// <summary>
+            /// 是否检测空间不足并给与对应的警告（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            SpaceIsInsufficientWarn,
         }
     }
 }

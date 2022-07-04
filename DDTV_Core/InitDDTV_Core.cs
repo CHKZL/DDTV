@@ -89,8 +89,6 @@ namespace DDTV_Core
             Log.AddLog("HardDisk", LogClass.LogType.Error_IsAboutToHappen, e);
         }
 
-       
-
         /// <summary>
         /// 登陆状态失效
         /// </summary>
