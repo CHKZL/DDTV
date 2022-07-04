@@ -18,6 +18,7 @@ namespace DDTV_Core.Tool
 {
     public class FileOperation
     {
+        public static bool SpaceIsInsufficientWarn = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.SpaceIsInsufficientWarn, "False", CoreConfigClass.Group.Core));
         private static DelEvent delEvent = new DelEvent();
         /// <summary>
         /// 硬盘快满提示
@@ -208,40 +209,43 @@ namespace DDTV_Core.Tool
                 Task.Run(() => {
                     while (true)
                     {
-                        try
+                        if (SpaceIsInsufficientWarn)
                         {
-                            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                            try
                             {
-                                string _SavePathName = Download.DownloadPath.Split(':').Length > 1 ? Download.DownloadPath.Split(':')[0] : Path.GetFullPath(Download.DownloadPath).Split(':')[0];
-                                string _TmpPathName = Download.DownloadPath.Split(':').Length > 1 ? Download.DownloadPath.Split(':')[0] : Path.GetFullPath(Download.DownloadPath).Split(':')[0];
-                                double SaveUsingProportion = (double)GetHardDiskSpace(_SavePathName, 2) / (double)GetHardDiskSpace(_SavePathName, 1);
-                                if (SaveUsingProportion < 0.05)
+                                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                                 {
-                                    PathAlmostFull.Invoke(null, "录制文件夹所在盘符剩余空间已不足5%！");
-                                }
-                                double TmpUsingProportion = (double)GetHardDiskSpace(_TmpPathName, 2) / (double)GetHardDiskSpace(_TmpPathName, 1);
-                                if (TmpUsingProportion < 0.05)
-                                {
-                                    PathAlmostFull.Invoke(null, "临时文件夹所在盘符剩余空间已不足5%！");
-                                }
-                            }
-                            else if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                            {
-                                string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                                DriveInfo[] BB = DriveInfo.GetDrives();
-                                foreach (var item in BB)
-                                {
-                                    if (BaseDirectory.StartsWith(item.Name))
+                                    string _SavePathName = Download.DownloadPath.Split(':').Length > 1 ? Download.DownloadPath.Split(':')[0] : Path.GetFullPath(Download.DownloadPath).Split(':')[0];
+                                    string _TmpPathName = Download.DownloadPath.Split(':').Length > 1 ? Download.DownloadPath.Split(':')[0] : Path.GetFullPath(Download.DownloadPath).Split(':')[0];
+                                    double SaveUsingProportion = (double)GetHardDiskSpace(_SavePathName, 2) / (double)GetHardDiskSpace(_SavePathName, 1);
+                                    if (SaveUsingProportion < 0.05)
                                     {
-                                        if((double)item.TotalFreeSpace/ (double)item.TotalSize<0.05)
+                                        PathAlmostFull.Invoke(null, "录制文件夹所在盘符剩余空间已不足5%！");
+                                    }
+                                    double TmpUsingProportion = (double)GetHardDiskSpace(_TmpPathName, 2) / (double)GetHardDiskSpace(_TmpPathName, 1);
+                                    if (TmpUsingProportion < 0.05)
+                                    {
+                                        PathAlmostFull.Invoke(null, "临时文件夹所在盘符剩余空间已不足5%！");
+                                    }
+                                }
+                                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                                {
+                                    string BaseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                                    DriveInfo[] BB = DriveInfo.GetDrives();
+                                    foreach (var item in BB)
+                                    {
+                                        if (BaseDirectory.StartsWith(item.Name))
                                         {
-                                            PathAlmostFull.Invoke(null, "DDTV所在盘符剩余空间已不足5%！");
+                                            if ((double)item.TotalFreeSpace / (double)item.TotalSize < 0.05)
+                                            {
+                                                PathAlmostFull.Invoke(null, "DDTV所在盘符剩余空间已不足5%！");
+                                            }
                                         }
                                     }
                                 }
                             }
+                            catch (Exception) { }
                         }
-                        catch (Exception) { }
                         Thread.Sleep(300*1000);
                     }
                 });
