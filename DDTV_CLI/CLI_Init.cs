@@ -25,6 +25,8 @@ namespace DDTV_CLI
             //Console.ReadKey();
 
             #endregion
+           
+
 
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
             while (true)

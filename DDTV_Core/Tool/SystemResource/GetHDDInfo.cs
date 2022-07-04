@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Text;
@@ -12,6 +13,7 @@ namespace DDTV_Core.Tool.SystemResource
     {
         public static List<HDDInfo> GetWindows(string DriveLetter)
         {
+            
             HDDInfo windowsHDDInfo = new HDDInfo();
             ManagementObject disk = new ManagementObject(
                 "win32_logicaldisk.deviceid=\"" + DriveLetter + ":\"");
