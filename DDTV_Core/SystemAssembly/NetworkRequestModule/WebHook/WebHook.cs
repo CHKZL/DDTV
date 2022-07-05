@@ -109,7 +109,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// <summary>
             /// 下载任务成功结束
             /// </summary>
-            DownloadEndMissionSuccess
+            DownloadEndMissionSuccess,
+            /// <summary>
+            /// 剩余空间不足
+            /// </summary>
+            SpaceIsInsufficientWarn,
         }
     }
 }

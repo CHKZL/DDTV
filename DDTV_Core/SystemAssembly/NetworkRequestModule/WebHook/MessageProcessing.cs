@@ -14,7 +14,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
     {
         public static string Processing(HookType hookType, long uid, string id)
         {
-            if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            if (uid>0 && Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
                 string msg = JsonConvert.SerializeObject(new Message()
                 {

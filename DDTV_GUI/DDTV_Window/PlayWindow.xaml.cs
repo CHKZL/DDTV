@@ -454,24 +454,31 @@ namespace DDTV_GUI.DDTV_Window
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             IsClose = true;
-            CancelDownload();
-            LiveChatDispose();
-            foreach (var item in OldFileDirectoryList)
-            {
-                DDTV_Core.Tool.FileOperation.Del(item);
-            }
+            Task.Run(() => {
+                CancelDownload();
+                LiveChatDispose();
+                foreach (var item in OldFileDirectoryList)
+                {
+                    DDTV_Core.Tool.FileOperation.Del(item);
+                }
 
-            VideoView.Dispatcher.Invoke(() =>
-               VideoView.MediaPlayer.Stop()
-           );
-            if (VideoView != null)
-            {
-                VideoView.Dispose();
-            }
-            if (vlcVideo != null)
-            {
-                vlcVideo.Dispose();
-            }
+                VideoView.Dispatcher.Invoke(() =>
+                   VideoView.MediaPlayer.Stop()
+               );
+                if (VideoView != null)
+                {
+                    VideoView.Dispatcher.Invoke(() =>
+                        VideoView.Dispose()
+                    );
+
+                }
+                if (vlcVideo != null)
+                {
+                    VideoView.Dispatcher.Invoke(() =>
+                        VideoView.Dispose()
+                    );
+                }
+            });
         }
         private Dialog DG = null;
         private void Danmu_Send_Button_Click(object sender, RoutedEventArgs e)

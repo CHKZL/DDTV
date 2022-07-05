@@ -34,13 +34,26 @@ namespace DDTV_WEB_Server.Controllers
         }
         public class FileNames
         {
+            /// <summary>
+            /// 文件名
+            /// </summary>
             public string Name { get; set; }
+            /// <summary>
+            /// 文件类型
+            /// </summary>
             public string FileType { get; set; }
+            /// <summary>
+            /// 文件大小(如果类型是文件夹则为0)
+            /// </summary>
+            public long Size { get; set; }
+            /// <summary>
+            /// 文件创建时间
+            /// </summary>
+            public DateTime DateTime { get; set; }
+            /// <summary>
+            /// 子文件夹
+            /// </summary>
             public List<FileNames> children { get; set; }
-        }
-        public class state
-        {
-            public bool opened { get; set; }
         }
         //以上字段为树形控件中需要的属性
         public class GetSystemAllPath : Controller
@@ -54,7 +67,9 @@ namespace DDTV_WEB_Server.Controllers
                     list.Add(new FileNames
                     {
                         Name = f.Name,
-                        FileType=f.Extension
+                        Size=f.Length,
+                        DateTime=f.CreationTime,
+                        FileType =f.Extension,
                     });
                 }
                 return list;
@@ -74,6 +89,7 @@ namespace DDTV_WEB_Server.Controllers
                         {
                             Name = d.Name,
                             FileType = d.Extension,
+                            Size=0,
                             children = GetallDirectory(new List<FileNames>(), d.FullName)
                         });
                     }
