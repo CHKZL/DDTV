@@ -8,7 +8,9 @@
 |API操作|❌|✅|一般用于程序调用，每个请求都可以直接调用，每次操作都需要携带根据key计算的sig|
 
 ## 两种接口的调用差异
-详情请查看该路径下WEB请求和API操作相关页面的说明
+请务必先请查看该路径下WEB请求和API操作相关页面的说明  
+请务必先请查看该路径下WEB请求和API操作相关页面的说明  
+请务必先请查看该路径下WEB请求和API操作相关页面的说明  
 
 ## 已实现的通用API列表
 |方式|名称|返回内容|解释|
@@ -25,9 +27,10 @@
 |POST|Config_GetFollow|JSON|[导入关注列表中的V](./#post-api-config-getfollow)|
 |POST|File_GetAllFileList|JSON|[获取已录制的文件列表](./#post-api-file-getallfilelist)|
 |POST|File_GetTypeFileList|JSON|[分类获取已录制的文件总列表](./#post-api-file-gettypefilelist)|
+|POST|File_GetFilePathList|JSON|[根据文件树结构返回已录制的文件总列表](./#post-api-file-getfilepathlist)|
 |POST|File_GetFile|FileStram|[下载对应的文件](./#post-api-file-getfile)|
 |POST|Login|JSON|[WEB登陆](./#post-api-login)|
-|POST|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#post-api-loginqr)|
+|GET|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#get-api-loginqr)|
 |POST|Login_Reset|JSON|[重新登陆哔哩哔哩账号](./#post-api-login-reset)|
 |POST|Login_State|JSON|[查询内部登陆状态](./#post-api-login-state)|
 |POST|Rec_RecordingInfo|JSON|[获取下载中的任务情况详细情况](./#post-api-rec-recordinginfo)|
@@ -86,7 +89,7 @@
 无
 
 - 返回数据说明   
-```C#
+```CSharp
     public class SystemResourceClass
     {
         /// <summary>
@@ -154,7 +157,7 @@
 无
 
 - 返回数据说明   
-```C#
+```CSharp
         public class Config
         {
             public List<Data> datas = new();
@@ -389,7 +392,7 @@
 该接口消耗的系统硬件资源较高，请勿频繁调用！！！！！
 
 - 返回数据说明   
-```C#
+```CSharp
     public class SystemResourceClass
     {
         /// <summary>
@@ -465,7 +468,7 @@
 该接口用于前端自行判断，启动后默认值都为真，不能作为DDTV是否正在运行的参考
 
 - 返回数据说明   
-```C#
+```CSharp
 return bool;//直接指示当前的WEB_FirstStart值为多少
 
 ```
@@ -483,7 +486,7 @@ return bool;//直接指示当前的WEB_FirstStart值为多少
 用于设置初始化状态值(WEB_FirstStart)；该值无实际的逻辑处理，用于前端自行判断使用。
 
 - 返回数据说明   
-```C#
+```CSharp
 return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}");
 ```
 :::
@@ -498,7 +501,7 @@ return MessageBase.Success(nameof(System_Config), state, $"设置初始化标志
 检测登陆中时是否登陆成功，应该使用`/api/LoingState`进行查询
 
 - 返回数据说明   
-```C#
+```CSharp
 return bool;//直接指示当前的登陆状态
 
 ```
@@ -517,7 +520,7 @@ return bool;//直接指示当前的登陆状态
 该接口需要依赖ffmpeg，请根据`进阶功能说明`中的`自动转码`页面的内容进行检查是否已经安装ffmpeg
 
 - 返回数据说明   
-```C#
+```CSharp
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "自动转码成功");
 ```
 :::
@@ -534,7 +537,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 请勿输入1-10485760(1MB)的数值，在某些清晰度较高的直播间中，初始数据包会大于这个数值，这种情况下会报错
 
 - 返回数据说明   
-```C#
+```CSharp
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "根据文件大小自动切片成功");
 ```
 :::
@@ -552,7 +555,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 该弹幕录制接口总共开关包括礼物、舰队、SC的录制开关，并且个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关，要录制某个房间除了打开这个设置还需要房间配置启动打开录制
 
 - 返回数据说明   
-```C#
+```CSharp
 MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "弹幕录制总共开关成功(注:该弹幕录制接口总共开关包括礼物、舰队、SC的录制开关，并且个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关，要录制某个房间除了打开这个设置还需要房间配置启动打开录制)");
 ```
 :::
@@ -568,7 +571,7 @@ MessageBase.Success(nameof(Config_Transcod), (state ? "打开" : "关闭") + "�
 该接口需要依赖哔哩哔哩账号登陆，使用前请确认已经扫码登陆
 
 - 返回数据说明   
-```C#
+```CSharp
 List<followClass>;
 
   public class followClass
@@ -586,7 +589,7 @@ List<followClass>;
 无
 
 - 返回数据说明   
-```C#
+```CSharp
 List<string> FileList;
 ```
 :::
@@ -601,8 +604,44 @@ List<string> FileList;
 
 
 - 返回数据说明   
-```C#
+```CSharp
 return File();    
+```
+:::
+
+### `POST /api/File_GetFilePathList`
+::: details 根据文件树结构返回已录制的文件总列表
+- 私有变量  
+
+无  
+
+- 返回数据说明   
+```CSharp
+        return List<FileNames>;  
+
+        public class FileNames
+        {
+            /// <summary>
+            /// 文件名
+            /// </summary>
+            public string Name { get; set; }
+            /// <summary>
+            /// 文件类型
+            /// </summary>
+            public string FileType { get; set; }
+            /// <summary>
+            /// 文件大小(如果类型是文件夹则为0)
+            /// </summary>
+            public long Size { get; set; }
+            /// <summary>
+            /// 文件创建时间
+            /// </summary>
+            public DateTime DateTime { get; set; }
+            /// <summary>
+            /// 子文件夹
+            /// </summary>
+            public List<FileNames> children { get; set; }
+        }
 ```
 :::
 
@@ -612,7 +651,7 @@ return File();
 无
 
 - 返回数据说明   
-```C#
+```CSharp
     public class TypeFileList
     {
         public List<FileList> fileLists =new List<FileList>();
@@ -635,7 +674,7 @@ return File();
 |Password|string|是|用于登陆的密码，默认设置为ddtv，在配置文件中进行设置|
 
 - 返回数据说明   
-```C#
+```CSharp
  private class LoginOK
         {
             public string Cookie { get; set; }
@@ -643,13 +682,13 @@ return File();
 ```
 :::
 
-### `POST /api/loginqr`
+### `GET /api/loginqr`
 ::: details 在提示登陆的情况下获取用于的登陆二维码
 - 私有变量  
 无
 
 - 返回数据说明   
-```C#
+```CSharp
 return File(ms.ToArray(), "image/png");
 ```
 :::
@@ -674,7 +713,7 @@ return File(ms.ToArray(), "image/png");
 
 - 返回数据说明     
 
-```C#  
+```CSharp  
 
         internal class LoginC
         {       
@@ -712,7 +751,7 @@ return File(ms.ToArray(), "image/png");
 无
 
 - 返回数据说明     
-```C#
+```CSharp
 return List<Downloads>;
 
         public class Downloads
@@ -824,7 +863,7 @@ return List<Downloads>;
 无
 
 - 返回数据说明   
-```C#
+```CSharp
 return List<LiteDownloads>;
 
     public class LiteDownloads
@@ -868,7 +907,7 @@ return List<LiteDownloads>;
 无
 
 - 返回数据说明   
-```C#
+```CSharp
 return List<Downloads>;
 
         public class Downloads
@@ -980,7 +1019,7 @@ return List<Downloads>;
 无
 
 - 返回数据说明   
-```C#
+```CSharp
 return List<LiteDownloads>;
 
     public class LiteDownloads
@@ -1030,7 +1069,7 @@ return List<LiteDownloads>;
 注意！是UID！是UID！
 
 - 返回数据说明   
-```C#
+```CSharp
 return string;
 ```
 :::
@@ -1044,7 +1083,7 @@ return string;
 该接口根据服务器上房间配置的多少决定，数据量可能会较多；在启动成功前30秒最好不要调用，该阶段属于API请求更新数据阶段，可能为空的数据较多。
 
 - 返回数据说明   
-```C#
+```CSharp
 return List<RoomInfoClass.RoomInfo>;
 
         public class RoomInfo
@@ -1275,7 +1314,7 @@ return List<RoomInfoClass.RoomInfo>;
 该接口根据服务器上房间配置的多少决定，数据量可能会较多；在启动成功前30秒最好不要调用，该阶段属于API请求更新数据阶段，可能为空的数据较多。
 
 - 返回数据说明   
-```C#
+```CSharp
 return List<RoomInfoClass.RoomInfo>;
 
         public class RoomInfo
@@ -1329,7 +1368,7 @@ return List<RoomInfoClass.RoomInfo>;
 
 
 - 返回数据说明   
-```C#
+```CSharp
 return string;
 ```
 :::
@@ -1343,7 +1382,7 @@ return string;
 |UID|long|是|要从房间配置中删除的账号UID|
 
 - 返回数据说明   
-```C#
+```CSharp
 return string;
 ```
 :::
@@ -1358,7 +1397,7 @@ return string;
 |IsAutoRec|bool|是|打开\关闭开播自动录制|
 
 - 返回数据说明   
-```C#
+```CSharp
 return string;
 ```
 :::
@@ -1377,7 +1416,7 @@ return string;
 该功能收到总弹幕录制配置的限制，如要打开该房间的弹幕录制功能，请确认总开关已经启动
 
 - 返回数据说明   
-```C#
+```CSharp
 return string;
 ```
 :::

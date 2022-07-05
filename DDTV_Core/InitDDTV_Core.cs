@@ -19,6 +19,7 @@ using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using ConsoleTableExt;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using System.IO;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 
 namespace DDTV_Core
 {
@@ -31,7 +32,7 @@ namespace DDTV_Core
 
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-07-04 00:08:44";
+        public static string CompiledVersion = "2022-07-05 23:36:23";
 
         /// <summary>
         /// 初始化COre
@@ -87,6 +88,7 @@ namespace DDTV_Core
         private static void FileOperation_PathAlmostFull(object? sender, string e)
         {
             Log.AddLog("HardDisk", LogClass.LogType.Error_IsAboutToHappen, e);
+            WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, -1); 
         }
 
         /// <summary>

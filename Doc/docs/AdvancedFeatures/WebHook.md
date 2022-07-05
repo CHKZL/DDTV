@@ -14,7 +14,7 @@
 :::
 
 ## 事件类型
-```c#
+```CSharp
         public enum HookType
         {
             /// <summary>
@@ -61,6 +61,14 @@
             /// 执行Shell命令完成
             /// </summary>
             RunShellComplete,
+            /// <summary>
+            /// 下载任务成功结束
+            /// </summary>
+            DownloadEndMissionSuccess,
+            /// <summary>
+            /// 剩余空间不足
+            /// </summary>
+            SpaceIsInsufficientWarn,
         }
 ```
 
@@ -135,7 +143,7 @@
 ```
 ## 返回数据说明
 
-```C#  
+```CSharp  
         public class Message
         {
             /// <summary>
