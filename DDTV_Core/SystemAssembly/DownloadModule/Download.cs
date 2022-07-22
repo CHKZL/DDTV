@@ -480,11 +480,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
                     }
                     if (conut > 6)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】请求网络文件超时，等待任务自动重置..");
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"【{roomInfo.uname}({roomInfo.room_id})】请求网络文件超时，等待任务自动重置..");
                         return -1;
                     }
                     Thread.Sleep(5000);

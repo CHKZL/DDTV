@@ -372,15 +372,15 @@
                                             <ComboBoxItem Content="10MB(测试用，请勿选择)" Tag="9"></ComboBoxItem>
                                         </hc:ComboBox>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" Margin="0,0,460,0" SelectionChanged="RecQualityComboBox_SelectionChanged">
+                                    <Grid Width="835">
+                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" SelectionChanged="RecQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="170">
                                             <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
                                             <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
-                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="205,0,255,0" SelectionChanged="PlayQualityComboBox_SelectionChanged">
+                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="205,0,0,0" SelectionChanged="PlayQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="170">
                                             <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
@@ -388,8 +388,8 @@
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="565,32,29,3" Click="ForceCDNResolution_Click">
+                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>

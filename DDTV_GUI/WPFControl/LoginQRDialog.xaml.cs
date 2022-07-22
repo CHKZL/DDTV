@@ -37,15 +37,17 @@ namespace DDTV_GUI.WPFControl
             Text.Content = __;
             ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
             ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; 
-            //ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true).Save("./BiliQR.png", System.Drawing.Imaging.ImageFormat.Png);
-
             LoginQR.Source = ChangeBitmapToImageSource(ByQRCode.LoginByQrCode().SKData);
             
         }
 
         private void ByQRCode_QrCodeRefresh(QR_Object newQrCode)
         {
-            LoginQR.Source = ChangeBitmapToImageSource(newQrCode.SKData);
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                LoginQR.Source = ChangeBitmapToImageSource(newQrCode.SKData);
+            }));
+            
         }
 
         private void ByQRCode_QrCodeStatus_Changed(ByQRCode.QrCodeStatus status, BiliAccount.Account account = null)
@@ -62,13 +64,11 @@ namespace DDTV_GUI.WPFControl
                 }
                 BilibiliUserConfig.account.ExTime = account.Expires_Cookies;
                 BilibiliUserConfig.account.csrf = account.CsrfToken;
-
                 BilibiliUserConfig.WritUserFile();
                 //开始房间巡逻
                 LoginEndEvent.Invoke(this, EventArgs.Empty);
                 DDTV_Core.InitDDTV_Core.ClientAID = CoreConfig.GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
             }
-
         }
         [System.Runtime.InteropServices.DllImport("gdi32.dll")]
         public static extern bool DeleteObject(IntPtr hObject);
