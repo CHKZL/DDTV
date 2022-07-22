@@ -16,7 +16,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// </summary>
         /// <param name="url">目标网页地址</param>
         /// <returns></returns>
-        public static string GetRequest(string url, bool IsCookie = true, string Referer = "",string ContentType = "application/x-www-form-urlencoded")
+        public static string GetRequest(string url, bool IsCookie = true, string Referer = "",string ContentType = "application/x-www-form-urlencoded",bool IsMandatoryIPv4 = false)
         {
             //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
             if (string.IsNullOrEmpty(url))
@@ -32,6 +32,20 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = NetClass.UA();
             req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
+            if (IsMandatoryIPv4)
+            {
+                req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+                {
+                    if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        return new IPEndPoint(IPAddress.Any, 0);
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("no IPv4 address");
+                    }  
+                };
+            }
             if (!string.IsNullOrEmpty(Referer))
             {
                 req.Referer = Referer;

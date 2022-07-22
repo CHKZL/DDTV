@@ -262,18 +262,19 @@ namespace BiliAccount.Core
                 }
                 else
                 {
-                    switch (obj.data)
+                    int DC = Convert.ToInt32(obj.data);
+                    if(DC==-4)
                     {
-                        case -4://未扫描
-                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                            break;
-
-                        case -5://已扫描
-                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
-                            break;
-
-                        default:
-                            break;
+                        //未扫描
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
+                    }
+                    else if (DC == -5)
+                    {
+                        //已扫描
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
+                    }
+                    else
+                    {
                     }
                 }
             }
