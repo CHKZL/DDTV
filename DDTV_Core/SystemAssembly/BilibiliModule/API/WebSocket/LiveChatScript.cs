@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Buffers;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using static System.Buffers.Binary.BinaryPrimitives;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
 {
@@ -11,15 +9,16 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
     {
         internal static void WriteBE(this BinaryWriter writer, int value)
         {
-            unsafe { SwapBytes((byte*)&value, 4); }
+            if(BitConverter.IsLittleEndian)
+			    value = ReverseEndianness(value)
             writer.Write(value);
         }
         internal static void WriteBE(this BinaryWriter writer, ushort value)
         {
-            unsafe { SwapBytes((byte*)&value, 2); }
+            if(BitConverter.IsLittleEndian)
+			    value = ReverseEndianness(value)
             writer.Write(value);
         }
-
         internal static unsafe void SwapBytes(byte* ptr, int length)
         {
             for (int i = 0 ; i < length / 2 ; ++i)
