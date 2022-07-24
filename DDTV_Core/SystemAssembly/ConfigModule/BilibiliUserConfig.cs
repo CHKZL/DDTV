@@ -68,6 +68,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             }
             else
             {
+                account.loginStatus = LoginStatus.LoginFailure;
                 return login.VerifyLogin.QRLogin(satrtType);
             }
         }
