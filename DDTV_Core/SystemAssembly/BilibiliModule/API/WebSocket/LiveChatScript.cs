@@ -10,13 +10,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
         internal static void WriteBE(this BinaryWriter writer, int value)
         {
             if(BitConverter.IsLittleEndian)
-                value = ReverseEndianness(value)
+                value = ReverseEndianness(value);
             writer.Write(value);
         }
         internal static void WriteBE(this BinaryWriter writer, ushort value)
         {
             if(BitConverter.IsLittleEndian)
-                value = ReverseEndianness(value)
+                value = ReverseEndianness(value);
             writer.Write(value);
         }
         internal static unsafe void SwapBytes(byte* ptr, int length)
