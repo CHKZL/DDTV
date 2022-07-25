@@ -352,6 +352,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     break;
                 case "ROOM_BANNER":
                     //房间横幅信息，应该就是置顶的那个跳转广告
+                    break;                
+                case "ACTIVITY_RED_PACKET":
+                    //红包抽奖弹幕
                     break;
                 default:
                     //Console.WriteLine(cmd);
