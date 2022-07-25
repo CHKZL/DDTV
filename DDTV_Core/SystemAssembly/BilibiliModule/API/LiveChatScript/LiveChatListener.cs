@@ -333,6 +333,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //开播_心跳
                 case "LIVE":
                     MessageReceived(this, new LiveEventArgs(obj));
+                    //应该还有收费直播的鉴权信息，但是这里就不细说了
                     break;
                 //下播_心跳
                 case "PREPARING":
@@ -358,9 +359,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     break;
                  case "CUT_OFF":
                     //切断直播间
-                    break;
-                  case "LIVE":
-                    //付费直播间鉴权广播
                     break;
                 default:
                     //Console.WriteLine(cmd);
