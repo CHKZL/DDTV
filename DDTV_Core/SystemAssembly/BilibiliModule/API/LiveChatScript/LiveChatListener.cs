@@ -339,22 +339,28 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     MessageReceived(this, new PreparingpEventArgs(obj));
                     break;
                 case "INTERACT_WORD":
-                    //互动词，暂时不知道作用
+                    //进场消息（弹幕区展示进场消息，粉丝勋章，姥爷，榜单）和用户关注、分享、特别关注直播间
                     break;
                 case "PANEL":
                     //小时榜信息更新
                     break;
                 case "ONLINE_RANK_COUNT":
-                    //不知道是什么“在线等级计数”
+                    //服务等级（降级后会变化）
                     break;
                 case "ONLINE_RANK_V2":
-                    //不知道是啥
+                    //高能榜更新
                     break;
                 case "ROOM_BANNER":
                     //房间横幅信息，应该就是置顶的那个跳转广告
                     break;                
                 case "ACTIVITY_RED_PACKET":
                     //红包抽奖弹幕
+                    break;
+                 case "CUT_OFF":
+                    //切断直播间
+                    break;
+                  case "LIVE":
+                    //付费直播间鉴权广播
                     break;
                 default:
                     //Console.WriteLine(cmd);
