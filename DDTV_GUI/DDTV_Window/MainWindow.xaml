@@ -190,6 +190,11 @@
                                 <hc:Poptip Content="增删改等更多功能在鼠标右键菜单中" PlacementType="BottomLeft"/>
                             </hc:AdornerElement.Instance>
                         </ListView>
+                        <Button Name="ForceRefreshLiveBroadcastList" Content="重置列表" Margin="785,21,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ForceRefreshLiveBroadcastList_Click">
+                            <hc:AdornerElement.Instance>
+                                <hc:Poptip Content="点击后会强制刷新该列表(请在该列表卡住的情况下再点击)" PlacementType="BottomLeft"/>
+                            </hc:AdornerElement.Instance>
+                        </Button>
                     </Grid>
 
                 </TabItem>

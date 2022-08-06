@@ -17,8 +17,8 @@
     <Copyright></Copyright>
     <PackageTags></PackageTags>
     <OutputType>Library</OutputType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageIcon>DDTV.png</PackageIcon>
+    <PackageReadmeFile></PackageReadmeFile>
+    <PackageIcon></PackageIcon>
     <PackageProjectUrl>https://github.com/CHKZL/DDTV</PackageProjectUrl>
   </PropertyGroup>
 
@@ -28,14 +28,6 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="F:\DDTV.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-    <None Include="F:\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
