@@ -54,7 +54,6 @@ namespace DDTV_GUI.UpdateInterface
         {
             Task.Run(() =>
             {
-               
                 while (true)
                 {
                     try

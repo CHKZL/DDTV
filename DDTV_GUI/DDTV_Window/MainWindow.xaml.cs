@@ -1154,6 +1154,11 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, DDTV_Core.Tool.Dokidoki.IsDoNotSleepState.ToString(), CoreConfigClass.Group.Download);
         }
 
+        /// <summary>
+        /// 选择新的录制存放路径
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Select_Save_Path_Button_Click(object sender, RoutedEventArgs e)
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
@@ -1195,7 +1200,11 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
         }
-
+        /// <summary>
+        /// 选择新的缓存文件存放路径
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Select_Tmp_Path_Button_Click(object sender, RoutedEventArgs e)
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
@@ -1319,6 +1328,30 @@ namespace DDTV_GUI.DDTV_Window
             FileOperation.SpaceIsInsufficientWarn = (bool)SpaceIsInsufficientWarn.IsChecked ? true : false;
 
             CoreConfig.SetValue(CoreConfigClass.Key.SpaceIsInsufficientWarn, FileOperation.SpaceIsInsufficientWarn.ToString(), CoreConfigClass.Group.Core);
+        }
+
+        /// <summary>
+        /// 直播监控列表强制刷新按钮点击事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ForceRefreshLiveBroadcastList_Click(object sender, RoutedEventArgs e)
+        {
+            List<BindingData.LiveList> _ = new();
+            foreach (var item in Rooms.RoomInfo)
+            {
+                BindingData.LiveList live = new(item.Value.uname,
+                    item.Value.live_status == 1 ? "直播中" : " 摸了",
+                    item.Value.IsRemind ? "     √" : "     ×",
+                    item.Value.IsAutoRec ? "     √" : "     ×",
+                    item.Value.room_id,
+                    item.Value.uid,
+                    item.Value.live_status,
+                    item.Value.IsRecDanmu ? "     √" : "     ×");
+                _.Add(live);
+            }
+            LiveList.ItemsSource = _;
+            UpdateInterface.Main.ActivationInterface = 1;
         }
     }
 }
