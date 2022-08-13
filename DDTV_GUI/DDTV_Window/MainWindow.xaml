@@ -140,7 +140,8 @@
                                     <GridViewColumn Header="开播提醒" Width="90" DisplayMemberBinding="{Binding IsRemind}"/>
                                     <GridViewColumn Header="自动录制" Width="90" DisplayMemberBinding="{Binding IsRec}"/>
                                     <GridViewColumn Header="录制弹幕" Width="90" DisplayMemberBinding="{Binding IsDanmu}"/>
-                                    <GridViewColumn Header="房间号" Width="130" DisplayMemberBinding="{Binding RoomId}"/>
+                                    <GridViewColumn Header="房间号" Width="100" DisplayMemberBinding="{Binding RoomId}"/>
+                                    <GridViewColumn Header="标题" Width="170" DisplayMemberBinding="{Binding Title}"/>
                                 </GridView>
 
                             </ListView.View>
@@ -207,8 +208,8 @@
                                 <GridViewColumn Header="已下载大小" Width="110" DisplayMemberBinding="{Binding DownSzie}"/>
                                 <GridViewColumn Header="开始时间" Width="120" DisplayMemberBinding="{Binding StartTime}"/>
                                 <GridViewColumn Header="下载速度" Width="80" DisplayMemberBinding="{Binding DownloadSpe}"/>
-                                <GridViewColumn Header="标题" Width="300" DisplayMemberBinding="{Binding Title}"/>
-
+                                <GridViewColumn Header="标题" Width="150" DisplayMemberBinding="{Binding Title}"/>
+                                <GridViewColumn Header="CDN_Host" Width="150" DisplayMemberBinding="{Binding Cdn_Host}"/>
                             </GridView>
                         </ListView.View>
                         <ListView.ContextMenu>
