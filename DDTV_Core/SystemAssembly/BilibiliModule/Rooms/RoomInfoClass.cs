@@ -295,6 +295,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             ///  用于房间监控系统，记录开播时的关注数
             /// </summary>
             public int MonitoringSystem_Attention = 0;
+            /// <summary>
+            /// 当前Host地址
+            /// </summary>
+            public string Host { set; get; } = "";
         }
         public class RoomWebSocket
         {

@@ -90,6 +90,12 @@
                             <Image Source="/Resources/Img/UI/close.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
+                    <Separator/>
+                    <MenuItem Header="查看当前播放窗口详情" Click="PlayWindowInfo_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                 </ContextMenu>
             </Grid.ContextMenu>
             <!--<Grid x:Name="PlayControl" Background="#CC00A1D6" Height="38" VerticalAlignment="Bottom">
