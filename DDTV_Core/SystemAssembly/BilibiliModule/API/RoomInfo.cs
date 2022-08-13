@@ -39,7 +39,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     }
                 }
                 LT += "]}";
-                string WebText = NetworkRequestModule.Post.Post.SendRequest_GetWebInfo_JsonClass("https://api.live.bilibili.com/room/v1/Room/get_status_info_by_uids", LT, "UTF-8");
+                string WebText = NetworkRequestModule.Post.Post.SendRequest_GetWebInfo_JsonClass($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/get_status_info_by_uids", LT, "UTF-8");
 
                 if (string.IsNullOrEmpty(WebText))
                 {
@@ -137,7 +137,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         internal static RoomInfoClass.RoomInfo room_init(long uid)
         {
             string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomid);
+            string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/room_init?id=" + roomid);
             
             if (string.IsNullOrEmpty(WebText))
             {
@@ -229,11 +229,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             string WebText=String.Empty;
             if (RoomId==0)
             {
-                WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/room/v1/Room/get_info?id={Rooms.Rooms.GetValue(uid, CacheType.room_id)}");
+                WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/get_info?id={Rooms.Rooms.GetValue(uid, CacheType.room_id)}");
             }
             else
             {
-                WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/room/v1/Room/get_info?id={RoomId}");
+                WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/get_info?id={RoomId}");
             }
            
             if (string.IsNullOrEmpty(WebText))
@@ -295,7 +295,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         {
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             List<int> _out=new List<int>();
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn=10000&platform=web");
+            string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/playUrl?cid=" + roomId + $"&qn=10000&platform=web");
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetQuality获取网络数据为空或超时，开始重试");
@@ -350,7 +350,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl_Mandatory(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine,bool IsPlay=false)
+        public static string playUrl_v2(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine,bool IsPlay=false)
         {
             List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
         PlayR: if (!GetQuality(uid).Contains((int)qn))
@@ -358,13 +358,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 qn = RoomInfoClass.Quality.OriginalPainting;
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
-            string WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.live.bilibili.com/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)qn}&platform=web&ptype=8");
+            string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)qn}&platform=web&ptype=8");
 
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
-                return playUrl_Mandatory(uid, qn);
+                return playUrl_v2(uid, qn);
             }
             try
             {
@@ -411,7 +411,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
 #endif
                             Thread.Sleep(3000);
-                            return playUrl_Mandatory(uid, qn);
+                            return playUrl_v2(uid, qn);
                         }
                         else
                         {
@@ -433,11 +433,26 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             catch (Exception e)
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误2，出现错误的字符串:{WebText}", true, e,false);
-                return playUrl_Mandatory(uid, qn);
+                //return playUrl_v2(uid, qn);
             }  
             return null;
         }
 
+        public static string GetPlayUrl(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine, bool IsPlay = false)
+        {
+            switch(CoreConfig.APIVersion)
+            {
+                case 1:
+                    return playUrl_v1(uid, qn, line, IsPlay);
+                   
+                case 2:
+                    return playUrl_v2(uid, qn, line, IsPlay);
+                 
+                default:
+                    return playUrl_v2(uid, qn, line, IsPlay);
+                 
+            }
+        }
 
         /// <summary>
         /// 获取房间直播视频流地址
@@ -445,7 +460,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine)
+        public static string playUrl_v1(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine, bool IsPlay = false)
         {
             List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
             PlayR: if (!GetQuality(uid).Contains((int)qn))
@@ -454,13 +469,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
+            string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
 
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
-                return playUrl(uid, qn);          
+                return playUrl_v1(uid, qn);          
             }
 
             JObject JO =new JObject();
@@ -471,7 +486,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             catch (Exception e)
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误", true, e);
-                return playUrl(uid, qn);
+                return playUrl_v1(uid, qn);
             }
 
             try
@@ -526,6 +541,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             catch (Exception e)
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取视频流地址失败，失败的json串:\n{JO.ToString()}", true, e);
+
             }
             return null;
         }

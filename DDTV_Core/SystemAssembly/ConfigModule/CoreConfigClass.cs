@@ -279,6 +279,16 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：false
             /// </summary>
             SpaceIsInsufficientWarn,
+            /// <summary>
+            /// 使用自己的代理地址替换默认的API地址（字符串）
+            /// 组：Core   默认值：string.Empty
+            /// </summary>
+            ReplaceAPI,
+            /// <summary>
+            /// 使用的API版本 (应该为有限的int值  1：v1 API  2：2v API)
+            /// 组：Core   默认值：1
+            /// </summary>
+            APIVersion,
         }
     }
 }

@@ -87,6 +87,7 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Start();
             Loaded += new RoutedEventHandler(Topping);
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
+            this.Title = Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -194,7 +195,7 @@ namespace DDTV_GUI.DDTV_Window
                     Quality = 10000;
                     Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
                 }
-                string Url = RoomInfo.playUrl_Mandatory(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line,true);
+                string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line,true);
                 windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
                 roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
                 this.Dispatcher.Invoke(() =>

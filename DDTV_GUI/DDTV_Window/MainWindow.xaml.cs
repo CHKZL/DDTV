@@ -232,7 +232,9 @@ namespace DDTV_GUI.DDTV_Window
             TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
             DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
             SpaceIsInsufficientWarn.IsChecked= DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
-
+            ReplaceAPIText.Text = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
+            SelectAPI_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 1 ? true : false;
+            SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1352,6 +1354,44 @@ namespace DDTV_GUI.DDTV_Window
             }
             LiveList.ItemsSource = _;
             UpdateInterface.Main.ActivationInterface = 1;
+        }
+
+        private void SaveReplaceAPI_Click(object sender, RoutedEventArgs e)
+        {
+            //DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI
+            MessageBoxResult dr = MessageBox.Show("确认后会修改API请求所使用的域名，如果是第三方API代理无法访问或者错误，DDTV的录制功能将会出现意料外的错误\r\n确认修改吗？", "确定修改API请求域名吗", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                string APIURL = ReplaceAPIText.Text.ToLower();
+                if(APIURL.Substring(0,4)!="http"||APIURL.Substring(APIURL.Length-1,1)=="/"|| APIURL.Substring(APIURL.Length - 1, 1) != @"\")
+                {
+                    MessageBox.Show("地址有误！\r\n请确保输入的API使用的域名为http地址并不以斜杠结尾\r\n如：https://api.live.bilibili.com");
+                    return;
+                }
+                else
+                {
+                    CoreConfig.ReplaceAPI = APIURL;
+                    CoreConfig.SetValue(CoreConfigClass.Key.ReplaceAPI, APIURL, CoreConfigClass.Group.Core);
+                    Growl.Success($"修改API代理为{APIURL}");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改API代理为{APIURL}", false, null, false);
+                }
+            }
+        }
+
+        private void SelectAPI_v1_Click(object sender, RoutedEventArgs e)
+        {
+            CoreConfig.APIVersion = 1;
+            CoreConfig.SetValue(CoreConfigClass.Key.APIVersion, CoreConfig.APIVersion.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success($"修改API版本为v{CoreConfig.APIVersion}");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改API版本为v{CoreConfig.APIVersion}", false, null, false);
+        }
+
+        private void SelectAPI_v2_Click(object sender, RoutedEventArgs e)
+        {
+            CoreConfig.APIVersion = 2;
+            CoreConfig.SetValue(CoreConfigClass.Key.APIVersion, CoreConfig.APIVersion.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success($"修改API版本为v{CoreConfig.APIVersion}");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改API版本为v{CoreConfig.APIVersion}", false, null, false);
         }
     }
 }

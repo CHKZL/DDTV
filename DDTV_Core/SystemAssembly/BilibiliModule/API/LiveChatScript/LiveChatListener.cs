@@ -443,7 +443,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         {
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage ret = await client.PostAsync("https://api.live.bilibili.com/room/v1/Room/room_init?id=" + roomId, new StringContent(""));
+                HttpResponseMessage ret = await client.PostAsync($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/room_init?id=" + roomId, new StringContent(""));
                 string k = await ret.Content.ReadAsStringAsync();
                 //dynamicClass cc = JsonConvert.DeserializeObject<dynamicClass>(k);
                 dynamicClass cc = JsonMapper.ToObject<dynamicClass>(k);

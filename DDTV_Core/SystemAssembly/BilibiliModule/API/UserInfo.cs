@@ -24,7 +24,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         internal static RoomInfoClass.RoomInfo info(long uid)
         {
             string WebText = NetworkRequestModule.Get.Get.GetRequest("http://api.bilibili.com/x/space/acc/info?mid=" + uid);
-
+            
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"info获取网络数据为空或超时");
@@ -123,6 +123,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 return false;
             }
             string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/nav");
+            
             try
             {
                 JObject root = (JObject)JsonConvert.DeserializeObject(WebText);
@@ -211,6 +212,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 pg++;
                 string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/relation/followings?vmid=" + uid + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp");
+                //string WebText = NetworkRequestModule.Get.Get.GetRequest($"https://{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/x/relation/followings?vmid=" + uid + "&pn=" + pg + "&ps=50&order=desc&jsonp=jsonp");
                 User.follow.Root root = JsonConvert.DeserializeObject<User.follow.Root>(WebText);
                 if (root.code == 0 && root.data.list.Count > 0)
                 {
