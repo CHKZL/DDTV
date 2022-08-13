@@ -75,12 +75,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    roomInfo.IsUserCancel = true;
-                    foreach (var item in roomInfo.DownloadingList)
+                    if (!roomInfo.IsUserCancel)
                     {
-                        WebHook.SendHook(WebHook.HookType.CancelRec, uid);
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
-                        item.Cancel();
+                        roomInfo.IsUserCancel = true;
+                        foreach (var item in roomInfo.DownloadingList)
+                        {
+                            WebHook.SendHook(WebHook.HookType.CancelRec, uid);
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"取消【{ roomInfo.uname}({roomInfo.room_id})】的下载任务");
+                            item.Cancel();
+                            return true;
+                        }
+                    }
+                    else
+                    {
                         return true;
                     }
                 }
@@ -305,7 +312,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"录制结束操作：UID:{uid}的任务触发IsCancel操作，跳过任务结束操作操作");
                     }
-                    roomInfo.live_status = 0;
+                    if (!IsCancel)
+                    {
+                        roomInfo.live_status = 0;
+                    }
                     roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
                     //任务结束流程完成
                 }

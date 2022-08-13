@@ -7,23 +7,17 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>BiliAccount</PackageId>
     <Version>2.5.5.27</Version>
-    <Authors>LeoChen</Authors>
-    <Company>zhangbudademao.com</Company>
+    <Authors></Authors>
+    <Company></Company>
     <Product>BiliAccount</Product>
     <Description>用于处理B站账号类的操作</Description>
-    <Copyright>Copyright © 2022 zhangbudademao.com, all rights reserved.</Copyright>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/LeoChen98/BiliAccount</PackageProjectUrl>
+    <Copyright></Copyright>
+    <PackageLicenseExpression>GPL2.0</PackageLicenseExpression>
+    <PackageProjectUrl>t</PackageProjectUrl>
     <RepositoryUrl>https://github.com/LeoChen98/BiliAccount</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>bilibili bililive bililogin biliaccount</PackageTags>
-    <PackageIcon>favicon_4.png</PackageIcon>
-    <PackageReleaseNotes>
-      adds:
-        1. 新增 `Linq.ByQRCode.LoginByQrCodeUrl`。
-      enhancements:
-        1. 更新引用库版本。
-    </PackageReleaseNotes>
+    <PackageReleaseNotes>    </PackageReleaseNotes>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -125,13 +119,6 @@
   <ItemGroup>
     <None Remove="nuget.exe" />
     <None Remove="nuget_release.bat" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Include="favicon_4.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
   </ItemGroup>
   
   <ItemGroup Condition="'$(TargetFramework)' == 'net48'">

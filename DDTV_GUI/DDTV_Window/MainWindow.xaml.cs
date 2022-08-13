@@ -573,7 +573,7 @@ namespace DDTV_GUI.DDTV_Window
                 int roomid = UpdateInterface.Main.recList[Index].RoomId;
                 if (Download.CancelDownload(Uid))
                 {
-                    Growl.Success($"已取消[{name}({roomid})]录制任务");
+                    Growl.Success($"已取消[{name}({roomid})]录制任务，界面显示有延迟，稍后会自动消失");
                 }
                 else
                 {

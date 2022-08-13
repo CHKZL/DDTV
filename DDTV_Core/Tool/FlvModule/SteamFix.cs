@@ -14,6 +14,9 @@ namespace DDTV_Core.Tool.FlvModule
         private static long FlvVideoFPS = 0;
         private static long ErrorAudioFPS = 0;
         private static long ErrorVideoFPS = 0;
+
+        private static byte[] EndFlvAudioData = null;
+        private static byte[] EndFlvVideoData = null;
         public static byte[] FixWrite(byte[] data, Downloads downloads, out uint Len)
         {
             uint PakeTime = 0;
@@ -131,12 +134,10 @@ namespace DDTV_Core.Tool.FlvModule
                                 Len=15;
                                 return data;
                             }
-                    }
-                    
+                    }             
                 }
                 else
-                {
-                    
+                {     
                     downloads.flvTimes.IsTagHeader=!downloads.flvTimes.IsTagHeader;
                     if (downloads.flvTimes.FlvTotalTagCount<2)
                     {
@@ -154,6 +155,7 @@ namespace DDTV_Core.Tool.FlvModule
                                     data.CopyTo(TEST, downloads.FlvScriptTag.FistAbody.Length);
                                     downloads.FlvScriptTag.FistAbody=TEST;
                                 }
+                                downloads.flvTimes.FlvAudioTagCount++;
                                 break;
                             case 0x09:
                                 if (downloads.flvTimes.FlvVideoTagCount==1)
@@ -163,9 +165,10 @@ namespace DDTV_Core.Tool.FlvModule
                                     data.CopyTo(TEST, downloads.FlvScriptTag.FistVbody.Length);
                                     downloads.FlvScriptTag.FistVbody=TEST;
                                 }
+                                downloads.flvTimes.FlvVideoTagCount++;
                                 break;
                         }
-                        downloads.flvTimes.FlvAudioTagCount++;
+                        
                     }
                     Len=15;
                     return data;
