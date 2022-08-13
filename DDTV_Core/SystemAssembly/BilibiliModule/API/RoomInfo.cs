@@ -523,7 +523,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 goto PlayR;
                             }
                             string Url = Roomdurl["durl"][(int)line]["url"].ToString();
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功");
+                            string Host = Url.Replace(".com/","●").Split('●')[0]+".com";
+                            if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo))
+                            {
+                                roomInfo.Host = Host;
+                            }
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功：{Url}");
                             return Url;
 
                         }

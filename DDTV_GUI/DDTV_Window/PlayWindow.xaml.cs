@@ -87,7 +87,7 @@ namespace DDTV_GUI.DDTV_Window
             VolumeTimer.Start();
             Loaded += new RoutedEventHandler(Topping);
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
-            this.Title = Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+            
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -196,7 +196,7 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
                 }
                 string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line,true);
-                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname)+"-"+ Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
                 roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
                 this.Dispatcher.Invoke(() =>
                     this.Title = windowInfo.title
@@ -990,5 +990,19 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
+        private void PlayWindowInfo_Click(object sender, RoutedEventArgs e)
+        {
+            string text = "数据获取中，请稍候再查看";
+            if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            {
+                text = 
+                    $"用户名:\r\n{roomInfo.uname}\r\n\r\n" +
+                    $"UID:\r\n{roomInfo.uid}\r\n\r\n" +
+                    $"标题:\r\n{roomInfo.title}\r\n\r\n" +
+                    $"房间号:\r\n{roomInfo.room_id}\r\n\r\n" +
+                    $"Host:\r\n{roomInfo.Host}\r\n\r\n";
+            }
+            HandyControl.Controls.MessageBox.Show(text);
+        }
     }
 }
