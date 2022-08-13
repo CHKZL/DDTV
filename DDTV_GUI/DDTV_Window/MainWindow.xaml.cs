@@ -1363,7 +1363,7 @@ namespace DDTV_GUI.DDTV_Window
             if (dr == MessageBoxResult.OK)
             {
                 string APIURL = ReplaceAPIText.Text.ToLower();
-                if(APIURL.Substring(0,4)!="http"||APIURL.Substring(APIURL.Length-1,1)=="/"|| APIURL.Substring(APIURL.Length - 1, 1) != @"\")
+                if(APIURL.Substring(0,4)!="http"||APIURL.Substring(APIURL.Length-1,1)=="/"|| APIURL.Substring(APIURL.Length - 1, 1) == @"\")
                 {
                     MessageBox.Show("地址有误！\r\n请确保输入的API使用的域名为http地址并不以斜杠结尾\r\n如：https://api.live.bilibili.com");
                     return;
