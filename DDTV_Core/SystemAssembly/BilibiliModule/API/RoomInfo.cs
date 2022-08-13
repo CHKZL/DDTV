@@ -396,7 +396,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                     }
                                     else
                                     {
-                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(P2P):获取到CDN地址为{item.Host}的下载流，该地址为mcdn地址，跳过");
+                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(mcdn):获取到CDN地址为{item.Host}的下载流，该地址为mcdn地址");
+                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
                                     }
                                 }
                             }

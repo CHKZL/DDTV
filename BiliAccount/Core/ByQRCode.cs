@@ -48,8 +48,26 @@ namespace BiliAccount.Core
         /// </summary>
         public static void CancelLogin()
         {
-            Monitor.Dispose();
-            Refresher.Dispose();
+            if(Monitor!=null)
+            {
+                try
+                {
+                    Monitor.Dispose();
+                }
+                catch (Exception)
+                {}
+            }
+            if (Refresher!=null)
+            {
+                try
+                {
+                    Refresher.Dispose();
+                }
+                catch (Exception)
+                { }
+            }
+           
+            
         }
 
         /// <summary>
@@ -79,6 +97,7 @@ namespace BiliAccount.Core
 
                 if (obj.code == 0)
                 {
+                    CancelLogin();
                     Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
                 }

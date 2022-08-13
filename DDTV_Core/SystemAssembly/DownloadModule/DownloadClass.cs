@@ -199,7 +199,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                         return;
                                     }
-
+                                    bool IsEnd = false;
                                     for (int i = 0; i < DataLength; i++)
                                     {
                                         int EndF = 0;
@@ -211,21 +211,26 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             catch (NotSupportedException e)
                                             {
+                                                IsEnd = true;
                                                 //流不支持读取
                                                 EndF = -1;
+                                                break;
                                             }
                                             catch (ObjectDisposedException e)
                                             {
+                                                IsEnd = true;
                                                 //被关闭了
                                                 EndF = -1;
+                                                break;
                                             }
-                                            
                                         }
                                         else
                                         {
+                                            IsEnd = true;
                                             EndF = -1;
+                                            break;
                                         }
-                                        if (EndF != -1)
+                                        if (!IsEnd)
                                         {
                                             data[i] = (byte)EndF;
                                             DownloadCount++;
@@ -233,42 +238,47 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         }
                                         else
                                         {
-                                            Clear();
-                                            if (flvTimes.FlvTotalTagCount < 3)
-                                            {
-                                                Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
-                                                if (File.Exists(fileStream.Name))
-                                                {
-                                                    Tool.FileOperation.Del(fileStream.Name);
-                                                }
-                                            }
-                                            fileStream.Close();
-                                            fileStream.Dispose();
+                                            break;
+                                        }
+                                    }
 
-                                            if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                                    if (IsEnd)
+                                    {
+                                        Clear();
+                                        if (flvTimes.FlvTotalTagCount < 3)
+                                        {
+                                            Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
+                                            if (File.Exists(fileStream.Name))
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{roomInfo.uname}({roomInfo.room_id})]录制流已断开，但监测到直播状态还为“开播中”持续监听中，尝试继续监听");
-                                                if (resp != null)
-                                                {
-                                                    resp.Close();
-                                                    resp.Dispose();
-                                                }
-                                                roomInfo.IsDownload = false;
-                                                Download.AddDownloadTaskd(Uid, false);
-                                                return;
+                                                Tool.FileOperation.Del(fileStream.Name);
                                             }
-                                            else
+                                        }
+                                        fileStream.Close();
+                                        fileStream.Dispose();
+
+                                        if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1" && !IsCancel)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{roomInfo.uname}({roomInfo.room_id})]录制流已断开，但监测到直播状态还为“开播中”持续监听中，尝试继续监听");
+                                            if (resp != null)
                                             {
-                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
-                                                if (resp != null)
-                                                {
-                                                    resp.Close();
-                                                    resp.Dispose();
-                                                }
-                                                roomInfo.IsDownload = false;
-                                                Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
-                                                return;
+                                                resp.Close();
+                                                resp.Dispose();
                                             }
+                                            roomInfo.IsDownload = false;
+                                            Download.AddDownloadTaskd(Uid, false);
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
+                                            if (resp != null)
+                                            {
+                                                resp.Close();
+                                                resp.Dispose();
+                                            }
+                                            roomInfo.IsDownload = false;
+                                            Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
+                                            return;
                                         }
                                     }
 
@@ -306,7 +316,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         double Proportion = ts.TotalMilliseconds / 3000.0;
                                         long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
-                                        double T = CurrentDownloadSize / Proportion/3;
+                                        double T = CurrentDownloadSize / Proportion / 3;
                                         DownloadSpe = Convert.ToInt64(T);
                                         SpeedCalibration_Size = TotalDownloadCount;
                                         SpeedCalibration_Time = DateTime.Now;
@@ -322,8 +332,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         IsDownloading = false;
                         Rooms.RoomInfo[Uid].DownloadingList.RemoveAt(Rooms.RoomInfo[Uid].DownloadingList.Count - 1);
 
-
-                        Download.AddDownloadTaskd(Uid, false);
+                        if (!IsCancel)
+                        {
+                            Download.AddDownloadTaskd(Uid, false);
+                        }
                         return;
                     }
                     catch (Exception e)
@@ -331,7 +343,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误", true, e);
                         roomInfo.IsDownload = false;
                         IsDownloading = false;
-                        Download.AddDownloadTaskd(Uid, false);
+                        if (!IsCancel)
+                        {
+                            Download.AddDownloadTaskd(Uid, false);
+                        }
                         return;
                     }
                 });
