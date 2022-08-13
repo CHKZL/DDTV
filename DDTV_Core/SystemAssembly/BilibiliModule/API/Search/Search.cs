@@ -15,6 +15,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.Search
             string B = NetworkRequestModule.Get.Get.GetRequest("http://api.bilibili.com/x/web-interface/search/type?"+
                 $"search_type=live_user&" +
                 $"keyword={KeyWord}");
+           
             JObject JO = (JObject)JsonConvert.DeserializeObject(B);
             return JO;
         }

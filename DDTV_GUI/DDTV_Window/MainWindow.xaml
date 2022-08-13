@@ -400,7 +400,32 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
-
+                                    <Grid Width="850" Margin="5">
+                                        <TextBox x:Name="ReplaceAPIText" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="使用API地址" Style="{StaticResource TextBoxExtend}" Text="https://api.live.bilibili.com" Margin="0,0,615,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="【重要】修改请求所使用的API地址，如果你明白这个值是用来干什么并且自建代理\反代可以进行修改，默认情况下都应该为https://api.live.bilibili.com" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </TextBox>
+                                        <Button Name="SaveReplaceAPI" Content="保存" Margin="240,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SaveReplaceAPI_Click"/>
+                                        <!--<hc:ButtonGroup Margin="305,27,240,0">
+                                            <TextBlock HorizontalAlignment="Left" Margin="5" Text="切换API版本" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                            <RadioButton Content="使用v1 API" IsChecked="True"/>
+                                            <RadioButton Content="使用v2 API"/>
+                                        </hc:ButtonGroup>-->
+                                        <TextBlock HorizontalAlignment="Left" Margin="330,2,0,0" Text="切换API版本" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <hc:ButtonGroup Margin="330,27,280,0" Style="{StaticResource ButtonGroupSolid}">
+                                            <RadioButton Name="SelectAPI_v1" Content="使用v1 API" IsChecked="True" Click="SelectAPI_v1_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="V1或者V2 请根据网络状况自行选择，在网络条件好的地方V2比V1稳定，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                            <RadioButton Name="SelectAPI_v2" Content="使用v2 API" Click="SelectAPI_v2_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="V1或者V2 请根据网络状况自行选择，在网络条件好的地方V2比V1稳定，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                        </hc:ButtonGroup>
+                                    </Grid>
                                     <Grid Width="815"  Margin="5">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="录制的同时储存弹幕信息" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
                                         <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="190,5,0,5" Click="DanmuToggle_Click" HorizontalAlignment="Left" Width="36">

@@ -33,7 +33,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                     { "csrf_token", BilibiliUserConfig.account.csrf },
                     { "csrf", BilibiliUserConfig.account.csrf }
                 };
-                JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest_SendDanmu("https://api.live.bilibili.com/msg/send", Params, CK));
+                JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest_SendDanmu($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/msg/send", Params, CK));
                 Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"弹幕发送成功");
             });
         }
@@ -53,7 +53,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             do
             {
                 Thread.Sleep(1000 * new Random().Next(1, 5));
-                data = NetworkRequestModule.Get.Get.GetRequest("https://api.live.bilibili.com/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, false);
+                data = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, false);
                 if(!string.IsNullOrEmpty(data))
                 {
                     break;

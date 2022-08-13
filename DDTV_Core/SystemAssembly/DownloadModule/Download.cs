@@ -354,7 +354,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                         roomInfo.IsDownload = true;
                         downloadClass.Uid = uid;
-                        downloadClass.Url = BilibiliModule.API.RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)RecQuality);
+                        downloadClass.Url = BilibiliModule.API.RoomInfo.GetPlayUrl(uid, (RoomInfoClass.Quality)RecQuality);
                         downloadClass.IsDownloading = true;
                         if (string.IsNullOrEmpty(downloadClass.Url))
                         {

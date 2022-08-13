@@ -16,6 +16,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
         public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
         public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "False", CoreConfigClass.Group.Core));
+        public static string ReplaceAPI = GetValue(CoreConfigClass.Key.ReplaceAPI, "https://api.live.bilibili.com", CoreConfigClass.Group.Core);
+        public static int APIVersion = int.Parse(GetValue(CoreConfigClass.Key.APIVersion, "1", CoreConfigClass.Group.Core));
 
         /// <summary>
         /// 初始化配置文件
@@ -120,6 +122,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _ForceCDNResolution = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.ForceCDNResolution;
             var _ConsoleMonitorMode = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ConsoleMonitorMode;
             var _SpaceIsInsufficientWarn = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
+            var _ReplaceAPI = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
+            var _APIVersion = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion;
         }
         /// <summary>
         /// 获取配置
