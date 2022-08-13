@@ -1349,7 +1349,8 @@ namespace DDTV_GUI.DDTV_Window
                     item.Value.room_id,
                     item.Value.uid,
                     item.Value.live_status,
-                    item.Value.IsRecDanmu ? "     √" : "     ×");
+                    item.Value.IsRecDanmu ? "     √" : "     ×",
+                    item.Value.title);
                 _.Add(live);
             }
             LiveList.ItemsSource = _;

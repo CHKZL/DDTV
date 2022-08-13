@@ -17,6 +17,7 @@ namespace DDTV_GUI.BindingData
         private int roomid;
         private long uid;
         private string isdanmu;
+        private string title;
         public event PropertyChangedEventHandler PropertyChanged;
         public string Name
         {
@@ -138,7 +139,23 @@ namespace DDTV_GUI.BindingData
                 }
             }
         }
-        public LiveList(string name, string state, string isremind, string isrec, int roomid, long uid,int liveState,string isdanmu)
+        public string Title
+        {
+            get
+            {
+                return title;
+            }
+            set
+            {
+                title = value;
+                if (this.PropertyChanged != null)//激发事件，参数为Age属性  
+                {
+                    this.PropertyChanged.Invoke(this, new PropertyChangedEventArgs("Age"));
+                }
+            }
+        }
+        
+        public LiveList(string name, string state, string isremind, string isrec, int roomid, long uid,int liveState,string isdanmu,string title)
         {
             this.name = name;
             this.state = state;
@@ -148,6 +165,7 @@ namespace DDTV_GUI.BindingData
             this.uid = uid;
             this.liveState = liveState;
             this.isdanmu=isdanmu;
+            this.title = title;
         }
     }
 }
