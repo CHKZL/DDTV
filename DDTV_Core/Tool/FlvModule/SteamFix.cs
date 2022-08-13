@@ -110,6 +110,7 @@ namespace DDTV_Core.Tool.FlvModule
                                 data[9]=c[1];
                                 data[10]=c[0];
                                 data[11]=c[3];
+                                downloads.RecordingDuration = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
                                 //PakeTime = BitConverter.ToUInt32(new byte[] { data[10], data[9], data[8], data[11] }, 0);
                                 //if (PakeTime - FlvVideoFPS > 500)
                                 //{
