@@ -104,6 +104,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 下载速度
             /// </summary>
             public long DownloadSpe { get; set; }
+            /// <summary>
+            /// 触发下播次数统计
+            /// </summary>
+            public int LiveStopTriggerStatistics { set; get; }
             public enum DownloadStatus
             {
                 /// <summary>
@@ -208,6 +212,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             try
                                             {
                                                 EndF = stream.ReadByte();
+                                                if(LiveStopTriggerStatistics>5)
+                                                {
+                                                    EndF = -1;
+                                                    IsEnd = true;
+                                                    LiveStopTriggerStatistics = 0;
+                                                }
                                             }
                                             catch (NotSupportedException e)
                                             {
@@ -313,6 +323,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
                                     if (ts.TotalMilliseconds > 3000)
                                     {
+                                        if(roomInfo.live_status!=1)
+                                        {
+                                            LiveStopTriggerStatistics++;
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}",false,null,false);
+                                        }
+                                        else if (roomInfo.live_status == 1)
+                                        {
+                                            LiveStopTriggerStatistics = 0;
+                                        }
                                         double Proportion = ts.TotalMilliseconds / 3000.0;
                                         long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
