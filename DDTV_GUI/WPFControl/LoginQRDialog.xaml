@@ -10,9 +10,9 @@
         Width="360"
         Height="360"
         Background="{DynamicResource RegionBrush}">
-    <hc:SimplePanel>
-        <Button Width="22" Height="22" Command="hc:ControlCommands.Close" Style="{StaticResource ButtonIcon}" Foreground="{DynamicResource PrimaryBrush}" hc:IconElement.Geometry="{StaticResource ErrorGeometry}" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0"/>
+    <hc:SimplePanel HorizontalAlignment="Left" Width="360">
+        <!--<Button Width="22" Height="22" Command="hc:ControlCommands.Close" Style="{StaticResource ButtonIcon}" Foreground="{DynamicResource PrimaryBrush}" hc:IconElement.Geometry="{StaticResource ErrorGeometry}" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0"/>-->
         <Image x:Name="LoginQR" Height="300"  VerticalAlignment="Top" Width="300" Margin="0,030,0,0"/>
-        <Label Name="Text" Content="使用哔哩哔哩手机客户端扫码登陆" Margin="0,329,0,0" VerticalAlignment="Top" FontSize="14" Height="31"/>
+        <Label Name="Text" Content="使用哔哩哔哩手机客户端扫码登陆" Margin="0,329,0,0" VerticalAlignment="Top" FontSize="14" Height="31" Background="{x:Null}" BorderBrush="{x:Null}"/>
     </hc:SimplePanel>
 </Border>

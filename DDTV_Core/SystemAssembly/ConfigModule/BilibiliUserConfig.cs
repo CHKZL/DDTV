@@ -175,8 +175,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             public static void CheckLoginValidity()
             {
                 if (!IsOn)
-                {
-                   
+                { 
                     IsOn = !IsOn;
                     Task.Run(() =>
                     {
@@ -204,6 +203,17 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             Thread.Sleep(IntervalTime);
                         }
                     });
+                }
+                else
+                {
+                    if (!BilibiliModule.API.UserInfo.LoginValidityVerification())
+                    {
+                        if (CheckAccountChanged != null)
+                        {
+                            CheckAccountChanged.Invoke(null, EventArgs.Empty);
+                            IsState = false;
+                        }
+                    }
                 }
             }
         }

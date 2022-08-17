@@ -17,15 +17,24 @@ namespace DDTV_Core.Tool.FlvModule
 
         private static byte[] EndFlvAudioData = null;
         private static byte[] EndFlvVideoData = null;
-        public static byte[] FixWrite(byte[] data, Downloads downloads, out uint Len)
+        public static byte[] FixWrite(byte[] data, Downloads downloads, out uint Len,out bool IsError)
         {
             uint PakeTime = 0;
+            IsError=false;
             if (downloads.DownloadCount>9)
             {
+                bool IsErrorLen = false;
+              
                 if (downloads.flvTimes.IsTagHeader)
                 {
                     downloads.flvTimes.IsTagHeader=!downloads.flvTimes.IsTagHeader;
                     downloads.flvTimes.FlvTotalTagCount++;
+                    if (data.Length > 15 && data[7] == 0xFF && data[6] == 0xFF && data[5] == 0xFF)
+                    {
+                        IsError = true;
+                       
+                    }
+
                     switch (data[4])
                     {
                         case 0x12:
