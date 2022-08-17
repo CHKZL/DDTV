@@ -100,6 +100,7 @@ namespace BiliAccount.Core
                     CancelLogin();
                     Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
+
                 }
             }
             else goto re;

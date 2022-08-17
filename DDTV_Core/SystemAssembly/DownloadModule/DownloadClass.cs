@@ -64,11 +64,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// </summary>
             public string FilePath { set; get; }
             /// <summary>
-            /// 开始时间
+            /// 整体任务开始时间
             /// </summary>
             public DateTime StartTime { set; get; } = DateTime.Now;
             /// <summary>
-            /// 结束时间
+            /// 整体任务结束时间
             /// </summary>
             public DateTime EndTime { set; get; }
             /// <summary>
@@ -108,6 +108,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 触发下播次数统计
             /// </summary>
             public int LiveStopTriggerStatistics { set; get; }
+            /// <summary>
+            /// 异常速度统计
+            /// </summary>
+            public int ErrorDownloadSpeTrigger { set; get; }
+            /// <summary>
+            /// 当前子任务开始时间
+            /// </summary>
+            public DateTime SpeedCalibration_Time = DateTime.Now;
             public enum DownloadStatus
             {
                 /// <summary>
@@ -153,9 +161,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <summary>
             /// 下载任务实际执行事件
             /// </summary>
+            /// <param name="downloads">下载对象</param>
             /// <param name="req">下载任务WebRequest对象</param>
             /// <param name="Path">保存路径</param>
             /// <param name="FileName">保存文件名</param>
+            /// <param name="format">保存的文件格式</param>
+            /// <param name="roomInfo">房间对象</param>
             internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format, RoomInfoClass.RoomInfo roomInfo)
             {
                 Task.Run(async () =>
@@ -182,6 +193,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 long SpeedCalibration_Size = 0;
                                 while (true)
                                 {
+                                    if (DataLength > 1000000)
+                                    {
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"疑是错误！检测到超长的DataLength包，长度:{DataLength}byte");
+                                    }
                                     byte[] data = new byte[DataLength];
                                     if (IsCancel)
                                     {
@@ -217,6 +232,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     EndF = -1;
                                                     IsEnd = true;
                                                     LiveStopTriggerStatistics = 0;
+                                                    break;
                                                 }
                                             }
                                             catch (NotSupportedException e)
@@ -251,8 +267,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             break;
                                         }
                                     }
-
-                                    if (IsEnd)
+                                    if(DataLength==15)
+                                    {
+                                        bool IsAllFF = true;
+                                        foreach (var item in data)
+                                        {
+                                            if(item!=0xFF)
+                                            {
+                                                IsAllFF = false;
+                                                break;
+                                            }
+                                        }
+                                        if(IsAllFF)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"在录制[{roomInfo.uname}({roomInfo.room_id})]的直播任务DataLength时触发了AllFF错误，结束该子任务开始续命");
+                                            IsEnd = true;
+                                        }
+                                    }
+                                    AllFFErrpr: if(IsEnd)
                                     {
                                         Clear();
                                         if (flvTimes.FlvTotalTagCount < 3)
@@ -263,17 +295,38 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 Tool.FileOperation.Del(fileStream.Name);
                                             }
                                         }
-                                        fileStream.Close();
-                                        fileStream.Dispose();
+                                        try
+                                        {
+                                            fileStream.Close();
+                                            fileStream.Dispose();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志", true, e, true);
+                                        }
+
+                                        try
+                                        {
+                                            stream.Close();
+                                            stream.Dispose();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志", true, e, true);
+                                        }
+                                        try
+                                        {
+                                            resp.Close();
+                                            resp.Dispose();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Error, $"取消[{roomInfo.uname}({roomInfo.room_id})]的时候出现已知范围内的其他错误，错误堆栈已写入日志", true, e, true);
+                                        }
 
                                         if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1" && !IsCancel)
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{roomInfo.uname}({roomInfo.room_id})]录制流已断开，但监测到直播状态还为“开播中”持续监听中，尝试继续监听");
-                                            if (resp != null)
-                                            {
-                                                resp.Close();
-                                                resp.Dispose();
-                                            }
                                             roomInfo.IsDownload = false;
                                             Download.AddDownloadTaskd(Uid, false);
                                             return;
@@ -281,18 +334,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         else
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
-                                            if (resp != null)
-                                            {
-                                                resp.Close();
-                                                resp.Dispose();
-                                            }
                                             roomInfo.IsDownload = false;
                                             Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
                                             return;
                                         }
                                     }
-
-                                    byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL);
+                                    bool IsFixWriteError = false;
+                                    byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL,out IsFixWriteError);
+                                    if(IsFixWriteError)
+                                    {
+                                        IsEnd = true;
+                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"在录制[{roomInfo.uname}({roomInfo.room_id})]的直播任务FixWrite时触发了AllFF错误，结束该子任务开始续命");
+                                        goto AllFFErrpr;
+                                    }
                                     DataLength = DL;
                                     if (FixData != null)
                                     {
@@ -335,8 +389,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         double Proportion = ts.TotalMilliseconds / 3000.0;
                                         long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
-                                        double T = CurrentDownloadSize / Proportion / 3;
+                                        double T = CurrentDownloadSize / Proportion / 3.0;
                                         DownloadSpe = Convert.ToInt64(T);
+                                        if(DownloadSpe > (1048576*100))
+                                        {
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"疑是错误！检测到超长的DownloadSpe长度，长度:{DownloadSpe}byte");
+                                        }
                                         SpeedCalibration_Size = TotalDownloadCount;
                                         SpeedCalibration_Time = DateTime.Now;
                                     }

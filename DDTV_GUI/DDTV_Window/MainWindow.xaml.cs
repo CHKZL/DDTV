@@ -1364,6 +1364,11 @@ namespace DDTV_GUI.DDTV_Window
             if (dr == MessageBoxResult.OK)
             {
                 string APIURL = ReplaceAPIText.Text.ToLower();
+                if(string.IsNullOrEmpty(APIURL))
+                {
+                    APIURL = "https://api.live.bilibili.com";
+                    ReplaceAPIText.Text = APIURL;
+                }
                 if(APIURL.Substring(0,4)!="http"||APIURL.Substring(APIURL.Length-1,1)=="/"|| APIURL.Substring(APIURL.Length - 1, 1) == @"\")
                 {
                     MessageBox.Show("地址有误！\r\n请确保输入的API使用的域名为http地址并不以斜杠结尾\r\n如：https://api.live.bilibili.com");
@@ -1393,6 +1398,18 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.APIVersion, CoreConfig.APIVersion.ToString(), CoreConfigClass.Group.Core);
             Growl.Success($"修改API版本为v{CoreConfig.APIVersion}");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改API版本为v{CoreConfig.APIVersion}", false, null, false);
+        }
+
+        /// <summary>
+        /// 注销B站账号
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+            BilibiliUserConfig.account.cookie = "";
+            BilibiliUserConfig.WritUserFile();
+            BilibiliUserConfig.CheckAccount.CheckLoginValidity();
         }
     }
 }

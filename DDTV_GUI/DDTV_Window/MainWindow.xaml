@@ -89,6 +89,11 @@
                         <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>
+                <!--<hc:SideMenuItem Header="动态">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>-->
             </hc:SideMenu>
         </Grid>
         <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
@@ -304,25 +309,26 @@
                         <Grid Margin="20,10,10,10" Background="#4C797979">
                             <ScrollViewer>
                                 <WrapPanel Orientation="Horizontal">
-                                    <Grid Width="630" Margin="5">
+                                    <Grid Width="850">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="缩小后隐藏到托盘" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="HideIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="138,6,456,4" Click="HideIcon_Click">
+                                        <ToggleButton x:Name="HideIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="138,6,0,4" Click="HideIcon_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开开关后，缩小DDTV窗口回从任务栏中消失、隐藏到角落后台托盘中，双击托盘中的ico恢复到任务栏" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                         <TextBlock HorizontalAlignment="Left" Margin="221,0,0,0" Text="阻止系统休眠" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="DoNotSleepWhileDownloadingIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="322,6,272,4" Click="DoNotSleepWhileDownloadingIcon_Click">
+                                        <ToggleButton x:Name="DoNotSleepWhileDownloadingIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="322,6,0,4" Click="DoNotSleepWhileDownloadingIcon_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会阻止系统进入休眠模式（不阻止屏幕休眠）防止录制任务失败，关闭本设置或者退出DDTV后恢复" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                         <TextBlock HorizontalAlignment="Left" Margin="400,0,0,0" Text="检测剩余空间并警告" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="SpaceIsInsufficientWarn" Style="{StaticResource ToggleButtonSwitch}" Margin="550,6,44,4" Click="SpaceIsInsufficientWarn_Click">
+                                        <ToggleButton x:Name="SpaceIsInsufficientWarn" Style="{StaticResource ToggleButtonSwitch}" Margin="550,6,0,4" Click="SpaceIsInsufficientWarn_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="当录制的盘符剩余空间低于百分之5时，会每5分钟弹出一次提示，警告剩余空间不足" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                        <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="738,0,0,0"/>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
@@ -484,6 +490,25 @@
                             </hc:AdornerElement.Instance>
                         </Button>
                         <Button Content="查看系统日志" Margin="776,508,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
+                    </Grid>
+                </TabItem>
+                <TabItem Header="动态">
+                    <Grid>
+                        <hc:ScrollViewer>
+                            <hc:WaterfallPanel  Groups="1" hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}">
+                                <Grid Height="60" Margin="5,5,5,5" Background="#C8C8C8C8" >
+                                    <hc:Row Gutter="10" VerticalAlignment="Center" >
+                                        <hc:Col Span="5">
+                                            <TextBlock Text="白菜发布视频动态" VerticalAlignment="Center" FontSize="18"/>
+                                        </hc:Col>
+                                        <hc:Col Span="5">
+                                            <TextBlock Text="白菜发布动态" VerticalAlignment="Center" FontSize="18"/>
+                                        </hc:Col>
+
+                                    </hc:Row>
+                                </Grid>
+                            </hc:WaterfallPanel>
+                        </hc:ScrollViewer>
                     </Grid>
                 </TabItem>
             </TabControl>
