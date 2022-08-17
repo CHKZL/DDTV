@@ -18,6 +18,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "False", CoreConfigClass.Group.Core));
         public static string ReplaceAPI = GetValue(CoreConfigClass.Key.ReplaceAPI, "https://api.live.bilibili.com", CoreConfigClass.Group.Core);
         public static int APIVersion = int.Parse(GetValue(CoreConfigClass.Key.APIVersion, "1", CoreConfigClass.Group.Core));
+        public static bool AutoInsallUpdate = bool.Parse(GetValue(CoreConfigClass.Key.AutoInsallUpdate, "False", CoreConfigClass.Group.Core));
+        
 
         /// <summary>
         /// 初始化配置文件
@@ -124,6 +126,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _SpaceIsInsufficientWarn = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
             var _ReplaceAPI = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             var _APIVersion = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion;
+            var _AutoInsallUpdate = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AutoInsallUpdate;
         }
         /// <summary>
         /// 获取配置

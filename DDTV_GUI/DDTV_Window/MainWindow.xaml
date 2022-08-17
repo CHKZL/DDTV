@@ -328,6 +328,7 @@
                                                 <hc:Poptip Content="当录制的盘符剩余空间低于百分之5时，会每5分钟弹出一次提示，警告剩余空间不足" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+
                                         <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="738,0,0,0"/>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
@@ -337,6 +338,7 @@
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                     </Grid>
+
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="RecPathTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="录制储存路径" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,120,0" Background="{x:Null}" BorderBrush="White" LostFocus="RecPathTextBox_LostFocus" IsEnabled="False" />
 
@@ -469,7 +471,14 @@
                                                 <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加B站API调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                        <TextBlock HorizontalAlignment="Left" Margin="502,10,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="AutoUpdateSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="615,9,0,1" HorizontalAlignment="Left" Width="36" Click="AutoUpdateSwitch_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开自动更新后，如果收到新版本推送，并且当时没有录播任务和观看直播，则会自动重启DDTV更新到最新版本" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
                                     </Grid>
+
                                 </WrapPanel>
                             </ScrollViewer>
                         </Grid>

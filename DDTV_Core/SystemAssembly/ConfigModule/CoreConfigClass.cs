@@ -289,6 +289,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：1
             /// </summary>
             APIVersion,
+            /// <summary>
+            /// 自动安装更新（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            AutoInsallUpdate,
         }
     }
 }
