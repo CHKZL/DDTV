@@ -97,9 +97,9 @@ namespace DDTV_GUI.DDTV_Window
             //clipWindow.Show();
 
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
-            
-            //Sprite.Show(new DDTV_Sprite());
 
+            //Sprite.Show(new DDTV_Sprite());
+          
         }
 
         private void FileOperation_PathAlmostFull(object? sender, string e)
@@ -124,7 +124,30 @@ namespace DDTV_GUI.DDTV_Window
 
         private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
         {
-            Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击[更新DDTV]进行自动更新");
+            if (CoreConfig.AutoInsallUpdate)
+            {
+                bool IsDL = false;
+                foreach (var A1 in Rooms.RoomInfo)
+                {
+                    if (A1.Value.DownloadingList.Count > 0)
+                    {
+                        IsDL = true;
+                    }
+                }
+                if (IsDL || playWindowsList.Count > 0)
+                {
+                    Growl.InfoGlobal($"DDTV检测到更新，但是当前有观看/录制任务正在进行中，等待任务结束后空闲时间会自动更新");
+                }
+                else
+                {
+                    Update(true);
+                }
+            }
+            else
+            {
+                Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击[更新DDTV]进行自动更新");
+            }
+            
         }
 
         private bool CheckRepeatedRun()
@@ -235,6 +258,8 @@ namespace DDTV_GUI.DDTV_Window
             ReplaceAPIText.Text = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             SelectAPI_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 1 ? true : false;
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
+            AutoUpdateSwitch.IsChecked = CoreConfig.AutoInsallUpdate;
+
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1097,23 +1122,39 @@ namespace DDTV_GUI.DDTV_Window
 
         private void DDTV_UPDATE_Button_Click(object sender, RoutedEventArgs e)
         {
-            //UpdateInterface.Notify.Add("标题","测试文本内容");
-            //return;
             DDTV_Core.Tool.DDTV_Update.CheckUpdateProgram(true);
             MessageBoxResult dr = MessageBox.Show($"确定要开始更新DDTV吗？\n确定后会结束DDTV全部任务并退出DDTV开始更新", "更新DDTV", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
             {
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"用户点击自动更新", false, null, false);
-                if (File.Exists("./DDTV_Update.exe"))
+                Update(false);
+            }
+        }
+
+        /// <summary>
+        /// 更新DDTV
+        /// </summary>
+        public void Update(bool IsAuto)
+        {
+            if (File.Exists("./DDTV_Update.exe"))
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "./DDTV_Update.exe";
+                if(IsAuto)
                 {
-                    Process.Start("./DDTV_Update.exe");
+                    process.StartInfo.Arguments = "autoupdate";
+                }
+                process.Start();
+                Dispatcher.BeginInvoke(new Action(delegate
+                {
                     Application.Current.Shutdown();
-                }
-                else
-                {
-                    Growl.Error($"找不到自动更新脚本程序DDTV_Update.exe");
-                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"找不到自动更新脚本程序DDTV_Update.exe", false, null, false);
-                }
+                }));
+                
+            }
+            else
+            {
+                Growl.Error($"找不到自动更新脚本程序DDTV_Update.exe");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"找不到自动更新脚本程序DDTV_Update.exe", false, null, false);
             }
         }
 
@@ -1410,6 +1451,20 @@ namespace DDTV_GUI.DDTV_Window
             BilibiliUserConfig.account.cookie = "";
             BilibiliUserConfig.WritUserFile();
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
+        }
+
+        /// <summary>
+        /// 自动更新开关
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AutoUpdateSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)AutoUpdateSwitch.IsChecked ? true : false;
+            CoreConfig.AutoInsallUpdate = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.AutoInsallUpdate, Is.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success((Is ? "打开" : "关闭") + "DDTV自动更新");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "DDTV自动更新", false, null, false);
         }
     }
 }
