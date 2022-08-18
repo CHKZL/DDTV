@@ -1167,15 +1167,24 @@ namespace DDTV_GUI.DDTV_Window
         {
             MessageBoxResult dr = MessageBox.Show($"确定要导入关注列表中的VUP/VTB的房间信息么？\n该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少需要手动补充", "导入列表", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
-            { 
+            {
                 if (File.Exists("./DDTV_Update.exe"))
                 {
-                    int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
-                    Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
-                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的V到配置", false, null, false);
+                    ImportVTBButton.Text = "导入中...请稍候...";
+                    Task.Run(() =>
+                    {
+                        int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid)).Count;
+                        Growl.Success($"成功导入{AddConut}个关注列表中的V到配置");
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的V到配置", false, null, false);
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ImportVTBButton.Text = "导入完成";
+                        }));
+                        
+                    });
                 }
             }
-            
+
         }
 
         private void HideIcon_Click(object sender, RoutedEventArgs e)
