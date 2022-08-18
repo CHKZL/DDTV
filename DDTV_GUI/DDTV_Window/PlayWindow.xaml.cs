@@ -360,7 +360,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             if(this.Width / 16.0 > this.Height / 9.0)
             {
-                if (this.Width > LastWidth)
+                if (this.Width > LastWidth+1)
                 {
                     this.Height = this.Width / 1.7755;
                 }
@@ -371,7 +371,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                if (this.Height > LastHeight)
+                if (this.Height > LastHeight+1)
                 {
                     this.Width= this.Height * 1.7755;
                 }
@@ -672,8 +672,6 @@ namespace DDTV_GUI.DDTV_Window
             double dpixRatio = currentGraphics.DpiX / 96;
             int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
             int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
-
-
             if (MainWindow.playWindowsList.Count == 1)
             {
                 MainWindow.playWindowsList[0].FullScreenSwitch();
