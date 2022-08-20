@@ -486,6 +486,12 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
         private Dialog DG = null;
+
+        /// <summary>
+        /// 鼠标右键菜单_发送弹幕事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Danmu_Send_Button_Click(object sender, RoutedEventArgs e)
         {
             SendDialogDispose += PlayWindow_SendDialogDispose;
@@ -555,21 +561,41 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_关闭本窗口事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Exit_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_切换全屏事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_FullScreenSwitch_Send_Button_Click(object sender, RoutedEventArgs e)
         {
             FullScreenSwitch();
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_刷新本窗口事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_RefreshWindow_Send_Button_Click(object sender, RoutedEventArgs e)
         {
             RefreshWindow();
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_全局静音事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_SetMute_Click(object sender, RoutedEventArgs e)
         {
             foreach (var item in MainWindow.playWindowsList)
@@ -578,6 +604,11 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_打开\关闭弹幕
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
             if (MainWindow.linkDMNum >= 3)
@@ -666,16 +697,19 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_自动全屏平铺事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_WindowSorting_Click(object sender, RoutedEventArgs e)
         {
-            WindowSorting();
-        }
-        public void WindowSorting()
-        {
-            Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            //Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
             //double dpixRatio = currentGraphics.DpiX / 96;
             //int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
             //int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
+
+
             int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
             int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
             if (MainWindow.playWindowsList.Count == 1)
@@ -689,7 +723,8 @@ namespace DDTV_GUI.DDTV_Window
                 windows_4.Add(new int[] { ScreenWidth / 2, 0 });
                 windows_4.Add(new int[] { 0, ScreenHeight / 2 });
                 windows_4.Add(new int[] { ScreenWidth / 2, ScreenHeight / 2 });
-                for (int i = 0 ; i < 4 ; i++)
+
+                for (int i = 0; i < 4; i++)
                 {
                     if (i >= MainWindow.playWindowsList.Count)
                     {
@@ -700,7 +735,7 @@ namespace DDTV_GUI.DDTV_Window
                         Width = (ScreenWidth / 2),
                         Height = (ScreenHeight / 2),
                         X = windows_4[i][0],
-                        Y = windows_4[i][1] 
+                        Y = windows_4[i][1]
                     });
                 }
             }
@@ -716,7 +751,7 @@ namespace DDTV_GUI.DDTV_Window
                 windows_9.Add(new int[] { 0, (ScreenHeight / 3) + (ScreenHeight / 3) });
                 windows_9.Add(new int[] { (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
                 windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
-                for (int i = 0 ; i < 9 ; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     if (i >= MainWindow.playWindowsList.Count)
                     {
@@ -731,7 +766,7 @@ namespace DDTV_GUI.DDTV_Window
                     });
                 }
             }
-            else if (MainWindow.playWindowsList.Count > 9)
+            else if (MainWindow.playWindowsList.Count > 9 && MainWindow.playWindowsList.Count < 25)
             {
                 List<int[]> windows_16 = new List<int[]>();
                 windows_16.Add(new int[] { 0, 0 });
@@ -750,7 +785,7 @@ namespace DDTV_GUI.DDTV_Window
                 windows_16.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
                 windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
                 windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-                for (int i = 0 ; i < 16 ; i++)
+                for (int i = 0; i < 16; i++)
                 {
                     if (i >= MainWindow.playWindowsList.Count)
                     {
@@ -766,6 +801,8 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
         }
+
+
         public bool SetWindowInfo(WindowInfo SW)
         {
             try
@@ -835,6 +872,12 @@ namespace DDTV_GUI.DDTV_Window
             public double Height { set; get; } = -1;
             public string title { set; get; } = null;
         }
+
+        /// <summary>
+        /// 鼠标右键菜单_复制直播间地址事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_CopyLiveRoomUrl_Click(object sender, RoutedEventArgs e)
         {
             string url = "https://live.bilibili.com/" + roomId;
@@ -909,6 +952,11 @@ namespace DDTV_GUI.DDTV_Window
             RefreshWindow();
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_关闭全部播放窗口事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_ExitAll_Click(object sender, RoutedEventArgs e)
         {
 
@@ -979,6 +1027,11 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_设置/锁定锁定置顶事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MenuItem_Topping_Click(object sender, RoutedEventArgs e)
         {
             IsTopping = !IsTopping;
@@ -994,6 +1047,11 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
+        /// <summary>
+        /// 鼠标右键菜单_查看当前播放窗口详情事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayWindowInfo_Click(object sender, RoutedEventArgs e)
         {
             string text = "数据获取中，请稍候再查看";
@@ -1007,6 +1065,228 @@ namespace DDTV_GUI.DDTV_Window
                     $"Host:\r\n{roomInfo.Host}\r\n\r\n";
             }
             HandyControl.Controls.MessageBox.Show(text);
+        }
+
+        /// <summary>
+        /// 鼠标右键菜单_赛事模式全屏平铺事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_GuideMode_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Controls.MenuItem menuItem = e.Source as System.Windows.Controls.MenuItem;
+            switch (menuItem.Tag.ToString())
+            {
+                case "1_6":
+                    Guide1_6Mode();
+                    MainWindow.guideMode = MainWindow.GuideMode.W1_6;
+                    break;
+                case "1_8":
+                    Guide1_8Mode();
+                    MainWindow.guideMode = MainWindow.GuideMode.W1_8;
+                    break;
+                case "1_13":
+                    Guide1_13Mode();
+                    MainWindow.guideMode = MainWindow.GuideMode.W1_13;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 赛事模式_1-6
+        /// </summary>
+        private void Guide1_6Mode()
+        {
+            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
+            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+
+            List<int[]> windows_1_6 = new List<int[]>();
+            windows_1_6.Add(new int[] { 0, 0 });
+            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), 0 });
+            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), ScreenHeight / 3 });
+            windows_1_6.Add(new int[] { 0, (ScreenHeight / 3) + (ScreenHeight / 3) });
+            windows_1_6.Add(new int[] { (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+
+            MainWindow.playWindowsList[0].SetWindowInfo(new WindowInfo()
+            {
+                Width = (ScreenWidth / 3) * 2,
+                Height = (ScreenHeight / 3) * 2,
+                X = windows_1_6[0][0],
+                Y = windows_1_6[0][1]
+            });
+
+
+            for (int i = 1; i < 6; i++)
+            {
+                if (i >= MainWindow.playWindowsList.Count)
+                {
+                    break;
+                }
+                MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                {
+                    Width = (ScreenWidth / 3),
+                    Height = (ScreenHeight / 3),
+                    X = windows_1_6[i][0],
+                    Y = windows_1_6[i][1]
+                });
+            }
+        }
+
+        /// <summary>
+        /// 赛事模式_1-8
+        /// </summary>
+        private void Guide1_8Mode()
+        {
+            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
+            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+
+            List<int[]> windows_1_8 = new List<int[]>();
+            windows_1_8.Add(new int[] { 0, 0 });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+
+            MainWindow.playWindowsList[0].SetWindowInfo(new WindowInfo()
+            {
+                Width = (ScreenWidth / 4) * 3,
+                Height = (ScreenHeight / 4) * 3,
+                X = windows_1_8[0][0],
+                Y = windows_1_8[0][1]
+            });
+
+
+            for (int i = 1; i < 8; i++)
+            {
+                if (i >= MainWindow.playWindowsList.Count)
+                {
+                    break;
+                }
+                MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                {
+                    Width = (ScreenWidth / 4),
+                    Height = (ScreenHeight / 4),
+                    X = windows_1_8[i][0],
+                    Y = windows_1_8[i][1]
+                });
+            }
+        }
+
+        /// <summary>
+        /// 赛事模式_1-13
+        /// </summary>
+        private void Guide1_13Mode()
+        {
+            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
+            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+
+            List<int[]> windows_1_13 = new List<int[]>();
+            windows_1_13.Add(new int[] { 0, 0 });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4), 0 });
+
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
+            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) });
+
+
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
+            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+
+           
+
+
+            for (int i = 0; i < 13; i++)
+            {
+                if (i >= MainWindow.playWindowsList.Count)
+                {
+                    break;
+                }
+
+                if (i == 1)
+                {
+                    MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                    {
+                        Width = (ScreenWidth / 4) * 2,
+                        Height = (ScreenHeight / 4) * 2,
+                        X = windows_1_13[i][0],
+                        Y = windows_1_13[i][1]
+                    });
+                }
+                else
+                {
+                    MainWindow.playWindowsList[i].SetWindowInfo(new WindowInfo()
+                    {
+                        Width = (ScreenWidth / 4),
+                        Height = (ScreenHeight / 4),
+                        X = windows_1_13[i][0],
+                        Y = windows_1_13[i][1]
+                    });
+                }
+            }
+        }
+
+        /// <summary>
+        /// 鼠标右键菜单_赛事模式设置为主窗口事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_SetGuideModeMianWindow_Click(object sender, RoutedEventArgs e)
+        {
+            int ti = MainWindow.playWindowsList.IndexOf(this);
+            switch (MainWindow.guideMode)
+            {
+                case MainWindow.GuideMode.N:
+
+                    break;
+                case MainWindow.GuideMode.W1_6:
+                    {
+                        PlayWindow playWindow = MainWindow.playWindowsList[0];
+                        MainWindow.playWindowsList[0] = MainWindow.playWindowsList[ti];
+                        MainWindow.playWindowsList[ti] = playWindow;
+                    }
+                    break;
+                case MainWindow.GuideMode.W1_8:
+                    {
+                        PlayWindow playWindow = MainWindow.playWindowsList[0];
+                        MainWindow.playWindowsList[0] = MainWindow.playWindowsList[ti];
+                        MainWindow.playWindowsList[ti] = playWindow;
+                    }
+                    break;
+                case MainWindow.GuideMode.W1_13:
+                    {
+                        PlayWindow playWindow = MainWindow.playWindowsList[1];
+                        MainWindow.playWindowsList[1] = MainWindow.playWindowsList[ti];
+                        MainWindow.playWindowsList[ti] = playWindow;
+                    }
+                    break;
+            }
+
+           
+            
+            switch(MainWindow.guideMode)
+            {
+                case MainWindow.GuideMode.N:
+                    break;
+                case MainWindow.GuideMode.W1_6:
+                    Guide1_6Mode();
+                    break;
+                case MainWindow.GuideMode.W1_8:
+                    Guide1_8Mode();
+                    break;
+                case MainWindow.GuideMode.W1_13:
+                    Guide1_13Mode();
+                    break;
+            }
         }
     }
 }

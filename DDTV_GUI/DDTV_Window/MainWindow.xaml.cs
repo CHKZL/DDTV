@@ -38,8 +38,16 @@ namespace DDTV_GUI.DDTV_Window
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
         public NotifyIcon notifyIcon=new();
         public static List<PlayWindow> playWindowsList = new();
+        public static GuideMode guideMode = GuideMode.N;
         public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-       
+     
+        public enum GuideMode
+        {
+            N,
+            W1_6,
+            W1_8,
+            W1_13,
+        }
         public MainWindow()
         {
            

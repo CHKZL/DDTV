@@ -14,8 +14,8 @@
 
     <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
         <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
-            <Grid.ContextMenu>
-                <ContextMenu >
+            <Grid.ContextMenu  >
+                <ContextMenu>
                     <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
@@ -77,6 +77,16 @@
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="设置窗口为导播模式" >
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                        <MenuItem Header="设置为主窗口" Width="150" Click="MenuItem_SetGuideModeMianWindow_Click"/>
+                        <Separator/>
+                        <MenuItem Header="1-6模式" Tag="1_6" Width="150" Click="MenuItem_GuideMode_Click"/>
+                        <MenuItem Header="1-8模式" Tag="1_8" Width="150" Click="MenuItem_GuideMode_Click"/>
+                        <MenuItem Header="1-13模式" Tag="1_13" Width="150" Click="MenuItem_GuideMode_Click"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="关闭本窗口" Click="MenuItem_Exit_Click">
