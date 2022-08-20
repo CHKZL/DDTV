@@ -25,6 +25,8 @@ using KeyEventArgs = System.Windows.Input.KeyEventArgs;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using System.Windows.Controls;
 using DDTV_Core.SystemAssembly.Log;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -62,13 +64,15 @@ namespace DDTV_GUI.DDTV_Window
         private List<RunningBlock> DanmuBlock = new();
         private DispatcherTimer timer;
         private bool IsTopping = false;
+
+
         public PlayWindow(long Uid)
         {        
             InitializeComponent();
             Quality = GUIConfig.PlayQuality;
             uid = Uid;
             SetMenuItemSwitchQuality();
-
+            
             UpdateWindowInfo();
             Core.Initialize("./plugins/vlc");
             vlcVideo = new LibVLC();
@@ -669,9 +673,11 @@ namespace DDTV_GUI.DDTV_Window
         public void WindowSorting()
         {
             Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
-            double dpixRatio = currentGraphics.DpiX / 96;
-            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
-            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
+            //double dpixRatio = currentGraphics.DpiX / 96;
+            //int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
+            //int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
+            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
+            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
             if (MainWindow.playWindowsList.Count == 1)
             {
                 MainWindow.playWindowsList[0].FullScreenSwitch();
@@ -694,7 +700,7 @@ namespace DDTV_GUI.DDTV_Window
                         Width = (ScreenWidth / 2),
                         Height = (ScreenHeight / 2),
                         X = windows_4[i][0],
-                        Y = windows_4[i][1]
+                        Y = windows_4[i][1] 
                     });
                 }
             }
