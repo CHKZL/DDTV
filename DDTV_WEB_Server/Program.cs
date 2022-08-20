@@ -16,10 +16,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
         {
             Task.Run(() =>
             {
-                DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB);
-               
-                //ServerInteraction.CheckUpdates.Update();
-                //ServerInteraction.Dokidoki.Start("WEB");
+                DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB); 
             });    
             Thread.Sleep(3000);
 
