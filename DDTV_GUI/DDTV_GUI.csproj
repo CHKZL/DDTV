@@ -36,6 +36,7 @@
     <None Remove="Resources\Img\UI\pushpin.png" />
     <None Remove="Resources\Img\UI\reload _ime.png" />
     <None Remove="Resources\Img\UI\reload.png" />
+    <None Remove="Resources\Img\UI\RightButton.png" />
     <None Remove="Resources\Img\UI\share.png" />
     <None Remove="Resources\Img\UI\shrink.png" />
     <None Remove="Resources\Img\UI\smile.png" />
@@ -127,6 +128,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\reload.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\RightButton.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\share.png">
