@@ -21,6 +21,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.Tool.TranscodModule;
 using DDTV_Core.Tool;
 using System.Threading;
+using System.Windows.Media.Animation;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -52,6 +53,9 @@ namespace DDTV_GUI.DDTV_Window
         {
            
             InitializeComponent();
+          
+
+
             if (CheckRepeatedRun())
             {
                 Application.Current.Shutdown();
@@ -109,6 +113,8 @@ namespace DDTV_GUI.DDTV_Window
             //Sprite.Show(new DDTV_Sprite());
           
         }
+
+
 
         private void FileOperation_PathAlmostFull(object? sender, string e)
         {

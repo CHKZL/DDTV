@@ -27,6 +27,7 @@ using System.Windows.Controls;
 using DDTV_Core.SystemAssembly.Log;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
+using DDTV_GUI.DanMuCanvas.BarrageParameters;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -65,6 +66,13 @@ namespace DDTV_GUI.DDTV_Window
         private DispatcherTimer timer;
         private bool IsTopping = false;
 
+        BarrageConfig barrageConfig;
+
+        public List<string> ShieldDanMuText= new List<string>()
+        {
+            "老板大气"
+        };
+
 
         public PlayWindow(long Uid)
         {        
@@ -99,7 +107,12 @@ namespace DDTV_GUI.DDTV_Window
                 Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
             });
 
+
+            barrageConfig = new BarrageConfig(canvas);
         }
+
+
+
         void Topping(object sender, RoutedEventArgs e)
         {
             timer = new DispatcherTimer();
@@ -631,17 +644,17 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
-            if (MainWindow.linkDMNum >= 3)
-            {
-                Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
-                return;
-            }
+            //if (MainWindow.linkDMNum >= 3)
+            //{
+            //    Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
+            //    return;
+            //}
             IsOpenDanmu = !IsOpenDanmu;
 
             if (IsOpenDanmu)
             {
-                Growl.InfoGlobal($"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕");
-                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动{roomId}房间的弹幕连接,15秒后开始显示弹幕", false);
+                Growl.InfoGlobal($"启动{roomId}房间的弹幕连接");
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动{roomId}房间的弹幕连接", false);
                 Task.Run(() =>
                 {
                     MainWindow.linkDMNum++;
@@ -689,14 +702,26 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
         }
+
+        
         private void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
           
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
+                    bool IsShiel = false;
+                    foreach (var item in ShieldDanMuText)
+                    {
+                        if(Danmu.Message.Contains(item))
+                        {
+                            IsShiel = true;
+                            break;
+                        } 
+                    }
                     //Growl.Info("收到弹幕Danmu.Message");
-                    AddDanmu(Danmu.Message);
+                    if (!IsShiel)
+                        AddDanmu(Danmu.Message);
                     
                     //Console.WriteLine($"{Danmu.Message}");
                     break;
@@ -998,53 +1023,62 @@ namespace DDTV_GUI.DDTV_Window
         {
             Task.Run(() =>
             {
-                RunningBlock runningBlock=null;
-                PlayGrid.Dispatcher.Invoke(new Action(() => {
-                runningBlock = new();
-                runningBlock.AutoReverse = true;
-                runningBlock.Duration = new Duration(new TimeSpan(0, 0, 10));
-                runningBlock.IsRunning = true;
-                runningBlock.FontSize = 30;
-                runningBlock.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.PaleVioletRed);
-                runningBlock.BorderBrush = null;
-                double Top = new Random().Next(0, (int)windowInfo.Height - 50);
-                runningBlock.Margin = new Thickness(-50, Top, -50, (int)windowInfo.Height - Top - 80);
-                StackPanel stackPanel = new StackPanel();
-                OutlineText outlineText = new OutlineText();
-                outlineText.Text = DanmuText;
-                outlineText.FontWeight = FontWeights.Bold;
-                outlineText.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White);
-                outlineText.Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
-                outlineText.FontSize = 24;
-                outlineText.StrokeThickness = 1;
-                stackPanel.Children.Add(outlineText);
-                runningBlock.Content = stackPanel;
-                DanmuBlock.Add(runningBlock);
-
-                PlayGrid.Children.Add(runningBlock);
-
-            }));
-
-
-
-                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
-                Thread.Sleep(5);
-                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
-                Thread.Sleep(10000);
-                if(runningBlock.Visibility==Visibility.Collapsed)
+                //非UI线程调用UI组件
+                System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
-                }
-                Thread.Sleep(10000);
-                runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
-                if(DanmuBlock.Contains(runningBlock))
-                {
-                    DanmuBlock.Remove(runningBlock);
-                    PlayGrid.Dispatcher.Invoke(new Action(() => PlayGrid.Children.Remove(runningBlock)));
-                    
-                }
-                
+                    //显示弹幕
+                    barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, (int)this.Height);
+                });
             });
+            //Task.Run(() =>
+            //{
+            //    RunningBlock runningBlock=null;
+            //    PlayGrid.Dispatcher.Invoke(new Action(() => {
+            //    runningBlock = new();
+            //    runningBlock.AutoReverse = true;
+            //    runningBlock.Duration = new Duration(new TimeSpan(0, 0, 10));
+            //    runningBlock.IsRunning = true;
+            //    runningBlock.FontSize = 30;
+            //    runningBlock.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.PaleVioletRed);
+            //    runningBlock.BorderBrush = null;
+            //    double Top = new Random().Next(0, (int)windowInfo.Height - 50);
+            //    runningBlock.Margin = new Thickness(-50, Top, -50, (int)windowInfo.Height - Top - 80);
+            //    StackPanel stackPanel = new StackPanel();
+            //    OutlineText outlineText = new OutlineText();
+            //    outlineText.Text = DanmuText;
+            //    outlineText.FontWeight = FontWeights.Bold;
+            //    outlineText.Fill = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.White);
+            //    outlineText.Stroke = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Colors.Black);
+            //    outlineText.FontSize = 24;
+            //    outlineText.StrokeThickness = 1;
+            //    stackPanel.Children.Add(outlineText);
+            //    runningBlock.Content = stackPanel;
+            //    DanmuBlock.Add(runningBlock);
+
+            //    PlayGrid.Children.Add(runningBlock);
+
+            //}));
+
+
+
+            //    runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
+            //    Thread.Sleep(5);
+            //    runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
+            //    Thread.Sleep(10000);
+            //    if(runningBlock.Visibility==Visibility.Collapsed)
+            //    {
+            //        runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Visible));
+            //    }
+            //    Thread.Sleep(10000);
+            //    runningBlock.Dispatcher.Invoke(new Action(() => runningBlock.Visibility = Visibility.Collapsed));
+            //    if(DanmuBlock.Contains(runningBlock))
+            //    {
+            //        DanmuBlock.Remove(runningBlock);
+            //        PlayGrid.Dispatcher.Invoke(new Action(() => PlayGrid.Children.Remove(runningBlock)));
+
+            //    }
+
+            //});
         }
 
         /// <summary>

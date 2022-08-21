@@ -127,8 +127,9 @@
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
             <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2DCDCDC" FontSize="30" Visibility="Collapsed" Background="#B2646465"/>
+            <Canvas Name="canvas">
 
-
+            </Canvas>
         </Grid>
     </vlc:VideoView>
 </hc:GlowWindow>
