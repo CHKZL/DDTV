@@ -113,7 +113,11 @@
                 <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Danmu_Send_Button_Click"/>
             </Grid>-->
             <Grid Name="loading" Background="#7F5B5B5B">
+                <TextBlock Text="鼠标在窗口上滚动滚轮调整音量" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" Margin="0,-140,0,0" />
+                <TextBlock Text="加载中" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" />
+                <TextBlock Text="播放窗口功能请在窗口上鼠标右键查看" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" Margin="0,140,0,0" />
                 <hc:CircleProgressBar IsIndeterminate="True"/>
+
                 <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
 
@@ -122,8 +126,8 @@
                     <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
-            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#E5DCDCDC" FontSize="30" Visibility="Collapsed"/>
-           
+            <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2DCDCDC" FontSize="30" Visibility="Collapsed" Background="#B2646465"/>
+
 
         </Grid>
     </vlc:VideoView>

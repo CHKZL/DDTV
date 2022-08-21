@@ -406,7 +406,16 @@ namespace DDTV_GUI.DDTV_Window
         {
             VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Volume = (int)i);
             volume.Dispatcher.Invoke(() => volume.Value = i);
-            volumeText.Dispatcher.Invoke(() => volumeText.Text = i.ToString());
+            volumeText.Dispatcher.Invoke(() => {
+                if(i.ToString().Split('.').Length>1)
+                {
+                    volumeText.Text = i.ToString().Split('.')[0];
+                }
+                else
+                {
+                    volumeText.Text = i.ToString();
+                }
+            });
             //CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play)
             CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
             MainWindow.DefaultVolume = i;
