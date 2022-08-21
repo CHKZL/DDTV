@@ -75,20 +75,19 @@
                             <Image Source="/Resources/Img/UI/notification.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="自动全屏平铺" Click="MenuItem_WindowSorting_Click">
+                    <MenuItem Header="自动全屏平铺">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
-                    </MenuItem>
-                    <MenuItem Header="设置窗口为导播模式" >
-                        <MenuItem.Icon>
-                            <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
-                        </MenuItem.Icon>
-                        <MenuItem Header="设置为主窗口" Width="150" Click="MenuItem_SetGuideModeMianWindow_Click"/>
+                        <MenuItem Header="设置为1号窗口" Width="150" Click="MenuItem_SetGuideModeMianWindow_Click"/>
                         <Separator/>
+                        <MenuItem Header="平均模式" Width="150" Click="MenuItem_WindowSorting_Click"/>
                         <MenuItem Header="1-6模式" Tag="1_6" Width="150" Click="MenuItem_GuideMode_Click"/>
                         <MenuItem Header="1-8模式" Tag="1_8" Width="150" Click="MenuItem_GuideMode_Click"/>
                         <MenuItem Header="1-13模式" Tag="1_13" Width="150" Click="MenuItem_GuideMode_Click"/>
+                    </MenuItem>
+                    <MenuItem Header="设置窗口为导播模式" >
+                       
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="关闭本窗口" Click="MenuItem_Exit_Click">
@@ -129,7 +128,7 @@
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
             <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2DCDCDC" FontSize="30" Visibility="Collapsed" Background="#B2646465"/>
-            <Canvas Name="canvas" Opacity="0.2">
+            <Canvas Name="canvas" Opacity="1">
 
             </Canvas>
         </Grid>

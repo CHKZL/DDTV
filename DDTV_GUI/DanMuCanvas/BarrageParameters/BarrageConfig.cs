@@ -107,6 +107,7 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
                                                        //设置完成动画的时间
                                                        //实例化TextBlock和设置基本属性,并添加到Canvas中
             TextBlock textblock = new TextBlock();
+            
             //加上昵称显示
             if (!string.IsNullOrEmpty(contentlist.nickName))
             {
@@ -117,7 +118,8 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
                 textblock.Text = contentlist.content;
             }
             textblock.FontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize;
-            if(IsSubtitle)
+            textblock.FontWeight = System.Windows.FontWeights.Bold;
+            if (IsSubtitle)
             {
                 byte R = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[0], 16);
                 byte G = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[1], 16);

@@ -330,7 +330,7 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="注销bilibili账号" HorizontalAlignment="Left" Margin="738,0,0,0"/>
+                                        <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="登出bilibili账号" HorizontalAlignment="Left" Margin="738,0,0,0"/>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
