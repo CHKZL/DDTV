@@ -44,7 +44,7 @@ namespace DDTV_GUI.DDTV_Window
         long uid = 0;
         int roomId = 0;
         //string title = string.Empty;
-        
+
         WPFControl.SendDanmuDialog sendDanmuDialog;
         public event EventHandler<EventArgs> DanMuConfigDialogDispose;
         private Dialog DanMuConfigDialog;//取色盘弹出窗口
@@ -61,7 +61,7 @@ namespace DDTV_GUI.DDTV_Window
         private List<string> OldFileDirectoryList = new();
         private int Quality = 0;
         private int Line = 0;
-        private List<int> QualityList= new();
+        private List<int> QualityList = new();
         private int LastWidth;
         private int LastHeight;
         public WindowInfo windowInfo = new();
@@ -71,33 +71,34 @@ namespace DDTV_GUI.DDTV_Window
 
         BarrageConfig barrageConfig;
 
-        public List<string> ShieldDanMuText= new List<string>()
+        public List<string> ShieldDanMuText = new List<string>()
         {
             "老板大气"
         };
 
 
         public PlayWindow(long Uid)
-        {        
+        {
             InitializeComponent();
-            Task.Run(() => 
-            {
-                Quality = GUIConfig.PlayQuality;
-                uid = Uid;
-                SetMenuItemSwitchQuality();
 
-                UpdateWindowInfo();
-                Core.Initialize("./plugins/vlc");
-                vlcVideo = new LibVLC();
-                _mediaPlayer = new MediaPlayer(vlcVideo);
-                Dispatcher.Invoke(() =>
+           
+            Task.Run(() =>
+            {
+                VideoView.Dispatcher.Invoke(() =>
                 {
+                    Core.Initialize("./plugins/vlc");
+                    vlcVideo = new LibVLC();
+                    _mediaPlayer = new MediaPlayer(vlcVideo);
                     VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
                     VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
                 });
-               
+                Quality = GUIConfig.PlayQuality;
+                uid = Uid;
+                SetMenuItemSwitchQuality();
+                UpdateWindowInfo();
+
                 Task.Run(() =>
                 {
                     Thread.Sleep(1000);
@@ -107,16 +108,14 @@ namespace DDTV_GUI.DDTV_Window
                 VolumeTimer.Tick += VolumeTimer_Tick;
                 VolumeTimer.Start();
                 Loaded += new RoutedEventHandler(Topping);
-                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
-            });
-
-
-            barrageConfig = new BarrageConfig(canvas);
-            canvas.Opacity = CoreConfig.DanMuFontOpacity;
+                barrageConfig = new BarrageConfig(canvas);
+                canvas.Dispatcher.Invoke(() =>
+                {
+                    canvas.Opacity = CoreConfig.DanMuFontOpacity;
+                });               
+            });       
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);     
         }
-
-
-
         void Topping(object sender, RoutedEventArgs e)
         {
             timer = new DispatcherTimer();
@@ -160,7 +159,7 @@ namespace DDTV_GUI.DDTV_Window
                 else
                     qn80.Visibility = Visibility.Collapsed;
             });
-           
+
         }
 
         /// <summary>
@@ -222,13 +221,13 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                if(!QualityList.Contains(Quality))
+                if (!QualityList.Contains(Quality))
                 {
                     Quality = 10000;
                     Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
                 }
-                string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line,true);
-                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname)+"-"+ Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+                string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line, true);
+                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname) + "-" + Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
                 roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
                 this.Dispatcher.Invoke(() =>
                     this.Title = windowInfo.title
@@ -273,7 +272,7 @@ namespace DDTV_GUI.DDTV_Window
         }
         public void StartDownload(string Url)
         {
-            if(!string.IsNullOrEmpty(FileDirectory))
+            if (!string.IsNullOrEmpty(FileDirectory))
             {
                 DDTV_Core.Tool.FileOperation.Del(FileDirectory);
             }
@@ -283,7 +282,7 @@ namespace DDTV_GUI.DDTV_Window
             OldFileDirectoryList.Add(FileDirectory);
             CancelDownload();
 
-           R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+        R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
                 //string U2 = RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
 
@@ -390,9 +389,9 @@ namespace DDTV_GUI.DDTV_Window
                     item.Visibility = Visibility.Hidden;
                 }
             }
-            if(this.Width / 16.0 > this.Height / 9.0)
+            if (this.Width / 16.0 > this.Height / 9.0)
             {
-                if (this.Width > LastWidth+1)
+                if (this.Width > LastWidth + 1)
                 {
                     this.Height = this.Width / 1.7755;
                 }
@@ -403,9 +402,9 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                if (this.Height > LastHeight+1)
+                if (this.Height > LastHeight + 1)
                 {
-                    this.Width= this.Height * 1.7755;
+                    this.Width = this.Height * 1.7755;
                 }
                 else
                 {
@@ -423,8 +422,9 @@ namespace DDTV_GUI.DDTV_Window
         {
             VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Volume = (int)i);
             volume.Dispatcher.Invoke(() => volume.Value = i);
-            volumeText.Dispatcher.Invoke(() => {
-                if(i.ToString().Split('.').Length>1)
+            volumeText.Dispatcher.Invoke(() =>
+            {
+                if (i.ToString().Split('.').Length > 1)
                 {
                     volumeText.Text = i.ToString().Split('.')[0];
                 }
@@ -495,7 +495,8 @@ namespace DDTV_GUI.DDTV_Window
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             IsClose = true;
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 CancelDownload();
                 LiveChatDispose();
                 foreach (var item in OldFileDirectoryList)
@@ -676,12 +677,12 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         public void LiveChatDispose()
         {
-            
+
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
-                if (roomInfo.roomWebSocket.LiveChatListener != null&& roomInfo.roomWebSocket.LiveChatListener.startIn)
+                if (roomInfo.roomWebSocket.LiveChatListener != null && roomInfo.roomWebSocket.LiveChatListener.startIn)
                 {
-                    MainWindow.linkDMNum--;  
+                    MainWindow.linkDMNum--;
                     try
                     {
                         if (!roomInfo.IsDownload)
@@ -706,52 +707,52 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
-        
+
         private void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
-          
+
             switch (e)
             {
                 case DanmuMessageEventArgs Danmu:
                     bool IsShiel = false;
                     foreach (var item in ShieldDanMuText)
                     {
-                        if(Danmu.Message.Contains(item))
+                        if (Danmu.Message.Contains(item))
                         {
                             IsShiel = true;
                             break;
-                        } 
+                        }
                     }
                     //Growl.Info("收到弹幕Danmu.Message");
                     if (!IsShiel)
                     {
                         if (Danmu.Message[..1] == "【")
                         {
-                            AddDanmu(Danmu.Message,true);
+                            AddDanmu(Danmu.Message, true);
                         }
                         else
                         {
                             AddDanmu(Danmu.Message, false);
                         }
                     }
-                       
-                    
+
+
                     //Console.WriteLine($"{Danmu.Message}");
                     break;
-                //case SuperchatEventArg SuperchatEvent:
-                //    Console.WriteLine($"{SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
-                //    break;
-                //case GuardBuyEventArgs GuardBuyEvent:
-                //    Console.WriteLine($"{GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
-                //    break;
-                //case SendGiftEventArgs sendGiftEventArgs:
-                //    Console.WriteLine($"{sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
-                //    break;
-                //case EntryEffectEventArgs entryEffectEventArgs:
-                //    Console.WriteLine($"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
-                //    break;
-                //default:
-                //    break;
+                    //case SuperchatEventArg SuperchatEvent:
+                    //    Console.WriteLine($"{SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
+                    //    break;
+                    //case GuardBuyEventArgs GuardBuyEvent:
+                    //    Console.WriteLine($"{GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
+                    //    break;
+                    //case SendGiftEventArgs sendGiftEventArgs:
+                    //    Console.WriteLine($"{sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
+                    //    break;
+                    //case EntryEffectEventArgs entryEffectEventArgs:
+                    //    Console.WriteLine($"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
+                    //    break;
+                    //default:
+                    //    break;
             }
         }
 
@@ -873,7 +874,7 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     this.Top = SW.Y;
                 }
-                
+
                 if (SW.Height > 0)
                 {
                     this.Height = SW.Height;
@@ -910,7 +911,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             try
             {
-                windowInfo.X= this.Left;
+                windowInfo.X = this.Left;
                 windowInfo.Y = this.Top;
                 windowInfo.Width = this.Width;
                 windowInfo.Height = this.Height;
@@ -1032,7 +1033,7 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
 
-        private void AddDanmu(string DanmuText,bool IsSubtitle)
+        private void AddDanmu(string DanmuText, bool IsSubtitle)
         {
             Task.Run(() =>
             {
@@ -1102,7 +1103,7 @@ namespace DDTV_GUI.DDTV_Window
         private void MenuItem_Topping_Click(object sender, RoutedEventArgs e)
         {
             IsTopping = !IsTopping;
-            if(IsTopping)
+            if (IsTopping)
             {
                 this.Topmost = true;
                 timer.Start();
@@ -1124,7 +1125,7 @@ namespace DDTV_GUI.DDTV_Window
             string text = "数据获取中，请稍候再查看";
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
-                text = 
+                text =
                     $"用户名:\r\n{roomInfo.uname}\r\n\r\n" +
                     $"UID:\r\n{roomInfo.uid}\r\n\r\n" +
                     $"标题:\r\n{roomInfo.title}\r\n\r\n" +
@@ -1269,7 +1270,7 @@ namespace DDTV_GUI.DDTV_Window
             windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
             windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
 
-           
+
 
 
             for (int i = 0; i < 13; i++)
@@ -1338,9 +1339,9 @@ namespace DDTV_GUI.DDTV_Window
                     break;
             }
 
-           
-            
-            switch(MainWindow.guideMode)
+
+
+            switch (MainWindow.guideMode)
             {
                 case MainWindow.GuideMode.N:
                     break;
