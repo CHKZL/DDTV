@@ -19,7 +19,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string ReplaceAPI = GetValue(CoreConfigClass.Key.ReplaceAPI, "https://api.live.bilibili.com", CoreConfigClass.Group.Core);
         public static int APIVersion = int.Parse(GetValue(CoreConfigClass.Key.APIVersion, "1", CoreConfigClass.Group.Core));
         public static bool AutoInsallUpdate = bool.Parse(GetValue(CoreConfigClass.Key.AutoInsallUpdate, "False", CoreConfigClass.Group.Core));
-        
+        public static string DanMuColor = GetValue(CoreConfigClass.Key.DanmuColor, "0xFF,0xFF,0xFF", CoreConfigClass.Group.Play);
+        public static string SubtitleColor = GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
+        public static int DanMuFontSize = int.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
+        public static double DanMuFontOpacity = double.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
 
         /// <summary>
         /// 初始化配置文件
@@ -127,7 +130,13 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _ReplaceAPI = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             var _APIVersion = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion;
             var _AutoInsallUpdate = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AutoInsallUpdate;
-        }
+
+            var _DanMuColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor;
+            var _SubtitleColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
+            var _DanMuFontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
+            var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+
+    }
         /// <summary>
         /// 获取配置
         /// </summary>

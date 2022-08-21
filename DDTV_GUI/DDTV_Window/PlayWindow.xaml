@@ -46,10 +46,12 @@
                         <MenuItem Name="qn80" Header="流畅" Tag="80" Width="90" Click="MenuItem_SwitchQuality_Click"/>
                     </MenuItem>
                     <Separator/>
-                    <MenuItem Header="打开\关闭弹幕" Click="MenuItem_OpenDamu_Click">
+                    <MenuItem Header="弹幕菜单" >
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
+                        <MenuItem Header="打开/关闭弹幕" Width="150" Click="MenuItem_OpenDamu_Click"/>
+                        <MenuItem Header="弹幕设置" Width="150" Click="MenuItem_DamuConfig_Click"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="设置/锁定锁定置顶" Click="MenuItem_Topping_Click">
@@ -127,7 +129,7 @@
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
             <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2DCDCDC" FontSize="30" Visibility="Collapsed" Background="#B2646465"/>
-            <Canvas Name="canvas">
+            <Canvas Name="canvas" Opacity="0.2">
 
             </Canvas>
         </Grid>
