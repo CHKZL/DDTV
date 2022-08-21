@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.Log
     /// </summary>
     public class Log
     {
-       
+
         /// <summary>
         /// 日志等级(向下包含)
         /// </summary>
@@ -73,7 +73,7 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="IsError">是否是错误(错误内容会出了数据库外另外写一份txt文本记录详细错误日志和堆栈)</param>
         /// <param name="exception">IsError为真时有效，错误日志的Exception信息</param>
         /// <param name="IsDisplay">该记录是否在终端打印</param>
-        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null,bool IsDisplay=true)
+        public static void AddLog(string Source, LogClass.LogType logType, string Message, bool IsError = false, Exception? exception = null, bool IsDisplay = true)
         {
             Task.Run(() =>
             {
@@ -84,9 +84,9 @@ namespace DDTV_Core.SystemAssembly.Log
                     Source = Source,
                     Time = DateTime.Now,
                     Type = logType,
-                    IsError= IsError,
-                    exception= exception,
-                    IsDisplay=IsDisplay,
+                    IsError = IsError,
+                    exception = exception,
+                    IsDisplay = IsDisplay,
                 };
                 LogList.Add(logClass);
             });
@@ -97,7 +97,8 @@ namespace DDTV_Core.SystemAssembly.Log
         /// </summary>
         private static void PrintThread()
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 while (true)
                 {
                     try
@@ -186,20 +187,21 @@ namespace DDTV_Core.SystemAssembly.Log
         /// </summary>
         private static void WeritDB()
         {
-            Task.Run(() => {
-            while (true)
+            Task.Run(() =>
+            {
+                while (true)
                 {
                     try
                     {
-                        while(LogDBClasses.Count > 0)
+                        while (LogDBClasses.Count > 0)
                         {
                             if (LogDB.Operate.AddDb(LogDBClasses[0]))
                             {
                                 LogDBClasses.RemoveAt(0);
                             }
-                        }  
+                        }
                     }
-                    catch (Exception){}
+                    catch (Exception) { }
                     Thread.Sleep(30);
                 }
             });
@@ -212,14 +214,15 @@ namespace DDTV_Core.SystemAssembly.Log
         /// <param name="Message"></param>
         public static void ErrorLogFileWrite(LogClass logClass)// string Source, string Message)
         {
-            logClasses.Add(logClass);     
+            logClasses.Add(logClass);
         }
         /// <summary>
         /// 写错误日志堆栈详情到本地文本
         /// </summary>
         private static void WriteErrorLogFile()
         {
-            Task.Run(() => {
+            Task.Run(() =>
+            {
                 while (true)
                 {
                     try
@@ -228,13 +231,13 @@ namespace DDTV_Core.SystemAssembly.Log
                         {
                             LogClass logClass = new LogClass()
                             {
-                                exception= logClasses[0].exception,
-                                IsError= logClasses[0].IsError,
-                                Message= logClasses[0].Message,
-                                RunningTime=logClasses[0].RunningTime,
-                                Source=logClasses[0].Source,
-                                Time=logClasses[0].Time,
-                                Type= logClasses[0].Type,
+                                exception = logClasses[0].exception,
+                                IsError = logClasses[0].IsError,
+                                Message = logClasses[0].Message,
+                                RunningTime = logClasses[0].RunningTime,
+                                Source = logClasses[0].Source,
+                                Time = logClasses[0].Time,
+                                Type = logClasses[0].Type,
                             };
                             logClasses.RemoveAt(0);
                             string ErrorText = $"\n\n{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}";
@@ -264,15 +267,19 @@ namespace DDTV_Core.SystemAssembly.Log
             public static bool IsOn = false;
             public void Start()
             {
-                if(!IsOn)
+                if (!IsOn)
                 {
                     IsOn = true;
-                    Clean();
+                    Task.Run(() =>
+                    {
+                        Clean();
+                    });
+                   
                 }
             }
             private void Clean()
             {
-               while(true)
+                while (true)
                 {
                     try
                     {
@@ -310,6 +317,6 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
             }
         }
-       
+
     }
 }

@@ -69,29 +69,36 @@ namespace DDTV_GUI.DDTV_Window
         public PlayWindow(long Uid)
         {        
             InitializeComponent();
-            Quality = GUIConfig.PlayQuality;
-            uid = Uid;
-            SetMenuItemSwitchQuality();
-            
-            UpdateWindowInfo();
-            Core.Initialize("./plugins/vlc");
-            vlcVideo = new LibVLC();
-            _mediaPlayer = new MediaPlayer(vlcVideo);
-            VideoView.MediaPlayer = _mediaPlayer;
-            VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
-            VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
-            VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
-            Task.Run(() =>
+            Task.Run(() => 
             {
-                Thread.Sleep(1000);
-                Play(uid);
+                Quality = GUIConfig.PlayQuality;
+                uid = Uid;
+                SetMenuItemSwitchQuality();
+
+                UpdateWindowInfo();
+                Core.Initialize("./plugins/vlc");
+                vlcVideo = new LibVLC();
+                _mediaPlayer = new MediaPlayer(vlcVideo);
+                Dispatcher.Invoke(() =>
+                {
+                    VideoView.MediaPlayer = _mediaPlayer;
+                    VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
+                    VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
+                    VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
+                });
+               
+                Task.Run(() =>
+                {
+                    Thread.Sleep(1000);
+                    Play(uid);
+                });
+                VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
+                VolumeTimer.Tick += VolumeTimer_Tick;
+                VolumeTimer.Start();
+                Loaded += new RoutedEventHandler(Topping);
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
             });
-            VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
-            VolumeTimer.Tick += VolumeTimer_Tick;
-            VolumeTimer.Start();
-            Loaded += new RoutedEventHandler(Topping);
-            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
-            
+
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -113,26 +120,30 @@ namespace DDTV_GUI.DDTV_Window
             {
                 QualityList.Add(10000);
             }
-            if(QualityList.Contains(10000))
-                qn10000.Visibility= Visibility.Visible;
-            else
-                qn10000.Visibility= Visibility.Collapsed;
-            if (QualityList.Contains(400))
-                qn400.Visibility = Visibility.Visible;
-            else
-                qn400.Visibility = Visibility.Collapsed;
-            if (QualityList.Contains(250))
-                qn250.Visibility = Visibility.Visible;
-            else
-                qn250.Visibility = Visibility.Collapsed;
-            if (QualityList.Contains(150))
-                qn150.Visibility = Visibility.Visible;
-            else
-                qn150.Visibility = Visibility.Collapsed;
-            if (QualityList.Contains(80))
-                qn80.Visibility = Visibility.Visible;
-            else
-                qn80.Visibility = Visibility.Collapsed;
+            Dispatcher.Invoke(() =>
+            {
+                if (QualityList.Contains(10000))
+                    qn10000.Visibility = Visibility.Visible;
+                else
+                    qn10000.Visibility = Visibility.Collapsed;
+                if (QualityList.Contains(400))
+                    qn400.Visibility = Visibility.Visible;
+                else
+                    qn400.Visibility = Visibility.Collapsed;
+                if (QualityList.Contains(250))
+                    qn250.Visibility = Visibility.Visible;
+                else
+                    qn250.Visibility = Visibility.Collapsed;
+                if (QualityList.Contains(150))
+                    qn150.Visibility = Visibility.Visible;
+                else
+                    qn150.Visibility = Visibility.Collapsed;
+                if (QualityList.Contains(80))
+                    qn80.Visibility = Visibility.Visible;
+                else
+                    qn80.Visibility = Visibility.Collapsed;
+            });
+           
         }
 
         /// <summary>
