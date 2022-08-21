@@ -36,9 +36,16 @@ namespace DDTV_Core.SystemAssembly.Log
         /// 需要写入数据库的日志队列
         /// </summary>
         private static List<LogClass> LogDBClasses = new List<LogClass>();
-
-
+        /// <summary>
+        /// 
+        /// </summary>
         private static ConsoleWriter console = new ConsoleWriter();
+        /// <summary>
+        /// 删除过期日志类
+        /// </summary>
+        public static CleanUpExpirLog cleanUpExpirLog = new CleanUpExpirLog();
+
+
         /// <summary>
         /// Log系统初始化
         /// </summary>
@@ -55,6 +62,7 @@ namespace DDTV_Core.SystemAssembly.Log
             WeritDB();
             WriteErrorLogFile();
             PrintThread();//新增打印线程，把并行日志打印方法修改为串行，为之后控制台颜色区分做准备
+            cleanUpExpirLog.Start();
         }
         /// <summary>
         /// 增加日志
@@ -172,7 +180,7 @@ namespace DDTV_Core.SystemAssembly.Log
             }
         }
 
-        
+
         /// <summary>
         /// 启用sqlite数据库写入
         /// </summary>
@@ -249,5 +257,59 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
             });
         }
+
+        public class CleanUpExpirLog
+        {
+            public static int Interval = 24 * 60 * 60 * 1000;
+            public static bool IsOn = false;
+            public void Start()
+            {
+                if(!IsOn)
+                {
+                    IsOn = true;
+                    Clean();
+                }
+            }
+            private void Clean()
+            {
+               while(true)
+                {
+                    try
+                    {
+                        string[] list = Directory.GetFiles(@"Log");
+                        int SqliteFileCount = 0;
+                        foreach (string file in list)
+                        {
+                            if (file.Split('.').Length > 1 && file.Split('.')[1].ToLower() == "sqlite")
+                            {
+                                SqliteFileCount++;
+                            }
+                        }
+                        if (SqliteFileCount > 10)
+                        {
+                            DateTime NowTime = DateTime.Now;
+                            foreach (string file in list)
+                            {
+                                if (file.Split('_').Length > 1 && file.Split('-').Length > 5 && file.Split('T').Length > 1)
+                                {
+                                    DateTime FileTime = DateTime.Parse(file.Split('_')[1].Split('T')[0] + " " + file.Split('_')[1].Split('T')[1].Replace("-", ":").Substring(0, 8));
+                                    TimeSpan timeSpan = FileTime.Subtract(NowTime).Duration();
+                                    if (timeSpan.TotalDays > 14)
+                                    {
+                                        DDTV_Core.Tool.FileOperation.Del(file);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        AddLog(nameof(Log), LogClass.LogType.Error, "过期Log清理失败，写错误日志", true, e, true);
+                    }
+                    Thread.Sleep(Interval);
+                }
+            }
+        }
+       
     }
 }
