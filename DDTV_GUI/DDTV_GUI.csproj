@@ -49,7 +49,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="DevExpress.Data" Version="22.1.4" />
     <PackageReference Include="HandyControl" Version="3.3.0" />
     <PackageReference Include="LibVLCSharp" Version="3.6.6" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.6.6" />

@@ -112,7 +112,7 @@ namespace DDTV_GUI.DDTV_Window
 
 
             barrageConfig = new BarrageConfig(canvas);
-            this.Opacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+            canvas.Opacity = CoreConfig.DanMuFontOpacity;
         }
 
 
@@ -176,7 +176,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.Warning("该直播间直播已结束");
+                Growl.WarningGlobal($"({roomId})直播间直播已结束");
                 return;
             }
             Thread.Sleep(3000);
@@ -433,7 +433,6 @@ namespace DDTV_GUI.DDTV_Window
                     volumeText.Text = i.ToString();
                 }
             });
-            //CoreConfig.GetValue(CoreConfigClass.Key.DefaultVolume, "50", CoreConfigClass.Group.Play)
             CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
             MainWindow.DefaultVolume = i;
         }

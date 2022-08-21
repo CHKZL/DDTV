@@ -31,7 +31,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-08-17 16:01:26";
+        public static string CompiledVersion = "2022-08-21 22:52:45";
 
         /// <summary>
         /// 初始化COre
