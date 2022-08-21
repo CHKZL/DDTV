@@ -28,6 +28,7 @@ using DDTV_Core.SystemAssembly.Log;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DDTV_GUI.DanMuCanvas.BarrageParameters;
+using DDTV_GUI.WPFControl;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -45,6 +46,8 @@ namespace DDTV_GUI.DDTV_Window
         //string title = string.Empty;
         
         WPFControl.SendDanmuDialog sendDanmuDialog;
+        public event EventHandler<EventArgs> DanMuConfigDialogDispose;
+        private Dialog DanMuConfigDialog;//取色盘弹出窗口
         private DispatcherTimer VolumeTimer = new DispatcherTimer();
         int VolumeGridTime = 3;
         public event EventHandler<EventArgs> SendDialogDispose;
@@ -109,6 +112,7 @@ namespace DDTV_GUI.DDTV_Window
 
 
             barrageConfig = new BarrageConfig(canvas);
+            this.Opacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
         }
 
 
@@ -721,7 +725,17 @@ namespace DDTV_GUI.DDTV_Window
                     }
                     //Growl.Info("收到弹幕Danmu.Message");
                     if (!IsShiel)
-                        AddDanmu(Danmu.Message);
+                    {
+                        if (Danmu.Message[..1] == "【")
+                        {
+                            AddDanmu(Danmu.Message,true);
+                        }
+                        else
+                        {
+                            AddDanmu(Danmu.Message, false);
+                        }
+                    }
+                       
                     
                     //Console.WriteLine($"{Danmu.Message}");
                     break;
@@ -1019,7 +1033,7 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
 
-        private void AddDanmu(string DanmuText)
+        private void AddDanmu(string DanmuText,bool IsSubtitle)
         {
             Task.Run(() =>
             {
@@ -1027,7 +1041,7 @@ namespace DDTV_GUI.DDTV_Window
                 System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {
                     //显示弹幕
-                    barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, (int)this.Height);
+                    barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, (int)this.Height, IsSubtitle);
                 });
             });
             //Task.Run(() =>
@@ -1341,6 +1355,19 @@ namespace DDTV_GUI.DDTV_Window
                     Guide1_13Mode();
                     break;
             }
+        }
+
+        private void MenuItem_DamuConfig_Click(object sender, RoutedEventArgs e)
+        {
+            DanMuConfigDialogDispose += PlayWindow_DanMuConfigDialogDispose;
+            DanMuConfig danMuConfigWindow = new DanMuConfig(DanMuConfigDialogDispose);
+            DanMuConfigDialog = Dialog.Show(danMuConfigWindow);
+        }
+
+        private void PlayWindow_DanMuConfigDialogDispose(object? sender, EventArgs e)
+        {
+            canvas.Opacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+            DanMuConfigDialog.Close();
         }
     }
 }

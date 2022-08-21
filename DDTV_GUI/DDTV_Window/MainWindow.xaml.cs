@@ -34,6 +34,7 @@ namespace DDTV_GUI.DDTV_Window
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
+
         private static bool HideIconState = false;
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
@@ -53,9 +54,6 @@ namespace DDTV_GUI.DDTV_Window
         {
            
             InitializeComponent();
-          
-
-
             if (CheckRepeatedRun())
             {
                 Application.Current.Shutdown();
@@ -111,7 +109,7 @@ namespace DDTV_GUI.DDTV_Window
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
 
             //Sprite.Show(new DDTV_Sprite());
-          
+      
         }
 
 
@@ -273,7 +271,7 @@ namespace DDTV_GUI.DDTV_Window
             SelectAPI_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 1 ? true : false;
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
             AutoUpdateSwitch.IsChecked = CoreConfig.AutoInsallUpdate;
-
+            
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -693,6 +691,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             Dialog.Show<AddRoomDialog>();
         }
+
         /// <summary>
         /// 监控列表_右键菜单_在DDTV中观看
         /// </summary>

@@ -294,6 +294,26 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：false
             /// </summary>
             AutoInsallUpdate,
+            /// <summary>
+            /// 弹幕颜色（颜色字符串）
+            /// 组：Play   默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            DanmuColor,
+            /// <summary>
+            /// 字幕颜色（颜色字符串）
+            /// 组：Play   默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            SubtitleColor,
+            /// <summary>
+            /// 弹幕大小（Int）
+            /// 组：Play   默认值：26
+            /// </summary>
+            DanMuFontSize,
+            /// <summary>
+            /// 弹幕透明度（Double）
+            /// 组：Play   默认值：1
+            /// </summary>
+            DanMuFontOpacity
         }
     }
 }

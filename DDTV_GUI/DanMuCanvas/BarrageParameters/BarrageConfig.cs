@@ -32,10 +32,6 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
         /// </summary>
         public double initFinishTime;
         /// <summary>
-        /// 弹幕字体大小
-        /// </summary>
-        public double fontSize;
-        /// <summary>
         /// 弹幕总高度
         /// </summary>
         public int height;
@@ -65,7 +61,6 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
             rowCount = 10;
             reduceSpeed = decimal.Parse("0.5");
             initFinishTime = double.Parse("10");
-            fontSize = double.Parse("30");
             height = int.Parse("500");
 
         }
@@ -100,12 +95,12 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
         /// 在Window界面上显示弹幕信息,速度和位置随机产生
         /// </summary>
         /// <param name="contentlist"></param>
-        public void Barrage(MessageInformation contentlist,int Height)
+        public void Barrage(MessageInformation contentlist,int Height,bool IsSubtitle=false)
         {
             Random random = new Random();
             //当前读取弹幕的位置
             //获取高度位置(置顶、三分之一、三分之二)
-            int Max = (int)(Height - fontSize);
+            int Max = (int)(Height - DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize);
             double inittop = new Random().Next(0, Max);// GetHeight(locations[i]);
                                                        //获取速度随机数
                                                        //double randomspeed = random.NextDouble();
@@ -121,8 +116,22 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
             {
                 textblock.Text = contentlist.content;
             }
-            textblock.FontSize = fontSize;
-            textblock.Foreground = GetRandomColor();
+            textblock.FontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize;
+            if(IsSubtitle)
+            {
+                byte R = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[0], 16);
+                byte G = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[1], 16);
+                byte B = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[2], 16);
+                textblock.Foreground = new SolidColorBrush(Color.FromRgb(R, G, B));
+            }
+            else
+            {
+                byte R = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor.Split(',')[0], 16);
+                byte G = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor.Split(',')[1], 16);
+                byte B = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor.Split(',')[2], 16);
+                textblock.Foreground = new SolidColorBrush(Color.FromRgb(R,G,B)); 
+            }
+            
             //这里设置了弹幕的高度
             Canvas.SetTop(textblock, inittop);
             canvas.Children.Add(textblock);
@@ -131,7 +140,7 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
             Timeline.SetDesiredFrameRate(animation, 60);  //如果有性能问题,这里可以设置帧数
                                                           //从右往左
             animation.From = canvas.ActualWidth;
-            animation.To = 0- (fontSize * textblock.Text.Length);
+            animation.To = 0- (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize * textblock.Text.Length);
             animation.Duration = TimeSpan.FromSeconds(initFinishTime);
             animation.AutoReverse = false;
             animation.Completed += (object sender, EventArgs e) =>
