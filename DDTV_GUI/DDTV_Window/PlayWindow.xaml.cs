@@ -97,7 +97,11 @@ namespace DDTV_GUI.DDTV_Window
                 Quality = GUIConfig.PlayQuality;
                 uid = Uid;
                 SetMenuItemSwitchQuality();
-                UpdateWindowInfo();
+                this.Dispatcher.Invoke(() =>
+                {
+                    UpdateWindowInfo();
+                });
+              
 
                 Task.Run(() =>
                 {
@@ -107,13 +111,14 @@ namespace DDTV_GUI.DDTV_Window
                 VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
                 VolumeTimer.Tick += VolumeTimer_Tick;
                 VolumeTimer.Start();
-                Loaded += new RoutedEventHandler(Topping);
+              
                 barrageConfig = new BarrageConfig(canvas);
                 canvas.Dispatcher.Invoke(() =>
                 {
                     canvas.Opacity = CoreConfig.DanMuFontOpacity;
                 });               
-            });       
+            });
+            Loaded += new RoutedEventHandler(Topping);
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);     
         }
         void Topping(object sender, RoutedEventArgs e)
@@ -1368,6 +1373,22 @@ namespace DDTV_GUI.DDTV_Window
         {
             canvas.Opacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
             DanMuConfigDialog.Close();
+        }
+
+        int i = 0;
+        private void PlayGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            i += 1;
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 1);
+            timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
+            timer.IsEnabled = true;
+            if (i == 2)  
+            {
+                timer.IsEnabled = false;
+                i = 0;
+                FullScreenSwitch();
+            }
         }
     }
 }
