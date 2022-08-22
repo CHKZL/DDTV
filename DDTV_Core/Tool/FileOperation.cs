@@ -38,6 +38,10 @@ namespace DDTV_Core.Tool
                     return false;
                 }
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.CreateDefault(new Uri(Url));
+                if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                {
+                    httpWebRequest.Proxy = null;
+                }
                 httpWebRequest.Accept = "*/*";
                 httpWebRequest.UserAgent = SystemAssembly.NetworkRequestModule.NetClass.UA();
                 httpWebRequest.Method = "GET";

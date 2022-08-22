@@ -292,6 +292,10 @@ namespace DDTV_GUI.DDTV_Window
                 //string U2 = RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
 
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
+                if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                {
+                    req.Proxy = null;
+                }
                 req.Method = "GET";
                 req.ContentType = "application/x-www-form-urlencoded";
                 req.Accept = "*/*";
@@ -1337,9 +1341,12 @@ namespace DDTV_GUI.DDTV_Window
                     break;
                 case MainWindow.GuideMode.W1_13:
                     {
-                        PlayWindow playWindow = MainWindow.playWindowsList[1];
-                        MainWindow.playWindowsList[1] = MainWindow.playWindowsList[ti];
-                        MainWindow.playWindowsList[ti] = playWindow;
+                        if (MainWindow.playWindowsList.Count > 1)
+                        {
+                            PlayWindow playWindow = MainWindow.playWindowsList[1];
+                            MainWindow.playWindowsList[1] = MainWindow.playWindowsList[ti];
+                            MainWindow.playWindowsList[ti] = playWindow;
+                        }
                     }
                     break;
             }
@@ -1376,14 +1383,15 @@ namespace DDTV_GUI.DDTV_Window
         }
 
         int i = 0;
-        private void PlayGrid_MouseDown(object sender, MouseButtonEventArgs e)
+
+        private void PlayGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             i += 1;
             DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 1);
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
             timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
             timer.IsEnabled = true;
-            if (i == 2)  
+            if (i == 2)
             {
                 timer.IsEnabled = false;
                 i = 0;

@@ -26,6 +26,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             NetClass.API_Count(url);
             string result = "";
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            {
+                req.Proxy = null;
+            }
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
             req.ContentType = ContentType;

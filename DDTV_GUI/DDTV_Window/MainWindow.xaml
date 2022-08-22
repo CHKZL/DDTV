@@ -317,20 +317,25 @@
                                                 <hc:Poptip Content="打开开关后，缩小DDTV窗口回从任务栏中消失、隐藏到角落后台托盘中，双击托盘中的ico恢复到任务栏" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                        <TextBlock HorizontalAlignment="Left" Margin="221,0,0,0" Text="阻止系统休眠" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="DoNotSleepWhileDownloadingIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="322,6,0,4" Click="DoNotSleepWhileDownloadingIcon_Click" HorizontalAlignment="Left" Width="36">
+                                        <TextBlock HorizontalAlignment="Left" Margin="204,0,0,0" Text="阻止系统休眠" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="DoNotSleepWhileDownloadingIcon" Style="{StaticResource ToggleButtonSwitch}" Margin="305,5,0,5" Click="DoNotSleepWhileDownloadingIcon_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会阻止系统进入休眠模式（不阻止屏幕休眠）防止录制任务失败，关闭本设置或者退出DDTV后恢复" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                        <TextBlock HorizontalAlignment="Left" Margin="400,0,0,0" Text="检测剩余空间并警告" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="SpaceIsInsufficientWarn" Style="{StaticResource ToggleButtonSwitch}" Margin="550,6,0,4" Click="SpaceIsInsufficientWarn_Click" HorizontalAlignment="Left" Width="36">
+                                        <TextBlock HorizontalAlignment="Left" Margin="375,0,0,0" Text="检测剩余空间并警告" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="SpaceIsInsufficientWarn" Style="{StaticResource ToggleButtonSwitch}" Margin="524,6,0,4" Click="SpaceIsInsufficientWarn_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="当录制的盘符剩余空间低于百分之5时，会每5分钟弹出一次提示，警告剩余空间不足" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-
-                                        <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="登出bilibili账号" HorizontalAlignment="Left" Margin="738,0,0,0"/>
+                                        <TextBlock HorizontalAlignment="Left" Margin="573,0,0,0" Text="使用系统代理" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="ProxySwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="690,5,0,5" Click="ProxySwitch_Click"  HorizontalAlignment="Left" Width="36">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开该功能后会使用系统设置的代理（Proxy），一般是梯子或者网络问题才需要修改这一项；如果不明白这个是什么，请勿修改" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                        <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="登出bilibili账号" HorizontalAlignment="Left" Margin="745,0,0,0"/>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
@@ -538,7 +543,7 @@
                 </Grid>
             </Border>
         </hc:Drawer>
-        
+
     </Grid>
 
 </hc:GlowWindow>
