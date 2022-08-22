@@ -23,6 +23,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string SubtitleColor = GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
         public static int DanMuFontSize = int.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
         public static double DanMuFontOpacity = double.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
+        public static bool WhetherToEnableProxy =  bool.Parse(GetValue(CoreConfigClass.Key.WhetherToEnableProxy, "True", CoreConfigClass.Group.Core));
 
         /// <summary>
         /// 初始化配置文件
@@ -135,6 +136,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _SubtitleColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
             var _DanMuFontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
             var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+            var _WhetherToEnableProxy = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy;
 
     }
         /// <summary>

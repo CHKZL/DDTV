@@ -271,7 +271,7 @@ namespace DDTV_GUI.DDTV_Window
             SelectAPI_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 1 ? true : false;
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
             AutoUpdateSwitch.IsChecked = CoreConfig.AutoInsallUpdate;
-            
+            ProxySwitch.IsChecked = CoreConfig.WhetherToEnableProxy;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1487,6 +1487,15 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.AutoInsallUpdate, Is.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((Is ? "打开" : "关闭") + "DDTV自动更新");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "DDTV自动更新", false, null, false);
+        }
+
+        private void ProxySwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)ProxySwitch.IsChecked ? true : false;
+            CoreConfig.WhetherToEnableProxy = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.WhetherToEnableProxy, Is.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success((Is ? "使用" : "不使用") + "系统代理");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "使用" : "不使用") + "系统代理", false, null, false);
         }
     }
 }

@@ -275,6 +275,8 @@ namespace BiliAccount.Core
             try
             {
                 req = (HttpWebRequest)WebRequest.Create("https://passport.bilibili.com/api/login/sso?" + parm);
+               
+                    
                 req.AllowAutoRedirect = false;
                 req.UserAgent = Config.Instance.User_Agent;
                 rep = (HttpWebResponse)req.GetResponse();

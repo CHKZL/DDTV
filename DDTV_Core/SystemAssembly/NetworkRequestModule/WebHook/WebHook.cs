@@ -26,6 +26,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
                         {
                             HttpWebRequest request;
                             request = (HttpWebRequest)WebRequest.Create(ConfigModule.CoreConfig.WebHookUrl);
+                            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                            {
+                                request.Proxy = null;
+                            }
                             request.Method = "POST";
                             request.ContentType = "application/json; charset=UTF-8";
                             request.UserAgent = $"{InitDDTV_Core.InitType}/{InitDDTV_Core.Ver}";

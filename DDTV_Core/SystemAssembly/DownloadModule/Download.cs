@@ -364,6 +364,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             return;
                         }
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(downloadClass.Url);
+                        if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                        {
+                            req.Proxy = null;
+                        }
                         req.Method = "GET";
                         req.ContentType = "application/x-www-form-urlencoded";
                         req.Accept = "*/*";

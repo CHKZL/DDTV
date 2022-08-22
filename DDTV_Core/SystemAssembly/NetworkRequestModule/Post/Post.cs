@@ -23,6 +23,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             NetClass.API_Count(url);
             string strURL = url;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strURL);
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            {
+                request.Proxy = null;
+            }
             request.ServicePoint.Expect100Continue = false;
             request.Method = "POST";
             request.ContentType = "application/json;charset=" + encode.ToUpper();
@@ -75,6 +79,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             NetClass.API_Count(url);
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            {
+                req.Proxy = null;
+            }
             req.ServicePoint.Expect100Continue = false;
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
@@ -143,6 +151,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         {
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            {
+                req.Proxy = null;
+            }
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = $"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";

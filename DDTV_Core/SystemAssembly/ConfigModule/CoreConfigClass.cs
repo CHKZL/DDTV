@@ -313,7 +313,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 弹幕透明度（Double）
             /// 组：Play   默认值：1
             /// </summary>
-            DanMuFontOpacity
+            DanMuFontOpacity,
+            /// <summary>
+            /// 是否使用系统代理（布尔值）
+            /// 组：Core   默认值：true
+            /// </summary>
+            WhetherToEnableProxy,
         }
     }
 }
