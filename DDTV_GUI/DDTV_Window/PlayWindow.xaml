@@ -13,7 +13,7 @@
         Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" >
 
     <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
-        <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown">
+        <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown" MouseDown="PlayGrid_MouseDown">
             <Grid.ContextMenu  >
                 <ContextMenu>
                     <MenuItem Header="发送弹幕" Click="Danmu_Send_Button_Click">
@@ -85,9 +85,6 @@
                         <MenuItem Header="1-6模式" Tag="1_6" Width="150" Click="MenuItem_GuideMode_Click"/>
                         <MenuItem Header="1-8模式" Tag="1_8" Width="150" Click="MenuItem_GuideMode_Click"/>
                         <MenuItem Header="1-13模式" Tag="1_13" Width="150" Click="MenuItem_GuideMode_Click"/>
-                    </MenuItem>
-                    <MenuItem Header="设置窗口为导播模式" >
-                       
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="关闭本窗口" Click="MenuItem_Exit_Click">
