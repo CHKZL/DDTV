@@ -1177,7 +1177,12 @@ namespace DDTV_GUI.DDTV_Window
                 process.StartInfo.FileName = "./DDTV_Update.exe";
                 if(IsAuto)
                 {
-                    process.StartInfo.Arguments = "autoupdate";
+                    process.StartInfo.Arguments += " autoupdate";
+                
+                }
+                if (CoreConfig.IsDev)
+                {
+                    process.StartInfo.Arguments += " dev";
                 }
                 process.Start();
                 Dispatcher.BeginInvoke(new Action(delegate
