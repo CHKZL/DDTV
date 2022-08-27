@@ -5,7 +5,6 @@ using System.Windows;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
-
 using System.Windows.Input;
 using Dialog = HandyControl.Controls.Dialog;
 using System.Windows.Threading;
@@ -42,6 +41,7 @@ namespace DDTV_GUI.DDTV_Window
         private static MediaPlayer _mediaPlayer;
         bool IsClose = false;
         long uid = 0;
+        string name = string.Empty;
         int roomId = 0;
         //string title = string.Empty;
 
@@ -77,7 +77,7 @@ namespace DDTV_GUI.DDTV_Window
         };
 
 
-        public PlayWindow(long Uid)
+        public PlayWindow(long Uid,string Name)
         {
             InitializeComponent();
 
@@ -86,7 +86,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 VideoView.Dispatcher.Invoke(() =>
                 {
-                    Core.Initialize("./plugins/vlc");
+                   
                     vlcVideo = new LibVLC();
                     _mediaPlayer = new MediaPlayer(vlcVideo);
                     VideoView.MediaPlayer = _mediaPlayer;
@@ -96,6 +96,7 @@ namespace DDTV_GUI.DDTV_Window
                 });
                 Quality = GUIConfig.PlayQuality;
                 uid = Uid;
+                name = Name;
                 SetMenuItemSwitchQuality();
                 this.Dispatcher.Invoke(() =>
                 {
@@ -180,7 +181,12 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.WarningGlobal($"({roomId})直播间直播已结束");
+                EndGrid.Dispatcher.Invoke(() =>
+                {
+                    EndGrid.Visibility = Visibility.Visible;
+                });
+                
+                Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
                 return;
             }
             Thread.Sleep(3000);
@@ -224,55 +230,66 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="Uid"></param>
         private void Play(long Uid)
         {
-            if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+            try
             {
-                if (!QualityList.Contains(Quality))
+                if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                 {
-                    Quality = 10000;
-                    Growl.WarningGlobal("该直播间没有默认匹配的清晰度，当前直播间已为您切换到原画");
-                }
-                string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line, true);
-                windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname) + "-" + Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
-                roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
-                this.Dispatcher.Invoke(() =>
-                    this.Title = windowInfo.title
-                );
-                StartDownload(Url);
-
-                Task.Run(() =>
-                {
-                    Thread.Sleep(3000);
-                    VideoView.Dispatcher.Invoke(() =>
+                    if (!QualityList.Contains(Quality))
                     {
-                        try
-                        {
-                            if (!IsClose && VideoView.MediaPlayer != null)
-                            {
-                                if (VideoView.MediaPlayer.IsPlaying)
-                                {
-                                    VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
-                                }
-                                VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
-                                SetVolume(MainWindow.DefaultVolume);
-                            }
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-                    });
-                });
-            }
-            else
-            {
-                Growl.AskGlobal($"直播间【{roomId}】已下播，是否关闭本窗口", isConfirmed =>
-                {
-                    if (isConfirmed)
-                    {
-                        this.Close();
+                        Quality = 10000;
+                        Growl.WarningGlobal($"{name}播间没有默认匹配的清晰度，已为您切换到原画");
                     }
-                    return true;
-                });
+                    string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line, true);
+                    windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname) + "-" + Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
+                    roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
+                    this.Dispatcher.Invoke(() =>
+                        this.Title = windowInfo.title
+                    );
+                    StartDownload(Url);
+
+                    Task.Run(() =>
+                    {
+                        Thread.Sleep(3000);
+                        VideoView.Dispatcher.Invoke(() =>
+                        {
+                            try
+                            {
+                                if (!IsClose && VideoView.MediaPlayer != null)
+                                {
+                                    if (VideoView.MediaPlayer.IsPlaying)
+                                    {
+                                        VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
+                                    }
+                                    VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                    SetVolume(MainWindow.DefaultVolume);
+                                }
+                            }
+                            catch (Exception e)
+                            {
+
+                            }
+                        });
+                    });
+                }
+                else
+                {
+                    EndGrid.Dispatcher.Invoke(() =>
+                    {
+                        EndGrid.Visibility = Visibility.Visible;
+                    });
+                    Growl.AskGlobal($"直播间【{name}({roomId})】已下播，是否关闭本窗口", isConfirmed =>
+                    {
+                        if (isConfirmed)
+                        {
+                            this.Close();
+                        }
+                        return true;
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                Growl.WarningGlobal($"【{name}({roomId})】试图加载视频流至播放器，被系统阻止，请稍候再试");
             }
         }
         public void StartDownload(string Url)
@@ -358,7 +375,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.AskGlobal($"直播间【{roomId}】已下播，是否关闭本窗口", isConfirmed =>
+                Growl.AskGlobal($"【{name}({roomId})】已下播，是否关闭本窗口", isConfirmed =>
                 {
                     if (isConfirmed)
                     {
@@ -666,8 +683,8 @@ namespace DDTV_GUI.DDTV_Window
 
             if (IsOpenDanmu)
             {
-                Growl.InfoGlobal($"启动{roomId}房间的弹幕连接");
-                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动{roomId}房间的弹幕连接", false);
+                Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
                 Task.Run(() =>
                 {
                     MainWindow.linkDMNum++;
@@ -701,7 +718,7 @@ namespace DDTV_GUI.DDTV_Window
                             roomInfo.roomWebSocket.IsConnect = false;
                             roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
                             roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                            Growl.InfoGlobal($"关闭{roomId}房间的弹幕连接");
+                            Growl.InfoGlobal($"关闭【{name}({roomId})】的弹幕连接");
                         }
                         else
                         {

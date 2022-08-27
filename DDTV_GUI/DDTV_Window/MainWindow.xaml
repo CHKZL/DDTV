@@ -307,7 +307,7 @@
                 </TabItem>
                 <TabItem Header="设置">
                     <Grid>
-                        <Grid Margin="20,10,10,10" Background="#4C797979">
+                        <Grid Margin="6,6,6,6" Background="#4C797979">
                             <ScrollViewer>
                                 <WrapPanel Orientation="Horizontal">
                                     <Grid Width="850">
@@ -470,19 +470,32 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
-                                    <Grid Width="815"  Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集（请仔细查看开关说明）" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="DDcenterSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="417,10,0,0" HorizontalAlignment="Left" Width="36" Click="DDcenterSwitch_Click">
+                                    <Grid Width="853">
+                                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DDcenterSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="246,10,0,0" HorizontalAlignment="Left" Width="36" Click="DDcenterSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加B站API调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                        <TextBlock HorizontalAlignment="Left" Margin="502,10,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="AutoUpdateSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="615,9,0,1" HorizontalAlignment="Left" Width="36" Click="AutoUpdateSwitch_Click">
+                                        <TextBlock HorizontalAlignment="Left" Margin="369,9,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="AutoUpdateSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="482,8,0,2" HorizontalAlignment="Left" Width="36" Click="AutoUpdateSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开自动更新后，如果收到新版本推送，并且当时没有录播任务和观看直播，则会自动重启DDTV更新到最新版本" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="551,8,0,0" Text="接受开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DevSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="684,6,0,4" HorizontalAlignment="Left" Width="36" Click="DevSwitch_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开本开关后，手动点击[更新DDTV]按钮时会检查是否有新的开发版本，如果有会更新到最新的开发版本。（关闭此开关后再点击更新会更新为正常发布版本）" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+
+                                        <Button Content="更新DDTV" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Click="DDTV_UPDATE_Button_Click" Margin="760,0,0,0">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </Button>
                                     </Grid>
 
                                 </WrapPanel>
@@ -499,11 +512,7 @@
                         <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-158" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
 
                         <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="764,10,0,0" VerticalAlignment="Top"/>
-                        <Button Content="更新DDTV" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="DDTV_UPDATE_Button_Click">
-                            <hc:AdornerElement.Instance>
-                                <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新" PlacementType="BottomLeft"/>
-                            </hc:AdornerElement.Instance>
-                        </Button>
+
                         <Button Content="查看系统日志" Margin="776,508,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>

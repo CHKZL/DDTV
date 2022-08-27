@@ -319,6 +319,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：true
             /// </summary>
             WhetherToEnableProxy,
+            /// <summary>
+            /// 是否使用开发版更新模式
+            /// 组：Core   默认值：false
+            /// </summary>
+            IsDev,
         }
     }
 }
