@@ -59,8 +59,14 @@ namespace DDTV_GUI.DDTV_Window
                 Application.Current.Shutdown();
                 return;
             }
+#if DEBUG
+            string Title = $"DDTV——你的地表最强B站播放器 {Ver}　(Dev版-编译时间:{InitDDTV_Core.CompiledVersion})";
+#endif
+#if !DEBUG
             string Title = $"DDTV——你的地表最强B站播放器 {Ver}　({InitDDTV_Core.Ver})";
-            
+#endif
+
+
             this.Title = Title;
             DDTV_ICO.Text = Title;
             //初始化DDTV_Core          
@@ -77,7 +83,7 @@ namespace DDTV_GUI.DDTV_Window
                 InitialBoot IB = new InitialBoot();
                 IB.ShowDialog();
             }
-
+            LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
             RoomPatrol.StartLive += RoomPatrol_StartLive;//注册开播提醒事件
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
@@ -109,9 +115,26 @@ namespace DDTV_GUI.DDTV_Window
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
 
             //Sprite.Show(new DDTV_Sprite());
-      
+            DelTmpFile();
         }
 
+        private void DelTmpFile()
+        {
+            Task.Run(() =>
+            {
+                //List<string> Files = new List<string>();
+                //foreach (var item in Directory.GetFiles("./tmp"))
+                //{
+                //    Files.Add(item);
+                //}
+                //FileOperation.Del(Files);
+                DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
+                foreach (FileInfo item in root.GetFiles())
+                {
+                    DDTV_Core.Tool.FileOperation.Del(item.FullName);
+                }
+            });
+        }
 
 
         private void FileOperation_PathAlmostFull(object? sender, string e)
@@ -157,7 +180,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.InfoGlobal($"DDTV检测到更新，请在[关于]界面中点击[更新DDTV]进行自动更新");
+                Growl.InfoGlobal($"DDTV检测到更新，请在[设置]界面中点击[更新DDTV]进行自动更新");
             }
             
         }
@@ -272,6 +295,8 @@ namespace DDTV_GUI.DDTV_Window
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
             AutoUpdateSwitch.IsChecked = CoreConfig.AutoInsallUpdate;
             ProxySwitch.IsChecked = CoreConfig.WhetherToEnableProxy;
+
+            DevSwitch.IsChecked = CoreConfig.IsDev;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -417,11 +442,7 @@ namespace DDTV_GUI.DDTV_Window
             MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
             {
-                DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
-                foreach (FileInfo item in root.GetFiles())
-                {
-                    DDTV_Core.Tool.FileOperation.Del(item.FullName);
-                }
+                DelTmpFile();
                 Application.Current.Shutdown();
                 return true;
             }
@@ -717,11 +738,12 @@ namespace DDTV_GUI.DDTV_Window
             if (Index > -1 && UpdateInterface.Main.liveList.Count > Index)
             {
                 long uid = UpdateInterface.Main.liveList[Index].Uid;
+                string name = UpdateInterface.Main.liveList[Index].Name;
                 if (UpdateInterface.Main.liveList[Index].LiveState == 1)
                 {
                     this.Dispatcher.Invoke(new Action(() =>
                     {
-                        PlayWindow playWindow = new PlayWindow(uid);
+                        PlayWindow playWindow = new PlayWindow(uid, name);
                         playWindowsList.Add(playWindow);
                         playWindow.Closed += PlayWindow_Closed;
                         playWindow.Show();
@@ -1496,6 +1518,15 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.WhetherToEnableProxy, Is.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((Is ? "使用" : "不使用") + "系统代理");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "使用" : "不使用") + "系统代理", false, null, false);
+        }
+
+        private void DevSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)DevSwitch.IsChecked ? true : false;
+            CoreConfig.IsDev = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.IsDev, Is.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success((Is ? "打开" : "关闭") + "开发版本更新监听");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "开发版本更新监听", false, null, false);
         }
     }
 }

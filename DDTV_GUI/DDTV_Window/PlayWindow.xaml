@@ -119,6 +119,10 @@
                 <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
 
+            <Grid Name="EndGrid" Background="#7F5B5B5B" Visibility="Collapsed">
+                <TextBlock Text="该房间已下播" Style="{StaticResource TextBlockLarge}" Foreground="#fb7299" FontSize="30" />
+            </Grid>
+
             <hc:PreviewSlider Name="volume" Height="300" Value="200" Maximum="100" Orientation="Vertical" Margin="10,150,0,10"  VerticalAlignment="Center" HorizontalAlignment="Left" SmallChange="1" MouseMove="volume_MouseMove">
                 <hc:PreviewSlider.PreviewContent>
                     <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
