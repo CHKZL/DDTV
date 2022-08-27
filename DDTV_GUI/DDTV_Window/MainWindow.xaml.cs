@@ -295,8 +295,10 @@ namespace DDTV_GUI.DDTV_Window
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
             AutoUpdateSwitch.IsChecked = CoreConfig.AutoInsallUpdate;
             ProxySwitch.IsChecked = CoreConfig.WhetherToEnableProxy;
-
             DevSwitch.IsChecked = CoreConfig.IsDev;
+
+            SelectDanMu_Name.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
+            SelectDanMu_UID.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -938,12 +940,16 @@ namespace DDTV_GUI.DDTV_Window
                 GiftToggle.IsEnabled = true;
                 GuardToggle.IsEnabled = true;
                 SCToggle.IsEnabled = true;
+                SelectDanMu_Name.IsEnabled= true;
+                SelectDanMu_UID.IsEnabled = true;
             }
             else
             {
                 GiftToggle.IsEnabled = false;
                 GuardToggle.IsEnabled = false;
                 SCToggle.IsEnabled = false;
+                SelectDanMu_Name.IsEnabled = false;
+                SelectDanMu_UID.IsEnabled = false;
             }
         }
 
@@ -1532,6 +1538,22 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfig.SetValue(CoreConfigClass.Key.IsDev, Is.ToString(), CoreConfigClass.Group.Core);
             Growl.Success((Is ? "打开" : "关闭") + "开发版本更新监听");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "开发版本更新监听", false, null, false);
+        }
+
+        private void SelectDanMu_UID_Click(object sender, RoutedEventArgs e)
+        {
+            CoreConfig.DanMuSaveType = 2;
+            CoreConfig.SetValue(CoreConfigClass.Key.DanMuSaveType, CoreConfig.DanMuSaveType.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success($"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}", false, null, false);
+        }
+
+        private void SelectDanMu_Name_Click(object sender, RoutedEventArgs e)
+        {
+            CoreConfig.DanMuSaveType = 1;
+            CoreConfig.SetValue(CoreConfigClass.Key.DanMuSaveType, CoreConfig.DanMuSaveType.ToString(), CoreConfigClass.Group.Core);
+            Growl.Success($"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}", false, null, false);
         }
     }
 }
