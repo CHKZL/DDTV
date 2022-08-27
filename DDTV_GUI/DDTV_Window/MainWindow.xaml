@@ -409,7 +409,7 @@
                                         </hc:ComboBox>
 
                                         <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click">
+                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click" IsEnabled="False">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
@@ -422,11 +422,6 @@
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                         <Button Name="SaveReplaceAPI" Content="保存" Margin="240,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SaveReplaceAPI_Click"/>
-                                        <!--<hc:ButtonGroup Margin="305,27,240,0">
-                                            <TextBlock HorizontalAlignment="Left" Margin="5" Text="切换API版本" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                            <RadioButton Content="使用v1 API" IsChecked="True"/>
-                                            <RadioButton Content="使用v2 API"/>
-                                        </hc:ButtonGroup>-->
                                         <TextBlock HorizontalAlignment="Left" Margin="330,2,0,0" Text="切换API版本" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <hc:ButtonGroup Margin="330,27,280,0" Style="{StaticResource ButtonGroupSolid}">
                                             <RadioButton Name="SelectAPI_v1" Content="使用v1 API" IsChecked="True" Click="SelectAPI_v1_Click">
@@ -437,6 +432,19 @@
                                             <RadioButton Name="SelectAPI_v2" Content="使用v2 API" Click="SelectAPI_v2_Click">
                                                 <hc:AdornerElement.Instance>
                                                     <hc:Poptip Content="V1或者V2 请根据网络状况自行选择，在网络条件好的地方V2比V1稳定，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                        </hc:ButtonGroup>
+                                        <TextBlock HorizontalAlignment="Left" Margin="631,2,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <hc:ButtonGroup Margin="649,27,77,0" Style="{StaticResource ButtonGroupSolid}">
+                                            <RadioButton Name="SelectDanMu_Name" Content="昵称" IsChecked="True" Click="SelectDanMu_Name_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                            <RadioButton Name="SelectDanMu_UID" Content="UID" Click="SelectDanMu_UID_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
                                         </hc:ButtonGroup>
@@ -469,6 +477,7 @@
                                                 <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+
                                     </Grid>
                                     <Grid Width="853">
                                         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
@@ -477,23 +486,23 @@
                                                 <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加B站API调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                        <TextBlock HorizontalAlignment="Left" Margin="369,9,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="AutoUpdateSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="482,8,0,2" HorizontalAlignment="Left" Width="36" Click="AutoUpdateSwitch_Click">
+                                        <TextBlock HorizontalAlignment="Left" Margin="318,9,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="AutoUpdateSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="431,9,0,1" HorizontalAlignment="Left" Width="36" Click="AutoUpdateSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开自动更新后，如果收到新版本推送，并且当时没有录播任务和观看直播，则会自动重启DDTV更新到最新版本" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="551,8,0,0" Text="接受开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="DevSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="684,6,0,4" HorizontalAlignment="Left" Width="36" Click="DevSwitch_Click">
+                                        <TextBlock HorizontalAlignment="Left" Margin="489,9,0,0" Text="接受开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DevSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="622,10,0,0" HorizontalAlignment="Left" Width="36" Click="DevSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开本开关后，手动点击[更新DDTV]按钮时会检查是否有新的开发版本，如果有会更新到最新的开发版本。（关闭此开关后再点击更新会更新为正常发布版本）" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <Button Content="更新DDTV" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Click="DDTV_UPDATE_Button_Click" Margin="760,0,0,0">
+                                        <Button Content="更新DDTV"  HorizontalAlignment="Left" Click="DDTV_UPDATE_Button_Click" Margin="760,0,0,0">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="点击该按钮会结束所有录制中的任务！！！并退出DDTV开始更新！" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </Button>
                                     </Grid>
@@ -507,13 +516,13 @@
                 <TabItem Header="关于">
                     <Grid>
                         <TextBlock Text="这里还没想好放什么，有问题或者建议请加群338182356" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30"/>
-                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-96" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
-                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-135" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="202" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件所用到的所有数据和工具均来自互联网公开内容。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-96" Foreground="#FF828282" HorizontalAlignment="Left" Width="766" Height="184" VerticalAlignment="Bottom" />
+                        <TextBlock Text="　　本软件上所出现的所有信息都归属原所有者。在使用过程中的任何资料、数据、与产生的后果与责任都与本软件和作者群体无关。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-135" Foreground="#FF828282" HorizontalAlignment="Left" Width="755" Height="202" VerticalAlignment="Bottom" />
                         <TextBlock Text="　　请悉知以上内容后再确定是否使用本软件。" FontSize="16" TextWrapping="Wrap" Margin="10,0,0,-158" Foreground="#FF828282" HorizontalAlignment="Left" Width="620" Height="184" VerticalAlignment="Bottom" />
 
                         <ToggleButton Content="猜猜我是干嘛的" IsChecked="{Binding IsOpen,ElementName=DrawerLeft}" HorizontalAlignment="Left" Margin="764,10,0,0" VerticalAlignment="Top"/>
 
-                        <Button Content="查看系统日志" Margin="776,508,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
+                        <Button Content="查看系统日志" Margin="776,498,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>
                 <TabItem Header="动态">

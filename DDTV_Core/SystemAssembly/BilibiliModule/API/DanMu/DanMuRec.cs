@@ -1,5 +1,6 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
@@ -68,7 +69,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                             type = Danmu.MessageType,
                             time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
                             uid = Danmu.UserId,
-                            Message = Danmu.Message
+                            Message = Danmu.Message,
+                            Nickname=Danmu.UserName
                         });
                         break;
                     case SuperchatEventArg SuperchatEvent:
@@ -149,8 +151,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <param name="roomId"></param>
         private static FileInfo SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, string FileName, string Name, int roomId,long time)
         {
-           
-            string XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+
+            string XML = string.Empty;
+
+            switch (CoreConfig.DanMuSaveType)
+            {
+                case 1:
+                    XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
                 "<i>" +
                 "<chatserver>chat.bilibili.com</chatserver>" +
                 "<chatid>0</chatid>" +
@@ -162,12 +169,46 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 $"<roomid>{roomId}</roomid>" +
                 $"<time>{time}</time>" +
                 $"<source>k-v</source>";
-            int i = 1;
-            foreach (var item in danmuInfo)
-            {
-                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
-                i++;
+                    break;
+                case 2:
+                    XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<i>" +
+                "<chatserver>chat.bilibili.com</chatserver>" +
+                "<chatid>0</chatid>" +
+                "<mission>0</mission>" +
+                "<maxlimit>2147483647</maxlimit>" +
+                "<state>0</state>" +
+                $"<app>{InitDDTV_Core.Ver}</app>" +
+                $"<real_name>{Name}</real_name>" +
+                $"<roomid>{roomId}</roomid>" +
+                $"<time>{time}</time>" +
+                $"<source>k-v</source>";
+                    break;
             }
+
+            int i = 1;
+
+
+
+            switch (CoreConfig.DanMuSaveType)
+            {
+                case 1:
+                    foreach (var item in danmuInfo)
+                    {
+                        XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.Nickname},{i}\">{XMLEscape(item.Message)}</d>\r\n";
+                        i++;
+                    }
+                    break;
+                case 2:
+                    foreach (var item in danmuInfo)
+                    {
+                        XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
+                        i++;
+                    }
+                    break;
+            }
+
+           
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
             return new FileInfo(FileName + ".xml");

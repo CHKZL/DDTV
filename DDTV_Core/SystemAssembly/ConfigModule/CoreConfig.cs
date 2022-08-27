@@ -25,6 +25,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static double DanMuFontOpacity = double.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
         public static bool WhetherToEnableProxy =  bool.Parse(GetValue(CoreConfigClass.Key.WhetherToEnableProxy, "True", CoreConfigClass.Group.Core));
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
+        public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
 
         /// <summary>
         /// 初始化配置文件
@@ -139,7 +140,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
             var _WhetherToEnableProxy = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy;
             var _IsDev = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDev;
-
+            var _SCSaveType = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType;
         }
         /// <summary>
         /// 获取配置

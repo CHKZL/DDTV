@@ -77,6 +77,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             /// 弹幕信息
             /// </summary>
             public string Message { set; get; }
+            /// <summary>
+            /// 发送人昵称
+            /// </summary>
+            public string Nickname { set; get;}
         }
         public class SuperChatInfo
         {
