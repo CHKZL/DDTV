@@ -112,6 +112,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             /// SC消息内容_翻译后
             /// </summary>
             public string MessageTrans { set; get; }
+            /// <summary>
+            /// SC消息的持续时间
+            /// </summary>
+            public int TimeLength { set; get; }
         }
         public class GiftInfo
         {

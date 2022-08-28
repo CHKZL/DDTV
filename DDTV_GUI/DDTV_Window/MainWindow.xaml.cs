@@ -269,9 +269,9 @@ namespace DDTV_GUI.DDTV_Window
                 ? 3 : 4;
 
             DanmuToggle.IsChecked = Download.IsRecDanmu;
-            GiftToggle.IsChecked = Download.IsRecGift;
-            GuardToggle.IsChecked = Download.IsRecGuard;
-            SCToggle.IsChecked = Download.IsRecSC;
+            //GiftToggle.IsChecked = Download.IsRecGift;
+            //GuardToggle.IsChecked = Download.IsRecGuard;
+            //SCToggle.IsChecked = Download.IsRecSC;
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
 
@@ -297,8 +297,8 @@ namespace DDTV_GUI.DDTV_Window
             ProxySwitch.IsChecked = CoreConfig.WhetherToEnableProxy;
             DevSwitch.IsChecked = CoreConfig.IsDev;
 
-            SelectDanMu_Name.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
-            SelectDanMu_UID.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
+            SelectDanMu_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
+            SelectDanMu_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -937,48 +937,62 @@ namespace DDTV_GUI.DDTV_Window
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "弹幕录制总开关",false,null,false);
             if (Is)
             {
-                GiftToggle.IsEnabled = true;
-                GuardToggle.IsEnabled = true;
-                SCToggle.IsEnabled = true;
-                SelectDanMu_Name.IsEnabled= true;
-                SelectDanMu_UID.IsEnabled = true;
+                //GiftToggle.IsEnabled = true;
+                //GuardToggle.IsEnabled = true;
+                //SCToggle.IsEnabled = true;
+                SelectDanMu_v1.IsEnabled = true;
+                SelectDanMu_v2.IsEnabled = true;
             }
             else
             {
-                GiftToggle.IsEnabled = false;
-                GuardToggle.IsEnabled = false;
-                SCToggle.IsEnabled = false;
-                SelectDanMu_Name.IsEnabled = false;
-                SelectDanMu_UID.IsEnabled = false;
+                //GiftToggle.IsEnabled = false;
+                //GuardToggle.IsEnabled = false;
+                //SCToggle.IsEnabled = false;
+                SelectDanMu_v1.IsEnabled = false;
+                SelectDanMu_v2.IsEnabled = false;
             }
-        }
-
-        private void GiftToggle_Click(object sender, RoutedEventArgs e)
-        {
-            bool Is = (bool)GiftToggle.IsChecked ? true : false;
             Download.IsRecGift = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecGift, Is.ToString(), CoreConfigClass.Group.Download);
-            Growl.Success((Is ? "打开" : "关闭") + "礼物录制");
+            //Growl.Success((Is ? "打开" : "关闭") + "礼物录制");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "礼物录制", false, null, false);
-        }
 
-        private void GuardToggle_Click(object sender, RoutedEventArgs e)
-        {
-            bool Is = (bool)GuardToggle.IsChecked ? true : false;
             Download.IsRecGuard = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecGuard, Is.ToString(), CoreConfigClass.Group.Download);
-            Growl.Success((Is ? "打开" : "关闭") + "上舰录制");
+            //Growl.Success((Is ? "打开" : "关闭") + "上舰录制");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "上舰录制", false, null, false);
-        }
 
-        private void SCToggle_Click(object sender, RoutedEventArgs e)
-        {
-            bool Is = (bool)SCToggle.IsChecked ? true : false;
             Download.IsRecSC = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecSC, Is.ToString(), CoreConfigClass.Group.Download);
-            Growl.Success((Is ? "打开" : "关闭") + "SC录制");
+            //Growl.Success((Is ? "打开" : "关闭") + "SC录制");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "SC录制", false, null, false);
         }
+
+        //private void GiftToggle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool Is = (bool)GiftToggle.IsChecked ? true : false;
+        //    Download.IsRecGift = Is;
+        //    CoreConfig.SetValue(CoreConfigClass.Key.IsRecGift, Is.ToString(), CoreConfigClass.Group.Download);
+        //    Growl.Success((Is ? "打开" : "关闭") + "礼物录制");
+        //    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "礼物录制", false, null, false);
+        //}
+
+        //private void GuardToggle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool Is = (bool)GuardToggle.IsChecked ? true : false;
+        //    Download.IsRecGuard = Is;
+        //    CoreConfig.SetValue(CoreConfigClass.Key.IsRecGuard, Is.ToString(), CoreConfigClass.Group.Download);
+        //    Growl.Success((Is ? "打开" : "关闭") + "上舰录制");
+        //    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "上舰录制", false, null, false);
+        //}
+
+        //private void SCToggle_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool Is = (bool)SCToggle.IsChecked ? true : false;
+        //    Download.IsRecSC = Is;
+        //    CoreConfig.SetValue(CoreConfigClass.Key.IsRecSC, Is.ToString(), CoreConfigClass.Group.Download);
+        //    Growl.Success((Is ? "打开" : "关闭") + "SC录制");
+        //    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "SC录制", false, null, false);
+        //}
 
         private void IsFlvSplitToggle_Click(object sender, RoutedEventArgs e)
         {
@@ -992,18 +1006,18 @@ namespace DDTV_GUI.DDTV_Window
                 FlvSplitSizeComboBox.Visibility = Visibility.Visible;
                 TranscodToggle.IsEnabled = false;
                 DanmuToggle.IsEnabled = false;
-                GiftToggle.IsEnabled= false;
-                GuardToggle.IsEnabled = false;
-                SCToggle.IsEnabled = false;
+                //GiftToggle.IsEnabled= false;
+                //GuardToggle.IsEnabled = false;
+                //SCToggle.IsEnabled = false;
             }
             else
             {
                 FlvSplitSizeComboBox.Visibility = Visibility.Collapsed;
                 TranscodToggle.IsEnabled = true;
                 DanmuToggle.IsEnabled = true;
-                GiftToggle.IsEnabled = true;
-                GuardToggle.IsEnabled = true;
-                SCToggle.IsEnabled = true;
+                //GiftToggle.IsEnabled = true;
+                //GuardToggle.IsEnabled = true;
+                //SCToggle.IsEnabled = true;
             }
         }
 
@@ -1540,20 +1554,20 @@ namespace DDTV_GUI.DDTV_Window
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "开发版本更新监听", false, null, false);
         }
 
-        private void SelectDanMu_UID_Click(object sender, RoutedEventArgs e)
+        private void SelectDanMu_v2_Click(object sender, RoutedEventArgs e)
         {
             CoreConfig.DanMuSaveType = 2;
             CoreConfig.SetValue(CoreConfigClass.Key.DanMuSaveType, CoreConfig.DanMuSaveType.ToString(), CoreConfigClass.Group.Core);
-            Growl.Success($"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}", false, null, false);
+            Growl.Success($"修改弹幕用户信息储存类型为原始数据模式");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为原始数据模式", false, null, false);
         }
 
-        private void SelectDanMu_Name_Click(object sender, RoutedEventArgs e)
+        private void SelectDanMu_v1_Click(object sender, RoutedEventArgs e)
         {
             CoreConfig.DanMuSaveType = 1;
             CoreConfig.SetValue(CoreConfigClass.Key.DanMuSaveType, CoreConfig.DanMuSaveType.ToString(), CoreConfigClass.Group.Core);
-            Growl.Success($"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为{CoreConfig.DanMuSaveType}", false, null, false);
+            Growl.Success($"修改弹幕用户信息储存类型为兼容模式");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为兼容模式", false, null, false);
         }
     }
 }
