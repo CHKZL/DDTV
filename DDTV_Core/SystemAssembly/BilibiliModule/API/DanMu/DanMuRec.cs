@@ -126,7 +126,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 switch (CoreConfig.DanMuSaveType)
                 {
-                    case 1:
+                    case 2:
 
                         WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
                         roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
@@ -135,7 +135,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
 
                         break;
-                    case 2:
+                    case 1:
                         WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
                         roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime), roomInfo.title);
                         break;

@@ -106,29 +106,29 @@
                         </Grid>
                         <Grid Margin="10,26,640,383" Background="#59A5A5A5">
                             <TextBlock Margin="10,10,0,0" Text="监控中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
-                            <TextBlock x:Name="MonitoringCount" Margin="45,47,45,23" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="MonitoringCount" Margin="0,47,0,23" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                         </Grid>
                         <Grid Margin="10,383,640,26" Background="#59A5A5A5">
-                            <TextBlock x:Name="SavePathSize" Margin="10,37,5,50" Text="999.99GB/888.88GB" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="SavePathSize" Margin="10,37,5,50" Text="正在初始化" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                             <TextBlock Margin="10,5,0,0" Text="储存盘容量" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="149" HorizontalAlignment="Left" FontSize="20"/>
-                            <TextBlock x:Name="TmpPathSize" Margin="10,95,5,-19" Text="999.99GB/888.88GB" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="TmpPathSize" Margin="10,95,5,-19" Text="正在初始化" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="20" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                             <TextBlock Margin="10,65,0,0" Text="缓存盘容量" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="149" HorizontalAlignment="Left" FontSize="20"/>
                         </Grid>
                         <Grid Margin="10,204,640,205" Background="#59A5A5A5">
-                            <TextBlock x:Name="RecCount" Margin="45,47,45,23" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="RecCount" Margin="0,47,0,23" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                             <TextBlock Margin="10,10,0,0" Text="录制中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
 
                         </Grid>
                         <Grid Margin="263,27,387,383" Background="#59A5A5A5">
                             <TextBlock Margin="10,10,0,0" Text="直播中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
-                            <TextBlock x:Name="LiveBroadcastingCount" Margin="45,47,45,22" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="LiveBroadcastingCount" Margin="0,47,0,22" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                         </Grid>
                         <Grid Margin="263,384,387,26" Background="#59A5A5A5">
                             <TextBlock Margin="10,10,0,0" Text="Power By" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="40" VerticalAlignment="Top" Width="153" HorizontalAlignment="Left" FontSize="26"/>
                             <Image Margin="53,50,53,15" Source="/Resources/Img/UI/logo1.png" Stretch="Fill"/>
                         </Grid>
                         <Grid Margin="263,205,387,205" Background="#59A5A5A5">
-                            <TextBlock x:Name="RecCompleteCount" Margin="45,47,45,22" Text="999" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
+                            <TextBlock x:Name="RecCompleteCount" Margin="0,47,0,22" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                             <TextBlock Margin="10,10,0,0" Text="已录制" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
                         </Grid>
 
