@@ -187,6 +187,7 @@ namespace DDTV_GUI.DDTV_Window
                 });
                 
                 Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
+
                 return;
             }
             Thread.Sleep(3000);
@@ -277,14 +278,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         EndGrid.Visibility = Visibility.Visible;
                     });
-                    Growl.AskGlobal($"直播间【{name}({roomId})】已下播，是否关闭本窗口", isConfirmed =>
-                    {
-                        if (isConfirmed)
-                        {
-                            this.Close();
-                        }
-                        return true;
-                    });
+
+                    Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
                 }
             }
             catch (Exception)
@@ -375,14 +370,12 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-                Growl.AskGlobal($"【{name}({roomId})】已下播，是否关闭本窗口", isConfirmed =>
+                EndGrid.Dispatcher.Invoke(() =>
                 {
-                    if (isConfirmed)
-                    {
-                        this.Close();
-                    }
-                    return true;
+                    EndGrid.Visibility = Visibility.Visible;
                 });
+
+                Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
             }
         }
         public void CancelDownload()
