@@ -126,8 +126,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 switch (CoreConfig.DanMuSaveType)
                 {
+                    case 1:
+                        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
+                        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime), roomInfo.title);
+                        break;
                     case 2:
-
                         WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
                         roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
                         roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
@@ -135,10 +138,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
 
                         break;
-                    case 1:
-                        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
-                        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime), roomInfo.title);
-                        break;
+                   
                 }
             }
 
@@ -167,11 +167,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         private static FileInfo SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, List<DanMuClass.GiftInfo> GiftInfo, List<DanMuClass.GuardBuyInfo> guardBuyInfos, List<DanMuClass.SuperChatInfo> superChatInfos, string FileName, string Name, int roomId, long time,string title)
         {
             string XML = Properties.Resources.LiveChatRecordInfo;
-            XML.Replace("<-app->",  InitDDTV_Core.Ver);
-            XML.Replace("<-name->", Name);
-            XML.Replace("<-time->", time.ToString());
-            XML.Replace("<-roomid->", roomId.ToString());
-            XML.Replace("<-title->", title);
+            XML = XML.Replace("<-app->",  InitDDTV_Core.Ver);
+            XML = XML.Replace("<-name->", Name);
+            XML = XML.Replace("<-time->", time.ToString());
+            XML = XML.Replace("<-roomid->", roomId.ToString());
+            XML = XML.Replace("<-title->", title);
             string d = string.Empty;
             for (int i = 0; i < danmuInfo.Count; i++)
             {
@@ -219,7 +219,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                     .Replace("<-count->", item.Number.ToString())
                     + "\r";
             }
-            XML.Replace("<-LiveChat->", d + sc + gift + guard);
+            XML = XML.Replace("<-LiveChat->", d + sc + gift + guard);
             File.WriteAllText(FileName + ".xml", XML);
             return new FileInfo(FileName + ".xml");
         }
