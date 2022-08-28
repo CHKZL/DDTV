@@ -435,19 +435,7 @@
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
                                         </hc:ButtonGroup>
-                                        <TextBlock HorizontalAlignment="Left" Margin="631,2,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <hc:ButtonGroup Margin="649,27,77,0" Style="{StaticResource ButtonGroupSolid}">
-                                            <RadioButton Name="SelectDanMu_Name" Content="昵称" IsChecked="True" Click="SelectDanMu_Name_Click">
-                                                <hc:AdornerElement.Instance>
-                                                    <hc:Poptip Content="根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称" PlacementType="BottomLeft"/>
-                                                </hc:AdornerElement.Instance>
-                                            </RadioButton>
-                                            <RadioButton Name="SelectDanMu_UID" Content="UID" Click="SelectDanMu_UID_Click">
-                                                <hc:AdornerElement.Instance>
-                                                    <hc:Poptip Content="根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
-                                                </hc:AdornerElement.Instance>
-                                            </RadioButton>
-                                        </hc:ButtonGroup>
+
                                     </Grid>
                                     <Grid Width="815"  Margin="5">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="录制的同时储存弹幕信息" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
@@ -457,7 +445,7 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="260,0,0,0" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <!--<TextBlock HorizontalAlignment="Left" Margin="260,0,0,0" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}"/>
                                         <ToggleButton x:Name="GiftToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="361,5,0,5" Click="GiftToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
@@ -476,7 +464,21 @@
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="只有当该房间弹幕录制启用时才有效" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
-                                        </ToggleButton>
+                                        </ToggleButton>-->
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="269,0,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <hc:ButtonGroup Margin="445,0,166,0" Style="{StaticResource ButtonGroupSolid}" VerticalAlignment="Center">
+                                            <RadioButton Name="SelectDanMu_v1" Content="兼容格式" IsChecked="True" Click="SelectDanMu_v1_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="兼容格式将储存方便直接使用浏览器查看和第三方软件解析的文件内容" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                            <RadioButton Name="SelectDanMu_v2" Content="原始数据格式" Click="SelectDanMu_v2_Click">
+                                                <hc:AdornerElement.Instance>
+                                                    <hc:Poptip Content="原始数据格式将储存为阿B弹幕文件原始格式，并且弹幕、礼物、大航海、SC都将分别储存为不同的文件" PlacementType="BottomLeft"/>
+                                                </hc:AdornerElement.Instance>
+                                            </RadioButton>
+                                        </hc:ButtonGroup>
 
                                     </Grid>
                                     <Grid Width="853">
