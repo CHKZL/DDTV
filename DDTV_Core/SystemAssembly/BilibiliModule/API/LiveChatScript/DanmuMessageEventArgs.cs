@@ -46,7 +46,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         /// </summary>
         public string Message { get; set; }
         /// <summary>
-        /// 发送人等级
+        /// 发送人舰队等级
         /// </summary>
         public int GuardLV { get; set; }
         

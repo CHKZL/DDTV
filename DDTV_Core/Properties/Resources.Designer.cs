@@ -97,21 +97,7 @@ namespace DDTV_Core.Properties {
         }
         
         /// <summary>
-        ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;#s&quot;?&gt;
-        ///&lt;i&gt;
-        ///&lt;chatserver&gt;chat.bilibili.com&lt;/chatserver&gt;
-        ///&lt;chatid&gt;0&lt;/chatid&gt;
-        ///&lt;mission&gt;0&lt;/mission&gt;
-        ///&lt;maxlimit&gt;2147483647&lt;/maxlimit&gt;
-        ///&lt;state&gt;0&lt;/state&gt;
-        ///&lt;app&gt;&lt;-app-&gt;&lt;/app&gt;
-        ///&lt;real_name&gt;&lt;-name-&gt;&lt;/real_name&gt;
-        ///&lt;time&gt;&lt;-time-&gt;&lt;/time&gt;
-        ///&lt;roomid&gt;&lt;-roomid-&gt;&lt;/roomid&gt;
-        ///&lt;source&gt;k-v&lt;/source&gt;
-        ///&lt;LiveChatRecordInfo roomid=&quot;&lt;-roomid-&gt;&quot; shortid=&quot;0&quot; name=&quot;&lt;-name-&gt;&quot; title=&quot;&lt;-title-&gt;&quot;/&gt;
-        ///&lt;XmlStyle&gt;&lt;z:stylesheet version=&quot;1.0&quot; id=&quot;s&quot; xml:id=&quot;s&quot; xmlns:z=&quot;htt [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///   查找类似 &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;#s&quot;?&gt;&lt;i&gt;&lt;chatserver&gt;chat.bilibili.com&lt;/chatserver&gt;&lt;chatid&gt;0&lt;/chatid&gt;&lt;mission&gt;0&lt;/mission&gt;&lt;maxlimit&gt;2147483647&lt;/maxlimit&gt;&lt;state&gt;0&lt;/state&gt;&lt;app&gt;&lt;-app-&gt;&lt;/app&gt;&lt;real_name&gt;&lt;-name-&gt;&lt;/real_name&gt;&lt;time&gt;&lt;-time-&gt;&lt;/time&gt;&lt;roomid&gt;&lt;-roomid-&gt;&lt;/roomid&gt;&lt;title&gt;&lt;-title-&gt;&lt;/title&gt;&lt;source&gt;k-v&lt;/source&gt;&lt;XmlStyle&gt;&lt;z:stylesheet version=&quot;1.0&quot; id=&quot;s&quot; xml:id=&quot;s&quot; xmlns:z=&quot;http://www.w3.org/1999/XSL/Transform&quot;&gt;&lt;z:output method=&quot;html&quot;/&gt;&lt;z:template match=&quot;/&quot;&gt;&lt;html&gt;&lt;me [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string LiveChatRecordInfo {
             get {
