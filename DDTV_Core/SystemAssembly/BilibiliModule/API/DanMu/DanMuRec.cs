@@ -70,7 +70,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                             time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
                             uid = Danmu.UserId,
                             Message = Danmu.Message,
-                            Nickname=Danmu.UserName
+                            Nickname=Danmu.UserName,
+                            LV=Danmu.GuardLV
                         });
                         break;
                     case SuperchatEventArg SuperchatEvent:
