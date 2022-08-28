@@ -272,10 +272,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 .Replace("<", "&lt;")
                 .Replace(">", "&gt;")
                 .Replace("'", "&apos;")
-                .Replace("\"", "&quot;")
-                .Replace(" ", "&nbsp;")
-                .Replace("×", "&times;")
-                .Replace("÷", "&divde;");
+                .Replace("\"", "&quot;");
+                //.Replace(" ", "&nbsp;")
+                //.Replace("×", "&times;")
+                //.Replace("÷", "&divde;");
         }
         /// <summary>
         /// 储存原始礼物信息到文件
