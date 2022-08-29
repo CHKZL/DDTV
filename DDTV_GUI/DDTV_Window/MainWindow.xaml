@@ -27,7 +27,6 @@
         </hc:NotifyIcon>
         <Grid x:Name="BackGroundGrid" MouseLeftButtonDown="GlowWindow_MouseLeftButtonDown">
             <Image x:Name="BackGroundImage" Source="/Resources/Img/UI/BackGround.jpg" Opacity="0.2" Margin="0,0,-4,0" Stretch="UniformToFill" />
-
         </Grid>
         <Grid x:Name="TestGrid" Visibility="Collapsed">
             <ToggleButton Content="Left" IsChecked="{Binding IsOpen, ElementName=About}" Height="60" Width="82"/>
@@ -99,7 +98,6 @@
         <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
             <TabControl x:Name="MainWindowTab" Margin="0,10,0,0" Style="{StaticResource TabControlInLine}" Background="{x:Null}">
                 <TabItem Header="首页">
-
                     <Grid>
                         <Grid Margin="500,0,0,0" Width="350" Height="480" Background="#59A5A5A5">
                             <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="10" Foreground="#FF2B2B2B" HorizontalAlignment="Left" Width="330" Height="460" VerticalAlignment="Center" />
@@ -468,9 +466,9 @@
 
                                         <TextBlock HorizontalAlignment="Left" Margin="269,0,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}"/>
                                         <hc:ButtonGroup Margin="445,0,166,0" Style="{StaticResource ButtonGroupSolid}" VerticalAlignment="Center">
-                                            <RadioButton Name="SelectDanMu_v1" Content="兼容格式" IsChecked="True" Click="SelectDanMu_v1_Click">
+                                            <RadioButton Name="SelectDanMu_v1" Content="兼容格式" IsChecked="True" Click="SelectDanMu_v1_Click" IsEnabled="False">
                                                 <hc:AdornerElement.Instance>
-                                                    <hc:Poptip Content="兼容格式将储存方便直接使用浏览器查看和第三方软件解析的文件内容" PlacementType="BottomLeft"/>
+                                                    <hc:Poptip Content="已移除(该功能后续更新在:B站官方饭盒内进行)" PlacementType="BottomLeft"/>
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
                                             <RadioButton Name="SelectDanMu_v2" Content="原始数据格式" Click="SelectDanMu_v2_Click">

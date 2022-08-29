@@ -125,22 +125,30 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         {
             if (Download.IsRecDanmu)
             {
-                switch (CoreConfig.DanMuSaveType)
-                {
-                    case 1:
-                        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
-                        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime), roomInfo.title);
-                        break;
-                    case 2:
-                        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
-                        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
-                        roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
-                        roomInfo.DownloadedFileInfo.GuardFile = SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
-                        roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
+                //switch (CoreConfig.DanMuSaveType)
+                //{
+                //    case 1:
+                //        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
+                //        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime), roomInfo.title);
+                //        break;
+                //    case 2:
+                //        WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
+                //        roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
+                //        roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
+                //        roomInfo.DownloadedFileInfo.GuardFile = SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
+                //        roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
 
-                        break;
-                   
-                }
+                //        break;
+
+                //}
+
+                //后续录播功能更新在:B站官方饭盒内（如https://workshop.bilibili.com/fan-group/2007781080）(当前还是打点测试状态，后续开放全量录播功能)
+
+                WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
+                roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
+                roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
+                roomInfo.DownloadedFileInfo.GuardFile = SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
+                roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
             }
 
 
@@ -165,65 +173,65 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         /// <summary>
         /// 储存新格式弹幕信息到xml文件
         /// </summary>
-        private static FileInfo SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, List<DanMuClass.GiftInfo> GiftInfo, List<DanMuClass.GuardBuyInfo> guardBuyInfos, List<DanMuClass.SuperChatInfo> superChatInfos, string FileName, string Name, int roomId, long time,string title)
-        {
-            string XML = Properties.Resources.LiveChatRecordInfo;
-            XML = XML.Replace("<-app->",  InitDDTV_Core.Ver);
-            XML = XML.Replace("<-name->", Name);
-            XML = XML.Replace("<-time->", time.ToString());
-            XML = XML.Replace("<-roomid->", roomId.ToString());
-            XML = XML.Replace("<-title->", title);
-            string d = string.Empty;
-            for (int i = 0; i < danmuInfo.Count; i++)
-            {
-                d += Properties.Resources.LiveChat_d
-                    .Replace("<-p->", $"{danmuInfo[i].time:f4},{danmuInfo[i].type},{danmuInfo[i].size},{danmuInfo[i].color},{danmuInfo[i].timestamp / 1000},{danmuInfo[i].pool},{danmuInfo[i].uid},{i}")
-                    .Replace("<-user->", danmuInfo[i].Nickname)
-                    .Replace("<-text->", XMLEscape(danmuInfo[i].Message))
-                    + "\r";
-            }
+        //private static FileInfo SevaDanmu(List<DanMuClass.DanmuInfo> danmuInfo, List<DanMuClass.GiftInfo> GiftInfo, List<DanMuClass.GuardBuyInfo> guardBuyInfos, List<DanMuClass.SuperChatInfo> superChatInfos, string FileName, string Name, int roomId, long time,string title)
+        //{
+        //    string XML = Properties.Resources.LiveChatRecordInfo;
+        //    XML = XML.Replace("<-app->",  InitDDTV_Core.Ver);
+        //    XML = XML.Replace("<-name->", Name);
+        //    XML = XML.Replace("<-time->", time.ToString());
+        //    XML = XML.Replace("<-roomid->", roomId.ToString());
+        //    XML = XML.Replace("<-title->", title);
+        //    string d = string.Empty;
+        //    for (int i = 0; i < danmuInfo.Count; i++)
+        //    {
+        //        d += Properties.Resources.LiveChat_d
+        //            .Replace("<-p->", $"{danmuInfo[i].time:f4},{danmuInfo[i].type},{danmuInfo[i].size},{danmuInfo[i].color},{danmuInfo[i].timestamp / 1000},{danmuInfo[i].pool},{danmuInfo[i].uid},{i}")
+        //            .Replace("<-user->", danmuInfo[i].Nickname)
+        //            .Replace("<-text->", XMLEscape(danmuInfo[i].Message))
+        //            + "\r";
+        //    }
 
-            string sc = string.Empty;
-            foreach (var item in superChatInfos)
-            {
-                sc += Properties.Resources.LiveChat_sc
-                    .Replace("<-ts->", item.Time.ToString())
-                    .Replace("<-user->", item.UserName)
-                    .Replace("<-uid->", item.UserId.ToString())
-                    .Replace("<-price->", item.Price.ToString())
-                    .Replace("<-time->", item.Message.ToString())
-                    .Replace("<-time->", item.TimeLength.ToString())
-                    .Replace("<-text->", XMLEscape(item.Message))
-                    +"\r";
-            }
+        //    string sc = string.Empty;
+        //    foreach (var item in superChatInfos)
+        //    {
+        //        sc += Properties.Resources.LiveChat_sc
+        //            .Replace("<-ts->", item.Time.ToString())
+        //            .Replace("<-user->", item.UserName)
+        //            .Replace("<-uid->", item.UserId.ToString())
+        //            .Replace("<-price->", item.Price.ToString())
+        //            .Replace("<-time->", item.Message.ToString())
+        //            .Replace("<-time->", item.TimeLength.ToString())
+        //            .Replace("<-text->", XMLEscape(item.Message))
+        //            +"\r";
+        //    }
 
-            string gift = string.Empty;
-            foreach (var item in GiftInfo)
-            {
-                gift += Properties.Resources.LiveChat_gift
-                    .Replace("<-ts->", item.Time.ToString())
-                    .Replace("<-user->", item.UserName)
-                    .Replace("<-uid->", item.UserId.ToString())
-                    .Replace("<-giftname->", item.GiftName)
-                    .Replace("<-giftcount->", item.Amount.ToString())
-                    + "\r";
-            }
+        //    string gift = string.Empty;
+        //    foreach (var item in GiftInfo)
+        //    {
+        //        gift += Properties.Resources.LiveChat_gift
+        //            .Replace("<-ts->", item.Time.ToString())
+        //            .Replace("<-user->", item.UserName)
+        //            .Replace("<-uid->", item.UserId.ToString())
+        //            .Replace("<-giftname->", item.GiftName)
+        //            .Replace("<-giftcount->", item.Amount.ToString())
+        //            + "\r";
+        //    }
 
-            string guard = string.Empty;
-            foreach (var item in guardBuyInfos)
-            {
-                guard += Properties.Resources.LiveChat_guard
-                    .Replace("<-ts->", item.Time.ToString())
-                    .Replace("<-user->", item.UserName)
-                    .Replace("<-uid->", item.UserId.ToString())
-                    .Replace("<-level->", item.GuardLevel == 1 ? "总督" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "舰长" : item.GuardLevel.ToString())
-                    .Replace("<-count->", item.Number.ToString())
-                    + "\r";
-            }
-            XML = XML.Replace("<-LiveChat->", d + sc + gift + guard);
-            File.WriteAllText(FileName + ".xml", XML);
-            return new FileInfo(FileName + ".xml");
-        }
+        //    string guard = string.Empty;
+        //    foreach (var item in guardBuyInfos)
+        //    {
+        //        guard += Properties.Resources.LiveChat_guard
+        //            .Replace("<-ts->", item.Time.ToString())
+        //            .Replace("<-user->", item.UserName)
+        //            .Replace("<-uid->", item.UserId.ToString())
+        //            .Replace("<-level->", item.GuardLevel == 1 ? "总督" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "舰长" : item.GuardLevel.ToString())
+        //            .Replace("<-count->", item.Number.ToString())
+        //            + "\r";
+        //    }
+        //    XML = XML.Replace("<-LiveChat->", d + sc + gift + guard);
+        //    File.WriteAllText(FileName + ".xml", XML);
+        //    return new FileInfo(FileName + ".xml");
+        //}
 
 
         /// <summary>

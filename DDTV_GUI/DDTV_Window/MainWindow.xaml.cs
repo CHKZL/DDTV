@@ -940,7 +940,7 @@ namespace DDTV_GUI.DDTV_Window
                 //GiftToggle.IsEnabled = true;
                 //GuardToggle.IsEnabled = true;
                 //SCToggle.IsEnabled = true;
-                SelectDanMu_v1.IsEnabled = true;
+                SelectDanMu_v1.IsEnabled = false;
                 SelectDanMu_v2.IsEnabled = true;
             }
             else
