@@ -62,6 +62,11 @@ namespace DDTV_GUI.WPFControl
             {
                 fontSize = (int)e.NewValue;
                 FontSizeText.Text = "字体大小：" + fontSize;
+                if(PreviewText!=null)
+                {
+                    PreviewText.FontSize = fontSize;
+                }
+              
             }
         }
 
@@ -71,6 +76,11 @@ namespace DDTV_GUI.WPFControl
             {
                 Opacity = double.Parse(String.Format("{0:F}", e.NewValue));
                 FontOpacityText.Text = "透明度：" + Opacity;
+                if (PreviewText != null)
+                {
+                    PreviewText.Opacity = Opacity;
+                }
+               
             }
         }
     }

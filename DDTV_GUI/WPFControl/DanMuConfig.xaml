@@ -19,7 +19,7 @@
                 <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
             </hc:PreviewSlider.PreviewContent>
         </hc:PreviewSlider>
-        <Button Content="确定" Margin="0,145,0,0" Style="{StaticResource ButtonSuccess}" VerticalAlignment="Top" Width="100" Click="Button_Click"/>
+        <Button Content="确定" Margin="9,142,0,0" Style="{StaticResource ButtonSuccess}" VerticalAlignment="Top" Width="100" Click="Button_Click" HorizontalAlignment="Left"/>
         <TextBlock Margin="138,10,138,0" Text="弹幕设置" FontSize="20" Height="25" VerticalAlignment="Top" />
         <TextBlock x:Name="FontOpacityText" Margin="11,79,0,0" Text="透明度：1.00" FontSize="16" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Width="111" />
         <hc:PreviewSlider x:Name="FontOpacitySlider" Value="500" Maximum="1" Margin="120,77,14,0" Height="25" VerticalAlignment="Top" SmallChange="0.01" ValueChanged="FontOpacitySlider_ValueChanged" LargeChange="0.01" TickFrequency="0.01">
@@ -27,6 +27,7 @@
                 <Label Style="{StaticResource LabelPrimary}" Content="{Binding (hc:PreviewSlider.PreviewPosition), RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.00"/>
             </hc:PreviewSlider.PreviewContent>
         </hc:PreviewSlider>
+        <TextBlock Name="PreviewText" Margin="178,95,35,1" Text="预览" FontSize="12" />
     </hc:SimplePanel>
 </Border>
     
