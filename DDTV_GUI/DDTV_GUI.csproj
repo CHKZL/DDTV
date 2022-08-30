@@ -44,6 +44,7 @@
     <None Remove="Resources\Img\UI\unordered-list.png" />
     <None Remove="Resources\Img\UI\video.png" />
     <None Remove="Resources\Img\UI\View.png" />
+    <None Remove="Resources\Img\UI\Volume.png" />
     <None Remove="Resources\Img\UI\wrench.png" />
     <None Remove="Resources\Img\蒂蒂媞薇.png" />
   </ItemGroup>
@@ -151,6 +152,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\View.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\Volume.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\wrench.png">

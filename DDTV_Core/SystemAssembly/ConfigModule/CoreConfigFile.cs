@@ -13,54 +13,65 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     /// </summary>
     public class CoreConfigFile
     {
+        private static DateTime SaveTime = DateTime.Now;
         /// <summary>
         /// 写入配置文件
         /// </summary>
-        public static void WriteConfigFile(string ConfigFile = "./DDTV_Config.ini")
+        public static void WriteConfigFile(string ConfigFile = "./DDTV_Config.ini",bool IsUser =false)
         {
-            List<ConfigTmp> configTmp = new List<ConfigTmp>();
-
-            foreach (var datas in CoreConfigClass.config.datas)
+            
+            TimeSpan ts = DateTime.Now - SaveTime;	//计算时间差
+            if (ts.TotalSeconds > 5 || IsUser)
             {
-                bool IsOK = false;
-                foreach (var item in configTmp)
+                SaveTime = DateTime.Now;
+                List<ConfigTmp> configTmp = new List<ConfigTmp>();
+
+                foreach (var datas in CoreConfigClass.config.datas)
                 {
-                    if (item.G==datas.Group)
+                    bool IsOK = false;
+                    foreach (var item in configTmp)
                     {
-                        item.datas.Add(datas);
-                        IsOK=true;
-                        break;
+                        if (item.G == datas.Group)
+                        {
+                            item.datas.Add(datas);
+                            IsOK = true;
+                            break;
+                        }
+                    }
+                    if (!IsOK)
+                    {
+                        CoreConfigClass.Config.Data data = new CoreConfigClass.Config.Data()
+                        {
+                            Enabled = datas.Enabled,
+                            Group = datas.Group,
+                            Key = datas.Key,
+                            KeyName = datas.KeyName,
+                            Value = datas.Value,
+                        };
+                        ConfigTmp configTmp1 = new ConfigTmp() { G = datas.Group, datas = new List<CoreConfigClass.Config.Data>() };
+                        configTmp1.datas.Add(datas);
+                        configTmp.Add(configTmp1);
                     }
                 }
-                if (!IsOK)
+                if (!Tool.FileOperation.SpaceWillBeEnough(ConfigFile))
                 {
-                    CoreConfigClass.Config.Data data = new CoreConfigClass.Config.Data()
-                    {
-                        Enabled=datas.Enabled,
-                        Group=datas.Group,
-                        Key=datas.Key,
-                        KeyName=datas.KeyName,
-                        Value =datas.Value,
-                    };
-                    ConfigTmp configTmp1 = new ConfigTmp() { G=datas.Group, datas=new List<CoreConfigClass.Config.Data>() };
-                    configTmp1.datas.Add(datas);
-                    configTmp.Add(configTmp1);
+                    Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Error, "配置文件储存路径所属盘符剩余空间不足10MB！放弃更新储存配置文件！", true, null, true);
+                    return;
                 }
-            }
-            if(!Tool.FileOperation.SpaceWillBeEnough(ConfigFile))
-            {
-                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Error, "配置文件储存路径所属盘符剩余空间不足10MB！放弃更新储存配置文件！", true, null, true);
-                return;
-            }
 
-            using FileStream fileStream = File.Create(ConfigFile);
-            foreach (var item1 in configTmp)
-            {
-                fileStream.Write(Encoding.UTF8.GetBytes($"[{item1.G}]\r\n"));
-                foreach (var item2 in item1.datas)
+                using FileStream fileStream = File.Create(ConfigFile);
+                foreach (var item1 in configTmp)
                 {
-                    fileStream.Write(Encoding.UTF8.GetBytes((item2.Enabled ? "" : "# ")+$"{item2.Key}={item2.Value}\r\n"));
+                    fileStream.Write(Encoding.UTF8.GetBytes($"[{item1.G}]\r\n"));
+                    foreach (var item2 in item1.datas)
+                    {
+                        fileStream.Write(Encoding.UTF8.GetBytes((item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n"));
+                    }
                 }
+            }
+            else
+            {
+
             }
         }
         /// <summary>

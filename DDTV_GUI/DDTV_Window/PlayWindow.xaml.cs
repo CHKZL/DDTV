@@ -28,6 +28,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using DDTV_GUI.DanMuCanvas.BarrageParameters;
 using DDTV_GUI.WPFControl;
+using System.Diagnostics;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -952,16 +953,33 @@ namespace DDTV_GUI.DDTV_Window
         }
 
         /// <summary>
-        /// 鼠标右键菜单_复制直播间地址事件
+        /// 鼠标右键菜单_在浏览器打开直播间事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void MenuItem_CopyLiveRoomUrl_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_OpenLiveRoomUrl_Click(object sender, RoutedEventArgs e)
         {
+            if(roomId==0)
+            {
+                System.Windows.MessageBox.Show("参数初始化中，请播放窗口加载完成后再试");
+            }
             string url = "https://live.bilibili.com/" + roomId;
-            System.Windows.Clipboard.SetDataObject(url);
-            Growl.SuccessGlobal("已复制直播间Url到粘贴板");
-            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"制直播间Url到粘贴板[URL:{url}]", false);
+            var psi = new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"在浏览器打开直播间[URL:{url}]", false);
+            //string url = "https://live.bilibili.com/" + roomId;
+            //System.Windows.Clipboard.SetDataObject(url);
+            //Growl.SuccessGlobal("已复制直播间Url到粘贴板");
+            //Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"制直播间Url到粘贴板[URL:{url}]", false);
+
+
+
+
+
         }
 
         /// <summary>
@@ -1406,6 +1424,22 @@ namespace DDTV_GUI.DDTV_Window
                 timer.IsEnabled = false;
                 i = 0;
                 FullScreenSwitch();
+            }
+        }
+
+        /// <summary>
+        /// 播放窗口音频solo功能
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_SetMuteSolo_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in MainWindow.playWindowsList)
+            {
+                if(item!=this)
+                {
+                    item.SetMute();
+                }
             }
         }
     }
