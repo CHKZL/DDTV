@@ -13,11 +13,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     /// </summary>
     public class CoreConfigFile
     {
-        private static DateTime SaveTime = DateTime.Now;
+        private static DateTime SaveTime = DateTime.MinValue;
         /// <summary>
         /// 写入配置文件
         /// </summary>
-        public static void WriteConfigFile(string ConfigFile = "./DDTV_Config.ini",bool IsUser =false)
+        public static void WriteConfigFile(bool IsUser = false,string ConfigFile = "./DDTV_Config.ini")
         {
             
             TimeSpan ts = DateTime.Now - SaveTime;	//计算时间差
