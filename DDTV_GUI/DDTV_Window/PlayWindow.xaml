@@ -21,7 +21,7 @@
                             <Image Source="/Resources/Img/UI/message.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="复制直播间地址" Click="MenuItem_CopyLiveRoomUrl_Click">
+                    <MenuItem Header="在浏览器打开直播间" Click="MenuItem_OpenLiveRoomUrl_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/code.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
@@ -70,10 +70,14 @@
                             <Image Source="/Resources/Img/UI/reload.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="全局静音" Click="MenuItem_SetMute_Click">
+                    <MenuItem Header="音量设置">
                         <MenuItem.Icon>
-                            <Image Source="/Resources/Img/UI/notification.png" Width="18" Height="18"/>
+                            <Image Source="/Resources/Img/UI/Volume.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
+                        <MenuItem Header="滚轮可直接单独调整音量" Tag="400" Width="200" />
+                        <Separator/>
+                        <MenuItem Header="全局静音" Width="200" Click="MenuItem_SetMute_Click"/>
+                        <MenuItem Header="该窗口solo" Width="200" Click="MenuItem_SetMuteSolo_Click"/>
                     </MenuItem>
                     <MenuItem Header="自动全屏平铺">
                         <MenuItem.Icon>
