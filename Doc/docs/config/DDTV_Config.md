@@ -10,50 +10,60 @@
 ```ini
 [Core]
 RoomListConfig=./RoomListConfig.json
-ClientAID=9cc4fd9c-1116-4a92-8428-24a4b83c608d
-GUI_FirstStart=false
-WEB_FirstStart=false
-IsAutoTranscod=True
+IsAutoTranscod=False
 TranscodParmetrs=-i {Before} -vcodec copy -acodec copy {After}
-InstanceAID=956050d3
-TranscodingCompleteAutoDeleteFiles=false
-DDcenterSwitch=false
+TranscodingCompleteAutoDeleteFiles=False
+GUI_FirstStart=False
+WEB_FirstStart=True
+InstanceAID=93A66F57-1
+ConsoleMonitorMode=False
+ReplaceAPI=https://api.live.bilibili.com
+APIVersion=1
+AutoInsallUpdate=False
+WhetherToEnableProxy=True
+DDcenterSwitch=False
+SpaceIsInsufficientWarn=False
+ClientAID=1e81168d-3ac0-4efc-ba7a-d96e81e79d8b
+IsDev=True
+DanMuSaveType=1
 WebHookUrl=
-[WEB_API]
-WEB_API_SSL=false
-AccessControlAllowOrigin=http://127.0.0.1:5500
-AccessControlAllowCredentials=true
-WebUserName=ami
-WebPassword=ddtv
-pfxFileName=pfxFileName
-pfxPasswordFileName=pfxPasswordFileName
-AccessKeyId=3fce1282b6104887ba494eaf4f714147
-AccessKeySecret=2f9fda70a48c4b2eb3d60ff07ddc67ab
-ServerAID=e3545f6d-63d9-4898-81dd-9be9c6439d6f
-ServerName=DDTV_Server
-CookieDomain=
 [Download]
-DoNotSleepWhileDownloading=true
-DownloadPath=.\Rec
+DownloadPath=./Rec/
 DownloadDirectoryName={ROOMID}_{NAME}
 DownloadFileName={DATE}_{TIME}_{TITLE}
-TmpPath=.\Tmp
+TmpPath=./tmp/
 RecQuality=10000
-IsRecDanmu=true
-IsRecGift=true
-IsRecGuard=true
-IsRecSC=true
+IsRecDanmu=True
+IsRecGift=True
+IsRecGuard=True
+IsRecSC=True
 IsFlvSplit=False
 FlvSplitSize=1073741824
-Shell=false
+DoNotSleepWhileDownloading=True
+Shell=False
 ForceCDNResolution=False
+[WEB_API]
+WEB_API_SSL=False
+AccessControlAllowOrigin=*
+AccessControlAllowCredentials=True
+WebUserName=ami
+WebPassword=ddtv
+AccessKeyId=b6fb1e591d9e490f94da263576cfb143
+AccessKeySecret=9f092770e2514c56b0d89d7331a1ac58
+ServerAID=d47b5033-e488-4146-83e4-d9ae5d296f7e
+ServerName=DDTV_Server
+CookieDomain=
+pfxFileName=
+pfxPasswordFileName=
 [Play]
-DefaultVolume=100
-PlayQuality=10000
+DanmuColor=0xff,0xff,0xff
+SubtitleColor=0x00,0xFF,0xFF
+DanMuFontSize=62
+PlayQuality=150
+DefaultVolume=0
+DanMuFontOpacity=0.2
 [GUI]
-HideIconState=false
-
-
+HideIconState=False
 ```
 ### 配置说明
 ```csharp
@@ -287,5 +297,65 @@ HideIconState=false
             /// 组：Download   默认值：false
             /// </summary>
             ForceCDNResolution,
+            /// <summary>
+            /// 控制台监控模式开关，打开后控制台会输出每个在列表中的任务开始和结束相信信息（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            ConsoleMonitorMode,
+            /// <summary>
+            /// 是否检测空间不足并给与对应的警告（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            SpaceIsInsufficientWarn,
+            /// <summary>
+            /// 使用自己的代理地址替换默认的API地址（字符串）
+            /// 组：Core   默认值：string.Empty
+            /// </summary>
+            ReplaceAPI,
+            /// <summary>
+            /// 使用的API版本 (应该为有限的int值  1：v1 API  2：2v API)
+            /// 组：Core   默认值：1
+            /// </summary>
+            APIVersion,
+            /// <summary>
+            /// 自动安装更新（布尔值）
+            /// 组：Core   默认值：false
+            /// </summary>
+            AutoInsallUpdate,
+            /// <summary>
+            /// 弹幕颜色（颜色字符串）
+            /// 组：Play   默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            DanmuColor,
+            /// <summary>
+            /// 字幕颜色（颜色字符串）
+            /// 组：Play   默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            SubtitleColor,
+            /// <summary>
+            /// 弹幕大小（Int）
+            /// 组：Play   默认值：26
+            /// </summary>
+            DanMuFontSize,
+            /// <summary>
+            /// 弹幕透明度（Double）
+            /// 组：Play   默认值：1
+            /// </summary>
+            DanMuFontOpacity,
+            /// <summary>
+            /// 是否使用系统代理（布尔值）
+            /// 组：Core   默认值：true
+            /// </summary>
+            WhetherToEnableProxy,
+            /// <summary>
+            /// 是否使用开发版更新模式
+            /// 组：Core   默认值：false
+            /// </summary>
+            IsDev,
+            /// <summary>
+            /// 切换弹幕储存信息类型，根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称 (应该为有限的int值  1：昵称  2：UID)
+            /// 组：Core   默认值：2
+            /// </summary>
+            DanMuSaveType,
         }
 ```

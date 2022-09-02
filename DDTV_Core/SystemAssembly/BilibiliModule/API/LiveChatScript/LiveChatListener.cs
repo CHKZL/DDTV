@@ -29,21 +29,22 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         public bool startIn = false;
         public string wss_S = "";
         public long mid = 0;
-        public bool IsUserDispose=false;
+        public bool IsUserDispose = false;
+        public bool IsWatchMode = false;
 
         public LiveChatListener()
         {
-            
+
         }
 
-        public async void Connect(int roomId,long uid)
+        public async void Connect(int roomId, long uid)
         {
             try
             {
                 m_ReceiveBuffer = new byte[8192 * 1024];
                 TroomId = roomId;
                 startIn = true;
-                mid= uid;
+                mid = uid;
                 await ConnectAsync(roomId, null);
             }
             catch (Exception e)
@@ -64,13 +65,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             JObject JO = new JObject();
             try
             {
-                await m_client.ConnectAsync(new Uri("wss://"+host.host_list[0].host+"/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
+                await m_client.ConnectAsync(new Uri("wss://" + host.host_list[new Random().Next(0, host.host_list.Count-1)].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
 
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e,false);
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"WSS连接发生错误", true, e, false);
                 Dispose();
                 //Console.WriteLine(e.ToString());
             }
@@ -115,7 +116,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                    Dispose();
                }
            });
-            _=_innerHeartbeat();
+            _ = _innerHeartbeat();
         }
 
         public void Close()
@@ -124,7 +125,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             try
             {
-                if (m_innerRts!=null)
+                if (m_innerRts != null)
                 {
                     m_innerRts.Cancel();
                 }
@@ -262,18 +263,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         {
             var obj = new JObject();
             try
-            {        
+            {
                 jsonBody = ReplaceString(jsonBody);
                 if (jsonBody.Contains("DANMU_MSG"))
                 {
                     jsonBody = jsonBody.Replace("extra\":\"{\"send_from_me", "extra\":{\"send_from_me");
-                    jsonBody=jsonBody.Replace("}\"}","}}");
+                    jsonBody = jsonBody.Replace("}\"}", "}}");
                 }
                 obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             }
             catch (Exception) { return; }
             string cmd = (string)obj["cmd"];
-            if(cmd.Contains("DANMU_MSG"))
+            if (cmd.Contains("DANMU_MSG"))
             {
                 MessageReceived(this, new DanmuMessageEventArgs(obj));
             }
@@ -282,89 +283,89 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 MessageReceived(this, new SuperchatEventArg(obj));
             }
             else
-            switch (cmd)
-            {
-                //弹幕信息
-                case "DANMU_MSG":
-                    MessageReceived(this, new DanmuMessageEventArgs(obj));
-                    break;
-                //SC信息
-                case "SUPER_CHAT_MESSAGE":
-                    MessageReceived(this, new SuperchatEventArg(obj));
-                    break;
-                //礼物
-                case "SEND_GIFT":
-                    MessageReceived(this, new SendGiftEventArgs(obj));
-                    break;
-                //舰组信息(上舰)
-                case "GUARD_BUY":
-                    MessageReceived(this, new GuardBuyEventArgs(obj));
-                    break;
-                //小时榜单变动通知
-                case "ACTIVITY_BANNER_UPDATE_V2":
-                    MessageReceived(this, new ActivityBannerEventArgs(obj));
-                    break;
-                //礼物combo
-                case "COMBO_SEND":               
-                    break;
-                //进场特效
-                case "ENTRY_EFFECT":
-                    MessageReceived(this, new EntryEffectEventArgs(obj));
-                    break;        
-                //续费舰长
-                case "USER_TOAST_MSG":
-                    break;
-                //在房间内续费了舰长
-                case "NOTICE_MSG":
-                    break;
-                //欢迎
-                case "WELCOME":
-                    MessageReceived(this, new WelcomeEventArgs(obj));
-                    break;
-             
-                //人气值(心跳数据)
-                case "LiveP":
-                    MessageReceived(this, new LivePopularity(obj));
-                    break;
-                //管理员警告
-                case "WARNING":
-                    MessageReceived(this, new WarningEventArg(obj));
-                    break;
-                //开播_心跳
-                case "LIVE":
-                    MessageReceived(this, new LiveEventArgs(obj));
-                    //应该还有收费直播的鉴权信息，但是这里就不细说了
-                    break;
-                //下播_心跳
-                case "PREPARING":
-                    MessageReceived(this, new PreparingpEventArgs(obj));
-                    break;
-                case "INTERACT_WORD":
-                    //进场消息（弹幕区展示进场消息，粉丝勋章，姥爷，榜单）和用户关注、分享、特别关注直播间
-                    break;
-                case "PANEL":
-                    //小时榜信息更新
-                    break;
-                case "ONLINE_RANK_COUNT":
-                    //服务等级（降级后会变化）
-                    break;
-                case "ONLINE_RANK_V2":
-                    //高能榜更新
-                    break;
-                case "ROOM_BANNER":
-                    //房间横幅信息，应该就是置顶的那个跳转广告
-                    break;                
-                case "ACTIVITY_RED_PACKET":
-                    //红包抽奖弹幕
-                    break;
-                 case "CUT_OFF":
-                    //切断直播间
-                    break;
-                default:
-                    //Console.WriteLine(cmd);
-                    MessageReceived(this, new MessageEventArgs(obj));
-                    break;
-            }
+                switch (cmd)
+                {
+                    //弹幕信息
+                    case "DANMU_MSG":
+                        MessageReceived(this, new DanmuMessageEventArgs(obj));
+                        break;
+                    //SC信息
+                    case "SUPER_CHAT_MESSAGE":
+                        MessageReceived(this, new SuperchatEventArg(obj));
+                        break;
+                    //礼物
+                    case "SEND_GIFT":
+                        MessageReceived(this, new SendGiftEventArgs(obj));
+                        break;
+                    //舰组信息(上舰)
+                    case "GUARD_BUY":
+                        MessageReceived(this, new GuardBuyEventArgs(obj));
+                        break;
+                    //小时榜单变动通知
+                    case "ACTIVITY_BANNER_UPDATE_V2":
+                        MessageReceived(this, new ActivityBannerEventArgs(obj));
+                        break;
+                    //礼物combo
+                    case "COMBO_SEND":
+                        break;
+                    //进场特效
+                    case "ENTRY_EFFECT":
+                        MessageReceived(this, new EntryEffectEventArgs(obj));
+                        break;
+                    //续费舰长
+                    case "USER_TOAST_MSG":
+                        break;
+                    //在房间内续费了舰长
+                    case "NOTICE_MSG":
+                        break;
+                    //欢迎
+                    case "WELCOME":
+                        MessageReceived(this, new WelcomeEventArgs(obj));
+                        break;
+                    //人气值(心跳数据)
+                    case "LiveP":
+                        MessageReceived(this, new LivePopularity(obj));
+                        break;
+                    //管理员警告
+                    case "WARNING":
+                        MessageReceived(this, new WarningEventArg(obj));
+                        break;
+                    //开播_心跳
+                    case "LIVE":
+                        MessageReceived(this, new LiveEventArgs(obj));
+                        //应该还有收费直播的鉴权信息，但是这里就不细说了
+                        break;
+                    //下播_心跳
+                    case "PREPARING":
+                        MessageReceived(this, new PreparingpEventArgs(obj));
+                        break;
+                    case "INTERACT_WORD":
+                        MessageReceived(this, new InteractWordEventArgs(obj));
+                        //进场消息（弹幕区展示进场消息，粉丝勋章，姥爷，榜单）和用户关注、分享、特别关注直播间
+                        break;
+                    case "PANEL":
+                        //小时榜信息更新
+                        break;
+                    case "ONLINE_RANK_COUNT":
+                        //服务等级（降级后会变化）
+                        break;
+                    case "ONLINE_RANK_V2":
+                        //高能榜更新
+                        break;
+                    case "ROOM_BANNER":
+                        //房间横幅信息，应该就是置顶的那个跳转广告
+                        break;
+                    case "ACTIVITY_RED_PACKET":
+                        //红包抽奖弹幕
+                        break;
+                    case "CUT_OFF":
+                        //切断直播间
+                        break;
+                    default:
+                        //Console.WriteLine(cmd);
+                        MessageReceived(this, new MessageEventArgs(obj));
+                        break;
+                }
             return;
         }
         /// <summary>
@@ -565,11 +566,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             //Debug.LogError(protocol.Version + "\\" + protocol.Operation);
             //
 
-            if(Rooms.Rooms.RoomInfo.TryGetValue(mid,out Rooms.RoomInfoClass.RoomInfo roomInfo))
+            if (Rooms.Rooms.RoomInfo.TryGetValue(mid, out Rooms.RoomInfoClass.RoomInfo roomInfo))
             {
-                roomInfo.roomWebSocket.dokiTime= Tool.TimeModule.Time.Operate.GetRunMilliseconds();
+                roomInfo.roomWebSocket.dokiTime = Tool.TimeModule.Time.Operate.GetRunMilliseconds();
             }
-                
+
 
             if (protocol.PacketLength < 16)
             {
@@ -639,6 +640,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             }
         }
         #endregion
-     
+
     }
 }
