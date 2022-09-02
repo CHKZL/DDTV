@@ -41,7 +41,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
             /// <summary>
             /// 
             /// </summary>
-            public int mid { get; set; }
+            public long mid { get; set; }
             /// <summary>
             /// 
             /// </summary>

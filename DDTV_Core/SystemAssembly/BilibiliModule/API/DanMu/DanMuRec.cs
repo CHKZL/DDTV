@@ -1,4 +1,5 @@
-﻿using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
+﻿using ColorConsole;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
@@ -15,17 +16,21 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
 {
     public class DanMuRec
     {
-        public static void Rec(long UID)
+        public static void Rec(long UID, bool IsWatchMode = false)
         {
             Task.Run(() =>
             {
-                StartRecDanmu(UID);
+                StartRecDanmu(UID, IsWatchMode);
             });
         }
-        public static void StartRecDanmu(long UID)
+        public static void StartRecDanmu(long UID,bool IsWatchMode=false)
         {
             RoomInfoClass.RoomInfo _ = WebSocket.WebSocket.ConnectRoomAsync(UID);
             _.DanmuFile.TimeStopwatch = new System.Diagnostics.Stopwatch();
+            if(IsWatchMode)
+            {
+                _.roomWebSocket.LiveChatListener.IsWatchMode = true;
+            }
             _.DanmuFile.TimeStopwatch.Start();
             _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
             _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
@@ -50,7 +55,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
             }   
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        private static ConsoleWriter console = new ConsoleWriter();
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
@@ -60,6 +68,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 switch (e)
                 {
                     case DanmuMessageEventArgs Danmu:
+                        if(liveChatListener.IsWatchMode)
+                        {
+                          
+                            console.Write($"[弹幕]", ConsoleColor.Green);
+                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                            console.Write($"{Danmu.UserName}：", ConsoleColor.Magenta);
+                            console.WriteLine($"{Danmu.Message}", ConsoleColor.White);
+                        }
+                        else
                         roomInfo.DanmuFile.Danmu.Add(new DanMuClass.DanmuInfo
                         {
                             color = Danmu.MessageColor,
@@ -75,7 +92,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         });
                         break;
                     case SuperchatEventArg SuperchatEvent:
-                        roomInfo.DanmuFile.SuperChat.Add(new DanMuClass.SuperChatInfo()
+                        if (liveChatListener.IsWatchMode)
+                        {
+                            console.Write($"[超级留言]", ConsoleColor.Red);
+                            console.Write($"(金额{SuperchatEvent.Price})", ConsoleColor.Red);
+                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                            
+                            console.Write($"{SuperchatEvent.UserName}：", ConsoleColor.Magenta);
+                            console.WriteLine($"{SuperchatEvent.Message}", ConsoleColor.White);
+                        }
+                        else
+                            roomInfo.DanmuFile.SuperChat.Add(new DanMuClass.SuperChatInfo()
                         {
                             Message = SuperchatEvent.Message,
                             MessageTrans = SuperchatEvent.messageTrans,
@@ -88,7 +115,16 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         });
                         break;
                     case GuardBuyEventArgs GuardBuyEvent:
-                        roomInfo.DanmuFile.GuardBuy.Add(new DanMuClass.GuardBuyInfo()
+                        if (liveChatListener.IsWatchMode)
+                        {
+                            string Lv = GuardBuyEvent.GuardLevel == 1 ? "舰长" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "总督";
+                            console.Write($"[上舰]", ConsoleColor.Red);
+                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                            console.Write($"{GuardBuyEvent.UserName}：", ConsoleColor.Magenta);
+                            console.WriteLine($"{GuardBuyEvent.Number}个月的{Lv}", ConsoleColor.White);
+                        }
+                        else
+                            roomInfo.DanmuFile.GuardBuy.Add(new DanMuClass.GuardBuyInfo()
                         {
                             GuardLevel = GuardBuyEvent.GuardLevel,
                             GuradName = GuardBuyEvent.GuardName,
@@ -101,7 +137,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                         });
                         break;
                     case SendGiftEventArgs sendGiftEventArgs:
-                        roomInfo.DanmuFile.Gift.Add(new DanMuClass.GiftInfo()
+                        if (liveChatListener.IsWatchMode)
+                        {
+                            console.Write($"[礼物]", ConsoleColor.Red);
+                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                            console.Write($"{sendGiftEventArgs.UserName}：", ConsoleColor.Magenta);
+                            console.WriteLine($"送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}", ConsoleColor.White);
+                        }
+                        else
+                            roomInfo.DanmuFile.Gift.Add(new DanMuClass.GiftInfo()
                         {
                             Amount = sendGiftEventArgs.Amount,
                             GiftName = sendGiftEventArgs.GiftName,
@@ -110,7 +154,27 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                             Timestamp = sendGiftEventArgs.Timestamp,
                             UserId = sendGiftEventArgs.UserId,
                             UserName = sendGiftEventArgs.UserName
-                        });
+                            });
+                        break;
+                    case InteractWordEventArgs interactWordEventArgs:
+                        if (liveChatListener.IsWatchMode)
+                        {
+                            switch (interactWordEventArgs.MsgType)
+                            {
+                                case 1:
+                                    console.Write($"[进场]", ConsoleColor.Yellow);
+                                    break;
+                                case 2:
+                                    console.Write($"[关注]", ConsoleColor.Yellow);
+                                    break;
+                                case 4:
+                                    console.Write($"[特别关注]", ConsoleColor.Yellow);
+                                    break;
+                            }
+                        
+                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                            console.WriteLine($"{interactWordEventArgs.Uname}", ConsoleColor.Magenta);
+                        }
                         break;
                     default:
                         break;
