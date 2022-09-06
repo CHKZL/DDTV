@@ -179,7 +179,15 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 else
                 {
-                    Update(true);
+                    if (!Tool.ExamineFullScreen.IsForegroundFullScreen())
+                    {
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"触发自动更新", false, null, false);
+                        Update(true);
+                    }
+                    else
+                    {
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"正在运行全屏任务，跳过自动更新", false, null, false);
+                    }
                 }
             }
             else
