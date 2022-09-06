@@ -23,7 +23,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 StartRecDanmu(UID, IsWatchMode);
             });
         }
-        public static void StartRecDanmu(long UID,bool IsWatchMode=false)
+        public static RoomInfoClass.RoomInfo StartRecDanmu(long UID,bool IsWatchMode=false)
         {
             RoomInfoClass.RoomInfo _ = WebSocket.WebSocket.ConnectRoomAsync(UID);
             _.DanmuFile.TimeStopwatch = new System.Diagnostics.Stopwatch();
@@ -31,9 +31,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 _.roomWebSocket.LiveChatListener.IsWatchMode = true;
             }
-            _.DanmuFile.TimeStopwatch.Start();
-            _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-            _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+            else
+            {
+                _.DanmuFile.TimeStopwatch.Start();
+                _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+                _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+            }
+            return _;
         }
 
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)

@@ -65,9 +65,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             JObject JO = new JObject();
             try
             {
-                await m_client.ConnectAsync(new Uri("wss://" + host.host_list[new Random().Next(0, host.host_list.Count-1)].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
 
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
+
+                //因为下标为0的服务器握手好像改了，临时先屏蔽掉，用其他的
+                //await m_client.ConnectAsync(new Uri("wss://" + host.host_list[0].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
+                await m_client.ConnectAsync(new Uri("wss://" + host.host_list[new Random().Next(1, host.host_list.Count)].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token); 
             }
             catch (Exception e)
             {
@@ -358,9 +361,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     case "ACTIVITY_RED_PACKET":
                         //红包抽奖弹幕
                         break;
-                    case "CUT_OFF":
                         //切断直播间
+                    case "CUT_OFF":
+                        MessageReceived(this, new CutOffEventArg(obj));
                         break;
+                       
                     default:
                         //Console.WriteLine(cmd);
                         MessageReceived(this, new MessageEventArgs(obj));

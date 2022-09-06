@@ -58,6 +58,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DDTV_Core\DDTV_Core.csproj" />
+    <ProjectReference Include="..\DDTV_DanMu\DDTV_DanMu.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -166,6 +167,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="WPFControl\OpenDanMuWindowDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="WPFControl\ColorPickerWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -183,6 +187,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="WPFControl\OpenDanMuWindowDialog.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="WPFControl\ColorPickerWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

@@ -78,7 +78,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                                 ws_port=(int)item["ws_port"],
                             });
                         }
-                        Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"获取【[UID]：{uid}】的直播间wss长连接服务器信息成功");
+                        Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"获取【[UID]：{uid}】的直播间弹幕信息长连接服务器信息成功");
                     }
                     else
                     {

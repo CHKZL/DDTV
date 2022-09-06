@@ -46,6 +46,8 @@ namespace DDTV_Core.Tool
                     case SatrtType.DDTV_CLI:
                         Type = "DDTV_CLI_x64";
                         break;
+                    case SatrtType.DDTV_DanMu:
+                        return;
                     default:
                         Type = "DDTV_CLI_x64";
                         break;

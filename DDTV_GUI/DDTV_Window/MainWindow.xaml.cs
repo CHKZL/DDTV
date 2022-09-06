@@ -34,14 +34,18 @@ namespace DDTV_GUI.DDTV_Window
         public static double DefaultVolume = 0;//默认音量
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
+        private Dialog OpenDanMuWindowDialog;//切片窗口
 
         private static bool HideIconState = false;
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
+        public static event EventHandler<EventArgs> OpenDanMuWindowDialogDispose;//切片窗口关闭事件
         public NotifyIcon notifyIcon=new();
         public static List<PlayWindow> playWindowsList = new();
         public static GuideMode guideMode = GuideMode.N;
         public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        public static DDTV_DanMu.MainWindow DanMuWindow = null;
      
         public enum GuideMode
         {
@@ -1593,6 +1597,31 @@ namespace DDTV_GUI.DDTV_Window
             Growl.Success($"修改弹幕用户信息储存类型为兼容模式");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"修改弹幕用户信息储存类型为兼容模式", false, null, false);
             CoreConfigFile.WriteConfigFile(true);
+        }
+
+        private void DanMuWindowButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(DanMuWindow==null)
+            {
+                OpenDanMuWindowDialogDispose += MainWindow_OpenDanMuWindowDialogDispose;
+                OpenDanMuWindowDialog openDanMuWindowDialog = new OpenDanMuWindowDialog(OpenDanMuWindowDialogDispose);
+                OpenDanMuWindowDialog = Dialog.Show(openDanMuWindowDialog);
+            }
+            else
+            {
+                try
+                {
+                    DanMuWindow.Close();
+                }
+                catch (Exception)
+                {}
+                DanMuWindow = null;
+            }
+        }
+
+        private void MainWindow_OpenDanMuWindowDialogDispose(object? sender, EventArgs e)
+        {
+            OpenDanMuWindowDialog.Dispatcher.BeginInvoke(new Action(() => OpenDanMuWindowDialog.Close()));
         }
     }
 }
