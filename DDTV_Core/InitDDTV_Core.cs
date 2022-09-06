@@ -31,7 +31,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-09-02 20:11:14";
+        public static string CompiledVersion = "2022-09-03 23:38:32";
 
         /// <summary>
         /// 初始化COre
@@ -40,7 +40,7 @@ namespace DDTV_Core
         {
             InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{Ver}(编译时间:{CompiledVersion})\n========================");
+            Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
             Log.LogInit(LogClass.LogType.Debug);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
@@ -49,7 +49,7 @@ namespace DDTV_Core
             CoreConfig.ConfigInit(satrtType);
             DDTV_Update.CheckUpdateProgram();
             Task.Run(() => Tool.DDcenter.Init(satrtType));
-            if (satrtType != SatrtType.DDTV_GUI)
+            if (satrtType != SatrtType.DDTV_GUI && satrtType!=SatrtType.DDTV_DanMu)
             {
                 SeKey();
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
@@ -76,6 +76,8 @@ namespace DDTV_Core
                 case SatrtType.DDTV_GUI:
                     //ServerInteraction.CheckUpdates.Update("GUI");
                     ServerInteraction.Dokidoki.Start("GUI");
+                    break;
+                case SatrtType.DDTV_DanMu:
                     break;
                 default:
                     ServerInteraction.CheckUpdates.Update("Core");
@@ -176,6 +178,7 @@ namespace DDTV_Core
             DDTV_GUI,
             DDTV_CLI,
             DDTV_WEB,
+            DDTV_DanMu,
             DDTV_Other = int.MaxValue
         }
 

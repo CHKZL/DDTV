@@ -299,6 +299,14 @@
                                     </Button>
                                     <TextBlock Name="ManualTranscodingProgress" HorizontalAlignment="Left" Margin="242,0,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" Width="583"/>
                                 </Grid>
+                                <!--<Grid Width="825"  Margin="5">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="打开弹幕浮窗：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Name="DanMuWindowButton" Tag="0"  Content="选择文件" Margin="117,2,0,0" HorizontalAlignment="Left" Click="DanMuWindowButton_Click" VerticalAlignment="Top">
+                                        <hc:AdornerElement.Instance>
+                                            <hc:Poptip Content="点击按钮，选择文件后会自动进行转码操作" PlacementType="BottomLeft"/>
+                                        </hc:AdornerElement.Instance>
+                                    </Button>
+                                </Grid>-->
                             </WrapPanel>
                         </ScrollViewer>
                     </Grid>
