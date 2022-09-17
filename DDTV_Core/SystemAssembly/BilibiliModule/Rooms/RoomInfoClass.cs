@@ -196,6 +196,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public int special_type { set; get; }
             /// <summary>
+            /// 是否是临时播放项目
+            /// </summary>
+            public bool IsTemporaryPlay { set; get; } = false;
+            /// <summary>
             /// 直播间状态(0:无房间 1:有房间)
             /// </summary>
             public int roomStatus { set; get; }

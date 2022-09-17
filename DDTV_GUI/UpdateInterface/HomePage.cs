@@ -25,7 +25,16 @@ namespace DDTV_GUI.UpdateInterface
             int _RecCount = 0;
             int _LiveBroadcastingCount = 0;
             int _RecCompleteCount = 0;
-            int _MonitoringCount = Rooms.RoomInfo.Count;
+            int _MonitoringCount = 0;
+            foreach (var item in Rooms.RoomInfo)
+            {
+                if(!item.Value.IsTemporaryPlay)
+                {
+                    _MonitoringCount++;
+                }
+            }
+
+           
             string _SavePathName = Download.DownloadPath.Split(':').Length>1?Download.DownloadPath.Split(':')[0]:Path.GetFullPath(Download.DownloadPath).Split(':')[0];
             string _SavePathSize = DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_SavePathName,2))+"/"+ DDTV_Core.SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(DDTV_Core.Tool.FileOperation.GetHardDiskSpace(_SavePathName, 1));
             string _TmpPathName = Download.TmpPath.Split(':').Length > 1 ? Download.TmpPath.Split(':')[0] : Path.GetFullPath(Download.TmpPath).Split(':')[0];
@@ -37,7 +46,7 @@ namespace DDTV_GUI.UpdateInterface
                 {
                     _RecCount++;
                 }
-                if(A1.Value.live_status==1)
+                if(A1.Value.live_status==1 && !A1.Value.IsTemporaryPlay)
                 {
                     _LiveBroadcastingCount++;
                 }

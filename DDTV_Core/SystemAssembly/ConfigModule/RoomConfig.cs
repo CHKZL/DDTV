@@ -22,12 +22,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// <param name="IsAutoRec">是否自动录制</param>
         /// <param name="IsRemind">是否开播提醒</param>
         /// <returns></returns>
-        public static string AddRoom(long uid, string Description, bool IsAutoRec = false, bool IsRemind = false, bool IsRecDanmu = false)
+        public static bool AddRoom(long uid, string Description, bool IsAutoRec = false, bool IsRemind = false, bool IsRecDanmu = false,bool IsTmp=false)
         {
             if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
                 Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Warn, "添加的房间已存在！");
-                return "添加的房间已存在";
+                return false;
             }
             else
             {
@@ -62,12 +62,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 
                     RoomConfigFile.WriteRoomConfigFile();
                     Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Info, $"添加房间记录成功:【[uid]:{uid} [room_id]:{RoomId} [uname]:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)} [IsAutoRec]:{IsAutoRec} [IsRemind]:{IsRemind}】");
-                    return "添加房间记录成功";
+                    return true;
                 }
                 else
                 {
                     Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Warn, "填写的用户UID房间不存在");
-                    return "填写的用户UID房间不存在";
+                    return false;
                 }
             }
         }
@@ -221,8 +221,17 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     }
                     else
                     {
-                        Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"未在当前房间配置内容中找到想修改的房间(UID:{roomCards.UID})信息，修改失败");
-                        return false;
+                        if(AddRoom(roomCards.UID, "",  roomCards.IsAutoRec, roomCards.IsRemind, roomCards.IsRecDanmu))
+                        {
+                            Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"申请添加的房间(UID:{roomCards.UID})本地列表中不存在，但是阿B数据库中存在开房间添加到本地数据中，添加成功");
+                            return true;
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"未在当前房间配置内容中找到想修改的房间(UID:{roomCards.UID})信息，修改失败");
+                            return false;
+                        }
+                       
                     }
                 }
                 else
