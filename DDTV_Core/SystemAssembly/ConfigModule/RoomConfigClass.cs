@@ -42,6 +42,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             public bool IsRecDanmu;
             /// <summary>
+            /// 是否是临时播放项目
+            /// </summary>
+            public bool IsTemporaryPlay { set; get; } = false;
+            /// <summary>
             /// 优先标记
             /// </summary>
             public bool Like;

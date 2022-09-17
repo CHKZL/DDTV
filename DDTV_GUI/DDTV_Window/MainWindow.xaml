@@ -188,6 +188,12 @@
                                             <Image Source="/Resources/Img/UI/add_user.png" Width="18" Height="18"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="打开临时监控窗" Click="LiveList_MenuItem_Peep_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/Peep.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                             <hc:AdornerElement.Instance>
@@ -501,7 +507,7 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="489,9,0,0" Text="接受开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <TextBlock HorizontalAlignment="Left" Margin="489,9,0,0" Text="查询开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <ToggleButton x:Name="DevSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="622,10,0,0" HorizontalAlignment="Left" Width="36" Click="DevSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开本开关后，手动点击[更新DDTV]按钮时会检查是否有新的开发版本，如果有会更新到最新的开发版本。（关闭此开关后再点击更新会更新为正常发布版本）" PlacementType="BottomLeft"/>

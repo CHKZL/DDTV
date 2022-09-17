@@ -52,8 +52,8 @@ namespace DDTV_DanMu
                 Log.AddLog(nameof(DDTV_DanMu), LogClass.LogType.Info, $"正在连接房间，请稍候...........");
                 Thread.Sleep(3000);
             }
-            Rec(Uid != 0 ? Uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-            //Rec(8739477);
+            //Rec(Uid != 0 ? Uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+            Rec(1875094289);
             Add("游戏如需全屏请请使用“无边框全屏”模式");
             Add("初始化完成，等待直播间数据");
             W = this;

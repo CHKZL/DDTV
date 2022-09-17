@@ -231,6 +231,10 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
             /// </summary>
             IsRecDanmu,
             /// <summary>
+            /// 是否是临时播放项目(Local值)
+            /// </summary>
+            IsTemporaryPlay,
+            /// <summary>
             /// 特殊标记(Local值)
             /// </summary>
             Like,

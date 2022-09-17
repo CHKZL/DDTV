@@ -57,7 +57,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     Rooms.RoomInfo[item.UID].IsRemind = (item.IsRemind||item.RemindStatus);
                     Rooms.RoomInfo[item.UID].Like = item.Like;
                     Rooms.RoomInfo[item.UID].IsRecDanmu = item.IsRecDanmu;
+                    Rooms.RoomInfo[item.UID].IsTemporaryPlay = item.IsTemporaryPlay;
                     Rooms.RoomInfo[item.UID].Shell = item.Shell;
+
                 }
                 else
                 {
@@ -79,6 +81,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         Like = item.Like,
                         uid = item.UID,
                         IsRecDanmu=item.IsRecDanmu,
+                        IsTemporaryPlay=item.IsTemporaryPlay,
                         Shell = item.Shell,
                     });
                 }
@@ -87,6 +90,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 DataCache.SetCache(CacheType.room_id, item.UID.ToString(), Rooms.RoomInfo[item.UID].room_id.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsAutoRec, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsAutoRec.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRemind, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsRemind.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsTemporaryPlay, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsTemporaryPlay.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.Like, item.UID.ToString(), Rooms.RoomInfo[item.UID].Like.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.uid, item.UID.ToString(), Rooms.RoomInfo[item.UID].uid.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRecDanmu, item.UID.ToString(), Rooms.RoomInfo[item.UID].IsRecDanmu.ToString(), int.MaxValue);
@@ -119,6 +123,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 DataCache.SetCache(CacheType.room_id, item.Value.uid.ToString(), item.Value.room_id.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsAutoRec, item.Value.uid.ToString(), item.Value.IsAutoRec.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRemind, item.Value.uid.ToString(), item.Value.IsRemind.ToString(), int.MaxValue);
+                DataCache.SetCache(CacheType.IsTemporaryPlay, item.Value.uid.ToString(), item.Value.IsTemporaryPlay.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.Like, item.Value.uid.ToString(), item.Value.Like.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.uid, item.Value.uid.ToString(), item.Value.uid.ToString(), int.MaxValue);
                 DataCache.SetCache(CacheType.IsRecDanmu, item.Value.uid.ToString(), item.Value.IsRecDanmu.ToString(), int.MaxValue);

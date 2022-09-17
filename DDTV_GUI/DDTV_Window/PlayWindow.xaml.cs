@@ -82,7 +82,7 @@ namespace DDTV_GUI.DDTV_Window
         };
 
 
-        public PlayWindow(long Uid,string Name)
+        public PlayWindow(long Uid,string Name,bool IsTemporaryPlay = false)
         {
             InitializeComponent();
 

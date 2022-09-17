@@ -33,6 +33,7 @@
     <None Remove="Resources\Img\UI\logo1.png" />
     <None Remove="Resources\Img\UI\message.png" />
     <None Remove="Resources\Img\UI\notification.png" />
+    <None Remove="Resources\Img\UI\Peep.png" />
     <None Remove="Resources\Img\UI\play-circle.png" />
     <None Remove="Resources\Img\UI\pushpin.png" />
     <None Remove="Resources\Img\UI\reload _ime.png" />
@@ -121,6 +122,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\notification.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\Peep.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\play-circle.png">

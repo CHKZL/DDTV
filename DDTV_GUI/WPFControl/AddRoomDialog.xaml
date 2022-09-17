@@ -11,8 +11,8 @@
         Height="190"
         Background="{DynamicResource RegionBrush}">
     <hc:SimplePanel>
-        <TextBlock Style="{StaticResource TextBlockLargeBold}" Text="添加监控" Margin="0,15,0,0" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="20,65,0,0" VerticalAlignment="Top" Text="选择添加的数据类型："></TextBlock>
+        <TextBlock Name="Title" Style="{StaticResource TextBlockLargeBold}" Text="添加监控" Margin="0,15,0,0" VerticalAlignment="Top"/>
+        <TextBlock Name="Reminder" HorizontalAlignment="Left" Margin="20,65,0,0" VerticalAlignment="Top" Text="选择添加的数据类型："></TextBlock>
         <UniformGrid Margin="140,62,46,106" Columns="2">
             <RadioButton Name="UIDRadio" Margin="0,0,0,0" BorderThickness="1" Content="UID" IsChecked="True"/>
             <RadioButton Name="RoomIdRadio" Margin="0,0,0,0" BorderThickness="1" Content="RoomId"/>

@@ -724,8 +724,8 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LiveList_MenuItem_AddRoom_Click(object sender, RoutedEventArgs e)
-        {
-            Dialog.Show<AddRoomDialog>();
+        { 
+            Dialog.Show(new AddRoomDialog(false));
         }
 
         /// <summary>
@@ -773,7 +773,7 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
-        private void PlayWindow_Closed(object? sender, EventArgs e)
+        public static void PlayWindow_Closed(object? sender, EventArgs e)
         {
             playWindowsList.Remove(sender as PlayWindow);
         }
@@ -1633,6 +1633,16 @@ namespace DDTV_GUI.DDTV_Window
         private void MainWindow_OpenDanMuWindowDialogDispose(object? sender, EventArgs e)
         {
             OpenDanMuWindowDialog.Dispatcher.BeginInvoke(new Action(() => OpenDanMuWindowDialog.Close()));
+        }
+
+        /// <summary>
+        /// 监控列表_右键菜单_打开临时监控窗口
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LiveList_MenuItem_Peep_Click(object sender, RoutedEventArgs e)
+        {
+            Dialog.Show(new AddRoomDialog(true));
         }
     }
 }
