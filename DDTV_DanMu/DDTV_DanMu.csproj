@@ -5,10 +5,15 @@
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>DDTV.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Res\Move.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="DDTV.ico" />
   </ItemGroup>
 
   <ItemGroup>

@@ -65,7 +65,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
     public class GuardBuyEventArgs : MessageEventArgs
     {
         /// <summary>
-        /// 舰长等级：1-舰长 2-提督 3-总督
+        /// 舰长等级：1-总督 2-提督 3-舰长
         /// </summary>
         public int GuardLevel { get; set; }
 

@@ -4,6 +4,7 @@ DDTV_GUI仅支持Windows平台运行，其他平台需要录制请使用DDTV_WEB
 :::
 ## 1.下载
 从以下地方选一个下载DDTV最新版本    
+[bilibili](https://play-live.bilibili.com/details/1651690688387)  
 [GitHub](https://github.com/CHKZL/DDTV/releases/latest)   
 [GitHub(fastgit镜像)](https://hub.fastgit.xyz/CHKZL/DDTV/releases/latest)  
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  

@@ -10,9 +10,9 @@
         ActiveGlowColor="#00a1d6"
         InactiveGlowColor="#fb7299"
         Title="PlayWindow" Width="800" Height="460"
-        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" >
+        Icon="/Resources/Img/UI/DDTV.ico" Closing="Window_Closing" AllowsTransparency="True" WindowStyle="None" KeyDown="GlowWindow_KeyDown" >
 
-    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged" >
+    <vlc:VideoView x:Name="VideoView" SizeChanged="Window_SizeChanged">
         <Grid Name="PlayGrid" MouseWheel="Grid_MouseWheel" Background="#01FFFFFF" MouseMove="Grid_MouseMove" KeyDown="Window_KeyDown" MouseLeftButtonDown="PlayGrid_MouseLeftButtonDown">
             <Grid.ContextMenu  >
                 <ContextMenu>
@@ -35,7 +35,7 @@
                         <MenuItem Header="备线2" Tag="2" Width="90" Click="MenuItem_SwitchLine_Click"/>
                         <MenuItem Header="备线3" Tag="3" Width="90" Click="MenuItem_SwitchLine_Click"/>
                     </MenuItem>
-                    <MenuItem Header="切换清晰度">
+                    <MenuItem Name="MenuItem_SwitchQuality" Header="切换清晰度">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/block.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
@@ -59,7 +59,7 @@
                             <Image Source="/Resources/Img/UI/pushpin.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                     </MenuItem>
-                    <MenuItem Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
+                    <MenuItem Name="MenuItem_FullScreenSwitch" Header="切换全屏" Click="MenuItem_FullScreenSwitch_Send_Button_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/fullscreen.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
@@ -79,7 +79,7 @@
                         <MenuItem Header="全局静音" Width="200" Click="MenuItem_SetMute_Click"/>
                         <MenuItem Header="该窗口solo" Width="200" Click="MenuItem_SetMuteSolo_Click"/>
                     </MenuItem>
-                    <MenuItem Header="自动全屏平铺">
+                    <MenuItem Name="MenuItem_WindowSorting" Header="自动全屏平铺">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/border-outer.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
@@ -103,6 +103,11 @@
                         </MenuItem.Icon>
                     </MenuItem>
                     <Separator/>
+                    <MenuItem Name="MenuItem_OnlyPlayAudio" Tag="0" Header="该窗口只播放音频" Click="MenuItem_OnlyPlayAudio_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/BlackHear.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="查看当前播放窗口详情" Click="PlayWindowInfo_Click">
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
@@ -114,6 +119,9 @@
                 <Slider Name="volume" Maximum="100" Margin="40,10,0,0" HorizontalAlignment="Left" Width="200" MouseMove="volume_MouseMove"/>
                 <Button Content="发送弹幕" HorizontalAlignment="Left" Margin="252,0,0,4" VerticalAlignment="Bottom" Click="Danmu_Send_Button_Click"/>
             </Grid>-->
+            <Grid Name="BlackListeningTips" Background="Black"  Visibility="Collapsed">
+                <TextBlock Text="黑听中...右键菜单中退出" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" />
+            </Grid>
             <Grid Name="loading" Background="#7F5B5B5B">
                 <TextBlock Text="鼠标在窗口上滚动滚轮调整音量" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" Margin="0,-140,0,0" />
                 <TextBlock Text="加载中" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" />
@@ -122,7 +130,8 @@
 
                 <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
-
+            
+            
             <Grid Name="EndGrid" Background="#7F5B5B5B" Visibility="Collapsed">
                 <TextBlock Text="该房间已下播" Style="{StaticResource TextBlockLarge}" Foreground="#fb7299" FontSize="30" />
             </Grid>
