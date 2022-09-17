@@ -1,4 +1,5 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_GUI.DDTV_Window;
 using HandyControl.Controls;
 using System;
@@ -100,9 +101,9 @@ namespace DDTV_GUI.WPFControl
                         var tmp = new DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass.RoomCard()
                         {
                             UID = UID,
-                            IsAutoRec = false,
+                            IsAutoRec = (bool)RecCheck.IsChecked,
                             Description="",
-                            IsRecDanmu=false,
+                            IsRecDanmu= (bool)DanMuCheck.IsChecked,
                             IsRemind=false,
                             IsTemporaryPlay=false,
                             Like=false,
@@ -113,6 +114,11 @@ namespace DDTV_GUI.WPFControl
                         DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.ReviseRoom(tmp,true,0);
                         Growl.SuccessGlobal($"添加成功");
                         UIDInputBox.Clear();
+                        if (tmp.IsAutoRec && Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                        {
+                            Download.AddDownloadTaskd(UID, true);
+                            Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
+                        }
                     }
                 }
                 else
@@ -125,6 +131,19 @@ namespace DDTV_GUI.WPFControl
             {
                 Growl.WarningGlobal($"UID不符合规范！");
                 return;
+            }
+        }
+
+        private void RecCheck_Click(object sender, RoutedEventArgs e)
+        {
+            if (RecCheck.IsChecked == false)
+            {
+                DanMuCheck.IsChecked = false;
+                DanMuCheck.IsEnabled = false;
+            }
+            else
+            {
+                DanMuCheck.IsEnabled = true;
             }
         }
     }
