@@ -21,6 +21,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static string DownloadPath = CoreConfig.GetValue(CoreConfigClass.Key.DownloadPath, "./Rec/", CoreConfigClass.Group.Download);
         public static string DownloadDirectoryName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadDirectoryName, "{ROOMID}_{NAME}", CoreConfigClass.Group.Download);
         public static string DownloadFileName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFileName, "{DATE}_{TIME}_{TITLE}", CoreConfigClass.Group.Download);
+        public static string DownloadFolderName = CoreConfig.GetValue(CoreConfigClass.Key.DownloadFolderName, "{YYYY}_{MM}_{DD}", CoreConfigClass.Group.Download);
         public static string TmpPath = CoreConfig.GetValue(CoreConfigClass.Key.TmpPath, "./tmp/", CoreConfigClass.Group.Download);
         public static int RecQuality = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.RecQuality, "10000", CoreConfigClass.Group.Download));
         public static bool IsRecDanmu = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsRecDanmu, "True", CoreConfigClass.Group.Download));

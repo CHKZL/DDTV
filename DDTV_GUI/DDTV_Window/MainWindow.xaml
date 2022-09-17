@@ -149,7 +149,7 @@
 
                             </ListView.View>
                             <ListView.ContextMenu>
-                                <ContextMenu Width="150">
+                                <ContextMenu Width="160">
                                     <MenuItem Header="在DDTV中观看" Click="LiveList_MenuItem_Play_Click">
                                         <MenuItem.Icon>
                                             <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
@@ -161,6 +161,11 @@
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <Separator />
+                                    <MenuItem Header="手动启动一次录制" Click="LiveList_MenuItem_ManualRec_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/Once.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                     <MenuItem Header="设置开播提醒" Click="LiveList_MenuItem_SetIsRemind_Click">
                                         <MenuItem.Icon>
                                             <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
@@ -350,9 +355,14 @@
                                         <Button Name="LogoutButton" Click="LogoutButton_Click" Style="{StaticResource ButtonDanger}" Content="登出bilibili账号" HorizontalAlignment="Left" Margin="745,0,0,0"/>
                                     </Grid>
                                     <Grid Width="850" Margin="5">
-                                        <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,119,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
+                                        <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,451,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  请使用半角字符!!!(可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间{TIME}、标题{TITLE})" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  请使用半角字符!!!(可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间(HH-mm-ss){TIME}、标题{TITLE})、时{HH}、分{mm}、秒{SS}" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </TextBox>
+                                        <TextBox x:Name="DefaultFolderNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认日期文件夹名称格式" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="419,0,32,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFolderNameTextBox_LostFocus">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="如：{YYYY}_{MM}_{DD}  请使用半角字符!!!(可用关键字:当前时间 年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                     </Grid>
