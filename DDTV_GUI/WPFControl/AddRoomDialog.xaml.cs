@@ -67,8 +67,8 @@ namespace DDTV_GUI.WPFControl
                     Growl.WarningGlobal($"房间号或UID不能为负数！");
                     return;
                 }
-
-                if(!Rooms.RoomInfo.ContainsKey(UID))
+                
+                if(IsTMP && !Rooms.RoomInfo.ContainsKey(UID))
                 {
                     Rooms.RoomInfo.Add(UID, new RoomInfoClass.RoomInfo()
                     {

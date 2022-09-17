@@ -357,12 +357,12 @@
                                     <Grid Width="850" Margin="5">
                                         <TextBox x:Name="DefaultFileNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认文件名" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="0,0,451,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  请使用半角字符!!!(可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间(HH-mm-ss){TIME}、标题{TITLE})、时{HH}、分{mm}、秒{SS}" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="如：{DATE}_{TIME}_{TITLE}  请使用半角字符!!!(可用关键字:房间号{ROOMID}、昵称{NAME}、日期{DATE}、时间(HH-mm-ss){TIME}、标题{TITLE})、时{HH}、分{mm}、秒{ss}" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                         <TextBox x:Name="DefaultFolderNameTextBox" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="默认日期文件夹名称格式" Style="{StaticResource TextBoxExtend}" Text="TEST" Margin="419,0,32,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFolderNameTextBox_LostFocus">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="如：{YYYY}_{MM}_{DD}  请使用半角字符!!!(可用关键字:当前时间 年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="如：{YYYY}_{MM}_{DD}  请使用半角字符!!!(可用关键字:当前时间 年(1949){yyyy}、年(49){yy}、月{MM}、日{dd})" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
                                     </Grid>
