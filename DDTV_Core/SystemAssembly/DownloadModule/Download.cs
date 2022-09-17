@@ -129,7 +129,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     roomInfo.IsUserCancel = false;
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
-                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + $"{DownloadFileName}" + "_{R}.flv");
+                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv");
 
                     //弹幕录制结束处理
                     if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
@@ -404,7 +404,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FilePath = Path;
                             downloadClass.FlvSplit = IsFlvSplit;
                             downloadClass.FlvSplitSize = FlvSplitSize;
-                            Tool.FileOperation.CreateAll(Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}");
+                            Tool.FileOperation.CreateAll(Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}");
                             downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
                             //录制弹幕(是否是新任务 && 弹幕录制总开关 && 房间弹幕录制设置)
                             bool RoomIsRecDanmu = false;
@@ -413,7 +413,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{ roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                                 roomInfo.DanmuFile = new();
-                                roomInfo.DanmuFile.FileName = Path + $"/{roomInfo.CreationTime.ToString("yy_MM_dd")}/" + FileName;
+                                roomInfo.DanmuFile.FileName = Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}/" + FileName;
                                 BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
                             }
                             else
