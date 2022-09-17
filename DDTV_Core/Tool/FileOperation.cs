@@ -129,6 +129,14 @@ namespace DDTV_Core.Tool
 
             Text = Text
                 .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
+                .Replace("{YYYY}", DateTime.Now.ToString("YYYY"))
+                .Replace("{YY}", DateTime.Now.ToString("YY"))
+                .Replace("{MM}", DateTime.Now.ToString("MM"))
+                .Replace("{DD}", DateTime.Now.ToString("DD"))
+                .Replace("{HH}", DateTime.Now.ToString("HH"))
+                .Replace("{mm}", DateTime.Now.ToString("mm"))
+                .Replace("{SS}", DateTime.Now.ToString("SS"))
+                .Replace("{FFF}", DateTime.Now.ToString("FFF"))
                 .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
                 .Replace("{DATE}", DateTime.Now.ToString("yyMMdd"))
                 .Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss"))

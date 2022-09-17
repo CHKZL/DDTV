@@ -100,6 +100,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             DownloadFileName,
             /// <summary>
+            /// 默认默认日期文件夹名称格式 (应该为关键字组合，如:{KEY}_{KEY})
+            /// 组：Download  默认值：{YYYY}_{MM}_{DD}  可选值：YYYY|YY|MM|DD   (年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})
+            /// </summary>
+            DownloadFolderName,
+            /// <summary>
             /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-i {Before} -vcodec copy -acodec copy {After})
             /// 组：Core      默认值：-i {Before} -vcodec copy -acodec copy {After}
             /// </summary>

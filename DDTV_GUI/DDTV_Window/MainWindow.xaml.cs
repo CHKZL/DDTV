@@ -264,6 +264,7 @@ namespace DDTV_GUI.DDTV_Window
         private void InitMainUI()
         {
             DefaultFileNameTextBox.Text = Download.DownloadFileName;
+            DefaultFolderNameTextBox.Text = Download.DownloadFolderName;
             RecPathTextBox.Text = Download.DownloadPath;
             TmpPathTextBox.Text = Download.TmpPath;
             TranscodToggle.IsChecked = Transcod.IsAutoTranscod;
@@ -806,6 +807,26 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     DefaultFileNameTextBox.Text = Download.DownloadFileName;
                     Growl.Warning("默认文件名不能为空");
+                }
+            }
+        }
+        private void DefaultFolderNameTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            string Text = DefaultFolderNameTextBox.Text.Trim();
+            if (Download.DownloadFolderName != Text)
+            {
+                if (!string.IsNullOrEmpty(Text))
+                {
+                    Download.DownloadFolderName = Text;
+                    CoreConfig.SetValue(CoreConfigClass.Key.DownloadFolderName, Download.DownloadFolderName, CoreConfigClass.Group.Download);
+                    Growl.Success("默认日期文件夹名称格式设置成功");
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认日期文件夹名称格式设置成功:" + Download.DownloadFolderName, false, null, false);
+                    CoreConfigFile.WriteConfigFile(true);
+                }
+                else
+                {
+                    DefaultFolderNameTextBox.Text = Download.DownloadFolderName;
+                    Growl.Warning("默认日期文件夹名称不能为空");
                 }
             }
         }
@@ -1643,6 +1664,21 @@ namespace DDTV_GUI.DDTV_Window
         private void LiveList_MenuItem_Peep_Click(object sender, RoutedEventArgs e)
         {
             Dialog.Show(new AddRoomDialog(true));
+        }
+
+        private void LiveList_MenuItem_ManualRec_Click(object sender, RoutedEventArgs e)
+        {
+            int Index = LiveList.SelectedIndex;
+            if (Index > -1 && UpdateInterface.Main.liveList.Count > Index)
+            {
+                long uid = UpdateInterface.Main.liveList[Index].Uid;
+                string name = UpdateInterface.Main.liveList[Index].Name;
+                int roomid = UpdateInterface.Main.liveList[Index].RoomId;
+                string Title = UpdateInterface.Main.liveList[Index].Title;
+                Log.AddLog(nameof(RoomPatrol), LogClass.LogType.Info, $"【手动录制】用户手动开始录制【{roomid}-{name}】的直播流-标题：[{Title}]");
+                Download.AddDownloadTaskd(uid, true);
+                Growl.SuccessGlobal($"增加手动录制任务:【{roomid}-{name}】");
+            }
         }
     }
 }
