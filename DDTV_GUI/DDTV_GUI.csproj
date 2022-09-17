@@ -17,6 +17,7 @@
     <None Remove="Resources\Img\UI\alert.png" />
     <None Remove="Resources\Img\UI\align-right.png" />
     <None Remove="Resources\Img\UI\BackGround.jpg" />
+    <None Remove="Resources\Img\UI\BlackHear.png" />
     <None Remove="Resources\Img\UI\block.png" />
     <None Remove="Resources\Img\UI\border-outer.png" />
     <None Remove="Resources\Img\UI\box_plot.png" />
@@ -72,6 +73,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\BackGround.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\BlackHear.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\block.png">

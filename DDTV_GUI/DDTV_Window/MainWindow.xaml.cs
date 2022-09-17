@@ -40,13 +40,13 @@ namespace DDTV_GUI.DDTV_Window
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
         public static event EventHandler<EventArgs> OpenDanMuWindowDialogDispose;//切片窗口关闭事件
-        public NotifyIcon notifyIcon=new();
+        public NotifyIcon notifyIcon = new();
         public static List<PlayWindow> playWindowsList = new();
         public static GuideMode guideMode = GuideMode.N;
         public static string Ver = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         public static DDTV_DanMu.MainWindow DanMuWindow = null;
-     
+
         public enum GuideMode
         {
             N,
@@ -56,7 +56,7 @@ namespace DDTV_GUI.DDTV_Window
         }
         public MainWindow()
         {
-           
+
             InitializeComponent();
             if (CheckRepeatedRun())
             {
@@ -149,52 +149,53 @@ namespace DDTV_GUI.DDTV_Window
         private void Notify_NotifyUpdate(object? sender, EventArgs e)
         {
             UpdateInterface.Notify.InfoC A = (UpdateInterface.Notify.InfoC)sender;
-            notifyIcon.ShowBalloonTip(A.Title,A.Content,HandyControl.Data.NotifyIconInfoType.Info);
+            notifyIcon.ShowBalloonTip(A.Title, A.Content, HandyControl.Data.NotifyIconInfoType.Info);
         }
 
         private void Notice_NewNotice(object? sender, EventArgs e)
         {
             string N = "";
-            N= sender as string;
-            Notice.Dispatcher.Invoke(() => {
-                Notice.Text= N;
+            N = sender as string;
+            Notice.Dispatcher.Invoke(() =>
+            {
+                Notice.Text = N;
             });
         }
 
         private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
         {
-            if (CoreConfig.AutoInsallUpdate)
+            if (!Tool.ExamineFullScreen.IsForegroundFullScreen())
             {
-                bool IsDL = false;
-                foreach (var A1 in Rooms.RoomInfo)
+                if (CoreConfig.AutoInsallUpdate)
                 {
-                    if (A1.Value.DownloadingList.Count > 0)
+                    bool IsDL = false;
+                    foreach (var A1 in Rooms.RoomInfo)
                     {
-                        IsDL = true;
+                        if (A1.Value.DownloadingList.Count > 0)
+                        {
+                            IsDL = true;
+                        }
                     }
-                }
-                if (IsDL || playWindowsList.Count > 0)
-                {
-                    Growl.InfoGlobal($"DDTV检测到更新，但是当前有观看/录制任务正在进行中，等待任务结束后空闲时间会自动更新");
-                }
-                else
-                {
-                    if (!Tool.ExamineFullScreen.IsForegroundFullScreen())
+                    if (IsDL || playWindowsList.Count > 0)
                     {
-                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"触发自动更新", false, null, false);
-                        Update(true);
+                        Growl.InfoGlobal($"DDTV检测到更新，但是当前有观看/录制任务正在进行中，等待任务结束后空闲时间会自动更新");
                     }
                     else
                     {
-                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"正在运行全屏任务，跳过自动更新", false, null, false);
+
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"触发自动更新", false, null, false);
+                        Update(true);
                     }
+                }
+                else
+                {
+                    Growl.InfoGlobal($"DDTV检测到更新，请在[设置]界面中点击[更新DDTV]进行自动更新");
                 }
             }
             else
             {
-                Growl.InfoGlobal($"DDTV检测到更新，请在[设置]界面中点击[更新DDTV]进行自动更新");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Info, $"正在运行全屏任务，跳过自动更新", false, null, false);
             }
-            
         }
 
         private bool CheckRepeatedRun()
@@ -268,16 +269,16 @@ namespace DDTV_GUI.DDTV_Window
             TranscodToggle.IsChecked = Transcod.IsAutoTranscod;
             HideIcon.IsChecked = HideIconState;
 
-            RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000 
-                ? 0 : Download.RecQuality == 400 
-                ? 1 : Download.RecQuality == 250 
-                ? 2 : Download.RecQuality==150
-                ? 3:4;
+            RecQualityComboBox.SelectedIndex = Download.RecQuality == 10000
+                ? 0 : Download.RecQuality == 400
+                ? 1 : Download.RecQuality == 250
+                ? 2 : Download.RecQuality == 150
+                ? 3 : 4;
 
-            PlayQualityComboBox.SelectedIndex = GUIConfig.PlayQuality == 10000 
-                ? 0 : GUIConfig.PlayQuality == 400 
-                ? 1 : GUIConfig.PlayQuality == 250 
-                ? 2 : GUIConfig.PlayQuality == 150 
+            PlayQualityComboBox.SelectedIndex = GUIConfig.PlayQuality == 10000
+                ? 0 : GUIConfig.PlayQuality == 400
+                ? 1 : GUIConfig.PlayQuality == 250
+                ? 2 : GUIConfig.PlayQuality == 150
                 ? 3 : 4;
 
             DanmuToggle.IsChecked = Download.IsRecDanmu;
@@ -287,21 +288,21 @@ namespace DDTV_GUI.DDTV_Window
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
 
-            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760 
-                ? 8 : Download.FlvSplitSize == 8482560409 
-                ? 7 : Download.FlvSplitSize == 6335076761 
-                ? 6 : Download.FlvSplitSize == 2040109465 
-                ? 5 : Download.FlvSplitSize == 5368709120 
-                ? 4 : Download.FlvSplitSize == 4294967296 
-                ? 3 : Download.FlvSplitSize == 3221225472 
-                ? 2 : Download.FlvSplitSize == 2147483648 
+            FlvSplitSizeComboBox.SelectedIndex = Download.FlvSplitSize == 10485760
+                ? 8 : Download.FlvSplitSize == 8482560409
+                ? 7 : Download.FlvSplitSize == 6335076761
+                ? 6 : Download.FlvSplitSize == 2040109465
+                ? 5 : Download.FlvSplitSize == 5368709120
+                ? 4 : Download.FlvSplitSize == 4294967296
+                ? 3 : Download.FlvSplitSize == 3221225472
+                ? 2 : Download.FlvSplitSize == 2147483648
                 ? 1 : 0;
 
             DoNotSleepWhileDownloadingIcon.IsChecked = Dokidoki.IsDoNotSleepState;
             ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
             TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
             DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
-            SpaceIsInsufficientWarn.IsChecked= DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
+            SpaceIsInsufficientWarn.IsChecked = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
             ReplaceAPIText.Text = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             SelectAPI_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 1 ? true : false;
             SelectAPI_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion == 2 ? true : false;
@@ -484,7 +485,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void DDTV_ICO_MouseDoubleClick(object sender, RoutedEventArgs e)
         {
-            if(HideIconState)
+            if (HideIconState)
             {
                 this.Visibility = Visibility.Visible;
                 this.Activate();
@@ -677,7 +678,7 @@ namespace DDTV_GUI.DDTV_Window
                 if (RoomConfig.ReviseRoom(roomCard, false, 2))
                 {
                     Growl.Success("已" + (!YIsAutoRec ? "打开" : "关闭") + $"[{name}({roomid})]的开播自动录制");
-                    if(!YIsAutoRec && Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status)== "1")
+                    if (!YIsAutoRec && Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                     {
                         Download.AddDownloadTaskd(uid, true);
                     }
@@ -762,7 +763,7 @@ namespace DDTV_GUI.DDTV_Window
                         playWindow.Closed += PlayWindow_Closed;
                         playWindow.Show();
                     }));
-                   
+
 
                 }
                 else
@@ -798,7 +799,7 @@ namespace DDTV_GUI.DDTV_Window
                     Download.DownloadFileName = Text;
                     CoreConfig.SetValue(CoreConfigClass.Key.DownloadFileName, Download.DownloadFileName, CoreConfigClass.Group.Download);
                     Growl.Success("默认文件名设置成功");
-                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认文件名设置成功:"+ Download.DownloadFileName, false, null, false);
+                    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "默认文件名设置成功:" + Download.DownloadFileName, false, null, false);
                     CoreConfigFile.WriteConfigFile(true);
                 }
                 else
@@ -870,7 +871,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void TranscodToggle_Click(object sender, RoutedEventArgs e)
         {
-            if(!File.Exists("./plugins/ffmpeg/ffmpeg.exe"))
+            if (!File.Exists("./plugins/ffmpeg/ffmpeg.exe"))
             {
                 Growl.Warning($"缺少对应的转码组件！");
                 return;
@@ -892,7 +893,7 @@ namespace DDTV_GUI.DDTV_Window
                 switch (i)
                 {
                     case 1:
-                        Download.RecQuality = 10000;   
+                        Download.RecQuality = 10000;
                         break;
                     case 2:
                         Download.RecQuality = 400;
@@ -951,7 +952,7 @@ namespace DDTV_GUI.DDTV_Window
             Download.IsRecDanmu = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecDanmu, Is.ToString(), CoreConfigClass.Group.Download);
             Growl.Success((Is ? "打开" : "关闭") + "弹幕录制总开关");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "弹幕录制总开关",false,null,false);
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "弹幕录制总开关", false, null, false);
             if (Is)
             {
                 //GiftToggle.IsEnabled = true;
@@ -1128,24 +1129,24 @@ namespace DDTV_GUI.DDTV_Window
             {
                 string filePath = UpdateInterface.Main.recList[Index].FilePath;
                 long uid = UpdateInterface.Main.recList[Index].Uid;
-               
-                if(Rooms.RoomInfo.TryGetValue(uid,out var roomInfo))
+
+                if (Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
                 {
-                    if(roomInfo.DownloadingList.Count>0)
+                    if (roomInfo.DownloadingList.Count > 0)
                     {
-                        
+
                         FileInfo[] fileInfos = new FileInfo[roomInfo.DownloadingList.Count];
-                        for(int i=0;i< roomInfo.DownloadingList.Count;i++)
+                        for (int i = 0; i < roomInfo.DownloadingList.Count; i++)
                         {
-                            if(roomInfo.DownloadingList[i].FlvSplit)
+                            if (roomInfo.DownloadingList[i].FlvSplit)
                             {
                                 Growl.WarningGlobal("该任务已启动自动分P功能，无法使用激光切片");
                                 return;
                             }
                             fileInfos[i] = new FileInfo(roomInfo.DownloadingList[i].FileName);
                         }
-                        
-                        if (fileInfos.Length==1)
+
+                        if (fileInfos.Length == 1)
                         {
                             ClipWindow clipWindow = new(fileInfos[0].FullName, roomInfo);
                             clipWindow.Show();
@@ -1155,7 +1156,7 @@ namespace DDTV_GUI.DDTV_Window
                             CuttingDialogDispose += MainWindow_CuttingDialogDispose;
                             SelectCuttingFileDialog selectCuttingFileDialog = new SelectCuttingFileDialog(fileInfos, CuttingDialogDispose, roomInfo);
                             ClipDialog = Dialog.Show(selectCuttingFileDialog);
-                        }                    
+                        }
                     }
                 }
             }
@@ -1165,8 +1166,8 @@ namespace DDTV_GUI.DDTV_Window
         {
             ClipDialog.Dispatcher.BeginInvoke(new Action(() => ClipDialog.Close()));
         }
-        
-        
+
+
         /// <summary>
         /// 录制任务_右键菜单_打开文件夹
         /// </summary>
@@ -1216,10 +1217,10 @@ namespace DDTV_GUI.DDTV_Window
             {
                 Process process = new Process();
                 process.StartInfo.FileName = "./DDTV_Update.exe";
-                if(IsAuto)
+                if (IsAuto)
                 {
                     process.StartInfo.Arguments += " autoupdate";
-                
+
                 }
                 if (CoreConfig.IsDev)
                 {
@@ -1230,7 +1231,7 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     Application.Current.Shutdown();
                 }));
-                
+
             }
             else
             {
@@ -1261,7 +1262,7 @@ namespace DDTV_GUI.DDTV_Window
                         {
                             ImportVTBButton.Text = "导入完成";
                         }));
-                        
+
                     });
                 }
             }
@@ -1305,12 +1306,13 @@ namespace DDTV_GUI.DDTV_Window
             {
                 path = dialog.FileName;
             }
-            catch (Exception){
+            catch (Exception)
+            {
                 return;
             }
-           
 
-            
+
+
             if (Download.DownloadPath != path)
             {
                 if (!string.IsNullOrEmpty(path))
@@ -1424,8 +1426,8 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Button_TranscodingSelectFilesManual(object sender, RoutedEventArgs e)
         {
-            if(!IsTranscoding)
-            {     
+            if (!IsTranscoding)
+            {
                 CommonOpenFileDialog dialog = new CommonOpenFileDialog();
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok && File.Exists(dialog.FileName))
                 {
@@ -1438,7 +1440,8 @@ namespace DDTV_GUI.DDTV_Window
                     ManualTranscodingProgress.Text = $"后台正在进行文件转码:{fileInfo.Name}";
                     IsTranscoding = true;
                     TranscodingSelectFilesManual.Content = "转码中";
-                    Task.Factory.StartNew(() => {
+                    Task.Factory.StartNew(() =>
+                    {
                         var TR = Transcod.CallFFMPEG(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
@@ -1503,12 +1506,12 @@ namespace DDTV_GUI.DDTV_Window
             if (dr == MessageBoxResult.OK)
             {
                 string APIURL = ReplaceAPIText.Text.ToLower();
-                if(string.IsNullOrEmpty(APIURL))
+                if (string.IsNullOrEmpty(APIURL))
                 {
                     APIURL = "https://api.live.bilibili.com";
                     ReplaceAPIText.Text = APIURL;
                 }
-                if(APIURL.Substring(0,4)!="http"||APIURL.Substring(APIURL.Length-1,1)=="/"|| APIURL.Substring(APIURL.Length - 1, 1) == @"\")
+                if (APIURL.Substring(0, 4) != "http" || APIURL.Substring(APIURL.Length - 1, 1) == "/" || APIURL.Substring(APIURL.Length - 1, 1) == @"\")
                 {
                     MessageBox.Show("地址有误！\r\n请确保输入的API使用的域名为http地址并不以斜杠结尾\r\n如：https://api.live.bilibili.com");
                     return;
@@ -1609,7 +1612,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void DanMuWindowButton_Click(object sender, RoutedEventArgs e)
         {
-            if(DanMuWindow==null)
+            if (DanMuWindow == null)
             {
                 OpenDanMuWindowDialogDispose += MainWindow_OpenDanMuWindowDialogDispose;
                 OpenDanMuWindowDialog openDanMuWindowDialog = new OpenDanMuWindowDialog(OpenDanMuWindowDialogDispose);
@@ -1622,7 +1625,7 @@ namespace DDTV_GUI.DDTV_Window
                     DanMuWindow.Close();
                 }
                 catch (Exception)
-                {}
+                { }
                 DanMuWindow = null;
             }
         }

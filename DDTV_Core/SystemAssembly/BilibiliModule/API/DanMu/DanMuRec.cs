@@ -72,114 +72,125 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 switch (e)
                 {
                     case DanmuMessageEventArgs Danmu:
-                        if(liveChatListener.IsWatchMode)
                         {
-                          
-                            console.Write($"[弹幕]", ConsoleColor.Green);
-                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
-                            console.Write($"{Danmu.UserName}：", ConsoleColor.Magenta);
-                            console.WriteLine($"{Danmu.Message}", ConsoleColor.White);
-                        }
-                        else
-                        roomInfo.DanmuFile.Danmu.Add(new DanMuClass.DanmuInfo
-                        {
-                            color = Danmu.MessageColor,
-                            pool = 0,
-                            size = 25,
-                            timestamp = Danmu.Timestamp,
-                            type = Danmu.MessageType,
-                            time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            uid = Danmu.UserId,
-                            Message = Danmu.Message,
-                            Nickname=Danmu.UserName,
-                            LV=Danmu.GuardLV
-                        });
-                        break;
-                    case SuperchatEventArg SuperchatEvent:
-                        if (liveChatListener.IsWatchMode)
-                        {
-                            console.Write($"[超级留言]", ConsoleColor.Red);
-                            console.Write($"(金额{SuperchatEvent.Price})", ConsoleColor.Red);
-                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
-                            
-                            console.Write($"{SuperchatEvent.UserName}：", ConsoleColor.Magenta);
-                            console.WriteLine($"{SuperchatEvent.Message}", ConsoleColor.White);
-                        }
-                        else
-                            roomInfo.DanmuFile.SuperChat.Add(new DanMuClass.SuperChatInfo()
-                        {
-                            Message = SuperchatEvent.Message,
-                            MessageTrans = SuperchatEvent.messageTrans,
-                            Price = SuperchatEvent.Price,
-                            Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = SuperchatEvent.Timestamp,
-                            UserId = SuperchatEvent.UserId,
-                            UserName = SuperchatEvent.UserName,
-                            TimeLength = SuperchatEvent.TimeLength
-                        });
-                        break;
-                    case GuardBuyEventArgs GuardBuyEvent:
-                        if (liveChatListener.IsWatchMode)
-                        {
-                            string Lv = GuardBuyEvent.GuardLevel == 1 ? "舰长" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "总督";
-                            console.Write($"[上舰]", ConsoleColor.Red);
-                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
-                            console.Write($"{GuardBuyEvent.UserName}：", ConsoleColor.Magenta);
-                            console.WriteLine($"{GuardBuyEvent.Number}个月的{Lv}", ConsoleColor.White);
-                        }
-                        else
-                            roomInfo.DanmuFile.GuardBuy.Add(new DanMuClass.GuardBuyInfo()
-                        {
-                            GuardLevel = GuardBuyEvent.GuardLevel,
-                            GuradName = GuardBuyEvent.GuardName,
-                            Number = GuardBuyEvent.Number,
-                            Price = GuardBuyEvent.Price,
-                            Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = GuardBuyEvent.Timestamp,
-                            UserId = GuardBuyEvent.UserId,
-                            UserName = GuardBuyEvent.UserName
-                        });
-                        break;
-                    case SendGiftEventArgs sendGiftEventArgs:
-                        if (liveChatListener.IsWatchMode)
-                        {
-                            console.Write($"[礼物]", ConsoleColor.Red);
-                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
-                            console.Write($"{sendGiftEventArgs.UserName}：", ConsoleColor.Magenta);
-                            console.WriteLine($"送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}", ConsoleColor.White);
-                        }
-                        else
-                            roomInfo.DanmuFile.Gift.Add(new DanMuClass.GiftInfo()
-                        {
-                            Amount = sendGiftEventArgs.Amount,
-                            GiftName = sendGiftEventArgs.GiftName,
-                            Price = sendGiftEventArgs.GiftPrice,
-                            Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = sendGiftEventArgs.Timestamp,
-                            UserId = sendGiftEventArgs.UserId,
-                            UserName = sendGiftEventArgs.UserName
-                            });
-                        break;
-                    case InteractWordEventArgs interactWordEventArgs:
-                        if (liveChatListener.IsWatchMode)
-                        {
-                            switch (interactWordEventArgs.MsgType)
+                            if (liveChatListener.IsWatchMode)
                             {
-                                case 1:
-                                    console.Write($"[进场]", ConsoleColor.Yellow);
-                                    break;
-                                case 2:
-                                    console.Write($"[关注]", ConsoleColor.Yellow);
-                                    break;
-                                case 4:
-                                    console.Write($"[特别关注]", ConsoleColor.Yellow);
-                                    break;
+                                console.Write($"[弹幕]", ConsoleColor.Green);
+                                console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                                console.Write($"{Danmu.UserName}：", ConsoleColor.Magenta);
+                                console.WriteLine($"{Danmu.Message}", ConsoleColor.White);
                             }
-                        
-                            console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
-                            console.WriteLine($"{interactWordEventArgs.Uname}", ConsoleColor.Magenta);
+                            else
+                                roomInfo.DanmuFile.Danmu.Add(new DanMuClass.DanmuInfo
+                                {
+                                    color = Danmu.MessageColor,
+                                    pool = 0,
+                                    size = 25,
+                                    timestamp = Danmu.Timestamp,
+                                    type = Danmu.MessageType,
+                                    time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                    uid = Danmu.UserId,
+                                    Message = Danmu.Message,
+                                    Nickname = Danmu.UserName,
+                                    LV = Danmu.GuardLV
+                                });
+                            break;
                         }
-                        break;
+                    case SuperchatEventArg SuperchatEvent:
+                        {
+                            if (liveChatListener.IsWatchMode)
+                            {
+                                console.Write($"[超级留言]", ConsoleColor.Red);
+                                console.Write($"(金额{SuperchatEvent.Price})", ConsoleColor.Red);
+                                console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+
+                                console.Write($"{SuperchatEvent.UserName}：", ConsoleColor.Magenta);
+                                console.WriteLine($"{SuperchatEvent.Message}", ConsoleColor.White);
+                            }
+                            else
+                                roomInfo.DanmuFile.SuperChat.Add(new DanMuClass.SuperChatInfo()
+                                {
+                                    Message = SuperchatEvent.Message,
+                                    MessageTrans = SuperchatEvent.messageTrans,
+                                    Price = SuperchatEvent.Price,
+                                    Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                    Timestamp = SuperchatEvent.Timestamp,
+                                    UserId = SuperchatEvent.UserId,
+                                    UserName = SuperchatEvent.UserName,
+                                    TimeLength = SuperchatEvent.TimeLength
+                                });
+                            break;
+                        }
+                    case GuardBuyEventArgs GuardBuyEvent:
+                        {
+                            if (liveChatListener.IsWatchMode)
+                            {
+                                string Lv = GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长";
+                                console.Write($"[上舰]", ConsoleColor.Red);
+                                console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                                console.Write($"{GuardBuyEvent.UserName}：", ConsoleColor.Magenta);
+                                console.WriteLine($"{GuardBuyEvent.Number}个月的{Lv}", ConsoleColor.White);
+                            }
+                            else
+                            {
+                                roomInfo.DanmuFile.GuardBuy.Add(new DanMuClass.GuardBuyInfo()
+                                {
+                                    GuardLevel = GuardBuyEvent.GuardLevel,
+                                    GuradName = GuardBuyEvent.GuardName,
+                                    Number = GuardBuyEvent.Number,
+                                    Price = GuardBuyEvent.Price,
+                                    Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                    Timestamp = GuardBuyEvent.Timestamp,
+                                    UserId = GuardBuyEvent.UserId,
+                                    UserName = GuardBuyEvent.UserName
+                                });
+                            }
+                            break;
+                        }
+                    case SendGiftEventArgs sendGiftEventArgs:
+                        {
+                            if (liveChatListener.IsWatchMode)
+                            {
+                                console.Write($"[礼物]", ConsoleColor.Red);
+                                console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                                console.Write($"{sendGiftEventArgs.UserName}：", ConsoleColor.Magenta);
+                                console.WriteLine($"送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}", ConsoleColor.White);
+                            }
+                            else
+                                roomInfo.DanmuFile.Gift.Add(new DanMuClass.GiftInfo()
+                                {
+                                    Amount = sendGiftEventArgs.Amount,
+                                    GiftName = sendGiftEventArgs.GiftName,
+                                    Price = sendGiftEventArgs.GiftPrice,
+                                    Time = roomInfo.DanmuFile.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                    Timestamp = sendGiftEventArgs.Timestamp,
+                                    UserId = sendGiftEventArgs.UserId,
+                                    UserName = sendGiftEventArgs.UserName
+                                });
+                            break;
+                        }
+                    case InteractWordEventArgs interactWordEventArgs:
+                        {
+                            if (liveChatListener.IsWatchMode)
+                            {
+                                switch (interactWordEventArgs.MsgType)
+                                {
+                                    case 1:
+                                        console.Write($"[进场]", ConsoleColor.Yellow);
+                                        break;
+                                    case 2:
+                                        console.Write($"[关注]", ConsoleColor.Yellow);
+                                        break;
+                                    case 4:
+                                        console.Write($"[特别关注]", ConsoleColor.Yellow);
+                                        break;
+                                }
+
+                                console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
+                                console.WriteLine($"{interactWordEventArgs.Uname}", ConsoleColor.Magenta);
+                            }
+                            break;
+                        }
                     default:
                         break;
                 }

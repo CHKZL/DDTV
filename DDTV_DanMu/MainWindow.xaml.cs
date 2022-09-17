@@ -30,6 +30,9 @@ namespace DDTV_DanMu
     {
         private List<DanmuInfo> DanMuList = new List<DanmuInfo>();
         private bool IsTransparency=false;
+        private Timer Most;
+        private DispatcherTimer timer;
+        private static Window W;
         private class DanmuInfo
         {
             public string Text { get; set; }
@@ -50,13 +53,37 @@ namespace DDTV_DanMu
                 Thread.Sleep(3000);
             }
             Rec(Uid != 0 ? Uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
-            //Rec(433351);
+            //Rec(8739477);
             Add("游戏如需全屏请请使用“无边框全屏”模式");
             Add("初始化完成，等待直播间数据");
-
+            W = this;
             DanMuLog.ItemsSource = DanMuList;
-            this.Topmost = true;
+            timer = new DispatcherTimer();
+            Loaded += new RoutedEventHandler(Topping);
+           
+            //Most = new Timer(RefresherTopmost, null, 1000, 1000);
             LockSize();
+        }
+
+        //public static void RefresherTopmost(object state)
+        //{
+        //    W.Dispatcher.Invoke(new Action(() =>
+        //    {
+        //        W.Topmost = true;
+        //        //Console.WriteLine("TOP");
+        //    }));
+        //}
+
+        void Topping(object sender, RoutedEventArgs e)
+        {
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer1_Tick;
+            timer.Start();
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.Topmost = true;
         }
 
         private void Rec(long Uid)
@@ -123,7 +150,7 @@ namespace DDTV_DanMu
                         break;
                     case GuardBuyEventArgs GuardBuyEvent:
                         {
-                            string Lv = GuardBuyEvent.GuardLevel == 1 ? "舰长" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "总督";
+                            string Lv = GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长";
                             console.Write($"[上舰]", ConsoleColor.Red);
                             console.Write($"{DateTime.Now.ToString("HH:mm:ss")}:", ConsoleColor.DarkGray);
                             console.Write($"{GuardBuyEvent.UserName}：", ConsoleColor.Magenta);

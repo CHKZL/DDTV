@@ -70,6 +70,10 @@ namespace DDTV_GUI.DDTV_Window
         private DispatcherTimer timer;
         private bool IsTopping = false;
 
+        private double BlackListeningOriginalSize_Width = 0;//350
+        private double BlackListeningOriginalSize_Height = 0;//200
+        private bool IsBlackHear =false;//是否为黑听模式
+
         BarrageConfig barrageConfig;
 
         public List<string> ShieldDanMuText = new List<string>()
@@ -458,40 +462,7 @@ namespace DDTV_GUI.DDTV_Window
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            //音量增加
-            if (e.KeyStates == Keyboard.GetKeyStates(Key.Up))
-            {
-                if (volume.Value + 5 <= 100)
-                {
-                    SetVolume(volume.Value + 5);
-                }
-                else
-                {
-                    SetVolume(100);
-                }
-            }
-            //音量降低
-            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Down))
-            {
-                if (volume.Value - 5 >= 0)
-                {
-                    SetVolume(volume.Value - 5);
-                }
-                else
-                {
-                    SetVolume(0);
-                }
-            }
-            //全屏回车
-            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
-            {
-                FullScreenSwitch();
-            }
-            //F5刷新
-            else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
-            {
-                RefreshWindow();
-            }
+        
         }
         public void RefreshWindow()
         {
@@ -503,7 +474,10 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (this.WindowState == WindowState.Normal)
             {
-                this.WindowState = WindowState.Maximized;
+                if (!IsBlackHear)
+                {
+                    this.WindowState = WindowState.Maximized;
+                }
             }
             else if (this.WindowState == WindowState.Maximized)
             {
@@ -1414,17 +1388,19 @@ namespace DDTV_GUI.DDTV_Window
 
         private void PlayGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            i += 1;
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
-            timer.IsEnabled = true;
-            if (i == 2)
-            {
-                timer.IsEnabled = false;
-                i = 0;
-                FullScreenSwitch();
-            }
+            
+                i += 1;
+                DispatcherTimer timer = new DispatcherTimer();
+                timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+                timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
+                timer.IsEnabled = true;
+                if (i == 2)
+                {
+                    timer.IsEnabled = false;
+                    i = 0;
+                    FullScreenSwitch();
+                }
+            
         }
 
         /// <summary>
@@ -1440,6 +1416,88 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     item.SetMute();
                 }
+            }
+        }
+
+        private void GlowWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            //音量增加
+            if (e.KeyStates == Keyboard.GetKeyStates(Key.Up))
+            {
+                volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Visible));
+                volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Visible);
+                VolumeGridTime = 3;
+                if (volume.Value + 5 <= 100)
+                {
+                    SetVolume(volume.Value + 5);
+                }
+                else
+                {
+                    SetVolume(100);
+                }
+            }
+            //音量降低
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Down))
+            {
+                volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Visible));
+                volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Visible);
+                VolumeGridTime = 3;
+                if (volume.Value - 5 >= 0)
+                {
+                    SetVolume(volume.Value - 5);
+                }
+                else
+                {
+                    SetVolume(0);
+                }
+            }
+            //全屏回车
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
+            {
+                FullScreenSwitch();
+            }
+            //F5刷新
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
+            {
+                RefreshWindow();
+            }
+        }
+
+        /// <summary>
+        /// 右键菜单_黑听模式切换
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MenuItem_OnlyPlayAudio_Click(object sender, RoutedEventArgs e)
+        {
+            if(MenuItem_OnlyPlayAudio.Tag.ToString()=="0")
+            {
+                IsBlackHear = true;
+                FullScreenSwitch();
+                MenuItem_OnlyPlayAudio.Tag = "1";
+                BlackListeningOriginalSize_Width = this.Width;
+                BlackListeningOriginalSize_Height = this.Height;
+                this.Width = 350;
+                this.Height = 200;
+                BlackListeningTips.Visibility= Visibility.Visible;
+                MenuItem_OnlyPlayAudio.Header = "退出只播音频";
+                MenuItem_SwitchQuality.Visibility = Visibility.Collapsed;
+                MenuItem_FullScreenSwitch.Visibility = Visibility.Collapsed;
+                MenuItem_WindowSorting.Visibility = Visibility.Collapsed;
+               
+            }
+            else
+            {
+                IsBlackHear = false;
+                MenuItem_OnlyPlayAudio.Tag = "0";
+                this.Width = BlackListeningOriginalSize_Width;
+                this.Height = BlackListeningOriginalSize_Height;
+                BlackListeningTips.Visibility = Visibility.Collapsed;
+                MenuItem_OnlyPlayAudio.Header = "只放音频";
+                MenuItem_SwitchQuality.Visibility = Visibility.Visible;
+                MenuItem_FullScreenSwitch.Visibility = Visibility.Visible;
+                MenuItem_WindowSorting.Visibility = Visibility.Visible;
+                
             }
         }
     }
