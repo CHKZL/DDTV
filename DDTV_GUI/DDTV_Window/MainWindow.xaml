@@ -11,7 +11,7 @@
         InactiveGlowColor="#fb7299"
         Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
-        Background="Transparent" MinWidth="1000" MaxWidth="1000" MinHeight="563" MaxHeight="563" ResizeMode="CanMinimize" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged">
+        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged">
 
     <Grid Background="White">
         <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">
@@ -550,27 +550,36 @@
                     </Grid>
                 </TabItem>
                 <TabItem Header="动态">
-                    <Grid>
+                    <Grid Name="Window_RoomCard_Parent">
                         <hc:ScrollViewer>
-                            <hc:WaterfallPanel  Groups="1" hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}">
-                                <Grid Height="60" Margin="5,5,5,5" Background="#C8C8C8C8" >
-                                    <hc:Row Gutter="10" VerticalAlignment="Center" >
-                                        <hc:Col Span="5">
-                                            <TextBlock Text="白菜发布视频动态" VerticalAlignment="Center" FontSize="18"/>
-                                        </hc:Col>
-                                        <hc:Col Span="5">
-                                            <TextBlock Text="白菜发布动态" VerticalAlignment="Center" FontSize="18"/>
-                                        </hc:Col>
-
-                                    </hc:Row>
-                                </Grid>
-                            </hc:WaterfallPanel>
+                            <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Auto"  Orientation="Horizontal" >
+                                <hc:WaterfallPanel Name="Window_RoomCard" Height="Auto" Width="870" Orientation="Horizontal" Groups="4"  hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}" >
+                                    <Border Style="{StaticResource BorderRegion}" Width="208" Height="166" Margin="2,2,2,2">
+                                        <Grid Margin="-6,-6,-6,-6">
+                                            <Image Margin="0,-6,-12,32"  Source="/Resources/Img/UI/TEST_直播封面.png">
+                                                <Image.Clip>
+                                                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,198,110"/>
+                                                </Image.Clip>
+                                            </Image>
+                                            <Grid Margin="0,0,-12,32" Background="Black" Opacity="0.5">
+                                                <Grid.Clip>
+                                                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,198,110"/>
+                                                </Grid.Clip>
+                                            </Grid>
+                                            <TextBlock Margin="0,110,0,28" Text="测试直播卡片" Foreground="Black" FontSize="16"/>
+                                            <Image Height="24" Width="24" Margin="-180,130,0,0"  Source="/Resources/Img/UI/Rec.png"/>
+                                            <Image Height="24" Width="24" Margin="-128,130,0,0"  Source="/Resources/Img/UI/DanMu.png"/>
+                                            <Image Height="24" Width="24" Margin="-76,130,0,0"  Source="/Resources/Img/UI/Remind.png"/>
+                                        </Grid>
+                                    </Border>
+                                </hc:WaterfallPanel>
+                            </hc:ScrollViewer>
                         </hc:ScrollViewer>
                     </Grid>
                 </TabItem>
             </TabControl>
         </Grid>
-        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -584,7 +593,7 @@
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>
+        </hc:Drawer>-->
 
     </Grid>
 
