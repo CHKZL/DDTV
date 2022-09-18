@@ -22,6 +22,9 @@ using DDTV_Core.Tool.TranscodModule;
 using DDTV_Core.Tool;
 using System.Threading;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
+using System.Windows.Resources;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -120,8 +123,131 @@ namespace DDTV_GUI.DDTV_Window
 
             //Sprite.Show(new DDTV_Sprite());
             DelTmpFile();
+
+
+            //Task.Run(() =>
+            //{
+            //    Thread.Sleep(5000);
+            //    foreach (var item in Rooms.RoomInfo)
+            //    {
+            //        AddRoomCard(item.Value.uid);
+            //    }
+            //});
         }
 
+        private void AddRoomCard(long uid)
+        {
+            if (Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
+            {
+                App.Current.Dispatcher.Invoke(() => {
+                    Grid grid = new Grid()
+                    {
+                        Margin = new Thickness(-6, -6, -6, -6)
+                    };
+                    var bitmapImage = new BitmapImage();
+                    if (!string.IsNullOrEmpty(roomInfo.cover_from_user))
+                    {
+                        bitmapImage.BeginInit();
+                        bitmapImage.UriSource = new Uri(roomInfo.cover_from_user); ;
+                        bitmapImage.EndInit();
+                    }
+                    Image image = new Image()
+                    {
+                        Margin = new Thickness(0, -6, -12, 32),
+                        Source = bitmapImage
+                    };
+                    image.Clip = new RectangleGeometry()
+                    {
+                        RadiusX = 10,
+                        RadiusY = 10,
+                        Rect = new Rect(0, 0, 198, 110)
+                    };
+                    TextBlock textBlock = new TextBlock()
+                    {
+                        Margin = new Thickness(0, 110, 0, 28),
+                        Text = roomInfo.uname,
+                        Foreground = new SolidColorBrush(Colors.Black),
+                        FontSize = 16
+                    };
+                    grid.Children.Add(image);
+                    grid.Children.Add(textBlock);
+
+
+
+
+                    if (roomInfo.live_status != 1)
+                    {
+                        Grid GBlack = new Grid()
+                        {
+                            Margin = new Thickness(0, 0, -12, 32),
+                            Background = new SolidColorBrush(Colors.Black),
+                            Opacity = 0.5
+                        };
+                        GBlack.Clip = new RectangleGeometry()
+                        {
+                            RadiusX = 10,
+                            RadiusY = 10,
+                            Rect = new Rect(0, 0, 198, 110)
+                        };
+                        grid.Children.Add(GBlack);
+
+                    }
+                    Image B = new Image()
+                    {
+                        Height = 24,
+                        Width = 24,
+                        Margin = new Thickness(-180, 130, 0, 0),
+                        Source = GetImageSouce(Properties.Resources.Rec)
+                    };
+                    grid.Children.Add(B);
+                    grid.Children.Add(new Image()
+                    {
+                        Height = 24,
+                        Width = 24,
+                        Margin = new Thickness(-128, 130, 0, 0),
+                        Source = GetImageSouce(Properties.Resources.DanMu)
+                    });
+                    grid.Children.Add(new Image()
+                    {
+                        Height = 24,
+                        Width = 24,
+                        Margin = new Thickness(-76, 130, 0, 0),
+                        Source = GetImageSouce(Properties.Resources.Remind)
+                    });
+                    Border border = new Border()
+                    {
+                        Width = 208,
+                        Height = 166,
+                        Margin = new Thickness(2, 2, 2, 2),
+                        Padding = new Thickness(10, 10, 10, 10),
+                        BorderThickness = new Thickness(1, 1, 1, 1),
+                        BorderBrush = new SolidColorBrush(Colors.White),
+                        Background = new SolidColorBrush(Colors.White),
+                        CornerRadius = new CornerRadius(5)
+                    };
+                    //BorderThickness="1" BorderBrush="White" Background="White"
+                    border.Child = grid;
+                    Window_RoomCard.Children.Add(border);
+                });
+            }
+        }
+        private BitmapSource GetImageSouce(System.Drawing.Bitmap bitmap)
+        {
+            BitmapSource img;
+            IntPtr hBitmap;
+
+            hBitmap = bitmap.GetHbitmap();
+            img = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                hBitmap,
+                IntPtr.Zero,
+                Int32Rect.Empty,
+                BitmapSizeOptions.FromEmptyOptions());
+            return img;
+        }
+
+        /// <summary>
+        /// 删除临时文件
+        /// </summary>
         private void DelTmpFile()
         {
             Task.Run(() =>
@@ -343,6 +469,8 @@ namespace DDTV_GUI.DDTV_Window
             this.MainWindowTab.SelectedIndex = Index;
             if (Index >= 0)
                 UpdateInterface.Main.ActivationInterface = Index;
+
+           
         }
 
 
@@ -1679,6 +1807,20 @@ namespace DDTV_GUI.DDTV_Window
                 Download.AddDownloadTaskd(uid, true);
                 Growl.SuccessGlobal($"增加手动录制任务:【{roomid}-{name}】");
             }
+        }
+
+        /// <summary>
+        /// 主窗口大小改变事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void GlowWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if(this.Width-130>0)
+            {
+                Window_RoomCard.Width = this.Width - 134;
+                Window_RoomCard.Groups = (int)Window_RoomCard.Width / 212;
+            }    
         }
     }
 }

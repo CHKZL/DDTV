@@ -125,49 +125,6 @@ namespace DDTV_Core
                 }
             });
         }
-        private static void TestVetInfo()
-        {
-            Task.Run(() =>
-            {
-                while (true)
-                {
-                    try
-                    {
-                        Thread.Sleep(90 * 1000);
-                        Console.WriteLine("当前版本为开发预览测试版，请随时关注反馈群更新到最新版本。\n如遇见任何问题，请加群[338182356]反馈");
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-            });
-        }
-
-        private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
-        {
-
-            switch (e)
-            {
-                case DanmuMessageEventArgs Danmu:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到弹幕信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(Danmu.Timestamp)} {Danmu.UserName}({Danmu.UserId}):{Danmu.Message}");
-                    break;
-                case SuperchatEventArg SuperchatEvent:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到Superchat信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(SuperchatEvent.Timestamp)} {SuperchatEvent.UserName}({SuperchatEvent.UserId}):价值[{SuperchatEvent.Price}]的SC信息:【{SuperchatEvent.Message}】,翻译后:【{SuperchatEvent.messageTrans}】");
-                    break;
-                case GuardBuyEventArgs GuardBuyEvent:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到舰组信息]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(GuardBuyEvent.Timestamp)} {GuardBuyEvent.UserName}({GuardBuyEvent.UserId}):开通了{GuardBuyEvent.Number}个月的{GuardBuyEvent.GuardName}(单价{GuardBuyEvent.Price})");
-                    break;
-                case SendGiftEventArgs sendGiftEventArgs:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[收到礼物]{Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(sendGiftEventArgs.Timestamp)} {sendGiftEventArgs.UserName}({sendGiftEventArgs.UserId}):价值{sendGiftEventArgs.GiftPrice}的{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}");
-                    break;
-                case EntryEffectEventArgs entryEffectEventArgs:
-                    Log.AddLog(nameof(LiveChatListener), LogClass.LogType.Info, $"[舰长进入房间]舰长uid:{entryEffectEventArgs.uid},舰长头像{entryEffectEventArgs.face},欢迎信息:{entryEffectEventArgs.copy_writing}");
-                    break;
-                default:
-                    break;
-            }
-        }
 
         /// <summary>
         /// Core的启动类型

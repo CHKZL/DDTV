@@ -54,11 +54,13 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
             { CacheType.IsAutoRec, new Dictionary<string, Data>() },
             { CacheType.IsRemind, new Dictionary<string, Data>() },
             { CacheType.IsRecDanmu, new Dictionary<string, Data>() },
+            { CacheType.IsTemporaryPlay, new Dictionary<string, Data>() },
             { CacheType.Like, new Dictionary<string, Data>() },
             { CacheType.attention, new Dictionary<string, Data>() },
             { CacheType.level, new Dictionary<string, Data>() },
             { CacheType.sex, new Dictionary<string, Data>() },
             { CacheType.sign, new Dictionary<string, Data>() },
+            
             };
 
 
