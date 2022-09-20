@@ -39,6 +39,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Info_API = 32,
             /// <summary>
+            /// IP协议版本消息
+            /// </summary>
+            Info_IP_Ver = 33,
+            /// <summary>
             /// 调试信息
             /// </summary>
             Debug = 40,

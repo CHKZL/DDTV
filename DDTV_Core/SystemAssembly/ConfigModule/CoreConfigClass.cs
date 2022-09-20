@@ -330,6 +330,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             IsDev,
             /// <summary>
+            /// 是否强制使用IPv4（如果只有v6没有IPv4会自动切IPv6）
+            /// 组：Core   默认值：false
+            /// </summary>
+            MandatoryUseIPv4,
+            /// <summary>
             /// 切换弹幕储存信息类型，根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称 (应该为有限的int值  1：昵称  2：UID)
             /// 组：Core   默认值：2
             /// </summary>

@@ -26,9 +26,32 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             NetClass.API_Count(url);
             string result = "";
             HttpWebRequest req = WebRequest.Create(url) as HttpWebRequest;
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            if (!CoreConfig.WhetherToEnableProxy)
             {
                 req.Proxy = null;
+            }
+            if (!CoreConfig.MandatoryUseIPv4)
+            {
+                try
+                {
+                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+                    {
+                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            return new IPEndPoint(IPAddress.Any, 0);
+                        }
+                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        {
+                            return new IPEndPoint(IPAddress.IPv6Any, 0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    };
+                }
+                catch (Exception) { }
             }
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
@@ -36,20 +59,6 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
             req.UserAgent = NetClass.UA();
             req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
-            if (IsMandatoryIPv4)
-            {
-                req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
-                {
-                    if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                    {
-                        return new IPEndPoint(IPAddress.Any, 0);
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("no IPv4 address");
-                    }  
-                };
-            }
             if (!string.IsNullOrEmpty(Referer))
             {
                 req.Referer = Referer;

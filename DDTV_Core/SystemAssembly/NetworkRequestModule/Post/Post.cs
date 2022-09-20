@@ -23,9 +23,32 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             NetClass.API_Count(url);
             string strURL = url;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strURL);
+            request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
             if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
             {
                 request.Proxy = null;
+            }
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+            {
+                try
+                {
+                    request.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+                    {
+                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            return new IPEndPoint(IPAddress.Any, 0);
+                        }
+                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        {
+                            return new IPEndPoint(IPAddress.IPv6Any, 0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    };
+                }
+                catch (Exception) { }
             }
             request.ServicePoint.Expect100Continue = false;
             request.Method = "POST";
@@ -82,6 +105,31 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
             {
                 req.Proxy = null;
+            }
+            req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+            {
+                try
+                {
+                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+                    {
+                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            return new IPEndPoint(IPAddress.Any, 0);
+                        }
+                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        {
+                            Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"使用IPv6发起请求");
+                            return new IPEndPoint(IPAddress.IPv6Any, 0);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"没有IPv4也没有IPv6！");
+                            return null;
+                        }
+                    };
+                }
+                catch (Exception) { }
             }
             req.ServicePoint.Expect100Continue = false;
             req.Method = "POST";
@@ -151,10 +199,34 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         {
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
             if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
             {
                 req.Proxy = null;
             }
+            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+            {
+                try
+                {
+                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+                    {
+                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                        {
+                            return new IPEndPoint(IPAddress.Any, 0);
+                        }
+                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+                        {
+                            return new IPEndPoint(IPAddress.IPv6Any, 0);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    };
+                }
+                catch (Exception) { }
+            }
+
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = $"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36";
