@@ -33,6 +33,8 @@ namespace DDTV_GUI.WPFControl
             {
                 Title.Text = "打开临时播放窗口";
                 Reminder.Text = "选择打开的数据类型：";
+                RecCheck.Visibility= Visibility.Collapsed;
+                DanMuCheck.Visibility = Visibility.Collapsed;
             }
         }
 

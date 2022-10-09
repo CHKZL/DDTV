@@ -11,7 +11,7 @@
         InactiveGlowColor="#fb7299"
         Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
-        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged">
+        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000">
 
     <Grid Background="White">
         <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">
@@ -88,11 +88,11 @@
                         <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>
-                <!--<hc:SideMenuItem Header="动态">
+                <hc:SideMenuItem Header="动态">
                     <hc:SideMenuItem.Icon>
                         <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
-                </hc:SideMenuItem>-->
+                </hc:SideMenuItem>
             </hc:SideMenu>
         </Grid>
         <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
@@ -556,7 +556,7 @@
                                 <hc:WaterfallPanel Name="Window_RoomCard" Height="Auto" Width="870" Orientation="Horizontal" Groups="4"  hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}" >
                                     <Border Style="{StaticResource BorderRegion}" Width="208" Height="166" Margin="2,2,2,2">
                                         <Grid Margin="-6,-6,-6,-6">
-                                            <Image Margin="0,-6,-12,32"  Source="/Resources/Img/UI/TEST_直播封面.png">
+                                            <Image Margin="0,-6,-12,32" Source="/Resources/Img/UI/TEST_直播封面.png" >
                                                 <Image.Clip>
                                                     <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,198,110"/>
                                                 </Image.Clip>
@@ -598,3 +598,5 @@
     </Grid>
 
 </hc:GlowWindow>
+    
+    

@@ -335,6 +335,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             MandatoryUseIPv4,
             /// <summary>
+            /// 发起HTTP请求时，是否无视SSL证书
+            /// 组：Core   默认值：false
+            /// </summary>
+            IsBypass_SSL,
+            /// <summary>
             /// 切换弹幕储存信息类型，根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称 (应该为有限的int值  1：昵称  2：UID)
             /// 组：Core   默认值：2
             /// </summary>

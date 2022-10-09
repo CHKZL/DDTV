@@ -57,8 +57,15 @@ namespace DDTV_Core.SystemAssembly.Log
             Tool.TimeModule.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
 
+#if DEBUG
+            AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.InitType}|{InitDDTV_Core.Ver}【Dev】({InitDDTV_Core.CompiledVersion})");
+            AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成（Dev模式）");
+#else
             AddLog("System", LogClass.LogType.Info, $"{InitDDTV_Core.InitType}|{InitDDTV_Core.Ver}({InitDDTV_Core.CompiledVersion})");
             AddLog(nameof(Log), LogClass.LogType.Info, "Log系统初始化完成");
+#endif
+
+
             WeritDB();
             WriteErrorLogFile();
             PrintThread();//新增打印线程，把并行日志打印方法修改为串行，为之后控制台颜色区分做准备

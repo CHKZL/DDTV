@@ -25,6 +25,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static double DanMuFontOpacity = double.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
         public static bool WhetherToEnableProxy =  bool.Parse(GetValue(CoreConfigClass.Key.WhetherToEnableProxy, "True", CoreConfigClass.Group.Core));
         public static bool MandatoryUseIPv4 = bool.Parse(GetValue(CoreConfigClass.Key.MandatoryUseIPv4, "False", CoreConfigClass.Group.Core));
+        public static bool IsBypass_SSL= bool.Parse(GetValue(CoreConfigClass.Key.IsBypass_SSL, "False", CoreConfigClass.Group.Core));
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
 
@@ -141,6 +142,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
             var _WhetherToEnableProxy = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy;
             var _IsDev = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDev;
+            var _MandatoryUseIPv4 = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4;
+            var _IsBypass_SSL = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsBypass_SSL;
             var _SCSaveType = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType;
         }
         /// <summary>

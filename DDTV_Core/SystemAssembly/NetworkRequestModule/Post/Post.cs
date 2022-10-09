@@ -23,12 +23,16 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             NetClass.API_Count(url);
             string strURL = url;
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(strURL);
-            request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+
+            if (!CoreConfig.IsBypass_SSL)
+            {
+                request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            }         
+            if (!CoreConfig.WhetherToEnableProxy)
             {
                 request.Proxy = null;
             }
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+            if (!CoreConfig.MandatoryUseIPv4)
             {
                 try
                 {
@@ -102,12 +106,16 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             NetClass.API_Count(url);
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            if (!CoreConfig.IsBypass_SSL)
+            {
+                req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            }
+            if (!CoreConfig.WhetherToEnableProxy)
             {
                 req.Proxy = null;
             }
-            req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+           
+            if (!CoreConfig.MandatoryUseIPv4)
             {
                 try
                 {
@@ -199,12 +207,15 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         {
             string result = "";
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+            if (!CoreConfig.IsBypass_SSL)
+            {
+                req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
+            }
+            if (!CoreConfig.WhetherToEnableProxy)
             {
                 req.Proxy = null;
             }
-            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4)
+            if (!CoreConfig.MandatoryUseIPv4)
             {
                 try
                 {
