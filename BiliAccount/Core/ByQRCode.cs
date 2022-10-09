@@ -35,6 +35,11 @@ namespace BiliAccount.Core
         private static Timer Monitor;
 
         /// <summary>
+        /// 状态监视器的调用计数
+        /// </summary>
+        private static int MonitorCallCount = 0;
+
+        /// <summary>
         /// 刷新监视器
         /// </summary>
         private static Timer Refresher;
@@ -98,6 +103,7 @@ namespace BiliAccount.Core
                 if (obj.code == 0)
                 {
                     CancelLogin();
+                    MonitorCallCount = 0;
                     Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
 
@@ -199,7 +205,8 @@ namespace BiliAccount.Core
                     //        }
                     //    }
                     //}
-
+                    CancelLogin();
+                    MonitorCallCount = 0;
                     Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, new List<object>{ Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
                 }
@@ -219,6 +226,18 @@ namespace BiliAccount.Core
         /// <param name="o">oauthKey</param>
         private static void MonitorCallback(object o)
         {
+            MonitorCallCount++;
+            if (MonitorCallCount > 30 && MonitorCallCount < 60)
+            {
+                Monitor.Change(1000, 3000);
+                MonitorCallCount = 60;
+            }
+            else if (MonitorCallCount > 90 && MonitorCallCount < 120)
+            {
+                Monitor.Change(1000, 5000);
+                MonitorCallCount = 120;
+            }
+
             string oauthKey = o.ToString();
 
             string str = Http.PostBody("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https%3A%2F%2Fwww.bilibili.com%2F", null, "application/x-www-form-urlencoded; charset=UTF-8", "https://passport.bilibili.com/login",$"Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");

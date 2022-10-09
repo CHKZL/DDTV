@@ -29,6 +29,7 @@ using System.Windows.Forms;
 using DDTV_GUI.DanMuCanvas.BarrageParameters;
 using DDTV_GUI.WPFControl;
 using System.Diagnostics;
+using Point = System.Drawing.Point;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -125,7 +126,7 @@ namespace DDTV_GUI.DDTV_Window
                 });               
             });
             Loaded += new RoutedEventHandler(Topping);
-            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);     
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);          
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -217,6 +218,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Collapsed));
                 volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Collapsed);
+                volume_Global_Check.Dispatcher.Invoke(() => volume_Global_Check.Visibility = Visibility.Collapsed);
             }
         }
 
@@ -537,19 +539,32 @@ namespace DDTV_GUI.DDTV_Window
 
         private void volume_MouseMove(object sender, MouseEventArgs e)
         {
-            SetVolume(volume.Value);
+            if((bool)volume_Global_Check.IsChecked)
+            {
+                foreach (var item in MainWindow.playWindowsList)
+                {
+                    item.SetVolume(volume.Value);
+                }
+            }
+            else
+            {
+                SetVolume(volume.Value);
+            }
+            
         }
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Visible));
             volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Visible);
+            volume_Global_Check.Dispatcher.Invoke(() => volume_Global_Check.Visibility = Visibility.Visible);
             VolumeGridTime = 3;
             if (e.Delta > 0)
-            {
+            {    
                 if (volume.Value + 5 <= 100)
                 {
                     volume.Value += 5;
+                    
                     SetVolume(volume.Value);
                     //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
@@ -763,8 +778,21 @@ namespace DDTV_GUI.DDTV_Window
             //int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
 
 
-            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
-            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+            //int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
+            //int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+
+            //ScreenWidth = Screen.PrimaryScreen.Bounds.Width;
+            //ScreenHeight= Screen.PrimaryScreen.Bounds.Height;
+
+           
+
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            var screen = System.Windows.Forms.Screen.FromHandle(handle);
+
+            int ScreenWidth = screen.Bounds.Width;
+            int ScreenHeight = screen.Bounds.Height;
+
+
             if (MainWindow.playWindowsList.Count == 1)
             {
                 MainWindow.playWindowsList[0].FullScreenSwitch();
@@ -787,8 +815,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         Width = (ScreenWidth / 2),
                         Height = (ScreenHeight / 2),
-                        X = windows_4[i][0],
-                        Y = windows_4[i][1]
+                        X = windows_4[i][0] + screen.Bounds.X,
+                        Y = windows_4[i][1] + screen.Bounds.Y
                     });
                 }
             }
@@ -814,8 +842,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         Width = (ScreenWidth / 3),
                         Height = (ScreenHeight / 3),
-                        X = windows_9[i][0],
-                        Y = windows_9[i][1]
+                        X = windows_9[i][0] + screen.Bounds.X,
+                        Y = windows_9[i][1] + screen.Bounds.Y
                     });
                 }
             }
@@ -848,8 +876,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         Width = (ScreenWidth / 4),
                         Height = (ScreenHeight / 4),
-                        X = windows_16[i][0],
-                        Y = windows_16[i][1]
+                        X = windows_16[i][0] + screen.Bounds.X,
+                        Y = windows_16[i][1] + screen.Bounds.Y
                     });
                 }
             }
@@ -1176,8 +1204,11 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_6Mode()
         {
-            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
-            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            var screen = System.Windows.Forms.Screen.FromHandle(handle);
+
+            int ScreenWidth = screen.Bounds.Width;
+            int ScreenHeight = screen.Bounds.Height;
 
             List<int[]> windows_1_6 = new List<int[]>();
             windows_1_6.Add(new int[] { 0, 0 });
@@ -1191,8 +1222,8 @@ namespace DDTV_GUI.DDTV_Window
             {
                 Width = (ScreenWidth / 3) * 2,
                 Height = (ScreenHeight / 3) * 2,
-                X = windows_1_6[0][0],
-                Y = windows_1_6[0][1]
+                X = windows_1_6[0][0] + screen.Bounds.X,
+                Y = windows_1_6[0][1] + screen.Bounds.Y
             });
 
 
@@ -1206,8 +1237,8 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     Width = (ScreenWidth / 3),
                     Height = (ScreenHeight / 3),
-                    X = windows_1_6[i][0],
-                    Y = windows_1_6[i][1]
+                    X = windows_1_6[i][0] + screen.Bounds.X,
+                    Y = windows_1_6[i][1] + screen.Bounds.Y
                 });
             }
         }
@@ -1217,8 +1248,11 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_8Mode()
         {
-            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
-            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            var screen = System.Windows.Forms.Screen.FromHandle(handle);
+
+            int ScreenWidth = screen.Bounds.Width;
+            int ScreenHeight = screen.Bounds.Height;
 
             List<int[]> windows_1_8 = new List<int[]>();
             windows_1_8.Add(new int[] { 0, 0 });
@@ -1234,8 +1268,8 @@ namespace DDTV_GUI.DDTV_Window
             {
                 Width = (ScreenWidth / 4) * 3,
                 Height = (ScreenHeight / 4) * 3,
-                X = windows_1_8[0][0],
-                Y = windows_1_8[0][1]
+                X = windows_1_8[0][0] + screen.Bounds.X,
+                Y = windows_1_8[0][1] + screen.Bounds.Y
             });
 
 
@@ -1249,8 +1283,8 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     Width = (ScreenWidth / 4),
                     Height = (ScreenHeight / 4),
-                    X = windows_1_8[i][0],
-                    Y = windows_1_8[i][1]
+                    X = windows_1_8[i][0] + screen.Bounds.X,
+                    Y = windows_1_8[i][1] + screen.Bounds.Y
                 });
             }
         }
@@ -1260,8 +1294,11 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_13Mode()
         {
-            int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
-            int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth);
+            IntPtr handle = new WindowInteropHelper(this).Handle;
+            var screen = System.Windows.Forms.Screen.FromHandle(handle);
+
+            int ScreenWidth = screen.Bounds.Width;
+            int ScreenHeight = screen.Bounds.Height;
 
             List<int[]> windows_1_13 = new List<int[]>();
             windows_1_13.Add(new int[] { 0, 0 });
@@ -1297,8 +1334,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         Width = (ScreenWidth / 4) * 2,
                         Height = (ScreenHeight / 4) * 2,
-                        X = windows_1_13[i][0],
-                        Y = windows_1_13[i][1]
+                        X = windows_1_13[i][0] + screen.Bounds.X,
+                        Y = windows_1_13[i][1] + screen.Bounds.Y
                     });
                 }
                 else
@@ -1307,8 +1344,8 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         Width = (ScreenWidth / 4),
                         Height = (ScreenHeight / 4),
-                        X = windows_1_13[i][0],
-                        Y = windows_1_13[i][1]
+                        X = windows_1_13[i][0] + screen.Bounds.X,
+                        Y = windows_1_13[i][1] + screen.Bounds.Y
                     });
                 }
             }
@@ -1426,6 +1463,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Visible));
                 volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Visible);
+                volume_Global_Check.Dispatcher.Invoke(() => volume_Global_Check.Visibility = Visibility.Visible);
                 VolumeGridTime = 3;
                 if (volume.Value + 5 <= 100)
                 {
@@ -1441,6 +1479,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 volume.Dispatcher.Invoke(new Action(() => volume.Visibility = Visibility.Visible));
                 volumeText.Dispatcher.Invoke(() => volumeText.Visibility = Visibility.Visible);
+                volume_Global_Check.Dispatcher.Invoke(() => volume_Global_Check.Visibility = Visibility.Visible);
                 VolumeGridTime = 3;
                 if (volume.Value - 5 >= 0)
                 {

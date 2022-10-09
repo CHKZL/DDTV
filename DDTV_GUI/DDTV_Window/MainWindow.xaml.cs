@@ -124,6 +124,7 @@ namespace DDTV_GUI.DDTV_Window
             //Sprite.Show(new DDTV_Sprite());
             DelTmpFile();
 
+           
 
             //Task.Run(() =>
             //{
@@ -137,6 +138,8 @@ namespace DDTV_GUI.DDTV_Window
 
         private void AddRoomCard(long uid)
         {
+            
+
             if (Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
             {
                 App.Current.Dispatcher.Invoke(() => {
@@ -171,10 +174,6 @@ namespace DDTV_GUI.DDTV_Window
                     };
                     grid.Children.Add(image);
                     grid.Children.Add(textBlock);
-
-
-
-
                     if (roomInfo.live_status != 1)
                     {
                         Grid GBlack = new Grid()
