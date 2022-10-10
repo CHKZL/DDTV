@@ -16,8 +16,7 @@ namespace DDTV_WEB_Server
             }
 
             public async Task Invoke(HttpContext context)
-            {
-               
+            {      
                 if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Credentials"))
                 {
                     context.Response.Headers.Add("Access-Control-Allow-Credentials", WebServerConfig.AccessControlAllowCredentials);
