@@ -124,7 +124,7 @@ namespace DDTV_GUI.DDTV_Window
             //Sprite.Show(new DDTV_Sprite());
             DelTmpFile();
 
-           
+
 
             //Task.Run(() =>
             //{
