@@ -1,25 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
-using System.Net.WebSockets;
-using DDTV_Core.SystemAssembly.Log;
-using System.Net;
-using DDTV_Core.SystemAssembly.ConfigModule;
+﻿using ConsoleTableExt;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
+using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
-using System.Runtime.InteropServices;
-using ConsoleTables;
-using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
-using DDTV_Core.Tool;
-using DDTV_Core.SystemAssembly.RoomPatrolModule;
-using ConsoleTableExt;
-using DDTV_Core.SystemAssembly.DownloadModule;
-using System.IO;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
+using DDTV_Core.SystemAssembly.RoomPatrolModule;
+using DDTV_Core.Tool;
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Threading;
+using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
 namespace DDTV_Core
 {
@@ -49,7 +41,7 @@ namespace DDTV_Core
             CoreConfig.ConfigInit(satrtType);
             DDTV_Update.CheckUpdateProgram();
             Task.Run(() => Tool.DDcenter.Init(satrtType));
-            if (satrtType != SatrtType.DDTV_GUI && satrtType!=SatrtType.DDTV_DanMu)
+            if (satrtType != SatrtType.DDTV_GUI && satrtType != SatrtType.DDTV_DanMu)
             {
                 SeKey();
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
@@ -89,7 +81,7 @@ namespace DDTV_Core
         private static void FileOperation_PathAlmostFull(object? sender, string e)
         {
             Log.AddLog("HardDisk", LogClass.LogType.Error_IsAboutToHappen, e);
-            WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, -1); 
+            WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, -1);
         }
 
         /// <summary>
