@@ -88,11 +88,11 @@
                         <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>
-                <hc:SideMenuItem Header="动态">
+                <!--<hc:SideMenuItem Header="动态">
                     <hc:SideMenuItem.Icon>
                         <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
-                </hc:SideMenuItem>
+                </hc:SideMenuItem>-->
             </hc:SideMenu>
         </Grid>
         <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
@@ -579,7 +579,7 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -593,7 +593,7 @@
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>-->
+        </hc:Drawer>
 
     </Grid>
 

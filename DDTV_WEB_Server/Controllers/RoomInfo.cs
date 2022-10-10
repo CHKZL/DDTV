@@ -117,6 +117,25 @@ namespace DDTV_WEB_Server.Controllers
             }
         }
     }
+    public class Room_Add_ForRoomId : ProcessingControllerBase.ApiControllerBase
+    {
+        [HttpPost(Name = "Room_Add_ForRoomId")]
+        public ActionResult Post([FromForm] int roomid, [FromForm] string cmd)
+        {
+            long UID = 0;
+            var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.get_info(0, roomid, false);
+            if (roomInfo != null)
+            {
+                UID = roomInfo.uid;
+                RoomConfig.AddRoom(UID, roomid, "", true);
+                return Content(MessageBase.Success(nameof(Room_Add), "添加完成"), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(Room_Add), "该房间号不存在！", "该房间号不存在！", MessageBase.code.UIDFailed), "application/json");
+            }
+        }
+    }
     public class Room_Del : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "Room_Del")]
