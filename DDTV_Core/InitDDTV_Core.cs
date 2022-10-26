@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-10-09 16:15:36";
+        public static string CompiledVersion = "2022-10-26 22:20:28(HLS测试版)";
 
         /// <summary>
         /// 初始化COre
@@ -143,7 +143,7 @@ namespace DDTV_Core
                         Console.WriteLine($"a：查看下载中的任务情况");
                         Console.WriteLine($"b：一键导入关注列表中的V(可能不全需要自己补一下)");
                         Console.WriteLine($"c：重登登陆");
-                        Console.WriteLine($"z：控制台监控模式开关");
+                        Console.WriteLine($"z：控制台监控模式开关(会显示所有上下播信息)");
                         switch (Console.ReadKey().Key)
                         {
                             case ConsoleKey.A:
@@ -185,25 +185,31 @@ namespace DDTV_Core
                                     Console.WriteLine("确定一键导入关注列表中的V吗？按'Y'导入，按任意键取消");
                                     switch (Console.ReadKey().Key)
                                     {
-                                        case ConsoleKey.Y:
-                                            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
-                                            break;
-                                        case ConsoleKey.W://隐藏操作             
-                                            Console.WriteLine("触发隐藏操作，按Y导入vtbs列表中的所有V，按其他键取消");
-                                            if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                        case ConsoleKey.Y://导入关注列表中的V
                                             {
-                                                //一键导入本地vtbs文件中的所有V
-                                                SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true, true);
+                                                SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
+                                                break;
                                             }
-                                            break;
-                                        case ConsoleKey.Q://隐藏操作
-                                            Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有V，按其他键取消");
-                                            //一键导入所有关注列表
-                                            if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                        case ConsoleKey.W://隐藏操作，导入vtbs列表中的所有人         
                                             {
-                                                SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                                Console.WriteLine("触发隐藏操作，按Y导入vtbs列表中的所有人，按其他键取消");
+                                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                                {
+                                                    //一键导入本地vtbs文件中的所有V
+                                                    SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), false, true);
+                                                }
+                                                break;
                                             }
-                                            break;
+                                        case ConsoleKey.Q://隐藏操作，导入关注列表中的所有人
+                                            {
+                                                Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有人，按其他键取消");
+                                                //一键导入所有关注列表
+                                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                                {
+                                                    SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                                }
+                                                break;
+                                            }
                                         default:
                                             Console.WriteLine("放弃导入");
                                             break;
@@ -227,9 +233,11 @@ namespace DDTV_Core
                                     break;
                                 }
                             case ConsoleKey.Z:
-                                CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
-                                Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
-                                break;
+                                {
+                                    CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
+                                    Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
+                                    break;
+                                }
                             default:
                                 break;
                         }

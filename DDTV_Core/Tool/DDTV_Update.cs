@@ -120,7 +120,7 @@ namespace DDTV_Core.Tool
 
                     //Console.WriteLine($"正在下载大小{file.Size}字节的文件:{file.FilePath}");
                     Log.AddLog("DDTV_Update", LogClass.LogType.Debug, $"检测到更新器文件变化，开始下载文件[{file.FilePath}({SystemAssembly.NetworkRequestModule.NetClass.ConversionSize(file.Size)})]", false, null, false);
-                    SystemAssembly.NetworkRequestModule.Get.Get.GetFile(DownloadUrl, file.FilePath);
+                    SystemAssembly.NetworkRequestModule.Get.Get.GetFile_For_Update(DownloadUrl, file.FilePath);
                     Log.AddLog("DDTV_Update", LogClass.LogType.Debug, $"下载文件[{file.FilePath}]完成", false, null, false);
                 }
                

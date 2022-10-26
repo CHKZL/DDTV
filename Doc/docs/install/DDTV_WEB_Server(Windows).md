@@ -5,7 +5,7 @@
 [GitHub(fastgit镜像)](https://hub.fastgit.xyz/CHKZL/DDTV/releases/latest)  
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  
 DDTV功能反馈讨论群:`338182356`  
-DDTV聊天吹水群:`307156949`   
+DDTV聊天吹水群:`522865400`   
 
 ## 2.安装
 DDTV_WEB_Server是免安装的，把下载下来的压缩包解压到任意位置即可   

@@ -116,6 +116,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 当前子任务开始时间
             /// </summary>
             public DateTime SpeedCalibration_Time = DateTime.Now;
+            /// <summary>
+            /// HLS任务_已下载的HLS片段记录
+            /// </summary>
+            public List<string> HLSRecorded { set; get; } = new List<string>();
+            /// <summary>
+            /// 是否是HLS任务
+            /// </summary>
+            public bool IsHLS { get; set; }
             public enum DownloadStatus
             {
                 /// <summary>
@@ -157,6 +165,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             public void Cancel()
             {
                 IsCancel = true;
+            }
+            public bool GetCancelState()
+            {
+                return IsCancel;
             }
             /// <summary>
             /// 下载任务实际执行事件
@@ -214,7 +226,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的录制任务，该任务取消");
                                         roomInfo.IsDownload = false;
-                                        Download.DownloadCompleteTaskd(Uid, false, true);
+                                        Download.DownloadCompleteTaskd_FLV(Uid, false, true);
 
                                         return;
                                     }
@@ -227,7 +239,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             try
                                             {
                                                 EndF = stream.ReadByte();
-                                                if(LiveStopTriggerStatistics>5)
+                                                if (LiveStopTriggerStatistics > 5)
                                                 {
                                                     EndF = -1;
                                                     IsEnd = true;
@@ -267,24 +279,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             break;
                                         }
                                     }
-                                    if(DataLength==15)
+                                    if (DataLength == 15)
                                     {
                                         bool IsAllFF = true;
                                         foreach (var item in data)
                                         {
-                                            if(item!=0xFF)
+                                            if (item != 0xFF)
                                             {
                                                 IsAllFF = false;
                                                 break;
                                             }
                                         }
-                                        if(IsAllFF)
+                                        if (IsAllFF)
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"在录制[{roomInfo.uname}({roomInfo.room_id})]的直播任务DataLength时触发了AllFF错误，结束该子任务开始续命");
                                             IsEnd = true;
                                         }
                                     }
-                                    AllFFErrpr: if(IsEnd)
+                                AllFFErrpr: if (IsEnd)
                                     {
                                         Clear();
                                         if (flvTimes.FlvTotalTagCount < 3)
@@ -335,13 +347,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
                                             roomInfo.IsDownload = false;
-                                            Download.DownloadCompleteTaskd(Uid, downloads.FlvSplit);
+                                            Download.DownloadCompleteTaskd_FLV(Uid, downloads.FlvSplit);
                                             return;
                                         }
                                     }
                                     bool IsFixWriteError = false;
-                                    byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL,out IsFixWriteError);
-                                    if(IsFixWriteError)
+                                    byte[] FixData = Tool.FlvModule.SteamFix.FixWrite(data, this, out uint DL, out IsFixWriteError);
+                                    if (IsFixWriteError)
                                     {
                                         IsEnd = true;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"在录制[{roomInfo.uname}({roomInfo.room_id})]的直播任务FixWrite时触发了AllFF错误，结束该子任务开始续命");
@@ -377,10 +389,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
                                     if (ts.TotalMilliseconds > 3000)
                                     {
-                                        if(roomInfo.live_status!=1)
+                                        if (roomInfo.live_status != 1)
                                         {
                                             LiveStopTriggerStatistics++;
-                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}",false,null,false);
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
                                         }
                                         else if (roomInfo.live_status == 1)
                                         {
@@ -391,7 +403,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                         double T = CurrentDownloadSize / Proportion / 3.0;
                                         DownloadSpe = Convert.ToInt64(T);
-                                        if(DownloadSpe > (1048576*100))
+                                        if (DownloadSpe > (1048576 * 100))
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"疑是错误！检测到超长的DownloadSpe长度，长度:{DownloadSpe}byte");
                                         }
@@ -427,6 +439,121 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         return;
                     }
                 });
+            }
+
+            internal bool Download_m4s(Downloads downloads, RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, string host, string base_url, string extra, List<string> Process)
+            {
+                try
+                {
+                    long SpeedCalibration_Size = 0;
+                    int len = 0;
+                    WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
+                    int count = 1;
+                    //Path="D:"+Path.Substring(1, Path.Length-1);
+                    Path = Tool.FileOperation.CreateAll(Path);
+                    downloads.FlvFileList.Add(downloads.FilePath);
+                    FileStream fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
+
+                    while (true)
+                    {
+                        if (IsCancel)
+                        {
+
+                            Status = DownloadStatus.Cancel;
+                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
+                            roomInfo.IsDownload = false;
+                            Download.DownloadCompleteTaskd_HLS(Uid, downloads, true);
+
+                            return true;
+                        }
+                        string index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
+                        if (string.IsNullOrEmpty(index))
+                        {
+                            Thread.Sleep(100);
+                            index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
+                            if (string.IsNullOrEmpty(index))
+                            {
+                                return true;
+                            }
+                        }
+                        string[] M3 = index.Split('\n');
+                        if (len == 0)
+                        {
+                            string EXTMAP = "";
+                            foreach (var item in M3)
+                            {
+                                if (item.Contains("#EXT-X-MAP"))
+                                {
+                                    EXTMAP = item.Split('=')[1].Replace("\"", "");
+                                    break;
+                                }
+                            }
+                            Process.Add($"{EXTMAP}");
+                            byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + EXTMAP + "?" + extra);
+                            downloads.TotalDownloadCount += fileInfo.Length;
+                            DownloadCount += fileInfo.Length;
+                            fs.Write(fileInfo);
+                            Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
+                            //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + EXTMAP + "?" + extra, $"{downloads.FilePath}{EXTMAP}");
+                            //Tool.FileOperation.Del(fileInfo.FullName);
+                            len++;
+
+                        }
+                        for (int i = 0; i < M3.Length; i++)
+                        {
+                            if (M3[i].Contains("#EXTINF"))
+                            {
+                                if (!Process.Contains(M3[i + 1].Split('.')[0]))
+                                {
+                                    Process.Add(M3[i + 1].Split('.')[0]);
+                                    //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + M3[i + 1] + "?" + extra, $"{downloads.FilePath}{M3[i + 1].Split('.')[0]}.m4s");
+                                    //downloads.TotalDownloadCount += fileInfo.Length;
+                                    //Tool.FileOperation.Del(fileInfo.FullName);
+                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + M3[i + 1] + "?" + extra);
+                                    downloads.TotalDownloadCount += fileInfo.Length;
+                                    DownloadCount += fileInfo.Length;
+                                    Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
+                                    fs.Write(fileInfo);
+
+                                    len++;
+                                }
+                            }
+                        }
+                        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
+                        {
+                            len = 0;
+                            DownloadCount = 0;
+                            fs.Close();
+                            fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
+                        }
+                        Thread.Sleep(1000);
+                        TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
+                        if (ts.TotalMilliseconds > 3000)
+                        {
+                            if (roomInfo.live_status != 1)
+                            {
+                                LiveStopTriggerStatistics++;
+                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
+                            }
+                            else if (roomInfo.live_status == 1)
+                            {
+                                LiveStopTriggerStatistics = 0;
+                            }
+                            double Proportion = ts.TotalMilliseconds / 3000.0;
+                            long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
+
+                            double T = CurrentDownloadSize / Proportion / 3.0;
+                            DownloadSpe = Convert.ToInt64(T);
+                            SpeedCalibration_Size = TotalDownloadCount;
+                            SpeedCalibration_Time = DateTime.Now;
+                        }
+
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
             }
 
             public static byte[] TrimNullByte(byte[] oldByte)

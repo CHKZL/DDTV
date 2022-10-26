@@ -430,8 +430,8 @@
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click" IsEnabled="False">
+                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click" Visibility="Collapsed">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>

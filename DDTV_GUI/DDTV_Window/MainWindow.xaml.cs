@@ -1590,7 +1590,7 @@ namespace DDTV_GUI.DDTV_Window
                     TranscodingSelectFilesManual.Content = "转码中";
                     Task.Factory.StartNew(() =>
                     {
-                        var TR = Transcod.CallFFMPEG(new TranscodClass()
+                        var TR = Transcod.CallFFMPEG_FLV(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
                             AfterFilePath = dialog.FileName,
