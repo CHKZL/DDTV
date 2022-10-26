@@ -130,7 +130,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 }
                 else
                 {
-                    Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                  
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
@@ -282,6 +282,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                    $"\n===================";
                         Console.WriteLine(EndText);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
+                        Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                     }
                     else
                     {
@@ -702,6 +703,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             roomInfo.CreationTime = DateTime.Now;
                             downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
+                           
+
                             string StarText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n=========FLV==========\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
                                 $"UID:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uid)}\n" +
