@@ -454,100 +454,113 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     downloads.FlvFileList.Add(downloads.FilePath);
                     FileStream fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
 
-                    while (true)
+                    try
                     {
-                        if (IsCancel)
+                        while (true)
                         {
-
-                            Status = DownloadStatus.Cancel;
-                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
-                            roomInfo.IsDownload = false;
-                            Download.DownloadCompleteTaskd_HLS(Uid, downloads, true);
-
-                            return true;
-                        }
-                        string index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
-                        if (string.IsNullOrEmpty(index))
-                        {
-                            Thread.Sleep(100);
-                            index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
-                            if (string.IsNullOrEmpty(index))
+                            if (IsCancel)
                             {
+
+                                Status = DownloadStatus.Cancel;
+                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
+                                roomInfo.IsDownload = false;
+                                fs.Close();
+                                fs.Dispose();
+                                Download.DownloadCompleteTaskd_HLS(Uid, downloads, true);
+
                                 return true;
                             }
-                        }
-                        string[] M3 = index.Split('\n');
-                        if (len == 0)
-                        {
-                            string EXTMAP = "";
-                            foreach (var item in M3)
+                            string index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
+                            if (string.IsNullOrEmpty(index))
                             {
-                                if (item.Contains("#EXT-X-MAP"))
+                                Thread.Sleep(100);
+                                index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + "index.m3u8" + "?" + extra);
+                                if (string.IsNullOrEmpty(index))
                                 {
-                                    EXTMAP = item.Split('=')[1].Replace("\"", "");
-                                    break;
+                                    fs.Close();
+                                    fs.Dispose();
+                                    return true;
                                 }
                             }
-                            Process.Add($"{EXTMAP}");
-                            byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + EXTMAP + "?" + extra);
-                            downloads.TotalDownloadCount += fileInfo.Length;
-                            DownloadCount += fileInfo.Length;
-                            fs.Write(fileInfo);
-                            Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
-                            //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + EXTMAP + "?" + extra, $"{downloads.FilePath}{EXTMAP}");
-                            //Tool.FileOperation.Del(fileInfo.FullName);
-                            len++;
-
-                        }
-                        for (int i = 0; i < M3.Length; i++)
-                        {
-                            if (M3[i].Contains("#EXTINF"))
+                            string[] M3 = index.Split('\n');
+                            if (len == 0)
                             {
-                                if (!Process.Contains(M3[i + 1].Split('.')[0]))
+                                string EXTMAP = "";
+                                foreach (var item in M3)
                                 {
-                                    Process.Add(M3[i + 1].Split('.')[0]);
-                                    //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + M3[i + 1] + "?" + extra, $"{downloads.FilePath}{M3[i + 1].Split('.')[0]}.m4s");
-                                    //downloads.TotalDownloadCount += fileInfo.Length;
-                                    //Tool.FileOperation.Del(fileInfo.FullName);
-                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + M3[i + 1] + "?" + extra);
-                                    downloads.TotalDownloadCount += fileInfo.Length;
-                                    DownloadCount += fileInfo.Length;
-                                    Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
-                                    fs.Write(fileInfo);
+                                    if (item.Contains("#EXT-X-MAP"))
+                                    {
+                                        EXTMAP = item.Split('=')[1].Replace("\"", "");
+                                        break;
+                                    }
+                                }
+                                Process.Add($"{EXTMAP}");
+                                byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + EXTMAP + "?" + extra);
+                                downloads.TotalDownloadCount += fileInfo.Length;
+                                DownloadCount += fileInfo.Length;
+                                fs.Write(fileInfo);
+                                Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
+                                //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + EXTMAP + "?" + extra, $"{downloads.FilePath}{EXTMAP}");
+                                //Tool.FileOperation.Del(fileInfo.FullName);
+                                len++;
 
-                                    len++;
+                            }
+                            for (int i = 0; i < M3.Length; i++)
+                            {
+                                if (M3[i].Contains("#EXTINF"))
+                                {
+                                    if (!Process.Contains(M3[i + 1].Split('.')[0]))
+                                    {
+                                        Process.Add(M3[i + 1].Split('.')[0]);
+                                        //FileInfo fileInfo = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetFile(host + base_url + M3[i + 1] + "?" + extra, $"{downloads.FilePath}{M3[i + 1].Split('.')[0]}.m4s");
+                                        //downloads.TotalDownloadCount += fileInfo.Length;
+                                        //Tool.FileOperation.Del(fileInfo.FullName);
+                                        byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + M3[i + 1] + "?" + extra);
+                                        downloads.TotalDownloadCount += fileInfo.Length;
+                                        DownloadCount += fileInfo.Length;
+                                        Log.Log.AddLog("TEST", Log.LogClass.LogType.Warn, fileInfo.Length.ToString());
+                                        fs.Write(fileInfo);
+
+                                        len++;
+                                    }
                                 }
                             }
-                        }
-                        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
-                        {
-                            len = 0;
-                            DownloadCount = 0;
-                            fs.Close();
-                            fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
-                        }
-                        Thread.Sleep(1000);
-                        TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
-                        if (ts.TotalMilliseconds > 3000)
-                        {
-                            if (roomInfo.live_status != 1)
+                            if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
                             {
-                                LiveStopTriggerStatistics++;
-                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
+                                len = 0;
+                                DownloadCount = 0;
+                                fs.Close();
+                                fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
                             }
-                            else if (roomInfo.live_status == 1)
+                            Thread.Sleep(1000);
+                            TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
+                            if (ts.TotalMilliseconds > 3000)
                             {
-                                LiveStopTriggerStatistics = 0;
+                                if (roomInfo.live_status != 1)
+                                {
+                                    LiveStopTriggerStatistics++;
+                                    Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
+                                }
+                                else if (roomInfo.live_status == 1)
+                                {
+                                    LiveStopTriggerStatistics = 0;
+                                }
+                                double Proportion = ts.TotalMilliseconds / 3000.0;
+                                long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
+
+                                double T = CurrentDownloadSize / Proportion / 3.0;
+                                DownloadSpe = Convert.ToInt64(T);
+                                SpeedCalibration_Size = TotalDownloadCount;
+                                SpeedCalibration_Time = DateTime.Now;
                             }
-                            double Proportion = ts.TotalMilliseconds / 3000.0;
-                            long CurrentDownloadSize = TotalDownloadCount - SpeedCalibration_Size;
 
-                            double T = CurrentDownloadSize / Proportion / 3.0;
-                            DownloadSpe = Convert.ToInt64(T);
-                            SpeedCalibration_Size = TotalDownloadCount;
-                            SpeedCalibration_Time = DateTime.Now;
                         }
-
+                    }
+                    catch (Exception)
+                    {
+                        fs.Close();
+                        fs.Dispose();
+                        return false;
                     }
                 }
                 catch (Exception)
