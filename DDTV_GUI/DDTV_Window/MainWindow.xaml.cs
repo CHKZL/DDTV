@@ -1291,6 +1291,11 @@ namespace DDTV_GUI.DDTV_Window
                                 Growl.WarningGlobal("该任务已启动自动分P功能，无法使用激光切片");
                                 return;
                             }
+                            if (roomInfo.DownloadingList[i].IsHLS)
+                            {
+                                Growl.WarningGlobal("该任务为HLS流，无法使用激光切片，如需使用该功能请加群联系我魔改该功能");
+                                return;
+                            }
                             fileInfos[i] = new FileInfo(roomInfo.DownloadingList[i].FileName);
                         }
 
