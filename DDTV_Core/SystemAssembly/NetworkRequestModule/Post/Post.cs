@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
 {
-    internal class Post
+    public class Post
     {
         /// <summary>
         /// 通过Post请求发送网络请求获取Json类返回信息(该方法应该是为批量获取房间信息特殊准备的)

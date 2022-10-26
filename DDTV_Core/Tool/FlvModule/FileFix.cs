@@ -187,7 +187,7 @@ namespace DDTV_Core.Tool.FlvModule
                 AfterFilePath = F.Replace(".flv", ".mp4"),
                 BeforeFilePath = F
             };
-            Transcod.CallFFMPEG(transcodClass);
+            Transcod.CallFFMPEG_FLV(transcodClass);
             FileOperation.Del(F);
           
         }

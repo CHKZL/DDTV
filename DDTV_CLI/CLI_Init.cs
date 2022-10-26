@@ -12,7 +12,7 @@ namespace DDTV_CLI
     public class CLI_Init
     {
         public static void Main(string[] args)
-        {
+        {  
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
             while (true)
             {

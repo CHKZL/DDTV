@@ -90,7 +90,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             }
             return result;  
         }
-        public static void GetFile(string URL, string File)
+        public static void GetFile_For_Update(string URL, string File)
         {
             var wc = new WebClient();
             wc.Headers.Add("Referer: Update.ddtv.pro");
@@ -101,6 +101,30 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             }
             wc.DownloadFile(URL, File);
 
+        }
+        public static FileInfo GetFile(string URL, string File)
+        {
+            var wc = new WebClient();
+            wc.Headers.Add("Referer: https://www.bilibili.com/");
+            wc.Headers.Add("ContentType: application/x-www-form-urlencoded");
+            wc.Headers.Add("Accept: */*");
+            wc.Headers.Add("UserAgent: " + NetClass.UA());
+            string P = Path.GetDirectoryName(File);
+            if (!string.IsNullOrEmpty(P))
+            {
+                Directory.CreateDirectory(P);
+            }
+            wc.DownloadFile(URL, File);
+            return new FileInfo(File);
+        }
+        public static byte[] GetFile_Bytes(string URL)
+        {
+            var wc = new WebClient();
+            wc.Headers.Add("Referer: https://www.bilibili.com/");
+            wc.Headers.Add("ContentType: application/x-www-form-urlencoded");
+            wc.Headers.Add("Accept: */*");
+            wc.Headers.Add("UserAgent: " + NetClass.UA());
+            return wc.DownloadData(URL);
         }
     }
 }

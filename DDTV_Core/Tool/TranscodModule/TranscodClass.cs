@@ -33,5 +33,9 @@ namespace DDTV_Core.Tool.TranscodModule
         /// 自定义转码参数
         /// </summary>
         public string Parameters { get; set; }
+        /// <summary>
+        /// HLS调用转码需要提供的文件列表
+        /// </summary>
+        public List<string> HLS_Files { set; get; }
     }
 }
