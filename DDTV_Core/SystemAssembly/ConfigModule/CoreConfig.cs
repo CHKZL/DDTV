@@ -28,6 +28,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool IsBypass_SSL= bool.Parse(GetValue(CoreConfigClass.Key.IsBypass_SSL, "False", CoreConfigClass.Group.Core));
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
+        
 
         /// <summary>
         /// 初始化配置文件
@@ -145,6 +146,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _MandatoryUseIPv4 = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4;
             var _IsBypass_SSL = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsBypass_SSL;
             var _SCSaveType = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType;
+            var _IsHls = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
         }
         /// <summary>
         /// 获取配置

@@ -32,6 +32,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static bool IsRecSC = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsRecSC, "True", CoreConfigClass.Group.Download));
         public static bool IsFlvSplit = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsFlvSplit, "False", CoreConfigClass.Group.Download));
         public static long FlvSplitSize = long.Parse(CoreConfig.GetValue(CoreConfigClass.Key.FlvSplitSize, "1073741824", CoreConfigClass.Group.Download));
+        public static bool IsHls = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHls, "False", CoreConfigClass.Group.Download));
 
         /// <summary>
         /// 下载完成事件
@@ -49,7 +50,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     if (IsNewTask || !roomInfo.IsUserCancel)
                     {
                         roomInfo.IsUserCancel = false;
-                        if(IsHLS)
+                        if(IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
                         {
                             AddDownLoad_HLS(uid, IsNewTask);
                         }
@@ -549,39 +550,103 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
                         downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
-                        string WebText = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={downloadClass.RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)RecQuality}&platform=h5&ptype=8");
-                        ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo> response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(WebText);
-                        if (response.Data.LiveStatus != 1)
-                        {
-
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"获取【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】的直播流时发现直播间已经下播，任务结束");
-                            return;
-                        }
                         string host = "";
                         string base_url = "";
                         string extra = "";
-                        foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
+                        string base_file_name = "";
+                        if (IsNewTask)
                         {
-                            if (Stream.ProtocolName == "http_hls")
+                            int x = 0;
+                            while (true)
                             {
-                                foreach (var Format in Stream.Formats)
+                                x++;
+                                string WebText = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={downloadClass.RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)RecQuality}&platform=h5&ptype=8",false, "https://www.bilibili.com/");
+                                ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo> response = null;
+                                int error = 0;
+                                while (true)
                                 {
-                                    if (Format.FormatName.ToLower() == "fmp4")
+                                    if(error>10)
                                     {
-                                        host = Format.Codecs[0].UrlInfos[0].Host;
-                                        extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
-                                        base_url = Format.Codecs[0].BaseUrl;
-                                        base_url = base_url.Replace(base_url.Split('/')[base_url.Split('/').Length - 1], "");
+                                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时重试10次超时，复位任务重试");
+                                        break;
                                     }
+                                    if (string.IsNullOrEmpty(WebText))
+                                    {
+                                        error++;
+                                        Thread.Sleep(100);
+                                        WebText = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={downloadClass.RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)RecQuality}&platform=h5&ptype=8", false, "https://www.bilibili.com/");
+                                    }
+                                    else
+                                    {
+                                        response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(WebText);
+                                        break;
+                                    }
+                                }
+
+
+
+                                if (response != null)
+                                {
+                                    if (response.Data.LiveStatus != 1)
+                                    {
+
+                                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"获取【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】的直播流时发现直播间已经下播，任务结束");
+                                        return;
+                                    }
+
+                                    foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
+                                    {
+                                        if (Stream.ProtocolName == "http_hls")
+                                        {
+                                            foreach (var Format in Stream.Formats)
+                                            {
+                                                if (Format.FormatName.ToLower() == "fmp4")
+                                                {
+                                                    host = Format.Codecs[0].UrlInfos[0].Host;
+                                                    extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
+                                                    base_url = Format.Codecs[0].BaseUrl;
+                                                    base_file_name = base_url.Split('/')[base_url.Split('/').Length - 1];
+                                                    base_url = base_url.Replace(base_url.Split('/')[base_url.Split('/').Length - 1], "");
+                                                    downloadClass.ExtendedName = "m4s";
+                                                    goto start;
+                                                }
+                                                //else if (Format.FormatName.ToLower() == "ts")
+                                                //{
+                                                //    host = Format.Codecs[0].UrlInfos[0].Host;
+                                                //    extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
+                                                //    base_url = Format.Codecs[0].BaseUrl;
+                                                //    base_file_name = base_url.Split('/')[base_url.Split('/').Length - 1];
+                                                //    base_url = base_url.Replace(base_url.Split('/')[base_url.Split('/').Length - 1], "");
+                                                //    downloadClass.ExtendedName = "ts";
+                                                //    goto start;
+                                                //}
+                                            }
+                                        }
+                                    }
+                                    if (x > 12)
+                                    {
+                                        break;
+                                    }
+                                    Thread.Sleep(1000);
+                                }
+                                else
+                                {
+                                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时网络超时，尝试重试");
+                                    x--;
+                                    Thread.Sleep(200);
                                 }
                             }
                         }
-                        if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(base_url) || string.IsNullOrEmpty(extra))
+                      
+                        start: if (string.IsNullOrEmpty(host) || string.IsNullOrEmpty(base_url) || string.IsNullOrEmpty(extra))
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】没有HLS直播流，降级到FLV");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】没有检测到HLS直播流，降级到FLV");
                             AddDownloadTaskd(uid, IsNewTask, false);
                             return;
                         }
+
+                        roomInfo.Host = "[HLS] "+host;
+
                         Rooms.RoomInfo[uid].DownloadingList.Add(downloadClass);
                         roomInfo.IsDownload = true;
                         downloadClass.Uid = uid;
@@ -608,8 +673,22 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.FileName = Path;
                         downloadClass.FlvSplit = IsFlvSplit;
                         downloadClass.FlvSplitSize = FlvSplitSize;
-                       
-                        if(downloadClass.Download_m4s(downloadClass, roomInfo, Path, FileName, host, base_url, extra, downloadClass.HLSRecorded))
+
+                        //弹幕录制
+                        bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool RoomIsRecDanmu);
+                        if (IsNewTask && IsRecDanmu && RoomIsRecDanmu)
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
+                            roomInfo.DanmuFile = new();
+                            roomInfo.DanmuFile.FileName = Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}/" + FileName;
+                            BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，理由：是否为重连任务:{!IsNewTask},弹幕总开关:{IsRecDanmu},房间弹幕录制设置:{RoomIsRecDanmu}");
+                        }
+
+                        if (downloadClass.Download_HLS(downloadClass, roomInfo, Path, FileName, host, base_url, base_file_name, extra, downloadClass.HLSRecorded, downloadClass.ExtendedName))
                         {
                             if (!downloadClass.GetCancelState())
                             {
@@ -713,6 +792,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 $"=========FLV==========";
                             Console.WriteLine(StarText);
                             downloadClass.IsHLS = false;
+                            downloadClass.ExtendedName = "flv";
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n", "　"), false, null, false);
                             if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                                 DownloadPath = DownloadPath + "/";
@@ -723,7 +803,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloadClass.FlvSplit = IsFlvSplit;
                             downloadClass.FlvSplitSize = FlvSplitSize;
                             Tool.FileOperation.CreateAll(Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}");
-                            downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, "flv", roomInfo);
+                            downloadClass.DownFLV_HttpWebRequest(downloadClass, req, Path, FileName, downloadClass.ExtendedName, roomInfo);
                             //录制弹幕(是否是新任务 && 弹幕录制总开关 && 房间弹幕录制设置)
                             bool RoomIsRecDanmu = false;
                             bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out RoomIsRecDanmu);

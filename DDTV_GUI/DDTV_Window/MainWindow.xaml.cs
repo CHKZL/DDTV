@@ -438,6 +438,7 @@ namespace DDTV_GUI.DDTV_Window
 
             SelectDanMu_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
             SelectDanMu_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
+            HLSToggle.IsChecked = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1825,6 +1826,16 @@ namespace DDTV_GUI.DDTV_Window
                 Window_RoomCard.Width = this.Width - 134;
                 Window_RoomCard.Groups = (int)Window_RoomCard.Width / 212;
             }    
+        }
+
+        private void HLSToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool IsHLS = (bool)HLSToggle.IsChecked ? true : false;
+            DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls = IsHLS;
+            CoreConfig.SetValue(CoreConfigClass.Key.IsHls, IsHLS.ToString(), CoreConfigClass.Group.Download);
+            Growl.Success((IsHLS ? "打开" : "关闭") + "HLS优先");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (IsHLS ? "打开" : "关闭") + "HLS优先", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
         }
     }
 }
