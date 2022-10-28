@@ -680,7 +680,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                             roomInfo.DanmuFile = new();
-                            roomInfo.DanmuFile.FileName = Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}/" + FileName;
+                            roomInfo.DanmuFile.FileName = Path + FileName;
                             BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
                         }
                         else
