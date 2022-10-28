@@ -221,8 +221,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
 
                 //}
 
-                //后续录播功能更新在:B站官方饭盒内（如https://workshop.bilibili.com/fan-group/2007781080）(当前还是打点测试状态，后续开放全量录播功能)
-
                 WebHook.SendHook(WebHook.HookType.SaveDanmuComplete, roomInfo.uid);
                 roomInfo.DownloadedFileInfo.DanMuFile = SevaDanmu(roomInfo.DanmuFile.Danmu, roomInfo.DanmuFile.FileName, roomInfo.uname, roomInfo.room_id, Tool.TimeModule.Time.Operate.DateTimeToConvertTimeStamp(roomInfo.CreationTime));
                 roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
