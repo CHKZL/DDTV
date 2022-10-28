@@ -344,6 +344,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：2
             /// </summary>
             DanMuSaveType,
+            /// <summary>
+            /// 是否优先使用HLS进行录制
+            /// 组：Download   默认值：False
+            /// </summary>
+            IsHls,
         }
     }
 }

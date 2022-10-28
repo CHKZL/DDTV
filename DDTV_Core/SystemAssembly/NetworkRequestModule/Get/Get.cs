@@ -83,7 +83,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                 }
                 Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request, $"发起GetRequest请求完成:{url}", false, null, false);
             }
-            catch (Exception)
+           catch (Exception e)
             {
                 Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求超时或错误");
                 return null;

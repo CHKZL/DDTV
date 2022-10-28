@@ -31,6 +31,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
         /// </summary>
         public static void Init()
         {
+           
             Rooms.UpdateRoomInfo();
             
             foreach (var item in Rooms.RoomInfo)
@@ -75,6 +76,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             }
             Task.Run(() =>
             {
+                Thread.Sleep(3000);
                 long ETime = 0;
                 while (true)
                 {

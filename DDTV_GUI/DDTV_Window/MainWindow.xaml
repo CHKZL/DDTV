@@ -380,16 +380,23 @@
                                             </hc:AdornerElement.Instance>
                                         </Button>
                                     </Grid>
-                                    <Grid Width="630" Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="88,4,506,6" Click="TranscodToggle_Click">
+                                    <Grid Width="848">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="优先使用HLS进行录制" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="HLSToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="168,4,0,6" HorizontalAlignment="Left" Width="36" Click="HLSToggle_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开后会尝试使用HLS流进行录制（打开该选项后开播后会等待10-20秒开始接入流HLS流，如果30秒后没有检测到HLS流会降级到FLV进行录制）" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="247,0,0,0" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="330,4,0,6" Click="TranscodToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="录制完成后将自动转码为MP4" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="170,0,0,0" Text="转码完成后自动删除原始FLV文件" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="411,5,183,5" Click="TranscodingCompleteAutoDeleteFiles_Click">
+                                        <TextBlock HorizontalAlignment="Left" Margin="417,4,0,0" Text="转码完成后自动删除原始FLV文件" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="658,4,0,6" Click="TranscodingCompleteAutoDeleteFiles_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="在网络比较差的情况下原始flv文件可能会有问题，但是能修复；如果使用有问题的flv转码并且删除了原始文件，该操作是不可逆的，请注意！" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
@@ -579,7 +586,7 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -593,7 +600,7 @@
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>
+        </hc:Drawer>-->
 
     </Grid>
 
