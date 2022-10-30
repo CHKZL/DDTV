@@ -397,7 +397,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         if (roomInfo.live_status != 1)
                                         {
                                             LiveStopTriggerStatistics++;
-                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
+                                            //Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
                                         }
                                         else if (roomInfo.live_status == 1)
                                         {
@@ -582,7 +582,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 if (roomInfo.live_status != 1)
                                 {
                                     LiveStopTriggerStatistics++;
-                                    Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
+                                    //Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Debug, $"房间[{roomInfo.uname}({roomInfo.room_id})]触发下播次数统计:{LiveStopTriggerStatistics}", false, null, false);
                                 }
                                 else if (roomInfo.live_status == 1)
                                 {
