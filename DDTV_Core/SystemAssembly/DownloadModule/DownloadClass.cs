@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 
 namespace DDTV_Core.SystemAssembly.DownloadModule
 {
@@ -445,7 +446,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 });
             }
 
-            internal bool Download_HLS(Downloads downloads, RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, string host, string base_url,string base_file_name, string extra, List<string> Process,string ExtendedName)
+            internal bool Download_HLS(Downloads downloads, RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
             {
                 try
                 {
@@ -473,7 +474,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                 return true;
                             }
-                            string index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + base_file_name + extra);
+                            string index = NetworkRequestModule.Get.Get.GetRequest(hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra);
                             int error = 0;
                             while (true)
                             {
@@ -488,7 +489,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 {
                                     error++;
                                     Thread.Sleep(100);
-                                    index = DDTV_Core.SystemAssembly.NetworkRequestModule.Get.Get.GetRequest(host + base_url + base_file_name + extra);
+                                    hLSHostClass = HLS_Host.Get_HLS_Host(roomInfo, downloads);
+                                    Thread.Sleep(300);
+                                    index = NetworkRequestModule.Get.Get.GetRequest(hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra);
                                 }
                                 else
                                 {
@@ -514,7 +517,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 }
                                             }
                                             Process.Add($"{EXTMAP}");
-                                            byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + EXTMAP + "?" + extra);
+                                            byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + EXTMAP + "?" + hLSHostClass.extra);
                                             downloads.TotalDownloadCount += fileInfo.Length;
                                             DownloadCount += fileInfo.Length;
                                             fs.Write(fileInfo);
@@ -528,7 +531,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 if (!Process.Contains(M3[i + 1].Split('.')[0]))
                                                 {
                                                     Process.Add(M3[i + 1].Split('.')[0]);
-                                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + base_url + M3[i + 1] + "?" + extra);
+                                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + M3[i + 1] + "?" + hLSHostClass.extra);
                                                     downloads.TotalDownloadCount += fileInfo.Length;
                                                     DownloadCount += fileInfo.Length;
                                                     fs.Write(fileInfo);
@@ -555,7 +558,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 if (!Process.Contains(M3[i + 1].Split('.')[0].Split('/')[1]))
                                                 {
                                                     Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
-                                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(host + M3[i + 1]);
+                                                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
                                                     downloads.TotalDownloadCount += fileInfo.Length;
                                                     DownloadCount += fileInfo.Length;
                                                     fs.Write(fileInfo);                                     
