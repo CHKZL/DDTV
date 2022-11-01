@@ -132,7 +132,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 }
                 else
                 {
-                  
+                    downloadClass.EndTime = DateTime.Now;
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
@@ -191,6 +191,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.Url = String.Empty;
                             downloads.FileName = OkFileName;
                             downloads.HLSRecorded = new List<string>();
+                           
                             if (item.Title != downloads.Title)
                             {
                                 downloads.Title = item.Title;
