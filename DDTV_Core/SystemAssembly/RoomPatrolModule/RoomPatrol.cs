@@ -31,34 +31,10 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
         /// </summary>
         public static void Init()
         {
-           
+         
             Rooms.UpdateRoomInfo();
-            
-            foreach (var item in Rooms.RoomInfo)
-            {
-                if (item.Value.live_status == 1)
-                {
-                    item.Value.MonitoringSystem_Airtime = DateTime.Now;
-                    item.Value.MonitoringSystem_Attention = item.Value.attention;
-                    if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
-                    {
-                        //自动录制
-
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●直播间开播】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
-                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
-                        
-                        //StartRec.Invoke(item.Value, EventArgs.Empty);
-                    }
-                    else
-                    {
-                        Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【○直播间开播】根据配置忽略此直播间:检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
-                        //StartLive.Invoke(item.Value, EventArgs.Empty);
-                        
-                    }
-                   
-                    WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
-                }
-            }
+           
+           
             //是否初始化所有房间的粉丝数
             if(false)
             {
@@ -76,7 +52,31 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
             }
             Task.Run(() =>
             {
-                Thread.Sleep(3000);
+                foreach (var item in Rooms.RoomInfo)
+                {
+                    if (item.Value.live_status == 1)
+                    {
+                        item.Value.MonitoringSystem_Airtime = DateTime.Now;
+                        item.Value.MonitoringSystem_Attention = item.Value.attention;
+                        if (bool.Parse(Rooms.GetValue(item.Value.uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
+                        {
+                            //自动录制
+
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●直播间开播】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
+                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
+                            Thread.Sleep(500);
+                            //StartRec.Invoke(item.Value, EventArgs.Empty);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【○直播间开播】根据配置忽略此直播间:检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
+                            //StartLive.Invoke(item.Value, EventArgs.Empty);
+
+                        }
+
+                        WebHook.SendHook(WebHook.HookType.StartLive, item.Value.uid);
+                    }
+                }
                 long ETime = 0;
                 while (true)
                 {
@@ -138,6 +138,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         {
                             StartRec.Invoke(item.Value, EventArgs.Empty);
                         }
+                        Thread.Sleep(500);
                     }
                     else
                     {
