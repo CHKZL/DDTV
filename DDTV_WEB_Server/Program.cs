@@ -28,7 +28,6 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 Services.AddControllers();
                 Services.AddEndpointsApiExplorer();
                 Services.AddSwaggerGen();
-               
                 Services.AddMvc();
                 //注册Cookie认证服务
                 Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -70,8 +69,9 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             app.UseMiddleware<CorsMiddleware.AccessControlAllowOrigin>();
             //app.UseHttpsRedirection();
             app.UseAuthorization();
+
             app.MapControllers();
-            //app.MapRazorPages();
+            app.MapRazorPages();
             app.UseFileServer(new FileServerOptions()
             {
                 EnableDirectoryBrowsing = false,

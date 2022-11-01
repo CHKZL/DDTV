@@ -11,5 +11,14 @@ namespace DDTV_WEB_Server.Pages
         {
             Message += $" 当前秒数:  { DateTime.Now.Second.ToString() }";
         }
+        public void AutoReceipt()
+        {
+            Message += $" 当前秒数:  { DateTime.Now.Second.ToString() }";
+        }
+
+        public IActionResult OnPostSave()
+        {
+            return RedirectToPage("List");
+        }
     }
 }

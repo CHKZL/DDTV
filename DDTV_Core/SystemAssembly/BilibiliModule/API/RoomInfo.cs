@@ -379,11 +379,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 url_data.FirstOrDefault(x => x.ProtocolName == "http_stream")?.Formats?.FirstOrDefault(x => x.FormatName == "flv")?.Codecs?.FirstOrDefault(x => x.CodecName == "avc");
                             foreach (var item in url_http_stream_flv_avc.UrlInfos)
                             {
+                                Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo);
+                                
+                                   
+                                
                                 if (!IsPlay && ForceCDNResolution)
                                 {
                                     if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
                                     {
                                         Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
+                                        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                                            roomInfo.Host = item.Host;
                                         return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
                                     }
                                 }
@@ -392,11 +398,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                     if (!item.Host.Contains(".mcdn."))
                                     {
                                         Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
+                                        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                                            roomInfo.Host = item.Host;
                                         return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
                                     }
                                     else
                                     {
                                         Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(mcdn):获取到CDN地址为{item.Host}的下载流，该地址为mcdn地址");
+                                        if(roomInfo!=null&&string.IsNullOrEmpty(roomInfo.Host))
+                                            roomInfo.Host = item.Host;
                                         return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
                                     }
                                 }
@@ -526,8 +536,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             string Host = Url.Replace(".com/","●").Split('●')[0]+".com";
                             if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo))
                             {
-                                roomInfo.Host = "[FLV] " + Host;
+                                roomInfo.Host = Host;
                             }
+                            if(IsPlay)
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功：{Url}");
                             return Url;
 

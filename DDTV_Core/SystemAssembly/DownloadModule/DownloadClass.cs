@@ -489,7 +489,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 {
                                     error++;
                                     Thread.Sleep(100);
-                                    hLSHostClass = HLS_Host.Get_HLS_Host(roomInfo, downloads);
+                                    hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
+                                    if(hLSHostClass.LiveStatus==false || string.IsNullOrEmpty(hLSHostClass.host))
+                                    {
+                                        break;
+                                    }
                                     Thread.Sleep(300);
                                     index = NetworkRequestModule.Get.Get.GetRequest(hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra);
                                 }

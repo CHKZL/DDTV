@@ -35,7 +35,7 @@ namespace DDTV_GUI.UpdateInterface
                         FileSize += (ulong)item.TotalDownloadCount;
                         Spe = NetClass.ConversionSize(item.DownloadSpe, NetClass.ConversionSizeType.BitRate);
                     }
-                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid, FilePath, Spe,A1.Value.Host);
+                    BindingData.RecList rec = new(A1.Value.uname, A1.Value.room_id, FileSize==0?"":NetClass.ConversionSize(FileSize), starttime.ToString("MM-dd HH:mm:ss"), A1.Value.title,A1.Value.uid, FilePath, Spe,A1.Value.Host);
                     _.Add(rec);
                 }
             }
