@@ -446,7 +446,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 });
             }
 
-            internal bool Download_HLS(Downloads downloads, RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
+            internal bool Download_HLS(ref Downloads downloads,ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
             {
                 try
                 {
@@ -490,7 +490,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     error++;
                                     Thread.Sleep(100);
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
-                                    if(hLSHostClass.LiveStatus==false || string.IsNullOrEmpty(hLSHostClass.host))
+                                    if(hLSHostClass.IsEffective)
                                     {
                                         break;
                                     }
