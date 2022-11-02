@@ -211,7 +211,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                            
                            
                         }
-                        if (downloads.DownloadCount > 100)
+                        if (downloads.TotalDownloadCount > 100)
                         {
                             roomInfo.DownloadedLog.Add(downloads);
                         }
@@ -423,7 +423,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 downloads.FileName = FileList[0];
                             }     
                         }
-                        if(downloads.DownloadCount>100)
+                        if(downloads.TotalDownloadCount > 100)
                         {
                             roomInfo.DownloadedLog.Add(downloads);
                         }
@@ -572,7 +572,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，理由：是否为重连任务:{!IsNewTask},弹幕总开关:{IsRecDanmu},房间弹幕录制设置:{RoomIsRecDanmu}");
                         }
 
-                        if (downloadClass.Download_HLS(downloadClass, roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
+                        if (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
                         {
                             if (!downloadClass.GetCancelState())
                             {
