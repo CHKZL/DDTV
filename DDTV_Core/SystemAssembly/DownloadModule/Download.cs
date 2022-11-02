@@ -208,7 +208,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.TotalDownloadCount += item.TotalDownloadCount;
                             downloads.Status = DownloadStatus.DownloadComplete;
                             downloads.FilePath = item.FilePath;
-                            roomInfo.DownloadedLog.Add(downloads);
+                            if(item.DownloadCount>100)
+                            {
+                                roomInfo.DownloadedLog.Add(downloads);
+                            }
+                           
                         }
                         //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
