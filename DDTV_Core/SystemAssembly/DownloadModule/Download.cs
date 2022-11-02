@@ -208,11 +208,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.TotalDownloadCount += item.TotalDownloadCount;
                             downloads.Status = DownloadStatus.DownloadComplete;
                             downloads.FilePath = item.FilePath;
-                            if(item.DownloadCount>100)
-                            {
-                                roomInfo.DownloadedLog.Add(downloads);
-                            }
                            
+                           
+                        }
+                        if (downloads.DownloadCount > 100)
+                        {
+                            roomInfo.DownloadedLog.Add(downloads);
                         }
                         //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
@@ -420,9 +421,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             if (FileList.Count > 0)
                             {
                                 downloads.FileName = FileList[0];
-                            }
+                            }     
+                        }
+                        if(downloads.DownloadCount>100)
+                        {
                             roomInfo.DownloadedLog.Add(downloads);
                         }
+                       
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
 
