@@ -33,7 +33,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static bool IsRecSC = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsRecSC, "True", CoreConfigClass.Group.Download));
         public static bool IsFlvSplit = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsFlvSplit, "False", CoreConfigClass.Group.Download));
         public static long FlvSplitSize = long.Parse(CoreConfig.GetValue(CoreConfigClass.Key.FlvSplitSize, "1073741824", CoreConfigClass.Group.Download));
-        public static bool IsHls = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHls, "False", CoreConfigClass.Group.Download));
+        public static bool IsHls = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHls, "True", CoreConfigClass.Group.Download));
         public static int WaitHLSTime = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WaitHLSTime, "15", CoreConfigClass.Group.Download));
 
         /// <summary>
