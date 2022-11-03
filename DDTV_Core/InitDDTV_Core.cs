@@ -23,7 +23,8 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-11-02 21:20:55";
+        public static string CompiledVersion = "2022-11-03 23:57:33";
+        public static bool WhetherInitializationIsComplet = false;//是否初始化完成
 
         /// <summary>
         /// 初始化COre
@@ -76,6 +77,7 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("Core");
                     break;
             }
+            WhetherInitializationIsComplet = true;
         }
 
         private static void FileOperation_PathAlmostFull(object? sender, string e)

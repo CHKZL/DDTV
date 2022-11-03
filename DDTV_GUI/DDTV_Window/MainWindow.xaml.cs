@@ -50,6 +50,8 @@ namespace DDTV_GUI.DDTV_Window
 
         public static DDTV_DanMu.MainWindow DanMuWindow = null;
 
+       
+
         public enum GuideMode
         {
             N,
@@ -134,7 +136,9 @@ namespace DDTV_GUI.DDTV_Window
             //        AddRoomCard(item.Value.uid);
             //    }
             //});
+            
         }
+
 
         private void AddRoomCard(long uid)
         {
@@ -439,6 +443,8 @@ namespace DDTV_GUI.DDTV_Window
             SelectDanMu_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
             SelectDanMu_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
             HLSToggle.IsChecked = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
+
+            WaitHLSTime.Value = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -1836,6 +1842,24 @@ namespace DDTV_GUI.DDTV_Window
             Growl.Success((IsHLS ? "打开" : "关闭") + "HLS优先");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (IsHLS ? "打开" : "关闭") + "HLS优先", false, null, false);
             CoreConfigFile.WriteConfigFile(true);
+        }
+
+        /// <summary>
+        /// HLS流等待时间设置
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void WaitHLSTime_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
+        {
+          
+            if(InitDDTV_Core.WhetherInitializationIsComplet && e.Info>10)
+            {
+                DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime = (int)e.Info;
+                CoreConfig.SetValue(CoreConfigClass.Key.WaitHLSTime, ((int)e.Info).ToString(), CoreConfigClass.Group.Download);
+                Growl.Success($"设置HLS等待时间为{(int)e.Info}秒");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"设置HLS等待时间为{(int)e.Info}秒", false, null, false);
+                CoreConfigFile.WriteConfigFile(true);
+            }
         }
     }
 }
