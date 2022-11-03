@@ -34,6 +34,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static bool IsFlvSplit = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsFlvSplit, "False", CoreConfigClass.Group.Download));
         public static long FlvSplitSize = long.Parse(CoreConfig.GetValue(CoreConfigClass.Key.FlvSplitSize, "1073741824", CoreConfigClass.Group.Download));
         public static bool IsHls = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHls, "False", CoreConfigClass.Group.Download));
+        public static int WaitHLSTime = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WaitHLSTime, "15", CoreConfigClass.Group.Download));
 
         /// <summary>
         /// 下载完成事件
@@ -50,6 +51,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 {
                     if (IsNewTask || !roomInfo.IsUserCancel)
                     {
+                        if (!IsNewTask)
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{roomInfo.uname}(房间号:{roomInfo.room_id},UID:{roomInfo.uid})因为服务器原因连接中断，尝试进行重连...");
+                        }
                         roomInfo.IsUserCancel = false;
                         if(IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
                         {
@@ -161,9 +166,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
+                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec))&& IsRecDanmu)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec为false，将不会储存弹幕相关数据");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec或IsRecDanmu为false，将不会储存弹幕相关数据");
                         }
                         if (!roomInfo.roomWebSocket.IsConnect)
                         {
@@ -174,7 +179,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                     if (!IsCancel)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
+                        //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
                         DownloadClass.Downloads downloads = new DownloadClass.Downloads();
                         DateTime StartTime = DateTime.MaxValue;
                         DateTime EndTime = DateTime.MinValue;
@@ -315,7 +320,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec为false，将不会储存弹幕相关数据");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec或IsRecDanmu为false，将不会储存弹幕相关数据");
                         }
                         if (!roomInfo.roomWebSocket.IsConnect)
                         {
@@ -385,7 +390,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     if (!IsCancel)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
+                        //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
                         DownloadClass.Downloads downloads = new DownloadClass.Downloads();
                         DateTime StartTime = DateTime.MaxValue;
                         DateTime EndTime = DateTime.MinValue;
@@ -497,7 +502,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
 
         /// <summary>
-        /// 增加FLV下载任务具体实现
+        /// 增加HLS下载任务具体实现
         /// </summary>
         /// <param name="uid">需要下载的房间uid号</param>
         /// <param name="IsNewTask">是否为新任务</param>
@@ -569,7 +574,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，理由：是否为重连任务:{!IsNewTask},弹幕总开关:{IsRecDanmu},房间弹幕录制设置:{RoomIsRecDanmu}");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:{(IsNewTask?"否":"是")},弹幕总开关:{(IsRecDanmu ? "是" : "否")},房间弹幕录制设置:{(RoomIsRecDanmu ? "是" : "否")}");
                         }
 
                         if (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))

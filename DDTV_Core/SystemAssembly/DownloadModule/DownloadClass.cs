@@ -490,7 +490,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     error++;
                                     Thread.Sleep(100);
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
-                                    if(hLSHostClass.IsEffective)
+                                    if (!hLSHostClass.LiveStatus)
+                                    {
+                                        return true;
+                                    }
+                                    if (hLSHostClass.IsEffective)
                                     {
                                         break;
                                     }
@@ -502,9 +506,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     break;
                                 }
                             }
-                           
-                           
-                            string[] M3 = index.Split('\n');
+                            string[] M3 = new string[0];
+                           if (!string.IsNullOrEmpty(index))
+                            {
+                                M3 = index.Split('\n');
+                            }
+                            
                             switch (ExtendedName)
                             {
                                 case "m4s":

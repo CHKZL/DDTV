@@ -74,17 +74,25 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             //开一个线程用于定时自动储存配置
             Task.Run(() =>
             {
+
                 while (true)
                 {
-                    try
+                    if (WhetherInitializationIsComplet)
                     {
-                        CoreConfigFile.WriteConfigFile();
+                        try
+                        {
+                            CoreConfigFile.WriteConfigFile();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Warn, $"配置文件定时储存出现错误", true, e);
+                        }
+                        Thread.Sleep(10 * 1000);
                     }
-                    catch (Exception e)
+                    else
                     {
-                        Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Warn, $"配置文件定时储存出现错误", true, e);
+                        Thread.Sleep(3 * 1000);
                     }
-                    Thread.Sleep(10 * 1000);
                 }
             });
         }
@@ -147,6 +155,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _IsBypass_SSL = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsBypass_SSL;
             var _SCSaveType = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType;
             var _IsHls = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
+            var _WaitHLSTime = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
         }
         /// <summary>
         /// 获取配置

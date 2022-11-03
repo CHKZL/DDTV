@@ -384,32 +384,44 @@
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="优先使用HLS进行录制" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
                                         <ToggleButton x:Name="HLSToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="168,4,0,6" HorizontalAlignment="Left" Width="36" Click="HLSToggle_Click">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="打开后会尝试使用HLS流进行录制（打开该选项后开播后会等待10-20秒开始接入流HLS流，如果30秒后没有检测到HLS流会降级到FLV进行录制）" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="打开后会尝试使用HLS流进行录制（打开该选项后开播后会等待若干秒后开始接入流HLS流，如果超过时间后没有检测到HLS流会降级到FLV进行录制）" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                       
+                                        <TextBlock HorizontalAlignment="Left" Margin="240,4,0,0" Text="HLS等待时间(秒)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <hc:NumericUpDown Name="WaitHLSTime" Value="20" Minimum="10" Increment="5" DecimalPlaces="0" Margin="366,0,394,0" ValueChanged="WaitHLSTime_ValueChanged">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="因为B站的机制为开始推流后若干秒才会生成HLS流，所以需要设定一个等待时间，如果超时后还没有HLS会降级到FLV模式录制，最低10秒，推荐20秒以上" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </hc:NumericUpDown>
+                                        
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="247,0,0,0" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="330,4,0,6" Click="TranscodToggle_Click" HorizontalAlignment="Left" Width="36">
+
+                                    </Grid>
+                                    <Grid Width="858">
+                                        <TextBlock HorizontalAlignment="Left" Margin="7,0,0,0" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="90,5,0,5" Click="TranscodToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="录制完成后将自动转码为MP4" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="417,4,0,0" Text="转码完成后自动删除原始FLV文件" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="658,4,0,6" Click="TranscodingCompleteAutoDeleteFiles_Click" HorizontalAlignment="Left" Width="36">
+                                        <TextBlock HorizontalAlignment="Left" Margin="152,0,0,0" Text="转码后删除FLV文件" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="297,9,0,9" Click="TranscodingCompleteAutoDeleteFiles_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="在网络比较差的情况下原始flv文件可能会有问题，但是能修复；如果使用有问题的flv转码并且删除了原始文件，该操作是不可逆的，请注意！" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                    </Grid>
-                                    <Grid Width="630" Height="40">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="启用单个文件大小限制(自动分割)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="IsFlvSplitToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="247,9,347,9" Click="IsFlvSplitToggle_Click">
+
+                                        <TextBlock HorizontalAlignment="Left" Margin="359,0,0,0" Text="启用单个文件大小限制(自动分割)" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <ToggleButton x:Name="IsFlvSplitToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="599,10,223,8" Click="IsFlvSplitToggle_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="注意1：该功能启用后，自动合并、自动转码、快速剪辑功能将无效；注意2：任务开始的时候开关状态就决定了该任务限制的大小，任务开始后该开关和对应的值的变化和任务无关" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                        <hc:ComboBox Name="FlvSplitSizeComboBox" hc:InfoElement.TitleWidth="55" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="文件大小" Margin="311,5,90,5" SelectionChanged="FlvSplitSizeComboBox_SelectionChanged">
+
+
+                                        <hc:ComboBox Name="FlvSplitSizeComboBox" hc:InfoElement.TitleWidth="55" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Title="文件大小" Margin="644,6,6,4" SelectionChanged="FlvSplitSizeComboBox_SelectionChanged">
                                             <ComboBoxItem Content="1GB" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="2GB" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="3GB" Tag="3"></ComboBoxItem>

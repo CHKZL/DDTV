@@ -349,6 +349,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：False
             /// </summary>
             IsHls,
+            /// <summary>
+            /// 等待HLS流的时间
+            /// 组：Download   默认值：15
+            /// </summary>
+            WaitHLSTime,
         }
     }
 }

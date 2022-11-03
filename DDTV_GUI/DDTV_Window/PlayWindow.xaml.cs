@@ -289,8 +289,9 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Error, $"【{name}({roomId})】试图加载视频流至播放器，被系统阻止", true,e,false);
                 Growl.WarningGlobal($"【{name}({roomId})】试图加载视频流至播放器，被系统阻止，请稍候再试");
             }
         }
