@@ -25,6 +25,12 @@ namespace DDTV_WEB_Server.Controllers
     /// </summary>
     public class Config_FileSplit : ProcessingControllerBase.ApiControllerBase
     {
+        /// <summary>
+        /// 修改自动切片的文件大小设置
+        /// </summary>
+        /// <param name="Size">切片大小，单位为btye（0为无限制）</param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
         [HttpPost(Name = "Config_FileSplit")]
         public ActionResult post([FromForm] long Size, [FromForm] string cmd)
         {
