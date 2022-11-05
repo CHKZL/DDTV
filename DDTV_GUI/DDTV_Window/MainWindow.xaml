@@ -302,13 +302,13 @@
                                     <TextBlock Name="ImportVTBButton" HorizontalAlignment="Left" Margin="242,3,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                 </Grid>
                                 <Grid Width="825"  Margin="5">
-                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="对文件进行手动转码：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                    <Button Name="TranscodingSelectFilesManual" Content="选择文件" Margin="167,0,0,0" HorizontalAlignment="Left" Click="Button_TranscodingSelectFilesManual">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="对文件进行手动修复/转码：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Name="TranscodingSelectFilesManual" Content="选择文件" Margin="200,2,0,0" HorizontalAlignment="Left" Click="Button_TranscodingSelectFilesManual" VerticalAlignment="Top">
                                         <hc:AdornerElement.Instance>
-                                            <hc:Poptip Content="点击按钮，选择文件后会自动进行转码操作" PlacementType="BottomLeft"/>
+                                            <hc:Poptip Content="点击按钮，选择文件后会进行修复/转码操作" PlacementType="BottomLeft"/>
                                         </hc:AdornerElement.Instance>
                                     </Button>
-                                    <TextBlock Name="ManualTranscodingProgress" HorizontalAlignment="Left" Margin="242,0,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" Width="583"/>
+                                    <TextBlock Name="ManualTranscodingProgress" HorizontalAlignment="Left" Margin="285,0,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" Width="540"/>
                                 </Grid>
                                 <!--<Grid Width="825"  Margin="5">
                                     <TextBlock HorizontalAlignment="Left" Margin="5" Text="打开弹幕浮窗：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
@@ -387,14 +387,14 @@
                                                 <hc:Poptip Content="打开后会尝试使用HLS流进行录制（打开该选项后开播后会等待若干秒后开始接入流HLS流，如果超过时间后没有检测到HLS流会降级到FLV进行录制）" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
-                                       
+
                                         <TextBlock HorizontalAlignment="Left" Margin="240,4,0,0" Text="HLS等待时间(秒)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <hc:NumericUpDown Name="WaitHLSTime" Value="20" Minimum="10" Increment="5" DecimalPlaces="0" Margin="366,0,394,0" ValueChanged="WaitHLSTime_ValueChanged">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="因为B站的机制为开始推流后若干秒才会生成HLS流，所以需要设定一个等待时间，如果超时后还没有HLS会降级到FLV模式录制，最低10秒，推荐20秒以上" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </hc:NumericUpDown>
-                                        
+
 
 
                                     </Grid>

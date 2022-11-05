@@ -457,7 +457,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //Path="D:"+Path.Substring(1, Path.Length-1);
                     Path = Tool.FileOperation.CreateAll(Path);
                     downloads.FlvFileList.Add(downloads.FilePath);
-                    FileStream fs = new FileStream(downloads.FilePath + FileName + $".mp4", FileMode.Create);
+                    downloads.FileName = downloads.FilePath + FileName + $".mp4";
+                    FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
                     try
                     {
                         while (true)

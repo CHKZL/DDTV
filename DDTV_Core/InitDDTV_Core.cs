@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-11-03 23:57:33";
+        public static string CompiledVersion = "2022-11-05 18:24:23";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
 
         /// <summary>
@@ -34,6 +34,7 @@ namespace DDTV_Core
             InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
+            Console.WriteLine($"有任何问题欢迎加群：338182356 直接沟通");
             Log.LogInit(LogClass.LogType.Debug);
             //TestVetInfo();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
