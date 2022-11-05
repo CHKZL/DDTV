@@ -1580,7 +1580,7 @@ namespace DDTV_GUI.DDTV_Window
         private static CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
         private bool IsTranscoding = false;
         /// <summary>
-        /// 手动转码选择文件
+        /// 手动修复/转码选择文件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -1592,25 +1592,27 @@ namespace DDTV_GUI.DDTV_Window
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok && File.Exists(dialog.FileName))
                 {
                     FileInfo fileInfo = new FileInfo(dialog.FileName);
-                    if (fileInfo.Extension.ToLower() != ".flv")
+                    
+                    if (fileInfo.Extension.ToLower() != ".flv" && fileInfo.Extension.ToLower() !=".mp4")
                     {
-                        MessageBox.Show("选择的文件不是DDTV录制的FVL文件！");
+                        MessageBox.Show("选择的文件不是DDTV录制的FVL或mp4文件！");
                         return;
                     }
+                    bool IsMp4File = fileInfo.Extension.ToLower()==".mp4"?true:false;
                     ManualTranscodingProgress.Text = $"后台正在进行文件转码:{fileInfo.Name}";
                     IsTranscoding = true;
-                    TranscodingSelectFilesManual.Content = "转码中";
+                    TranscodingSelectFilesManual.Content = "修复/转码中";
                     Task.Factory.StartNew(() =>
                     {
                         var TR = Transcod.CallFFMPEG_FLV(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
-                            AfterFilePath = dialog.FileName,
-                            BeforeFilePath = dialog.FileName
+                            AfterFilePath = IsMp4File ? dialog.FileName.Replace(".mp4", "_fix.mp4") : dialog.FileName,
+                            BeforeFilePath = dialog.FileName,
                         });
                         this.Dispatcher.Invoke(new Action(() =>
                         {
-                            ManualTranscodingProgress.Text = $"手动文件转码完成";
+                            ManualTranscodingProgress.Text = $"手动文件修复/转码完成，输出文件到原始文件路径";
                             IsTranscoding = false;
                             TranscodingSelectFilesManual.Content = "选择文件";
                         }));

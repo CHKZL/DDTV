@@ -30,6 +30,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 Process process = new Process();
                 TimeSpan all = new TimeSpan(), now = new TimeSpan();
                 int progress = -1;
+                string DleFile = transcodClass.BeforeFilePath;
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     process.StartInfo.FileName = "./plugins/ffmpeg/ffmpeg.exe";
@@ -195,18 +196,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 DDTV_Core.Tool.FileOperation.Del($"{r}.txt");
                 Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
                 transcodClass.IsTranscod = true;
-                if (TranscodingCompleteAutoDeleteFiles && File.Exists(transcodClass.AfterFilePath))
-                {
-                    try
-                    {
-                        FileOperation.Del(transcodClass.BeforeFilePath);
-                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, $"转码后删除文件:{transcodClass.BeforeFilePath}成功");
-                    }
-                    catch (Exception e)
-                    {
-                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Warn, $"转码后删除文件:{transcodClass.BeforeFilePath}失败，详细日志已写入。", true, e);
-                    }
-                }
+              
                 transcodClass.IsTranscod = false;
                 GC.Collect();
                 Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，GC");

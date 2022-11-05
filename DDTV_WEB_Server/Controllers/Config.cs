@@ -12,6 +12,12 @@ namespace DDTV_WEB_Server.Controllers
    /// </summary>
     public class Config_Transcod : ProcessingControllerBase.ApiControllerBase
     {
+        /// <summary>
+        /// 自动转码开关
+        /// </summary>
+        /// <param name="state">是否打开自动转码</param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
         [HttpPost(Name = "Config_Transcod")]
         public ActionResult post([FromForm] bool state,[FromForm] string cmd)
         {
@@ -61,11 +67,14 @@ namespace DDTV_WEB_Server.Controllers
             return Content(MessageBase.Success(nameof(Config_FileSplit), text), "application/json");
         }
     }
-    /// <summary>
-    /// 弹幕总开关接口
-    /// </summary>
     public class Config_DanmuRec : ProcessingControllerBase.ApiControllerBase
     {
+        /// <summary>
+        /// 弹幕总开关接口
+        /// </summary>
+        /// <param name="state">是否打开弹幕录制总开关</param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
         [HttpPost(Name = "Config_DanmuRec")]
         public ActionResult post([FromForm] bool state, [FromForm] string cmd)
         {

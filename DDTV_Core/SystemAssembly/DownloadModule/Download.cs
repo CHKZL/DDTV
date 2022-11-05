@@ -176,6 +176,30 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
 
                     }
+                    //转码
+
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误。");
+
+                    if (!string.IsNullOrEmpty(downloadClass.FileName) && File.Exists(downloadClass.FileName))
+                    {
+
+                        var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
+                        {
+                            AfterFilenameExtension = ".mp4",
+                            BeforeFilePath = downloadClass.FileName,
+                            AfterFilePath = downloadClass.FileName.Replace(".mp4", "_fix.mp4"),
+                        });
+                        roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
+                        WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{downloadClass.FileName}]不存在！");
+                    }
+
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】[{downloadClass.FileName}]修复任务已全部完成");
+
+
 
                     if (!IsCancel)
                     {
@@ -194,7 +218,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.Name = item.Name;
                             downloads.IsDownloading = false;
                             downloads.Url = String.Empty;
-                            downloads.FileName = OkFileName;
+                            downloads.FileName = item.FileName;
                             downloads.HLSRecorded = new List<string>();
                            
                             if (item.Title != downloads.Title)
