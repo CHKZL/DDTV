@@ -158,7 +158,7 @@ namespace DDTV_GUI.BindingData
         {
             this.name = name;
             this.roomid = roomid;
-            this.downszie = String.IsNullOrEmpty(downszie)?"连接中": downszie;
+            this.downszie = roomid!=0?String.IsNullOrEmpty(downszie)?"连接中": downszie:"";
             this.starttime = starttime;
             this.title = title;
             this.uid = uid;
