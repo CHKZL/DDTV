@@ -596,7 +596,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:{(IsNewTask?"否":"是")},弹幕总开关:{(IsRecDanmu ? "是" : "否")},房间弹幕录制设置:{(RoomIsRecDanmu ? "是" : "否")}");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:[{(IsNewTask?"否":"是")}],弹幕总开关:[{(IsRecDanmu ? "是" : "否")}],房间弹幕录制设置:[{(RoomIsRecDanmu ? "是" : "否")}]");
                         }
 
                         if (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))

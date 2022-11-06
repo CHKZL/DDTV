@@ -461,10 +461,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     downloads.FileName = downloads.FilePath + FileName + $".mp4";
                     roomInfo.Files.Add(downloads.FileName);
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
+                    int WaitingTime = 1000;
                     try
                     {
                         while (true)
                         {
+                            WaitingTime = 1000;
                             if (IsCancel)
                             {
 
@@ -532,11 +534,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             Process.Add($"{EXTMAP}");
                                             byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + EXTMAP + "?" + hLSHostClass.extra);
-                                            downloads.TotalDownloadCount += fileInfo.Length;
-                                            DownloadCount += fileInfo.Length;
-                                            fs.Write(fileInfo);
-                                            len++;
-
+                                            if (fileInfo != null)
+                                            {
+                                                downloads.TotalDownloadCount += fileInfo.Length;
+                                                DownloadCount += fileInfo.Length;
+                                                fs.Write(fileInfo);
+                                                len++;
+                                            }
+                                            else
+                                            {
+                                                WaitingTime = 100;
+                                            }
                                         }
                                         for (int i = 0; i < M3.Length; i++)
                                         {
@@ -546,11 +554,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 {
                                                     Process.Add(M3[i + 1].Split('.')[0]);
                                                     byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + M3[i + 1] + "?" + hLSHostClass.extra);
-                                                    downloads.TotalDownloadCount += fileInfo.Length;
-                                                    DownloadCount += fileInfo.Length;
-                                                    fs.Write(fileInfo);
 
-                                                    len++;
+                                                    if (fileInfo != null)
+                                                    {
+                                                        downloads.TotalDownloadCount += fileInfo.Length;
+                                                        DownloadCount += fileInfo.Length;
+                                                        fs.Write(fileInfo);
+                                                        len++;
+                                                    }
+                                                    else
+                                                    {
+                                                        WaitingTime = 100;
+                                                    }
+
                                                 }
                                             }
                                         }
@@ -573,9 +589,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 {
                                                     Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
                                                     byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
-                                                    downloads.TotalDownloadCount += fileInfo.Length;
-                                                    DownloadCount += fileInfo.Length;
-                                                    fs.Write(fileInfo);                                     
+                                                    if (fileInfo != null)
+                                                    {
+                                                        downloads.TotalDownloadCount += fileInfo.Length;
+                                                        DownloadCount += fileInfo.Length;
+                                                        fs.Write(fileInfo);
+                                                        len++;
+                                                    }
+                                                    else
+                                                    {
+                                                        WaitingTime = 100;
+                                                    }
                                                 }
                                             }
                                         }
@@ -589,7 +613,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     }
                             }
                        
-                            Thread.Sleep(1000);
+                            Thread.Sleep(WaitingTime);
                             TimeSpan ts = DateTime.Now - SpeedCalibration_Time;    //计算时间差
                             if (ts.TotalMilliseconds > 3000)
                             {
@@ -613,15 +637,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                         }
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】下载循环中出现意外错误！错误详情已写txt文本中",true,e,true);
                         fs.Close();
                         fs.Dispose();
                         return false;
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】新建下载出现意外错误！错误详情已写txt文本中", true, e, true);
                     return false;
                 }
             }

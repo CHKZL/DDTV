@@ -430,7 +430,7 @@ namespace DDTV_GUI.DDTV_Window
 
             DoNotSleepWhileDownloadingIcon.IsChecked = Dokidoki.IsDoNotSleepState;
             ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
-            TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
+            //TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
             DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
             SpaceIsInsufficientWarn.IsChecked = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
             ReplaceAPIText.Text = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;

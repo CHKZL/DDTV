@@ -119,12 +119,31 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         }
         public static byte[] GetFile_Bytes(string URL)
         {
-            var wc = new WebClient();
-            wc.Headers.Add("Referer: https://www.bilibili.com/");
-            wc.Headers.Add("ContentType: application/x-www-form-urlencoded");
-            wc.Headers.Add("Accept: */*");
-            wc.Headers.Add("UserAgent: " + NetClass.UA());
-            return wc.DownloadData(URL);
+            try
+            {
+                var wc = new WebClient();
+                wc.Headers.Add("Referer: https://www.bilibili.com/");
+                wc.Headers.Add("ContentType: application/x-www-form-urlencoded");
+                wc.Headers.Add("Accept: */*");
+                wc.Headers.Add("UserAgent: " + NetClass.UA());
+                return wc.DownloadData(URL);
+            }
+            catch (WebException e)
+            {
+                switch(e.Status)
+                {
+                    case WebExceptionStatus.Timeout:
+                        return null;
+                    default:
+                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetFile_Bytes请求错误:{e.Status}");
+                        return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetFile_Bytes请求发生意外错误，详情已写入txt",true,e,true);
+                return null;
+            }
         }
     }
 }
