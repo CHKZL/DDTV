@@ -11,7 +11,7 @@
         InactiveGlowColor="#fb7299"
         Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
-        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000">
+        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000" ResizeMode="NoResize">
 
     <Grid Background="White">
         <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">
@@ -400,17 +400,17 @@
                                     </Grid>
                                     <Grid Width="858">
                                         <TextBlock HorizontalAlignment="Left" Margin="7,0,0,0" Text="FLV转MP4" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="90,5,0,5" Click="TranscodToggle_Click" HorizontalAlignment="Left" Width="36">
+                                        <ToggleButton x:Name="TranscodToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="90,5,0,5" Click="TranscodToggle_Click" HorizontalAlignment="Left" Width="36" >
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="录制完成后将自动转码为MP4" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
                                         <TextBlock HorizontalAlignment="Left" Margin="152,0,0,0" Text="转码后删除FLV文件" Style="{StaticResource TextBlockSubTitle}"/>
-                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="297,9,0,9" Click="TranscodingCompleteAutoDeleteFiles_Click" HorizontalAlignment="Left" Width="36">
-                                            <hc:AdornerElement.Instance>
+                                        <ToggleButton x:Name="TranscodingCompleteAutoDeleteFiles" Style="{StaticResource ToggleButtonSwitch}" Margin="297,9,0,9" Click="TranscodingCompleteAutoDeleteFiles_Click" HorizontalAlignment="Left" Width="36" IsChecked="True" IsEnabled="False">
+                                            <!--<hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="在网络比较差的情况下原始flv文件可能会有问题，但是能修复；如果使用有问题的flv转码并且删除了原始文件，该操作是不可逆的，请注意！" PlacementType="BottomLeft"/>
-                                            </hc:AdornerElement.Instance>
+                                            </hc:AdornerElement.Instance>-->
                                         </ToggleButton>
 
                                         <TextBlock HorizontalAlignment="Left" Margin="359,0,0,0" Text="启用单个文件大小限制(自动分割)" Style="{StaticResource TextBlockSubTitle}"/>

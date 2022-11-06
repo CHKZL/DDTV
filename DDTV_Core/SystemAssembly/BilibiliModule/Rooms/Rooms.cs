@@ -177,43 +177,43 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             switch (cacheType)
             {
                 case DataCacheModule.DataCacheClass.CacheType.area:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.area_name:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.area_v2_id:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.area_v2_name:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.area_v2_parent_id:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.area_v2_parent_name:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.broadcast_type:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.cover_from_user:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.face:
                     return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.hidden_till:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.keyframe:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_status:
                     return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_time:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.lock_till:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.room_id:
                     return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.short_id:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.tag_name:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.tags:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.uid:
-                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid });
+                    return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.uname:
                     return API.UserInfo.info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.need_p2p:

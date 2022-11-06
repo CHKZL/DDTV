@@ -187,6 +187,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             roomInfo.uname = roomCards.name;
                             roomInfo.Like = roomCards.Like;
                             roomInfo.IsRecDanmu = roomCards.IsRecDanmu;
+                            roomInfo.IsTemporaryPlay = roomCards.IsTemporaryPlay;
                         }
                         else
                         {
@@ -196,6 +197,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             roomInfo.uname = roomInfo.uname;
                             roomInfo.Like = roomInfo.Like;
                             roomInfo.IsRecDanmu = roomInfo.IsRecDanmu;
+                            roomInfo.IsTemporaryPlay = roomInfo.IsTemporaryPlay;
                             switch (Type)
                             {
                                 case 1:

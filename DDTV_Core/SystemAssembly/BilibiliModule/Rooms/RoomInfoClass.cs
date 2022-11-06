@@ -303,6 +303,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// 当前Host地址
             /// </summary>
             public string Host { set; get; } = "";
+            /// <summary>
+            /// 下载的文件记录
+            /// </summary>
+            public List<string> Files { set; get; } = new List<string>();
         }
         public class RoomWebSocket
         {

@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Version>3.3.0.804</Version>
+    <Version>3.3.1.806</Version>
     <Authors>ami</Authors>
     <ApplicationIcon>DDTV.ico</ApplicationIcon>
   </PropertyGroup>

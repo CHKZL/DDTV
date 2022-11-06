@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace DDTV_Core.Tool.TranscodModule
 {
@@ -25,7 +26,7 @@ namespace DDTV_Core.Tool.TranscodModule
         {
             try
             {
-                Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"开始转码文件：[{transcodClass.BeforeFilePath}]");
+                Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"开始修复或转码文件：[{transcodClass.BeforeFilePath}]");
                 transcodClass.IsTranscod = true;
                 Process process = new Process();
                 TimeSpan all = new TimeSpan(), now = new TimeSpan();
@@ -91,7 +92,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 process.Exited += delegate (object sender, EventArgs e)
                 {
                     Process P = (Process)sender;
-                    Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "转码任务完成:" + P.StartInfo.Arguments);
+                    Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "修复/转码任务完成:" + P.StartInfo.Arguments);
                 };
                 if (process.HasExited)
                 {
@@ -99,23 +100,33 @@ namespace DDTV_Core.Tool.TranscodModule
                     process.WaitForExit(1200);
                 }
                 process.Close();
-                Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
+                //Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
                 transcodClass.IsTranscod = true;
-                if (TranscodingCompleteAutoDeleteFiles && File.Exists(transcodClass.AfterFilePath))
+                Thread.Sleep(2000);
+                if (File.Exists(transcodClass.AfterFilePath))
                 {
-                    try
-                    {
-                        FileOperation.Del(transcodClass.BeforeFilePath);
-                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, $"转码后删除文件:{transcodClass.BeforeFilePath}成功");
-                    }
-                    catch (Exception e)
-                    {
-                        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Warn, $"转码后删除文件:{transcodClass.BeforeFilePath}失败，详细日志已写入。", true, e);
-                    }
+                    Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件：[{transcodClass.BeforeFilePath}]");
+                    FileOperation.Del(transcodClass.BeforeFilePath);
                 }
+                else
+                {
+                    Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件失败。原因：[{transcodClass.AfterFilePath}]不存在");
+                }
+                //if (TranscodingCompleteAutoDeleteFiles && File.Exists(transcodClass.AfterFilePath))
+                //{
+                //    try
+                //    {
+                //        FileOperation.Del(transcodClass.BeforeFilePath);
+                //        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, $"转码后删除文件:{transcodClass.BeforeFilePath}成功");
+                //    }
+                //    catch (Exception e)
+                //    {
+                //        SystemAssembly.Log.Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Warn, $"转码后删除文件:{transcodClass.BeforeFilePath}失败，详细日志已写入。", true, e);
+                //    }
+                //}
                 transcodClass.IsTranscod = false;
                 GC.Collect();
-                Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，GC");
+                //Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，GC");
                 return transcodClass;
             }
             catch (Exception e)
