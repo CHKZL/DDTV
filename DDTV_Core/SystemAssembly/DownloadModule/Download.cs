@@ -179,25 +179,27 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //转码
 
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误。");
-
-                    if (!string.IsNullOrEmpty(downloadClass.FileName) && File.Exists(downloadClass.FileName))
+                    foreach (var item in roomInfo.Files)
                     {
-
-                        var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
+                        if (!string.IsNullOrEmpty(item) && File.Exists(item))
                         {
-                            AfterFilenameExtension = ".mp4",
-                            BeforeFilePath = downloadClass.FileName,
-                            AfterFilePath = downloadClass.FileName.Replace(".mp4", "_fix.mp4"),
-                        });
-                        roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
-                        WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
+                            var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
+                            {
+                                AfterFilenameExtension = ".mp4",
+                                BeforeFilePath = item,
+                                AfterFilePath = item.Replace(".mp4", "_fix.mp4"),
+                            });
+                            roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
+                            WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item}]不存在！");
+                        }
                     }
-                    else
-                    {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{downloadClass.FileName}]不存在！");
-                    }
+                    
 
-                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】[{downloadClass.FileName}]修复任务已全部完成");
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】修复任务已全部完成");
 
 
 

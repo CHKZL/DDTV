@@ -22,8 +22,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="UIDList">需要更新的UID列表</param>
         /// <param name="query">需要返回信息的UID</param>
         /// <returns></returns>
-        internal static RoomInfoClass.RoomInfo get_status_info_by_uids(List<long> UIDList, long query = 0)
+        public static List<RoomInfoClass.RoomInfo> get_status_info_by_uids(List<long> UIDList,bool IsTmp=false)
         {
+            List<RoomInfoClass.RoomInfo> info = new List<RoomInfoClass.RoomInfo>();
             if (UIDList.Count > 0)
             {
                 string LT = "";
@@ -45,7 +46,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 {
                     Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_status_info_by_uids获取网络数据为空或超时");
                     Thread.Sleep(800);
-                    return get_status_info_by_uids(UIDList, query);
+                    return get_status_info_by_uids(UIDList);
                 }
                 JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
                 if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
@@ -55,79 +56,123 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         if (RoomList.Count() > 0)
                         {
                             IList<JToken> obj = JObject.Parse(RoomList.ToString());
-                            for (int i = 0 ; i < RoomList.Count() ; i++)
+                            for (int i = 0; i < RoomList.Count(); i++)
                             {
                                 long uid = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(RoomList[((JProperty)obj[i]).Name].ToString()).uid;
-                                if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
+                                if (IsTmp)
                                 {
+                                    
                                     if (((JProperty)obj[i]).Name != null && RoomList[((JProperty)obj[i]).Name] != null)
                                     {
                                         string name = RoomList[((JProperty)obj[i]).Name].ToString();
-                                        Rooms.Rooms.RoomInfo[uid].area = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area;
-                                        Rooms.Rooms.RoomInfo[uid].area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_name;
-                                        Rooms.Rooms.RoomInfo[uid].area_v2_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_id;
-                                        Rooms.Rooms.RoomInfo[uid].area_v2_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_name;
-                                        Rooms.Rooms.RoomInfo[uid].area_v2_parent_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_id;
-                                        Rooms.Rooms.RoomInfo[uid].area_v2_parent_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_name;
-                                        Rooms.Rooms.RoomInfo[uid].broadcast_type = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).broadcast_type;
-                                        Rooms.Rooms.RoomInfo[uid].cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).cover_from_user;
-                                        Rooms.Rooms.RoomInfo[uid].face = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).face;
-                                        Rooms.Rooms.RoomInfo[uid].hidden_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).hidden_till;
-                                        Rooms.Rooms.RoomInfo[uid].keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).keyframe;
-                                        Rooms.Rooms.RoomInfo[uid].live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_status;
-                                        Rooms.Rooms.RoomInfo[uid].live_time = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_time;
-                                        Rooms.Rooms.RoomInfo[uid].lock_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).lock_till;
-                                        Rooms.Rooms.RoomInfo[uid].online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).online;
-                                        Rooms.Rooms.RoomInfo[uid].room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).room_id;
-                                        Rooms.Rooms.RoomInfo[uid].short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).short_id;
-                                        Rooms.Rooms.RoomInfo[uid].tag_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).tag_name;
-                                        Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).title);
-                                        Rooms.Rooms.RoomInfo[uid].uname = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).uname;
+                                        RoomInfoClass.RoomInfo room = new RoomInfoClass.RoomInfo();
+                                        room.area = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area;
+                                        room.area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_name;
+                                        room.area_v2_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_id;
+                                        room.area_v2_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_name;
+                                        room.area_v2_parent_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_id;
+                                        room.area_v2_parent_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_name;
+                                        room.broadcast_type = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).broadcast_type;
+                                        room.cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).cover_from_user;
+                                        room.face = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).face;
+                                        room.hidden_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).hidden_till;
+                                        room.keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).keyframe;
+                                        room.live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_status;
+                                        room.live_time = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_time;
+                                        room.lock_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).lock_till;
+                                        room.online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).online;
+                                        room.room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).room_id;
+                                        room.short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).short_id;
+                                        room.tag_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).tag_name;
+                                        room.title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).title);
+                                        room.uname = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).uname;
+                                        room.uid = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).uid;
+                                        info.Add(room);
                                     }
                                 }
                                 else
                                 {
-                                    Rooms.Rooms.RoomInfo.Add(uid, JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(RoomList[((JProperty)obj[i]).Name].ToString()));
-                                }
-                                //开始更新该API对应的缓存信息
-                                DataCache.SetCache(CacheType.area, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.area_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_name.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.area_v2_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_id.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.area_v2_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_name.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.area_v2_parent_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_parent_id.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.area_v2_parent_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_parent_name.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.broadcast_type, uid.ToString(), Rooms.Rooms.RoomInfo[uid].broadcast_type.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.cover_from_user, uid.ToString(), Rooms.Rooms.RoomInfo[uid].cover_from_user.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.face, uid.ToString(), Rooms.Rooms.RoomInfo[uid].face.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.hidden_till, uid.ToString(), Rooms.Rooms.RoomInfo[uid].hidden_till.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.keyframe, uid.ToString(), Rooms.Rooms.RoomInfo[uid].keyframe.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);
-                                DataCache.SetCache(CacheType.live_time, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_time.ToString(), 0);
-                                DataCache.SetCache(CacheType.lock_till, uid.ToString(), Rooms.Rooms.RoomInfo[uid].lock_till.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 0);
-                                DataCache.SetCache(CacheType.room_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].room_id.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
-                                DataCache.SetCache(CacheType.tags, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tags.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.tag_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tag_name.ToString(), 60 * 1000);
-                                DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
-                                DataCache.SetCache(CacheType.uname, uid.ToString(), Rooms.Rooms.RoomInfo[uid].uname.ToString(), int.MaxValue);
-                                if (UIDList.Count() == 1)
-                                {
-                                    //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"调用更新房间状态API回调成功，已更新房间信息");
-                                    return Rooms.Rooms.RoomInfo[uid];
+                                    if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
+                                    {
+                                        if (((JProperty)obj[i]).Name != null && RoomList[((JProperty)obj[i]).Name] != null)
+                                        {
+                                            string name = RoomList[((JProperty)obj[i]).Name].ToString();
+                                            Rooms.Rooms.RoomInfo[uid].area = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area;
+                                            Rooms.Rooms.RoomInfo[uid].area_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_name;
+                                            Rooms.Rooms.RoomInfo[uid].area_v2_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_id;
+                                            Rooms.Rooms.RoomInfo[uid].area_v2_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_name;
+                                            Rooms.Rooms.RoomInfo[uid].area_v2_parent_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_id;
+                                            Rooms.Rooms.RoomInfo[uid].area_v2_parent_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).area_v2_parent_name;
+                                            Rooms.Rooms.RoomInfo[uid].broadcast_type = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).broadcast_type;
+                                            Rooms.Rooms.RoomInfo[uid].cover_from_user = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).cover_from_user;
+                                            Rooms.Rooms.RoomInfo[uid].face = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).face;
+                                            Rooms.Rooms.RoomInfo[uid].hidden_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).hidden_till;
+                                            Rooms.Rooms.RoomInfo[uid].keyframe = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).keyframe;
+                                            Rooms.Rooms.RoomInfo[uid].live_status = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_status;
+                                            Rooms.Rooms.RoomInfo[uid].live_time = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).live_time;
+                                            Rooms.Rooms.RoomInfo[uid].lock_till = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).lock_till;
+                                            Rooms.Rooms.RoomInfo[uid].online = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).online;
+                                            Rooms.Rooms.RoomInfo[uid].room_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).room_id;
+                                            Rooms.Rooms.RoomInfo[uid].short_id = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).short_id;
+                                            Rooms.Rooms.RoomInfo[uid].tag_name = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).tag_name;
+                                            Rooms.Rooms.RoomInfo[uid].title = Tool.FileOperation.CheckFilenames(JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).title);
+                                            Rooms.Rooms.RoomInfo[uid].uname = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(name).uname;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Rooms.Rooms.RoomInfo.Add(uid, JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(RoomList[((JProperty)obj[i]).Name].ToString()));
+                                    }
+                                    //开始更新该API对应的缓存信息
+                                    DataCache.SetCache(CacheType.area, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.area_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_name.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.area_v2_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_id.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.area_v2_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_name.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.area_v2_parent_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_parent_id.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.area_v2_parent_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].area_v2_parent_name.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.broadcast_type, uid.ToString(), Rooms.Rooms.RoomInfo[uid].broadcast_type.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.cover_from_user, uid.ToString(), Rooms.Rooms.RoomInfo[uid].cover_from_user.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.face, uid.ToString(), Rooms.Rooms.RoomInfo[uid].face.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.hidden_till, uid.ToString(), Rooms.Rooms.RoomInfo[uid].hidden_till.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.keyframe, uid.ToString(), Rooms.Rooms.RoomInfo[uid].keyframe.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.live_status, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_status.ToString(), 0);
+                                    DataCache.SetCache(CacheType.live_time, uid.ToString(), Rooms.Rooms.RoomInfo[uid].live_time.ToString(), 0);
+                                    DataCache.SetCache(CacheType.lock_till, uid.ToString(), Rooms.Rooms.RoomInfo[uid].lock_till.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.online, uid.ToString(), Rooms.Rooms.RoomInfo[uid].online.ToString(), 0);
+                                    DataCache.SetCache(CacheType.room_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].room_id.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.short_id, uid.ToString(), Rooms.Rooms.RoomInfo[uid].short_id.ToString(), int.MaxValue);
+                                    DataCache.SetCache(CacheType.tags, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tags.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.tag_name, uid.ToString(), Rooms.Rooms.RoomInfo[uid].tag_name.ToString(), 60 * 1000);
+                                    DataCache.SetCache(CacheType.title, uid.ToString(), Tool.FileOperation.CheckFilenames(Rooms.Rooms.RoomInfo[uid].title.ToString()), 0);
+                                    DataCache.SetCache(CacheType.uname, uid.ToString(), Rooms.Rooms.RoomInfo[uid].uname.ToString(), int.MaxValue);
+                                    if (UIDList.Count() == 1)
+                                    {
+                                        //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"调用更新房间状态API回调成功，已更新房间信息");
+                                        return new List<RoomInfoClass.RoomInfo>() { Rooms.Rooms.RoomInfo[uid]};
+                                    }
                                 }
                             }
                         }
                         else
                         {
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"更新房间开播状态失败，稍后重试（偶尔提示可以无视本消息）");
-                            return null;
+                            info.Add(new RoomInfoClass.RoomInfo());
+                            return info;
                         }
                     }
                 }
             }
             //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"收到的UIDList长度为0，调用更新房间状态API回调失败");
-            return null;
+            if(IsTmp)
+            {
+                return info;
+            }
+            else
+            {
+                info.Add(new RoomInfoClass.RoomInfo());
+                return info;
+            }
+           
         }
         /// <summary>
         /// 获取房间初始化信息

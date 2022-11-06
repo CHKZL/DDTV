@@ -42,97 +42,110 @@ namespace DDTV_GUI.WPFControl
         {
             bool UIDCK = UIDRadio.IsChecked.Value;
             bool RoomIdCK = RoomIdRadio.IsChecked.Value;
-            string _UID = UIDInputBox.Text;
-           
-            if (string.IsNullOrEmpty(_UID))
+            string InputValue = UIDInputBox.Text;
+            List<long> Uids=new List<long>();
+            List<long> ErrorUids = new List<long>();
+            if (string.IsNullOrEmpty(InputValue))
             {
-                Growl.Warning($"Uid/RoomID不能为空");
+                Growl.Warning($"输入内容不能为空");
                 return;
             }
-            if (long.TryParse(_UID, out long UID))
+
+            if(RoomIdCK)
             {
-                if (RoomIdCK)
+                if (long.TryParse(InputValue, out long RoomId))
                 {
-                    var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.get_info(0, UID, false);
-                    if(roomInfo != null)
+                    if(RoomId<1)
                     {
-                        UID= roomInfo.uid;
-                    }
-                    else
-                    {
-                        Growl.WarningGlobal($"该房间号或UID不存在！");
+                        Growl.WarningGlobal($"房间号不能为负数！");
                         return;
                     }
-                }
-
-                if (UID <= 0)
-                {
-                    Growl.WarningGlobal($"房间号或UID不能为负数！");
-                    return;
-                }
-                
-                if(IsTMP && !Rooms.RoomInfo.ContainsKey(UID))
-                {
-                    Rooms.RoomInfo.Add(UID, new RoomInfoClass.RoomInfo()
-                    {
-                        uid = UID,
-                        IsTemporaryPlay=true,
-                        IsAutoRec=false,
-                        IsRecDanmu=false,
-                        IsRemind=false,
-                    });
-                }
-                if (int.TryParse(Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), out int RoomId))
-                {
-                    string Name = Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
-                    if (IsTMP)
-                    {
-                        DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(UID,"tmp",false,false,false,true);
-                        UIDInputBox.Clear();
-                        this.Dispatcher.Invoke(new Action(() =>
-                        {
-                            PlayWindow playWindow = new PlayWindow(UID, Name);
-
-                            MainWindow.playWindowsList.Add(playWindow);
-                            playWindow.Closed += MainWindow.PlayWindow_Closed;
-                            playWindow.Show();
-                        }));
-                    }
-                    else
-                    {
-                        var tmp = new DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass.RoomCard()
-                        {
-                            UID = UID,
-                            IsAutoRec = (bool)RecCheck.IsChecked,
-                            Description="",
-                            IsRecDanmu= (bool)DanMuCheck.IsChecked,
-                            IsRemind=false,
-                            IsTemporaryPlay=false,
-                            Like=false,
-                            RoomId=RoomId,
-                            Shell="",
-                            name=Name,
-                        };
-                        DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.ReviseRoom(tmp,true,0);
-                        Growl.SuccessGlobal($"添加成功");
-                        UIDInputBox.Clear();
-                        if (tmp.IsAutoRec && Rooms.GetValue(UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
-                        {
-                            Download.AddDownloadTaskd(UID, true);
-                            Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
-                        }
-                    }
+                    var Info = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.get_info(0, RoomId, false);
+                    Uids.Add(Info.uid);     
                 }
                 else
                 {
-                    Growl.WarningGlobal($"该房间号或UID不存在！");
+                    Growl.WarningGlobal($"该房间号不符合规范！");
                     return;
                 }
             }
+            else if (UIDCK)
+            {
+                string[] T = InputValue.Split(" ");
+                foreach (var item in T)
+                {
+                    if (long.TryParse(item, out long UID))
+                    {
+                        if (UID > 0)
+                        {
+                            Uids.Add(UID);
+                        }
+                        else
+                        {
+                            ErrorUids.Add(UID);
+                        }
+                    }
+                }
+            }
+            List<RoomInfoClass.RoomInfo> roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.RoomInfo.get_status_info_by_uids(Uids, true);
+
+            if (IsTMP)
+            {
+                if (!Rooms.RoomInfo.ContainsKey((roomInfo[0].uid)))
+                {
+                    Rooms.RoomInfo.Add(roomInfo[0].uid, new RoomInfoClass.RoomInfo()
+                    {
+                        uid = roomInfo[0].uid,
+                        IsTemporaryPlay = true,
+                        IsAutoRec = false,
+                        IsRecDanmu = false,
+                        IsRemind = false,
+                    });
+                }
+                int.TryParse(Rooms.GetValue(roomInfo[0].uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), out int Rid);
+                string Name = Rooms.GetValue(roomInfo[0].uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
+                if (IsTMP)
+                {
+                    DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(roomInfo[0].uid, "tmp", false, false, false, true);
+                    UIDInputBox.Clear();
+                    this.Dispatcher.Invoke(new Action(() =>
+                    {
+                        PlayWindow playWindow = new PlayWindow(roomInfo[0].uid, Name);
+
+                        MainWindow.playWindowsList.Add(playWindow);
+                        playWindow.Closed += MainWindow.PlayWindow_Closed;
+                        playWindow.Show();
+                    }));
+                }
+
+            }
             else
             {
-                Growl.WarningGlobal($"UID不符合规范！");
-                return;
+                foreach (var item in roomInfo)
+                {
+                    var tmp = new DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass.RoomCard()
+                    {
+                        UID = item.uid,
+                        IsAutoRec = (bool)RecCheck.IsChecked,
+                        Description = "",
+                        IsRecDanmu = (bool)DanMuCheck.IsChecked,
+                        IsRemind = false,
+                        IsTemporaryPlay = false,
+                        Like = false,
+                        RoomId = item.room_id,
+                        Shell = "",
+                        name = item.uname,
+                    };
+                    DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.ReviseRoom(tmp, true, 0);
+                    if (!IsTMP)
+                        Growl.SuccessGlobal($"添加成功");
+                    UIDInputBox.Clear();
+                    if (tmp.IsAutoRec && Rooms.GetValue(tmp.UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                    {
+                        Download.AddDownloadTaskd(tmp.UID, true);
+                        Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
+                    }
+                }
             }
         }
 
