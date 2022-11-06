@@ -11,7 +11,7 @@
         InactiveGlowColor="#fb7299"
         Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
-        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000" ResizeMode="NoResize">
+        Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000" ResizeMode="CanMinimize">
 
     <Grid Background="White">
         <hc:NotifyIcon x:Name="DDTV_ICO" Text=" " IsBlink="False" Visibility="Visible" Icon="/Resources/Img/UI/DDTV.ico" MouseDoubleClick="DDTV_ICO_MouseDoubleClick">

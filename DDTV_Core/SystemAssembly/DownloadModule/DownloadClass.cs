@@ -197,6 +197,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         string _F = Path + $"/{Tool.FileOperation.ReplaceKeyword(downloads.Uid, Download.DownloadFolderName)}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         downloads.FlvFileList.Add(_F);
+                        roomInfo.Files.Add(_F);
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())

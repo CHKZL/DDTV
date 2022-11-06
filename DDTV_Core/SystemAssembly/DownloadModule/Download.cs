@@ -187,7 +187,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 AfterFilenameExtension = ".mp4",
                                 BeforeFilePath = item,
-                                AfterFilePath = item.Replace(".mp4", "_fix.mp4"),
+                                AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv","_fix.mp4"),
                             });
                             roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
                             WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
@@ -374,15 +374,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //转码
                     if (IsTranscod)
                     {
-                        foreach (var DLIST in roomInfo.DownloadingList)
+                        foreach (var file in roomInfo.Files)
                         {
-                            foreach (var item in DLIST.FlvFileList)
+                            if (File.Exists(file) && !FileList.Contains(file))
                             {
-                                if (File.Exists(item) && !FileList.Contains(item))
-                                //if (File.Exists(item))
-                                {
-                                    FileList.Add((string)item);
-                                }
+                                FileList.Add(file);
                             }
                         }
                         if (FileList.Count > 0)
@@ -397,7 +393,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     {
                                         AfterFilenameExtension = ".mp4",
                                         BeforeFilePath = item,
-                                        AfterFilePath = item,
+                                        AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
                                     });
                                     roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
                                     WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
