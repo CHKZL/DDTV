@@ -773,10 +773,9 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_WindowSorting_Click(object sender, RoutedEventArgs e)
         {
-            //Graphics currentGraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
-            //double dpixRatio = currentGraphics.DpiX / 96;
-            //int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight / dpixRatio);
-            //int ScreenWidth = Convert.ToInt32(SystemParameters.PrimaryScreenWidth / dpixRatio);
+
+            //int screenheight = convert.toint32(systemparameters.primaryscreenheight / dpixratio);
+            //int screenwidth = convert.toint32(systemparameters.primaryscreenwidth / dpixratio);
 
 
             //int ScreenHeight = Convert.ToInt32(SystemParameters.PrimaryScreenHeight);
@@ -785,13 +784,15 @@ namespace DDTV_GUI.DDTV_Window
             //ScreenWidth = Screen.PrimaryScreen.Bounds.Width;
             //ScreenHeight= Screen.PrimaryScreen.Bounds.Height;
 
-           
+
+            Graphics currentgraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixratio = currentgraphics.DpiX / 96;
 
             IntPtr handle = new WindowInteropHelper(this).Handle;
             var screen = System.Windows.Forms.Screen.FromHandle(handle);
 
-            int ScreenWidth = screen.Bounds.Width;
-            int ScreenHeight = screen.Bounds.Height;
+            double ScreenWidth = (double)screen.Bounds.Width/ dpixratio;
+            double ScreenHeight = (double)screen.Bounds.Height/ dpixratio;
 
 
             if (MainWindow.playWindowsList.Count == 1)
@@ -802,9 +803,9 @@ namespace DDTV_GUI.DDTV_Window
             {
                 List<int[]> windows_4 = new List<int[]>();
                 windows_4.Add(new int[] { 0, 0 });
-                windows_4.Add(new int[] { ScreenWidth / 2, 0 });
-                windows_4.Add(new int[] { 0, ScreenHeight / 2 });
-                windows_4.Add(new int[] { ScreenWidth / 2, ScreenHeight / 2 });
+                windows_4.Add(new int[] { (int)ScreenWidth / 2, 0 });
+                windows_4.Add(new int[] { 0, (int)ScreenHeight / 2 });
+                windows_4.Add(new int[] { (int)ScreenWidth / 2, (int)ScreenHeight / 2 });
 
                 for (int i = 0; i < 4; i++)
                 {
@@ -825,14 +826,14 @@ namespace DDTV_GUI.DDTV_Window
             {
                 List<int[]> windows_9 = new List<int[]>();
                 windows_9.Add(new int[] { 0, 0 });
-                windows_9.Add(new int[] { (ScreenWidth / 3), 0 });
-                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), 0 });
-                windows_9.Add(new int[] { 0, (ScreenHeight / 3) });
-                windows_9.Add(new int[] { (ScreenWidth / 3), ScreenHeight / 3 });
-                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), ScreenHeight / 3 });
-                windows_9.Add(new int[] { 0, (ScreenHeight / 3) + (ScreenHeight / 3) });
-                windows_9.Add(new int[] { (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
-                windows_9.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3), 0 });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), 0 });
+                windows_9.Add(new int[] { 0, (int)(ScreenHeight / 3) });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3), (int)ScreenHeight / 3 });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), (int)ScreenHeight / 3 });
+                windows_9.Add(new int[] { 0, (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3), (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
+                windows_9.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
                 for (int i = 0; i < 9; i++)
                 {
                     if (i >= MainWindow.playWindowsList.Count)
@@ -852,21 +853,21 @@ namespace DDTV_GUI.DDTV_Window
             {
                 List<int[]> windows_16 = new List<int[]>();
                 windows_16.Add(new int[] { 0, 0 });
-                windows_16.Add(new int[] { (ScreenWidth / 4), 0 });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
-                windows_16.Add(new int[] { 0, (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4), ScreenHeight / 4 });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
-                windows_16.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-                windows_16.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), 0 });
+                windows_16.Add(new int[] { 0, (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4), (int)ScreenHeight / 4 });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)ScreenHeight / 4 });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)ScreenHeight / 4 });
+                windows_16.Add(new int[] { 0, (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { 0, (int)(ScreenHeight / 4) + (int)(int)(ScreenHeight / 4) + (int)(int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4), (int)(int)(ScreenHeight / 4) + (int)(int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+                windows_16.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
                 for (int i = 0; i < 16; i++)
                 {
                     if (i >= MainWindow.playWindowsList.Count)
@@ -1205,19 +1206,22 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_6Mode()
         {
+            Graphics currentgraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixratio = currentgraphics.DpiX / 96;
+
             IntPtr handle = new WindowInteropHelper(this).Handle;
             var screen = System.Windows.Forms.Screen.FromHandle(handle);
 
-            int ScreenWidth = screen.Bounds.Width;
-            int ScreenHeight = screen.Bounds.Height;
+            double ScreenWidth = (double)screen.Bounds.Width / dpixratio;
+            double ScreenHeight = (double)screen.Bounds.Height / dpixratio;
 
             List<int[]> windows_1_6 = new List<int[]>();
             windows_1_6.Add(new int[] { 0, 0 });
-            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), 0 });
-            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), ScreenHeight / 3 });
-            windows_1_6.Add(new int[] { 0, (ScreenHeight / 3) + (ScreenHeight / 3) });
-            windows_1_6.Add(new int[] { (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
-            windows_1_6.Add(new int[] { (ScreenWidth / 3) + (ScreenWidth / 3), (ScreenHeight / 3) + (ScreenHeight / 3) });
+            windows_1_6.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), 0 });
+            windows_1_6.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), (int)ScreenHeight / 3 });
+            windows_1_6.Add(new int[] { 0, (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
+            windows_1_6.Add(new int[] { (int)(ScreenWidth / 3), (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
+            windows_1_6.Add(new int[] { (int)(ScreenWidth / 3) + (int)(ScreenWidth / 3), (int)(ScreenHeight / 3) + (int)(ScreenHeight / 3) });
 
             MainWindow.playWindowsList[0].SetWindowInfo(new WindowInfo()
             {
@@ -1249,21 +1253,24 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_8Mode()
         {
+            Graphics currentgraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixratio = currentgraphics.DpiX / 96;
+
             IntPtr handle = new WindowInteropHelper(this).Handle;
             var screen = System.Windows.Forms.Screen.FromHandle(handle);
 
-            int ScreenWidth = screen.Bounds.Width;
-            int ScreenHeight = screen.Bounds.Height;
+            double ScreenWidth = (double)screen.Bounds.Width / dpixratio;
+            double ScreenHeight = (double)screen.Bounds.Height / dpixratio;
 
             List<int[]> windows_1_8 = new List<int[]>();
             windows_1_8.Add(new int[] { 0, 0 });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_8.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_8.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), 0 });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)ScreenHeight / 4 });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { 0, (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_8.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
 
             MainWindow.playWindowsList[0].SetWindowInfo(new WindowInfo()
             {
@@ -1295,29 +1302,32 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void Guide1_13Mode()
         {
+            Graphics currentgraphics = Graphics.FromHwnd(new WindowInteropHelper(this).Handle);
+            double dpixratio = currentgraphics.DpiX / 96;
+
             IntPtr handle = new WindowInteropHelper(this).Handle;
             var screen = System.Windows.Forms.Screen.FromHandle(handle);
 
-            int ScreenWidth = screen.Bounds.Width;
-            int ScreenHeight = screen.Bounds.Height;
+            double ScreenWidth = (double)screen.Bounds.Width / dpixratio;
+            double ScreenHeight = (double)screen.Bounds.Height / dpixratio;
 
             List<int[]> windows_1_13 = new List<int[]>();
             windows_1_13.Add(new int[] { 0, 0 });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4), 0 });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4), 0 });
 
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), 0 });
-            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), 0 });
+            windows_1_13.Add(new int[] { 0, (int)(ScreenHeight / 4) });
 
 
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), ScreenHeight / 4 });
-            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { 0, (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
-            windows_1_13.Add(new int[] { (ScreenWidth / 4) + (ScreenWidth / 4) + (ScreenWidth / 4), (ScreenHeight / 4) + (ScreenHeight / 4) + (ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)ScreenHeight / 4 });
+            windows_1_13.Add(new int[] { 0, (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { 0, (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
+            windows_1_13.Add(new int[] { (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4) + (int)(ScreenWidth / 4), (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) + (int)(ScreenHeight / 4) });
 
 
 
