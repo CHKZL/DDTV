@@ -26,6 +26,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                 if (error > 10 || (IsFlvSteam && NoHlsSteam > Download.WaitHLSTime) || (!IsFlvSteam && NoHlsSteam > Download.WaitHLSTime+25))
                 {
                     Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时重试10次超时");
+                    hLSHostClass.IsEffective = false;
                     return hLSHostClass;
                 }
                 if (string.IsNullOrEmpty(WebText))

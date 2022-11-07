@@ -163,7 +163,7 @@ namespace DDTV_WEB_Server.Controllers
                     configData.datas.Add(item);
                 }
             }
-            return Content(MessageBase.Success(nameof(System_Config), CoreConfigClass.config.datas), "application/json");
+            return Content(MessageBase.Success(nameof(System_Config), configData.datas), "application/json");
         }
     }
     public class ConfigData
