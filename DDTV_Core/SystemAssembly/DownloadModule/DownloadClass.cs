@@ -497,14 +497,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
                                     if (!hLSHostClass.LiveStatus)
                                     {
+                                        fs.Close();
+                                        fs.Dispose();
                                         return true;
                                     }
-                                    if (hLSHostClass.IsEffective)
+                                    if (!hLSHostClass.IsEffective)
                                     {
                                         break;
                                     }
                                     Thread.Sleep(300);
-                                    index = NetworkRequestModule.Get.Get.GetRequest(hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra);
+                                    string Url = hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra;
+                                    if (!string.IsNullOrEmpty(Url))
+                                    {
+                                        index = NetworkRequestModule.Get.Get.GetRequest(Url);
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
                                 }
                                 else
                                 {
