@@ -479,7 +479,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                 return true;
                             }
-                            string index = NetworkRequestModule.Get.Get.GetRequest(hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra);
+                            string TU = hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra;
+                            string index = "";
+                            if (!string.IsNullOrEmpty(TU))
+                            {
+                                index = NetworkRequestModule.Get.Get.GetRequest(TU);
+                            }
                             int error = 0;
                             while (true)
                             {
