@@ -93,7 +93,7 @@ namespace DDTV_Core.Tool.TranscodModule
                     Process P = (Process)sender;
                     Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "修复/转码任务完成:" + P.StartInfo.Arguments);
                 };
-                if (process.HasExited)
+                if (!process.HasExited)
                 {
                     //如果超过20分钟都没有等待到exit信息，就跳过
                     process.WaitForExit(1200);
@@ -101,7 +101,7 @@ namespace DDTV_Core.Tool.TranscodModule
                 process.Close();
                 //Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
                 transcodClass.IsTranscod = true;
-                Thread.Sleep(2000);
+                Thread.Sleep(3000);
                 if (File.Exists(transcodClass.AfterFilePath))
                 {
                     Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件：[{transcodClass.BeforeFilePath}]");
