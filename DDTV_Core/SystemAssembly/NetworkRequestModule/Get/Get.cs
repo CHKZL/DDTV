@@ -135,7 +135,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                     case WebExceptionStatus.Timeout:
                         return null;
                     default:
-                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "")+ $"GetFile_Bytes请求错误:{e.Status}，URL为{URL}");
+                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "")+ $"GetFile_Bytes请求错误:{e.Status}");
                         return null;
                 }
             }

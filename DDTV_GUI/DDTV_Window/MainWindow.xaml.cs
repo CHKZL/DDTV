@@ -98,7 +98,7 @@ namespace DDTV_GUI.DDTV_Window
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
             PlayWindow.PlayListExit += MainWindow_PlayListExit;//注册批量关闭播放窗口事件
             FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//硬盘空间不足事件
-            Tool.ServerInteraction.Start();
+            Tool.ServerInteraction.Start();//更新看门狗程序
             Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;//检查更新事件
             Tool.ServerInteraction.Notice.NewNotice += Notice_NewNotice;//更新首页说明事件
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
@@ -1556,15 +1556,15 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfigFile.WriteConfigFile(true);
         }
 
-        private void TranscodingCompleteAutoDeleteFiles_Click(object sender, RoutedEventArgs e)
-        {
-            bool Is = (bool)TranscodingCompleteAutoDeleteFiles.IsChecked ? true : false;
-            Transcod.TranscodingCompleteAutoDeleteFiles = Is;
-            CoreConfig.SetValue(CoreConfigClass.Key.TranscodingCompleteAutoDeleteFiles, Is.ToString(), CoreConfigClass.Group.Core);
-            Growl.Success((Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件", false, null, false);
-            CoreConfigFile.WriteConfigFile(true);
-        }
+        //private void TranscodingCompleteAutoDeleteFiles_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool Is = (bool)TranscodingCompleteAutoDeleteFiles.IsChecked ? true : false;
+        //    Transcod.TranscodingCompleteAutoDeleteFiles = Is;
+        //    CoreConfig.SetValue(CoreConfigClass.Key.TranscodingCompleteAutoDeleteFiles, Is.ToString(), CoreConfigClass.Group.Core);
+        //    Growl.Success((Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件");
+        //    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "转码完成后自动删除原始FLV文件", false, null, false);
+        //    CoreConfigFile.WriteConfigFile(true);
+        //}
 
         private void DDcenterSwitch_Click(object sender, RoutedEventArgs e)
         {

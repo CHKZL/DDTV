@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DDTV_Core.Tool.ServerMessageClass;
+using Newtonsoft.Json;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +25,7 @@ namespace DDTV_Core.Tool
                             {
                                 if (IsChecked)
                                 {
-                                    Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序[10分钟后再次提示]");  
+                                    Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序[10分钟后再次提示]");
                                 }
                                 else
                                 {
@@ -32,12 +34,45 @@ namespace DDTV_Core.Tool
                                         IsChecked = true;
                                         Console.WriteLine("检测到新版本，请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序[10分钟后再次提示]");
                                     }
-                                }  
+                                }
                             }
                             catch (Exception)
                             {
                             }
                             Thread.Sleep(60 * 30 * 1000);
+                        }
+                    });
+                }
+            }
+        }
+
+        public class UpdateNotice
+        {
+            private static bool Is = false;
+            private static int i = 0;
+            public static void Start(string Type)
+            {
+                if (!Is)
+                {
+                    Is = true;
+                    Task.Run(() =>
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                string N = DDTV_Core.Tool.Notice.GetNotice(Type);
+                                MessageBase.pack<MessageClass.NoticeText> pack = JsonConvert.DeserializeObject<MessageBase.pack<MessageClass.NoticeText>>(N);
+                                if (!string.IsNullOrEmpty(pack.data.Text))
+                                {
+                                    DDTV_Core.InitDDTV_Core.UpdateNotice = pack.data.Text;
+                                }
+                                Thread.Sleep(3600 * 1000);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
                         }
                     });
                 }
@@ -50,7 +85,7 @@ namespace DDTV_Core.Tool
             private static int i = 0;
             public static void Start(string Type)
             {
-               if(!Is)
+                if (!Is)
                 {
                     Is = true;
                     Task.Run(() =>

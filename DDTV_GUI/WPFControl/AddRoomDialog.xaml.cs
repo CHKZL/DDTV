@@ -106,21 +106,29 @@ namespace DDTV_GUI.WPFControl
                 string Name = Rooms.GetValue(roomInfo[0].uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname);
                 if (IsTMP)
                 {
-                    DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(roomInfo[0].uid, "tmp", false, false, false, true);
-                    UIDInputBox.Clear();
-                    this.Dispatcher.Invoke(new Action(() =>
+                    if (roomInfo[0].uid != 0 && roomInfo[0].room_id != 0)
                     {
-                        PlayWindow playWindow = new PlayWindow(roomInfo[0].uid, Name);
+                        DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.AddRoom(roomInfo[0].uid, "tmp", false, false, false, true);
+                        UIDInputBox.Clear();
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            PlayWindow playWindow = new PlayWindow(roomInfo[0].uid, Name);
 
-                        MainWindow.playWindowsList.Add(playWindow);
-                        playWindow.Closed += MainWindow.PlayWindow_Closed;
-                        playWindow.Show();
-                    }));
+                            MainWindow.playWindowsList.Add(playWindow);
+                            playWindow.Closed += MainWindow.PlayWindow_Closed;
+                            playWindow.Show();
+                        }));
+                    }
+                    else
+                    {
+                        Growl.WarningGlobal($"输入的房间号或者UID不存在对应的直播间，打开播放窗口失败");
+                        return;
+                    }
                 }
-
             }
             else
             {
+                int OkRoomConut = 0;
                 foreach (var item in roomInfo)
                 {
                     var tmp = new DDTV_Core.SystemAssembly.ConfigModule.RoomConfigClass.RoomCard()
@@ -136,16 +144,24 @@ namespace DDTV_GUI.WPFControl
                         Shell = "",
                         name = item.uname,
                     };
-                    DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.ReviseRoom(tmp, true, 0);
-                    if (!IsTMP)
-                        Growl.SuccessGlobal($"添加成功");
-                    UIDInputBox.Clear();
-                    if (tmp.IsAutoRec && Rooms.GetValue(tmp.UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                    if(tmp.UID!=0&& tmp.RoomId!=0)
                     {
-                        Download.AddDownloadTaskd(tmp.UID, true);
-                        Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
+                        OkRoomConut++;
+                        DDTV_Core.SystemAssembly.ConfigModule.RoomConfig.ReviseRoom(tmp, true, 0);
+                        if (!IsTMP)
+                            Growl.SuccessGlobal($"添加成功");
+                        UIDInputBox.Clear();
+                        if (tmp.IsAutoRec && Rooms.GetValue(tmp.UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                        {
+                            Download.AddDownloadTaskd(tmp.UID, true);
+                            Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
+                        }
                     }
                 }
+                if(OkRoomConut==0)
+                {
+                    Growl.WarningGlobal($"输入的UID或者房间号所属直播间不存在，添加失败");
+                }    
             }
         }
 

@@ -92,7 +92,6 @@ namespace DDTV_GUI.Tool
                                 {
                                     NewNotice.Invoke(pack.data.Text, EventArgs.Empty);
                                 }
-                                
                             }
                             catch (Exception)
                             {
