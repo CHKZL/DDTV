@@ -21,9 +21,13 @@ namespace DDTV_Core.SystemAssembly.Log
         /// </summary>
         private static LogClass.LogType LogLevel = LogClass.LogType.All;
         /// <summary>
-        /// 本地日志的记录
+        /// 日志记录
         /// </summary>
         public static List<LogClass> LogList = new();
+        /// <summary>
+        /// 待处理的日志记录
+        /// </summary>
+        public static List<LogClass> PendLogList = new();
         /// <summary>
         /// 新增日志事件
         /// </summary>
@@ -95,7 +99,7 @@ namespace DDTV_Core.SystemAssembly.Log
                     exception = exception,
                     IsDisplay = IsDisplay,
                 };
-                LogList.Add(logClass);
+                PendLogList.Add(logClass);
             });
         }
 
@@ -110,14 +114,14 @@ namespace DDTV_Core.SystemAssembly.Log
                 {
                     try
                     {
-                        while (LogList.Count > 0)
+                        while (PendLogList.Count > 0)
                         {
-                            _LogPrint(LogList[0]);
-                            LogList.Remove(LogList[0]);
+                            _LogPrint(PendLogList[0]);
+                            PendLogList.Remove(PendLogList[0]);
                         }
                     }
                     catch (Exception) { }
-                    if (LogList.Count > 10)
+                    if (PendLogList.Count > 10)
                     {
                         Thread.Sleep(5);
                     }
@@ -140,7 +144,7 @@ namespace DDTV_Core.SystemAssembly.Log
                 }
                 if (logClass.Type <= LogLevel && logClass.Type != LogClass.LogType.Info_Transcod && logClass.IsDisplay)
                 {
-
+                    LogList.Add(logClass);
                     string _ = $"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}][{logClass.Source}]{logClass.Message}";
                     console.Write($"{logClass.Time}:", ConsoleColor.White);
 

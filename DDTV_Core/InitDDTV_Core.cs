@@ -23,13 +23,14 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-11-08 01:06:00";
+        public static string CompiledVersion = "2022-11-08 23:33:52";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
+        public static string UpdateNotice = string.Empty;
 
-        /// <summary>
-        /// 初始化COre
-        /// </summary>
-        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
+    /// <summary>
+    /// 初始化COre
+    /// </summary>
+    public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
@@ -66,6 +67,7 @@ namespace DDTV_Core
                 case SatrtType.DDTV_WEB:
                     ServerInteraction.CheckUpdates.Update("WEB");
                     ServerInteraction.Dokidoki.Start("WEB");
+                    ServerInteraction.UpdateNotice.Start("WEB");
                     break;
                 case SatrtType.DDTV_GUI:
                     //ServerInteraction.CheckUpdates.Update("GUI");

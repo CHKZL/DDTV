@@ -1,5 +1,6 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.Tool.SystemResource;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -206,9 +207,123 @@ namespace DDTV_WEB_Server.Controllers
         //[Consumes("application/json")]
         public ActionResult Post([FromForm] string cmd)
         {
-            return Content(MessageBase.Success(nameof(System_Config), CoreConfig.WEB_FirstStart), "application/json");
+            return Content(MessageBase.Success(nameof(System_QueryWebFirstStart), CoreConfig.WEB_FirstStart), "application/json");
         }
     }
+
+    public class System_GetUpdateLog : ProcessingControllerBase.ApiControllerBase
+    {
+        /// <summary>
+        /// 获取更新公告
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "System_GetUpdateLog")]
+        //[Consumes("application/json")]
+        public ActionResult Post([FromForm] string cmd)
+        {
+            return Content(MessageBase.Success(nameof(System_GetUpdateLog), DDTV_Core.InitDDTV_Core.UpdateNotice), "application/json");
+        }
+    }
+
+    public class System_Log : ProcessingControllerBase.ApiControllerBase
+    {
+        /// <summary>
+        /// 获取日志
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="page">第几页</param>
+        /// <param name="Quantity">每页多少条</param>
+        /// <returns></returns>
+        [HttpPost(Name = "System_Log")]
+        public ActionResult Post([FromForm] string cmd, [FromForm] int page, [FromForm] int Quantity)
+        {
+            if(page>0&& Quantity>0)
+            {
+                Log logs = new Log()
+                {
+                    TotalLogs = DDTV_Core.SystemAssembly.Log.Log.LogList.Count()
+                };
+                for (int i = (page - 1) * Quantity; i < page * Quantity; i++)
+                {
+                    if (DDTV_Core.SystemAssembly.Log.Log.LogList.Count > i)
+                    {
+                        LogClass logClass = new LogClass()
+                        {
+                            IsDisplay = DDTV_Core.SystemAssembly.Log.Log.LogList[i].IsDisplay,
+                            IsError = DDTV_Core.SystemAssembly.Log.Log.LogList[i].IsError,
+                            Message = DDTV_Core.SystemAssembly.Log.Log.LogList[i].Message,
+                            RunningTime = DDTV_Core.SystemAssembly.Log.Log.LogList[i].RunningTime,
+                            Source = DDTV_Core.SystemAssembly.Log.Log.LogList[i].Source,
+                            Time = DDTV_Core.SystemAssembly.Log.Log.LogList[i].Time,
+                            Type = DDTV_Core.SystemAssembly.Log.Log.LogList[i].Type,
+                        };
+                        logs.Logs.Add(DDTV_Core.SystemAssembly.Log.Log.LogList[i]);
+                    }
+                }
+                return Content(MessageBase.Success(nameof(System_Log), logs), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(System_Log), false, $"输入的参数取值范围有误"), "application/json");
+            }
+        }
+        public class Log
+        {
+            /// <summary>
+            /// 总日志条数
+            /// </summary>
+            public long TotalLogs { get; set; }
+            /// <summary>
+            /// 查询量的日志信息
+            /// </summary>
+            public List<LogClass> Logs { get; set; } = new List<LogClass>();
+        }
+    }
+
+    public class System_LatestLog : ProcessingControllerBase.ApiControllerBase
+    {
+        /// <summary>
+        /// 获取最新日志
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="Quantity">最新的多少条</param>
+        /// <returns></returns>
+        [HttpPost(Name = "System_LatestLog")]
+        public ActionResult Post([FromForm] string cmd, [FromForm] int Quantity)
+        {
+            List<LogClass> Logs = new List<LogClass>();
+
+            if (Quantity > 0)
+            {
+                int Count = DDTV_Core.SystemAssembly.Log.Log.LogList.Count();
+                for (int i = 0; i < Quantity; i++)
+                {
+                    if(Count - 1 - i>0)
+                    {
+                        LogClass logClass = new LogClass()
+                        {
+                            IsDisplay = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].IsDisplay,
+                            IsError = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].IsError,
+                            Message = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Message,
+                            RunningTime = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].RunningTime,
+                            Source = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Source,
+                            Time = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Time,
+                            Type = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Type,
+                        };
+                        Logs.Add(logClass);
+                    }
+                }
+                return Content(MessageBase.Success(nameof(System_LatestLog), Logs), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(System_LatestLog), false, $"输入的参数取值范围有误"), "application/json");
+            }
+        }
+      
+    }
+
     public class System_SetWEBFirstStart : ProcessingControllerBase.ApiControllerBase
     {
         [HttpPost(Name = "System_SetWebFirstStart")]
@@ -217,7 +332,7 @@ namespace DDTV_WEB_Server.Controllers
         {
             CoreConfig.SetValue(CoreConfigClass.Key.GUI_FirstStart, state.ToString(), CoreConfigClass.Group.Core);
             CoreConfig.GUI_FirstStart = state;
-            return Content(MessageBase.Success(nameof(System_Config), state, $"设置初始化标志位为:{state}"), "application/json");
+            return Content(MessageBase.Success(nameof(System_SetWEBFirstStart), state, $"设置初始化标志位为:{state}"), "application/json");
         }
     }
     public class System_QueryUserState : ProcessingControllerBase.ApiControllerBase
@@ -227,11 +342,11 @@ namespace DDTV_WEB_Server.Controllers
         {
             if (!DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.LoginValidityVerification())
             {
-                return Content(MessageBase.Success(nameof(System_Config), false, $"未登录或登陆已失效"), "application/json");
+                return Content(MessageBase.Success(nameof(System_QueryUserState), false, $"未登录或登陆已失效"), "application/json");
             }
             else
             {
-                return Content(MessageBase.Success(nameof(System_Config), true, $"登陆有效"), "application/json");
+                return Content(MessageBase.Success(nameof(System_QueryUserState), true, $"登陆有效"), "application/json");
             }
 
         }
