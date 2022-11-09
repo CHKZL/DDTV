@@ -115,7 +115,6 @@
                         <Grid Margin="10,204,640,205" Background="#59A5A5A5">
                             <TextBlock x:Name="RecCount" Margin="0,47,0,23" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                             <TextBlock Margin="10,10,0,0" Text="录制中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>
-
                         </Grid>
                         <Grid Margin="263,27,387,383" Background="#59A5A5A5">
                             <TextBlock Margin="10,10,0,0" Text="直播中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="30" VerticalAlignment="Top" Width="90" HorizontalAlignment="Left" FontSize="26"/>

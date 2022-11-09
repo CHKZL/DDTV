@@ -12,7 +12,7 @@ namespace DDTV_Core.Tool.TranscodModule
         /// <summary>
         /// 转码任务状态，T为正在转码
         /// </summary>
-        public bool IsTranscod { get; set; }
+        public bool IsTranscod { get; set; } = true;
         /// <summary>
         /// 转码后文件储存路径
         /// </summary>

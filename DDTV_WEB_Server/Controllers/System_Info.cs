@@ -229,7 +229,7 @@ namespace DDTV_WEB_Server.Controllers
     public class System_Log : ProcessingControllerBase.ApiControllerBase
     {
         /// <summary>
-        /// 获取日志
+        /// 获取历史日志
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="page">第几页</param>

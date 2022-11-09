@@ -12,12 +12,17 @@
 请务必先请查看该路径下WEB请求和API操作相关页面的说明  
 请务必先请查看该路径下WEB请求和API操作相关页面的说明  
 
+## swagger
+DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:11419/swagger/index.html`进行访问调试
+
 ## 已实现的通用API列表
 |方式|名称|返回内容|解释|
 |:--:|:--:|:--:|:--:|
 |POST|System_Info|JSON|[获取系统运行情况](./#post-api-system-info)|
 |POST|System_Config|JSON|[获取系统配置文件信息](./#post-api-system-config)|
 |POST|System_Resources|JSON|[获取系统硬件资源使用情况](./#post-api-system-resources)|
+|POST|System_Log|JSON|[获取历史日志](./#post-api-system-log)|
+|POST|System_LatestLog|JSON|[获取最新日志](./#post-api-system-latestlog)|
 |POST|System_QueryWebFirstStart|JSON|[返回一个可以自行设定的初始化状态值](./#post-api-system-querywebfirststart)|
 |POST|System_SetWebFirstStart|JSON|[设置初始化状态值](./#post-api-system-setsebfirststart)|
 |POST|System_QueryUserState|JSON|[查询B站接口返回数据判断用户登陆状态是否有效](./#post-api-system-queryuserstate)|
@@ -457,6 +462,251 @@
     }
 ```
 :::
+
+### `POST /api/System_Log`
+::: details 获取历史日志
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|page|int|是|第几页|
+|Quantity|int|是|每页多少条|
+
+- 返回数据说明   
+```CSharp
+        public class Log
+        {
+            /// <summary>
+            /// 总日志条数
+            /// </summary>
+            public long TotalLogs { get; set; }
+            /// <summary>
+            /// 查询量的日志信息
+            /// </summary>
+            public List<LogClass> Logs { get; set; } = new List<LogClass>();
+        }
+
+    public class LogClass
+    {
+        public enum LogType
+        {
+            /// <summary>
+            /// 会造成整个DDTV无法运行的严重错误
+            /// </summary>
+            Error = 10,
+            /// <summary>
+            /// 虽然现在还没发生问题，但是不管这个问题之后肯定会导致严重错误
+            /// </summary>
+            Error_IsAboutToHappen = 11,
+            /// <summary>
+            /// 会造成错误，但是不影响运行的警告
+            /// </summary>
+            Warn = 20,
+            /// <summary>
+            /// 房间巡逻系统错误日志
+            /// </summary>
+            Warn_RoomPatrol = 23,
+            /// <summary>
+            /// 系统一般消息
+            /// </summary>
+            Info = 30,
+            /// <summary>
+            /// 转码消息
+            /// </summary>
+            Info_Transcod=31,
+            /// <summary>
+            /// API消息
+            /// </summary>
+            Info_API = 32,
+            /// <summary>
+            /// IP协议版本消息
+            /// </summary>
+            Info_IP_Ver = 33,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug = 40,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug_Request = 41,
+            /// <summary>
+            /// DDcenter请求
+            /// </summary>
+            Debug_DDcenter = 42,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug_Request_Error = 43,
+            /// <summary>
+            /// 一些追踪数据
+            /// </summary>
+            Trace = 50,
+            Trace_Web=51,
+            TmpInfo=99,
+            /// <summary>
+            /// 打开所有日志
+            /// </summary>
+            All = int.MaxValue,
+        }
+        /// <summary>
+        /// 日志内容
+        /// </summary>
+        public string? Message { set; get; }
+        /// <summary>
+        /// 日志类型
+        /// </summary>
+        public LogType Type { set; get; }
+        /// <summary>
+        /// 系统时间
+        /// </summary>
+        public DateTime Time { set; get; }
+        /// <summary>
+        /// 软件的运行时间
+        /// </summary>
+        public long RunningTime { set; get; }
+        /// <summary>
+        /// 来源
+        /// </summary>
+        public string? Source { set; get; }
+        /// <summary>
+        /// 时候是需要写入txt记录的错误
+        /// </summary>
+        public bool IsError { set; get; }
+        /// <summary>
+        /// IsError为真时有效，记录错误详细信息
+        /// </summary>
+        public Exception exception { set; get; }
+        /// <summary>
+        /// 是否应该打印到终端
+        /// </summary>
+        public bool IsDisplay { set; get; } =false;
+    }
+```
+:::
+
+### `POST /api/System_LatestLog`
+::: details 获取最新日志
+- 私有变量  
+
+|参数名|格式|是否必须|解释|
+|:--:|:--:|:--:|--|
+|Quantity|int|最新的多少条|
+
+- 返回数据说明   
+```CSharp
+        public class Log
+        {
+            /// <summary>
+            /// 总日志条数
+            /// </summary>
+            public long TotalLogs { get; set; }
+            /// <summary>
+            /// 查询量的日志信息
+            /// </summary>
+            public List<LogClass> Logs { get; set; } = new List<LogClass>();
+        }
+
+    public class LogClass
+    {
+        public enum LogType
+        {
+            /// <summary>
+            /// 会造成整个DDTV无法运行的严重错误
+            /// </summary>
+            Error = 10,
+            /// <summary>
+            /// 虽然现在还没发生问题，但是不管这个问题之后肯定会导致严重错误
+            /// </summary>
+            Error_IsAboutToHappen = 11,
+            /// <summary>
+            /// 会造成错误，但是不影响运行的警告
+            /// </summary>
+            Warn = 20,
+            /// <summary>
+            /// 房间巡逻系统错误日志
+            /// </summary>
+            Warn_RoomPatrol = 23,
+            /// <summary>
+            /// 系统一般消息
+            /// </summary>
+            Info = 30,
+            /// <summary>
+            /// 转码消息
+            /// </summary>
+            Info_Transcod=31,
+            /// <summary>
+            /// API消息
+            /// </summary>
+            Info_API = 32,
+            /// <summary>
+            /// IP协议版本消息
+            /// </summary>
+            Info_IP_Ver = 33,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug = 40,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug_Request = 41,
+            /// <summary>
+            /// DDcenter请求
+            /// </summary>
+            Debug_DDcenter = 42,
+            /// <summary>
+            /// 调试信息
+            /// </summary>
+            Debug_Request_Error = 43,
+            /// <summary>
+            /// 一些追踪数据
+            /// </summary>
+            Trace = 50,
+            Trace_Web=51,
+            TmpInfo=99,
+            /// <summary>
+            /// 打开所有日志
+            /// </summary>
+            All = int.MaxValue,
+        }
+        /// <summary>
+        /// 日志内容
+        /// </summary>
+        public string? Message { set; get; }
+        /// <summary>
+        /// 日志类型
+        /// </summary>
+        public LogType Type { set; get; }
+        /// <summary>
+        /// 系统时间
+        /// </summary>
+        public DateTime Time { set; get; }
+        /// <summary>
+        /// 软件的运行时间
+        /// </summary>
+        public long RunningTime { set; get; }
+        /// <summary>
+        /// 来源
+        /// </summary>
+        public string? Source { set; get; }
+        /// <summary>
+        /// 时候是需要写入txt记录的错误
+        /// </summary>
+        public bool IsError { set; get; }
+        /// <summary>
+        /// IsError为真时有效，记录错误详细信息
+        /// </summary>
+        public Exception exception { set; get; }
+        /// <summary>
+        /// 是否应该打印到终端
+        /// </summary>
+        public bool IsDisplay { set; get; } =false;
+    }
+```
+:::
+
+
 
 ### `POST /api/System_QueryWebFirstStart`
 ::: details 返回一个可以自行设定的初始化状态值(用于前端自行判断)

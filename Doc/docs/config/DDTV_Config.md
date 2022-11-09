@@ -128,6 +128,11 @@ HideIconState=False
             /// </summary>
             DownloadFileName,
             /// <summary>
+            /// 默认默认日期文件夹名称格式 (应该为关键字组合，如:{KEY}_{KEY})
+            /// 组：Download  默认值：{YYYY}_{MM}_{DD}  可选值：YYYY|YY|MM|DD   (年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})
+            /// </summary>
+            DownloadFolderName,
+            /// <summary>
             /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-i {Before} -vcodec copy -acodec copy {After})
             /// 组：Core      默认值：-i {Before} -vcodec copy -acodec copy {After}
             /// </summary>
@@ -353,9 +358,29 @@ HideIconState=False
             /// </summary>
             IsDev,
             /// <summary>
+            /// 是否强制使用IPv4（如果只有v6没有IPv4会自动切IPv6）
+            /// 组：Core   默认值：false
+            /// </summary>
+            MandatoryUseIPv4,
+            /// <summary>
+            /// 发起HTTP请求时，是否无视SSL证书
+            /// 组：Core   默认值：false
+            /// </summary>
+            IsBypass_SSL,
+            /// <summary>
             /// 切换弹幕储存信息类型，根据选择不同，储存的弹幕文件中，有一项值会储存UID或者当前昵称 (应该为有限的int值  1：昵称  2：UID)
             /// 组：Core   默认值：2
             /// </summary>
             DanMuSaveType,
+            /// <summary>
+            /// 是否优先使用HLS进行录制
+            /// 组：Download   默认值：False
+            /// </summary>
+            IsHls,
+            /// <summary>
+            /// 等待HLS流的时间
+            /// 组：Download   默认值：15
+            /// </summary>
+            WaitHLSTime,
         }
 ```

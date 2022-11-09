@@ -1604,18 +1604,21 @@ namespace DDTV_GUI.DDTV_Window
                     TranscodingSelectFilesManual.Content = "修复/转码中";
                     Task.Factory.StartNew(() =>
                     {
-                        var TR = Transcod.CallFFMPEG_FLV(new TranscodClass()
+                        if(!Transcod.CallFFMPEG_FLV(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
-                            AfterFilePath = IsMp4File ? dialog.FileName.Replace(".mp4", "_fix.mp4") : dialog.FileName,
+                            AfterFilePath = IsMp4File ? dialog.FileName.Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace(".flv", "_fix.mp4"),
                             BeforeFilePath = dialog.FileName,
-                        });
-                        this.Dispatcher.Invoke(new Action(() =>
+                        }).IsTranscod)
                         {
-                            ManualTranscodingProgress.Text = $"手动文件修复/转码完成，输出文件到原始文件路径";
-                            IsTranscoding = false;
-                            TranscodingSelectFilesManual.Content = "选择文件";
-                        }));
+                            this.Dispatcher.Invoke(new Action(() =>
+                            {
+                                ManualTranscodingProgress.Text = $"手动文件修复/转码完成，输出文件到原始文件路径";
+                                IsTranscoding = false;
+                                TranscodingSelectFilesManual.Content = "选择文件";
+                            }));
+                        }
+                       
                     }, cancellationTokenSource.Token);
                 }
             }
