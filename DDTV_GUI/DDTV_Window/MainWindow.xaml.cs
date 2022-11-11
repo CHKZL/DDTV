@@ -1609,7 +1609,7 @@ namespace DDTV_GUI.DDTV_Window
                             AfterFilenameExtension = ".mp4",
                             AfterFilePath = IsMp4File ? dialog.FileName.Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace(".flv", "_fix.mp4"),
                             BeforeFilePath = dialog.FileName,
-                        }).IsTranscod)
+                        },false).IsTranscod)
                         {
                             this.Dispatcher.Invoke(new Action(() =>
                             {

@@ -22,7 +22,8 @@ namespace DDTV_Core.Tool.TranscodModule
         /// 调用ffmpeg进行转码
         /// </summary>
         /// <param name="Filename">转码文件</param>
-        public static TranscodClass CallFFMPEG_FLV(TranscodClass transcodClass)
+        /// <param name="IsAutoDelOldFile">是否删除老文件</param>
+        public static TranscodClass CallFFMPEG_FLV(TranscodClass transcodClass,bool IsAutoDelOldFile = true)
         {
             try
             {
@@ -46,7 +47,9 @@ namespace DDTV_Core.Tool.TranscodModule
                 }
                 else
                 {
-                    process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
+                    
+                    //process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
+                    process.StartInfo.Arguments = "-i {Before} -vf scale=640:360 {After} -hide_banner".Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
                 }
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
@@ -96,20 +99,23 @@ namespace DDTV_Core.Tool.TranscodModule
                 if (!process.HasExited)
                 {
                     //如果超过20分钟都没有等待到exit信息，就跳过
-                    process.WaitForExit(1200);
+                    process.WaitForExit(1200*1000);
                 }
                 process.Close();
                 //Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
                 transcodClass.IsTranscod = true;
-                Thread.Sleep(3000);
-                if (File.Exists(transcodClass.AfterFilePath))
+                if (IsAutoDelOldFile)
                 {
-                    Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件：[{transcodClass.BeforeFilePath}]");
-                    FileOperation.Del(transcodClass.BeforeFilePath);
-                }
-                else
-                {
-                    Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件失败。原因：[{transcodClass.AfterFilePath}]不存在");
+                    Thread.Sleep(3000);
+                    if (File.Exists(transcodClass.AfterFilePath))
+                    {
+                        Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件：[{transcodClass.BeforeFilePath}]");
+                        FileOperation.Del(transcodClass.BeforeFilePath);
+                    }
+                    else
+                    {
+                        Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"删除临时文件失败。原因：[{transcodClass.AfterFilePath}]不存在");
+                    }
                 }
                 //if (TranscodingCompleteAutoDeleteFiles && File.Exists(transcodClass.AfterFilePath))
                 //{

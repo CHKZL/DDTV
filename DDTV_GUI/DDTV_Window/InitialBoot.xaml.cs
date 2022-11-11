@@ -1,5 +1,6 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
+using DDTV_Core.SystemAssembly.Log;
 using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
@@ -88,9 +89,17 @@ namespace DDTV_GUI.DDTV_Window
         private Dialog DG = null;
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            LoginDialogDispose += InitialBoot_LoginDialogDispose;
-            LoginQRDialog = new WPFControl.LoginQRDialog(LoginDialogDispose, "使用哔哩哔哩手机客户端扫码登陆");
-            DG = Dialog.Show(LoginQRDialog);
+            try
+            {
+                LoginDialogDispose += InitialBoot_LoginDialogDispose;
+                LoginQRDialog = new WPFControl.LoginQRDialog(LoginDialogDispose, "使用哔哩哔哩手机客户端扫码登陆");
+                DG = Dialog.Show(LoginQRDialog);
+            }
+            catch (Exception C)
+            {
+                Growl.WarningGlobal($"扫码登陆触发错误！错误详情已写到日志中");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Error, $"扫码登陆触发错误！错误详情已写到日志中", true,C,true);
+            }
         }
 
         private void InitialBoot_LoginDialogDispose(object? sender, EventArgs e)
