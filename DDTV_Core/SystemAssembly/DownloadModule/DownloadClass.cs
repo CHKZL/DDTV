@@ -447,7 +447,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 });
             }
 
-            internal bool Download_HLS(ref Downloads downloads,ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
+            internal int Download_HLS(ref Downloads downloads,ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
             {
                 try
                 {
@@ -465,7 +465,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     try
                     {
                         while (true)
-                        {
+                        { 
                             WaitingTime = 1000;
                             if (IsCancel)
                             {
@@ -473,11 +473,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Status = DownloadStatus.Cancel;
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
-                                fs.Close();
-                                fs.Dispose();
+                                DisposeFileStream(fs, downloads.FileName);
                                 Download.DownloadCompleteTaskd_HLS(Uid, downloads, true);
 
-                                return true;
+                                return 0;
                             }
                             string TU = hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra;
                             string index = "";
@@ -490,10 +489,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 if(error>10)
                                 {
-                                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS目录时重试10次超时，结束该任务尝试重试");
-                                    fs.Close();
-                                    fs.Dispose();
-                                    return true;
+                                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS目录时重试10次超时，降级为FLV模式");
+                                    DisposeFileStream(fs, downloads.FileName);
+                                    return -1;
                                 }
                                 if (string.IsNullOrEmpty(index))
                                 {
@@ -502,9 +500,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
                                     if (!hLSHostClass.LiveStatus)
                                     {
-                                        fs.Close();
-                                        fs.Dispose();
-                                        return true;
+                                        DisposeFileStream(fs, downloads.FileName);
+                                        return 0;
                                     }
                                     if (!hLSHostClass.IsEffective)
                                     {
@@ -655,15 +652,29 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     catch (Exception e)
                     {
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】下载循环中出现意外错误！错误详情已写txt文本中",true,e,true);
-                        fs.Close();
-                        fs.Dispose();
-                        return false;
+                        DisposeFileStream(fs, downloads.FileName);
+                        return 1;
                     }
                 }
                 catch (Exception e)
                 {
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】新建下载出现意外错误！错误详情已写txt文本中", true, e, true);
-                    return false;
+                    return -1;
+                }
+            }
+
+            public static void DisposeFileStream(FileStream fs,string FileName)
+            {
+                if (fs.Length < 2048)
+                {
+                    fs.Close();
+                    fs.Dispose();
+                    Tool.FileOperation.Del(FileName);
+                }
+                else
+                {
+                    fs.Close();
+                    fs.Dispose();
                 }
             }
 

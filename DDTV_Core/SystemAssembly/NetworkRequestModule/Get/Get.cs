@@ -18,6 +18,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// <returns></returns>
         public static string GetRequest(string url, bool IsCookie = true, string Referer = "",string ContentType = "application/x-www-form-urlencoded",bool IsMandatoryIPv4 = false)
         {
+          
             //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
             if (string.IsNullOrEmpty(url))
             {
@@ -47,12 +48,14 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                         }
                         else
                         {
+                         
                             return null;
                         }
                     };
                 }
                 catch (Exception) { }
             }
+            
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
             req.ContentType = ContentType;
@@ -66,8 +69,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             if (IsCookie && !string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
                 req.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
+               
             }
-            req.Timeout = 3000;
+            req.Timeout = 8000;
+           
             try
             {
                 using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
@@ -78,6 +83,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                         using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
                         {
                             result = reader.ReadToEnd();
+                          
                         }
                     }
                 }
@@ -86,8 +92,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
            catch (Exception e)
             {
                 Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求超时或错误");
+               
                 return null;
             }
+          
             return result;  
         }
         public static void GetFile_For_Update(string URL, string File)
