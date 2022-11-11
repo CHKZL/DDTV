@@ -33,11 +33,20 @@ namespace DDTV_GUI.WPFControl
         public LoginQRDialog(EventHandler<EventArgs> _,string __)
         {
             InitializeComponent();
-            LoginEndEvent = _;
-            Text.Content = __;
-            ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-            ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh; 
-            LoginQR.Source = ChangeBitmapToImageSource(ByQRCode.LoginByQrCode().SKData);
+            try
+            {
+                LoginEndEvent = _;
+                Text.Content = __;
+                ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
+                ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
+                LoginQR.Source = ChangeBitmapToImageSource(ByQRCode.LoginByQrCode().SKData);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"扫码登陆触发错误！错误详情已写到日志中");
+                Log.AddLog(nameof(LoginQRDialog), LogClass.LogType.Error, $"扫码登陆触发错误！错误详情已写到日志中", true, e, true);
+            }
+           
             
         }
 

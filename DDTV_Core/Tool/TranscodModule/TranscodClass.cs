@@ -9,6 +9,7 @@ namespace DDTV_Core.Tool.TranscodModule
 {
     public class TranscodClass
     {
+        public bool IsAutoDelFile { get; set; } = false;
         /// <summary>
         /// 转码任务状态，T为正在转码
         /// </summary>
