@@ -48,8 +48,8 @@ namespace DDTV_Core.Tool.TranscodModule
                 else
                 {
                     
-                    //process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
-                    process.StartInfo.Arguments = "-i {Before} -vf scale=640:360 {After} -hide_banner".Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
+                    process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
+                    //process.StartInfo.Arguments = "-i {Before} -vf scale=640:360 {After} -hide_banner".Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
                 }
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
