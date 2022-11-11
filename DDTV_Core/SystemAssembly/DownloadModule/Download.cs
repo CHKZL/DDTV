@@ -599,20 +599,23 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:[{(IsNewTask?"否":"是")}],弹幕总开关:[{(IsRecDanmu ? "是" : "否")}],房间弹幕录制设置:[{(RoomIsRecDanmu ? "是" : "否")}]");
                         }
 
-                        if (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
+                        switch (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
                         {
-                            if (!downloadClass.GetCancelState())
-                            {
-                                DownloadCompleteTaskd_HLS(uid, downloadClass);
-                            }
-                            return;
-                        }
-                        else
-                        {
-                            Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            AddDownloadTaskd(uid, false, true);
-                        }
-
+                            case -1:
+                                //Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                                AddDownloadTaskd(uid, false, false);
+                                break;
+                            case 0:
+                                if (!downloadClass.GetCancelState())
+                                {
+                                    DownloadCompleteTaskd_HLS(uid, downloadClass);
+                                }
+                                return;
+                            case 1:
+                                Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                                AddDownloadTaskd(uid, false, true);
+                                break;
+                        } 
                     }
                     else
                     {
