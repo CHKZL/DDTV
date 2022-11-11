@@ -18,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "False", CoreConfigClass.Group.Core));
         public static string ReplaceAPI = GetValue(CoreConfigClass.Key.ReplaceAPI, "https://api.live.bilibili.com", CoreConfigClass.Group.Core);
         public static int APIVersion = int.Parse(GetValue(CoreConfigClass.Key.APIVersion, "1", CoreConfigClass.Group.Core));
-        public static bool AutoInsallUpdate = bool.Parse(GetValue(CoreConfigClass.Key.AutoInsallUpdate, "False", CoreConfigClass.Group.Core));
+        public static bool AutoInsallUpdate = bool.Parse(GetValue(CoreConfigClass.Key.AutoInsallUpdate, "True", CoreConfigClass.Group.Core));
         public static string DanMuColor = GetValue(CoreConfigClass.Key.DanmuColor, "0xFF,0xFF,0xFF", CoreConfigClass.Group.Play);
         public static string SubtitleColor = GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
         public static int DanMuFontSize = int.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
