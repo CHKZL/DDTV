@@ -22,6 +22,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
             bool IsFlvSteam = false;
             while (true)
             {
+                if(roomInfo.IsUserCancel)
+                {
+                    hLSHostClass.IsUserCancel = true;
+                    return hLSHostClass;
+                }
                 WebText = NetworkRequestModule.Get.Get.GetRequest($"{ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomInfo.room_id}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)Download.RecQuality}&platform=2&ptype=2", false, "https://www.bilibili.com/");
                 if (error > 10 || (IsFlvSteam && NoHlsSteam > Download.WaitHLSTime) || (!IsFlvSteam && NoHlsSteam > Download.WaitHLSTime+25))
                 {
@@ -101,6 +106,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
             public string base_url { get; set; }
             public string base_file_name { get; set; }
             public string ExtendedName { get; set; }
+            public bool IsUserCancel { get; set; } = false;
         }
 
     }

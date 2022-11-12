@@ -268,13 +268,16 @@ namespace DDTV_GUI.DDTV_Window
                                     {
                                         VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
                                     }
-                                    VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
-                                    SetVolume(MainWindow.DefaultVolume);
+                                    if(!IsClose)
+                                    {
+                                        VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                        SetVolume(MainWindow.DefaultVolume);
+                                    } 
                                 }
                             }
                             catch (Exception e)
                             {
-
+                                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Error, $"【{name}({roomId})】播放器初始化播放过程中出现未知错误，错误详情已写txt中", true, e, false);
                             }
                         });
                     });
@@ -510,9 +513,13 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         VideoView.Dispatcher.Invoke(() =>
                         {
-                            if (VideoView.MediaPlayer != null)
-                            {
+                            if (VideoView.MediaPlayer != null && VideoView.MediaPlayer.IsPlaying)
+                            {     
                                 VideoView.MediaPlayer.Stop();//停止播放
+                            }
+                            else
+                            {
+                                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"VideoView.MediaPlayer为Null！在播放窗口【{name}({roomId})】触发Window_Closing的时候", false);
                             }
                         }
                         );
