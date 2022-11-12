@@ -23,6 +23,7 @@ namespace DDTV_Core.Tool
             };
             try
             {
+                CheckIPAddress();
                 string Ver = SystemAssembly.NetworkRequestModule.Post.Post.HttpPost("http://api.ddtv.pro/api/Dokidoki", Parameters);
             }
             catch (Exception)
@@ -30,6 +31,26 @@ namespace DDTV_Core.Tool
 
             }
         }
+
+        public static void CheckIPAddress()
+        {
+            new Task(() =>
+            {
+                try
+                {
+                    string str = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest("http://www.ip111.cn/", false, "", "", true);
+                    string IP = RegexMethod.GetIPAddress(str);
+                    if(!string.IsNullOrEmpty(IP))
+                    {
+                        SystemAssembly.Log.Log.AddLog(nameof(Dokidoki), SystemAssembly.Log.LogClass.LogType.Info_IP_Address, $"本地访问B站所使用的IP地址为:{IP}",false,null,false);
+                    }
+                }
+                catch (Exception)
+                {
+                }
+            }).Start();
+        }
+
         public static string GetDDCtime(string Type)
         {
             string Time = "";

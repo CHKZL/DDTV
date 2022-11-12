@@ -43,6 +43,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// </summary>
             Info_IP_Ver = 33,
             /// <summary>
+            /// 地址报文
+            /// </summary>
+            Info_IP_Address = 34,
+            /// <summary>
             /// 调试信息
             /// </summary>
             Debug = 40,

@@ -1,17 +1,13 @@
-﻿using DDTV_Core.SystemAssembly.BilibiliModule.API;
-using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
+﻿using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
@@ -49,14 +45,26 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    if (IsNewTask || !roomInfo.IsUserCancel)
+                    if(roomInfo.IsUserCancel)
+                    {
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载。该任务是否为新任务：[{(IsNewTask?"是":"否")}】");
+                        if (IsHLS)
+                        {
+                            DownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
+                        }
+                        else
+                        {
+                            DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                        }
+                    }
+                    else
                     {
                         if (!IsNewTask)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{roomInfo.uname}(房间号:{roomInfo.room_id},UID:{roomInfo.uid})因为服务器原因连接中断，尝试进行重连...");
                         }
                         roomInfo.IsUserCancel = false;
-                        if(IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
+                        if (IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
                         {
                             AddDownLoad_HLS(uid, IsNewTask);
                         }
@@ -65,28 +73,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             AddDownLoad_FLV(uid, IsNewTask);
                         }
                     }
-                    else
-                    {
-                        if (!IsNewTask)
-                        {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载，并且不是新任务");
-                            if (IsHLS)
-                            {
-                                DownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count()-1]);
-                            }
-                            else
-                            {
-                                DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
-                            }
-                        }
-                        else
-                        {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载，本任务是新任务");
-                        }
-                        roomInfo.IsUserCancel = false;
-                    }
                 }
-
             });
         }
         /// <summary>
@@ -137,6 +124,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 }
                 else
                 {
+                    roomInfo.IsUserCancel = false;
                     downloadClass.EndTime = DateTime.Now;
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
@@ -166,7 +154,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec))&& IsRecDanmu)
+                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && IsRecDanmu)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec或IsRecDanmu为false，将不会储存弹幕相关数据");
                         }
@@ -187,7 +175,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 AfterFilenameExtension = ".mp4",
                                 BeforeFilePath = item,
-                                AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv","_fix.mp4"),
+                                AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
                             });
                             roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
                             WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
@@ -197,7 +185,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item}]不存在！");
                         }
                     }
-                    
+
 
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】修复任务已全部完成");
 
@@ -222,7 +210,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.Url = String.Empty;
                             downloads.FileName = item.FileName;
                             downloads.HLSRecorded = new List<string>();
-                           
+
                             if (item.Title != downloads.Title)
                             {
                                 downloads.Title = item.Title;
@@ -239,8 +227,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.TotalDownloadCount += item.TotalDownloadCount;
                             downloads.Status = DownloadStatus.DownloadComplete;
                             downloads.FilePath = item.FilePath;
-                           
-                           
+
+
                         }
                         if (downloads.TotalDownloadCount > 100)
                         {
@@ -255,11 +243,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else
                         {
-                           // Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
+                            // Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
                             DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
                             //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
                         }
-                     
+
                         WebHook.SendHook(WebHook.HookType.DownloadEndMissionSuccess, uid);
                         string EndText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})录制任务完成:\n===================\n" +
                                    $"直播间:{roomInfo.room_id}\n" +
@@ -448,13 +436,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             if (FileList.Count > 0)
                             {
                                 downloads.FileName = FileList[0];
-                            }     
+                            }
                         }
-                        if(downloads.TotalDownloadCount > 100)
+                        if (downloads.TotalDownloadCount > 100)
                         {
                             roomInfo.DownloadedLog.Add(downloads);
                         }
-                       
+
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
 
@@ -465,7 +453,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         else
                         {
                             //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
-                            DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title,Name= roomInfo.uname}, EventArgs.Empty);
+                            DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
                         }
                         #region 房间Shell命令
@@ -551,9 +539,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.RoomId = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id);
                         downloadClass.Name = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname);
                         HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloadClass, IsNewTask);
-                        if(!hLSHostClass.LiveStatus)
+                        if (!hLSHostClass.LiveStatus)
                         {
                             DownloadCompleteTaskd_HLS(uid, downloadClass);
+                            return;
+                        }
+                        if(hLSHostClass.IsUserCancel)
+                        {
+                            DownloadCompleteTaskd_HLS(uid, downloadClass,true);
+                            return;
                         }
                         if (!hLSHostClass.IsEffective)
                         {
@@ -561,9 +555,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】没有检测到HLS直播流，降级到FLV");
                             AddDownloadTaskd(uid, IsNewTask, false);
                             return;
-                        }                
+                        }
                         roomInfo.IsDownload = true;
-                      
+
                         downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
                         string StarText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n=========HLS==========\n" +
                             $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
@@ -596,7 +590,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:[{(IsNewTask?"否":"是")}],弹幕总开关:[{(IsRecDanmu ? "是" : "否")}],房间弹幕录制设置:[{(RoomIsRecDanmu ? "是" : "否")}]");
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:[{(IsNewTask ? "否" : "是")}],弹幕总开关:[{(IsRecDanmu ? "是" : "否")}],房间弹幕录制设置:[{(RoomIsRecDanmu ? "是" : "否")}]");
                         }
 
                         switch (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
@@ -615,7 +609,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                                 AddDownloadTaskd(uid, false, true);
                                 break;
-                        } 
+                        }
                     }
                     else
                     {
@@ -697,7 +691,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             roomInfo.CreationTime = DateTime.Now;
                             downloadClass.Title = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.title);
-                           
+
 
                             string StarText = $"\n({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n=========FLV==========\n" +
                                 $"直播间:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.room_id)}\n" +
@@ -705,7 +699,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 $"昵称:{Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.uname)}\n" +
                                 $"标题:{downloadClass.Title}\n" +
                                 $"=========FLV==========";
-                            if(roomInfo.Host.Substring(0,1)=="[")
+                            if (roomInfo.Host.Substring(0, 1) == "[")
                             {
                                 if (roomInfo.Host.Substring(0, 4) == "[HLS]")
                                 {
@@ -716,8 +710,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 roomInfo.Host = "[FLV] " + roomInfo.Host;
                             }
-                            
-                            
+
+
                             Console.WriteLine(StarText);
                             downloadClass.IsHLS = false;
                             downloadClass.ExtendedName = "flv";
@@ -808,7 +802,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (roomInfo.IsUserCancel)
                 {
-                    roomInfo.IsUserCancel = !roomInfo.IsUserCancel;
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"检测到用户取消请求，放弃继续监听网络文件状态请求");
                     return -2;
                 }
