@@ -73,7 +73,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private double BlackListeningOriginalSize_Width = 0;//350
         private double BlackListeningOriginalSize_Height = 0;//200
-        private bool IsBlackHear =false;//是否为黑听模式
+        private bool IsBlackHear = false;//是否为黑听模式
 
         BarrageConfig barrageConfig;
 
@@ -83,16 +83,16 @@ namespace DDTV_GUI.DDTV_Window
         };
 
 
-        public PlayWindow(long Uid,string Name,bool IsTemporaryPlay = false)
+        public PlayWindow(long Uid, string Name, bool IsTemporaryPlay = false)
         {
             InitializeComponent();
 
-           
+
             Task.Run(() =>
             {
                 VideoView.Dispatcher.Invoke(() =>
                 {
-                   
+
                     vlcVideo = new LibVLC();
                     _mediaPlayer = new MediaPlayer(vlcVideo);
                     VideoView.MediaPlayer = _mediaPlayer;
@@ -108,7 +108,7 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     UpdateWindowInfo();
                 });
-              
+
 
                 Task.Run(() =>
                 {
@@ -118,15 +118,15 @@ namespace DDTV_GUI.DDTV_Window
                 VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
                 VolumeTimer.Tick += VolumeTimer_Tick;
                 VolumeTimer.Start();
-              
+
                 barrageConfig = new BarrageConfig(canvas);
                 canvas.Dispatcher.Invoke(() =>
                 {
                     canvas.Opacity = CoreConfig.DanMuFontOpacity;
-                });               
+                });
             });
             Loaded += new RoutedEventHandler(Topping);
-            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);          
+            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -191,7 +191,7 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     EndGrid.Visibility = Visibility.Visible;
                 });
-                
+
                 Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
 
                 return;
@@ -291,7 +291,7 @@ namespace DDTV_GUI.DDTV_Window
             }
             catch (Exception e)
             {
-                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Error, $"【{name}({roomId})】试图加载视频流至播放器，被系统阻止", true,e,false);
+                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Error, $"【{name}({roomId})】试图加载视频流至播放器，被系统阻止", true, e, false);
                 Growl.WarningGlobal($"【{name}({roomId})】试图加载视频流至播放器，被系统阻止，请稍候再试");
             }
         }
@@ -386,6 +386,9 @@ namespace DDTV_GUI.DDTV_Window
                 Growl.WarningGlobal($"【{name}({roomId})】直播已结束");
             }
         }
+        /// <summary>
+        /// 取消任务并停止缓冲
+        /// </summary>
         public void CancelDownload()
         {
             if (stream != null)
@@ -465,7 +468,7 @@ namespace DDTV_GUI.DDTV_Window
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-        
+
         }
         public void RefreshWindow()
         {
@@ -488,34 +491,44 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
-
+        /// <summary>
+        /// 关闭播放窗前触发，停止播放并回收播放器组件占用的内存，回收并清理临时文件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            IsClose = true;
+            IsClose = true;//记录关闭状态
             Task.Run(() =>
             {
-                CancelDownload();
-                LiveChatDispose();
-                foreach (var item in OldFileDirectoryList)
+                try
                 {
-                    DDTV_Core.Tool.FileOperation.Del(item);
+                    Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口【{name}({roomId})】触发Window_Closing", false);
+                    CancelDownload();//取消任务并停止缓冲
+                    LiveChatDispose();//直播间消息连接回收
+                    if (VideoView != null)
+                    {
+                        VideoView.Dispatcher.Invoke(() =>
+                        {
+                            if (VideoView.MediaPlayer != null)
+                            {
+                                VideoView.MediaPlayer.Stop();//停止播放
+                            }
+                        }
+                        );
+                        VideoView.Dispatcher.Invoke(() =>
+                            VideoView.Dispose()//结束播放器组件对象，并回收内存
+                        );
+                    }
+                    foreach (var item in OldFileDirectoryList)
+                    {
+                        DDTV_Core.Tool.FileOperation.Del(item);//清理观看产生的临时文件
+                    }
+                    Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口【{name}({roomId})】Window_Closing完成", false);
                 }
-
-                VideoView.Dispatcher.Invoke(() =>
-                   VideoView.MediaPlayer.Stop()
-               );
-                if (VideoView != null)
+                catch (Exception e)
                 {
-                    VideoView.Dispatcher.Invoke(() =>
-                        VideoView.Dispose()
-                    );
-
-                }
-                if (vlcVideo != null)
-                {
-                    VideoView.Dispatcher.Invoke(() =>
-                        VideoView.Dispose()
-                    );
+                    Log.AddLog(nameof(PlayWindow), LogClass.LogType.Warn, $"播放窗口【{name}({roomId})】Window_Closing时发生意外错误！", true, e, true);
                 }
             });
         }
@@ -540,7 +553,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void volume_MouseMove(object sender, MouseEventArgs e)
         {
-            if((bool)volume_Global_Check.IsChecked)
+            if ((bool)volume_Global_Check.IsChecked)
             {
                 foreach (var item in MainWindow.playWindowsList)
                 {
@@ -551,7 +564,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 SetVolume(volume.Value);
             }
-            
+
         }
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -561,11 +574,11 @@ namespace DDTV_GUI.DDTV_Window
             volume_Global_Check.Dispatcher.Invoke(() => volume_Global_Check.Visibility = Visibility.Visible);
             VolumeGridTime = 3;
             if (e.Delta > 0)
-            {    
+            {
                 if (volume.Value + 5 <= 100)
                 {
                     volume.Value += 5;
-                    
+
                     SetVolume(volume.Value);
                     //this.VlcControl.SourceProvider.MediaPlayer.Audio.Volume = (int)音量.Value;
                 }
@@ -791,8 +804,8 @@ namespace DDTV_GUI.DDTV_Window
             IntPtr handle = new WindowInteropHelper(this).Handle;
             var screen = System.Windows.Forms.Screen.FromHandle(handle);
 
-            double ScreenWidth = (double)screen.Bounds.Width/ dpixratio;
-            double ScreenHeight = (double)screen.Bounds.Height/ dpixratio;
+            double ScreenWidth = (double)screen.Bounds.Width / dpixratio;
+            double ScreenHeight = (double)screen.Bounds.Height / dpixratio;
 
 
             if (MainWindow.playWindowsList.Count == 1)
@@ -963,7 +976,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OpenLiveRoomUrl_Click(object sender, RoutedEventArgs e)
         {
-            if(roomId==0)
+            if (roomId == 0)
             {
                 System.Windows.MessageBox.Show("参数初始化中，请播放窗口加载完成后再试");
             }
@@ -1436,19 +1449,19 @@ namespace DDTV_GUI.DDTV_Window
 
         private void PlayGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            
-                i += 1;
-                DispatcherTimer timer = new DispatcherTimer();
-                timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-                timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
-                timer.IsEnabled = true;
-                if (i == 2)
-                {
-                    timer.IsEnabled = false;
-                    i = 0;
-                    FullScreenSwitch();
-                }
-            
+
+            i += 1;
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
+            timer.IsEnabled = true;
+            if (i == 2)
+            {
+                timer.IsEnabled = false;
+                i = 0;
+                FullScreenSwitch();
+            }
+
         }
 
         /// <summary>
@@ -1460,7 +1473,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             foreach (var item in MainWindow.playWindowsList)
             {
-                if(item!=this)
+                if (item != this)
                 {
                     item.SetMute();
                 }
@@ -1520,7 +1533,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OnlyPlayAudio_Click(object sender, RoutedEventArgs e)
         {
-            if(MenuItem_OnlyPlayAudio.Tag.ToString()=="0")
+            if (MenuItem_OnlyPlayAudio.Tag.ToString() == "0")
             {
                 IsBlackHear = true;
                 FullScreenSwitch();
@@ -1529,12 +1542,12 @@ namespace DDTV_GUI.DDTV_Window
                 BlackListeningOriginalSize_Height = this.Height;
                 this.Width = 350;
                 this.Height = 200;
-                BlackListeningTips.Visibility= Visibility.Visible;
+                BlackListeningTips.Visibility = Visibility.Visible;
                 MenuItem_OnlyPlayAudio.Header = "退出只播音频";
                 MenuItem_SwitchQuality.Visibility = Visibility.Collapsed;
                 MenuItem_FullScreenSwitch.Visibility = Visibility.Collapsed;
                 MenuItem_WindowSorting.Visibility = Visibility.Collapsed;
-               
+
             }
             else
             {
@@ -1547,7 +1560,7 @@ namespace DDTV_GUI.DDTV_Window
                 MenuItem_SwitchQuality.Visibility = Visibility.Visible;
                 MenuItem_FullScreenSwitch.Visibility = Visibility.Visible;
                 MenuItem_WindowSorting.Visibility = Visibility.Visible;
-                
+
             }
         }
     }
