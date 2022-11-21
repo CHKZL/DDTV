@@ -38,11 +38,12 @@ namespace DDTV_Core.Tool
             {
                 try
                 {
-                    string str = SystemAssembly.NetworkRequestModule.Get.Get.GetRequest("http://www.ip111.cn/", false, "", "", true);
-                    string IP = RegexMethod.GetIPAddress(str);
-                    if(!string.IsNullOrEmpty(IP))
+                    string IP_1 = RegexMethod.GetIPAddress(SystemAssembly.NetworkRequestModule.Get.Get.GetRequest("https://tool.lu/ip/", false, "", "", true));
+                    string IP_2 = RegexMethod.GetIPAddress(SystemAssembly.NetworkRequestModule.Get.Get.GetRequest("http://www.ip111.cn/", false, "", "", true));
+                    string IP_3 = RegexMethod.GetIPAddress(SystemAssembly.NetworkRequestModule.Get.Get.GetRequest("http://www.882667.com/", false, "", "", true));
+                    if (!string.IsNullOrEmpty(IP_1)|| !string.IsNullOrEmpty(IP_2) || !string.IsNullOrEmpty(IP_3))
                     {
-                        SystemAssembly.Log.Log.AddLog(nameof(Dokidoki), SystemAssembly.Log.LogClass.LogType.Info_IP_Address, $"本地访问B站所使用的IP地址为:{IP}",false,null,false);
+                        SystemAssembly.Log.Log.AddLog(nameof(Dokidoki), SystemAssembly.Log.LogClass.LogType.Info_IP_Address, $"本地访问B站所使用的IP地址为:[{IP_1}][{IP_2}][{IP_3}]",false,null,false);
                     }
                 }
                 catch (Exception)

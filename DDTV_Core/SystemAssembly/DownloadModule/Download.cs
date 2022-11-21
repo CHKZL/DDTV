@@ -74,6 +74,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                     }
                 }
+                else
+                {
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Warn, $"[UID:{uid}]增加下载任务失败，原因：roomInfo不存在");
+                }
             });
         }
         /// <summary>
@@ -169,20 +173,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误。");
                     foreach (var item in roomInfo.Files)
                     {
-                        if (!string.IsNullOrEmpty(item) && File.Exists(item))
+                        if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
                         {
                             var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
                             {
                                 AfterFilenameExtension = ".mp4",
-                                BeforeFilePath = item,
-                                AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
+                                BeforeFilePath = item.FilePath,
+                                AfterFilePath = item.FilePath.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
                             });
+                            item.IsTranscod = true;
                             roomInfo.DownloadedFileInfo.Mp4File = new FileInfo(tm.AfterFilePath);
                             WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item}]不存在！");
+                            if (!item.IsTranscod)
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item.FilePath}]不存在！");
+                            }
                         }
                     }
 
@@ -364,9 +372,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         foreach (var file in roomInfo.Files)
                         {
-                            if (File.Exists(file) && !FileList.Contains(file))
+                            if (!file.IsTranscod && File.Exists(file.FilePath) && !FileList.Contains(file.FilePath))
                             {
-                                FileList.Add(file);
+                                file.IsTranscod = true;
+                                FileList.Add(file.FilePath);
                             }
                         }
                         if (FileList.Count > 0)
