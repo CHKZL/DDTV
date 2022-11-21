@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-11-12 04:10:37";
+        public static string CompiledVersion = "2022-11-21 15:16:19";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
 
@@ -76,7 +76,7 @@ namespace DDTV_Core
                 case SatrtType.DDTV_DanMu:
                     break;
                 default:
-                    ServerInteraction.CheckUpdates.Update("Core");
+                    //ServerInteraction.CheckUpdates.Update("Core");
                     ServerInteraction.Dokidoki.Start("Core");
                     break;
             }

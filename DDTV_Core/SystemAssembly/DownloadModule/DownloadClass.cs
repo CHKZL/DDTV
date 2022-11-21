@@ -197,7 +197,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         string _F = Path + $"/{Tool.FileOperation.ReplaceKeyword(downloads.Uid, Download.DownloadFolderName)}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         downloads.FlvFileList.Add(_F);
-                        roomInfo.Files.Add(_F);
+                        roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath= _F});
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -378,6 +378,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         string _F2 = Path + $"/{Tool.FileOperation.ReplaceKeyword(downloads.Uid, Download.DownloadFolderName)}/" + FileName + "_" + count + "." + format;
                                         downloads.FlvFileList.Add(_F2);
                                         fileStream = new FileStream(_F2, FileMode.Create);
+                                        roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = _F2 });
                                         byte[] buffer = new byte[9 + 15] { FlvHeader.Signature[0], FlvHeader.Signature[1], FlvHeader.Signature[2], FlvHeader.Version, FlvHeader.Type, FlvHeader.FlvHeaderOffset[0], FlvHeader.FlvHeaderOffset[1], FlvHeader.FlvHeaderOffset[2], FlvHeader.FlvHeaderOffset[3], 0x00, 0x00, 0x00, 0x01, FlvScriptTag.TagType, FlvScriptTag.TagDataSize[0], FlvScriptTag.TagDataSize[1], FlvScriptTag.TagDataSize[2], FlvScriptTag.Timestamp[3], FlvScriptTag.Timestamp[2], FlvScriptTag.Timestamp[1], FlvScriptTag.Timestamp[0], 0x00, 0x00, 0x00 };
                                         fileStream.Write(buffer, 0, buffer.Length);
                                         fileStream.Write(FlvScriptTag.TagaData, 0, FlvScriptTag.TagaData.Length);
@@ -459,8 +460,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     Path = Tool.FileOperation.CreateAll(Path);
                     downloads.FlvFileList.Add(downloads.FilePath);
                     downloads.FileName = downloads.FilePath + FileName + $".mp4";
-                    roomInfo.Files.Add(downloads.FileName);
+                   
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
+                    roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = downloads.FileName });
                     int WaitingTime = 1000;
                     try
                     {
@@ -587,7 +589,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             len = 0;
                                             DownloadCount = 0;
                                             fs.Close();
-                                            fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
+                                            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".mp4";
+                                            fs = new FileStream(NewFilePath, FileMode.Create);
+                                            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
                                         }
                                         break;
                                     }
@@ -619,7 +623,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         { 
                                             DownloadCount = 0;
                                             fs.Close();
-                                            fs = new FileStream(downloads.FilePath + Tool.FileOperation.CheckFilenames(downloads.Title) + $"_{DateTime.Now.ToString("HHmmssfff")}.mp4", FileMode.Create);
+                                            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".ts";
+                                            fs = new FileStream(NewFilePath, FileMode.Create);
+                                            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
                                         }
                                         break;
                                     }

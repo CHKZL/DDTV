@@ -306,7 +306,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// <summary>
             /// 下载的文件记录
             /// </summary>
-            public List<string> Files { set; get; } = new List<string>();
+            public List<DownloadedFiles> Files { set; get; } = new List<DownloadedFiles>();
+            public class DownloadedFiles
+            {
+                public string FilePath { set; get; }
+                public bool IsTranscod { set; get; } = false;
+            }
         }
         public class RoomWebSocket
         {
