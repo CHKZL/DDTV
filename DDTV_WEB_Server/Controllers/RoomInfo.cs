@@ -196,4 +196,37 @@ namespace DDTV_WEB_Server.Controllers
             }
         }
     }
+    public class Room_Shell : ProcessingControllerBase.ApiControllerBase
+    {
+        /// <summary>
+        /// 修改房间配置Shell字符串
+        /// </summary>
+        /// <param name="uid">要修改的用户UID</param>
+        /// <param name="ShellString">新的Shell字符串</param>
+        /// <param name="CheckSign">用于验证的[CoreConfigClass.Key.AccessKeySecret]参数</param>
+        /// <param name="cmd"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "Room_Shell")]
+        public ActionResult Post([FromForm] long uid, [FromForm] string ShellString, [FromForm] string CheckSign, [FromForm] string cmd)
+        {
+            if (CheckSign != CoreConfig.HighRiskWebAPIFixedCheckSign)
+            {
+                return Content(MessageBase.Success(nameof(Room_Shell), $"修改Shell命令的高危操作校验失败，拒绝执行", "CheckSign错误",MessageBase.code.OperationFailed), "application/json");
+            }
+            RoomConfigClass.RoomCard roomCard = new RoomConfigClass.RoomCard()
+            {
+                UID = uid,
+                Shell = ShellString
+            };
+            if (RoomConfig.ReviseRoom(roomCard, false, 7))
+            {
+                return Content(MessageBase.Success(nameof(Room_Shell), $"已修改UID为{uid}的Shell命令为{ShellString}"), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(Room_Shell), $"修改UID为{uid}的Shell命令出现问题，修改失败", $"修改UID为{uid}的Shell命令出现问题，修改失败", MessageBase.code.OperationFailed), "application/json");
+            }
+
+        }
+    }
 }

@@ -61,9 +61,11 @@ namespace DDTV_GUI.DDTV_Window
         }
         public MainWindow()
         {
-
+            
             InitializeComponent();
-            if (CheckRepeatedRun())
+            DDTV_GUI.App.Application_Startup(null,null);
+
+            if (false && CheckRepeatedRun())
             {
                 Application.Current.Shutdown();
                 return;
@@ -261,10 +263,13 @@ namespace DDTV_GUI.DDTV_Window
                 //    Files.Add(item);
                 //}
                 //FileOperation.Del(Files);
-                DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
-                foreach (FileInfo item in root.GetFiles())
+                if (Directory.Exists(Download.TmpPath))
                 {
-                    DDTV_Core.Tool.FileOperation.Del(item.FullName);
+                    DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
+                    foreach (FileInfo item in root.GetFiles())
+                    {
+                        DDTV_Core.Tool.FileOperation.Del(item.FullName);
+                    }
                 }
             });
         }

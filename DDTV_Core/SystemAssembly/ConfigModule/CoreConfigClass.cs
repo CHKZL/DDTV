@@ -354,6 +354,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：15
             /// </summary>
             WaitHLSTime,
+            /// <summary>
+            /// 用于请求高危API接口时一起提交校验的固定字符串
+            /// 组：Core   默认值：随机生成的GUID
+            /// </summary>
+            HighRiskWebAPIFixedCheckSign,
         }
     }
 }

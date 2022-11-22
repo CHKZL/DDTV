@@ -235,8 +235,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             downloads.TotalDownloadCount += item.TotalDownloadCount;
                             downloads.Status = DownloadStatus.DownloadComplete;
                             downloads.FilePath = item.FilePath;
-
-
                         }
                         if (downloads.TotalDownloadCount > 100)
                         {
@@ -287,6 +285,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Console.WriteLine(EndText);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
                         Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                        roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                        roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                     }
                     else
                     {
@@ -516,6 +516,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                    $"\n===================";
                         Console.WriteLine(EndText);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
+                        roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                        roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                     }
                     else
                     {
