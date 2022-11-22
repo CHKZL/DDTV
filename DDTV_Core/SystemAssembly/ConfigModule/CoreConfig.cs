@@ -28,7 +28,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool IsBypass_SSL= bool.Parse(GetValue(CoreConfigClass.Key.IsBypass_SSL, "False", CoreConfigClass.Group.Core));
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
-        
+        public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
 
         /// <summary>
         /// 初始化配置文件
@@ -156,6 +156,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _SCSaveType = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType;
             var _IsHls = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
             var _WaitHLSTime = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
+            var _HighRiskWebAPIFixedCheckSign = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.HighRiskWebAPIFixedCheckSign;
+
         }
         /// <summary>
         /// 获取配置

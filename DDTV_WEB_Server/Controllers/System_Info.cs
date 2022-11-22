@@ -156,6 +156,7 @@ namespace DDTV_WEB_Server.Controllers
                 CoreConfigClass.Key.pfxPasswordFileName,
                 CoreConfigClass.Key.AccessKeyId,
                 CoreConfigClass.Key.AccessKeySecret,
+                CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign,
             };
             foreach (var item in CoreConfigClass.config.datas)
             {
