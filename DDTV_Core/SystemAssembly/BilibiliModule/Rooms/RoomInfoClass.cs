@@ -327,12 +327,29 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         }
         public class DownloadedFileInfo
         {
-
-            public FileInfo FlvFile { set; get; }
-            public FileInfo Mp4File { set; get; }
+            /// <summary>
+            /// 修复后的文件完整路径List
+            /// </summary>
+            public List<FileInfo> AfterRepairFiles { set; get; } = new List<FileInfo>();
+            /// <summary>
+            /// 修复前的文件完整路径List
+            /// </summary>
+            public List<FileInfo> BeforeRepairFiles { set; get; } = new List<FileInfo>();
+            /// <summary>
+            /// 录制的弹幕文件
+            /// </summary>
             public FileInfo DanMuFile { set; get; }
+            /// <summary>
+            /// 录制的SC记录文件
+            /// </summary>
             public FileInfo SCFile { set; get; }
+            /// <summary>
+            /// 录制的大航海记录文件
+            /// </summary>
             public FileInfo GuardFile { set; get; }
+            /// <summary>
+            /// 录制的礼物记录文件
+            /// </summary>
             public FileInfo GiftFile { set; get; }
         }
     }

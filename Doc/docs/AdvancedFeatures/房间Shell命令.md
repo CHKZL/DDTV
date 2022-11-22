@@ -12,8 +12,8 @@
 Shell命令可使用的关键字列表：
 |关键字|功能|
 |--|--|
-|{FlvFile}|该房间最近一次完成的下载任务的FLV文件信息|
-|{MP4File}|MP4文件信息|
+|{AfterRepairFiles}|修复后的文件完整路径List(文件以分号`;`进行分割，例：`FileA.mp4;FileB.mp4;FileC.mp4`)|
+|{AfterLen}|修复后的文件List数量|
 |{DanMuFile}|弹幕录制文件信息|
 |{SCFile}|SC记录文件信息|
 |{GuardFile}|大航海记录文件信息|

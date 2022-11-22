@@ -108,12 +108,29 @@ namespace DDTV_Core.Tool
         public static string ReplaceKeyword(long uid, string Text)
         {
             Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo);
+ 
+            if (roomInfo.DownloadedFileInfo.AfterRepairFiles != null)
+            {
+                string FileList = string.Empty;
+                foreach (var item in roomInfo.DownloadedFileInfo.AfterRepairFiles)
+                {
+                    FileList += item.FullName + ";";
+                }
+                Text = Text.Replace("{AfterRepairFiles}", FileList);
+                Text = Text.Replace("{AfterLen}", roomInfo.DownloadedFileInfo.AfterRepairFiles.Count().ToString());
+            }
 
-            if (roomInfo.DownloadedFileInfo.FlvFile != null)
-                Text = Text.Replace("{FlvFile}", roomInfo.DownloadedFileInfo.FlvFile.FullName);
+            if (roomInfo.DownloadedFileInfo.BeforeRepairFiles != null)
+            {
+                string FileList = string.Empty;
+                foreach (var item in roomInfo.DownloadedFileInfo.BeforeRepairFiles)
+                {
+                    FileList += item.FullName + ";";
+                }
+                Text = Text.Replace("{BeforeRepairFiles}", FileList);
+                Text = Text.Replace("{BeforeLen}", roomInfo.DownloadedFileInfo.BeforeRepairFiles.Count().ToString());
+            }
 
-            if (roomInfo.DownloadedFileInfo.Mp4File != null)
-                Text = Text.Replace("{MP4File}", roomInfo.DownloadedFileInfo.Mp4File.FullName);
 
             if (roomInfo.DownloadedFileInfo.DanMuFile != null)
                 Text = Text.Replace("{DanMuFile}", roomInfo.DownloadedFileInfo.DanMuFile.FullName);
@@ -146,8 +163,8 @@ namespace DDTV_Core.Tool
                 .Replace("{ss}", DateTime.Now.ToString("ss"))
                 .Replace("{fff}", DateTime.Now.ToString("fff"))
                 .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
-                .Replace("{DATE}", DateTime.Now.ToString("yyMMdd"))
-                .Replace("{TIME}", DateTime.Now.ToString("HH-mm-ss"))
+                .Replace("{DATE}", DateTime.Now.ToString("yyyy_MM_dd"))
+                .Replace("{TIME}", DateTime.Now.ToString("HH_mm_ss"))
                 .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
                 .Replace("{R}", new Random().Next(1000, 9999).ToString());
             return Text;

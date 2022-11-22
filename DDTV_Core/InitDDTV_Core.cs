@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-11-21 15:16:19";
+        public static string CompiledVersion = "2022-11-22 13:57:50";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
 
@@ -36,24 +36,21 @@ namespace DDTV_Core
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
             Console.WriteLine($"有任何问题欢迎加群：338182356 直接沟通");
-            Log.LogInit(LogClass.LogType.Debug);
-            //TestVetInfo();
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;
-            ServicePointManager.Expect100Continue = false;
-            CoreConfig.ConfigInit(satrtType);
-            DDTV_Update.CheckUpdateProgram();
-            Task.Run(() => Tool.DDcenter.Init(satrtType));
+            Log.LogInit(LogClass.LogType.Debug);//初始化日志系统，设置日志输出等级
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;//设置使用的最低安全协议（B站目前为Tls12）
+            ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;//连接队列上线
+            ServicePointManager.Expect100Continue = false;//禁止查询服务端post状态防止卡死
+            CoreConfig.ConfigInit(satrtType);//初始化设置系统
+            DDTV_Update.CheckUpdateProgram();//检查更新器是否有新版本
+            Task.Run(() => Tool.DDcenter.Init(satrtType));//初始化DDC采集系统
             if (satrtType != SatrtType.DDTV_GUI && satrtType != SatrtType.DDTV_DanMu)
             {
-                SeKey();
+                SeKey();//启动控制台菜单监听
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
-                FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//硬盘空间不足事件
+                FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//注册硬盘空间不足事件
             }
-            FileOperation.RemainingSpaceWarningDetection();
-            //var c = RuntimeInformation.RuntimeIdentifier;
+            FileOperation.RemainingSpaceWarningDetection();//开始监控硬盘剩余空间
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
-
             switch (satrtType)
             {
                 case SatrtType.DDTV_Core:
