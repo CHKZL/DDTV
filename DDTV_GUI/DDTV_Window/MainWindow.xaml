@@ -7,6 +7,8 @@
         xmlns:local="clr-namespace:DDTV_GUI"
         x:Class="DDTV_GUI.DDTV_Window.MainWindow"
         mc:Ignorable="d"
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
         Title="MainWindow" Width="1000" Height="563"
         Icon="/Resources/Img/UI/DDTV.ico"
         Background="Transparent" MinWidth="1000" MinHeight="563" Closing="GlowWindow_Closing" StateChanged="GlowWindow_StateChanged" SizeChanged="GlowWindow_SizeChanged" MaxHeight="563" MaxWidth="1000" ResizeMode="CanMinimize">
