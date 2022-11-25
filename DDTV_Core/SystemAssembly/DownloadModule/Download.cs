@@ -627,7 +627,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         switch (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
                         {
                             case -1:
-                                //Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                                Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                                 AddDownloadTaskd(uid, false, false);
                                 break;
                             case 0:
