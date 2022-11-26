@@ -5,7 +5,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Version>3.3.5.819</Version>
+    <Version>3.3.6.827</Version>
     <Description>这是DDTV的CLI版本</Description>
     <ApplicationIcon>DDTV.ico</ApplicationIcon>
     <Authors>ami</Authors>

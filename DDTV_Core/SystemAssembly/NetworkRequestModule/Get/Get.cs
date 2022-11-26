@@ -11,6 +11,9 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
 {
     public class Get
     {
+      
+
+
         /// <summary>
         /// 通过get请求获取返回信息
         /// </summary>
@@ -36,7 +39,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             {
                 req.Proxy = null;
             }
-            if (!CoreConfig.MandatoryUseIPv4)
+            if (CoreConfig.MandatoryUseIPv4)
             {
                 try
                 {
@@ -44,22 +47,23 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                     {
                         if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
+                           
                             return new IPEndPoint(IPAddress.Any, 0);
                         }
                         else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                         {
+                           
                             return new IPEndPoint(IPAddress.IPv6Any, 0);
                         }
                         else
                         {
-                         
+                        
                             return null;
                         }
                     };
                 }
                 catch (Exception) { }
             }
-            
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
             req.ContentType = ContentType;
@@ -93,10 +97,15 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                 }
                 //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request, $"发起GetRequest请求完成:{url}", false, null, false);
             }
+            catch(WebException e)
+            {
+                //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status},{IsCookie},{Referer},{IsMandatoryIPv4},{url}");
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}",true,e,false);
+                return null;
+            }
            catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求超时或错误");
-               
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求超时或错误,{e.ToString()}");      
                 return null;
             }
           
