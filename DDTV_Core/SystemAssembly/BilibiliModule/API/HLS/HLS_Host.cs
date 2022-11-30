@@ -65,6 +65,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                                         hLSHostClass.base_url = hLSHostClass.base_url.Replace(hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1], "");
                                         hLSHostClass.ExtendedName = "m4s";
                                         roomInfo.Host = "[HLS] " + hLSHostClass.host;
+                                        roomInfo.CurrentMode = 1;
                                         downloads.ExtendedName = "m4s";
                                         return hLSHostClass;
                                     }

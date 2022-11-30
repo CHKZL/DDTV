@@ -304,6 +304,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             /// </summary>
             public string Host { set; get; } = "";
             /// <summary>
+            /// 当前模式（0:FLV 1:HLS）
+            /// </summary>
+            public int CurrentMode { set; get; } = 0;
+            /// <summary>
             /// 下载的文件记录
             /// </summary>
             public List<DownloadedFiles> Files { set; get; } = new List<DownloadedFiles>();

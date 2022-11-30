@@ -243,15 +243,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
 
-                        if (DownloadCompleted == null)
-                        {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件为空！");
-                        }
-                        else
+                        if (DownloadCompleted != null)
                         {
                             // Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
                             DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
                             //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
+                            
+                        }
+                        else
+                        {
+                           if(DDTV_Core.InitDDTV_Core.InitType== InitDDTV_Core.SatrtType.DDTV_GUI)
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件为空！");
+                            }
                         }
                         #region 房间Shell命令
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
@@ -475,15 +479,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载任务添加到历史任务完成");
 
 
-                        if (DownloadCompleted == null)
+                        if (DownloadCompleted != null)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件为空！");
+                            // Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
+                            DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
+                            //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
+
                         }
                         else
                         {
-                            //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
-                            DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
+                            if (DDTV_Core.InitDDTV_Core.InitType == InitDDTV_Core.SatrtType.DDTV_GUI)
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件为空！");
+                            }
                         }
                         #region 房间Shell命令
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
@@ -741,7 +749,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 roomInfo.Host = "[FLV] " + roomInfo.Host;
                             }
-
+                            roomInfo.CurrentMode = 0;
 
                             Console.WriteLine(StarText);
                             downloadClass.IsHLS = false;

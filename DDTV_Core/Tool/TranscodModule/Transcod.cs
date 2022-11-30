@@ -51,6 +51,7 @@ namespace DDTV_Core.Tool.TranscodModule
                     process.StartInfo.Arguments = TranscodParmetrs.Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
                     //process.StartInfo.Arguments = "-i {Before} -vf scale=640:360 {After} -hide_banner".Replace("{After}", "\"" + transcodClass.AfterFilePath + "\"").Replace("{Before}", "\"" + transcodClass.BeforeFilePath + "\"");
                 }
+                Log.AddLog(nameof(Transcod), SystemAssembly.Log.LogClass.LogType.Info, "开始修复/转码任务完成:" + process.StartInfo.Arguments);
                 process.StartInfo.UseShellExecute = false;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.RedirectStandardError = true;

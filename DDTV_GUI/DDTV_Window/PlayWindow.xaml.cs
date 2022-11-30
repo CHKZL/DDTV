@@ -30,6 +30,7 @@ using DDTV_GUI.DanMuCanvas.BarrageParameters;
 using DDTV_GUI.WPFControl;
 using System.Diagnostics;
 using Point = System.Drawing.Point;
+using Downloader;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -75,6 +76,24 @@ namespace DDTV_GUI.DDTV_Window
         private double BlackListeningOriginalSize_Height = 0;//200
         private bool IsBlackHear = false;//是否为黑听模式
 
+        private DownloadService downloader = new DownloadService();
+        private DownloadConfiguration downloadOpt = new DownloadConfiguration()
+        {
+            BufferBlockSize = 4096, // 通常，主机最大支持8000字节，默认值为8000。
+            ChunkCount = 1, // 要下载的文件分片数量，默认值为1
+            //MaximumBytesPerSecond = 1024 * 1024, // 下载速度限制为1MB/s，默认值为零或无限制
+            MaxTryAgainOnFailover = int.MaxValue, // 失败的最大次数
+            Timeout = 2000, // 每个 stream reader  的超时（毫秒），默认值是1000
+            RequestConfiguration = // 定制请求头文件
+            {
+                Accept = "*/*",
+                //CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie), // Add your cookies
+                UserAgent = NetClass.UA(),
+                ContentType = "application/x-www-form-urlencoded",
+                Referer = "https://www.bilibili.com/"
+            }
+        };
+
         BarrageConfig barrageConfig;
 
         public List<string> ShieldDanMuText = new List<string>()
@@ -86,7 +105,7 @@ namespace DDTV_GUI.DDTV_Window
         public PlayWindow(long Uid, string Name, bool IsTemporaryPlay = false)
         {
             InitializeComponent();
-
+            downloader = new DownloadService(downloadOpt);
 
             Task.Run(() =>
             {
@@ -312,8 +331,7 @@ namespace DDTV_GUI.DDTV_Window
 
         R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                //string U2 = RoomInfo.playUrl_Mandatory(uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line);
-
+                //downloader.DownloadFileTaskAsync(Url, FileDirectory);
                 HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
                 if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
                 {
@@ -376,7 +394,6 @@ namespace DDTV_GUI.DDTV_Window
                             return;
                         }
                     }
-
                 });
             }
             else
@@ -403,6 +420,10 @@ namespace DDTV_GUI.DDTV_Window
             {
                 httpWebResponse.Close();
                 httpWebResponse.Dispose();
+            }
+            if(downloader.Status == DownloadStatus.Running)
+            {
+                downloader.CancelAsync();
             }
             IsDownloadStart = false;
         }
