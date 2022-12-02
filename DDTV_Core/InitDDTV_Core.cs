@@ -23,9 +23,10 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-12-02 22:03:05";
+        public static string CompiledVersion = "2022-12-03 06:55:28";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
+        public static bool IsDevDebug = false;
 
     /// <summary>
     /// 初始化COre
@@ -145,7 +146,7 @@ namespace DDTV_Core
                         Console.WriteLine($"a：查看下载中的任务情况");
                         Console.WriteLine($"b：一键导入关注列表中的V(可能不全需要自己补一下)");
                         Console.WriteLine($"c：重登登陆");
-                        Console.WriteLine($"z：控制台监控模式开关(会显示所有上下播信息)");
+                        Console.WriteLine($"z：控制台开发者监控模式开关(会显示所有上下播信息和一大堆调试信息)");
                         switch (Console.ReadKey().Key)
                         {
                             case ConsoleKey.A:
@@ -237,7 +238,8 @@ namespace DDTV_Core
                             case ConsoleKey.Z:
                                 {
                                     CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
-                                    Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台监控模式" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息" : ""));
+                                    IsDevDebug = CoreConfig.ConsoleMonitorMode;
+                                    Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台开发者监控模式开关" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息和一大堆调试信息" : ""));
                                     break;
                                 }
                             default:

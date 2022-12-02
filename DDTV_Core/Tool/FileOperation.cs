@@ -64,6 +64,14 @@ namespace DDTV_Core.Tool
                 catch (Exception){}
                 return true;
             }
+            catch(WebException e) 
+            {
+                if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                {
+                    Log.AddLog(nameof(FileOperation), LogClass.LogType.Debug, $"判断远端文件：文件不存在{e.Status}({(int)e.Status})[{Url}]");
+                }
+                return false;
+            }
             catch (Exception e)
             {
                 //Log.AddLog(nameof(FileOperation), LogClass.LogType.Warn, Url+"   " + e.Message,false,null,false);
