@@ -11,7 +11,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
 {
     public class Get
     {
-      
+
 
 
         /// <summary>
@@ -23,9 +23,9 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// <param name="ContentType">类型（默认使用application/x-www-form-urlencoded）</param>
         /// <param name="IsMandatoryIPv4">是否强制使用IPv4</param>
         /// <returns></returns>
-        public static string GetRequest(string url, bool IsCookie = true, string Referer = "",string ContentType = "application/x-www-form-urlencoded",bool IsMandatoryIPv4 = false)
+        public static string GetRequest(string url, bool IsCookie = true, string Referer = "", string ContentType = "application/x-www-form-urlencoded", bool IsMandatoryIPv4 = false)
         {
-          
+
             //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"发出网络请求:{url.Split('?')[0]}", false, null, false);
             if (string.IsNullOrEmpty(url))
             {
@@ -47,17 +47,17 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                     {
                         if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                         {
-                           
+
                             return new IPEndPoint(IPAddress.Any, 0);
                         }
                         else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
                         {
-                           
+
                             return new IPEndPoint(IPAddress.IPv6Any, 0);
                         }
                         else
                         {
-                        
+
                             return null;
                         }
                     };
@@ -77,10 +77,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             if (IsCookie && !string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
                 req.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
-               
+
             }
             req.Timeout = 8000;
-           
+
             try
             {
                 using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
@@ -91,25 +91,25 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                         using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
                         {
                             result = reader.ReadToEnd();
-                          
+
                         }
                     }
                 }
                 //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request, $"发起GetRequest请求完成:{url}", false, null, false);
             }
-            catch(WebException e)
+            catch (WebException e)
             {
                 //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status},{IsCookie},{Referer},{IsMandatoryIPv4},{url}");
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}",true,e,false);
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}", true, e, false);
                 return null;
             }
-           catch (Exception e)
+            catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求超时或错误,{e.ToString()}");      
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求超时或错误,{e.ToString()}");
                 return null;
             }
-          
-            return result;  
+
+            return result;
         }
         public static void GetFile_For_Update(string URL, string File)
         {
@@ -138,7 +138,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             wc.DownloadFile(URL, File);
             return new FileInfo(File);
         }
-        public static byte[] GetFile_Bytes(string URL,long Uid =0)
+        public static byte[] GetFile_Bytes(string URL, long Uid = 0)
         {
             try
             {
@@ -151,18 +151,20 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             }
             catch (WebException e)
             {
-                switch(e.Status)
+                switch (e.Status)
                 {
                     case WebExceptionStatus.Timeout:
                         return null;
+                    case WebExceptionStatus.ProtocolError:
+                        return null;
                     default:
-                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "")+ $"GetFile_Bytes请求错误:{e.Status}");
+                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "") + $"GetFile_Bytes请求错误:{e.Status}({(int)e.Status})");
                         return null;
                 }
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetFile_Bytes请求发生意外错误，详情已写入txt",true,e,true);
+                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetFile_Bytes请求发生意外错误，详情已写入txt", true, e, true);
                 return null;
             }
         }
