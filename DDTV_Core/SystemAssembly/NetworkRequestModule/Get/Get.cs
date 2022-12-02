@@ -12,8 +12,6 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
     public class Get
     {
 
-
-
         /// <summary>
         /// 通过get请求获取返回信息
         /// </summary>
@@ -100,7 +98,15 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             catch (WebException e)
             {
                 //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status},{IsCookie},{Referer},{IsMandatoryIPv4},{url}");
-                Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}", true, e, false);
+                 if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                {
+                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status}({(int)e.Status})[{url}]", true, e, false);
+                }
+                else
+                {
+                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}", true, e, false);
+                }
+                
                 return null;
             }
             catch (Exception e)

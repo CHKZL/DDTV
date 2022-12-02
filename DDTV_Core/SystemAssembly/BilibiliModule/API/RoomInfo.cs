@@ -22,7 +22,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="UIDList">需要更新的UID列表</param>
         /// <param name="query">需要返回信息的UID</param>
         /// <returns></returns>
-        public static List<RoomInfoClass.RoomInfo> get_status_info_by_uids(List<long> UIDList,bool IsTmp=false)
+        public static List<RoomInfoClass.RoomInfo> get_status_info_by_uids(List<long> UIDList, bool IsTmp = false)
         {
             List<RoomInfoClass.RoomInfo> info = new List<RoomInfoClass.RoomInfo>();
             if (UIDList.Count > 0)
@@ -31,7 +31,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 LT = "{\"uids\":[" + UIDList[0];
                 if (UIDList.Count > 0)
                 {
-                    for (int i = 1 ; i < UIDList.Count ; i++)
+                    for (int i = 1; i < UIDList.Count; i++)
                     {
                         if (UIDList[i] != 0)
                         {
@@ -61,7 +61,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 long uid = JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(RoomList[((JProperty)obj[i]).Name].ToString()).uid;
                                 if (IsTmp)
                                 {
-                                    
+
                                     if (((JProperty)obj[i]).Name != null && RoomList[((JProperty)obj[i]).Name] != null)
                                     {
                                         string name = RoomList[((JProperty)obj[i]).Name].ToString();
@@ -148,7 +148,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                     if (UIDList.Count() == 1)
                                     {
                                         //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"调用更新房间状态API回调成功，已更新房间信息");
-                                        return new List<RoomInfoClass.RoomInfo>() { Rooms.Rooms.RoomInfo[uid]};
+                                        return new List<RoomInfoClass.RoomInfo>() { Rooms.Rooms.RoomInfo[uid] };
                                     }
                                 }
                             }
@@ -163,7 +163,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 }
             }
             //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"收到的UIDList长度为0，调用更新房间状态API回调失败");
-            if(IsTmp)
+            if (IsTmp)
             {
                 return info;
             }
@@ -172,7 +172,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 info.Add(new RoomInfoClass.RoomInfo());
                 return info;
             }
-           
+
         }
         /// <summary>
         /// 获取房间初始化信息
@@ -183,7 +183,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         {
             string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/room_init?id=" + roomid);
-            
+
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"room_init获取网络数据为空或超时");
@@ -269,10 +269,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public static RoomInfoClass.RoomInfo get_info(long uid,long RoomId=0,bool IsAddedToForm=true)
+        public static RoomInfoClass.RoomInfo get_info(long uid, long RoomId = 0, bool IsAddedToForm = true)
         {
-            string WebText=String.Empty;
-            if (RoomId==0)
+            string WebText = String.Empty;
+            if (RoomId == 0)
             {
                 WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/get_info?id={Rooms.Rooms.GetValue(uid, CacheType.room_id)}");
             }
@@ -280,7 +280,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/get_info?id={RoomId}");
             }
-           
+
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_info获取网络数据为空或超时");
@@ -331,7 +331,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         return JsonConvert.DeserializeObject<RoomInfoClass.RoomInfo>(ri);
                     }
                     //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间get_info信息成功");
-                    
+
                 }
             }
             return null;
@@ -339,7 +339,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         public static List<int> GetQuality(long uid)
         {
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
-            List<int> _out=new List<int>();
+            List<int> _out = new List<int>();
             string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/playUrl?cid=" + roomId + $"&qn=10000&platform=web");
             if (string.IsNullOrEmpty(WebText))
             {
@@ -395,7 +395,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <param name="uid">用户mid</param>
         /// <param name="qn">画质</param>
         /// <returns></returns>
-        public static string playUrl_v2(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine,bool IsPlay=false)
+        public static string playUrl_v2(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine, bool IsPlay = false)
         {
             List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
         PlayR: if (!GetQuality(uid).Contains((int)qn))
@@ -422,58 +422,87 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             var url_data = BA?.Data?.PlayurlInfo?.Playurl?.Streams;
                             var url_http_stream_flv_avc =
                                 url_data.FirstOrDefault(x => x.ProtocolName == "http_stream")?.Formats?.FirstOrDefault(x => x.FormatName == "flv")?.Codecs?.FirstOrDefault(x => x.CodecName == "avc");
+
+                            Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo);
+                            string url = string.Empty;
                             foreach (var item in url_http_stream_flv_avc.UrlInfos)
                             {
-                                Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo);
-                                
-                                   
-                                
-                                if (!IsPlay && ForceCDNResolution)
+                                if(item.Host.Contains(".bilivideo.com"))
                                 {
-                                    if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
-                                    {
-                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
-                                        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
-                                            roomInfo.Host = item.Host;
-                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
-                                    }
-                                }
-                                else
-                                {
-                                    if (!item.Host.Contains(".mcdn."))
-                                    {
-                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
-                                        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
-                                            roomInfo.Host = item.Host;
-                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
-                                    }
-                                    else
-                                    {
-                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(mcdn):获取到CDN地址为{item.Host}的下载流，该地址为mcdn地址");
-                                        if(roomInfo!=null&&string.IsNullOrEmpty(roomInfo.Host))
-                                            roomInfo.Host = item.Host;
-                                        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
-                                    }
+                                    if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                                        roomInfo.Host = item.Host;
+                                    url = item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                                     Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN下载流:{url}", false, null, false);
+                                    return url;
                                 }
                             }
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到主CDN地址，2秒后重试(如果一直失败，那还是把强制主CDN设置给关了吧)");
-#if DEBUG
-                            string uu = "";
-                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
-                            {
-                                uu += item.Host + "\n";
-                            }
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
-#endif
-                            Thread.Sleep(3000);
-                            return playUrl_v2(uid, qn);
+
+                            int R = new Random().Next(0, url_http_stream_flv_avc.UrlInfos.Length);
+
+                            if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                                roomInfo.Host = url_http_stream_flv_avc.UrlInfos[R].Host;
+                            url = url_http_stream_flv_avc.UrlInfos[R].Host + url_http_stream_flv_avc.BaseUrl + url_http_stream_flv_avc.UrlInfos[R].Extra;
+                            
+
+
+                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN下载流:{url}", false, null, false);
+                            return url;
+
+                            //foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                            //{
+                            //Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo);
+                            //int R =new Random().Next(0,url_http_stream_flv_avc.UrlInfos.Length);
+                            //Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN地址为{item.Host}的下载流",false,null,false);
+                            //if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                            //    roomInfo.Host = item.Host;
+                            //return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+
+                            //if (!IsPlay && ForceCDNResolution)
+                            //{
+                            //    if (item.Host.Contains("d1--") || item.Host.Contains("c1--"))
+                            //    {
+                            //        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略2(主):获取到CDN地址为{item.Host}的下载流");
+                            //        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                            //            roomInfo.Host = item.Host;
+                            //        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                            //    }
+                            //}
+                            //else
+                            //{
+                            //    if (!item.Host.Contains(".mcdn."))
+                            //    {
+                            //        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(从):获取到CDN地址为{item.Host}的下载流");
+                            //        if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
+                            //            roomInfo.Host = item.Host;
+                            //        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                            //    }
+                            //    else
+                            //    {
+                            //        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Info, $"策略1(mcdn):获取到CDN地址为{item.Host}的下载流，该地址为mcdn地址");
+                            //        if(roomInfo!=null&&string.IsNullOrEmpty(roomInfo.Host))
+                            //            roomInfo.Host = item.Host;
+                            //        return item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
+                            //    }
+                            //}
+                            //}
+//                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到CDN地址，2秒后重试");
+//#if DEBUG
+//                            string uu = "";
+//                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
+//                            {
+//                                uu += item.Host + "\n";
+//                            }
+//                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
+//#endif
+//                            Thread.Sleep(3000);
+//                            return playUrl_v2(uid, qn);
                         }
                         else
                         {
                             Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取直播流地时发现直播间已经不再开播状态，放弃获取");
                             return null;
                         }
-                        
+
                     case 1002002:
                         Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"因为参数错误，{roomId}房间直播视频流获取失败");
                         break;
@@ -487,25 +516,26 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误2，出现错误的字符串:{WebText}", true, e,false);
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"playUrl获取的数据解析失败，出现未知的错误2，出现错误的字符串:{WebText}", true, e, false);
                 //return playUrl_v2(uid, qn);
-            }  
+            }
             return null;
         }
 
         public static string GetPlayUrl(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine, bool IsPlay = false)
         {
-            switch(CoreConfig.APIVersion)
+            return playUrl_v2(uid, qn, line, IsPlay);
+            switch (CoreConfig.APIVersion)
             {
                 case 1:
                     return playUrl_v1(uid, qn, line, IsPlay);
-                   
+
                 case 2:
                     return playUrl_v2(uid, qn, line, IsPlay);
-                 
+
                 default:
                     return playUrl_v2(uid, qn, line, IsPlay);
-                 
+
             }
         }
 
@@ -518,22 +548,22 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         public static string playUrl_v1(long uid, RoomInfoClass.Quality qn, RoomInfoClass.Line line = RoomInfoClass.Line.PrincipalLine, bool IsPlay = false)
         {
             List<RoomInfoClass.Quality> NotQU = new List<RoomInfoClass.Quality>();
-            PlayR: if (!GetQuality(uid).Contains((int)qn))
+        PlayR: if (!GetQuality(uid).Contains((int)qn))
             {
                 qn = RoomInfoClass.Quality.OriginalPainting;
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
-            
+
             string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/playUrl?cid=" + roomId + $"&qn={(int)qn}&platform=web");
 
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
                 Thread.Sleep(800);
-                return playUrl_v1(uid, qn);          
+                return playUrl_v1(uid, qn);
             }
 
-            JObject JO =new JObject();
+            JObject JO = new JObject();
             try
             {
                 JO = (JObject)JsonConvert.DeserializeObject(WebText);
@@ -552,10 +582,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     {
                         if (JO.TryGetValue("data", out var Roomdurl) && Roomdurl != null)
                         {
-                            if((int)Roomdurl["current_quality"]==0)
+                            if ((int)Roomdurl["current_quality"] == 0)
                             {
                                 NotQU.Add(qn);
-                                if(!NotQU.Contains(RoomInfoClass.Quality.OriginalPainting))
+                                if (!NotQU.Contains(RoomInfoClass.Quality.OriginalPainting))
                                 {
                                     qn = RoomInfoClass.Quality.OriginalPainting;
                                 }
@@ -573,18 +603,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                 }
                                 else
                                 {
-                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"获取用户[{uid}]的直播房间清晰度时所有清晰度均无数据源！这是一个来自BILIBILI的内部错误，DDTV无法解决",true,null,true);
+                                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Error, $"获取用户[{uid}]的直播房间清晰度时所有清晰度均无数据源！这是一个来自BILIBILI的内部错误，DDTV无法解决", true, null, true);
                                 }
                                 goto PlayR;
                             }
                             string Url = Roomdurl["durl"][(int)line]["url"].ToString();
-                            string Host = Url.Replace(".com/","●").Split('●')[0]+".com";
+                            string Host = Url.Replace(".com/", "●").Split('●')[0] + ".com";
                             if (Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo))
                             {
                                 roomInfo.Host = Host;
                             }
-                            if(IsPlay)
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功：{Url}");
+                            if (IsPlay)
+                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取用户[{uid}]的直播房间清晰度为[{qn}]的视频流地址成功：{Url}");
                             return Url;
 
                         }
