@@ -287,11 +287,15 @@ namespace DDTV_GUI.DDTV_Window
                                     {
                                         VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Stop());
                                     }
-                                    if(!IsClose)
+                                    if (!IsClose)
                                     {
+                                        do
+                                        {
+                                            Thread.Sleep(500);
+                                        } while (!File.Exists(FileDirectory));
                                         VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
                                         SetVolume(MainWindow.DefaultVolume);
-                                    } 
+                                    }
                                 }
                             }
                             catch (Exception e)
@@ -331,70 +335,70 @@ namespace DDTV_GUI.DDTV_Window
 
         R: if (Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
             {
-                //downloader.DownloadFileTaskAsync(Url, FileDirectory);
-                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
-                if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
-                {
-                    req.Proxy = null;
-                }
-                req.Method = "GET";
-                req.ContentType = "application/x-www-form-urlencoded";
-                req.Accept = "*/*";
-                req.UserAgent = NetClass.UA();
-                req.Referer = "https://www.bilibili.com/";
-                if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
-                {
-                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
-                }
-                try
-                {
-                    httpWebResponse = (HttpWebResponse)req.GetResponse();
-                }
-                catch (Exception)
-                {
-                    Thread.Sleep(10000);
-                    goto R;
-                }
-                stream = httpWebResponse.GetResponseStream();
-                IsDownloadStart = true;
-                FileStream fileStream = new FileStream(FileDirectory, FileMode.Create);
-                Task.Run(() =>
-                {
-                    while (true)
-                    {
-                        int EndF = 0;
-                        if (stream.CanRead)
-                        {
-                            try
-                            {
-                                EndF = stream.ReadByte();
-                            }
-                            catch (Exception e)
-                            {
-                                EndF = -1;
-                            }
-                        }
-                        else
-                        {
-                            EndF = -1;
-                        }
-                        if (EndF != -1)
-                        {
-                            fileStream.Write(new byte[] { (byte)EndF }, 0, 1);
-                        }
-                        else
-                        {
-                            try
-                            {
-                                if (req != null) req.Abort();
-                            }
-                            catch (Exception) { }
-                            fileStream.Close();
-                            fileStream.Dispose();
-                            return;
-                        }
-                    }
-                });
+                downloader.DownloadFileTaskAsync(Url, FileDirectory);
+                //HttpWebRequest req = (HttpWebRequest)WebRequest.Create(Url);
+                //if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                //{
+                //    req.Proxy = null;
+                //}
+                //req.Method = "GET";
+                //req.ContentType = "application/x-www-form-urlencoded";
+                //req.Accept = "*/*";
+                //req.UserAgent = NetClass.UA();
+                //req.Referer = "https://www.bilibili.com/";
+                //if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+                //{
+                //    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
+                //}
+                //try
+                //{
+                //    httpWebResponse = (HttpWebResponse)req.GetResponse();
+                //}
+                //catch (Exception)
+                //{
+                //    Thread.Sleep(10000);
+                //    goto R;
+                //}
+                //stream = httpWebResponse.GetResponseStream();
+                //IsDownloadStart = true;
+                //FileStream fileStream = new FileStream(FileDirectory, FileMode.Create);
+                //Task.Run(() =>
+                //{
+                //    while (true)
+                //    {
+                //        int EndF = 0;
+                //        if (stream.CanRead)
+                //        {
+                //            try
+                //            {
+                //                EndF = stream.ReadByte();
+                //            }
+                //            catch (Exception e)
+                //            {
+                //                EndF = -1;
+                //            }
+                //        }
+                //        else
+                //        {
+                //            EndF = -1;
+                //        }
+                //        if (EndF != -1)
+                //        {
+                //            fileStream.Write(new byte[] { (byte)EndF }, 0, 1);
+                //        }
+                //        else
+                //        {
+                //            try
+                //            {
+                //                if (req != null) req.Abort();
+                //            }
+                //            catch (Exception) { }
+                //            fileStream.Close();
+                //            fileStream.Dispose();
+                //            return;
+                //        }
+                //    }
+                //});
             }
             else
             {
@@ -474,21 +478,25 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="i"></param>
         private void SetVolume(double i)
         {
-            VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Volume = (int)i);
-            volume.Dispatcher.Invoke(() => volume.Value = i);
-            volumeText.Dispatcher.Invoke(() =>
+            //if (VideoView.MediaPlayer.State == VLCState.Playing)
             {
-                if (i.ToString().Split('.').Length > 1)
+                VideoView.Dispatcher.Invoke(() => VideoView.MediaPlayer.Volume = (int)i);
+                volume.Dispatcher.Invoke(() => volume.Value = i);
+                volumeText.Dispatcher.Invoke(() =>
                 {
-                    volumeText.Text = i.ToString().Split('.')[0];
-                }
-                else
-                {
-                    volumeText.Text = i.ToString();
-                }
-            });
-            CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
-            MainWindow.DefaultVolume = i;
+                    if (i.ToString().Split('.').Length > 1)
+                    {
+                        volumeText.Text = i.ToString().Split('.')[0];
+                    }
+                    else
+                    {
+                        volumeText.Text = i.ToString();
+                    }
+                });
+                CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
+                MainWindow.DefaultVolume = i;
+            }
+
         }
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {

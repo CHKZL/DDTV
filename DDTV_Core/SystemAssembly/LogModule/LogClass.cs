@@ -62,6 +62,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// 调试信息
             /// </summary>
             Debug_Request_Error = 43,
+             /// <summary>
+            /// GetFile_Bytes错误信息
+            /// </summary>
+            Debug_GetFile_Bytes = 44,
             /// <summary>
             /// 一些追踪数据
             /// </summary>
