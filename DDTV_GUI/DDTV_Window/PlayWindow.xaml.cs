@@ -31,6 +31,8 @@ using DDTV_GUI.WPFControl;
 using System.Diagnostics;
 using Point = System.Drawing.Point;
 using Downloader;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
+using System.Windows.Media;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -41,7 +43,7 @@ namespace DDTV_GUI.DDTV_Window
     {
 
         LibVLC vlcVideo;
-        private static MediaPlayer _mediaPlayer;
+        private static LibVLCSharp.Shared.MediaPlayer _mediaPlayer;
         bool IsClose = false;
         long uid = 0;
         string name = string.Empty;
@@ -76,6 +78,16 @@ namespace DDTV_GUI.DDTV_Window
         private double BlackListeningOriginalSize_Height = 0;//200
         private bool IsBlackHear = false;//是否为黑听模式
 
+        /// <summary>
+        /// 屏幕渲染弹幕对象
+        /// </summary>
+        private BarrageConfig barrageConfig;
+
+         private class SubtitlInfo
+        {
+            public string Text { get; set; }
+        }
+
         private DownloadService downloader = new DownloadService();
         private DownloadConfiguration downloadOpt = new DownloadConfiguration()
         {
@@ -94,7 +106,7 @@ namespace DDTV_GUI.DDTV_Window
             }
         };
 
-        BarrageConfig barrageConfig;
+    
 
         public List<string> ShieldDanMuText = new List<string>()
         {
@@ -106,14 +118,14 @@ namespace DDTV_GUI.DDTV_Window
         {
             InitializeComponent();
             downloader = new DownloadService(downloadOpt);
-
+           
             Task.Run(() =>
             {
                 VideoView.Dispatcher.Invoke(() =>
                 {
 
                     vlcVideo = new LibVLC();
-                    _mediaPlayer = new MediaPlayer(vlcVideo);
+                    _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(vlcVideo);
                     VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
@@ -128,10 +140,11 @@ namespace DDTV_GUI.DDTV_Window
                     UpdateWindowInfo();
                 });
 
-
+                
                 Task.Run(() =>
                 {
                     Thread.Sleep(1000);
+                   
                     Play(uid);
                 });
                 VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
@@ -146,6 +159,7 @@ namespace DDTV_GUI.DDTV_Window
             });
             Loaded += new RoutedEventHandler(Topping);
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
+          
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -289,12 +303,16 @@ namespace DDTV_GUI.DDTV_Window
                                     }
                                     if (!IsClose)
                                     {
-                                        do
+                                        if (!File.Exists(FileDirectory))
                                         {
-                                            Thread.Sleep(500);
-                                        } while (!File.Exists(FileDirectory));
-                                        VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
-                                        SetVolume(MainWindow.DefaultVolume);
+                                             Growl.WarningGlobal($"{name}-直播间的直播流当前不可访问，该问题一般是由于B站服务或者网络代理造成的，请稍后再试");
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                            SetVolume(MainWindow.DefaultVolume);
+                                        }
                                     }
                                 }
                             }
@@ -577,6 +595,8 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Danmu_Send_Button_Click(object sender, RoutedEventArgs e)
         {
+            HandyControl.Controls.MessageBox.Show("已优化弹幕发送窗口，请点击播放器右下角的弹幕发送组件开关填写弹幕");
+            return;
             SendDialogDispose += PlayWindow_SendDialogDispose;
             sendDanmuDialog = new WPFControl.SendDanmuDialog(roomId, SendDialogDispose);
             DG = Dialog.Show(sendDanmuDialog);
@@ -707,15 +727,18 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
+
             //if (MainWindow.linkDMNum >= 3)
             //{
             //    Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
             //    return;
             //}
+            
             IsOpenDanmu = !IsOpenDanmu;
 
             if (IsOpenDanmu)
             {
+                Subtitle.Visibility = Visibility;
                 Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");
                 Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
                 Task.Run(() =>
@@ -727,6 +750,8 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
+                Subtitle.Text = "";
+                Subtitle.Visibility = Visibility.Collapsed;
                 LiveChatDispose();
             }
 
@@ -1125,7 +1150,22 @@ namespace DDTV_GUI.DDTV_Window
 
         private void AddDanmu(string DanmuText, bool IsSubtitle)
         {
-            Task.Run(() =>
+            if (IsSubtitle)
+            {
+                byte R = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[0], 16);
+                byte G = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[1], 16);
+                byte B = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[2], 16);
+                Subtitle.Dispatcher.Invoke(new Action(() =>
+                {
+                    Subtitle.FontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize;
+                    Subtitle.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(R, G, B));
+                    Subtitle.Text = DanmuText;
+                }));
+
+            }
+            else
+            {
+                Task.Run(() =>
             {
                 //非UI线程调用UI组件
                 System.Windows.Application.Current.Dispatcher.Invoke(async () =>
@@ -1134,6 +1174,10 @@ namespace DDTV_GUI.DDTV_Window
                     barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, (int)this.Height, IsSubtitle);
                 });
             });
+            }
+
+
+
             //Task.Run(() =>
             //{
             //    RunningBlock runningBlock=null;
@@ -1482,22 +1526,37 @@ namespace DDTV_GUI.DDTV_Window
         }
 
         int i = 0;
-
+        double FullScreenMonitor_Top = 0;
+        double FullScreenMonitor_Left = 0;
+        /// <summary>
+        /// 双击播放窗口全屏
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PlayGrid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-
-            i += 1;
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
-            timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
-            timer.IsEnabled = true;
-            if (i == 2)
+            if (i == 0)
             {
-                timer.IsEnabled = false;
-                i = 0;
-                FullScreenSwitch();
+                FullScreenMonitor_Top = this.Top;
+                FullScreenMonitor_Left = this.Left;
             }
 
+            i += 1;
+            DispatcherTimer timer = new DispatcherTimer()
+            {
+                Interval = new TimeSpan(0, 0, 0, 0, 500),
+                IsEnabled = true,  
+            };
+            timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
+            if (i == 2)
+            {
+                if( FullScreenMonitor_Top == this.Top && FullScreenMonitor_Left == this.Left)
+                {
+                     FullScreenSwitch();
+                }
+                timer.IsEnabled = false;
+                i = 0;
+            }
         }
 
         /// <summary>
@@ -1597,6 +1656,65 @@ namespace DDTV_GUI.DDTV_Window
                 MenuItem_FullScreenSwitch.Visibility = Visibility.Visible;
                 MenuItem_WindowSorting.Visibility = Visibility.Visible;
 
+            }
+        }
+
+        private void DanMuGridSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if(DanMuSendGrid.Visibility== Visibility.Visible)
+            {
+                DanMuSendGrid.Visibility= Visibility.Collapsed;
+            }
+            else
+            {
+                DanMuSendGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void DanMuInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                string Massage = DanMuInput.Text;
+                if (Massage.Length > 30)
+                {
+                    Growl.Warning("发送的弹幕长度尝过限制(30个字符)");
+                    return;
+                }
+                else if (Massage.Length < 1)
+                {
+                    Growl.Warning("发送的弹幕内容不能为空");
+                    return;
+                }
+                DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu.Send(Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), Massage);
+                Growl.Success("发送弹幕完成");
+                DanMuInput.Text = "";
+            }
+        }
+
+        private void MenuItem_OpenSeparateDanmuWindow_Click(object sender, RoutedEventArgs e)
+        {
+            ShowDanMuWindow danMuShowWindow = new ShowDanMuWindow(uid);
+            danMuShowWindow.Show();
+        }
+
+        private void MenuItem_SwitchSubtitleDisplay_Click(object sender, RoutedEventArgs e)
+        {
+            if(!IsOpenDanmu)
+            {
+                 Growl.WarningGlobal("切换野生字幕显示状态失败！原因：未打开弹幕功能");
+            }
+            else
+            {
+                if(Subtitle.Visibility== Visibility.Visible)
+                {
+                    Subtitle.Visibility= Visibility.Collapsed;
+                    Subtitle.Text = "";
+                }
+                else
+                {
+                    Subtitle.Visibility = Visibility.Visible;
+                }
             }
         }
     }

@@ -37,10 +37,6 @@ namespace DDTV_DanMu
         {
             public string Text { get; set; }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="IsIndependent">是否为独立启动，如果是独立启动会唤起一个新的Core实例</param>
         public MainWindow()
         {
             long Uid = 0; bool IsIndependent = true;

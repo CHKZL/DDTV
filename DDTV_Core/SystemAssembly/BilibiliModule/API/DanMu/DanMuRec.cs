@@ -334,15 +334,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             $"<roomid>{roomId}</roomid>" +
             $"<time>{time}</time>" +
             $"<source>k-v</source>";
-
             int i = 1;
-
             foreach (var item in danmuInfo)
             {
                 XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
                 i++;
             }
-
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
             return new FileInfo(FileName + ".xml");
