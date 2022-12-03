@@ -234,6 +234,9 @@
     <Compile Update="WPFControl\DanMuConfig.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="WPFControl\DanmuShowDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
@@ -261,6 +264,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="WPFControl\DanMuConfig.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="WPFControl\DanmuShowDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>

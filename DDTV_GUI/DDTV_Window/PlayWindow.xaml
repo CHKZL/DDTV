@@ -51,7 +51,11 @@
                             <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
                         </MenuItem.Icon>
                         <MenuItem Header="打开/关闭弹幕" Width="150" Click="MenuItem_OpenDamu_Click"/>
+                        <MenuItem Header="显示/隐藏野生字幕" Width="150" Click="MenuItem_SwitchSubtitleDisplay_Click"/>
                         <MenuItem Header="弹幕设置" Width="150" Click="MenuItem_DamuConfig_Click"/>
+                        
+                        <Separator/>
+                        <MenuItem Header="打开独立弹幕框" Width="150" Click="MenuItem_OpenSeparateDanmuWindow_Click"/>
                     </MenuItem>
                     <Separator/>
                     <MenuItem Header="设置/锁定锁定置顶" Click="MenuItem_Topping_Click">
@@ -131,21 +135,41 @@
                 <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
 
+            <Grid>
+
+                <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000" Visibility="Collapsed">
+                    <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" VerticalAlignment="Center" Margin="65,0,85,0" KeyDown="DanMuInput_KeyDown"/>
+                </Grid>
+                <ToggleButton Name="DanMuGridSwitch" Opacity="0.6" Margin="0,0,2,2" BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="DanMuGridSwitch_Click">
+                    <hc:StatusSwitchElement.CheckedElement>
+                        <Border Background="#FFFB7299">
+                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
+                        </Border>
+                    </hc:StatusSwitchElement.CheckedElement>
+                    <Border Background="#FF00AEEC">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
+                    </Border>
+                </ToggleButton>
+            </Grid>
+
 
             <Grid Name="EndGrid" Background="#7F5B5B5B" Visibility="Collapsed">
                 <TextBlock Text="该房间已下播" Style="{StaticResource TextBlockLarge}" Foreground="#fb7299" FontSize="30" />
             </Grid>
 
-            <hc:PreviewSlider Name="volume" Height="300" Value="200" Maximum="100" Orientation="Vertical" Margin="10,0,0,35"  VerticalAlignment="Bottom" HorizontalAlignment="Left" SmallChange="1" MouseMove="volume_MouseMove">
+            <hc:PreviewSlider Name="volume" Height="300" Value="200" Maximum="100" Orientation="Vertical" Margin="10,0,0,77"  VerticalAlignment="Bottom" HorizontalAlignment="Left" SmallChange="1" MouseMove="volume_MouseMove">
                 <hc:PreviewSlider.PreviewContent>
                     <Label Style="{StaticResource LabelPrimary}" Content="{Binding Path=(hc:PreviewSlider.PreviewPosition),RelativeSource={RelativeSource Self}}" ContentStringFormat="#0.0"/>
                 </hc:PreviewSlider.PreviewContent>
             </hc:PreviewSlider>
-            <CheckBox Name="volume_Global_Check" Content="滑动条全局生效" FontSize="20" Foreground="#00a1d6" Margin="10,0,0,10" VerticalAlignment="Bottom" Height="25" HorizontalAlignment="Left" Width="170" />
+            <CheckBox Name="volume_Global_Check" Content="滑动条全局生效" FontSize="20" Foreground="#00a1d6" Margin="10,0,0,48" VerticalAlignment="Bottom" Height="25" HorizontalAlignment="Left" Width="170" />
             <TextBlock Name="volumeText" HorizontalAlignment="Center"  Margin="5" Text="tttttttttt" Style="{StaticResource TextBlockLarge}" Foreground="#B2DCDCDC" FontSize="30" Visibility="Collapsed" Background="#B2646465"/>
             <Canvas Name="canvas" Opacity="1">
 
             </Canvas>
+            <Grid Margin="0,0,0,48" Height="43" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                <hc:OutlineText Name="Subtitle" Visibility="Collapsed" StrokePosition="Outside"  FontSize="24" FontWeight="Bold" StrokeThickness="1" Fill="White"  Stroke="Black"  Text="" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
         </Grid>
     </vlc:VideoView>
 </hc:GlowWindow>
