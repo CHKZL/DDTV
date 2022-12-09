@@ -12,7 +12,7 @@
         Background="{DynamicResource RegionBrush}">
     <hc:SimplePanel>
         <TextBlock Style="{StaticResource TextBlockLargeBold}" Text="打开弹幕浮窗" Margin="0,15,0,0" VerticalAlignment="Top"/>
-        <hc:TextBox x:Name="UIDInputBox"  ShowClearButton="True" hc:InfoElement.Placeholder="请输入房间号" Text="" Margin="20,56,20,0" Height="44" VerticalAlignment="Top"/>
+        <hc:TextBox x:Name="UIDInputBox" hc:InfoElement.Placeholder="请输入房间号" Text="" Margin="20,56,20,0" Height="44" VerticalAlignment="Top"/>
         <Button Content="确定" Margin="0,110,0,0" Style="{StaticResource ButtonSuccess}" VerticalAlignment="Top" Width="100" Click="Button_Click"/>
         <Button Width="22" Height="22" Command="hc:ControlCommands.Close" Style="{StaticResource ButtonIcon}" Foreground="{DynamicResource PrimaryBrush}" hc:IconElement.Geometry="{StaticResource ErrorGeometry}" Padding="0" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,4,4,0"/>
     </hc:SimplePanel>

@@ -64,7 +64,7 @@
 
   <ItemGroup>
     <PackageReference Include="Downloader" Version="3.0.1" />
-    <PackageReference Include="HandyControl" Version="3.3.0" />
+    <PackageReference Include="HandyControl" Version="3.4.0" />
     <PackageReference Include="LibVLCSharp" Version="3.6.7" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.6.7" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
