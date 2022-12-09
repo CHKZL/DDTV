@@ -853,7 +853,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
+                        if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试:({Url})");
+                        }
+                        else
+                        {
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
+                        }
+                        
                     }
                     if (conut > 6)
                     {

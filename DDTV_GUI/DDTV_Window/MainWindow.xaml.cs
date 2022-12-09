@@ -63,7 +63,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             
             InitializeComponent();
-            DDTV_GUI.App.Application_Startup(null,null);
+            DDTV_GUI.App.Application_Startup();
 
             if (false && CheckRepeatedRun())
             {
@@ -135,10 +135,20 @@ namespace DDTV_GUI.DDTV_Window
             //    Thread.Sleep(5000);
             //    foreach (var item in Rooms.RoomInfo)
             //    {
-            //        AddRoomCard(item.Value.uid);
+            //        if(item.Value.live_status==1)
+            //        {
+            //            AddRoomCard(item.Value.uid);
+            //        }
+            //    }
+            //    foreach (var item in Rooms.RoomInfo)
+            //    {
+            //        if(item.Value.live_status!=1)
+            //        {
+            //            AddRoomCard(item.Value.uid);
+            //        }
             //    }
             //});
-            
+
         }
 
 
@@ -340,8 +350,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 if (process.Id != current.Id)
                 {
-                    if (process.MainModule.FileName
-                    == current.MainModule.FileName)
+                    if (process.MainModule.FileName == current.MainModule.FileName)
                     {
                         MessageBox.Show("已经有DDTV_GUI实例正在运行！");
                         return true;
@@ -1612,9 +1621,9 @@ namespace DDTV_GUI.DDTV_Window
                         if(!Transcod.CallFFMPEG_FLV(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
-                            AfterFilePath = IsMp4File ? dialog.FileName.Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace(".flv", "_fix.mp4"),
-                            BeforeFilePath = dialog.FileName,
-                        },false).IsTranscod)
+                            AfterFilePath = IsMp4File ? dialog.FileName.Replace("\\","/").Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace("\\","/").Replace(".flv", "_fix.mp4"),
+                            BeforeFilePath = dialog.FileName.Replace("\\","/"),
+                        },false,true).IsTranscod)
                         {
                             this.Dispatcher.Invoke(new Action(() =>
                             {
@@ -1870,6 +1879,31 @@ namespace DDTV_GUI.DDTV_Window
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"设置HLS等待时间为{(int)e.Info}秒", false, null, false);
                 CoreConfigFile.WriteConfigFile(true);
             }
+        }
+
+        private void OpenSeparateDanMuWindow_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+             int Index = 0;
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                Index = LiveList.SelectedIndex;
+            }));
+
+            if (Index > -1 && UpdateInterface.Main.liveList.Count > Index)
+            {
+                long uid = UpdateInterface.Main.liveList[Index].Uid;
+                string name = UpdateInterface.Main.liveList[Index].Name;
+                if (UpdateInterface.Main.liveList[Index].LiveState == 1)
+                {
+                    ShowDanMuWindow danMuShowWindow = new ShowDanMuWindow(uid);
+                    danMuShowWindow.Show();
+                }
+                else
+                {
+                    Growl.Warning($"该房间未开播");
+                }
+            }
+           
         }
     }
 }

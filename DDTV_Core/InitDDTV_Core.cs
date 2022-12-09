@@ -23,7 +23,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-12-04 00:47:44";
+        public static string CompiledVersion = "2022-12-09 18:49:17";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -239,7 +239,7 @@ namespace DDTV_Core
                                 {
                                     CoreConfig.ConsoleMonitorMode = !CoreConfig.ConsoleMonitorMode;
                                     IsDevDebug = CoreConfig.ConsoleMonitorMode;
-                                    Console.WriteLine(CoreConfig.ConsoleMonitorMode ? "打开" : "关闭" + "控制台开发者监控模式开关" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息和一大堆调试信息" : ""));
+                                    Console.WriteLine((CoreConfig.ConsoleMonitorMode ? "打开" : "关闭") + "控制台开发者监控模式开关" + (CoreConfig.ConsoleMonitorMode ? "(打开后控制台会输出每个在列表中的任务开始和结束相信信息和一大堆调试信息" : ""));
                                     break;
                                 }
                             default:

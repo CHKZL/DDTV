@@ -62,12 +62,18 @@ namespace DDTV_GUI
             return null;
         }
 
-        public static void Application_Startup(object sender, StartupEventArgs e)
+        public static void Application_Startup()
         {
             Process process = RuningInstance();
             if (process != null)
             {
-                MessageBox.Show("已经有DDTV_GUI实例正在运行中\r点击确定弹出正在运行的窗口\r如果没有自动弹出请检查程序是否缩小到了系统后台托盘中");
+                MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
+                    "\r点击确定弹出正在运行的窗口" +
+                    "\r如果没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
+                    "\r如果后台托盘中也没有应该上次退出后的程序还未关闭" +
+                    $"\r======参考信息======" +
+                    $"\rId:{process.Id}" +
+                    $"\rProcessName:{process.ProcessName}");
                 HandleRunningInstance(process);
                 System.Threading.Thread.Sleep(1000);
                 System.Environment.Exit(1);
