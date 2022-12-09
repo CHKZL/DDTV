@@ -575,7 +575,7 @@
                 <TabItem Header="动态">
                     <Grid Name="Window_RoomCard_Parent">
                         <hc:ScrollViewer>
-                            <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Auto"  Orientation="Horizontal" >
+                            <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Auto" >
                                 <hc:WaterfallPanel Name="Window_RoomCard" Height="Auto" Width="870" Orientation="Horizontal" Groups="4"  hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}" >
                                     <Border Style="{StaticResource BorderRegion}" Width="208" Height="166" Margin="2,2,2,2">
                                         <Grid Margin="-6,-6,-6,-6">
