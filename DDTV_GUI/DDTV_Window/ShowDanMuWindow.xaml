@@ -4,11 +4,13 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DDTV_GUI.DDTV_Window"
-                       xmlns:hc="https://handyorg.github.io/handycontrol"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
         mc:Ignorable="d"
-        Title="ShowDanMuWindow" Width="400" Height="600" Closed="Window_Closed">
+        ActiveGlowColor="#00a1d6"
+        InactiveGlowColor="#fb7299"
+        Title="ShowDanMuWindow" Width="400" Height="600" Closed="Window_Closed" Focusable="True">
     <Grid>
-        <ListBox Name="DanMuLog" DisplayMemberPath="Text" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" Focusable="False" FontSize="16" IsHitTestVisible="False" Margin="0,0,0,30"/>
+        <ListBox Name="DanMuLog" DisplayMemberPath="Text" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" FontSize="16" IsHitTestVisible="False" Margin="0,0,0,30"/>
         <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Height="30" VerticalAlignment="Bottom" KeyDown="DanMuInput_KeyDown"/>
     </Grid>
 </hc:GlowWindow>

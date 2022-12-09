@@ -829,7 +829,7 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.Success("已" + (!YIsAutoRec ? "打开" : "关闭") + $"[{name}({roomid})]的开播自动录制");
                     if (!YIsAutoRec && Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                     {
-                        Download.AddDownloadTaskd(uid, true);
+                        Download.AddVideoDownloadTaskd(uid, true);
                     }
                 }
                 else
@@ -1834,7 +1834,7 @@ namespace DDTV_GUI.DDTV_Window
                 int roomid = UpdateInterface.Main.liveList[Index].RoomId;
                 string Title = UpdateInterface.Main.liveList[Index].Title;
                 Log.AddLog(nameof(RoomPatrol), LogClass.LogType.Info, $"【手动录制】用户手动开始录制【{roomid}-{name}】的直播流-标题：[{Title}]");
-                Download.AddDownloadTaskd(uid, true);
+                Download.AddVideoDownloadTaskd(uid, true);
                 Growl.SuccessGlobal($"增加手动录制任务:【{roomid}-{name}】");
             }
         }

@@ -232,7 +232,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         Status = DownloadStatus.Cancel;
                                         Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的录制任务，该任务取消");
                                         roomInfo.IsDownload = false;
-                                        Download.DownloadCompleteTaskd_FLV(Uid, false, true);
+                                        Download.VideoDownloadCompleteTaskd_FLV(Uid, false, true);
 
                                         return;
                                     }
@@ -346,14 +346,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"[{roomInfo.uname}({roomInfo.room_id})]录制流已断开，但监测到直播状态还为“开播中”持续监听中，尝试继续监听");
                                             roomInfo.IsDownload = false;
-                                            Download.AddDownloadTaskd(Uid, false);
+                                            Download.AddVideoDownloadTaskd(Uid, false);
                                             return;
                                         }
                                         else
                                         {
                                             Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"房间[{roomInfo.uname}({roomInfo.room_id})]的录制子任务已完成");
                                             roomInfo.IsDownload = false;
-                                            Download.DownloadCompleteTaskd_FLV(Uid, downloads.FlvSplit);
+                                            Download.VideoDownloadCompleteTaskd_FLV(Uid, downloads.FlvSplit);
                                             return;
                                         }
                                     }
@@ -430,7 +430,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                         if (!IsCancel)
                         {
-                            Download.AddDownloadTaskd(Uid, false);
+                            Download.AddVideoDownloadTaskd(Uid, false);
                         }
                         return;
                     }
@@ -441,7 +441,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         IsDownloading = false;
                         if (!IsCancel)
                         {
-                            Download.AddDownloadTaskd(Uid, false);
+                            Download.AddVideoDownloadTaskd(Uid, false);
                         }
                         return;
                     }
@@ -476,7 +476,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
                                 DisposeFileStream(fs, downloads.FileName);
-                                Download.DownloadCompleteTaskd_HLS(Uid, downloads, true);
+                                Download.VideoDownloadCompleteTaskd_HLS(Uid, downloads, true);
 
                                 return 0;
                             }

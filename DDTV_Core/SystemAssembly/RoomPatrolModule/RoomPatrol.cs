@@ -63,7 +63,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                             //自动录制
 
                             Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●直播间开播】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
-                            DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
+                            DownloadModule.Download.AddVideoDownloadTaskd(item.Value.uid, true);
                             Thread.Sleep(500);
                             //StartRec.Invoke(item.Value, EventArgs.Empty);
                         }
@@ -132,7 +132,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         //自动录制
                         Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【●直播间开播】根据配置开始自动录制【{item.Value.room_id}-{item.Value.uname}】的直播流-标题：[{item.Value.title}]");
                        
-                        DownloadModule.Download.AddDownloadTaskd(item.Value.uid, true);
+                        DownloadModule.Download.AddVideoDownloadTaskd(item.Value.uid, true);
                         Rooms.GetRoomInfoBrief(item.Value.uid, true);
                         if (StartRec != null)
                         {

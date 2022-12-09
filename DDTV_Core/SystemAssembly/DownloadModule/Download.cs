@@ -37,9 +37,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         public static event EventHandler<EventArgs> DownloadCompleted;
         /// <summary>
-        /// 增加下载任务
+        /// 增加视频下载任务
         /// </summary>
-        public static void AddDownloadTaskd(long uid, bool IsNewTask = false, bool IsHLS = true)
+        public static void AddVideoDownloadTaskd(long uid, bool IsNewTask = false, bool IsHLS = true)
         {
             Task.Run(() =>
             {
@@ -50,11 +50,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载。该任务是否为新任务：[{(IsNewTask?"是":"否")}】");
                         if (IsHLS)
                         {
-                            DownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
+                            VideoDownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
                         }
                         else
                         {
-                            DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                            VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
                         }
                     }
                     else
@@ -66,11 +66,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         roomInfo.IsUserCancel = false;
                         if (IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
                         {
-                            AddDownLoad_HLS(uid, IsNewTask);
+                            AddVideoDownLoad_HLS(uid, IsNewTask);
                         }
                         else
                         {
-                            AddDownLoad_FLV(uid, IsNewTask);
+                            AddVideoDownLoad_FLV(uid, IsNewTask);
                         }
                     }
                 }
@@ -118,7 +118,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// 下载任务结束处理(HLS任务)
         /// </summary>
         /// <param name="IsCancel">该任务是否已经取消</param>
-        internal static void DownloadCompleteTaskd_HLS(long uid, DownloadClass.Downloads downloadClass, bool IsCancel = false)
+        internal static void VideoDownloadCompleteTaskd_HLS(long uid, DownloadClass.Downloads downloadClass, bool IsCancel = false)
         {
             try
             {
@@ -317,7 +317,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// <param name="uid">用户UID</param>
         /// <param name="Split">任务是否切片(当自动切片使能时，FLV文件合并功能会跳过)</param>
         /// <param name="IsCancel">该任务是否已经取消</param>
-        internal static void DownloadCompleteTaskd_FLV(long uid, bool Split = false, bool IsCancel = false)
+        internal static void VideoDownloadCompleteTaskd_FLV(long uid, bool Split = false, bool IsCancel = false)
         {
             try
             {
@@ -555,7 +555,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         /// <param name="uid">需要下载的房间uid号</param>
         /// <param name="IsNewTask">是否为新任务</param>
-        private static void AddDownLoad_HLS(long uid, bool IsNewTask)
+        private static void AddVideoDownLoad_HLS(long uid, bool IsNewTask)
         {
             while (!Rooms.RoomInfo.ContainsKey(uid))
             {
@@ -580,19 +580,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloadClass, IsNewTask);
                         if (!hLSHostClass.LiveStatus)
                         {
-                            DownloadCompleteTaskd_HLS(uid, downloadClass);
+                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass);
                             return;
                         }
                         if(hLSHostClass.IsUserCancel)
                         {
-                            DownloadCompleteTaskd_HLS(uid, downloadClass,true);
+                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass,true);
                             return;
                         }
                         if (!hLSHostClass.IsEffective)
                         {
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】没有检测到HLS直播流，降级到FLV");
-                            AddDownloadTaskd(uid, IsNewTask, false);
+                            AddVideoDownloadTaskd(uid, IsNewTask, false);
                             return;
                         }
                         roomInfo.IsDownload = true;
@@ -636,17 +636,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             case -1:
                                 Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                                AddDownloadTaskd(uid, false, false);
+                                AddVideoDownloadTaskd(uid, false, false);
                                 break;
                             case 0:
                                 if (!downloadClass.GetCancelState())
                                 {
-                                    DownloadCompleteTaskd_HLS(uid, downloadClass);
+                                    VideoDownloadCompleteTaskd_HLS(uid, downloadClass);
                                 }
                                 return;
                             case 1:
                                 Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                                AddDownloadTaskd(uid, false, true);
+                                AddVideoDownloadTaskd(uid, false, true);
                                 break;
                         }
                     }
@@ -676,7 +676,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         /// <param name="uid">需要下载的房间uid号</param>
         /// <param name="IsNewTask">是否为新任务</param>
-        private static void AddDownLoad_FLV(long uid, bool IsNewTask)
+        private static void AddVideoDownLoad_FLV(long uid, bool IsNewTask)
         {
             while (!Rooms.RoomInfo.ContainsKey(uid))
             {
@@ -703,7 +703,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"获取【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】的直播流时返回空内容，有可能直播间已经下播，开始重试任务确定状态");
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                            VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
                             return;
                         }
                         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(downloadClass.Url);
@@ -784,19 +784,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】已下播，FLV录制任务取消");
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                            VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
                             return;
                         }
                         else if (Ok == -2)
                         {
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            DownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                            VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
                             return;
                         }
                         else
                         {
                             Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                            AddDownloadTaskd(uid, IsNewTask);
+                            AddVideoDownloadTaskd(uid, IsNewTask);
                         }
                     }
                     else
