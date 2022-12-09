@@ -166,7 +166,7 @@ namespace DDTV_WEB_Server.Controllers
                
                 if (IsAutoRec && Rooms.GetValue(uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                 {
-                    Download.AddDownloadTaskd(uid, true);
+                    Download.AddVideoDownloadTaskd(uid, true);
                 }
                 return Content(MessageBase.Success(nameof(Room_AutoRec), "已" + (IsAutoRec ? "打开" : "关闭") + $"UID为{uid}的房间开播自动录制"), "application/json");
             }

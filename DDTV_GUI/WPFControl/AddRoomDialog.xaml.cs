@@ -153,7 +153,7 @@ namespace DDTV_GUI.WPFControl
                         UIDInputBox.Clear();
                         if (tmp.IsAutoRec && Rooms.GetValue(tmp.UID, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
                         {
-                            Download.AddDownloadTaskd(tmp.UID, true);
+                            Download.AddVideoDownloadTaskd(tmp.UID, true);
                             Growl.SuccessGlobal($"添加的房间{tmp.name}({tmp.RoomId})正在直播，开始录制");
                         }
                     }
