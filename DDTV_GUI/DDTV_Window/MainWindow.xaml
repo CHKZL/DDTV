@@ -88,7 +88,7 @@
                         <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>
-                <!--<hc:SideMenuItem Header="动态">
+                <!--<hc:SideMenuItem Header="开发者调试">
                     <hc:SideMenuItem.Icon>
                         <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
@@ -152,6 +152,11 @@
                                     <MenuItem Header="在DDTV中观看" Click="LiveList_MenuItem_Play_Click">
                                         <MenuItem.Icon>
                                             <Image Source="/Resources/Img/UI/alert.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="只看弹幕" Click="OpenSeparateDanMuWindow_MenuItem_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/DanMu.png" Width="18" Height="18"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
                                     <MenuItem Header="打开直播间" Click="LiveList_MenuItem_OpenLiveRoomUrl_Click">

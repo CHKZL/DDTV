@@ -38,5 +38,13 @@ namespace DDTV_Core.Tool.TranscodModule
         /// HLS调用转码需要提供的文件列表
         /// </summary>
         public List<string> HLS_Files { set; get; }
+        /// <summary>
+        /// 文件名(只有名称，不包含拓展名)
+        /// </summary>
+        public string Name { get; set; }
+        /// <summary>
+        /// 文件路径，只有路径，最后有斜杠
+        /// </summary>
+        public string Path { get; set; }
     }
 }

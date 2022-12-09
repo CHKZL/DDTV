@@ -104,7 +104,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                 }
                 else
                 {
-                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}", true, e, false);
+                    Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug_Request_Error, $"GetRequest请求发生网络层错误:{e.Status}", false, e, false);
                 }
                 
                 return null;

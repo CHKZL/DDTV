@@ -6,6 +6,7 @@ using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,26 +25,48 @@ namespace DDTV_GUI.DDTV_Window
     /// </summary>
     public partial class ShowDanMuWindow : GlowWindow
     {
-         private List<DanmuInfo> DanMuList = new List<DanmuInfo>();
-        private long Uid;
+        private List<DanmuInfo> DanMuList = new List<DanmuInfo>();
+        private RoomInfoClass.RoomInfo _roominfo = new RoomInfoClass.RoomInfo();
         public ShowDanMuWindow(long UID)
         {
             InitializeComponent();
-            Uid = UID;
-            DanMuLog.ItemsSource = DanMuList;
-            Rec(Uid != 0 ? Uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+            if (Rooms.RoomInfo.TryGetValue(UID, out var roomInfo))
+            {
+                _roominfo.room_id = roomInfo.room_id;
+                _roominfo.uid = roomInfo.uid;
+                _roominfo.uname = roomInfo.uname;
+                DanMuLog.ItemsSource = DanMuList;
+                Add($"尝试和弹幕服务器连接(RoomID:{roomInfo.room_id})");
+                Rec(_roominfo.uid != 0 ? _roominfo.uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
+            }
+            else
+            {
+                Add($"处理失败，该房间不在DDTV监控列表中");
+                Add($"请先添加到监控列表");
+            }
         }
-          private void Rec(long Uid)
+        private void Rec(long Uid)
         {
             MainWindow.linkDMNum++;
-            RoomInfoClass.RoomInfo _ = DanMuRec.StartRecDanmu(Uid, true);
-            this.Title = $"{_.uname} - DanMuChat";
-            _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-            _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-            if (_.roomWebSocket.LiveChatListener.m_ReceiveBuffer != null)
+            Task.Run(() =>
             {
-                Add($"与弹幕服务器连接成功(Uid:{Uid})...");
-            }
+
+
+                _roominfo = DanMuRec.StartRecDanmu(Uid, true);
+                Dispatcher.Invoke(() =>
+                {
+                    this.Title = $"{_roominfo.uname} - DanMuChat";
+                });
+
+                _roominfo.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+                _roominfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                if (_roominfo.roomWebSocket.LiveChatListener.m_ReceiveBuffer != null)
+                {
+                    Add($"成功和弹幕服务器连接");
+                    Add($"等待新的弹幕信息...");
+                }
+            });
+
         }
         private void Add(string Text)
         {
@@ -51,32 +74,13 @@ namespace DDTV_GUI.DDTV_Window
             {
                 DanMuList.Add(new DanmuInfo() { Text = Text });
                 DanMuLog.Items.Refresh();
-                if (DanMuList.Count>50)
+                if (DanMuList.Count > 50)
                 {
                     DanMuList.RemoveAt(0);
                 }
                 DanMuLog.ScrollIntoView(DanMuLog.Items[DanMuLog.Items.Count - 1]);
             });
-
-            //UpdateDanMuListScrollToEnd();
         }
-        private void UpdateDanMuListScrollToEnd()
-        {
-            try
-            {
-               
-
-                //DanMuLog.Items.Refresh();
-                //Decorator decorator = (Decorator)VisualTreeHelper.GetChild(DanMuLog, 0);
-                //ScrollViewer scrollViewer = (ScrollViewer)decorator.Child;
-                //scrollViewer.ScrollToEnd();
-            }
-            catch (Exception)
-            {
-
-            }
-        }
-
 
         private void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
@@ -99,53 +103,49 @@ namespace DDTV_GUI.DDTV_Window
         private void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            Rooms.RoomInfo.TryGetValue(liveChatListener.mid, out RoomInfoClass.RoomInfo roomInfo);
-            if (roomInfo != null)
+
+            string text = string.Empty;
+            switch (e)
             {
-                string text = string.Empty;
-                switch (e)
-                {
-                    case DanmuMessageEventArgs Danmu:
-                        {
-                            text = $"[弹幕]{Danmu.UserName}：{Danmu.Message}";
+                case DanmuMessageEventArgs Danmu:
+                    {
+                        text = $"[弹幕]{Danmu.UserName}：{Danmu.Message}";
 
-                        }
-                        break;
-                    case SuperchatEventArg SuperchatEvent:
-                        {
-                            text = $"[SC](金额{SuperchatEvent.Price}){SuperchatEvent.UserName}：{SuperchatEvent.Message}";
-                        }
-                        break;
-                    case GuardBuyEventArgs GuardBuyEvent:
-                        {
-                            string Lv = GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长";
-                            text = $"[上舰]{GuardBuyEvent.UserName}：{GuardBuyEvent.Number}个月的{Lv}";
-                        }
-                        break;
-                    case SendGiftEventArgs sendGiftEventArgs:
-                        {
-                            text = $"[礼物]{sendGiftEventArgs.UserName}：送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}";
-                        }
-                        break;
-                    case WarningEventArg warningEventArg:
-                        {
-                            text = $"[管理员警告]警告内容: { warningEventArg.msg}";
-                        }
-                        break;
-                    case CutOffEventArg cutOffEventArg:
-                        {
-                            text = $"[直播被切断]系统消息: { cutOffEventArg.msg}";
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                if (!string.IsNullOrEmpty(text))
-                {
-                    Add(text);
-                }
+                    }
+                    break;
+                case SuperchatEventArg SuperchatEvent:
+                    {
+                        text = $"[SC](金额{SuperchatEvent.Price}){SuperchatEvent.UserName}：{SuperchatEvent.Message}";
+                    }
+                    break;
+                case GuardBuyEventArgs GuardBuyEvent:
+                    {
+                        string Lv = GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长";
+                        text = $"[上舰]{GuardBuyEvent.UserName}：{GuardBuyEvent.Number}个月的{Lv}";
+                    }
+                    break;
+                case SendGiftEventArgs sendGiftEventArgs:
+                    {
+                        text = $"[礼物]{sendGiftEventArgs.UserName}：送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}";
+                    }
+                    break;
+                case WarningEventArg warningEventArg:
+                    {
+                        text = $"[管理员警告]警告内容: {warningEventArg.msg}";
+                    }
+                    break;
+                case CutOffEventArg cutOffEventArg:
+                    {
+                        text = $"[直播被切断]系统消息: {cutOffEventArg.msg}";
+                    }
+                    break;
+                default:
+                    break;
             }
-
+            if (!string.IsNullOrEmpty(text))
+            {
+                Add(text);
+            }
         }
 
 
@@ -156,23 +156,21 @@ namespace DDTV_GUI.DDTV_Window
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (Rooms.RoomInfo.TryGetValue(Uid, out RoomInfoClass.RoomInfo roomInfo))
-            {
-                if (roomInfo.roomWebSocket.LiveChatListener != null && roomInfo.roomWebSocket.LiveChatListener.startIn)
-                {
-                    MainWindow.linkDMNum--;
-                    try
-                    {
-                        Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"弹幕窗口关闭，断开弹幕连接", false);
-                        roomInfo.roomWebSocket.LiveChatListener.startIn = false;
-                        roomInfo.roomWebSocket.IsConnect = false;
-                        roomInfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
-                        roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                    }
-                    catch (Exception)
-                    {
 
-                    }
+            if (_roominfo.roomWebSocket.LiveChatListener != null && _roominfo.roomWebSocket.LiveChatListener.startIn)
+            {
+                MainWindow.linkDMNum--;
+                try
+                {
+                    Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"弹幕窗口关闭，断开弹幕连接", false);
+                    _roominfo.roomWebSocket.LiveChatListener.startIn = false;
+                    _roominfo.roomWebSocket.IsConnect = false;
+                    _roominfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
+                    _roominfo.roomWebSocket.LiveChatListener.Dispose();
+                }
+                catch (Exception)
+                {
+
                 }
             }
         }
@@ -192,7 +190,7 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.Warning("发送的弹幕内容不能为空");
                     return;
                 }
-                DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu.Send(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), Massage);
+                DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu.Send(Rooms.GetValue(_roominfo.uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), Massage);
                 DanMuInput.Text = "";
             }
         }

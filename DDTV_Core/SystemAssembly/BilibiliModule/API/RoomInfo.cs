@@ -413,7 +413,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             try
             {
+                if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                {
+                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl_v2接口获取到原始数据:({WebText})");
+                }
                 var BA = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(WebText);
+                 if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                {
+                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl_v2接口BA.Code:({BA.Code})");
+                }
                 switch (BA.Code)
                 {
                     case 0:
@@ -432,7 +440,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                                     if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
                                         roomInfo.Host = item.Host;
                                     url = item.Host + url_http_stream_flv_avc.BaseUrl + item.Extra;
-                                     Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN下载流:{url}", false, null, false);
+                                    if (DDTV_Core.InitDDTV_Core.IsDevDebug)
+                                    {
+                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN(bilivideo.com)下载流:{url}");
+                                    }
+                                    else
+                                    {
+                                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN(bilivideo.com)下载流:{url}", false, null, false);
+                                    }
+                                    
                                     return url;
                                 }
                             }
@@ -442,10 +458,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
                                 roomInfo.Host = url_http_stream_flv_avc.UrlInfos[R].Host;
                             url = url_http_stream_flv_avc.UrlInfos[R].Host + url_http_stream_flv_avc.BaseUrl + url_http_stream_flv_avc.UrlInfos[R].Extra;
-                            
+
+                            if (DDTV_Core.InitDDTV_Core.IsDevDebug)
+                            {
+                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN(Other)下载流:{url}");
+                            }
+                            else
+                            {
+                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN(Other)下载流:{url}", false, null, false);
+                            }
 
 
-                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"获取到CDN下载流:{url}", false, null, false);
                             return url;
 
                             //foreach (var item in url_http_stream_flv_avc.UrlInfos)
@@ -485,17 +508,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                             //    }
                             //}
                             //}
-//                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到CDN地址，2秒后重试");
-//#if DEBUG
-//                            string uu = "";
-//                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
-//                            {
-//                                uu += item.Host + "\n";
-//                            }
-//                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
-//#endif
-//                            Thread.Sleep(3000);
-//                            return playUrl_v2(uid, qn);
+                            //                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"未获取到CDN地址，2秒后重试");
+                            //#if DEBUG
+                            //                            string uu = "";
+                            //                            foreach (var item in url_http_stream_flv_avc.UrlInfos)
+                            //                            {
+                            //                                uu += item.Host + "\n";
+                            //                            }
+                            //                            Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Debug, $"{uu}");
+                            //#endif
+                            //                            Thread.Sleep(3000);
+                            //                            return playUrl_v2(uid, qn);
                         }
                         else
                         {

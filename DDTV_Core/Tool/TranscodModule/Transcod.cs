@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
+using ZXing.QrCode.Internal;
 
 namespace DDTV_Core.Tool.TranscodModule
 {
@@ -23,10 +24,12 @@ namespace DDTV_Core.Tool.TranscodModule
         /// </summary>
         /// <param name="Filename">转码文件</param>
         /// <param name="IsAutoDelOldFile">是否删除老文件</param>
-        public static TranscodClass CallFFMPEG_FLV(TranscodClass transcodClass,bool IsAutoDelOldFile = true)
+        public static TranscodClass CallFFMPEG_FLV(TranscodClass transcodClass,bool IsAutoDelOldFile = true,bool IsSaveLogFile = false)
         {
             try
             {
+                transcodClass.Path = transcodClass.AfterFilePath.Replace(transcodClass.AfterFilePath.Split('/')[transcodClass.AfterFilePath.Split('/').Length-1], "");
+                transcodClass.Name = transcodClass.AfterFilePath.Split('/')[transcodClass.AfterFilePath.Split('/').Length - 1];
                 Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"开始修复或转码文件：[{transcodClass.BeforeFilePath}]");
                 transcodClass.IsTranscod = true;
                 Process process = new Process();
@@ -59,13 +62,38 @@ namespace DDTV_Core.Tool.TranscodModule
                 process.StartInfo.CreateNoWindow = true; // 不显示窗口。
                 process.EnableRaisingEvents = true;
                 process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                List<string> LogText = new List<string>();;
+                if (IsSaveLogFile)
+                {
+                    process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                    {
+                        try
+                        {
+                            LogText.Add(e.Data);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    };  // 捕捉的信息
+                    process.OutputDataReceived  += delegate (object sender, DataReceivedEventArgs e)
+                    {
+                        try
+                        {
+                            LogText.Add(e.Data);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    };  // 捕捉的信息
+                }
                 //process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                 //{
+
                 //    try
                 //    {
                 //        string stringResults = e.Data;
                 //        if (stringResults == "" || stringResults == null) return;
-                //        //Console.WriteLine(stringResults);
+                //        Console.WriteLine(stringResults);
                 //        if (stringResults.Contains("Duration"))
                 //        {
                 //            all = TimeSpan.Parse(Regex.Match(stringResults, @"(?<=Duration: ).*?(?=, start)").Value);
@@ -99,10 +127,18 @@ namespace DDTV_Core.Tool.TranscodModule
                 };
                 if (!process.HasExited)
                 {
-                    //如果超过20分钟都没有等待到exit信息，就跳过
-                    process.WaitForExit(1200*1000);
+                    //如果超过10分钟都没有等待到exit信息，就跳过
+                    process.WaitForExit(1200 * 1000);
                 }
                 process.Close();
+                using (StreamWriter fileStream = new StreamWriter(transcodClass.Path + transcodClass.Name + "_转码日志.log",true,Encoding.UTF8))
+                {
+                    foreach (var item in LogText)
+                    {
+                        fileStream.WriteLine(item);
+                    }
+                }
+
                 //Log.AddLog(nameof(Transcod), LogClass.LogType.Info, $"转码任务：[{transcodClass.BeforeFilePath}]，Close");
                 transcodClass.IsTranscod = true;
                 if (IsAutoDelOldFile)
