@@ -50,7 +50,7 @@ namespace DDTV_GUI.DDTV_Window
 
         public static DDTV_DanMu.MainWindow DanMuWindow = null;
 
-       
+
 
         public enum GuideMode
         {
@@ -61,9 +61,9 @@ namespace DDTV_GUI.DDTV_Window
         }
         public MainWindow()
         {
-            
+
             InitializeComponent();
-            
+
             DDTV_GUI.App.Application_Startup();
 
             if (false && CheckRepeatedRun())
@@ -153,17 +153,18 @@ namespace DDTV_GUI.DDTV_Window
 
         }
 
-         public static string GetPackageVersion()
+        public static string GetPackageVersion()
         {
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
         private void AddRoomCard(long uid)
         {
-            
+
 
             if (Rooms.RoomInfo.TryGetValue(uid, out var roomInfo))
             {
-                App.Current.Dispatcher.Invoke(() => {
+                App.Current.Dispatcher.Invoke(() =>
+                {
                     Grid grid = new Grid()
                     {
                         Margin = new Thickness(-6, -6, -6, -6)
@@ -522,7 +523,7 @@ namespace DDTV_GUI.DDTV_Window
             if (Index >= 0)
                 UpdateInterface.Main.ActivationInterface = Index;
 
-           
+
         }
 
 
@@ -635,16 +636,25 @@ namespace DDTV_GUI.DDTV_Window
         /// <returns></returns>
         private bool APP_EXIT()
         {
-            MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            if (dr == MessageBoxResult.OK)
+            if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsExitReminder)
+            {
+                MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+                if (dr == MessageBoxResult.OK)
+                {
+                    DelTmpFile();
+                    Application.Current.Shutdown();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
             {
                 DelTmpFile();
                 Application.Current.Shutdown();
                 return true;
-            }
-            else
-            {
-                return false;
             }
         }
         /// <summary>
@@ -905,7 +915,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void LiveList_MenuItem_AddRoom_Click(object sender, RoutedEventArgs e)
-        { 
+        {
             Dialog.Show(new AddRoomDialog(false));
         }
 
@@ -1160,7 +1170,7 @@ namespace DDTV_GUI.DDTV_Window
                 //GuardToggle.IsEnabled = true;
                 //SCToggle.IsEnabled = true;
                 //SelectDanMu_v1.IsEnabled = false;
-               // SelectDanMu_v2.IsEnabled = true;
+                // SelectDanMu_v2.IsEnabled = true;
             }
             else
             {
@@ -1659,24 +1669,24 @@ namespace DDTV_GUI.DDTV_Window
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok && File.Exists(dialog.FileName))
                 {
                     FileInfo fileInfo = new FileInfo(dialog.FileName);
-                    
-                    if (fileInfo.Extension.ToLower() != ".flv" && fileInfo.Extension.ToLower() !=".mp4")
+
+                    if (fileInfo.Extension.ToLower() != ".flv" && fileInfo.Extension.ToLower() != ".mp4")
                     {
                         MessageBox.Show("选择的文件不是DDTV录制的FVL或mp4文件！");
                         return;
                     }
-                    bool IsMp4File = fileInfo.Extension.ToLower()==".mp4"?true:false;
+                    bool IsMp4File = fileInfo.Extension.ToLower() == ".mp4" ? true : false;
                     ManualTranscodingProgress.Text = $"后台正在进行文件转码:{fileInfo.Name}";
                     IsTranscoding = true;
                     TranscodingSelectFilesManual.Content = "修复/转码中";
                     Task.Factory.StartNew(() =>
                     {
-                        if(!Transcod.CallFFMPEG(new TranscodClass()
+                        if (!Transcod.CallFFMPEG(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
-                            AfterFilePath = IsMp4File ? dialog.FileName.Replace("\\","/").Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace("\\","/").Replace(".flv", "_fix.mp4"),
-                            BeforeFilePath = dialog.FileName.Replace("\\","/"),
-                        },false,true).IsTranscod)
+                            AfterFilePath = IsMp4File ? dialog.FileName.Replace("\\", "/").Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace("\\", "/").Replace(".flv", "_fix.mp4"),
+                            BeforeFilePath = dialog.FileName.Replace("\\", "/"),
+                        }, false, true).IsTranscod)
                         {
                             this.Dispatcher.Invoke(new Action(() =>
                             {
@@ -1685,7 +1695,7 @@ namespace DDTV_GUI.DDTV_Window
                                 TranscodingSelectFilesManual.Content = "选择文件";
                             }));
                         }
-                       
+
                     }, cancellationTokenSource.Token);
                 }
             }
@@ -1899,11 +1909,11 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void GlowWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if(this.Width-130>0)
+            if (this.Width - 130 > 0)
             {
                 Window_RoomCard.Width = this.Width - 134;
                 Window_RoomCard.Groups = (int)Window_RoomCard.Width / 212;
-            }    
+            }
         }
 
         private void HLSToggle_Click(object sender, RoutedEventArgs e)
@@ -1923,8 +1933,8 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void WaitHLSTime_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
         {
-          
-            if(InitDDTV_Core.WhetherInitializationIsComplet && e.Info>10)
+
+            if (InitDDTV_Core.WhetherInitializationIsComplet && e.Info > 10)
             {
                 DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime = (int)e.Info;
                 CoreConfig.SetValue(CoreConfigClass.Key.WaitHLSTime, ((int)e.Info).ToString(), CoreConfigClass.Group.Download);
@@ -1936,7 +1946,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void OpenSeparateDanMuWindow_MenuItem_Click(object sender, RoutedEventArgs e)
         {
-             int Index = 0;
+            int Index = 0;
             this.Dispatcher.Invoke(new Action(() =>
             {
                 Index = LiveList.SelectedIndex;
@@ -1967,7 +1977,12 @@ namespace DDTV_GUI.DDTV_Window
 
         private void SetDanmakuFactoryParameterSaveButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if (string.IsNullOrEmpty(SetDanmakuFactoryParameter.Text))
+            {
+                Growl.WarningGlobal($"转ASS参数不能为空");
+                return;
+            }
+            CoreConfig.DanmukuFactoryParameter = SetDanmakuFactoryParameter.Text;
         }
 
         private void DanmuToAssButton_Click(object sender, RoutedEventArgs e)

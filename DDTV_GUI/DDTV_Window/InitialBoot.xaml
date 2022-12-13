@@ -13,7 +13,7 @@
     <Grid Background="#0000A1D6">
 
         <Grid Margin="0,17,0,390">
-            <Button x:Name="ExitBoot" Content="X" HorizontalAlignment="Left" Margin="504,-8,0,0" VerticalAlignment="Top" Click="ExitBoot_Click" />
+            
             <hc:StepBar Name="ProgressAssembly" StepIndex="{Binding StepIndex}" >
                 <hc:StepBarItem Content="欢迎使用 DDTV"/>
                 <hc:StepBarItem Content="授权"/>
@@ -52,6 +52,6 @@
             <!--<RepeatButton Name="PreviousStep" Content="上一步" Width="150" Margin="60,0,0,0" HorizontalAlignment="Left" Click="PreviousStep_Click" />-->
             <RepeatButton x:Name="NextStep" Content="下一步" Width="178" Click="NextStep_Click" Background="#FFFB7299"/>
         </Grid>
-
+        <Button x:Name="ExitBoot" Content="X" HorizontalAlignment="Left" Margin="504,10,0,0" VerticalAlignment="Top" Click="ExitBoot_Click" />
     </Grid>
 </hc:GlowWindow>

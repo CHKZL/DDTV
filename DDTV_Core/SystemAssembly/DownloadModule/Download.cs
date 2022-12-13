@@ -159,7 +159,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     {
                                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Warn, $"【{roomInfo.uname}({roomInfo.room_id})】转换xml弹幕文件为ass文件时发生错误", true, e);
                                     }
-
                                 }
                             }
                             catch (Exception e)
