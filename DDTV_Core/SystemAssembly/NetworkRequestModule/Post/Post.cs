@@ -27,33 +27,34 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             if (!CoreConfig.IsBypass_SSL)
             {
                 request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-            }         
+            }
             if (!CoreConfig.WhetherToEnableProxy)
             {
                 request.Proxy = null;
             }
-            if (!CoreConfig.MandatoryUseIPv4)
-            {
-                try
-                {
-                    request.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
-                    {
-                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            return new IPEndPoint(IPAddress.Any, 0);
-                        }
-                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {
-                            return new IPEndPoint(IPAddress.IPv6Any, 0);
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    };
-                }
-                catch (Exception) { }
-            }
+            //if (CoreConfig.MandatoryUseIPv4)
+            //{
+            //    try
+            //    {
+            //        request.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+            //        {
+            //            if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            //            {
+            //                return new IPEndPoint(IPAddress.Any, 0);
+            //            }
+            //            else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            //            {
+            //                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"使用IPv6发起请求");
+            //                return new IPEndPoint(IPAddress.IPv6Any, 0);
+            //            }
+            //            else
+            //            {
+            //                return null;
+            //            }
+            //        };
+            //    }
+            //    catch (Exception) { }
+            //}
             request.ServicePoint.Expect100Continue = false;
             request.Method = "POST";
             request.ContentType = "application/json;charset=" + encode.ToUpper();
@@ -66,32 +67,43 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                 writer.Write(payload, 0, payload.Length);
                 writer.Close();
             }
-            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+            try
             {
-                string StrDate = "";
-                string strValue = "";
-                using (Stream s = response.GetResponseStream())
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
-                    using (StreamReader Reader = new StreamReader(s, Encoding.GetEncoding(encode.ToUpper())))
+                    string StrDate = "";
+                    string strValue = "";
+
+                    using (Stream s = response.GetResponseStream())
                     {
-                        while ((StrDate = Reader.ReadLine()) != null)
+                        using (StreamReader Reader = new StreamReader(s, Encoding.GetEncoding(encode.ToUpper())))
                         {
-                            strValue += StrDate + "\r\n";
+                            while ((StrDate = Reader.ReadLine()) != null)
+                            {
+                                strValue += StrDate + "\r\n";
+                            }
                         }
                     }
+
+
+                    if (response != null)
+                    {
+                        response.Dispose();
+                    }
+                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
+                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求完成：{url}", false, null, false);
+                    try
+                    {
+                        if (request != null) request.Abort();
+                    }
+                    catch (Exception) { }
+                    return strValue;
                 }
-                if(response!=null)
-                {
-                    response.Dispose();
-                }
-                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_GetWebInfo_JsonClass完成");
-                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求完成：{url}",false,null,false);
-                try
-                {
-                    if (request != null) request.Abort();
-                }
-                catch (Exception){}
-                return strValue;
+            }
+            catch (WebException e)
+            {
+                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status}({(int)e.Status})[{url}]", true, e, false);
+                return "";
             }
         }
         /// <summary>
@@ -114,31 +126,31 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 req.Proxy = null;
             }
-           
-            if (!CoreConfig.MandatoryUseIPv4)
-            {
-                try
-                {
-                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
-                    {
-                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            return new IPEndPoint(IPAddress.Any, 0);
-                        }
-                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {
-                            Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"使用IPv6发起请求");
-                            return new IPEndPoint(IPAddress.IPv6Any, 0);
-                        }
-                        else
-                        {
-                            Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"没有IPv4也没有IPv6！");
-                            return null;
-                        }
-                    };
-                }
-                catch (Exception) { }
-            }
+
+            //if (CoreConfig.MandatoryUseIPv4)
+            //{
+            //    try
+            //    {
+            //        req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+            //        {
+            //            if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            //            {
+            //                return new IPEndPoint(IPAddress.Any, 0);
+            //            }
+            //            else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            //            {
+            //                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"使用IPv6发起请求");
+            //                return new IPEndPoint(IPAddress.IPv6Any, 0);
+            //            }
+            //            else
+            //            {
+            //                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Info_IP_Ver, $"没有IPv4也没有IPv6！");
+            //                return null;
+            //            }
+            //        };
+            //    }
+            //    catch (Exception) { }
+            //}
             req.ServicePoint.Expect100Continue = false;
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
@@ -215,28 +227,28 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             {
                 req.Proxy = null;
             }
-            if (!CoreConfig.MandatoryUseIPv4)
-            {
-                try
-                {
-                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
-                    {
-                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
-                            return new IPEndPoint(IPAddress.Any, 0);
-                        }
-                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {
-                            return new IPEndPoint(IPAddress.IPv6Any, 0);
-                        }
-                        else
-                        {
-                            return null;
-                        }
-                    };
-                }
-                catch (Exception) { }
-            }
+            //if (CoreConfig.MandatoryUseIPv4)
+            //{
+            //    try
+            //    {
+            //        req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+            //        {
+            //            if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            //            {
+            //                return new IPEndPoint(IPAddress.Any, 0);
+            //            }
+            //            else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            //            {
+            //                return new IPEndPoint(IPAddress.IPv6Any, 0);
+            //            }
+            //            else
+            //            {
+            //                return null;
+            //            }
+            //        };
+            //    }
+            //    catch (Exception) { }
+            //}
 
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";

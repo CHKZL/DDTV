@@ -88,7 +88,7 @@
                         <Image Source="/Resources/Img/UI/smile.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>
-                <!--<hc:SideMenuItem Header="开发者调试">
+                <!--<hc:SideMenuItem Header="开发调试">
                     <hc:SideMenuItem.Icon>
                         <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
@@ -99,6 +99,7 @@
             <TabControl x:Name="MainWindowTab" Margin="0,10,0,0" Style="{StaticResource TabControlInLine}" Background="{x:Null}">
                 <TabItem Header="首页">
                     <Grid>
+                        <Button Content="测试" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_2"/>
                         <Grid Margin="500,0,0,0" Width="350" Height="480" Background="#59A5A5A5">
                             <TextBlock Name="Notice" Text="" FontSize="16" TextWrapping="Wrap" Margin="10" Foreground="#FF2B2B2B" HorizontalAlignment="Left" Width="330" Height="460" VerticalAlignment="Center" />
                         </Grid>
@@ -438,37 +439,28 @@
                                         </hc:ComboBox>
                                     </Grid>
                                     <Grid Width="835">
-                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" SelectionChanged="RecQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="170">
+                                        <hc:ComboBox Name="RecQualityComboBox" hc:TitleElement.Title="默认录制画质" SelectionTextBrush="Black" SelectionChanged="RecQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="130">
                                             <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
                                             <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
-                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="205,0,0,0" SelectionChanged="PlayQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="170">
+                                        <hc:ComboBox Name="PlayQualityComboBox" hc:TitleElement.Title="在线播放画质" SelectionTextBrush="Black" Margin="144,0,0,0" SelectionChanged="PlayQualityComboBox_SelectionChanged" HorizontalAlignment="Left" Width="130">
                                             <ComboBoxItem Content="原画" Tag="1"></ComboBoxItem>
                                             <ComboBoxItem Content="蓝光" Tag="2"></ComboBoxItem>
                                             <ComboBoxItem Content="超清" Tag="3"></ComboBoxItem>
                                             <ComboBoxItem Content="高清" Tag="4"></ComboBoxItem>
                                             <ComboBoxItem Content="流畅" Tag="5"></ComboBoxItem>
                                         </hc:ComboBox>
-
-                                        <TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top" Visibility="Collapsed"/>
-                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click" Visibility="Collapsed">
-                                            <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
-                                            </hc:AdornerElement.Instance>
-                                        </ToggleButton>
-                                    </Grid>
-                                    <Grid Width="850" Margin="5">
-                                        <TextBox x:Name="ReplaceAPIText" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="使用API地址" Style="{StaticResource TextBoxExtend}" Text="https://api.live.bilibili.com" Margin="0,0,615,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White" LostFocus="DefaultFileNameTextBox_LostFocus">
+                                        <TextBox x:Name="ReplaceAPIText" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="使用API地址" Style="{StaticResource TextBoxExtend}" Text="https://api.live.bilibili.com" Margin="284,0,372,0" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="【重要】修改请求所使用的API地址，如果你明白这个值是用来干什么并且自建代理\反代可以进行修改，默认情况下都应该为https://api.live.bilibili.com" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </TextBox>
-                                        <Button Name="SaveReplaceAPI" Content="保存" Margin="240,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SaveReplaceAPI_Click"/>
-                                        <TextBlock HorizontalAlignment="Left" Margin="330,2,0,0" Text="切换API版本" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
-                                        <hc:ButtonGroup Margin="330,27,280,0" Style="{StaticResource ButtonGroupSolid}">
+                                        <Button Name="SaveReplaceAPI" Content="保存" Margin="468,27,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SaveReplaceAPI_Click"/>
+
+                                        <hc:ButtonGroup Margin="548,27,126,0" Style="{StaticResource ButtonGroupSolid}">
                                             <RadioButton Name="SelectAPI_v1" Content="使用v1 API" IsChecked="True" Click="SelectAPI_v1_Click">
                                                 <hc:AdornerElement.Instance>
                                                     <hc:Poptip Content="V1或者V2 请根据网络状况自行选择，在网络条件好的地方V2比V1稳定，网络不好的地方V1比V2稳定" PlacementType="BottomLeft"/>
@@ -480,15 +472,34 @@
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
                                         </hc:ButtonGroup>
-
+                                        <!--<TextBlock HorizontalAlignment="Left" Margin="384,33,0,0" Text="强制使用主CDN地址录制【谨慎！看开关上的说明】" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top" Visibility="Collapsed"/>
+                                        <ToggleButton x:Name="ForceCDNResolution" Style="{StaticResource ToggleButtonSwitch}" Margin="756,31,43,4" Click="ForceCDNResolution_Click" Visibility="Collapsed">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开后会一直循环请求CDN地址，直到请求到主CDN地址，该方法能有效降低文件零碎和花屏问题，但是在刷到主CDN信息前不会开始录制(极端情况下会一直不开始录制)，请根据自己的网络状况选择" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>-->
                                     </Grid>
-                                    <Grid Width="815"  Margin="5">
-                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="录制的同时储存弹幕信息" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                        <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="190,5,0,5" Click="DanmuToggle_Click" HorizontalAlignment="Left" Width="36">
+                                    <Grid Width="853">
+                                        <TextBlock HorizontalAlignment="Left" Margin="5" Text="弹幕录制总开关" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                        <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="128,18,0,19" Click="DanmuToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="弹幕录制的全局开关(每个房间自己在房间配置列表单独设置，这个只是是否启用弹幕录制功能的总共开关)" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
+                                        <TextBlock Name="DanmuToAssText" HorizontalAlignment="Left" Margin="193,18,0,0" Text="录制后转为ass文件" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DanmuToAssButton" Style="{StaticResource ToggleButtonSwitch}" Margin="334,18,0,19" HorizontalAlignment="Left" Width="36" Click="DanmuToAssButton_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="录制完成后会对xml弹幕文件进行再编码，储存一份与视频文件同名的ass弹幕文件" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+
+
+                                        <TextBox x:Name="SetDanmakuFactoryParameter" hc:TitleElement.TitleWidth="80" hc:TitleElement.Title="弹幕转码为ass使用参数(如无必要，请勿修改)" Style="{StaticResource TextBoxExtend}" Text="-o {AfterFilePath} -i {BeforeFilePath}" Margin="384,-1,74,1" Background="{x:Null}" BorderBrush="White" SelectionTextBrush="White">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="具体格式请参考DanmakuFactory的参数说明，输入和输出文件的关键词为【】{AfterFilePath}和{BeforeFilePath}】，参数错误会导致转换失败" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </TextBox>
+                                        <Button Name="SetDanmakuFactoryParameterSaveButton" Content="保存" Margin="789,28,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SetDanmakuFactoryParameterSaveButton_Click"/>
 
                                         <!--<TextBlock HorizontalAlignment="Left" Margin="260,0,0,0" Text="储存礼物记录" Style="{StaticResource TextBlockSubTitle}"/>
                                         <ToggleButton x:Name="GiftToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="361,5,0,5" Click="GiftToggle_Click" HorizontalAlignment="Left" Width="36">
@@ -511,7 +522,7 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>-->
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="269,0,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}"/>
+                                        <!--<TextBlock HorizontalAlignment="Left" Margin="269,0,0,0" Text="切换弹幕储存信息类型" Style="{StaticResource TextBlockSubTitle}"/>
                                         <hc:ButtonGroup Margin="445,0,166,0" Style="{StaticResource ButtonGroupSolid}" VerticalAlignment="Center">
                                             <RadioButton Name="SelectDanMu_v1" Content="兼容格式" IsChecked="True" Click="SelectDanMu_v1_Click" IsEnabled="False">
                                                 <hc:AdornerElement.Instance>
@@ -523,8 +534,14 @@
                                                     <hc:Poptip Content="原始数据格式将储存为阿B弹幕文件原始格式，并且弹幕、礼物、大航海、SC都将分别储存为不同的文件" PlacementType="BottomLeft"/>
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
-                                        </hc:ButtonGroup>
+                                        </hc:ButtonGroup>-->
 
+                                    </Grid>
+                                    <Grid Width="853">
+                                        <TextBlock></TextBlock>
+                                    </Grid>
+                                    <Grid Width="853">
+                                        <TextBlock></TextBlock>
                                     </Grid>
                                     <Grid Width="853">
                                         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
@@ -540,7 +557,7 @@
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
 
-                                        <TextBlock HorizontalAlignment="Left" Margin="489,9,0,0" Text="查询开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <TextBlock HorizontalAlignment="Left" Margin="489,9,0,0" Text="加入开发版本更新" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <ToggleButton x:Name="DevSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="622,10,0,0" HorizontalAlignment="Left" Width="36" Click="DevSwitch_Click">
                                             <hc:AdornerElement.Instance>
                                                 <hc:Poptip Content="打开本开关后，手动点击[更新DDTV]按钮时会检查是否有新的开发版本，如果有会更新到最新的开发版本。（关闭此开关后再点击更新会更新为正常发布版本）" PlacementType="BottomLeft"/>
@@ -572,12 +589,12 @@
                         <Button Content="查看系统日志" Margin="776,498,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>
-                <TabItem Header="动态">
+                <TabItem Header="开发调试">
                     <Grid Name="Window_RoomCard_Parent">
                         <hc:ScrollViewer>
-                            <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Auto" >
+                            <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Disabled" >
                                 <hc:WaterfallPanel Name="Window_RoomCard" Height="Auto" Width="870" Orientation="Horizontal" Groups="4"  hc:PanelElement.FluidMoveBehavior="{StaticResource BehaviorXY200}" >
-                                    <Border Style="{StaticResource BorderRegion}" Width="208" Height="166" Margin="2,2,2,2">
+                                    <!--<Border Style="{StaticResource BorderRegion}" Width="208" Height="166" Margin="2,2,2,2">
                                         <Grid Margin="-6,-6,-6,-6">
                                             <Image Margin="0,-6,-12,32" Source="/Resources/Img/UI/TEST_直播封面.png" >
                                                 <Image.Clip>
@@ -594,15 +611,16 @@
                                             <Image Height="24" Width="24" Margin="-128,130,0,0"  Source="/Resources/Img/UI/DanMu.png"/>
                                             <Image Height="24" Width="24" Margin="-76,130,0,0"  Source="/Resources/Img/UI/Remind.png"/>
                                         </Grid>
-                                    </Border>
+                                    </Border>-->
                                 </hc:WaterfallPanel>
                             </hc:ScrollViewer>
                         </hc:ScrollViewer>
                     </Grid>
                 </TabItem>
+
             </TabControl>
         </Grid>
-        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -616,7 +634,7 @@
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>-->
+        </hc:Drawer>
 
     </Grid>
 

@@ -85,6 +85,9 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
             }
             app.Run();
         }
-
+         public static string GetPackageVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
     }
 }

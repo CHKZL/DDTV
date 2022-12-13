@@ -220,6 +220,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="DDTV_Window\NewClipWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -255,6 +258,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="DDTV_Window\NewClipWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="WPFControl\OpenDanMuWindowDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

@@ -136,7 +136,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.mp4");
 
                     //弹幕录制结束处理
-                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
+                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
                     {
                         roomInfo.roomWebSocket.IsConnect = false;
                         if (roomInfo.roomWebSocket.LiveChatListener != null)
@@ -148,7 +148,19 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                                BilibiliModule.API.DanMu.DanMuRec.SevaDanmuFile(roomInfo);
+                                Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
+                                if (IsRecDanmu && CoreConfig.IsXmlToAss)
+                                {
+                                    try
+                                    {
+                                        Tool.DanMuKu.DanMuKuRec.CallDanmakuFactory(downloadClass.FilePath, roomInfo.DownloadedFileInfo.DanMuFile.Name.Replace(".xml", "_fix.ass"), roomInfo.DownloadedFileInfo.DanMuFile.Name);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Warn, $"【{roomInfo.uname}({roomInfo.room_id})】转换xml弹幕文件为ass文件时发生错误", true, e);
+                                    }
+
+                                }
                             }
                             catch (Exception e)
                             {
@@ -175,7 +187,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
                         {
-                            var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
+                            var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                             {
                                 AfterFilenameExtension = ".mp4",
                                 BeforeFilePath = item.FilePath,
@@ -193,12 +205,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                     }
-
-
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】修复任务已全部完成");
-
-
-
                     if (!IsCancel)
                     {
                         //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
@@ -248,7 +255,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             // Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件触发");
                             DownloadCompleted.Invoke(new DownloadClass.Downloads() { Title = roomInfo.title, Name = roomInfo.uname }, EventArgs.Empty);
                             //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件结束");
-                            
                         }
                         else
                         {
@@ -260,20 +266,24 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         #region 房间Shell命令
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
                         {
-                            Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + roomInfo.Shell, false, null, false);
                             Task.Run(() =>
                             {
                                 WebHook.SendHook(WebHook.HookType.RunShellComplete, roomInfo.uid);
                                 try
                                 {
                                     string Shell = Tool.FileOperation.ReplaceKeyword(uid, roomInfo.Shell);
+                                    Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + Shell, false, null, false);
                                     string result = Tool.SystemResource.ExternalCommand.Shell(Shell);
                                     Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成，执行返回结果:\n{result}");
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令结束，返回信息:{result}", false, null, false);
+                                    roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                                    roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                                 }
                                 catch (Exception e)
                                 {
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Error, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令失败！详细堆栈信息已写入日志。", true, e, true);
+                                    roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                                    roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                                 }
                             });
                         }
@@ -289,8 +299,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Console.WriteLine(EndText);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
                         Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
-                        roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
-                        roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
+                        if (string.IsNullOrEmpty(roomInfo.Shell))
+                        {
+                            roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                            roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
+                        }
                     }
                     else
                     {
@@ -342,7 +355,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv");
 
                     //弹幕录制结束处理
-                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && roomInfo.roomWebSocket.IsConnect)
+                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
                     {
                         roomInfo.roomWebSocket.IsConnect = false;
                         if (roomInfo.roomWebSocket.LiveChatListener != null)
@@ -354,7 +367,18 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                                BilibiliModule.API.DanMu.DanMuRec.SevaDanmuFile(roomInfo);
+                                Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
+                                if (IsRecDanmu && CoreConfig.IsXmlToAss)
+                                {
+                                    try
+                                    {
+                                         Tool.DanMuKu.DanMuKuRec.CallDanmakuFactory(roomInfo.DownloadingList[roomInfo.DownloadingList.Count - 1].FilePath, roomInfo.DownloadedFileInfo.DanMuFile.Name.Replace(".xml", "_fix.ass"), roomInfo.DownloadedFileInfo.DanMuFile.Name);
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Warn, $"【{roomInfo.uname}({roomInfo.room_id})】转换xml弹幕文件为ass文件时发生错误", true, e);
+                                    }
+                                }
                             }
                             catch (Exception e)
                             {
@@ -410,7 +434,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 if (!string.IsNullOrEmpty(item) && File.Exists(item))
                                 {
 
-                                    var tm = Tool.TranscodModule.Transcod.CallFFMPEG_FLV(new Tool.TranscodModule.TranscodClass()
+                                    var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                                     {
                                         AfterFilenameExtension = ".mp4",
                                         BeforeFilePath = item,
@@ -496,20 +520,25 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         #region 房间Shell命令
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
                         {
-                            Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + roomInfo.Shell, false, null, false);
+                            
                             Task.Run(() =>
                             {
                                 WebHook.SendHook(WebHook.HookType.RunShellComplete, roomInfo.uid);
                                 try
                                 {
                                     string Shell = Tool.FileOperation.ReplaceKeyword(uid, roomInfo.Shell);
+                                    Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + Shell, false, null, false);
                                     string result = Tool.SystemResource.ExternalCommand.Shell(Shell);
                                     Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成，执行返回结果:\n{result}");
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令结束，返回信息:{result}", false, null, false);
+                                    roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                                    roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                                 }
                                 catch (Exception e)
                                 {
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Error, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令失败！详细堆栈信息已写入日志。", true, e, true);
+                                    roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                                    roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
                                 }
                             });
                         }
@@ -524,8 +553,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                    $"\n===================";
                         Console.WriteLine(EndText);
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, EndText.Replace("\n", "　"), false, null, false);
-                        roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
-                        roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
+                        if (string.IsNullOrEmpty(roomInfo.Shell))
+                        {
+                            roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
+                            roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
+                        }
                     }
                     else
                     {
@@ -625,7 +657,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                             roomInfo.DanmuFile = new();
                             roomInfo.DanmuFile.FileName = Path + FileName;
-                            BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
+                            Tool.DanMuKu.DanMuKuRec.Rec(uid);
                         }
                         else
                         {
@@ -773,7 +805,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                                 roomInfo.DanmuFile = new();
                                 roomInfo.DanmuFile.FileName = Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}/" + FileName;
-                                BilibiliModule.API.DanMu.DanMuRec.Rec(uid);
+                                Tool.DanMuKu.DanMuKuRec.Rec(uid);
                             }
                             else
                             {

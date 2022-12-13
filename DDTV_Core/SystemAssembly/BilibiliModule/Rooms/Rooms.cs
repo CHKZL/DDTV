@@ -19,29 +19,36 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// </summary>
         public static void UpdateRoomInfo()
         {
-            int P = 1;
-            int APageCpunt = RoomInfo.Count();
-            int OKConut = 0;
-            while (RoomInfo.Count() / P > 1500)
+            try
             {
-                P++;
-                APageCpunt = RoomInfo.Count() / P;
-            }
-            List<long> mids = new List<long>();
-            foreach (var item in RoomInfo)
-            {
-                mids.Add(item.Value.uid);
-                OKConut++;
-                if (OKConut >= APageCpunt)
+                int P = 1;
+                int APageCpunt = RoomInfo.Count();
+                int OKConut = 0;
+                while (RoomInfo.Count() / P > 1500)
                 {
-                    API.RoomInfo.get_status_info_by_uids(mids);
-                    mids = new List<long>();
-                    OKConut = 0;
-                    if (P != 1)
+                    P++;
+                    APageCpunt = RoomInfo.Count() / P;
+                }
+                List<long> mids = new List<long>();
+                foreach (var item in RoomInfo)
+                {
+                    mids.Add(item.Value.uid);
+                    OKConut++;
+                    if (OKConut >= APageCpunt)
                     {
-                        Thread.Sleep(500);
+                        API.RoomInfo.get_status_info_by_uids(mids);
+                        mids = new List<long>();
+                        OKConut = 0;
+                        if (P != 1)
+                        {
+                            Thread.Sleep(500);
+                        }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Warn, $"获取房间状态更新时发生错误，错误信息已写入日志文本中，稍后将自动重试，如果重复出现该错误，请检查网络状态", true, e, true);
             }
         }
 

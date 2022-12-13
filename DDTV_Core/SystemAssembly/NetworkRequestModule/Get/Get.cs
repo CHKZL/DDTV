@@ -37,31 +37,31 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             {
                 req.Proxy = null;
             }
-            if (CoreConfig.MandatoryUseIPv4)
-            {
-                try
-                {
-                    req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
-                    {
-                        if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
-                        {
+            //if (CoreConfig.MandatoryUseIPv4)
+            //{
+            //    try
+            //    {
+            //        req.ServicePoint.BindIPEndPointDelegate = (servicePoint, remoteEndPoint, retryCount) =>
+            //        {
+            //            if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+            //            {
 
-                            return new IPEndPoint(IPAddress.Any, 0);
-                        }
-                        else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
-                        {
+            //                return new IPEndPoint(IPAddress.Any, 0);
+            //            }
+            //            else if (remoteEndPoint.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6)
+            //            {
 
-                            return new IPEndPoint(IPAddress.IPv6Any, 0);
-                        }
-                        else
-                        {
+            //                return new IPEndPoint(IPAddress.IPv6Any, 0);
+            //            }
+            //            else
+            //            {
 
-                            return null;
-                        }
-                    };
-                }
-                catch (Exception) { }
-            }
+            //                return null;
+            //            }
+            //        };
+            //    }
+            //    catch (Exception) { }
+            //}
             req.ServicePoint.Expect100Continue = false;
             req.Method = "GET";
             req.ContentType = ContentType;

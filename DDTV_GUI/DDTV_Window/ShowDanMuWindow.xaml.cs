@@ -2,6 +2,7 @@
 using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core.Tool.DanMuKu;
 using HandyControl.Controls;
 using System;
 using System.Collections.Generic;
@@ -52,7 +53,7 @@ namespace DDTV_GUI.DDTV_Window
             {
 
 
-                _roominfo = DanMuRec.StartRecDanmu(Uid, true);
+                _roominfo = DanMuKuRec.StartRecDanmu(Uid, true);
                 Dispatcher.Invoke(() =>
                 {
                     this.Title = $"{_roominfo.uname} - DanMuChat";

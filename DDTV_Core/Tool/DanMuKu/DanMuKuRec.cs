@@ -1,20 +1,22 @@
 ﻿using ColorConsole;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
-using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
+namespace DDTV_Core.Tool.DanMuKu
 {
-    public class DanMuRec
+    public class DanMuKuRec
     {
         public static void Rec(long UID, bool IsWatchMode = false)
         {
@@ -23,11 +25,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 StartRecDanmu(UID, IsWatchMode);
             });
         }
-        public static RoomInfoClass.RoomInfo StartRecDanmu(long UID,bool IsWatchMode=false)
+        public static RoomInfoClass.RoomInfo StartRecDanmu(long UID, bool IsWatchMode = false)
         {
-            RoomInfoClass.RoomInfo _ = WebSocket.WebSocket.ConnectRoomAsync(UID);
+            RoomInfoClass.RoomInfo _ = WebSocket.ConnectRoomAsync(UID);
             _.DanmuFile.TimeStopwatch = new System.Diagnostics.Stopwatch();
-            if(IsWatchMode)
+            if (IsWatchMode)
             {
                 _.roomWebSocket.LiveChatListener.IsWatchMode = true;
             }
@@ -47,17 +49,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             {
                 if (!liveChatListener.IsUserDispose)
                 {
-                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
+                    Log.AddLog(nameof(DanMuKuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，检测到直播未停止且弹幕录制设置已打开，开始重连弹幕服务器");
                     Rec(liveChatListener.mid);
                 }
                 else
                 {
-                    Log.Log.AddLog(nameof(DanMuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}请求重连，但该房间的录制已经标记不再连接，取消重连");
+                    Log.AddLog(nameof(DanMuKuRec), LogClass.LogType.Info, $"{liveChatListener.TroomId}请求重连，但该房间的录制已经标记不再连接，取消重连");
                 }
             }
             catch (Exception)
             {
-            }   
+            }
         }
         /// <summary>
         /// 
@@ -66,7 +68,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         private static void LiveChatListener_MessageReceived(object? sender, MessageEventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            Rooms.Rooms.RoomInfo.TryGetValue(liveChatListener.mid, out RoomInfoClass.RoomInfo roomInfo);
+            Rooms.RoomInfo.TryGetValue(liveChatListener.mid, out RoomInfoClass.RoomInfo roomInfo);
             if (roomInfo != null)
             {
                 switch (e)
@@ -226,6 +228,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 roomInfo.DownloadedFileInfo.GiftFile = SevaGift(roomInfo.DanmuFile.Gift, roomInfo.DanmuFile.FileName);
                 roomInfo.DownloadedFileInfo.GuardFile = SevaGuardBuy(roomInfo.DanmuFile.GuardBuy, roomInfo.DanmuFile.FileName);
                 roomInfo.DownloadedFileInfo.SCFile = SevaSuperChat(roomInfo.DanmuFile.SuperChat, roomInfo.DanmuFile.FileName);
+
+
             }
 
 
@@ -356,9 +360,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
                 .Replace(">", "&gt;")
                 .Replace("'", "&apos;")
                 .Replace("\"", "&quot;");
-                //.Replace(" ", "&nbsp;")
-                //.Replace("×", "&times;")
-                //.Replace("÷", "&divde;");
+            //.Replace(" ", "&nbsp;")
+            //.Replace("×", "&times;")
+            //.Replace("÷", "&divde;");
         }
         /// <summary>
         /// 储存原始礼物信息到文件
@@ -405,6 +409,75 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             }
             File.WriteAllText(FileName + "_SC.csv", Gift, Encoding.UTF8);
             return new FileInfo(FileName + "_SC.csv");
+        }
+
+        public static void CallDanmakuFactory(string Path, string AfterFileName, string BeforeFileName, bool IsSaveLogFile = false)
+        {
+            try
+            {
+                Path = Path.Replace("\\", "/");
+                Process process = new Process();
+                process.StartInfo.FileName = "./plugins/DanmakuFactory/DanmakuFactory.exe";
+                process.StartInfo.Arguments = SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter.Replace("{AfterFilePath}", $"{Path + AfterFileName}").Replace("{BeforeFilePath}", $"{Path + BeforeFileName}");
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardInput = true;
+                process.StartInfo.CreateNoWindow = true; // 不显示窗口。
+                process.EnableRaisingEvents = true;
+                process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                List<string> LogText = new List<string>(); ;
+                if (IsSaveLogFile)
+                {
+                    process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                    {
+                        try
+                        {
+                            LogText.Add(e.Data);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    };  // 捕捉的信息
+                    process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                   {
+                       try
+                       {
+                           LogText.Add(e.Data);
+                       }
+                       catch (Exception)
+                       {
+                       }
+                   };  // 捕捉的信息
+                    process.Start();
+                    process.BeginErrorReadLine();   // 开始异步读取
+                    process.Exited += delegate (object sender, EventArgs e)
+                    {
+                        Process P = (Process)sender;
+                        Log.AddLog(nameof(DanMuKuRec), SystemAssembly.Log.LogClass.LogType.Info, "弹幕文件转换任务完成:" + P.StartInfo.Arguments);
+                    };
+                    if (!process.HasExited)
+                    {
+                        //如果超过1分钟都没有等待到exit信息，就跳过
+                        process.WaitForExit(60 * 1000);
+                    }
+                    process.Close();
+                    if (IsSaveLogFile)
+                    {
+                        using (StreamWriter fileStream = new StreamWriter(Path + AfterFileName + "_弹幕转换.log", true, Encoding.UTF8))
+                        {
+                            foreach (var item in LogText)
+                            {
+                                fileStream.WriteLine(item);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Log.AddLog(nameof(DanMuKuRec), LogClass.LogType.Warn, "弹幕文件转换出现致命错误！错误信息:\n" + e.ToString(), true, e, true);
+            }
         }
     }
 }

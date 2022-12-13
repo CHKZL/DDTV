@@ -63,6 +63,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             
             InitializeComponent();
+            
             DDTV_GUI.App.Application_Startup();
 
             if (false && CheckRepeatedRun())
@@ -130,19 +131,20 @@ namespace DDTV_GUI.DDTV_Window
 
 
 
+            ////测试房间卡片样式
             //Task.Run(() =>
             //{
             //    Thread.Sleep(5000);
             //    foreach (var item in Rooms.RoomInfo)
             //    {
-            //        if(item.Value.live_status==1)
+            //        if (item.Value.live_status == 1)
             //        {
             //            AddRoomCard(item.Value.uid);
             //        }
             //    }
             //    foreach (var item in Rooms.RoomInfo)
             //    {
-            //        if(item.Value.live_status!=1)
+            //        if (item.Value.live_status != 1)
             //        {
             //            AddRoomCard(item.Value.uid);
             //        }
@@ -151,7 +153,10 @@ namespace DDTV_GUI.DDTV_Window
 
         }
 
-
+         public static string GetPackageVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
         private void AddRoomCard(long uid)
         {
             
@@ -425,10 +430,37 @@ namespace DDTV_GUI.DDTV_Window
                 ? 2 : GUIConfig.PlayQuality == 150
                 ? 3 : 4;
 
-            DanmuToggle.IsChecked = Download.IsRecDanmu;
-            //GiftToggle.IsChecked = Download.IsRecGift;
-            //GuardToggle.IsChecked = Download.IsRecGuard;
-            //SCToggle.IsChecked = Download.IsRecSC;
+            {
+                DanmuToggle.IsChecked = Download.IsRecDanmu;
+                //GiftToggle.IsChecked = Download.IsRecGift;
+                //GuardToggle.IsChecked = Download.IsRecGuard;
+                //SCToggle.IsChecked = Download.IsRecSC;
+                DanmuToAssButton.IsChecked = CoreConfig.IsXmlToAss;
+                SetDanmakuFactoryParameter.Text = CoreConfig.DanmukuFactoryParameter;
+                if (Download.IsRecDanmu)
+                {
+                    DanmuToAssText.Visibility = Visibility.Visible;
+                    DanmuToAssButton.Visibility = Visibility.Visible;
+                    if (CoreConfig.IsXmlToAss)
+                    {
+                        SetDanmakuFactoryParameter.Visibility = Visibility.Visible;
+                        SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
+                        SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
+                    }
+                }
+                else
+                {
+                    DanmuToAssText.Visibility = Visibility.Collapsed;
+                    DanmuToAssButton.Visibility = Visibility.Collapsed;
+                    SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
+                    SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
+                }
+
+            }
             IsFlvSplitToggle.IsChecked = Download.IsFlvSplit;
             FlvSplitSizeComboBox.Visibility = Download.IsFlvSplit ? Visibility.Visible : Visibility.Collapsed;
 
@@ -443,7 +475,7 @@ namespace DDTV_GUI.DDTV_Window
                 ? 1 : 0;
 
             DoNotSleepWhileDownloadingIcon.IsChecked = Dokidoki.IsDoNotSleepState;
-            ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
+            //ForceCDNResolution.IsChecked = RoomInfo.ForceCDNResolution;
             //TranscodingCompleteAutoDeleteFiles.IsChecked = Transcod.TranscodingCompleteAutoDeleteFiles;
             DDcenterSwitch.IsChecked = DDcenter.DDcenterSwitch;
             SpaceIsInsufficientWarn.IsChecked = DDTV_Core.Tool.FileOperation.SpaceIsInsufficientWarn;
@@ -454,8 +486,8 @@ namespace DDTV_GUI.DDTV_Window
             ProxySwitch.IsChecked = CoreConfig.WhetherToEnableProxy;
             DevSwitch.IsChecked = CoreConfig.IsDev;
 
-            SelectDanMu_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
-            SelectDanMu_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
+            //SelectDanMu_v1.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 1 ? true : false;
+            //SelectDanMu_v2.IsChecked = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuSaveType == 2 ? true : false;
             HLSToggle.IsChecked = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
 
             WaitHLSTime.Value = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
@@ -1127,16 +1159,16 @@ namespace DDTV_GUI.DDTV_Window
                 //GiftToggle.IsEnabled = true;
                 //GuardToggle.IsEnabled = true;
                 //SCToggle.IsEnabled = true;
-                SelectDanMu_v1.IsEnabled = false;
-                SelectDanMu_v2.IsEnabled = true;
+                //SelectDanMu_v1.IsEnabled = false;
+               // SelectDanMu_v2.IsEnabled = true;
             }
             else
             {
                 //GiftToggle.IsEnabled = false;
                 //GuardToggle.IsEnabled = false;
                 //SCToggle.IsEnabled = false;
-                SelectDanMu_v1.IsEnabled = false;
-                SelectDanMu_v2.IsEnabled = false;
+                //SelectDanMu_v1.IsEnabled = false;
+                //SelectDanMu_v2.IsEnabled = false;
             }
             Download.IsRecGift = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsRecGift, Is.ToString(), CoreConfigClass.Group.Download);
@@ -1153,6 +1185,29 @@ namespace DDTV_GUI.DDTV_Window
             //Growl.Success((Is ? "打开" : "关闭") + "SC录制");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "SC录制", false, null, false);
             CoreConfigFile.WriteConfigFile(true);
+
+            if (Download.IsRecDanmu)
+            {
+                DanmuToAssText.Visibility = Visibility.Visible;
+                DanmuToAssButton.Visibility = Visibility.Visible;
+                if (CoreConfig.IsXmlToAss)
+                {
+                    SetDanmakuFactoryParameter.Visibility = Visibility.Visible;
+                    SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
+                    SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                DanmuToAssText.Visibility = Visibility.Collapsed;
+                DanmuToAssButton.Visibility = Visibility.Collapsed;
+                SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
+                SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
+            }
         }
 
         //private void GiftToggle_Click(object sender, RoutedEventArgs e)
@@ -1303,7 +1358,6 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     if (roomInfo.DownloadingList.Count > 0)
                     {
-
                         FileInfo[] fileInfos = new FileInfo[roomInfo.DownloadingList.Count];
                         for (int i = 0; i < roomInfo.DownloadingList.Count; i++)
                         {
@@ -1312,18 +1366,17 @@ namespace DDTV_GUI.DDTV_Window
                                 Growl.WarningGlobal("该任务已启动自动分P功能，无法使用激光切片");
                                 return;
                             }
-                            if (roomInfo.DownloadingList[i].IsHLS)
-                            {
-                                Growl.WarningGlobal("该任务为HLS流，无法使用激光切片，如需使用该功能请加群联系我魔改该功能");
-                                return;
-                            }
+                            //if (roomInfo.DownloadingList[i].IsHLS)
+                            //{
+                            //    Growl.WarningGlobal("该任务为HLS流，无法使用激光切片，如需使用该功能请加群联系我魔改该功能");
+                            //    return;
+                            //}
                             fileInfos[i] = new FileInfo(roomInfo.DownloadingList[i].FileName);
                         }
-
                         if (fileInfos.Length == 1)
                         {
-                            ClipWindow clipWindow = new(fileInfos[0].FullName, roomInfo);
-                            clipWindow.Show();
+                            NewClipWindow newClipWindow = new(fileInfos[0].FullName);
+                            newClipWindow.Show();
                         }
                         else
                         {
@@ -1560,15 +1613,15 @@ namespace DDTV_GUI.DDTV_Window
             }
         }
 
-        private void ForceCDNResolution_Click(object sender, RoutedEventArgs e)
-        {
-            bool Is = (bool)ForceCDNResolution.IsChecked ? true : false;
-            RoomInfo.ForceCDNResolution = Is;
-            CoreConfig.SetValue(CoreConfigClass.Key.ForceCDNResolution, Is.ToString(), CoreConfigClass.Group.Download);
-            Growl.Success((Is ? "打开" : "关闭") + "强制主CDN开关");
-            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "强制主CDN开关", false, null, false);
-            CoreConfigFile.WriteConfigFile(true);
-        }
+        //private void ForceCDNResolution_Click(object sender, RoutedEventArgs e)
+        //{
+        //    bool Is = (bool)ForceCDNResolution.IsChecked ? true : false;
+        //    RoomInfo.ForceCDNResolution = Is;
+        //    CoreConfig.SetValue(CoreConfigClass.Key.ForceCDNResolution, Is.ToString(), CoreConfigClass.Group.Download);
+        //    Growl.Success((Is ? "打开" : "关闭") + "强制主CDN开关");
+        //    Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "强制主CDN开关", false, null, false);
+        //    CoreConfigFile.WriteConfigFile(true);
+        //}
 
         //private void TranscodingCompleteAutoDeleteFiles_Click(object sender, RoutedEventArgs e)
         //{
@@ -1618,7 +1671,7 @@ namespace DDTV_GUI.DDTV_Window
                     TranscodingSelectFilesManual.Content = "修复/转码中";
                     Task.Factory.StartNew(() =>
                     {
-                        if(!Transcod.CallFFMPEG_FLV(new TranscodClass()
+                        if(!Transcod.CallFFMPEG(new TranscodClass()
                         {
                             AfterFilenameExtension = ".mp4",
                             AfterFilePath = IsMp4File ? dialog.FileName.Replace("\\","/").Replace(".mp4", "_fix.mp4") : dialog.FileName.Replace("\\","/").Replace(".flv", "_fix.mp4"),
@@ -1665,12 +1718,12 @@ namespace DDTV_GUI.DDTV_Window
             {
                 BindingData.LiveList live = new(item.Value.uname,
                     item.Value.live_status == 1 ? "直播中" : " 摸了",
-                    item.Value.IsRemind ? "     √" : "     ×",
-                    item.Value.IsAutoRec ? "     √" : "     ×",
+                    item.Value.IsRemind ? "     √" : "      ",
+                    item.Value.IsAutoRec ? "     √" : "      ",
                     item.Value.room_id,
                     item.Value.uid,
                     item.Value.live_status,
-                    item.Value.IsRecDanmu ? "     √" : "     ×",
+                    item.Value.IsRecDanmu ? "     √" : "      ",
                     item.Value.title);
                 _.Add(live);
             }
@@ -1903,7 +1956,38 @@ namespace DDTV_GUI.DDTV_Window
                     Growl.Warning($"该房间未开播");
                 }
             }
-           
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            NewClipWindow newClipWindow = new(@"E:\老D\PR项目\DDTV宣传\成品片段\压制完成.mp4");
+            newClipWindow.Show();
+        }
+
+        private void SetDanmakuFactoryParameterSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DanmuToAssButton_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)DanmuToAssButton.IsChecked ? true : false;
+            CoreConfig.IsXmlToAss = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.IsXmlToAss, Is.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Is ? "打开" : "关闭") + "录制后转为ass文件");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "录制后转为ass文件", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
+            if (Is)
+            {
+                SetDanmakuFactoryParameter.Visibility = Visibility.Visible;
+                SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
+                SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }

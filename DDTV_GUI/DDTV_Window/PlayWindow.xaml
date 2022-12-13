@@ -53,7 +53,7 @@
                         <MenuItem Header="打开/关闭弹幕" Width="150" Click="MenuItem_OpenDamu_Click"/>
                         <MenuItem Header="显示/隐藏野生字幕" Width="150" Click="MenuItem_SwitchSubtitleDisplay_Click"/>
                         <MenuItem Header="弹幕设置" Width="150" Click="MenuItem_DamuConfig_Click"/>
-                        
+
                         <Separator/>
                         <MenuItem Header="打开独立弹幕框" Width="150" Click="MenuItem_OpenSeparateDanmuWindow_Click"/>
                     </MenuItem>
@@ -138,7 +138,7 @@
             <Grid>
 
                 <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000" Visibility="Collapsed">
-                    <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" VerticalAlignment="Center" Margin="65,0,85,0" KeyDown="DanMuInput_KeyDown"/>
+                    <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Margin="0,2,85,3" KeyDown="DanMuInput_KeyDown" HorizontalAlignment="Right" Width="650"/>
                 </Grid>
                 <ToggleButton Name="DanMuGridSwitch" Opacity="0.6" Margin="0,0,2,2" BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="DanMuGridSwitch_Click">
                     <hc:StatusSwitchElement.CheckedElement>

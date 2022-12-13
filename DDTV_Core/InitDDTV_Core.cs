@@ -23,15 +23,15 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-12-10 00:54:48";
+        public static string CompiledVersion = "2022-12-12 21:03:36";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
 
-    /// <summary>
-    /// 初始化COre
-    /// </summary>
-    public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
+        /// <summary>
+        /// 初始化COre
+        /// </summary>
+        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
         {
             InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
@@ -87,6 +87,10 @@ namespace DDTV_Core
             WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, -1);
         }
 
+        public static string GetPackageVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
         /// <summary>
         /// 登陆状态失效
         /// </summary>
@@ -153,7 +157,7 @@ namespace DDTV_Core
                                 {
                                     int i = 0;
                                     //ConsoleTable tables = new ConsoleTable("序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息");
-                                    var tableData = new List<List<object>> { new List<object> { "序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息","录制模式" } };
+                                    var tableData = new List<List<object>> { new List<object> { "序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息", "录制模式" } };
                                     foreach (var A1 in Rooms.RoomInfo)
                                     {
                                         if (A1.Value.DownloadingList.Count > 0)
@@ -171,7 +175,7 @@ namespace DDTV_Core
                                             }
                                             i++;
 
-                                            tableData.Add(new List<object> { i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title, NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"), A1.Value.IsRecDanmu ? "YES" : "NO", A1.Value.CurrentMode==0?"FLV":"HLS" });
+                                            tableData.Add(new List<object> { i, A1.Value.uid, A1.Value.room_id, A1.Value.uname, A1.Value.title, NetClass.ConversionSize(FileSize), spe, downloadStatus, StartTime.ToString("yyyy-MM-dd HH:mm:ss"), A1.Value.IsRecDanmu ? "YES" : "NO", A1.Value.CurrentMode == 0 ? "FLV" : "HLS" });
 
 
 

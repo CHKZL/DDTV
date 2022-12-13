@@ -86,7 +86,7 @@ namespace DDTV_DanMu
 
         private void Rec(long Uid)
         {
-            RoomInfoClass.RoomInfo _ = DanMuRec.StartRecDanmu(Uid, true);
+            RoomInfoClass.RoomInfo _ = DDTV_Core.Tool.DanMuKu.DanMuKuRec.StartRecDanmu(Uid, true);
             _.roomWebSocket.LiveChatListener.DisposeSent += LiveChatListener_DisposeSent;
             _.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
             if(_.roomWebSocket.LiveChatListener.m_ReceiveBuffer!=null)
