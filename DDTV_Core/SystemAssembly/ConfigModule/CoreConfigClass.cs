@@ -359,6 +359,16 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：随机生成的GUID
             /// </summary>
             HighRiskWebAPIFixedCheckSign,
+            /// <summary>
+            /// 进行xml转ass文件时使用的参数语句 (应该是带{AfterFilePath}和{BeforeFilePath}的参数字符串，如:-o {AfterFilePath} -i {BeforeFilePath} )
+            /// 组：GUI   默认值：-o {AfterFilePath} -i {BeforeFilePath}
+            /// </summary>
+            DanmukuFactoryParameter,
+            /// <summary>
+            /// 是否对xml进行转码到ass
+            /// 组：GUI   默认值：False
+            /// </summary>
+            IsXmlToAss,
         }
     }
 }

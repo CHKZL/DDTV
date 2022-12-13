@@ -29,7 +29,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
         public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
-
+        public static bool IsXmlToAss= bool.Parse(GetValue(CoreConfigClass.Key.IsXmlToAss, "False", CoreConfigClass.Group.GUI));
+        public static string DanmukuFactoryParameter=GetValue(CoreConfigClass.Key.DanmukuFactoryParameter, "-o {AfterFilePath} -i {BeforeFilePath}", CoreConfigClass.Group.GUI);
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -97,7 +98,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             });
         }
         /// <summary>
-        /// 生成所有配置项，用户打开配置文件时配置信息缺失
+        /// 生成所有配置项，防止用户打开配置文件时配置信息缺失
         /// </summary>
         public static void BuildConfig()
         {
@@ -144,7 +145,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _ReplaceAPI = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             var _APIVersion = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion;
             var _AutoInsallUpdate = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AutoInsallUpdate;
-
             var _DanMuColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor;
             var _SubtitleColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
             var _DanMuFontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
@@ -157,7 +157,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _IsHls = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
             var _WaitHLSTime = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
             var _HighRiskWebAPIFixedCheckSign = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.HighRiskWebAPIFixedCheckSign;
-
+            var _DanmukuFactoryParameter = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter;
+            var _IsXmlToAss = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsXmlToAss;
         }
         /// <summary>
         /// 获取配置

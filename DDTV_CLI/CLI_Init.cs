@@ -12,12 +12,16 @@ namespace DDTV_CLI
     public class CLI_Init
     {
         public static void Main(string[] args)
-        {  
+        {
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
             while (true)
             {
                 Thread.Sleep(60000);
             }
+        }
+        public static string GetPackageVersion()
+        {
+            return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
     }
 }
