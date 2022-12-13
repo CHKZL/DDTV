@@ -31,6 +31,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
         public static bool IsXmlToAss= bool.Parse(GetValue(CoreConfigClass.Key.IsXmlToAss, "False", CoreConfigClass.Group.GUI));
         public static string DanmukuFactoryParameter=GetValue(CoreConfigClass.Key.DanmukuFactoryParameter, "-o {AfterFilePath} -i {BeforeFilePath}", CoreConfigClass.Group.GUI);
+        public static bool IsExitReminder = bool.Parse(GetValue(CoreConfigClass.Key.IsExitReminder, "True", CoreConfigClass.Group.GUI));
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -159,6 +160,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _HighRiskWebAPIFixedCheckSign = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.HighRiskWebAPIFixedCheckSign;
             var _DanmukuFactoryParameter = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter;
             var _IsXmlToAss = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsXmlToAss;
+            var _IsExitReminder =DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsExitReminder;
         }
         /// <summary>
         /// 获取配置

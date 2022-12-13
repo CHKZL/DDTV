@@ -369,6 +369,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：GUI   默认值：False
             /// </summary>
             IsXmlToAss,
+            /// <summary>
+            /// 退出是否提醒
+            /// 组：GUI   默认值：true
+            /// </summary>
+            IsExitReminder,
         }
     }
 }

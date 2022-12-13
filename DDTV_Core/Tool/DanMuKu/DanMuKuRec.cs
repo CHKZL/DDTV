@@ -413,53 +413,57 @@ namespace DDTV_Core.Tool.DanMuKu
 
         public static void CallDanmakuFactory(string Path, string AfterFileName, string BeforeFileName, bool IsSaveLogFile = false)
         {
-            try
+            Task.Run(() =>
             {
-                Path = Path.Replace("\\", "/");
-                Process process = new Process();
-                process.StartInfo.FileName = "./plugins/DanmakuFactory/DanmakuFactory.exe";
-                process.StartInfo.Arguments = SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter.Replace("{AfterFilePath}", $"{Path + AfterFileName}").Replace("{BeforeFilePath}", $"{Path + BeforeFileName}");
-                process.StartInfo.UseShellExecute = false;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardInput = true;
-                process.StartInfo.CreateNoWindow = true; // 不显示窗口。
-                process.EnableRaisingEvents = true;
-                process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-                List<string> LogText = new List<string>(); ;
-                if (IsSaveLogFile)
+                try
                 {
-                    process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                    Path = Path.Replace("\\", "/");
+                    Process process = new Process();
+                    process.StartInfo.FileName = "./plugins/DanmakuFactory/DanmakuFactory.exe";
+                    process.StartInfo.Arguments = SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter.Replace("{AfterFilePath}", $"{Path + AfterFileName}").Replace("{BeforeFilePath}", $"{Path + BeforeFileName}");
+                    process.StartInfo.UseShellExecute = false;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.RedirectStandardInput = true;
+                    process.StartInfo.CreateNoWindow = true; // 不显示窗口。
+                    process.EnableRaisingEvents = true;
+                    process.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                    List<string> LogText = new List<string>(); ;
+                    if (IsSaveLogFile)
                     {
-                        try
+                        process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                         {
-                            LogText.Add(e.Data);
-                        }
-                        catch (Exception)
-                        {
-                        }
-                    };  // 捕捉的信息
-                    process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
-                   {
-                       try
+                            try
+                            {
+                                LogText.Add(e.Data);
+                            }
+                            catch (Exception)
+                            {
+                            }
+                        };  // 捕捉的信息
+                        process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
                        {
-                           LogText.Add(e.Data);
-                       }
-                       catch (Exception)
-                       {
-                       }
-                   };  // 捕捉的信息
-                    process.Start();
-                    process.BeginErrorReadLine();   // 开始异步读取
+                           try
+                           {
+                               LogText.Add(e.Data);
+                           }
+                           catch (Exception)
+                           {
+                           }
+                       };  // 捕捉的信息
+                    }
                     process.Exited += delegate (object sender, EventArgs e)
                     {
                         Process P = (Process)sender;
                         Log.AddLog(nameof(DanMuKuRec), SystemAssembly.Log.LogClass.LogType.Info, "弹幕文件转换任务完成:" + P.StartInfo.Arguments);
                     };
+                    process.Start();
+                    process.BeginErrorReadLine();   // 开始异步读取
+
                     if (!process.HasExited)
                     {
-                        //如果超过1分钟都没有等待到exit信息，就跳过
-                        process.WaitForExit(60 * 1000);
+                        //如果超过10秒都没有等待到exit信息，就跳过
+                        process.WaitForExit(10 * 1000);
                     }
                     process.Close();
                     if (IsSaveLogFile)
@@ -473,11 +477,11 @@ namespace DDTV_Core.Tool.DanMuKu
                         }
                     }
                 }
-            }
-            catch (Exception e)
-            {
-                Log.AddLog(nameof(DanMuKuRec), LogClass.LogType.Warn, "弹幕文件转换出现致命错误！错误信息:\n" + e.ToString(), true, e, true);
-            }
+                catch (Exception e)
+                {
+                    Log.AddLog(nameof(DanMuKuRec), LogClass.LogType.Warn, "弹幕文件转换出现致命错误！错误信息:\n" + e.ToString(), true, e, true);
+                }
+            });
         }
     }
 }
