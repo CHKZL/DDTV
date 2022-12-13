@@ -1983,6 +1983,7 @@ namespace DDTV_GUI.DDTV_Window
                 return;
             }
             CoreConfig.DanmukuFactoryParameter = SetDanmakuFactoryParameter.Text;
+            CoreConfigFile.WriteConfigFile(true);
         }
 
         private void DanmuToAssButton_Click(object sender, RoutedEventArgs e)
