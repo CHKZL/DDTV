@@ -36,10 +36,10 @@ Q群	522865400(新)	聊天吹水的地方
 如果提示缺少.NET6环境，请先安装.NET6环境
 请根据官网的教程进行操作
 
-## 第三方客户端(非DDTV官方编写，仅介绍，是否使用请执行判断)
+## 第三方客户端(非DDTV官方编写，仅介绍，是否使用请自行判断)
 |名称|说明|主页|
 |---|---|---|
-|DDTV_Clent|基于WEB API开发的客户端，需要先安装部署DDTV_WEB_Server后才可以使用，适用于Windows、Linux、MacOS和Android|[FishMagic/DDTV_Client](https://github.com/FishMagic/DDTV_Client)|
+|DDTV_Client|基于WEB API开发的客户端，需要先安装部署DDTV_WEB_Server后才可以使用，适用于Windows、Linux、MacOS和Android|[FishMagic/DDTV_Client](https://github.com/FishMagic/DDTV_Client)|
 
 # 使用到的第三方组件
 * [BiliAccount](https://github.com/LeoChen98/BiliAccount)
