@@ -137,8 +137,9 @@
 
             <Grid>
 
-                <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000" Visibility="Collapsed">
-                    <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Margin="0,2,85,3" KeyDown="DanMuInput_KeyDown" HorizontalAlignment="Right" Width="650"/>
+                <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000">
+                    <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Margin="75,2,75,3" KeyDown="DanMuInput_KeyDown"/>
+                    <Button Name="playSwitch" Content="暂停" Margin="9,0,0,0" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Click="playSwitch_Click" Height="30" Width="52"/>
                 </Grid>
                 <ToggleButton Name="DanMuGridSwitch" Opacity="0.6" Margin="0,0,2,2" BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="DanMuGridSwitch_Click">
                     <hc:StatusSwitchElement.CheckedElement>

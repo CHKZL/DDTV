@@ -162,7 +162,7 @@ namespace BiliAccount.Core
         {
             string parm = "appkey=" + Config.Instance.Appkey;
             parm += "&sign=" + GetSign(parm);
-            string str = Http.PostBodyOutCookies("http://passport.bilibili.com/api/oauth2/getKey", out cookies, parm);
+            string str = Http.PostBodyOutCookies("https://passport.bilibili.com/api/oauth2/getKey", out cookies, parm);
             if (!string.IsNullOrEmpty(str))
             {
 #if NETSTANDARD2_0 || NETCORE3_0

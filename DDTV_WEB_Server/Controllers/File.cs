@@ -175,7 +175,7 @@ namespace DDTV_WEB_Server.Controllers
                     //byte[] bts = new byte[fs.Length];
                     //fs.Read(bts, 0, (int)fs.Length);
                     FileStream fs = null;
-                    if (type == "flv" || type == "mp4" || type == "xml" || type == "csv")
+                    if (type == "flv" || type == "mp4" || type == "xml" || type == "csv"|| type == "ass")
                     {
                         fs = new FileStream(FileName, FileMode.Open);
                     }
@@ -188,6 +188,8 @@ namespace DDTV_WEB_Server.Controllers
                         case "xml":
                             return File(fs, "application/xml", Name);
                         case "csv":
+                            return File(fs, "text/plain", Name);
+                        case "ass":
                             return File(fs, "text/plain", Name);
                         default:
                             return Content(MessageBase.Success(nameof(File_GetFile), "该文件不在支持列表内"), "application/json");

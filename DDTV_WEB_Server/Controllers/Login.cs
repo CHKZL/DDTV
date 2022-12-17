@@ -16,7 +16,7 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "Login")]
         public ActionResult Post([FromForm] string UserName, [FromForm] string Password,[FromForm] bool CookieExpires=false)
         {
-            if (UserName == WebServerConfig.WebUserName && Password == WebServerConfig.WebPassword)
+            if (UserName.Equals(WebServerConfig.WebUserName) && Password.Equals(WebServerConfig.WebPassword))
             {
                 WebServerConfig.Cookis = Guid.NewGuid().ToString();
                 CookieOptions cookieOptions = new CookieOptions();
