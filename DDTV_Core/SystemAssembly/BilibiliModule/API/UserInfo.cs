@@ -23,7 +23,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         internal static RoomInfoClass.RoomInfo info(long uid)
         {
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("http://api.bilibili.com/x/space/acc/info?mid=" + uid);
+            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/space/acc/info?mid=" + uid);
             
             if (string.IsNullOrEmpty(WebText))
             {

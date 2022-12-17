@@ -112,7 +112,7 @@ namespace DDTV_WEB_Server
         }
         private static void LoginErrer(ActionExecutingContext filterContext)
         {
-            filterContext.HttpContext.Response.Cookies.Append("DDTVUser", "");
+            filterContext.HttpContext.Response.Cookies.Delete("DDTVUser");
             filterContext.HttpContext.Response.Redirect("/api/LoginErrer");
             filterContext.Result = new EmptyResult();
         }

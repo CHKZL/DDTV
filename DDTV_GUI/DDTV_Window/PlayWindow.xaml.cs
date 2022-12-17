@@ -1717,5 +1717,22 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
         }
+
+        private void playSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (!IsClose && VideoView.MediaPlayer != null)
+            {
+                if (VideoView.MediaPlayer.IsPlaying)
+                {
+                    playSwitch.Content = "暂停";
+                    VideoView.MediaPlayer.Pause();
+                }
+                else
+                {
+                    playSwitch.Content = "播放";
+                    VideoView.MediaPlayer.Play();
+                }
+            }
+        }
     }
 }
