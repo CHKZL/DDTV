@@ -552,13 +552,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             {
                 case 1:
                     return playUrl_v1(uid, qn, line, IsPlay);
-
                 case 2:
                     return playUrl_v2(uid, qn, line, IsPlay);
-
                 default:
                     return playUrl_v2(uid, qn, line, IsPlay);
-
             }
         }
 

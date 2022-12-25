@@ -1971,8 +1971,8 @@ namespace DDTV_GUI.DDTV_Window
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
-            NewClipWindow newClipWindow = new(@"E:\老D\PR项目\DDTV宣传\成品片段\压制完成.mp4");
-            newClipWindow.Show();
+            //NewClipWindow newClipWindow = new(@"E:\老D\PR项目\DDTV宣传\成品片段\压制完成.mp4");
+            //newClipWindow.Show();
         }
 
         private void SetDanmakuFactoryParameterSaveButton_Click(object sender, RoutedEventArgs e)

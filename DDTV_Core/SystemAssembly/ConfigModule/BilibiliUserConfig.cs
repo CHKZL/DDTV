@@ -13,6 +13,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class BilibiliUserConfig
     {
+        private static string UserConfigFile = "BiliUser.ini";
         public static Account AccClass = new();
         public static CookieInfo account = new CookieInfo();
         public class CookieInfo
@@ -72,9 +73,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 return login.VerifyLogin.QRLogin(satrtType);
             }
         }
-        public static bool WritUserFile(string BiliUserFile = "./BiliUser.ini")
+        public static bool WritUserFile()
         {
-            using FileStream fileStream = File.Create(BiliUserFile);
+            using FileStream fileStream = File.Create(UserConfigFile);
             {
                 fileStream.Write(Encoding.UTF8.GetBytes($"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}"+"\r\n"));
                 fileStream.Write(Encoding.UTF8.GetBytes($"ExTime={account.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}" + "\r\n"));
@@ -88,12 +89,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// </summary>
         /// <param name="BiliUserFile">User配置文件的路径</param>
         /// <returns></returns>
-        internal static bool ReadUserFile(string BiliUserFile = "./BiliUser.ini")
+        internal static bool ReadUserFile()
         {
-            if (File.Exists(BiliUserFile))
+            if (File.Exists(UserConfigFile))
             {
-                string[] UserFileLine = File.ReadAllLines(BiliUserFile);
-                if (UserFileLine.Length>1||UserFileLine[0].Length>1)
+                string[] UserFileLine = File.ReadAllLines(UserConfigFile);
+                if (UserFileLine.Length>0||UserFileLine[0].Length>1)
                 {
                     account.cookie=String.Empty;
                     account.csrf=String.Empty;
@@ -177,6 +178,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 if (!IsOn)
                 { 
                     IsOn = !IsOn;
+                    Log.Log.AddLog(nameof(BilibiliUserConfig), LogClass.LogType.Info, $"NAV状态开始持续监测...");
                     Task.Run(() =>
                     {
                         Thread.Sleep(8 * 1000);
