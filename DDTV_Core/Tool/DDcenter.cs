@@ -119,7 +119,7 @@ namespace DDTV_Core.Tool
                                 {
                                     await _webSocket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes(instr)), WebSocketMessageType.Text, true, _cancellation);
 #if DEBUG
-                                    Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug, $"DDC采集成功", false, null, true);
+                                    Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug, $"DDC采集上报成功", false, null, true);
 #else
                         Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug_DDcenter, $"DDC采集成功", false, null, false);
 #endif
@@ -132,7 +132,7 @@ namespace DDTV_Core.Tool
                             //    break;
                             default:
 #if DEBUG
-                                Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug, $"DDC采集失败:{(string)K["type"]}", false, null, true);
+                                Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug, $"DDC采集失败:{(string)K["type"]}", false, null, false);
 #else
                         Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug_DDcenter, $"DDC采集成功:{(string)K["type"]}", false, null, false);
 #endif

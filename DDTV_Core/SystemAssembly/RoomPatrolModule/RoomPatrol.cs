@@ -69,7 +69,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                         }
                         else
                         {
-                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【○直播间开播】根据配置忽略此直播间:检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Debug, $"【○直播间开播】忽略【{item.Value.room_id}-{item.Value.uname}】- [{item.Value.title}]");
                             //StartLive.Invoke(item.Value, EventArgs.Empty);
 
                         }
@@ -144,7 +144,7 @@ namespace DDTV_Core.SystemAssembly.RoomPatrolModule
                     {
                         if (CoreConfig.ConsoleMonitorMode)
                         {
-                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Info, $"【○直播间开播】根据配置忽略此直播间:检测到【{item.Value.room_id}-{item.Value.uname}】开播-标题：[{item.Value.title}]");
+                            Log.Log.AddLog(nameof(RoomPatrol), Log.LogClass.LogType.Debug, $"【○直播间开播】忽略【{item.Value.room_id}-{item.Value.uname}】- [{item.Value.title}]");
                             Rooms.GetRoomInfoBrief(item.Value.uid, true);
                         }
                     }

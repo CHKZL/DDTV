@@ -39,7 +39,7 @@ namespace DDTV_WEB_Server.Controllers
             /// </summary>
             public string Name { get; set; }
             /// <summary>
-            /// 文件类型
+            /// 文件类型(如果是文件夹则为folder)
             /// </summary>
             public string FileType { get; set; }
             /// <summary>
@@ -50,6 +50,10 @@ namespace DDTV_WEB_Server.Controllers
             /// 文件创建时间
             /// </summary>
             public DateTime DateTime { get; set; }
+            /// <summary>
+            /// 最后修改时间
+            /// </summary>
+            public DateTime LastWriteTime { get; set; }
             /// <summary>
             /// 子文件夹
             /// </summary>
@@ -70,6 +74,7 @@ namespace DDTV_WEB_Server.Controllers
                         Size=f.Length,
                         DateTime=f.CreationTime,
                         FileType =f.Extension,
+                        LastWriteTime=f.LastWriteTime,
                     });
                 }
                 return list;
@@ -88,8 +93,10 @@ namespace DDTV_WEB_Server.Controllers
                         list.Add(new FileNames
                         {
                             Name = d.Name,
-                            FileType = d.Extension,
+                            FileType = "folder",
                             Size=0,
+                            DateTime=d.CreationTime,
+                            LastWriteTime=d.LastWriteTime,
                             children = GetallDirectory(new List<FileNames>(), d.FullName)
                         });
                     }
@@ -175,7 +182,7 @@ namespace DDTV_WEB_Server.Controllers
                     //byte[] bts = new byte[fs.Length];
                     //fs.Read(bts, 0, (int)fs.Length);
                     FileStream fs = null;
-                    if (type == "flv" || type == "mp4" || type == "xml" || type == "csv"|| type == "ass")
+                    if (type == "flv" || type == "mp4" || type == "xml" || type == "csv"|| type == "ass" || type=="png")
                     {
                         fs = new FileStream(FileName, FileMode.Open);
                     }
@@ -191,6 +198,8 @@ namespace DDTV_WEB_Server.Controllers
                             return File(fs, "text/plain", Name);
                         case "ass":
                             return File(fs, "text/plain", Name);
+                            case "png":
+                            return File(fs, "image/png", Name);
                         default:
                             return Content(MessageBase.Success(nameof(File_GetFile), "该文件不在支持列表内"), "application/json");
 

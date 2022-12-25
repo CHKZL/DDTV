@@ -1,4 +1,5 @@
 ﻿using ConsoleTableExt;
+using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.Log;
@@ -23,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-12-18 00:15:54";
+        public static string CompiledVersion = "2022-12-25 22:27:47";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -52,20 +53,27 @@ namespace DDTV_Core
             }
             FileOperation.RemainingSpaceWarningDetection();//开始监控硬盘剩余空间
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
+            //if(UserInfo.LoginValidityVerification())
+            //{
+            //    Log.AddLog(nameof(InitDDTV_Core), LogClass.LogType.Error, "登陆已失效！请重新登陆！", false, null, false);
+            //}
             switch (satrtType)
             {
                 case SatrtType.DDTV_Core:
                     ServerInteraction.CheckUpdates.Update("Core");
                     ServerInteraction.Dokidoki.Start("Core");
+                    BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
                 case SatrtType.DDTV_CLI:
                     ServerInteraction.CheckUpdates.Update("CLI");
                     ServerInteraction.Dokidoki.Start("CLI");
+                    BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
                 case SatrtType.DDTV_WEB:
                     ServerInteraction.CheckUpdates.Update("WEB");
                     ServerInteraction.Dokidoki.Start("WEB");
                     ServerInteraction.UpdateNotice.Start("WEB");
+                    BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
                 case SatrtType.DDTV_GUI:
                     //ServerInteraction.CheckUpdates.Update("GUI");

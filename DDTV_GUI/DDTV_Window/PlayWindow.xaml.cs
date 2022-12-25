@@ -78,6 +78,8 @@ namespace DDTV_GUI.DDTV_Window
         private double BlackListeningOriginalSize_Height = 0;//200
         private bool IsBlackHear = false;//是否为黑听模式
 
+        private ShowDanMuWindow showDanMuWindow = null;
+
         /// <summary>
         /// 屏幕渲染弹幕对象
         /// </summary>
@@ -117,19 +119,22 @@ namespace DDTV_GUI.DDTV_Window
         public PlayWindow(long Uid, string Name, bool IsTemporaryPlay = false)
         {
             InitializeComponent();
-            downloader = new DownloadService(downloadOpt);
+
            
+            downloader = new DownloadService(downloadOpt);
+
             Task.Run(() =>
             {
                 VideoView.Dispatcher.Invoke(() =>
                 {
-
                     vlcVideo = new LibVLC();
                     _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(vlcVideo);
                     VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.Loaded += (sender, e) => VideoView.MediaPlayer = _mediaPlayer;
                     VideoView.MediaPlayer.Playing += MediaPlayer_Playloading;
                     VideoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
+                    MainWindow.DefaultVolume = GUIConfig.DefaultVolume;
+                    SetVolume(MainWindow.DefaultVolume);
                 });
                 Quality = GUIConfig.PlayQuality;
                 uid = Uid;
@@ -311,7 +316,7 @@ namespace DDTV_GUI.DDTV_Window
                                         else
                                         {
                                             VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
-                                            SetVolume(MainWindow.DefaultVolume);
+                                            //SetVolume(MainWindow.DefaultVolume);
                                         }
                                     }
                                 }
@@ -443,6 +448,7 @@ namespace DDTV_GUI.DDTV_Window
                 httpWebResponse.Close();
                 httpWebResponse.Dispose();
             }
+          
             if(downloader.Status == DownloadStatus.Running)
             {
                 downloader.CancelAsync();
@@ -512,6 +518,7 @@ namespace DDTV_GUI.DDTV_Window
                     }
                 });
                 CoreConfig.SetValue(CoreConfigClass.Key.DefaultVolume, i.ToString("f0"), CoreConfigClass.Group.Play);
+                GUIConfig.DefaultVolume = i;
                 MainWindow.DefaultVolume = i;
             }
 
@@ -556,6 +563,13 @@ namespace DDTV_GUI.DDTV_Window
                     Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口【{name}({roomId})】触发Window_Closing", false);
                     CancelDownload();//取消任务并停止缓冲
                     LiveChatDispose();//直播间消息连接回收
+
+                    if (showDanMuWindow != null)
+                    {
+                        //关闭播放窗时，如果播放窗口存在，一起关闭
+                        showDanMuWindow.Dispatcher.Invoke(() => showDanMuWindow.Close());              
+                    }
+
                     if (VideoView != null)
                     {
                         VideoView.Dispatcher.Invoke(() =>
@@ -1695,6 +1709,7 @@ namespace DDTV_GUI.DDTV_Window
         private void MenuItem_OpenSeparateDanmuWindow_Click(object sender, RoutedEventArgs e)
         {
             ShowDanMuWindow danMuShowWindow = new ShowDanMuWindow(uid);
+            showDanMuWindow = danMuShowWindow;
             danMuShowWindow.Show();
         }
 
