@@ -45,32 +45,40 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    if(roomInfo.IsUserCancel)
+                    string is_sp = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.is_sp);
+                    if (is_sp == "1")
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载。该任务是否为新任务：[{(IsNewTask?"是":"否")}】");
-                        if (IsHLS)
-                        {
-                            VideoDownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
-                        }
-                        else
-                        {
-                            VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
-                        }
+                         AddVideoDownLoad_FLV(uid, IsNewTask);
                     }
                     else
                     {
-                        if (!IsNewTask)
+                        if (roomInfo.IsUserCancel)
                         {
-                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{roomInfo.uname}(房间号:{roomInfo.room_id},UID:{roomInfo.uid})因为服务器原因连接中断，尝试进行重连...");
-                        }
-                        roomInfo.IsUserCancel = false;
-                        if (IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
-                        {
-                            AddVideoDownLoad_HLS(uid, IsNewTask);
+                            Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载。该任务是否为新任务：[{(IsNewTask ? "是" : "否")}】");
+                            if (IsHLS)
+                            {
+                                VideoDownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
+                            }
+                            else
+                            {
+                                VideoDownloadCompleteTaskd_FLV(uid, IsFlvSplit);
+                            }
                         }
                         else
                         {
-                            AddVideoDownLoad_FLV(uid, IsNewTask);
+                            if (!IsNewTask)
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{roomInfo.uname}(房间号:{roomInfo.room_id},UID:{roomInfo.uid})因为服务器原因连接中断，尝试进行重连...");
+                            }
+                            roomInfo.IsUserCancel = false;
+                            if (IsHLS && DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls)
+                            {
+                                AddVideoDownLoad_HLS(uid, IsNewTask);
+                            }
+                            else
+                            {
+                                AddVideoDownLoad_FLV(uid, IsNewTask);
+                            }
                         }
                     }
                 }
@@ -257,7 +265,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
                         else
                         {
-                           if(DDTV_Core.InitDDTV_Core.InitType== InitDDTV_Core.SatrtType.DDTV_GUI)
+                            if (DDTV_Core.InitDDTV_Core.InitType == InitDDTV_Core.SatrtType.DDTV_GUI)
                             {
                                 Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"[{roomInfo.uname}({roomInfo.room_id})]下载完成事件为空！");
                             }
@@ -371,7 +379,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 {
                                     try
                                     {
-                                         Tool.DanMuKu.DanMuKuRec.CallDanmakuFactory(roomInfo.DownloadingList[roomInfo.DownloadingList.Count - 1].FilePath, roomInfo.DownloadedFileInfo.DanMuFile.Name.Replace(".xml", "_fix.ass"), roomInfo.DownloadedFileInfo.DanMuFile.Name);
+                                        Tool.DanMuKu.DanMuKuRec.CallDanmakuFactory(roomInfo.DownloadingList[roomInfo.DownloadingList.Count - 1].FilePath, roomInfo.DownloadedFileInfo.DanMuFile.Name.Replace(".xml", "_fix.ass"), roomInfo.DownloadedFileInfo.DanMuFile.Name);
                                     }
                                     catch (Exception e)
                                     {
@@ -519,7 +527,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         #region 房间Shell命令
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
                         {
-                            
+
                             Task.Run(() =>
                             {
                                 WebHook.SendHook(WebHook.HookType.RunShellComplete, roomInfo.uid);
@@ -614,9 +622,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             VideoDownloadCompleteTaskd_HLS(uid, downloadClass);
                             return;
                         }
-                        if(hLSHostClass.IsUserCancel)
+                        if (hLSHostClass.IsUserCancel)
                         {
-                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass,true);
+                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass, true);
                             return;
                         }
                         if (!hLSHostClass.IsEffective)
@@ -884,7 +892,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                        if (DDTV_Core.InitDDTV_Core.IsDevDebug)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试:({Url})");
                         }
@@ -892,7 +900,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info_API, $"房间【{roomInfo.uname}({roomInfo.room_id})】已开播，但未监测到推流数据，3秒后重试");
                         }
-                        
+
                     }
                     if (conut > 6)
                     {

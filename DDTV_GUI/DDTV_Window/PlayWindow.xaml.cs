@@ -747,23 +747,43 @@ namespace DDTV_GUI.DDTV_Window
             //    Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
             //    return;
             //}
-            
+
             IsOpenDanmu = !IsOpenDanmu;
+
+
+
 
             if (IsOpenDanmu)
             {
                 Subtitle.Visibility = Visibility;
                 Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");
                 Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
+
+                canvas.Visibility = Visibility;
+
                 Task.Run(() =>
                 {
-                    MainWindow.linkDMNum++;
-                    var roomInfo = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
-                    roomInfo.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo RI))
+                    {
+                        if (RI.roomWebSocket.LiveChatListener == null)
+                        {
+                            MainWindow.linkDMNum++;
+                            var T1 = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
+                            T1.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                            
+                        }
+                        else
+                        {
+                            RI.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                        }
+                    }
+
                 });
             }
             else
             {
+            
+                canvas.Visibility = Visibility.Collapsed;
                 Subtitle.Text = "";
                 Subtitle.Visibility = Visibility.Collapsed;
                 LiveChatDispose();
@@ -796,6 +816,8 @@ namespace DDTV_GUI.DDTV_Window
                         {
                             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"播放窗口关闭，但是还有录制任务，不断开弹幕连接", false);
                         }
+                        roomInfo.roomWebSocket.LiveChatListener.MessageReceived -= LiveChatListener_MessageReceived;
+
                     }
                     catch (Exception)
                     {
