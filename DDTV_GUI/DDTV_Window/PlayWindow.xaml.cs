@@ -765,12 +765,12 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo RI))
                     {
-                        if (RI.roomWebSocket.LiveChatListener == null)
+                        if (RI.roomWebSocket.LiveChatListener == null || !RI.roomWebSocket.LiveChatListener.startIn)
                         {
                             MainWindow.linkDMNum++;
                             var T1 = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
                             T1.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                            
+
                         }
                         else
                         {
