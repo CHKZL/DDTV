@@ -14,67 +14,68 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
     {
         public static string Processing(HookType hookType, long uid, string id)
         {
-            if (uid>0 && Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            if (uid > 0 && Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
             {
                 string msg = JsonConvert.SerializeObject(new Message()
                 {
                     id = id,
                     type = hookType,
+                    type_name = nameof(hookType),
                     hook_time = DateTime.Now,
                     uid = uid,
-                    user_info=new user_info()
+                    user_info = uid == 0 ? null : new user_info()
                     {
-                        attention= roomInfo.attention,
-                        face= roomInfo.face,
-                        name= roomInfo.uname,
-                        sign= roomInfo.sign,
-                        uid= roomInfo.uid,
+                        attention = roomInfo.attention,
+                        face = roomInfo.face,
+                        name = roomInfo.uname,
+                        sign = roomInfo.sign,
+                        uid = roomInfo.uid,
                     },
-                    room_Info=new room_info()
+                    room_Info = uid == 0 ? null : new room_info()
                     {
-                        area= roomInfo.area,
-                        attention= roomInfo.attention,
-                        area_name= roomInfo.area_name,
-                        area_v2_id= roomInfo.area_v2_id,
-                        area_v2_name= roomInfo.area_v2_name,
-                        area_v2_parent_id= roomInfo.area_v2_parent_id,
-                        area_v2_parent_name= roomInfo.area_v2_parent_name,
+                        area = roomInfo.area,
+                        attention = roomInfo.attention,
+                        area_name = roomInfo.area_name,
+                        area_v2_id = roomInfo.area_v2_id,
+                        area_v2_name = roomInfo.area_v2_name,
+                        area_v2_parent_id = roomInfo.area_v2_parent_id,
+                        area_v2_parent_name = roomInfo.area_v2_parent_name,
                         uid = uid,
-                        IsAutoRec= roomInfo.IsAutoRec,
-                        broadcast_type= roomInfo.broadcast_type,
-                        cover_from_user= roomInfo.cover_from_user,
-                        description= roomInfo.description,
-                        DownloadedFileInfo= roomInfo.DownloadedFileInfo,
-                        encrypted= roomInfo.encrypted,
-                        face= roomInfo.face,
-                        hidden_till= roomInfo.hidden_till,
-                        IsRecDanmu= roomInfo.IsRecDanmu,
-                        IsRemind    = roomInfo.IsRemind,
-                        is_hidden= roomInfo.is_hidden,
-                        is_locked= roomInfo.is_locked,
-                        is_portrait= roomInfo.is_portrait,
-                        is_sp= roomInfo.is_sp,
-                        keyframe= roomInfo.keyframe,
-                        level= roomInfo.level,
-                        live_status= roomInfo.live_status,
-                        live_time= roomInfo.live_time,
-                        lock_till= roomInfo.lock_till,
-                        need_p2p= roomInfo.need_p2p,
-                        online= roomInfo.online,
-                        pwd_verified= roomInfo.pwd_verified,
-                        roomStatus= roomInfo.roomStatus,
-                        room_id= roomInfo.room_id,
-                        roundStatus= roomInfo.roundStatus,
-                        sex= roomInfo.sex,
-                        Shell= roomInfo.Shell,
-                        short_id= roomInfo.short_id,
-                        sign= roomInfo.sign,
-                        special_type= roomInfo.special_type,
-                        tags= roomInfo.tags,
-                        tag_name= roomInfo.tag_name,
-                        title= roomInfo.title,
-                        uname= roomInfo.uname,
-                        url= roomInfo.url,
+                        IsAutoRec = roomInfo.IsAutoRec,
+                        broadcast_type = roomInfo.broadcast_type,
+                        cover_from_user = roomInfo.cover_from_user,
+                        description = roomInfo.description,
+                        DownloadedFileInfo = roomInfo.DownloadedFileInfo,
+                        encrypted = roomInfo.encrypted,
+                        face = roomInfo.face,
+                        hidden_till = roomInfo.hidden_till,
+                        IsRecDanmu = roomInfo.IsRecDanmu,
+                        IsRemind = roomInfo.IsRemind,
+                        is_hidden = roomInfo.is_hidden,
+                        is_locked = roomInfo.is_locked,
+                        is_portrait = roomInfo.is_portrait,
+                        is_sp = roomInfo.is_sp,
+                        keyframe = roomInfo.keyframe,
+                        level = roomInfo.level,
+                        live_status = roomInfo.live_status,
+                        live_time = roomInfo.live_time,
+                        lock_till = roomInfo.lock_till,
+                        need_p2p = roomInfo.need_p2p,
+                        online = roomInfo.online,
+                        pwd_verified = roomInfo.pwd_verified,
+                        roomStatus = roomInfo.roomStatus,
+                        room_id = roomInfo.room_id,
+                        roundStatus = roomInfo.roundStatus,
+                        sex = roomInfo.sex,
+                        Shell = roomInfo.Shell,
+                        short_id = roomInfo.short_id,
+                        sign = roomInfo.sign,
+                        special_type = roomInfo.special_type,
+                        tags = roomInfo.tags,
+                        tag_name = roomInfo.tag_name,
+                        title = roomInfo.title,
+                        uname = roomInfo.uname,
+                        url = roomInfo.url,
                     }
                 });
                 return msg;
@@ -94,6 +95,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// 类型
             /// </summary>
             public HookType type { set; get; }
+            /// <summary>
+            /// 返回的HookType类型枚举名称
+            /// </summary>
+            public string type_name { set; get; }
             /// <summary>
             /// 用户UID
             /// </summary>

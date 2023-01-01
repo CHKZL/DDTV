@@ -24,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2022-12-30 17:54:06";
+        public static string CompiledVersion = "2023-01-02 06:34:20";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -123,12 +123,13 @@ namespace DDTV_Core
                             return;
                         case BilibiliUserConfig.LoginStatus.LoginFailure:
                             Log.AddLog("Login", LogClass.LogType.Warn, "账号登陆失效！请进入[i]键菜单根据提示重新登陆", false, null, true);
+                            WebHook.SendHook(WebHook.HookType.LoginFailure, 0);
                             break;
                         case BilibiliUserConfig.LoginStatus.LoggingIn:
                             Log.AddLog("Login", LogClass.LogType.Info, "等待登陆中...", false, null, false);
                             break;
                     }
-                    Thread.Sleep(10 * 1000);
+                    Thread.Sleep(30 * 1000);
                 }
             });
         }
