@@ -1,6 +1,7 @@
 ﻿using BiliAccount;
 using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -195,6 +196,17 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                             CheckAccountChanged.Invoke(null, EventArgs.Empty);
                                             IsState = false;
                                         }
+                                    }
+                                    else
+                                    {
+                                        if (account!=null && account.ExTime!=DateTime.MinValue)
+                                        {
+                                            if(account.ExTime<DateTime.Now.AddDays(7))
+                                            {
+                                                WebHook.SendHook(WebHook.HookType.LoginWillExpireSoon, 0);
+                                            }
+                                        }
+                                        
                                     }
                                 }
                                 catch (Exception e)

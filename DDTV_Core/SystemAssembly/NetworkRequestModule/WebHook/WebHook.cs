@@ -118,6 +118,14 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// 剩余空间不足
             /// </summary>
             SpaceIsInsufficientWarn,
+            /// <summary>
+            /// 登陆失效
+            /// </summary>
+            LoginFailure,
+            /// <summary>
+            /// 登陆即将失效
+            /// </summary>
+            LoginWillExpireSoon,
         }
     }
 }
