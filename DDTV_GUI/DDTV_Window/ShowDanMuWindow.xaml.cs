@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.Tool.DanMuKu;
 using HandyControl.Controls;
@@ -31,6 +32,11 @@ namespace DDTV_GUI.DDTV_Window
         public ShowDanMuWindow(long UID)
         {
             InitializeComponent();
+            ShowDanMuSwitch.IsChecked = GUIConfig.ShowDanMuSwitch;
+            ShowGiftSwitch.IsChecked = GUIConfig.ShowGiftSwitch;
+            ShowSCSwitch.IsChecked = GUIConfig.ShowSCSwitch;
+            ShowGuardSwitch.IsChecked = GUIConfig.ShowGuardSwitch;
+
             if (Rooms.RoomInfo.TryGetValue(UID, out var roomInfo))
             {
                 _roominfo.room_id = roomInfo.room_id;
@@ -110,24 +116,26 @@ namespace DDTV_GUI.DDTV_Window
             {
                 case DanmuMessageEventArgs Danmu:
                     {
-                        text = $"[弹幕]{Danmu.UserName}：{Danmu.Message}";
-
+                        if (GUIConfig.ShowDanMuSwitch)
+                            text = $"[弹幕]{Danmu.UserName}：{Danmu.Message}";
                     }
                     break;
                 case SuperchatEventArg SuperchatEvent:
                     {
-                        text = $"[SC](金额{SuperchatEvent.Price}){SuperchatEvent.UserName}：{SuperchatEvent.Message}";
+                        if (GUIConfig.ShowSCSwitch)
+                            text = $"[SC](金额{SuperchatEvent.Price}){SuperchatEvent.UserName}：{SuperchatEvent.Message}";
                     }
                     break;
                 case GuardBuyEventArgs GuardBuyEvent:
                     {
-                        string Lv = GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长";
-                        text = $"[上舰]{GuardBuyEvent.UserName}：{GuardBuyEvent.Number}个月的{Lv}";
+                        if (GUIConfig.ShowGuardSwitch)
+                            text = $"[上舰]{GuardBuyEvent.UserName}：{GuardBuyEvent.Number}个月的{(GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长")}";
                     }
                     break;
                 case SendGiftEventArgs sendGiftEventArgs:
                     {
-                        text = $"[礼物]{sendGiftEventArgs.UserName}：送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}";
+                        if (GUIConfig.ShowGiftSwitch)
+                            text = $"[礼物]{sendGiftEventArgs.UserName}：送了{sendGiftEventArgs.Amount}个{sendGiftEventArgs.GiftName}";
                     }
                     break;
                 case WarningEventArg warningEventArg:
@@ -181,7 +189,7 @@ namespace DDTV_GUI.DDTV_Window
             if (e.Key == Key.Enter)
             {
                 string Massage = DanMuInput.Text;
-                if (Massage.Length > 30)
+                if (Massage.Length > 20)
                 {
                     Growl.Warning("发送的弹幕长度尝过限制(30个字符)");
                     return;
@@ -193,6 +201,58 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu.Send(Rooms.GetValue(_roominfo.uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id), Massage);
                 DanMuInput.Text = "";
+            }
+        }
+
+        private void ShowDanMuSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Checked = (bool)ShowDanMuSwitch.IsChecked;
+            GUIConfig.ShowDanMuSwitch = Checked;
+            CoreConfig.SetValue(CoreConfigClass.Key.ShowDanMuSwitch, Checked.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Checked ? "打开" : "关闭") + "弹幕窗弹幕信息");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Checked ? "打开" : "关闭") + "弹幕窗弹幕信息", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
+        }
+
+        private void ShowGiftSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Checked = (bool)ShowGiftSwitch.IsChecked;
+            GUIConfig.ShowGiftSwitch = Checked;
+            CoreConfig.SetValue(CoreConfigClass.Key.ShowGiftSwitch, Checked.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Checked ? "打开" : "关闭") + "弹幕窗礼物信息");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Checked ? "打开" : "关闭") + "弹幕窗礼物信息", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
+        }
+
+        private void ShowSCSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Checked = (bool)ShowSCSwitch.IsChecked;
+            GUIConfig.ShowSCSwitch = Checked;
+            CoreConfig.SetValue(CoreConfigClass.Key.ShowSCSwitch, Checked.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Checked ? "打开" : "关闭") + "弹幕窗SC信息");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Checked ? "打开" : "关闭") + "弹幕窗SC信息", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
+        }
+
+        private void ShowGuardSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Checked = (bool)ShowGuardSwitch.IsChecked;
+            GUIConfig.ShowGuardSwitch = Checked;
+            CoreConfig.SetValue(CoreConfigClass.Key.ShowGuardSwitch, Checked.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Checked ? "打开" : "关闭") + "弹幕窗大航海信息");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Checked ? "打开" : "关闭") + "弹幕窗大航海信息", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
+        }
+
+        private void TypeGridSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            if (TypeSetGrid.Visibility == Visibility.Visible)
+            {
+                TypeSetGrid.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                TypeSetGrid.Visibility = Visibility.Visible;
             }
         }
     }

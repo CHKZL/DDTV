@@ -14,76 +14,88 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
     {
         public static string Processing(HookType hookType, long uid, string id)
         {
-            if (uid > 0 && Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
+            Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo);
+            DownloadedFileInfo _d = new DownloadedFileInfo();
+            if(roomInfo!=null)
             {
-                string msg = JsonConvert.SerializeObject(new Message()
+                foreach (var item in roomInfo.DownloadedFileInfo.AfterRepairFiles)
                 {
-                    id = id,
-                    type = hookType,
-                    type_name = nameof(hookType),
-                    hook_time = DateTime.Now,
-                    uid = uid,
-                    user_info = uid == 0 ? null : new user_info()
-                    {
-                        attention = roomInfo.attention,
-                        face = roomInfo.face,
-                        name = roomInfo.uname,
-                        sign = roomInfo.sign,
-                        uid = roomInfo.uid,
-                    },
-                    room_Info = uid == 0 ? null : new room_info()
-                    {
-                        area = roomInfo.area,
-                        attention = roomInfo.attention,
-                        area_name = roomInfo.area_name,
-                        area_v2_id = roomInfo.area_v2_id,
-                        area_v2_name = roomInfo.area_v2_name,
-                        area_v2_parent_id = roomInfo.area_v2_parent_id,
-                        area_v2_parent_name = roomInfo.area_v2_parent_name,
-                        uid = uid,
-                        IsAutoRec = roomInfo.IsAutoRec,
-                        broadcast_type = roomInfo.broadcast_type,
-                        cover_from_user = roomInfo.cover_from_user,
-                        description = roomInfo.description,
-                        DownloadedFileInfo = roomInfo.DownloadedFileInfo,
-                        encrypted = roomInfo.encrypted,
-                        face = roomInfo.face,
-                        hidden_till = roomInfo.hidden_till,
-                        IsRecDanmu = roomInfo.IsRecDanmu,
-                        IsRemind = roomInfo.IsRemind,
-                        is_hidden = roomInfo.is_hidden,
-                        is_locked = roomInfo.is_locked,
-                        is_portrait = roomInfo.is_portrait,
-                        is_sp = roomInfo.is_sp,
-                        keyframe = roomInfo.keyframe,
-                        level = roomInfo.level,
-                        live_status = roomInfo.live_status,
-                        live_time = roomInfo.live_time,
-                        lock_till = roomInfo.lock_till,
-                        need_p2p = roomInfo.need_p2p,
-                        online = roomInfo.online,
-                        pwd_verified = roomInfo.pwd_verified,
-                        roomStatus = roomInfo.roomStatus,
-                        room_id = roomInfo.room_id,
-                        roundStatus = roomInfo.roundStatus,
-                        sex = roomInfo.sex,
-                        Shell = roomInfo.Shell,
-                        short_id = roomInfo.short_id,
-                        sign = roomInfo.sign,
-                        special_type = roomInfo.special_type,
-                        tags = roomInfo.tags,
-                        tag_name = roomInfo.tag_name,
-                        title = roomInfo.title,
-                        uname = roomInfo.uname,
-                        url = roomInfo.url,
-                    }
-                });
-                return msg;
+                    _d.AfterRepairFiles.Add(item.FullName);
+                }
+                foreach (var item in roomInfo.DownloadedFileInfo.BeforeRepairFiles)
+                {
+                    _d.BeforeRepairFiles.Add(item.FullName);
+                }
+                _d.DanMuFile = roomInfo.DownloadedFileInfo.DanMuFile != null ? roomInfo.DownloadedFileInfo.DanMuFile.FullName : null;
+                _d.SCFile = roomInfo.DownloadedFileInfo.SCFile != null ? roomInfo.DownloadedFileInfo.SCFile.FullName : null;
+                _d.GiftFile = roomInfo.DownloadedFileInfo.GiftFile != null ? roomInfo.DownloadedFileInfo.GiftFile.FullName : null;
+                _d.GuardFile = roomInfo.DownloadedFileInfo.GuardFile != null ? roomInfo.DownloadedFileInfo.GuardFile.FullName : null;
             }
-            else
+
+
+            string msg = JsonConvert.SerializeObject(new Message()
             {
-                return null;
-            }
+                id = id,
+                type = hookType,
+                type_name = nameof(hookType),
+                hook_time = DateTime.Now,
+                uid = uid,
+                user_info = uid == 0||roomInfo==null ? null : new user_info()
+                {
+                    attention = roomInfo.attention,
+                    face = roomInfo.face,
+                    name = roomInfo.uname,
+                    sign = roomInfo.sign,
+                    uid = roomInfo.uid,
+                },
+                room_Info = uid == 0||roomInfo==null ? null : new room_info()
+                {
+                    area = roomInfo.area,
+                    attention = roomInfo.attention,
+                    area_name = roomInfo.area_name,
+                    area_v2_id = roomInfo.area_v2_id,
+                    area_v2_name = roomInfo.area_v2_name,
+                    area_v2_parent_id = roomInfo.area_v2_parent_id,
+                    area_v2_parent_name = roomInfo.area_v2_parent_name,
+                    uid = uid,
+                    IsAutoRec = roomInfo.IsAutoRec,
+                    broadcast_type = roomInfo.broadcast_type,
+                    cover_from_user = roomInfo.cover_from_user,
+                    description = roomInfo.description,
+                    DownloadedFileInfo = _d,
+                    encrypted = roomInfo.encrypted,
+                    face = roomInfo.face,
+                    hidden_till = roomInfo.hidden_till,
+                    IsRecDanmu = roomInfo.IsRecDanmu,
+                    IsRemind = roomInfo.IsRemind,
+                    is_hidden = roomInfo.is_hidden,
+                    is_locked = roomInfo.is_locked,
+                    is_portrait = roomInfo.is_portrait,
+                    is_sp = roomInfo.is_sp,
+                    keyframe = roomInfo.keyframe,
+                    level = roomInfo.level,
+                    live_status = roomInfo.live_status,
+                    live_time = roomInfo.live_time,
+                    lock_till = roomInfo.lock_till,
+                    need_p2p = roomInfo.need_p2p,
+                    online = roomInfo.online,
+                    pwd_verified = roomInfo.pwd_verified,
+                    roomStatus = roomInfo.roomStatus,
+                    room_id = roomInfo.room_id,
+                    roundStatus = roomInfo.roundStatus,
+                    sex = roomInfo.sex,
+                    Shell = roomInfo.Shell,
+                    short_id = roomInfo.short_id,
+                    sign = roomInfo.sign,
+                    special_type = roomInfo.special_type,
+                    tags = roomInfo.tags,
+                    tag_name = roomInfo.tag_name,
+                    title = roomInfo.title,
+                    uname = roomInfo.uname,
+                    url = roomInfo.url,
+                }
+            });
+            return msg;
         }
         public class Message
         {
@@ -110,11 +122,11 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// <summary>
             /// 用户信息
             /// </summary>
-            public user_info user_info { set; get; }
+            public user_info user_info { set; get; } = new user_info();
             /// <summary>
             /// 直播间信息
             /// </summary>
-            public room_info room_Info { set; get; }
+            public room_info room_Info { set; get; }=new room_info();
         }
         public class user_info
         {
@@ -298,6 +310,33 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// 该房间录制完成后会执行的Shell命令
             /// </summary>
             public string Shell { set; get; } = "";
+        }
+        public class DownloadedFileInfo
+        {
+              /// <summary>
+            /// 修复后的文件完整路径List
+            /// </summary>
+            public List<string> AfterRepairFiles { set; get; } = new List<string>();
+            /// <summary>
+            /// 修复前的文件完整路径List
+            /// </summary>
+            public List<string> BeforeRepairFiles { set; get; } = new List<string>();
+            /// <summary>
+            /// 录制的弹幕文件
+            /// </summary>
+            public string DanMuFile { set; get; }
+            /// <summary>
+            /// 录制的SC记录文件
+            /// </summary>
+            public string SCFile { set; get; }
+            /// <summary>
+            /// 录制的大航海记录文件
+            /// </summary>
+            public string GuardFile { set; get; }
+            /// <summary>
+            /// 录制的礼物记录文件
+            /// </summary>
+            public string GiftFile { set; get; }
         }
     }
 }

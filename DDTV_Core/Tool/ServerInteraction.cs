@@ -1,6 +1,7 @@
 ﻿using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using DDTV_Core.Tool.ServerMessageClass;
 using Newtonsoft.Json;
 using System;
@@ -70,6 +71,7 @@ namespace DDTV_Core.Tool
                                     }
                                     else
                                     {
+                                        WebHook.SendHook(WebHook.HookType.UpdateAvailable, 0);
                                         Console.WriteLine("\n==========检测到新版本==========\n请退出本程序后运行目录中的[DDTV_Update]进行更新:\nWindows请退出后直接运行DDTV_Update.exe\nLinux环境请使用dotnet DDTV_Update.dll运行更新程序\n[10分钟后再次提示]\n==========检测到新版本==========\n");
                                     }
                                 }

@@ -374,6 +374,26 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：GUI   默认值：true
             /// </summary>
             IsExitReminder,
+            /// <summary>
+            /// 弹幕窗口是否显示弹幕信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowDanMuSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示礼物信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowGiftSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示SC信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowSCSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示大航海信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowGuardSwitch,
         }
     }
 }

@@ -6,6 +6,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using DDTV_Core.Tool;
+using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 
 namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 {
@@ -19,7 +20,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB); 
             });    
             Thread.Sleep(3000);
-
+           
             string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
             Console.WriteLine(Ver);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -84,7 +85,9 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                 app.Urls.Add("https://0.0.0.0:11451");
             }
             app.Run();
+            
         }
+
          public static string GetPackageVersion()
         {
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();

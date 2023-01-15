@@ -11,6 +11,24 @@
         Title="ShowDanMuWindow" Width="400" Height="600" Closed="Window_Closed" Focusable="True">
     <Grid>
         <ListBox Name="DanMuLog" DisplayMemberPath="Text" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" FontSize="16" IsHitTestVisible="False" Margin="0,0,0,30"/>
-        <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Height="30" VerticalAlignment="Bottom" KeyDown="DanMuInput_KeyDown"/>
+        <Grid Margin="0,0,0,46" Height="35" VerticalAlignment="Bottom">
+            <Grid Name="TypeSetGrid" RenderTransformOrigin="0.5,0.5" Background="#99969696" Visibility="Collapsed">
+                <CheckBox Name="ShowDanMuSwitch" Content="弹幕消息" HorizontalAlignment="Left" Margin="5,0,0,0" Click="ShowDanMuSwitch_Click"/>
+                <CheckBox Name="ShowGiftSwitch" Content="礼物消息" HorizontalAlignment="Left" Margin="97,0,0,0" Click="ShowGiftSwitch_Click"/>
+                <CheckBox Name="ShowSCSwitch" Content="SC消息" HorizontalAlignment="Left" Margin="189,0,0,0" Click="ShowSCSwitch_Click"/>
+                <CheckBox Name="ShowGuardSwitch" Content="大航海消息" HorizontalAlignment="Left" Margin="265,0,0,0" Click="ShowGuardSwitch_Click"/>
+            </Grid>
+            <ToggleButton Name="TypeGridSwitch" Opacity="0.6" Margin="0,0,3,3" BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="TypeGridSwitch_Click">
+                <hc:StatusSwitchElement.CheckedElement>
+                    <Border Background="#FFFB7299">
+                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="隐" Foreground="{DynamicResource TextIconBrush}"/>
+                    </Border>
+                </hc:StatusSwitchElement.CheckedElement>
+                <Border Background="#FF00AEEC">
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="显" Foreground="{DynamicResource TextIconBrush}"/>
+                </Border>
+            </ToggleButton>
+        </Grid>
+        <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多20个字，回车发送)" Height="30" VerticalAlignment="Bottom" KeyDown="DanMuInput_KeyDown"/>
     </Grid>
 </hc:GlowWindow>

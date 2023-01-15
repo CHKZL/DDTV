@@ -386,7 +386,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             LoginDialogDispose += MainWindow_LoginDialogDispose;
             WPFControl.LoginQRDialog LoginQRDialog;
-            RoomPatrol.IsOn = false;
+            //RoomPatrol.IsOn = false;
             this.Dispatcher.Invoke(new Action(() =>
             {
                 LoginQRDialog = new WPFControl.LoginQRDialog(LoginDialogDispose, "登陆信息失效，请使用哔哩哔哩手机客户端扫码登陆");
@@ -1794,7 +1794,8 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            BilibiliUserConfig.account.cookie = "";
+            //BilibiliUserConfig.account = new();
+            BilibiliUserConfig.account.cookie =  "";
             BilibiliUserConfig.WritUserFile();
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
         }

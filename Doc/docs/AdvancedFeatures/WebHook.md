@@ -77,6 +77,10 @@
             /// 登陆即将失效
             /// </summary>
             LoginWillExpireSoon,
+            /// <summary>
+            /// 有可用新版本
+            /// </summary>
+            UpdateAvailable,
         }
 ```
 

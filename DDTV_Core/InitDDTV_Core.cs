@@ -24,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-01-02 06:34:20";
+        public static string CompiledVersion = "2023-01-14 16:55:38";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -92,7 +92,7 @@ namespace DDTV_Core
         private static void FileOperation_PathAlmostFull(object? sender, string e)
         {
             Log.AddLog("HardDisk", LogClass.LogType.Error_IsAboutToHappen, e);
-            WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, -1);
+            WebHook.SendHook(WebHook.HookType.SpaceIsInsufficientWarn, 0);
         }
 
         public static string GetPackageVersion()
@@ -106,7 +106,7 @@ namespace DDTV_Core
         /// <param name="e"></param>
         private static void CheckAccount_CheckAccountChanged(object? sender, EventArgs e)
         {
-            RoomPatrol.IsOn = false;
+            //RoomPatrol.IsOn = false;
             Task.Run(() =>
             {
                 while (true)
@@ -122,7 +122,7 @@ namespace DDTV_Core
                             RoomPatrol.IsOn = true;
                             return;
                         case BilibiliUserConfig.LoginStatus.LoginFailure:
-                            Log.AddLog("Login", LogClass.LogType.Warn, "账号登陆失效！请进入[i]键菜单根据提示重新登陆", false, null, true);
+                            Log.AddLog("Login", LogClass.LogType.Warn, "账号登陆失效！请进入[i]键菜单根据提示重新登陆\n当前出于无登陆信息应急模式，该模式可能会导致触发阿B风控阻拦，请尽快登陆！！！", false, null, true);
                             WebHook.SendHook(WebHook.HookType.LoginFailure, 0);
                             break;
                         case BilibiliUserConfig.LoginStatus.LoggingIn:
