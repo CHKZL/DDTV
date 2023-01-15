@@ -21,7 +21,7 @@ namespace DDTV_GUI.DDTV_Window
         private static DateTime DateTime = DateTime.Now;
         private static bool IsMouseDown = false;
         private static long FlieLen = 0;
-        private static DateTime FlieSizeLen = DateTime.Now;
+        private static DateTime FileSizeLen = DateTime.Now;
 
         private static DateTime Start = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, 0, 0, 0);
         private static DateTime End = new DateTime(DateTime.Year, DateTime.Month, DateTime.Day, (int)FlieLen / 3600000, (int)FlieLen % 3600000 / 60000, (int)FlieLen % 3600000 % 60000 / 1000);
@@ -102,9 +102,14 @@ namespace DDTV_GUI.DDTV_Window
                         {
                             VideoView.Dispatcher.Invoke(() =>
                             {
-                                FlieSizeLen = DDTV_Core.Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(VideoView.MediaPlayer.Length);
+                                FileSizeLen = DDTV_Core.Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime(VideoView.MediaPlayer.Length);
                             });
-                            string ClipST = DDTV_Core.Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime((long)0 * 1000).ToString("HH:mm:ss") + "-" + FlieSizeLen.ToString("HH:mm:ss");
+
+                            string ClipST = 
+                            DDTV_Core.Tool.TimeModule.Time.Operate.ConvertTimeStampToDateTime((long)0 * 1000).ToString("HH:mm:ss") + 
+                            "-" + 
+                            FileSizeLen.ToString("HH:mm:ss");
+
                             ClipTimeStamp.Text = ClipST;
                             ClipSlider.Maximum = 0;
                             ClipSlider.Maximum = VideoView.MediaPlayer.Length/1000;

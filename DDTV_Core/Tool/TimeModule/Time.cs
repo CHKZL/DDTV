@@ -47,7 +47,7 @@ namespace DDTV_Core.Tool.TimeModule
             /// <returns>C#时间</returns>
             public static DateTime ConvertTimeStampToDateTime(long timeStamp)
             {
-                DateTime startTime = TimeZone.CurrentTimeZone.ToUniversalTime(new DateTime(1970, 1, 1,8,0,0)); // 当地时区
+                DateTime startTime = TimeZone.CurrentTimeZone.ToUniversalTime(DateTime.MinValue);
                 DateTime dt = startTime.AddMilliseconds(timeStamp);
                 return dt;
             }

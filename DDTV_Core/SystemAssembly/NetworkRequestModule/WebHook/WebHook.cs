@@ -44,7 +44,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
 
                             if ((int)resp.StatusCode >= 200 && (int)resp.StatusCode < 300)
                             {
-                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送完成:{cmd}-{uid}");
+                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送完成:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
                                 try
                                 {
                                     if (request != null) request.Abort();
@@ -52,9 +52,14 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
                                 catch (Exception) { }
                                 return;
                             }
+                            else
+                            {
+                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送失败:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
+                            }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
+                             Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Warn, $"WebHook信息发送失败:{cmd}-{uid}，错误详情已写日志和txt",true,e,true);
                         }
                         ReNum++;
                         Thread.Sleep(3 * 1000);
@@ -107,7 +112,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// </summary>
             SaveGuardComplete,
             /// <summary>
-            /// 执行Shell命令完成
+            /// 开始执行Shell命令
             /// </summary>
             RunShellComplete,
             /// <summary>
@@ -126,6 +131,14 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
             /// 登陆即将失效
             /// </summary>
             LoginWillExpireSoon,
+            /// <summary>
+            /// 有可用新版本
+            /// </summary>
+            UpdateAvailable,
+            /// <summary>
+            /// 执行Shell命令结束
+            /// </summary>
+            ShellExecutionComplete,
         }
     }
 }

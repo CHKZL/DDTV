@@ -136,7 +136,6 @@
             </Grid>
 
             <Grid>
-
                 <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000" Visibility="Collapsed">
                     <TextBox Name="DanMuInput" Style="{StaticResource TextBoxExtend}" hc:InfoElement.TitlePlacement="Left" hc:InfoElement.Placeholder="请输入弹幕(最多30个字，回车发送)" Margin="75,2,75,3" KeyDown="DanMuInput_KeyDown"/>
                     <Button Name="playSwitch" Content="暂停" Margin="9,0,0,0" Style="{StaticResource ButtonSuccess}" HorizontalAlignment="Left" Click="playSwitch_Click" Height="30" Width="52"/>

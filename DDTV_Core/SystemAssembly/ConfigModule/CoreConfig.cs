@@ -161,6 +161,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DanmukuFactoryParameter = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter;
             var _IsXmlToAss = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsXmlToAss;
             var _IsExitReminder =DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsExitReminder;
+            var _ShowDanMuSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowDanMuSwitch;
+            var _ShowGiftSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowGiftSwitch;
+            var _ShowSCSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowSCSwitch;
+            var _ShowGuardSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowGuardSwitch;
+
         }
         /// <summary>
         /// 获取配置

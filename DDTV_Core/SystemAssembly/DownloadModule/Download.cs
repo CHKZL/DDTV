@@ -282,6 +282,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + Shell, false, null, false);
                                     string result = Tool.SystemResource.ExternalCommand.Shell(Shell);
                                     Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成，执行返回结果:\n{result}");
+                                    WebHook.SendHook(WebHook.HookType.ShellExecutionComplete, roomInfo.uid);
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令结束，返回信息:{result}", false, null, false);
                                     roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
                                     roomInfo.DownloadedFileInfo.BeforeRepairFiles.Clear();
@@ -536,6 +537,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     string Shell = Tool.FileOperation.ReplaceKeyword(uid, roomInfo.Shell);
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间开始执行Shell命令:" + Shell, false, null, false);
                                     string result = Tool.SystemResource.ExternalCommand.Shell(Shell);
+                                    WebHook.SendHook(WebHook.HookType.ShellExecutionComplete, roomInfo.uid);
                                     Console.WriteLine($"{roomInfo.uname}直播间的Shell命令执行完成，执行返回结果:\n{result}");
                                     Log.Log.AddLog("Shell", Log.LogClass.LogType.Info, $"{roomInfo.uname}({roomInfo.room_id})直播间执行Shell命令结束，返回信息:{result}", false, null, false);
                                     roomInfo.DownloadedFileInfo.AfterRepairFiles.Clear();
