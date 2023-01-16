@@ -22,6 +22,7 @@ namespace DDTV_Core.SystemAssembly.Log
             /// 会造成错误，但是不影响运行的警告
             /// </summary>
             Warn = 20,
+            
             /// <summary>
             /// 房间巡逻系统错误日志
             /// </summary>
@@ -46,6 +47,10 @@ namespace DDTV_Core.SystemAssembly.Log
             /// 地址报文
             /// </summary>
             Info_IP_Address = 34,
+            /// <summary>
+            /// 删除文件消息
+            /// </summary>
+            Info_DelFile=35,
             /// <summary>
             /// 调试信息
             /// </summary>

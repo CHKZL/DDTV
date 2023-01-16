@@ -356,6 +356,7 @@ namespace DDTV_Core.Tool
                                     {
                                         File.Delete(DelFilelist[i]);
                                         DelFilelist.RemoveAt(i);
+                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile,$"删除文件完成[{DelFilelist[i]}]",false,null,false);
                                     }
                                     catch (Exception) { }
                                 }
@@ -364,6 +365,7 @@ namespace DDTV_Core.Tool
                                     try
                                     {
                                         DelFilelist.RemoveAt(i);
+                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile,$"删除文件,但文件不存在[{DelFilelist[i]}]",false,null,false);
                                     }
                                     catch (Exception) { }
                                 }
