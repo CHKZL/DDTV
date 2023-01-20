@@ -12,11 +12,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.Search
     {
         public static JObject TypeSearch(string KeyWord)
         {
-            string B = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/search/type?"+
+            string WebR = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/web-interface/search/type?"+
                 $"search_type=live_user&" +
                 $"keyword={KeyWord}");
            
-            JObject JO = (JObject)JsonConvert.DeserializeObject(B);
+            JObject JO = (JObject)JsonConvert.DeserializeObject(WebR);
             return JO;
         }
     }
