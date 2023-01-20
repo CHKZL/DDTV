@@ -304,13 +304,13 @@ namespace DDTV_WEB_Server.Controllers
                     {
                         LogClass logClass = new LogClass()
                         {
-                            IsDisplay = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].IsDisplay,
-                            IsError = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].IsError,
-                            Message = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Message,
-                            RunningTime = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].RunningTime,
-                            Source = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Source,
-                            Time = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Time,
-                            Type = DDTV_Core.SystemAssembly.Log.Log.LogList[Count - 1 - i].Type,
+                            IsDisplay = Log.LogList[Count - 1 - i].IsDisplay,
+                            IsError = Log.LogList[Count - 1 - i].IsError,
+                            Message = Log.LogList[Count - 1 - i].Message,
+                            RunningTime = Log.LogList[Count - 1 - i].RunningTime,
+                            Source = Log.LogList[Count - 1 - i].Source,
+                            Time = Log.LogList[Count - 1 - i].Time,
+                            Type = Log.LogList[Count - 1 - i].Type,
                         };
                         Logs.Add(logClass);
                     }

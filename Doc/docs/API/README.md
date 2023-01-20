@@ -33,7 +33,7 @@ DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:
 |POST|File_GetAllFileList|JSON|[获取已录制的文件列表](./#post-api-file-getallfilelist)|
 |POST|File_GetTypeFileList|JSON|[分类获取已录制的文件总列表](./#post-api-file-gettypefilelist)|
 |POST|File_GetFilePathList|JSON|[根据文件树结构返回已录制的文件总列表](./#post-api-file-getfilepathlist)|
-|POST|File_GetFile|FileStram|[下载对应的文件](./#post-api-file-getfile)|
+|GET|File_GetFile|FileStram|[下载对应的文件](./#post-api-file-getfile)|
 |POST|Login|JSON|[WEB登陆](./#post-api-login)|
 |GET|loginqr|PNG|[在提示登陆的情况下获取用于的登陆二维码](./#get-api-loginqr)|
 |POST|Login_Reset|JSON|[重新登陆哔哩哔哩账号](./#post-api-login-reset)|
@@ -95,63 +95,83 @@ DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:
 
 - 返回数据说明   
 ```CSharp
-    public class SystemResourceClass
-    {
-        /// <summary>
-        /// 平台
-        /// </summary>
-        public string Platform { set; get; }
-        /// <summary>
-        /// CPU使用率
-        /// </summary>
-        public double CPU_usage { set; get; }
-        /// <summary>
-        /// 内存
-        /// </summary>
-        public MemInfo Memory { set; get; }  
-        /// <summary>
-        /// 硬盘信息
-        /// </summary>
-        public List<HDDInfo> HDDInfo { set; get; }
-        public class MemInfo
+        public class Info
         {
             /// <summary>
-            /// 总计内存大小
+            /// 当前DDTV版本号
             /// </summary>
-            public long Total { get; set; }
+            public string DDTVCore_Ver { get; set; }
             /// <summary>
-            /// 可用内存大小
+            /// 监控房间数量
             /// </summary>
-            public long Available { get; set; }
+            public int Room_Quantity { get; set; }
+            /// <summary>
+            /// 设置的服务器名称
+            /// </summary>
+            public string ServerName { get; set; }
+            /// <summary>
+            /// 服务器的唯一资源编号
+            /// </summary>
+            public string ServerAID { get; set; }
+            /// <summary>
+            /// 操作系统相关信息
+            /// </summary>
+            public OS_Info os_Info { get; set; }
+            /// <summary>
+            /// 下载任务基础信息
+            /// </summary>
+            public Download_Info download_Info { get; set; }
+            public class OS_Info
+            {
+                /// <summary>
+                /// 系统版本
+                /// </summary>
+                public string OS_Ver { get; set; }
+                /// <summary>
+                /// 系统类型
+                /// </summary>
+                public string OS_Tpye { get; set; }
+                /// <summary>
+                /// 使用内存量，单位bit
+                /// </summary>
+                public long Memory_Usage { get; set; }
+                /// <summary>
+                /// 运行时版本
+                /// </summary>
+                public string Runtime_Ver { get; set; }
+                /// <summary>
+                /// 是否在交互模式下
+                /// </summary>
+                public bool UserInteractive { get; set; }
+                /// <summary>
+                /// 关联的用户
+                /// </summary>
+                public string Associated_Users { get; set; }
+                /// <summary>
+                /// 工作目录
+                /// </summary>
+                public string Current_Directory { get; set; }
+                /// <summary>
+                /// Core程序核心框架版本
+                /// </summary>
+                public string AppCore_Ver { set; get; }
+                /// <summary>
+                /// Web程序核心框架版本
+                /// </summary>
+                public string WebCore_Ver { set; get; }
+            }
+            public class Download_Info
+            {
+                /// <summary>
+                /// 下载中的任务数
+                /// </summary>
+                public int Downloading { get; set; }
+                /// <summary>
+                /// 下载结束的任务数
+                /// </summary>
+                public int Completed_Downloads { get; set; }
+            }
         }
-        public class HDDInfo
-        {
-            /// <summary>
-            /// 注册路径
-            /// </summary>
-            public string FileSystem { set; get; }
-            /// <summary>
-            /// 硬盘大小
-            /// </summary>
-            public string Size { get; set; }
-            /// <summary>
-            /// 已使用大小
-            /// </summary>
-            public string Used { get; set; }
-            /// <summary>
-            /// 可用大小
-            /// </summary>
-            public string Avail { get; set; }
-            /// <summary>
-            /// 使用率
-            /// </summary>
-            public string Usage { get; set; }
-            /// <summary>
-            /// 挂载路径
-            /// </summary>
-            public string MountPath { set; get; }
-        }
-    }
 ```
 :::
 
@@ -172,6 +192,10 @@ DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:
                 /// 配置键
                 /// </summary>
                 public Key Key { set; get; }
+                /// <summary>
+                /// 配置键名称
+                /// </summary>
+                public string KeyName { set; get; }
                 /// <summary>
                 /// 配置分组
                 /// </summary>
@@ -598,10 +622,6 @@ DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:
         public class Log
         {
             /// <summary>
-            /// 总日志条数
-            /// </summary>
-            public long TotalLogs { get; set; }
-            /// <summary>
             /// 查询量的日志信息
             /// </summary>
             public List<LogClass> Logs { get; set; } = new List<LogClass>();
@@ -844,7 +864,7 @@ List<string> FileList;
 ```
 :::
 
-### `POST /api/File_GetFile`
+### `GET /api/File_GetFile`
 ::: details 下载对应的文件
 - 私有变量  
 
@@ -1334,7 +1354,7 @@ return string;
 
 - 返回数据说明   
 ```CSharp
-return List<RoomInfoClass.RoomInfo>;
+    return List<RoomInfoClass.RoomInfo>;
 
         public class RoomInfo
         {
@@ -1471,6 +1491,10 @@ return List<RoomInfoClass.RoomInfo>;
             /// </summary>
             public int special_type { set; get; }
             /// <summary>
+            /// 是否是临时播放项目
+            /// </summary>
+            public bool IsTemporaryPlay { set; get; } = false;
+            /// <summary>
             /// 直播间状态(0:无房间 1:有房间)
             /// </summary>
             public int roomStatus { set; get; }
@@ -1535,6 +1559,10 @@ return List<RoomInfoClass.RoomInfo>;
             /// </summary>
             public List<Downloads> DownloadingList { set; get; } = new List<Downloads>();
             /// <summary>
+            /// 是否被用户取消操作
+            /// </summary>
+            public bool IsUserCancel { set; get; }=false;
+            /// <summary>
             /// 房间历史下载记录
             /// </summary>
             public List<Downloads> DownloadedLog { set; get; } = new List<Downloads>();
@@ -1550,6 +1578,78 @@ return List<RoomInfoClass.RoomInfo>;
             /// 该房间当前的任务时间
             /// </summary>
             public DateTime CreationTime { set; get; } = DateTime.Now; 
+            /// <summary>
+            /// 该房间最近一次完成的下载任务的文件信息
+            /// </summary>
+            public DownloadedFileInfo DownloadedFileInfo { set; get; }=new DownloadedFileInfo();
+            /// <summary>
+            /// 该房间录制完成后会执行的Shell命令
+            /// </summary>
+            public string Shell { set; get; } = "";
+            /// <summary>
+            /// 用于房间监控系统，记录的是监控系统检测到开始直播的时间
+            /// </summary>
+            public DateTime MonitoringSystem_Airtime = DateTime.Now;
+            /// <summary>
+            ///  用于房间监控系统，记录开播时的关注数
+            /// </summary>
+            public int MonitoringSystem_Attention = 0;
+            /// <summary>
+            /// 当前Host地址
+            /// </summary>
+            public string Host { set; get; } = "";
+            /// <summary>
+            /// 当前模式（0:FLV 1:HLS）
+            /// </summary>
+            public int CurrentMode { set; get; } = 0;
+            /// <summary>
+            /// 下载的文件记录
+            /// </summary>
+            public List<DownloadedFiles> Files { set; get; } = new List<DownloadedFiles>();
+            public class DownloadedFiles
+            {
+                public string FilePath { set; get; }
+                public bool IsTranscod { set; get; } = false;
+            }
+        }
+        public class RoomWebSocket
+        {
+            /// <summary>
+            /// 是否已连接
+            /// </summary>
+            public bool IsConnect { set; get; }
+            public long dokiTime { set; get; }
+            /// <summary>
+            /// WbdScket服务器信息
+            /// </summary>
+            public API.LiveChatScript.LiveChatListener LiveChatListener { set; get; } = new API.LiveChatScript.LiveChatListener();
+        }
+        public class DownloadedFileInfo
+        {
+            /// <summary>
+            /// 修复后的文件完整路径List
+            /// </summary>
+            public List<FileInfo> AfterRepairFiles { set; get; } = new List<FileInfo>();
+            /// <summary>
+            /// 修复前的文件完整路径List
+            /// </summary>
+            public List<FileInfo> BeforeRepairFiles { set; get; } = new List<FileInfo>();
+            /// <summary>
+            /// 录制的弹幕文件
+            /// </summary>
+            public FileInfo DanMuFile { set; get; }
+            /// <summary>
+            /// 录制的SC记录文件
+            /// </summary>
+            public FileInfo SCFile { set; get; }
+            /// <summary>
+            /// 录制的大航海记录文件
+            /// </summary>
+            public FileInfo GuardFile { set; get; }
+            /// <summary>
+            /// 录制的礼物记录文件
+            /// </summary>
+            public FileInfo GiftFile { set; get; }
         }
 ```
 :::
