@@ -271,6 +271,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                         }
                         #region 房间Shell命令
+                        //roomInfo.Shell = "touch {ROOMID}.info; echo '{AfterRepairFiles}' > {ROOMID}.info; sed -i 's/;/ /g' {ROOMID}.info; echo {ROOMID} >> {ROOMID}.info; echo '{NAME}' >> {ROOMID}.info;echo '{TITLE}' >> {ROOMID}.info; echo '{DATE}' >> {ROOMID}.info;echo 171 >> {ROOMID}.info;./up.sh {ROOMID}.info";
                         if (!string.IsNullOrEmpty(roomInfo.Shell))
                         {
                             Task.Run(() =>

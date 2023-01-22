@@ -73,7 +73,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             //fileStream.Write(Encoding.UTF8.GetBytes((item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n"));
                         }
                     }
-                    File.WriteAllText(ConfigFile, ConfigText);
+                    if (!string.IsNullOrEmpty(ConfigText))
+                        File.WriteAllText(ConfigFile, ConfigText);
                 }
             }
         }
