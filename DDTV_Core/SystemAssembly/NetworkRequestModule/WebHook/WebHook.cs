@@ -14,7 +14,9 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
     {
         public static void SendHook(HookType cmd, long uid)
         {
-            Task.Run(() =>
+            try
+            {
+                Task.Run(() =>
             {
                 string id = Guid.NewGuid().ToString();
                 if (!string.IsNullOrEmpty(ConfigModule.CoreConfig.WebHookUrl))
@@ -33,7 +35,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
                             request.Method = "POST";
                             request.ContentType = "application/json; charset=UTF-8";
                             request.UserAgent = $"{InitDDTV_Core.InitType}/{InitDDTV_Core.Ver}";
-                            string paraUrlCoded = MessageProcessing.Processing(cmd,uid, id);
+                            string paraUrlCoded = MessageProcessing.Processing(cmd, uid, id);
                             byte[] payload;
                             payload = Encoding.UTF8.GetBytes(paraUrlCoded);
                             request.ContentLength = payload.Length;
@@ -59,15 +61,20 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
                         }
                         catch (Exception e)
                         {
-                             Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Warn, $"WebHook信息发送失败:{cmd}-{uid}，错误详情已写日志和txt",true,e,true);
+                            Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Warn, $"WebHook信息发送失败:{cmd}-{uid}，错误详情已写日志和txt", true, e, true);
                         }
                         ReNum++;
                         Thread.Sleep(3 * 1000);
                     } while (ReNum > 3);
                 }
             });
+            }
+            catch (Exception)
+            {
+
+            }
         }
-       
+
 
         public enum HookType
         {

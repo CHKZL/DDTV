@@ -86,10 +86,10 @@ namespace DDTV_GUI.DDTV_Window
 
             DefaultVolume = GUIConfig.DefaultVolume;
             HideIconState = GUIConfig.HideIconState;
-            if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
-            {
-                CoreConfig.GUI_FirstStart = false;
-            }
+            //if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
+            //{
+            //    CoreConfig.GUI_FirstStart = false;
+            //}
             if (CoreConfig.GUI_FirstStart)
             {
                 InitialBoot IB = new InitialBoot();
