@@ -249,8 +249,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 RoomConfigFile.WriteRoomConfigFile();
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Log.AddLog(nameof(RoomConfig), Log.LogClass.LogType.Warn, $"修改房间配置失败{roomCards.UID})，修改失败",true,e,false);
                 return false;
             }
         }
