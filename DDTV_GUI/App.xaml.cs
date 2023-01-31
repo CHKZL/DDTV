@@ -67,16 +67,35 @@ namespace DDTV_GUI
             Process process = RuningInstance();
             if (process != null)
             {
-                MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
-                    "\r点击确定弹出正在运行的窗口" +
-                    "\r如果没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
+                 MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
+                    "\r点击‘是’弹出正在运行的窗口" +
+                    "\r点击‘否’强制启动一个新DDTV" +
+                    "\r=========\r如果点击‘是’后没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
                     "\r如果后台托盘中也没有应该上次退出后的程序还未关闭" +
                     $"\r======参考信息======" +
                     $"\rId:{process.Id}" +
-                    $"\rProcessName:{process.ProcessName}");
-                HandleRunningInstance(process);
-                System.Threading.Thread.Sleep(1000);
-                System.Environment.Exit(1);
+                    $"\rProcessName:{process.ProcessName}",
+                    "已有DDTV实例正在运行", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (dr == MessageBoxResult.Yes)
+                {
+                    HandleRunningInstance(process);
+                    System.Threading.Thread.Sleep(1000);
+                    System.Environment.Exit(1);
+                }
+                else
+                {
+                    
+                }
+                //MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
+                //    "\r点击确定弹出正在运行的窗口" +
+                //    "\r如果没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
+                //    "\r如果后台托盘中也没有应该上次退出后的程序还未关闭" +
+                //    $"\r======参考信息======" +
+                //    $"\rId:{process.Id}" +
+                //    $"\rProcessName:{process.ProcessName}");
+                //HandleRunningInstance(process);
+                //System.Threading.Thread.Sleep(1000);
+                //System.Environment.Exit(1);
             }
         }
     }

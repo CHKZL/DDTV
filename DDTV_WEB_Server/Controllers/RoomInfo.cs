@@ -192,7 +192,12 @@ namespace DDTV_WEB_Server.Controllers
             }
             else
             {
-                return Content(MessageBase.Success(nameof(Room_DanmuRec), $"修改UID为{uid}的弹幕录制出现问题，修改失败", $"修改UID为{uid}的弹幕录制出现问题，修改失败", MessageBase.code.OperationFailed), "application/json");
+                return Content(
+                    MessageBase.Success(nameof(Room_DanmuRec), 
+                    "发生错误",
+                    $"修改UID为{uid}的弹幕录制出现问题，修改失败，请检查UID是否正确", 
+                    MessageBase.code.OperationFailed), 
+                    "application/json");
             }
         }
     }

@@ -66,11 +66,11 @@ namespace DDTV_GUI.DDTV_Window
 
             DDTV_GUI.App.Application_Startup();
 
-            if (false && CheckRepeatedRun())
-            {
-                Application.Current.Shutdown();
-                return;
-            }
+            //if (CheckRepeatedRun())
+            //{
+            //    Application.Current.Shutdown();
+            //    return;
+            //}
 #if DEBUG
             string Title = $"DDTV——你的地表最强B站播放器 {Ver}　(Dev版-编译时间:{InitDDTV_Core.CompiledVersion})";
 #endif
