@@ -436,13 +436,13 @@ namespace DDTV_GUI.DDTV_Window
                 //GiftToggle.IsChecked = Download.IsRecGift;
                 //GuardToggle.IsChecked = Download.IsRecGuard;
                 //SCToggle.IsChecked = Download.IsRecSC;
-                DanmuToAssButton.IsChecked = CoreConfig.IsXmlToAss;
-                SetDanmakuFactoryParameter.Text = CoreConfig.DanmukuFactoryParameter;
+                DanmuToAssButton.IsChecked = GUIConfig.IsXmlToAss;
+                SetDanmakuFactoryParameter.Text = GUIConfig.DanmukuFactoryParameter;
                 if (Download.IsRecDanmu)
                 {
                     DanmuToAssText.Visibility = Visibility.Visible;
                     DanmuToAssButton.Visibility = Visibility.Visible;
-                    if (CoreConfig.IsXmlToAss)
+                    if (GUIConfig.IsXmlToAss)
                     {
                         SetDanmakuFactoryParameter.Visibility = Visibility.Visible;
                         SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Visible;
@@ -636,7 +636,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <returns></returns>
         private bool APP_EXIT()
         {
-            if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsExitReminder)
+            if (GUIConfig.IsExitReminder)
             {
                 MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
                 if (dr == MessageBoxResult.OK)
@@ -1200,7 +1200,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 DanmuToAssText.Visibility = Visibility.Visible;
                 DanmuToAssButton.Visibility = Visibility.Visible;
-                if (CoreConfig.IsXmlToAss)
+                if (GUIConfig.IsXmlToAss)
                 {
                     SetDanmakuFactoryParameter.Visibility = Visibility.Visible;
                     SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Visible;
@@ -1983,14 +1983,14 @@ namespace DDTV_GUI.DDTV_Window
                 Growl.WarningGlobal($"转ASS参数不能为空");
                 return;
             }
-            CoreConfig.DanmukuFactoryParameter = SetDanmakuFactoryParameter.Text;
+            GUIConfig.DanmukuFactoryParameter = SetDanmakuFactoryParameter.Text;
             CoreConfigFile.WriteConfigFile(true);
         }
 
         private void DanmuToAssButton_Click(object sender, RoutedEventArgs e)
         {
             bool Is = (bool)DanmuToAssButton.IsChecked ? true : false;
-            CoreConfig.IsXmlToAss = Is;
+            GUIConfig.IsXmlToAss = Is;
             CoreConfig.SetValue(CoreConfigClass.Key.IsXmlToAss, Is.ToString(), CoreConfigClass.Group.GUI);
             Growl.Success((Is ? "打开" : "关闭") + "录制后转为ass文件");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "录制后转为ass文件", false, null, false);

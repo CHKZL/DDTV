@@ -11,7 +11,7 @@ namespace DDTV_Core.Tool.SystemResource
     {
         public static string Shell(string Command)
         {
-            if (SystemAssembly.ConfigModule.CoreConfig.Shell)
+            if (SystemAssembly.DownloadModule.Download.Shell)
             {
                 Process process = new Process
                 {

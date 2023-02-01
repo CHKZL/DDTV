@@ -15,5 +15,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool ShowGiftSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ShowGiftSwitch, "True", CoreConfigClass.Group.GUI));
         public static bool ShowSCSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ShowSCSwitch, "True", CoreConfigClass.Group.GUI));
         public static bool ShowGuardSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ShowGuardSwitch, "True", CoreConfigClass.Group.GUI));
+        public static bool IsXmlToAss = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsXmlToAss, "False", CoreConfigClass.Group.GUI));
+        public static string DanmukuFactoryParameter = CoreConfig.GetValue(CoreConfigClass.Key.DanmukuFactoryParameter, "-o {AfterFilePath} -i {BeforeFilePath}", CoreConfigClass.Group.GUI);
+        public static bool IsExitReminder = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsExitReminder, "True", CoreConfigClass.Group.GUI));
+        public static string DanMuColor = CoreConfig.GetValue(CoreConfigClass.Key.DanmuColor, "0xFF,0xFF,0xFF", CoreConfigClass.Group.Play);
+        public static string SubtitleColor = CoreConfig.GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
+        public static int DanMuFontSize = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
+        public static double DanMuFontOpacity = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
     }
 }
