@@ -3,6 +3,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
+using DDTV_Core.Tool.TranscodModule;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -31,11 +32,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static long FlvSplitSize = long.Parse(CoreConfig.GetValue(CoreConfigClass.Key.FlvSplitSize, "1073741824", CoreConfigClass.Group.Download));
         public static bool IsHls = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHls, "True", CoreConfigClass.Group.Download));
         public static int WaitHLSTime = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.WaitHLSTime, "15", CoreConfigClass.Group.Download));
+        public static bool IsDoNotSleepState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "True", CoreConfigClass.Group.Download));
+        public static bool Shell = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.Shell, "False", CoreConfigClass.Group.Download));
+        public static bool RealTimeTitleFileName=bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.RealTimeTitleFileName, "True", CoreConfigClass.Group.Download));
 
         /// <summary>
         /// 下载完成事件
         /// </summary>
         public static event EventHandler<EventArgs> DownloadCompleted;
+
         /// <summary>
         /// 增加视频下载任务
         /// </summary>
@@ -48,7 +53,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     string is_sp = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.is_sp);
                     if (is_sp == "1")
                     {
-                         AddVideoDownLoad_FLV(uid, IsNewTask);
+                        AddVideoDownLoad_FLV(uid, IsNewTask);
                     }
                     else
                     {
@@ -157,7 +162,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
-                                if (IsRecDanmu && CoreConfig.IsXmlToAss)
+                                if (IsRecDanmu && GUIConfig.IsXmlToAss)
                                 {
                                     try
                                     {
@@ -194,12 +199,21 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
                         {
+                            string After = string.Empty;
+                            if(RealTimeTitleFileName)
+                            {
+                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                            }
+                            else
+                            {
+                                 After = item.FilePath.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                            }
                             var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                             {
                                 AfterFilenameExtension = ".mp4",
                                 BeforeFilePath = item.FilePath,
-                                AfterFilePath = item.FilePath.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
-                            });
+                                AfterFilePath = After
+                            }); 
                             item.IsTranscod = true;
                             roomInfo.DownloadedFileInfo.AfterRepairFiles.Add(new FileInfo(tm.AfterFilePath));
                             WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
@@ -377,7 +391,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
-                                if (IsRecDanmu && CoreConfig.IsXmlToAss)
+                                if (IsRecDanmu && GUIConfig.IsXmlToAss)
                                 {
                                     try
                                     {
@@ -443,11 +457,20 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 if (!string.IsNullOrEmpty(item) && File.Exists(item))
                                 {
 
+                                    string After = string.Empty;
+                                    if (RealTimeTitleFileName)
+                                    {
+                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                    }
+                                    else
+                                    {
+                                        After = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                    }
                                     var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                                     {
                                         AfterFilenameExtension = ".mp4",
                                         BeforeFilePath = item,
-                                        AfterFilePath = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4"),
+                                        AfterFilePath = After
                                     });
                                     roomInfo.DownloadedFileInfo.AfterRepairFiles.Add(new FileInfo(tm.AfterFilePath));
                                     WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);

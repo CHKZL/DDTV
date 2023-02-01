@@ -3,6 +3,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
+using DDTV_Core.SystemAssembly.ConfigModule;
 using DDTV_Core.SystemAssembly.DownloadModule;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
@@ -420,7 +421,7 @@ namespace DDTV_Core.Tool.DanMuKu
                     Path = Path.Replace("\\", "/");
                     Process process = new Process();
                     process.StartInfo.FileName = "./plugins/DanmakuFactory/DanmakuFactory.exe";
-                    process.StartInfo.Arguments = SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter.Replace("{AfterFilePath}", $"{Path + AfterFileName}").Replace("{BeforeFilePath}", $"{Path + BeforeFileName}");
+                    process.StartInfo.Arguments = GUIConfig.DanmukuFactoryParameter.Replace("{AfterFilePath}", $"{Path + AfterFileName}").Replace("{BeforeFilePath}", $"{Path + BeforeFileName}");
                     process.StartInfo.UseShellExecute = false;
                     process.StartInfo.RedirectStandardOutput = true;
                     process.StartInfo.RedirectStandardError = true;

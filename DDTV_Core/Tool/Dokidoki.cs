@@ -8,6 +8,7 @@ using System.Threading;
 using DDTV_Core.SystemAssembly.ConfigModule;
 using System.Runtime.InteropServices;
 using Newtonsoft.Json;
+using DDTV_Core.SystemAssembly.DownloadModule;
 
 namespace DDTV_Core.Tool
 {
@@ -116,7 +117,7 @@ namespace DDTV_Core.Tool
             if (!DoNotSleepWhileDownloadingIsRun && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 DoNotSleepWhileDownloadingIsRun = !DoNotSleepWhileDownloadingIsRun;
-                IsDoNotSleepState = CoreConfig.IsDoNotSleepState;
+                IsDoNotSleepState = Download.IsDoNotSleepState;
                 Task.Run(() => {
                     while (true)
                     {

@@ -15,10 +15,13 @@ DDTV_WEB_Server是免安装的，把下载下来的压缩包解压到任意位�
 如果在这个步骤中出现了你本地并不存在的文件，请尝试先启动一次DDTV_WEB_Server，正常情况下会自动生成缺失的文件。当然也可以手动新建，但是在linux下请注意权限问题。
 :::
 ### (1)运行环境准备
->DDTV_WEB_Server依赖于`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`环境运行，请先安装`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`：  
+>DDTV_WEB_Server依赖于`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`环境运行和`ffmpeg`，请先安装`.NET Runtime 6.0`和`ASP.NET Core Runtime 6.0`和`ffmpeg`：  
 [下载.NET Runtime(x64)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
 [下载ASP.NET Core Runtime(x64)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-6.0.1-windows-x64-installer)  
 如果你的操作系统不是`64位Windows10`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/windows?tabs=net60)进行环境的安装  
+
+ffmpeg安装说明：
+>windows环境下请将`ffmpeg.exe`文件放在DDTV文件夹中，相对路径：`.\plugins\ffmpeg\ffmpeg.exe`（如果不知道是怎么放，可以直接下载一个GUI版本，参考里面的plugins文件夹）
 
 ### 配置房间文件
 默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV_GUI通用  

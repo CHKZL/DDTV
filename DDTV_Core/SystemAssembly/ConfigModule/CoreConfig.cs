@@ -11,27 +11,19 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
     {
         public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "True", CoreConfigClass.Group.Core));
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "True", CoreConfigClass.Group.Core));
-        public static bool IsDoNotSleepState = bool.Parse(GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "True", CoreConfigClass.Group.Download));
-        public static bool Shell = bool.Parse(GetValue(CoreConfigClass.Key.Shell, "False", CoreConfigClass.Group.Download));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
         public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
         public static bool ConsoleMonitorMode = bool.Parse(GetValue(CoreConfigClass.Key.ConsoleMonitorMode, "False", CoreConfigClass.Group.Core));
         public static string ReplaceAPI = GetValue(CoreConfigClass.Key.ReplaceAPI, "https://api.live.bilibili.com", CoreConfigClass.Group.Core);
         public static int APIVersion = int.Parse(GetValue(CoreConfigClass.Key.APIVersion, "1", CoreConfigClass.Group.Core));
         public static bool AutoInsallUpdate = bool.Parse(GetValue(CoreConfigClass.Key.AutoInsallUpdate, "True", CoreConfigClass.Group.Core));
-        public static string DanMuColor = GetValue(CoreConfigClass.Key.DanmuColor, "0xFF,0xFF,0xFF", CoreConfigClass.Group.Play);
-        public static string SubtitleColor = GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
-        public static int DanMuFontSize = int.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
-        public static double DanMuFontOpacity = double.Parse(GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
         public static bool WhetherToEnableProxy =  bool.Parse(GetValue(CoreConfigClass.Key.WhetherToEnableProxy, "True", CoreConfigClass.Group.Core));
         public static bool MandatoryUseIPv4 = bool.Parse(GetValue(CoreConfigClass.Key.MandatoryUseIPv4, "False", CoreConfigClass.Group.Core));
         public static bool IsBypass_SSL= bool.Parse(GetValue(CoreConfigClass.Key.IsBypass_SSL, "False", CoreConfigClass.Group.Core));
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
         public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
-        public static bool IsXmlToAss= bool.Parse(GetValue(CoreConfigClass.Key.IsXmlToAss, "False", CoreConfigClass.Group.GUI));
-        public static string DanmukuFactoryParameter=GetValue(CoreConfigClass.Key.DanmukuFactoryParameter, "-o {AfterFilePath} -i {BeforeFilePath}", CoreConfigClass.Group.GUI);
-        public static bool IsExitReminder = bool.Parse(GetValue(CoreConfigClass.Key.IsExitReminder, "True", CoreConfigClass.Group.GUI));
+
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -133,9 +125,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DefaultVolume = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DefaultVolume;
             var _AccessControlAllowOrigin = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessControlAllowOrigin;
             var _AccessControlAllowCredentials = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.AccessControlAllowCredentials;
-            var _IsDoNotSleepState = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDoNotSleepState;
+            var _IsDoNotSleepState = DDTV_Core.SystemAssembly.DownloadModule.Download.IsDoNotSleepState;
             var _CookieDomain = DDTV_Core.SystemAssembly.ConfigModule.WebServerConfig.CookieDomain;
-            var _Shell = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Shell;
+            var _Shell = DDTV_Core.SystemAssembly.DownloadModule.Download.Shell;
             var _WebHookUrl = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WebHookUrl;
             var _InstanceAID = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.InstanceAID;
             var _DDcenterSwitch = DDTV_Core.Tool.DDcenter.DDcenterSwitch;
@@ -146,10 +138,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _ReplaceAPI = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI;
             var _APIVersion = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.APIVersion;
             var _AutoInsallUpdate = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.AutoInsallUpdate;
-            var _DanMuColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuColor;
-            var _SubtitleColor = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
-            var _DanMuFontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor;
-            var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+            var _DanMuColor = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuColor;
+            var _SubtitleColor = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.SubtitleColor;
+            var _DanMuFontSize = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.SubtitleColor;
+            var _DanMuFontOpacity = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuFontOpacity;
             var _WhetherToEnableProxy = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy;
             var _IsDev = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsDev;
             var _MandatoryUseIPv4 = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.MandatoryUseIPv4;
@@ -158,14 +150,14 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _IsHls = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
             var _WaitHLSTime = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
             var _HighRiskWebAPIFixedCheckSign = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.HighRiskWebAPIFixedCheckSign;
-            var _DanmukuFactoryParameter = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanmukuFactoryParameter;
-            var _IsXmlToAss = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsXmlToAss;
-            var _IsExitReminder =DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsExitReminder;
+            var _DanmukuFactoryParameter = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanmukuFactoryParameter;
+            var _IsXmlToAss = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.IsXmlToAss;
+            var _IsExitReminder =DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.IsExitReminder;
             var _ShowDanMuSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowDanMuSwitch;
             var _ShowGiftSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowGiftSwitch;
             var _ShowSCSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowSCSwitch;
             var _ShowGuardSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowGuardSwitch;
-
+            var _RealTimeTitleFileName = DDTV_Core.SystemAssembly.DownloadModule.Download.RealTimeTitleFileName;
         }
         /// <summary>
         /// 获取配置

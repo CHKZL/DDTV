@@ -35,19 +35,19 @@ namespace DDTV_GUI.WPFControl
 
             if(DanMuRadio.IsChecked.Value)
             {
-                CoreConfig.DanMuColor =
+                GUIConfig.DanMuColor =
                     "0x" + Convert.ToString(solidColorBrush.Color.R, 16) + "," +
                     "0x" + Convert.ToString(solidColorBrush.Color.G, 16) + "," +
                     "0x" + Convert.ToString(solidColorBrush.Color.B, 16);
-                CoreConfig.SetValue(CoreConfigClass.Key.DanmuColor, CoreConfig.DanMuColor, CoreConfigClass.Group.Play);
+                CoreConfig.SetValue(CoreConfigClass.Key.DanmuColor, GUIConfig.DanMuColor, CoreConfigClass.Group.Play);
             }
             else if (SubtitleRadio.IsChecked.Value)
             {
-                CoreConfig.SubtitleColor =
+                GUIConfig.SubtitleColor =
                     "0x" + Convert.ToString(solidColorBrush.Color.R, 16) + "," +
                     "0x" + Convert.ToString(solidColorBrush.Color.G, 16) + "," +
                     "0x" + Convert.ToString(solidColorBrush.Color.B, 16);
-                CoreConfig.SetValue(CoreConfigClass.Key.SubtitleColor, CoreConfig.SubtitleColor, CoreConfigClass.Group.Play);
+                CoreConfig.SetValue(CoreConfigClass.Key.SubtitleColor, GUIConfig.SubtitleColor, CoreConfigClass.Group.Play);
             }
             eventHandler.Invoke(this, EventArgs.Empty);
         }

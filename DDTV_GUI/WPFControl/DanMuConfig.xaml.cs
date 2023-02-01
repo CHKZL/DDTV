@@ -31,14 +31,14 @@ namespace DDTV_GUI.WPFControl
         {
             InitializeComponent();
             eventHandler = _;
-            FontSizeSlider.Value= CoreConfig.DanMuFontSize;
-            FontOpacitySlider.Value = CoreConfig.DanMuFontOpacity;
+            FontSizeSlider.Value= GUIConfig.DanMuFontSize;
+            FontOpacitySlider.Value = GUIConfig.DanMuFontOpacity;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            CoreConfig.DanMuFontSize = fontSize;
-            CoreConfig.DanMuFontOpacity = Opacity;
+            GUIConfig.DanMuFontSize = fontSize;
+            GUIConfig.DanMuFontOpacity = Opacity;
 
             CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontSize, fontSize.ToString(), CoreConfigClass.Group.Play);
             CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontOpacity, Opacity.ToString(), CoreConfigClass.Group.Play);

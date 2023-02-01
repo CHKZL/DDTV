@@ -15,9 +15,14 @@ DDTV_CLI是免安装的，把下载下来的压缩包解压到任意位置即可
 如果在这个步骤中出现了你本地并不存在的文件，请尝试先启动一次DDTV_CLI，正常情况下会自动生成缺失的文件。当然也可以手动新建。
 :::
 ### (1)运行环境准备
->DDTV_CLI依赖于`.NET Runtime 6.0`环境运行，请先安装`.NET Runtime 6.0`：  
-[下载.NET Runtime(x64)](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
-如果你的操作系统不是`64位Windows10`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/windows?tabs=net60)进行环境的安装  
+>DDTV_CLI依赖于`.NET6.0运行时`环境运行和`ffmpeg`，请先安装`.NET6.0运行时`和`ffmpeg`  
+
+.NET6.0运行时安装说明：   
+>[点击打开下载.NET6.0运行时(x64)网页](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
+如果你的操作系统不是`64位Windows10或11`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/windows?tabs=net60)进行环境的安装  
+
+ffmpeg安装说明：
+>windows环境下请将`ffmpeg.exe`文件放在DDTV文件夹中，相对路径：`.\plugins\ffmpeg\ffmpeg.exe`（如果不知道是怎么放，可以直接下载一个GUI版本，参考里面的plugins文件夹）
 
 ### 配置房间文件
 默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV_GUI通用  

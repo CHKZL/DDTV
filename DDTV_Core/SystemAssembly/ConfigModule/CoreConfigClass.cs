@@ -394,6 +394,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：GUI   默认值：true
             /// </summary>
             ShowGuardSwitch,
+            /// <summary>
+            /// 修复时文件名是否修改为实时的标题名称
+            /// 组：Download   默认值：true
+            /// </summary>
+            RealTimeTitleFileName,
         }
     }
 }

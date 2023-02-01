@@ -159,7 +159,7 @@ namespace DDTV_GUI.DDTV_Window
                 barrageConfig = new BarrageConfig(canvas);
                 canvas.Dispatcher.Invoke(() =>
                 {
-                    canvas.Opacity = CoreConfig.DanMuFontOpacity;
+                    canvas.Opacity = GUIConfig.DanMuFontOpacity;
                 });
             });
             Loaded += new RoutedEventHandler(Topping);
@@ -1188,12 +1188,12 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (IsSubtitle)
             {
-                byte R = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[0], 16);
-                byte G = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[1], 16);
-                byte B = Convert.ToByte(DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.SubtitleColor.Split(',')[2], 16);
+                byte R = Convert.ToByte(GUIConfig.SubtitleColor.Split(',')[0], 16);
+                byte G = Convert.ToByte(GUIConfig.SubtitleColor.Split(',')[1], 16);
+                byte B = Convert.ToByte(GUIConfig.SubtitleColor.Split(',')[2], 16);
                 Subtitle.Dispatcher.Invoke(new Action(() =>
                 {
-                    Subtitle.FontSize = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontSize;
+                    Subtitle.FontSize = GUIConfig.DanMuFontSize;
                     Subtitle.Fill = new SolidColorBrush(System.Windows.Media.Color.FromRgb(R, G, B));
                     Subtitle.Text = DanmuText;
                 }));
@@ -1557,7 +1557,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private void PlayWindow_DanMuConfigDialogDispose(object? sender, EventArgs e)
         {
-            canvas.Opacity = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.DanMuFontOpacity;
+            canvas.Opacity = GUIConfig.DanMuFontOpacity;
             DanMuConfigDialog.Close();
         }
 

@@ -18,11 +18,15 @@ DDTV_CLI是免安装的，把下载下来的压缩包解压到任意当前linux�
 ### 运行环境准备
 * 请从以下两种方法中选择适合你的
 ### 方法一：x86常见发行版本安装方法：
->DDTV_CLI依赖于`.NET Runtime 6.0`环境运行，请先安装`.NET Runtime 6.0`：  
+>DDTV_CLI依赖于`.NET6.0运行时`环境运行和`ffmpeg`，请先安装`.NET6.0运行时`和`ffmpeg`  
+ 
 >请根据你所使用的linux发行版本参考[微软文档](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)进行环境的安装  
 >:::warning .NET版本提示 
 >安装的版本只要高于.NET 6.0.1即可
 >:::  
+
+ffmpeg安装说明：
+>linux请根据您使用的发行版本自行使用`apt`或`yum`等包管理工具自行安装`ffmpeg` 
   
 ### 方法二：微软文档没有说明的发行版本或者Arm等版本安装方法  
 >(所有版本的linux也都可以用这个方法)  
@@ -51,6 +55,7 @@ DDTV_CLI是免安装的，把下载下来的压缩包解压到任意当前linux�
 >```
 >如果出现了dotnet相关信息，那么恭喜你，环境配置成功了  
 
+>最后：根据方法一种`ffmpeg`的说明进行安装即可
 
 ### 配置房间文件
 默认房间文件`RoomListConfig.json`格式为json字符串，默认为空json，并且和DDTV_GUI通用  
