@@ -1,3 +1,7 @@
+# 走过路过留个star吧
+
+[![Stargazers over time](https://starchart.cc/CHKZL/DDTV.svg)](https://starchart.cc/CHKZL/DDTV)
+
 # DDTV3.0
 你的地表最强B站播放器
 
@@ -36,10 +40,6 @@ Q群	522865400(新)	聊天吹水的地方
 如果提示缺少.NET6环境，请先安装.NET6环境
 请根据官网的教程进行操作
 
-
-# 走过路过留个star吧
-
-[![Stargazers over time](https://starchart.cc/CHKZL/DDTV.svg)](https://starchart.cc/CHKZL/DDTV)
 
 
 ## 第三方客户端(非DDTV官方编写，仅介绍，是否使用请自行判断)
