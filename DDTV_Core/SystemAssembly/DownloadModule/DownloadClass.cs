@@ -448,6 +448,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 });
             }
 
+            /// <summary>
+            /// HLS下载任务主体
+            /// </summary>
+            /// <param name="downloads"></param>
+            /// <param name="roomInfo"></param>
+            /// <param name="Path">路径</param>
+            /// <param name="FileName">文件名</param>
+            /// <param name="hLSHostClass">HOST类</param>
+            /// <param name="Process">已下载片段记录</param>
+            /// <param name="ExtendedName">拓展名格式</param>
+            /// <returns></returns>
             internal int Download_HLS(ref Downloads downloads,ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
             {
                 try
@@ -467,6 +478,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     int WaitingTime = 1000;
                     try
                     {
+                        
+                        List<string> HLS_strings = new List<string>();
                         while (true)
                         { 
                             WaitingTime = 1000;
@@ -530,11 +543,23 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 }
                             }
                             string[] M3 = new string[0];
-                           if (!string.IsNullOrEmpty(index))
+                            if (!string.IsNullOrEmpty(index))
                             {
                                 M3 = index.Split('\n');
                             }
-                            
+                            StreamWriter sw = new StreamWriter("./HLS_TEST", true);
+                            foreach (var item in M3)
+                            {
+                                //if(!HLS_strings.Contains(item) && !item.Contains("EXT-X-MEDIA-SEQUENCE"))
+                                {
+                                    sw.WriteLine(item);
+
+
+                                    //HLS_strings.Add(item);
+                                }
+                            }
+                            sw.WriteLine("===============================");
+                            sw.Close();
                             switch (ExtendedName)
                             {
                                 case "m4s":
@@ -552,6 +577,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             Process.Add($"{EXTMAP}");
                                             byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + EXTMAP + "?" + hLSHostClass.extra);
+
+
+                                            //File.WriteAllBytes("./tmp/test1", fileInfo);
+
+
                                             if (fileInfo != null)
                                             {
                                                 downloads.TotalDownloadCount += fileInfo.Length;
@@ -575,6 +605,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     NotUpdateCount = 0;
                                                     Process.Add(M3[i + 1].Split('.')[0]);
                                                     byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + M3[i + 1] + "?" + hLSHostClass.extra);
+                                                  
+                                                    //if (true)
+                                                    //{
+                                                    //    File.WriteAllBytes("./tmp/test2", fileInfo);
+                                                    //}
                                                     if (fileInfo != null)
                                                     {
                                                         downloads.TotalDownloadCount += fileInfo.Length;
