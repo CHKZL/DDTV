@@ -36,29 +36,38 @@ namespace DDTV_GUI
         private static extern bool SetForegroundWindow(IntPtr hWnd);
 
         private const int SW_SHOWNOMAL = 1;
-        private static void HandleRunningInstance(Process instance)
+        public static void HandleRunningInstance(Process instance)
         {
-            ShowWindowAsync(instance.MainWindowHandle, SW_SHOWNOMAL);//显示
-            SetForegroundWindow(instance.MainWindowHandle);//当到最前端
-        }
-        private static Process RuningInstance()
-        {
-            Process currentProcess = Process.GetCurrentProcess();
-            Process[] Processes = Process.GetProcessesByName(currentProcess.ProcessName);
-            foreach (Process process in Processes)
+            try
             {
-                if (process.Id != currentProcess.Id)
+                ShowWindowAsync(instance.MainWindowHandle, SW_SHOWNOMAL);//显示
+                SetForegroundWindow(instance.MainWindowHandle);//当到最前端
+            }
+            catch (Exception) { }
+
+        }
+        public static Process RuningInstance(bool IsStart = true)
+        {
+            try
+            {
+                Process currentProcess = Process.GetCurrentProcess();
+                Process[] Processes = Process.GetProcessesByName(currentProcess.ProcessName);
+                foreach (Process process in Processes)
                 {
-                    string PA = Assembly.GetExecutingAssembly().Location.Replace("/", "\\");
-                    string PB = currentProcess.MainModule.FileName;
-                    string PAA = PA.Replace(PA.Split('.')[PA.Split('.').Length - 1], "");
-                    string PBA = PB.Replace(PB.Split('.')[PB.Split('.').Length - 1], "");
-                    if (PAA == PBA)
+                    if (!IsStart || process.Id != currentProcess.Id)
                     {
-                        return process;
+                        string PA = Assembly.GetExecutingAssembly().Location.Replace("/", "\\");
+                        string PB = currentProcess.MainModule.FileName;
+                        string PAA = PA.Replace(PA.Split('.')[PA.Split('.').Length - 1], "");
+                        string PBA = PB.Replace(PB.Split('.')[PB.Split('.').Length - 1], "");
+                        if (PAA == PBA)
+                        {
+                            return process;
+                        }
                     }
                 }
             }
+            catch (Exception) { }
             return null;
         }
 
@@ -67,15 +76,15 @@ namespace DDTV_GUI
             Process process = RuningInstance();
             if (process != null)
             {
-                 MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
-                    "\r点击‘是’弹出正在运行的窗口" +
-                    "\r点击‘否’强制启动一个新DDTV" +
-                    "\r=========\r如果点击‘是’后没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
-                    "\r如果后台托盘中也没有应该上次退出后的程序还未关闭" +
-                    $"\r======参考信息======" +
-                    $"\rId:{process.Id}" +
-                    $"\rProcessName:{process.ProcessName}",
-                    "已有DDTV实例正在运行", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
+                   "\r点击‘是’弹出正在运行的窗口" +
+                   "\r点击‘否’强制启动一个新DDTV" +
+                   "\r=========\r如果点击‘是’后没有自动弹出请检查程序是否缩小到了系统后台托盘中" +
+                   "\r如果后台托盘中也没有应该上次退出后的程序还未关闭" +
+                   $"\r======参考信息======" +
+                   $"\rId:{process.Id}" +
+                   $"\rProcessName:{process.ProcessName}",
+                   "已有DDTV实例正在运行", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (dr == MessageBoxResult.Yes)
                 {
                     HandleRunningInstance(process);
@@ -84,7 +93,7 @@ namespace DDTV_GUI
                 }
                 else
                 {
-                    
+
                 }
                 //MessageBox.Show("已经有DDTV_GUI实例正在运行中" +
                 //    "\r点击确定弹出正在运行的窗口" +

@@ -315,6 +315,12 @@ namespace DDTV_GUI.DDTV_Window
                                         }
                                         else
                                         {
+                                            FileInfo fileInfo = new FileInfo(FileDirectory);
+                                            if (fileInfo.Length < 100)
+                                            {
+                                                Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
+                                                return;
+                                            }
                                             VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
                                             //SetVolume(MainWindow.DefaultVolume);
                                         }

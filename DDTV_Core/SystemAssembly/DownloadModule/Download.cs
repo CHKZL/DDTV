@@ -202,7 +202,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             string After = string.Empty;
                             if(RealTimeTitleFileName)
                             {
-                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"+"_{R}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                             }
                             else
                             {
@@ -460,7 +460,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     string After = string.Empty;
                                     if (RealTimeTitleFileName)
                                     {
-                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"+"_{R}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                                     }
                                     else
                                     {

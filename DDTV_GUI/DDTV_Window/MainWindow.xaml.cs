@@ -273,12 +273,6 @@ namespace DDTV_GUI.DDTV_Window
         {
             Task.Run(() =>
             {
-                //List<string> Files = new List<string>();
-                //foreach (var item in Directory.GetFiles("./tmp"))
-                //{
-                //    Files.Add(item);
-                //}
-                //FileOperation.Del(Files);
                 if (Directory.Exists(Download.TmpPath))
                 {
                     DirectoryInfo root = new DirectoryInfo(Download.TmpPath);
@@ -641,7 +635,7 @@ namespace DDTV_GUI.DDTV_Window
                 MessageBoxResult dr = HandyControl.Controls.MessageBox.Show("警告！当前退出会导致未完成的任务数据丢失\n确认退出?", "退出", MessageBoxButton.OKCancel, MessageBoxImage.Question);
                 if (dr == MessageBoxResult.OK)
                 {
-                    DelTmpFile();
+                    DelTmpFile();//删除临时文件
                     Application.Current.Shutdown();
                     return true;
                 }
@@ -682,6 +676,8 @@ namespace DDTV_GUI.DDTV_Window
                 this.Activate();
                 this.Focus();
                 UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
+                Process process =DDTV_GUI.App.RuningInstance(false);
+                DDTV_GUI.App.HandleRunningInstance(process);
             }
 
 
@@ -697,7 +693,7 @@ namespace DDTV_GUI.DDTV_Window
             {
                 if (WindowState == WindowState.Minimized)
                 {
-                    Growl.InfoGlobal("DDTV已最小化到系统托盘ICO中,请双击托盘ICO恢复到开始菜单");
+                    Growl.InfoGlobal("DDTV已最小化到系统托盘icon中,请双击托盘icon恢复到开始菜单");
                     UpdateInterface.Main.ActivationInterface = -1;
                     this.Visibility = Visibility.Hidden;
                 }
