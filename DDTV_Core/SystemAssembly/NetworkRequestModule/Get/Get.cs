@@ -164,7 +164,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                     case WebExceptionStatus.ProtocolError:
                         return null;
                     default:
-                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "") + $"GetFile_Bytes请求错误:{e.Status}({(int)e.Status})");
+                        Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, (Uid != 0 ? $"请求UID为[{Uid}]的房间发生" : "") + $"GetFile_Bytes请求错误:{e.Status}({(int)e.Status})",false,null,false);
                         return null;
                 }
             }
