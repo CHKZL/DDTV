@@ -197,7 +197,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         string _F = Path + $"/{Tool.FileOperation.ReplaceKeyword(downloads.Uid, Download.DownloadFolderName)}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         downloads.FlvFileList.Add(_F);
-                        roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath= _F});
+                        roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = _F });
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -459,7 +459,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="Process">已下载片段记录</param>
             /// <param name="ExtendedName">拓展名格式</param>
             /// <returns></returns>
-            internal int Download_HLS(ref Downloads downloads,ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process,string ExtendedName)
+            internal int Download_HLS(ref Downloads downloads, ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process, string ExtendedName, bool Is_ENDLIST = false)
             {
                 try
                 {
@@ -471,17 +471,25 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //Path="D:"+Path.Substring(1, Path.Length-1);
                     Path = Tool.FileOperation.CreateAll(Path);
                     downloads.FlvFileList.Add(downloads.FilePath);
-                    downloads.FileName = downloads.FilePath + FileName + $".mp4";
-                   
+                    if (Is_ENDLIST)
+                    {
+                        downloads.FileName = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + $".mp4";
+                    }
+                    else
+                    {
+                        downloads.FileName = downloads.FilePath + FileName + $".mp4";
+                    }
+
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
-                    roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = downloads.FileName });
+                    RoomInfoClass.RoomInfo.DownloadedFiles FF = new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = downloads.FileName };
+                    roomInfo.Files.Add(FF);
                     int WaitingTime = 1000;
                     try
                     {
-                        
+
                         List<string> HLS_strings = new List<string>();
                         while (true)
-                        { 
+                        {
                             WaitingTime = 1000;
                             if (IsCancel)
                             {
@@ -489,7 +497,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Status = DownloadStatus.Cancel;
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
-                                DisposeFileStream(fs, downloads.FileName);
+                                DisposeFileStream(fs);
                                 Download.VideoDownloadCompleteTaskd_HLS(Uid, downloads, true);
                                 return 0;
                             }
@@ -502,14 +510,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             int error = 0;
                             while (true)
                             {
-                                if(NotUpdateCount>5)
+                                if (NotUpdateCount > 5)
                                 {
                                     return 1;
                                 }
-                                if(error>10)
+                                if (error > 10)
                                 {
                                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS目录时重试10次超时，降级为FLV模式");
-                                    DisposeFileStream(fs, downloads.FileName);
+                                    DisposeFileStream(fs);
                                     return -1;
                                 }
                                 if (string.IsNullOrEmpty(index))
@@ -519,7 +527,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
                                     if (!hLSHostClass.LiveStatus)
                                     {
-                                        DisposeFileStream(fs, downloads.FileName);
+                                        if (len < 2)
+                                        {
+                                            roomInfo.Files.Remove(FF);
+                                            DisposeFileStream(fs, downloads.FileName);
+                                        }
+                                        else
+                                        {
+                                            DisposeFileStream(fs);
+                                        }
                                         return 0;
                                     }
                                     if (!hLSHostClass.IsEffective)
@@ -547,19 +563,20 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 M3 = index.Split('\n');
                             }
-                            StreamWriter sw = new StreamWriter("./HLS_TEST", true);
-                            foreach (var item in M3)
-                            {
-                                //if(!HLS_strings.Contains(item) && !item.Contains("EXT-X-MEDIA-SEQUENCE"))
-                                {
-                                    sw.WriteLine(item);
+                          
+                            //StreamWriter sw = new StreamWriter("./HLS_TEST", true);
+                            //foreach (var item in M3)
+                            //{
+                            //    //if(!HLS_strings.Contains(item) && !item.Contains("EXT-X-MEDIA-SEQUENCE"))
+                            //    {
+                            //        sw.WriteLine(item);
 
 
-                                    //HLS_strings.Add(item);
-                                }
-                            }
-                            sw.WriteLine("===============================");
-                            sw.Close();
+                            //        //HLS_strings.Add(item);
+                            //    }
+                            //}
+                            //sw.WriteLine("===============================");
+                            //sw.Close();
                             switch (ExtendedName)
                             {
                                 case "m4s":
@@ -605,7 +622,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     NotUpdateCount = 0;
                                                     Process.Add(M3[i + 1].Split('.')[0]);
                                                     byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + M3[i + 1] + "?" + hLSHostClass.extra);
-                                                  
+
                                                     //if (true)
                                                     //{
                                                     //    File.WriteAllBytes("./tmp/test2", fileInfo);
@@ -624,8 +641,22 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                                 }
                                             }
+                                            else if (M3[i].Contains("#EXT-X-ENDLIST"))
+                                            {
+                                                Thread.Sleep(3000);
+                                                if(len<3)
+                                                {
+                                                    roomInfo.Files.Remove(FF);
+                                                     DisposeFileStream(fs, downloads.FileName);
+                                                }
+                                                else
+                                                {
+                                                     DisposeFileStream(fs);
+                                                }
+                                                return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true);
+                                            }
                                         }
-                                        if(NotUpdates)
+                                        if (NotUpdates)
                                         {
                                             NotUpdateCount++;
                                         }
@@ -641,40 +672,40 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         break;
                                     }
                                     #region ts流模式
-                                                                    //case "ts":
-                                //    {
-                                //        for (int i = 0; i < M3.Length; i++)
-                                //        {
-                                //            if (M3[i].Contains("#EXTINF"))
-                                //            {
-                                //                if (!Process.Contains(M3[i + 1].Split('.')[0].Split('/')[1]))
-                                //                {
-                                //                    Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
-                                //                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
-                                //                    if (fileInfo != null)
-                                //                    {
-                                //                        downloads.TotalDownloadCount += fileInfo.Length;
-                                //                        DownloadCount += fileInfo.Length;
-                                //                        fs.Write(fileInfo);
-                                //                        len++;
-                                //                    }
-                                //                    else
-                                //                    {
-                                //                        WaitingTime = 100;
-                                //                    }
-                                //                }
-                                //            }
-                                //        }
-                                //        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
-                                //        { 
-                                //            DownloadCount = 0;
-                                //            fs.Close();
-                                //            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".ts";
-                                //            fs = new FileStream(NewFilePath, FileMode.Create);
-                                //            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
-                                //        }
-                                //        break;
-                                //    }
+                                    //case "ts":
+                                    //    {
+                                    //        for (int i = 0; i < M3.Length; i++)
+                                    //        {
+                                    //            if (M3[i].Contains("#EXTINF"))
+                                    //            {
+                                    //                if (!Process.Contains(M3[i + 1].Split('.')[0].Split('/')[1]))
+                                    //                {
+                                    //                    Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
+                                    //                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
+                                    //                    if (fileInfo != null)
+                                    //                    {
+                                    //                        downloads.TotalDownloadCount += fileInfo.Length;
+                                    //                        DownloadCount += fileInfo.Length;
+                                    //                        fs.Write(fileInfo);
+                                    //                        len++;
+                                    //                    }
+                                    //                    else
+                                    //                    {
+                                    //                        WaitingTime = 100;
+                                    //                    }
+                                    //                }
+                                    //            }
+                                    //        }
+                                    //        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
+                                    //        { 
+                                    //            DownloadCount = 0;
+                                    //            fs.Close();
+                                    //            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".ts";
+                                    //            fs = new FileStream(NewFilePath, FileMode.Create);
+                                    //            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
+                                    //        }
+                                    //        break;
+                                    //    }
                                     #endregion
                             }
 
@@ -704,8 +735,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     catch (Exception e)
                     {
-                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】下载循环中出现意外错误！错误详情已写txt文本中",true,e,true);
-                        DisposeFileStream(fs, downloads.FileName);
+                        Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】下载循环中出现意外错误！错误详情已写txt文本中", true, e, true);
+                        DisposeFileStream(fs);
                         return 1;
                     }
                 }
@@ -716,13 +747,16 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 }
             }
 
-            public static void DisposeFileStream(FileStream fs,string FileName)
+            public static void DisposeFileStream(FileStream fs, string FileName = "")
             {
                 if (fs.Length < 2048)
                 {
                     fs.Close();
                     fs.Dispose();
-                    Tool.FileOperation.Del(FileName);
+                    if (!string.IsNullOrEmpty(FileName))
+                    {
+                        Tool.FileOperation.Del(FileName);
+                    }
                 }
                 else
                 {
