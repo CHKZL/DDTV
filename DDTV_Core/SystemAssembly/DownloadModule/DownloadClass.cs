@@ -490,6 +490,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         List<string> HLS_strings = new List<string>();
                         while (true)
                         {
+                             D_start:
                             WaitingTime = 1000;
                             if (IsCancel)
                             {
@@ -510,6 +511,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             int error = 0;
                             while (true)
                             {
+                               
                                 if (NotUpdateCount > 5)
                                 {
                                     return 1;
@@ -609,6 +611,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             else
                                             {
                                                 WaitingTime = 100;
+                                            }
+                                            if(len==0)
+                                            {
+                                                goto D_start;
                                             }
                                         }
                                         bool NotUpdates = true;

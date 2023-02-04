@@ -174,9 +174,29 @@ namespace DDTV_Core.Tool
                 .Replace("{DATE}", DateTime.Now.ToString("yyyy_MM_dd"))
                 .Replace("{TIME}", DateTime.Now.ToString("HH_mm_ss"))
                 .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
-                .Replace("{R}", new Random().Next(1000, 9999).ToString());
+                .Replace("{R}", GetRandomStr(null, 5));
             return Text;
         }
+
+          /// <summary>
+        /// 随机字符串
+        /// </summary>
+        /// <param name="chars"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string GetRandomStr(string chars, int length)
+        {
+            Random random = new Random();
+            if (string.IsNullOrEmpty(chars))
+            {
+                chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789";
+            }
+            //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+
         /// <summary>
         /// 在指定路径中创建所有目录
         /// </summary>
