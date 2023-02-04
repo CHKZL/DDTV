@@ -12,62 +12,65 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook
 {
     public class WebHook
     {
-        public static void SendHook(HookType cmd, long uid)
+        public static void SendHook(HookType cmd, long uid, bool WhetherToPrompt = true)
         {
             try
             {
                 Task.Run(() =>
-            {
-                string id = Guid.NewGuid().ToString();
-                if (!string.IsNullOrEmpty(ConfigModule.CoreConfig.WebHookUrl))
                 {
-                    int ReNum = 0;
-                    do
+                    string id = Guid.NewGuid().ToString();
+                    if (!string.IsNullOrEmpty(ConfigModule.CoreConfig.WebHookUrl))
                     {
-                        try
+                        int ReNum = 0;
+                        do
                         {
-                            HttpWebRequest request;
-                            request = (HttpWebRequest)WebRequest.Create(ConfigModule.CoreConfig.WebHookUrl);
-                            if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
+                            try
                             {
-                                request.Proxy = null;
-                            }
-                            request.Method = "POST";
-                            request.ContentType = "application/json; charset=UTF-8";
-                            request.UserAgent = $"{InitDDTV_Core.InitType}/{InitDDTV_Core.Ver}";
-                            string paraUrlCoded = MessageProcessing.Processing(cmd, uid, id);
-                            byte[] payload;
-                            payload = Encoding.UTF8.GetBytes(paraUrlCoded);
-                            request.ContentLength = payload.Length;
-                            Stream writer = request.GetRequestStream();
-                            writer.Write(payload, 0, payload.Length);
-                            writer.Close();
-                            HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
-
-                            if ((int)resp.StatusCode >= 200 && (int)resp.StatusCode < 300)
-                            {
-                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送完成:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
-                                try
+                                HttpWebRequest request;
+                                request = (HttpWebRequest)WebRequest.Create(ConfigModule.CoreConfig.WebHookUrl);
+                                if (!DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.WhetherToEnableProxy)
                                 {
-                                    if (request != null) request.Abort();
+                                    request.Proxy = null;
                                 }
-                                catch (Exception) { }
-                                return;
+                                request.Method = "POST";
+                                request.ContentType = "application/json; charset=UTF-8";
+                                request.UserAgent = $"{InitDDTV_Core.InitType}/{InitDDTV_Core.Ver}";
+                                string paraUrlCoded = MessageProcessing.Processing(cmd, uid, id);
+                                byte[] payload;
+                                payload = Encoding.UTF8.GetBytes(paraUrlCoded);
+                                request.ContentLength = payload.Length;
+                                Stream writer = request.GetRequestStream();
+                                writer.Write(payload, 0, payload.Length);
+                                writer.Close();
+                                HttpWebResponse resp = (HttpWebResponse)request.GetResponse();
+
+                                if ((int)resp.StatusCode >= 200 && (int)resp.StatusCode < 300)
+                                {
+                                    if (WhetherToPrompt)
+                                    {
+                                        Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送完成:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
+                                    }
+                                    try
+                                    {
+                                        if (request != null) request.Abort();
+                                    }
+                                    catch (Exception) { }
+                                    return;
+                                }
+                                else
+                                {
+                                    Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送失败:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Info, $"WebHook信息发送失败:{cmd}-{uid}，StatusCode:{(int)resp.StatusCode}");
+                                Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Warn, $"WebHook信息发送失败:{cmd}-{uid}，错误详情已写日志和txt", true, e, true);
                             }
-                        }
-                        catch (Exception e)
-                        {
-                            Log.Log.AddLog(nameof(SendHook), Log.LogClass.LogType.Warn, $"WebHook信息发送失败:{cmd}-{uid}，错误详情已写日志和txt", true, e, true);
-                        }
-                        ReNum++;
-                        Thread.Sleep(3 * 1000);
-                    } while (ReNum > 3);
-                }
-            });
+                            ReNum++;
+                            Thread.Sleep(3 * 1000);
+                        } while (ReNum > 3);
+                    }
+                });
             }
             catch (Exception)
             {

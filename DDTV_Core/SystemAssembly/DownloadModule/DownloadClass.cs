@@ -186,11 +186,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="roomInfo">房间对象</param>
             internal void DownFLV_HttpWebRequest(Downloads downloads, HttpWebRequest req, string Path, string FileName, string format, RoomInfoClass.RoomInfo roomInfo)
             {
+                bool IsStart = false;
                 Task.Run(async () =>
                 {
                     try
                     {
-                        WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
+                        
                         int count = 1;
                         //Path="D:"+Path.Substring(1, Path.Length-1);
                         Path = Tool.FileOperation.CreateAll(Path);
@@ -279,6 +280,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             data[i] = (byte)EndF;
                                             DownloadCount++;
                                             TotalDownloadCount++;
+                                            if (!IsStart && DownloadCount > 10000)
+                                            { 
+                                                IsStart = true;
+                                                WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
+                                            }
                                         }
                                         else
                                         {
@@ -461,12 +467,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <returns></returns>
             internal int Download_HLS(ref Downloads downloads, ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process, string ExtendedName, bool Is_ENDLIST = false)
             {
+
+                bool IsStart = false;
                 try
                 {
+                    
                     long SpeedCalibration_Size = 0;
                     int len = 0;
                     int NotUpdateCount = 0;
-                    WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
+                    
                     int count = 1;
                     //Path="D:"+Path.Substring(1, Path.Length-1);
                     Path = Tool.FileOperation.CreateAll(Path);
@@ -490,7 +499,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         List<string> HLS_strings = new List<string>();
                         while (true)
                         {
-                             D_start:
+                        D_start:
+                            if (!IsStart && len > 10)
+                            {
+                                IsStart = true;
+                                WebHook.SendHook(WebHook.HookType.StartRec, roomInfo.uid);
+                            }
                             WaitingTime = 1000;
                             if (IsCancel)
                             {
