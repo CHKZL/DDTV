@@ -10,7 +10,6 @@ on:
       - '.github/workflows/Docker_Release.yml'
 
 env:
-  DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
   DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 jobs:
