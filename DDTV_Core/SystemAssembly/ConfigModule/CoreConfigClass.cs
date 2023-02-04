@@ -399,6 +399,16 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：true
             /// </summary>
             RealTimeTitleFileName,
+            /// <summary>
+            /// 时候使用云屏蔽列表(同步于B站直播间)
+            /// 组：Play   默认值：true
+            /// </summary>
+            DoesShieldTakeEffect,
+            /// <summary>
+            /// 弹幕发送窗口的默认状态
+            /// 组：Play   默认值：False
+            /// </summary>
+            BarrageSendingDefaultStatus,
         }
     }
 }

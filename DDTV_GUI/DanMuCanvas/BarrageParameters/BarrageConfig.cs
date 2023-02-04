@@ -49,24 +49,27 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
         /// 在Window界面上显示弹幕信息,速度和位置随机产生
         /// </summary>
         /// <param name="contentlist"></param>
-        public void Barrage(MessageInformation contentlist,int Height,bool IsSubtitle=false)
+        public void Barrage(MessageInformation contentlist,int Index,bool IsSubtitle=false)
         {
             Random random = new Random();
             //当前读取弹幕的位置
             //获取高度位置(置顶、三分之一、三分之二)
-            int Max = (int)(Height - GUIConfig.DanMuFontSize);
-            double inittop = new Random().Next(0, Max);// GetHeight(locations[i]);
+            //int Max = (int)(Height - GUIConfig.DanMuFontSize);
+            //double inittop = new Random().Next(0, Max);// GetHeight(locations[i]);
                                                        //获取速度随机数
                                                        //double randomspeed = random.NextDouble();
                                                        //设置完成动画的时间
                                                        //实例化TextBlock和设置基本属性,并添加到Canvas中
 
-            inittop = height;
-            height += GUIConfig.DanMuFontSize;
-            if(height>Max)
-            {
-                height = 0;
-            }
+            //inittop = height;
+
+            //height += GUIConfig.DanMuFontSize;
+            //if(height>Max)
+            //{
+            //    height = 0;
+            //}
+
+            height = Index * GUIConfig.DanMuFontSize;
             TextBlock textblock = new TextBlock();
             
             //加上昵称显示
@@ -97,7 +100,7 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
             }
             
             //这里设置了弹幕的高度
-            Canvas.SetTop(textblock, inittop);
+            Canvas.SetTop(textblock, height);
             canvas.Children.Add(textblock);
             //实例化动画
             DoubleAnimation animation = new DoubleAnimation();

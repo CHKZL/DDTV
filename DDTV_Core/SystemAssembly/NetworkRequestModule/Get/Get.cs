@@ -117,6 +117,12 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
 
             return result;
         }
+
+        /// <summary>
+        /// 仅用于DDTV_Update
+        /// </summary>
+        /// <param name="URL"></param>
+        /// <param name="File"></param>
         public static void GetFile_For_Update(string URL, string File)
         {
             var wc = new WebClient();
@@ -129,6 +135,13 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             wc.DownloadFile(URL, File);
 
         }
+
+        /// <summary>
+        /// 下载文件
+        /// </summary>
+        /// <param name="URL">下载的URL地址</param>
+        /// <param name="File">下载后文件的储存完整路径</param>
+        /// <returns></returns>
         public static FileInfo GetFile(string URL, string File)
         {
             var wc = new WebClient();
@@ -144,6 +157,13 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             wc.DownloadFile(URL, File);
             return new FileInfo(File);
         }
+
+        /// <summary>
+        /// 以byte[]形式返回Get请求信息
+        /// </summary>
+        /// <param name="URL"></param>
+        /// <param name="Uid"></param>
+        /// <returns></returns>
         public static byte[] GetFile_Bytes(string URL, long Uid = 0)
         {
             try
