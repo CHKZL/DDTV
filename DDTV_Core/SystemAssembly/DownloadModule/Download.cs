@@ -195,18 +195,20 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //转码
 
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误。");
+                    int index = 0;
                     foreach (var item in roomInfo.Files)
-                    {
+                    {                 
                         if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
                         {
+                            index++;
                             string After = string.Empty;
                             if(RealTimeTitleFileName)
                             {
-                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"+"_{R}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                             }
                             else
                             {
-                                 After = item.FilePath.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                 After = item.FilePath.Replace(".mp4", $"_{index}_fix.mp4").Replace(".flv", $"_{index}_fix.mp4");
                             }
                             var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                             {
@@ -441,6 +443,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //转码
                     if (IsTranscod)
                     {
+                       
                         foreach (var file in roomInfo.Files)
                         {
                             if (!file.IsTranscod && File.Exists(file.FilePath) && !FileList.Contains(file.FilePath))
@@ -452,19 +455,21 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         if (FileList.Count > 0)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。开始转码，待转码文件数：{FileList.Count}");
+                              int index = 0;
                             foreach (var item in FileList)
                             {
+                                index++;
                                 if (!string.IsNullOrEmpty(item) && File.Exists(item))
                                 {
 
                                     string After = string.Empty;
                                     if (RealTimeTitleFileName)
                                     {
-                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"+"_{R}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                                     }
                                     else
                                     {
-                                        After = item.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                        After = item.Replace(".mp4", $"_{index}_fix.mp4").Replace(".flv", $"_{index}_fix.mp4");
                                     }
                                     var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
                                     {
