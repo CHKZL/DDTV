@@ -25,6 +25,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Resources;
+using System.Data;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -59,6 +60,8 @@ namespace DDTV_GUI.DDTV_Window
             W1_8,
             W1_13,
         }
+
+        
         public MainWindow()
         {
 
@@ -150,8 +153,29 @@ namespace DDTV_GUI.DDTV_Window
             //        }
             //    }
             //});
+            
+        }
+
+        public void TEST_B()
+        {
+            List<BindingData.LiveList> _ = new();
+            foreach (var item in Rooms.RoomInfo)
+            {
+                BindingData.LiveList live = new(item.Value.uname,
+                    item.Value.live_status == 1 ? "直播中" : " 摸了",
+                    item.Value.IsRemind ? "     √" : "      ",
+                    item.Value.IsAutoRec ? "     √" : "      ",
+                    item.Value.room_id,
+                    item.Value.uid,
+                    item.Value.live_status,
+                    item.Value.IsRecDanmu ? "     √" : "      ",
+                    item.Value.title);
+                _.Add(live);
+            }
+            TESTDG.ItemsSource = _;
 
         }
+
 
         public static string GetPackageVersion()
         {
@@ -516,7 +540,7 @@ namespace DDTV_GUI.DDTV_Window
             this.MainWindowTab.SelectedIndex = Index;
             if (Index >= 0)
                 UpdateInterface.Main.ActivationInterface = Index;
-
+            //TEST_B();
 
         }
 

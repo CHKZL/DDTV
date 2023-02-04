@@ -93,6 +93,11 @@
                         <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
                     </hc:SideMenuItem.Icon>
                 </hc:SideMenuItem>-->
+                <!--<hc:SideMenuItem Header="新监控列表">
+                    <hc:SideMenuItem.Icon>
+                        <Image Source="/Resources/Img/UI/alert.png" Width="24" Height="24"/>
+                    </hc:SideMenuItem.Icon>
+                </hc:SideMenuItem>-->
             </hc:SideMenu>
         </Grid>
         <Grid x:Name="mainWindowGrid" Margin="120,-41,0,0">
@@ -589,6 +594,7 @@
                         <Button Content="查看系统日志" Margin="776,498,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>
+               
                 <TabItem Header="开发调试">
                     <Grid Name="Window_RoomCard_Parent">
                         <hc:ScrollViewer>
@@ -618,9 +624,26 @@
                     </Grid>
                 </TabItem>
 
+                <TabItem Header="新监控列表">
+                    <Grid Name="NewLiveList">
+                        <hc:ScrollViewer Margin="6,6,6,6" HorizontalScrollBarVisibility="Disabled" >
+                            <DataGrid Name="TESTDG" HeadersVisibility="All" RowHeaderWidth="60" AutoGenerateColumns="False" ItemsSource="{Binding DataList}" hc:DataGridAttach.ShowRowNumber="True">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Binding="{Binding Name}" Header="Name"/>
+                                    <DataGridTextColumn Binding="{Binding State}" Header="t2"/>
+                                    <DataGridTextColumn Binding="{Binding IsRemind}" Header="t3"/>
+                                    <DataGridTextColumn Binding="{Binding IsRec}" Header="t4"/>
+                                    <DataGridTextColumn Binding="{Binding IsDanmu}" Header="t4"/>
+                                    <DataGridTextColumn Binding="{Binding RoomId}" Header="t4"/>
+                                    <DataGridTextColumn Binding="{Binding Title}" Header="t4"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </hc:ScrollViewer>
+                    </Grid>
+                </TabItem>
             </TabControl>
         </Grid>
-        <hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
+        <!--<hc:Drawer Name="DrawerLeft" Dock="Left" ShowMode="Push">
             <Border Background="{DynamicResource RegionBrush}" Width="300" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource BorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
@@ -634,7 +657,7 @@
                     <Button Command="hc:ControlCommands.Close" Grid.Row="0" HorizontalAlignment="Right" Foreground="{DynamicResource PrimaryTextBrush}" Style="{StaticResource ButtonIcon}" hc:IconElement.Geometry="{StaticResource DeleteFillCircleGeometry}"/>
                 </Grid>
             </Border>
-        </hc:Drawer>
+        </hc:Drawer>-->
 
     </Grid>
 

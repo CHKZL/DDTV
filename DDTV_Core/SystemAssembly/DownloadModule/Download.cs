@@ -161,8 +161,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
-                                roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"));
-
+                                if (RealTimeTitleFileName)
+                                {
+                                    roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"));
+                                }
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
                                 if (IsRecDanmu && GUIConfig.IsXmlToAss)
                                 {
@@ -394,6 +396,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                                if (RealTimeTitleFileName)
+                                {
+                                    roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"));
+                                }
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
                                 if (IsRecDanmu && GUIConfig.IsXmlToAss)
                                 {
