@@ -5,4 +5,4 @@
 [submodule "WEBUI"]
 	path = WEBUI
 	url = https://github.com/hegugu-ng/DDTV_WEBUI
-	branch = WEBUI
+	branch = main
