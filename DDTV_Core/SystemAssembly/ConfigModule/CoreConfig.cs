@@ -9,6 +9,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class CoreConfig
     {
+        private static readonly bool InContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null;
+
         public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "True", CoreConfigClass.Group.Core));
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "True", CoreConfigClass.Group.Core));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
@@ -170,13 +172,18 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             string Value = DefaultValue;
 
+            if (Group == CoreConfigClass.Group.Default)
+            {
+                return Value;
+            }
+
             if (CoreConfigClass.config.datas.Count() > 0)
             {
                 foreach (var item in CoreConfigClass.config.datas)
                 {
                     if (item.Key == Key)
                     {
-                        if (item.Group == Group && Group != CoreConfigClass.Group.Default)
+                        if (item.Group == Group)
                         {
                             if (item.Enabled)
                             {
@@ -193,11 +200,21 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     }
                 }
             }
-            if (Group != CoreConfigClass.Group.Default)
+
+            if (InContainer)
             {
-                SetValue(Key, Value, Group);
-                Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，未找到该值，已经把默认值[{Value}]增加到配置文件", false, null, false);
+                string? Env = Environment.GetEnvironmentVariable($"{Key}");
+                if (Env != null)
+                {
+                    Value = Env;
+                    SetValue(Key, Value, Group);
+                    Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"从容器环境变量中获取配置键为[{Key}]的值成功，已经把值[{Value}]增加到配置文件");
+                    return Value;
+                }
             }
+
+            SetValue(Key, Value, Group);
+            Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"获取配置键为[{Key}]的值失败，未找到该值，已经把默认值[{Value}]增加到配置文件", false, null, false);
             return Value;
         }
         /// <summary>
