@@ -16,7 +16,7 @@ jobs:
       - name: Output Version
         id: version
         run: |
-          Version=$(curl -sX GET "https://api.github.com/repos/CHKZL/DDTV/releases/latest" | awk '/tag_name/{print $4}' FS='["]')
+          Version=$(curl -sX GET "https://api.github.com/repos/CHKZL/DDTV/releases/latest" --header 'authorization: Bearer ${{ secrets.GITHUB_TOKEN }}' --fail | awk '/tag_name/{print $4}' FS='["]')
           Version_major=$(echo "${Version%%.*}" | sed 's/[^0-9]//g')
           Version_minor=${Version#*.}
           echo "verall=${Version_major}.${Version_minor}" >> $GITHUB_OUTPUT
@@ -129,3 +129,33 @@ jobs:
       platforms:  ${{ needs.Prepare.outputs.PLATFORMS }}
       docker-dir: ${{ needs.Prepare.outputs.DOCKER_DIR }}
       build-args: REPO=ghcr.io/${{ needs.Prepare.outputs.owner }}/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
+
+# 更新DOCKER HUB文档
+  Update_Description:
+    runs-on: ubuntu-latest
+    needs: [Prepare]
+    env:
+      DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: ${{ needs.Prepare.outputs.DEPS_REPO }}
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ${{ needs.Prepare.outputs.DEPS_REPO }}
+
+      - name: ${{ needs.Prepare.outputs.CLI_REPO }}
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ${{ needs.Prepare.outputs.CLI_REPO }}
+
+      - name: ${{ needs.Prepare.outputs.BACK_END_REPO }}
+        uses: christian-korneck/update-container-description-action@v1
+        with:
+          destination_container_repo: ${{ needs.Prepare.outputs.BACK_END_REPO }}
+
+      - name: ${{ needs.Prepare.outputs.FRONT_END_REPO }}
+        uses: christian-korneck/update-container-description-action@v1
+        if: false
+        with:
+          destination_container_repo: ${{ needs.Prepare.outputs.FRONT_END_REPO }}
