@@ -2,3 +2,7 @@
 	path = Docker
 	url = https://github.com/moomiji/docker-ddtv
 	branch = docker
+[submodule "WEBUI"]
+	path = WEBUI
+	url = https://github.com/hegugu-ng/DDTV_WEBUI
+	branch = WEBUI
