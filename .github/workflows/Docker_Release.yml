@@ -2,13 +2,11 @@ name: Docker_Release
 
 on:
   workflow_dispatch:
-  watch:
-    types: [started]
+  release:
+    types: [released]
   push:
     branches: [master]
     paths:
-      - 'Docker/ddtv/**'
-      - 'Docker/.github/workflows/**'
       - '.github/workflows/Docker_Release.yml'
 
 jobs:
@@ -42,7 +40,7 @@ jobs:
     if: false
     needs: [Prepare]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.FRONT_END_REPO }}
       os_id:      alpine
@@ -56,7 +54,7 @@ jobs:
   Deps_alpine:
     needs: [Prepare]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.DEPS_REPO }}
       os_id:      alpine
@@ -69,7 +67,7 @@ jobs:
   CLI_alpine:
     needs: [Prepare, Deps_alpine]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.CLI_REPO }}
       os_id:      alpine
@@ -82,7 +80,7 @@ jobs:
   WEBServer_alpine:
     needs: [Prepare, Deps_alpine]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.BACK_END_REPO }}
       os_id:      alpine
@@ -96,7 +94,7 @@ jobs:
   Deps_debian:
     needs: [Prepare]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.DEPS_REPO }}
       os_id:      debian
@@ -109,7 +107,7 @@ jobs:
   CLI_debian:
     needs: [Prepare, Deps_debian]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.CLI_REPO }}
       os_id:      debian
@@ -122,7 +120,7 @@ jobs:
   WEBServer_debian:
     needs: [Prepare, Deps_debian]
     secrets: inherit
-    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@dev
+    uses: moomiji/docker-ddtv/.github/workflows/Docker_Build_Push.yml@docker
     with:
       repo:       ${{ needs.Prepare.outputs.BACK_END_REPO }}
       os_id:      debian
