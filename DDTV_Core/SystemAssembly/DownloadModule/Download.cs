@@ -161,6 +161,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.startIn = false;
                                 roomInfo.DanmuFile.TimeStopwatch.Stop();
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
+                                roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"));
+
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
                                 if (IsRecDanmu && GUIConfig.IsXmlToAss)
                                 {
@@ -694,7 +696,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】弹幕录制请求已发出");
                             roomInfo.DanmuFile = new();
-                            roomInfo.DanmuFile.FileName = Path + FileName;
+                            roomInfo.DanmuFile.FileName = Path + Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}");
                             Tool.DanMuKu.DanMuKuRec.Rec(uid);
                         }
                         else

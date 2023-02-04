@@ -33,6 +33,7 @@ using Point = System.Drawing.Point;
 using Downloader;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 using System.Windows.Media;
+using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -78,16 +79,25 @@ namespace DDTV_GUI.DDTV_Window
         private double BlackListeningOriginalSize_Height = 0;//200
         private bool IsBlackHear = false;//是否为黑听模式
 
-        private ShowDanMuWindow showDanMuWindow = null;
+        private ShowDanMuWindow showDanMuWindow = null;//当前播放窗口已打开的配套弹幕窗口
+
+        DanMu.ShieldInfo Shield = new();//屏蔽信息
+        public DanMuOrbitInfo[] danMuOrbitInfos = new DanMuOrbitInfo[100];//弹幕发射轨道
 
         /// <summary>
         /// 屏幕渲染弹幕对象
         /// </summary>
         private BarrageConfig barrageConfig;
 
-         private class SubtitlInfo
+        private class SubtitlInfo
         {
             public string Text { get; set; }
+        }
+
+        public class DanMuOrbitInfo
+        {
+            public string Text { get; set; }
+            public int Time { get; set; } = 0;
         }
 
         private DownloadService downloader = new DownloadService();
@@ -144,7 +154,14 @@ namespace DDTV_GUI.DDTV_Window
                 {
                     UpdateWindowInfo();
                 });
-
+                for (int i = 0; i < danMuOrbitInfos.Length; i++)
+                {
+                    danMuOrbitInfos[i] = new DanMuOrbitInfo();
+                }
+                Task.Run(() =>
+                {
+                    Shield = DanMu.GetShieldList();
+                });
                 
                 Task.Run(() =>
                 {
@@ -162,9 +179,19 @@ namespace DDTV_GUI.DDTV_Window
                     canvas.Opacity = GUIConfig.DanMuFontOpacity;
                 });
             });
+            if (GUIConfig.BarrageSendingDefaultStatus)
+            {
+                DanMuSendGrid.Visibility = Visibility.Visible;
+                DanMuGridSwitch.Opacity = 1;
+            }
+            else
+            {
+                DanMuSendGrid.Visibility = Visibility.Collapsed;
+                DanMuGridSwitch.Opacity = 0.4;
+            }
             Loaded += new RoutedEventHandler(Topping);
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
-          
+
         }
         void Topping(object sender, RoutedEventArgs e)
         {
@@ -1190,7 +1217,7 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
 
-        private void AddDanmu(string DanmuText, bool IsSubtitle)
+        private void AddDanmu(string DanmuText, bool IsSubtitle,long uid = 0)
         {
             if (IsSubtitle)
             {
@@ -1208,14 +1235,58 @@ namespace DDTV_GUI.DDTV_Window
             else
             {
                 Task.Run(() =>
-            {
-                //非UI线程调用UI组件
-                System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {
-                    //显示弹幕
-                    barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, (int)this.Height, IsSubtitle);
+                    if (GUIConfig.DoesShieldTakeEffect)
+                    {
+                        if (uid != 0)
+                        {
+                            foreach (var item in Shield.uids)
+                            {
+                                if (uid == item)
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                        //db.RndtSc.Where(p => p.SC == RV.ID).Any()
+                        foreach (var item in Shield.keyword_list)
+                        {
+                            if (DanmuText.Contains(item))
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    int Index = 0;
+                    int Mix = int.MaxValue;
+                    int MaxCount = LastHeight / GUIConfig.DanMuFontSize;
+                    for (int i = 0; i < danMuOrbitInfos.Length; i++)
+                    {
+                        if (danMuOrbitInfos[i].Time < Mix)
+                        {
+                            Index = i;
+                            Mix = danMuOrbitInfos[i].Time;
+                        }
+                        int T = (int)(DDTV_Core.Tool.TimeModule.Time.Operate.GetRunMilliseconds() / 1000);
+                        if (danMuOrbitInfos[i].Time + 3 < T)
+                        {
+                            Index = i;
+                            break;
+                        }
+                        else if (i >= MaxCount)
+                        {
+                            break;
+                        }
+                    }
+                    danMuOrbitInfos[Index].Time = (int)(DDTV_Core.Tool.TimeModule.Time.Operate.GetRunMilliseconds()/1000);
+                    //非UI线程调用UI组件
+                    System.Windows.Application.Current.Dispatcher.Invoke(async () =>
+                    {
+                        //显示弹幕
+                        barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, Index, IsSubtitle);
+                    });
+
                 });
-            });
             }
 
 
@@ -1703,15 +1774,27 @@ namespace DDTV_GUI.DDTV_Window
 
         private void DanMuGridSwitch_Click(object sender, RoutedEventArgs e)
         {
-            if(DanMuSendGrid.Visibility== Visibility.Visible)
+            if (DanMuSendGrid.Visibility == Visibility.Visible)
             {
-                DanMuSendGrid.Visibility= Visibility.Collapsed;
+                DanMuSendGrid.Visibility = Visibility.Collapsed;
                 DanMuGridSwitch.Opacity = 0.4;
+
+                GUIConfig.BarrageSendingDefaultStatus = false;
+                CoreConfig.SetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, false.ToString(), CoreConfigClass.Group.Play);
+                Growl.Success("关闭" + "弹幕发送窗口的默认状态");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "关闭" + "弹幕发送窗口的默认状态", false, null, false);
+                CoreConfigFile.WriteConfigFile(true);
             }
             else
             {
                 DanMuSendGrid.Visibility = Visibility.Visible;
                 DanMuGridSwitch.Opacity = 1;
+
+                GUIConfig.BarrageSendingDefaultStatus = true;
+                CoreConfig.SetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, true.ToString(), CoreConfigClass.Group.Play);
+                Growl.Success("打开" + "弹幕发送窗口的默认状态");
+                Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "打开" + "弹幕发送窗口的默认状态", false, null, false);
+                CoreConfigFile.WriteConfigFile(true);
             }
         }
 

@@ -160,6 +160,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _ShowSCSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowSCSwitch;
             var _ShowGuardSwitch = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.ShowGuardSwitch;
             var _RealTimeTitleFileName = DDTV_Core.SystemAssembly.DownloadModule.Download.RealTimeTitleFileName;
+            var _DoesShieldTakeEffect = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DoesShieldTakeEffect;
+            var _BarrageSendingDefaultStatus = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.BarrageSendingDefaultStatus;
         }
         /// <summary>
         /// 获取配置
