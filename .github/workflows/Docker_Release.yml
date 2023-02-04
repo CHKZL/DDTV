@@ -10,6 +10,7 @@ on:
       - '.github/workflows/Docker_Release.yml'
 
 env:
+  DOCKER_USER: ddtv
   DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 jobs:
