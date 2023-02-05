@@ -542,7 +542,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 {
                                     error++;
                                     Thread.Sleep(100);
-                                    hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
+                                    hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false, error % 2 == 1 ? true : false);
                                     if (!hLSHostClass.LiveStatus)
                                     {
                                         DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
