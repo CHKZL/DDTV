@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
+using static DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo;
 
 namespace DDTV_Core.SystemAssembly.DownloadModule
 {
@@ -198,7 +199,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         string _F = Path + $"/{Tool.FileOperation.ReplaceKeyword(downloads.Uid, Download.DownloadFolderName)}/" + FileName + "_" + count + "." + format;
                         downloads.FileName = _F;
                         downloads.FlvFileList.Add(_F);
-                        roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = _F });
+                        RoomInfoClass.RoomInfo.DownloadedFiles downloadedFiles = new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = _F };
+                        roomInfo.Files.Add(downloadedFiles);
                         using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
                         {
                             using (Stream stream = resp.GetResponseStream())
@@ -490,8 +492,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
 
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
-                    RoomInfoClass.RoomInfo.DownloadedFiles FF = new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = downloads.FileName };
-                    roomInfo.Files.Add(FF);
+                    DownloadedFiles downloadedFiles = new DownloadedFiles() { FilePath = downloads.FileName };
+                    roomInfo.Files.Add(downloadedFiles);
                     int WaitingTime = 1000;
                     try
                     {
@@ -512,7 +514,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Status = DownloadStatus.Cancel;
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
-                                DisposeFileStream(fs);
+                                DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
                                 Download.VideoDownloadCompleteTaskd_HLS(Uid, downloads, true);
                                 return 0;
                             }
@@ -533,7 +535,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 if (error > 10)
                                 {
                                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS目录时重试10次超时，降级为FLV模式");
-                                    DisposeFileStream(fs);
+                                    DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
                                     return -1;
                                 }
                                 if (string.IsNullOrEmpty(index))
@@ -543,15 +545,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads);
                                     if (!hLSHostClass.LiveStatus)
                                     {
-                                        if (len < 2)
-                                        {
-                                            roomInfo.Files.Remove(FF);
-                                            DisposeFileStream(fs, downloads.FileName);
-                                        }
-                                        else
-                                        {
-                                            DisposeFileStream(fs);
-                                        }
+                                        DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
                                         return 0;
                                     }
                                     if (!hLSHostClass.IsEffective)
@@ -664,15 +658,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             else if (M3[i].Contains("#EXT-X-ENDLIST"))
                                             {
                                                 Thread.Sleep(3000);
-                                                if(len<3)
-                                                {
-                                                    roomInfo.Files.Remove(FF);
-                                                     DisposeFileStream(fs, downloads.FileName);
-                                                }
-                                                else
-                                                {
-                                                     DisposeFileStream(fs);
-                                                }
+                                                DisposeFileStream(fs, downloads.FileName, downloadedFiles, roomInfo.Files, len);
                                                 return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true);
                                             }
                                         }
@@ -756,7 +742,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     catch (Exception e)
                     {
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】下载循环中出现意外错误！错误详情已写txt文本中", true, e, true);
-                        DisposeFileStream(fs);
+                        DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
                         return 1;
                     }
                 }
@@ -767,14 +753,15 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 }
             }
 
-            public static void DisposeFileStream(FileStream fs, string FileName = "")
+            public static void DisposeFileStream(FileStream fs, string FileName,DownloadedFiles downloaded,List<DownloadedFiles> downloadedFiles,int len = int.MaxValue)
             {
                 if (fs.Length < 2048)
                 {
                     fs.Close();
                     fs.Dispose();
-                    if (!string.IsNullOrEmpty(FileName))
+                    if (len<3)
                     {
+                        downloadedFiles.Remove(downloaded);
                         Tool.FileOperation.Del(FileName);
                     }
                 }
