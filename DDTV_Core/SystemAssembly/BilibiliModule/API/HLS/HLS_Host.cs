@@ -12,7 +12,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
 {
     public class HLS_Host
     {
-        public static HLSHostClass Get_HLS_Host(ref RoomInfoClass.RoomInfo roomInfo, ref DownloadClass.Downloads downloads, bool IsNewTask = false)
+        /// <summary>
+        /// 获取HLS的HOST信息
+        /// </summary>
+        /// <param name="roomInfo"></param>
+        /// <param name="downloads"></param>
+        /// <param name="IsNewTask"></param>
+        /// <param name="IsAlternative">是否查找备用fmp4的host信息(如果存在的话)</param>
+        /// <returns></returns>
+        public static HLSHostClass Get_HLS_Host(ref RoomInfoClass.RoomInfo roomInfo, ref DownloadClass.Downloads downloads, bool IsNewTask = false,bool IsAlternative =false)
         {
             HLSHostClass hLSHostClass = new HLSHostClass();
             string WebText = String.Empty;
@@ -58,8 +66,17 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                                     if (Format.FormatName.ToLower() == "fmp4")
                                     {
                                         hLSHostClass.IsEffective = true;
-                                        hLSHostClass.host = Format.Codecs[0].UrlInfos[0].Host;
-                                        hLSHostClass.extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
+                                        if (Format.Codecs[0].UrlInfos.Length>1 && IsAlternative)
+                                        {
+                                            hLSHostClass.host = Format.Codecs[0].UrlInfos[1].Host;
+                                            hLSHostClass.extra = Format.Codecs[0].UrlInfos[1].Extra.Replace("\u0026", "&");
+                                        }
+                                        else
+                                        {
+                                            hLSHostClass.host = Format.Codecs[0].UrlInfos[0].Host;
+                                            hLSHostClass.extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
+                                        }
+
                                         hLSHostClass.base_url = Format.Codecs[0].BaseUrl;
                                         hLSHostClass.base_file_name = hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1];
                                         hLSHostClass.base_url = hLSHostClass.base_url.Replace(hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1], "");
