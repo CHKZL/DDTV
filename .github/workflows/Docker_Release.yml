@@ -14,10 +14,6 @@ on:
     paths:
       - '.github/workflows/Docker_Release.yml'
 
-env:
-  DOCKER_USER: ddtv
-  DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
-
 jobs:
   Prepare:
     runs-on: ubuntu-latest
@@ -55,6 +51,9 @@ jobs:
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       platforms:  linux/amd64, linux/arm64, linux/arm/v7, linux/386, linux/arm/v6, linux/ppc64le, linux/s390x
       build-args: REPO=nginx:stable-alpine
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 # alpine
   Deps_alpine:
@@ -67,6 +66,9 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=mcr.microsoft.com/dotnet/aspnet:${{ needs.Prepare.outputs.DOTNET_VERSION }}-alpine
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   CLI_alpine:
     needs: [Prepare, Deps_alpine]
@@ -78,6 +80,9 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=ghcr.io/${{ needs.Prepare.outputs.owner }}/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   WEBServer_alpine:
     needs: [Prepare, Deps_alpine]
@@ -89,6 +94,9 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=ghcr.io/${{ needs.Prepare.outputs.owner }}/${{ needs.Prepare.outputs.DEPS_REPO }}:alpine
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 # debian
   Deps_debian:
@@ -101,6 +109,9 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=mcr.microsoft.com/dotnet/aspnet:${{ needs.Prepare.outputs.DOTNET_VERSION }}
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   CLI_debian:
     needs: [Prepare, Deps_debian]
@@ -112,6 +123,9 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=ghcr.io/${{ needs.Prepare.outputs.owner }}/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
   WEBServer_debian:
     needs: [Prepare, Deps_debian]
@@ -123,11 +137,17 @@ jobs:
       verall:     ${{ needs.Prepare.outputs.verall }}
       vertwo:     ${{ needs.Prepare.outputs.vertwo }}
       build-args: REPO=ghcr.io/${{ needs.Prepare.outputs.owner }}/${{ needs.Prepare.outputs.DEPS_REPO }}:debian
+    secrets:
+      DOCKERHUB_USERNAME: ddtv
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
 # 更新DOCKER HUB文档
   Update_Description:
     runs-on: ubuntu-latest
     needs: [Prepare]
+    env:
+      DOCKER_USER: ddtv
+      DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - uses: actions/checkout@v3
       - name: ${{ needs.Prepare.outputs.DEPS_REPO }}
