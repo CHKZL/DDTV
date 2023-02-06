@@ -83,7 +83,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private ShowDanMuWindow showDanMuWindow = null;//当前播放窗口已打开的配套弹幕窗口
 
-        DanMu.UserLiveInfo userLiveInfo = new();//屏蔽信息
+        private UserLiveInfo userLiveInfo = new();//屏蔽信息
         public DanMuOrbitInfo[] danMuOrbitInfos = new DanMuOrbitInfo[100];//弹幕发射轨道
 
         /// <summary>
