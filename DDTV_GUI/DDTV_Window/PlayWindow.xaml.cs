@@ -34,6 +34,7 @@ using Downloader;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 using System.Windows.Media;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
+using static DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -74,6 +75,7 @@ namespace DDTV_GUI.DDTV_Window
         private List<RunningBlock> DanmuBlock = new();
         private DispatcherTimer timer;
         private bool IsTopping = false;
+        private int WordLimit = 20;
 
         private double BlackListeningOriginalSize_Width = 0;//350
         private double BlackListeningOriginalSize_Height = 0;//200
@@ -81,7 +83,7 @@ namespace DDTV_GUI.DDTV_Window
 
         private ShowDanMuWindow showDanMuWindow = null;//当前播放窗口已打开的配套弹幕窗口
 
-        DanMu.ShieldInfo Shield = new();//屏蔽信息
+        DanMu.UserLiveInfo userLiveInfo = new();//屏蔽信息
         public DanMuOrbitInfo[] danMuOrbitInfos = new DanMuOrbitInfo[100];//弹幕发射轨道
 
         /// <summary>
@@ -132,7 +134,7 @@ namespace DDTV_GUI.DDTV_Window
 
            
             downloader = new DownloadService(downloadOpt);
-
+            roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
             Task.Run(() =>
             {
                 VideoView.Dispatcher.Invoke(() =>
@@ -160,7 +162,16 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 Task.Run(() =>
                 {
-                    Shield = DanMu.GetShieldList();
+                    userLiveInfo = DanMu.GetShieldList(roomId);
+                    if (userLiveInfo.data.user_level.level >= 20)
+                    {
+                        WordLimit = 30;
+                    }
+                    else
+                    {
+                        WordLimit = 20;
+                    }
+                    
                 });
                 
                 Task.Run(() =>
@@ -314,7 +325,7 @@ namespace DDTV_GUI.DDTV_Window
                     }
                     string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line, true);
                     windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname) + "-" + Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
-                    roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
+                    
                     this.Dispatcher.Invoke(() =>
                         this.Title = windowInfo.title
                     );
@@ -1240,16 +1251,15 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         if (uid != 0)
                         {
-                            foreach (var item in Shield.uids)
+                            foreach (var item in userLiveInfo.data.shield_info.shield_user_list)
                             {
-                                if (uid == item)
+                                if (uid == item.uid)
                                 {
                                     return;
                                 }
                             }
                         }
-                        //db.RndtSc.Where(p => p.SC == RV.ID).Any()
-                        foreach (var item in Shield.keyword_list)
+                        foreach (var item in userLiveInfo.data.shield_info.keyword_list)
                         {
                             if (DanmuText.Contains(item))
                             {
@@ -1803,9 +1813,9 @@ namespace DDTV_GUI.DDTV_Window
             if (e.Key == Key.Enter)
             {
                 string Massage = DanMuInput.Text;
-                if (Massage.Length > 30)
+                if (Massage.Length > WordLimit)
                 {
-                    Growl.Warning("发送的弹幕长度尝过限制(30个字符)");
+                    Growl.Warning($"发送的弹幕长度尝过限制(您当前的直播等级只能发送{WordLimit}个字内的弹幕信息)");
                     return;
                 }
                 else if (Massage.Length < 1)
