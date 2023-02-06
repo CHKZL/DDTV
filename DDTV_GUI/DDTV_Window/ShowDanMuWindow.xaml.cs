@@ -29,6 +29,9 @@ namespace DDTV_GUI.DDTV_Window
     {
         private List<DanmuInfo> DanMuList = new List<DanmuInfo>();
         private RoomInfoClass.RoomInfo _roominfo = new RoomInfoClass.RoomInfo();
+        private DanMu.UserLiveInfo userLiveInfo = new();//屏蔽信息
+        private int WordLimit = 20;
+
         public ShowDanMuWindow(long UID)
         {
             InitializeComponent();
@@ -39,10 +42,20 @@ namespace DDTV_GUI.DDTV_Window
 
             if (Rooms.RoomInfo.TryGetValue(UID, out var roomInfo))
             {
+
                 _roominfo.room_id = roomInfo.room_id;
                 _roominfo.uid = roomInfo.uid;
                 _roominfo.uname = roomInfo.uname;
                 DanMuLog.ItemsSource = DanMuList;
+                userLiveInfo = DanMu.GetShieldList(_roominfo.room_id);
+                if (userLiveInfo.data.user_level.level >= 20)
+                {
+                    WordLimit = 30;
+                }
+                else
+                {
+                    WordLimit = 20;
+                }
                 Add($"尝试和弹幕服务器连接(RoomID:{roomInfo.room_id})");
                 Rec(_roominfo.uid != 0 ? _roominfo.uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
             }
@@ -189,9 +202,9 @@ namespace DDTV_GUI.DDTV_Window
             if (e.Key == Key.Enter)
             {
                 string Massage = DanMuInput.Text;
-                if (Massage.Length > 20)
+                if (Massage.Length > WordLimit)
                 {
-                    Growl.Warning("发送的弹幕长度尝过限制(30个字符)");
+                    Growl.Warning($"发送的弹幕长度尝过限制(您当前的直播等级只能发送{WordLimit}个字内的弹幕信息)");
                     return;
                 }
                 else if (Massage.Length < 1)

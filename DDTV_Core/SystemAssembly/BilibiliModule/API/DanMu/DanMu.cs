@@ -39,27 +39,29 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             });
         }
 
+        
+
         /// <summary>
         /// 获取屏蔽词和屏蔽用户uid
         /// </summary>
         /// <returns></returns>
-        public static ShieldInfo GetShieldList()
+        public static UserLiveInfo GetShieldList(int roomid)
         {
-            ShieldInfo shieldInfo = new ShieldInfo();
-            string WebStr = NetworkRequestModule.Get.Get.GetRequest($"{CoreConfig.ReplaceAPI}/xlive/web-room/v1/index/getInfoByUser?room_id=6374209&from=0&not_mock_enter_effect=0");
-            ShielWebInfo? shielWebInfo = JsonConvert.DeserializeObject<ShielWebInfo>(WebStr);
-            if(shielWebInfo!=null)
-            {
-                foreach (var item in shielWebInfo.data.shield_info.shield_user_list)
-                {
-                    shieldInfo.uids.Add(item.uid);
-                }
-                foreach (var item in shielWebInfo.data.shield_info.keyword_list)
-                {
-                    shieldInfo.keyword_list.Add(item);
-                }
-            }
-            return shieldInfo;
+            string WebStr = NetworkRequestModule.Get.Get.GetRequest($"{CoreConfig.ReplaceAPI}/xlive/web-room/v1/index/getInfoByUser?room_id={roomid}&from=0&not_mock_enter_effect=0");
+            UserLiveInfo? shielWebInfo = JsonConvert.DeserializeObject<UserLiveInfo>(WebStr);
+            return shielWebInfo;
+            //if(shielWebInfo!=null)
+            //{
+            //    foreach (var item in shielWebInfo.data.shield_info.shield_user_list)
+            //    {
+            //        shieldInfo.uids.Add(item.uid);
+            //    }
+            //    foreach (var item in shielWebInfo.data.shield_info.keyword_list)
+            //    {
+            //        shieldInfo.keyword_list.Add(item);
+            //    }
+            //}
+            //return shieldInfo;
         }
         /// <summary>
         /// 获取直播间弹幕连接(wss长连接)
@@ -135,7 +137,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             /// </summary>
             public List<long> uids { get; set; } = new List<long>();
         }
-        public class ShielWebInfo
+        public class UserLiveInfo
         {
             /// <summary>
             /// 
