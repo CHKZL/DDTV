@@ -2032,7 +2032,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             bool Is = (bool)DoesShieldTakeEffectSwitch.IsChecked ? true : false;
             GUIConfig.DoesShieldTakeEffect = Is;
-            CoreConfig.SetValue(CoreConfigClass.Key.DoesShieldTakeEffect, Is.ToString(), CoreConfigClass.Group.GUI);
+            CoreConfig.SetValue(CoreConfigClass.Key.DoesShieldTakeEffect, Is.ToString(), CoreConfigClass.Group.Play);
             Growl.Success((Is ? "打开" : "关闭") + "云屏蔽和进房提示");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "云屏蔽和进房提示", false, null, false);
             CoreConfigFile.WriteConfigFile(true);

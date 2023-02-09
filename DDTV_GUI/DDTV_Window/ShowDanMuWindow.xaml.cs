@@ -47,7 +47,11 @@ namespace DDTV_GUI.DDTV_Window
                 _roominfo.uid = roomInfo.uid;
                 _roominfo.uname = roomInfo.uname;
                 DanMuLog.ItemsSource = DanMuList;
-                userLiveInfo = DanMu.GetShieldList(_roominfo.room_id);
+                if (GUIConfig.DoesShieldTakeEffect)
+                {
+                    userLiveInfo = DanMu.GetShieldList(_roominfo.room_id);
+                }
+
                 if (userLiveInfo.data.user_level.level >= 20)
                 {
                     WordLimit = 30;
