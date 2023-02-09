@@ -162,16 +162,18 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 Task.Run(() =>
                 {
-                    userLiveInfo = DanMu.GetShieldList(roomId);
-                    if (userLiveInfo.data.user_level.level >= 20)
+                    if (GUIConfig.DoesShieldTakeEffect)
                     {
-                        WordLimit = 30;
+                        userLiveInfo = DanMu.GetShieldList(roomId);
+                        if (userLiveInfo.data.user_level.level >= 20)
+                        {
+                            WordLimit = 30;
+                        }
+                        else
+                        {
+                            WordLimit = 20;
+                        }
                     }
-                    else
-                    {
-                        WordLimit = 20;
-                    }
-                    
                 });
                 
                 Task.Run(() =>
