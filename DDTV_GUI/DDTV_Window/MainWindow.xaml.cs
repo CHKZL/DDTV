@@ -510,6 +510,7 @@ namespace DDTV_GUI.DDTV_Window
             HLSToggle.IsChecked = DDTV_Core.SystemAssembly.DownloadModule.Download.IsHls;
 
             WaitHLSTime.Value = DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime;
+            DoesShieldTakeEffectSwitch.IsChecked = GUIConfig.DoesShieldTakeEffect;
         }
 
         private void Download_DownloadCompleted(object? sender, EventArgs e)
@@ -2025,6 +2026,16 @@ namespace DDTV_GUI.DDTV_Window
                 SetDanmakuFactoryParameter.Visibility = Visibility.Collapsed;
                 SetDanmakuFactoryParameterSaveButton.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void DoesShieldTakeEffectSwitch_Click(object sender, RoutedEventArgs e)
+        {
+            bool Is = (bool)DoesShieldTakeEffectSwitch.IsChecked ? true : false;
+            GUIConfig.DoesShieldTakeEffect = Is;
+            CoreConfig.SetValue(CoreConfigClass.Key.DoesShieldTakeEffect, Is.ToString(), CoreConfigClass.Group.GUI);
+            Growl.Success((Is ? "打开" : "关闭") + "云屏蔽和进房提示");
+            Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "云屏蔽和进房提示", false, null, false);
+            CoreConfigFile.WriteConfigFile(true);
         }
     }
 }

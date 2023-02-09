@@ -400,7 +400,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             RealTimeTitleFileName,
             /// <summary>
-            /// 时候使用云屏蔽列表(同步于B站直播间)
+            /// 是否使用云屏蔽列表(同步于B站直播间)
             /// 组：Play   默认值：true
             /// </summary>
             DoesShieldTakeEffect,

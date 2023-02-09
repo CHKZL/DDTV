@@ -485,6 +485,14 @@
                                         </ToggleButton>-->
                                     </Grid>
                                     <Grid Width="853">
+                                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="开启[云屏蔽词]功能和[进房提示]功能" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                        <ToggleButton x:Name="DoesShieldTakeEffectSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="283,8,0,2" HorizontalAlignment="Left" Width="36" Click="DoesShieldTakeEffectSwitch_Click">
+                                            <hc:AdornerElement.Instance>
+                                                <hc:Poptip Content="打开后会显示弹幕同步B站直播间内的屏蔽词和屏蔽UID列表进行屏蔽，并且进房后主播会看见XXX进入直播间的提示(因为这是同一个接口无法分离，只能一起开关)" PlacementType="BottomLeft"/>
+                                            </hc:AdornerElement.Instance>
+                                        </ToggleButton>
+                                    </Grid>
+                                    <Grid Width="853">
                                         <TextBlock HorizontalAlignment="Left" Margin="5" Text="弹幕录制总开关" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
                                         <ToggleButton x:Name="DanmuToggle" Style="{StaticResource ToggleButtonSwitch}" Margin="128,18,0,19" Click="DanmuToggle_Click" HorizontalAlignment="Left" Width="36">
                                             <hc:AdornerElement.Instance>
@@ -545,9 +553,7 @@
                                     <Grid Width="853">
                                         <TextBlock></TextBlock>
                                     </Grid>
-                                    <Grid Width="853">
-                                        <TextBlock></TextBlock>
-                                    </Grid>
+
                                     <Grid Width="853">
                                         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <ToggleButton x:Name="DDcenterSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="246,10,0,0" HorizontalAlignment="Left" Width="36" Click="DDcenterSwitch_Click">
@@ -594,7 +600,7 @@
                         <Button Content="查看系统日志" Margin="776,498,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_Click_1" />
                     </Grid>
                 </TabItem>
-               
+
                 <TabItem Header="开发调试">
                     <Grid Name="Window_RoomCard_Parent">
                         <hc:ScrollViewer>
