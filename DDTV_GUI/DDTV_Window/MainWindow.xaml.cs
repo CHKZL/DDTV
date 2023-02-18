@@ -2023,8 +2023,21 @@ namespace DDTV_GUI.DDTV_Window
             CoreConfigFile.WriteConfigFile(true);
         }
 
+        /// <summary>
+        /// 触发监控列表的搜索框
+        /// </summary>
+        private void SearchLiveList()
+        {
+            SearchDialogDispose += MainWindow_SearchDialogDispose;
+            SearchListDialog SearchListDialog;
 
-        
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                SearchListDialog = new SearchListDialog(SearchDialogDispose);
+                SearchDialog = Dialog.Show(SearchListDialog);
+            }));
+        }
+
         /// <summary>
         /// 监控列表搜索事件
         /// </summary>
@@ -2034,15 +2047,7 @@ namespace DDTV_GUI.DDTV_Window
         {
             if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.F)
             {
-                SearchDialogDispose += MainWindow_SearchDialogDispose;
-                SearchListDialog SearchListDialog;
-          
-                this.Dispatcher.Invoke(new Action(() =>
-                {
-                    SearchListDialog = new SearchListDialog(SearchDialogDispose);
-                    SearchDialog = Dialog.Show(SearchListDialog);
-                }));
-
+                SearchLiveList();
             }
         }
         public static int SearchIndex = 0;//返回的索引结果
@@ -2067,6 +2072,15 @@ namespace DDTV_GUI.DDTV_Window
                }));
 
             });
+        }
+        /// <summary>
+        /// 右键菜单_搜索列表中的房间_事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LiveList_MenuItem_Search_Click(object sender, RoutedEventArgs e)
+        {
+            SearchLiveList();
         }
     }
 }
