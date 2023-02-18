@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
 
@@ -35,6 +36,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         public static bool IsDoNotSleepState = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DoNotSleepWhileDownloading, "True", CoreConfigClass.Group.Download));
         public static bool Shell = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.Shell, "False", CoreConfigClass.Group.Download));
         public static bool RealTimeTitleFileName=bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.RealTimeTitleFileName, "True", CoreConfigClass.Group.Download));
+        public static bool IsSaveCover=bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsSaveCover, "False", CoreConfigClass.Group.Download));
 
         /// <summary>
         /// 下载完成事件
@@ -148,6 +150,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         DownloadPath = DownloadPath + "/";
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.mp4");
 
+                    SaveCover(uid);
                     //弹幕录制结束处理
                     if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
                     {
@@ -382,7 +385,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv");
-
+                    SaveCover(uid);
                     //弹幕录制结束处理
                     if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
                     {
@@ -902,6 +905,29 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                 Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Error, $"新建下载任务发生意料外的错误！", true, e);
             }
         }
+
+        /// <summary>
+        /// 保存封面
+        /// </summary>
+        /// <param name="Url">封面地址</param>
+        /// <param name="Path">保存地址</param>
+        internal static void SaveCover(long uid)
+        {
+            if (IsSaveCover)
+            {
+                Task.Run(() =>
+                {
+                    if (DataCacheModule.DataCache.GetCache(CacheType.cover_from_user, uid.ToString(), out string cover))
+                    {
+                        if (!string.IsNullOrEmpty(cover))
+                        {
+                            NetworkRequestModule.Get.Get.GetFile(cover, Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_cover.png"));
+                        }
+                    }
+                });
+            }
+        }
+
         /// <summary>
         /// 判断文件是否可以下载
         /// </summary>
