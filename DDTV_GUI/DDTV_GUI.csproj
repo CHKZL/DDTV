@@ -48,6 +48,7 @@
     <None Remove="Resources\Img\UI\reload.png" />
     <None Remove="Resources\Img\UI\Remind.png" />
     <None Remove="Resources\Img\UI\RightButton.png" />
+    <None Remove="Resources\Img\UI\Search.png" />
     <None Remove="Resources\Img\UI\ServerDownload.png" />
     <None Remove="Resources\Img\UI\share.png" />
     <None Remove="Resources\Img\UI\shrink.png" />
@@ -179,6 +180,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\RightButton.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\Search.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\ServerDownload.png">

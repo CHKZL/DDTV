@@ -209,10 +209,16 @@
                                             <Image Source="/Resources/Img/UI/Peep.png" Width="18" Height="18"/>
                                         </MenuItem.Icon>
                                     </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="在列表中搜索" Click="LiveList_MenuItem_Search_Click">
+                                        <MenuItem.Icon>
+                                            <Image Source="/Resources/Img/UI/Search.png" Width="18" Height="18"/>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                             <hc:AdornerElement.Instance>
-                                <hc:Poptip Content="增删改等更多功能在鼠标右键菜单中，Ctrl+F可以搜索列表" PlacementType="BottomLeft"/>
+                                <hc:Poptip Content="增删改等更多功能在鼠标右键菜单中，Ctrl+F或右键菜单可以搜索列表" PlacementType="BottomLeft"/>
                             </hc:AdornerElement.Instance>
                         </ListView>
                         <Button Name="ForceRefreshLiveBroadcastList" Content="重置列表" Margin="785,21,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="ForceRefreshLiveBroadcastList_Click">
