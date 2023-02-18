@@ -39,11 +39,13 @@ namespace DDTV_GUI.DDTV_Window
         private Dialog LogInQRDialog;//登陆过期预留弹出窗口
         private Dialog ClipDialog;//切片窗口
         private Dialog OpenDanMuWindowDialog;//切片窗口
+        private Dialog SearchDialog;//搜索弹出窗口
 
         private static bool HideIconState = false;
         public static event EventHandler<EventArgs> LoginDialogDispose;//登陆窗口登陆事件
         public static event EventHandler<EventArgs> CuttingDialogDispose;//切片窗口关闭事件
         public static event EventHandler<EventArgs> OpenDanMuWindowDialogDispose;//切片窗口关闭事件
+        public static event EventHandler<EventArgs> SearchDialogDispose;//搜索窗口关闭事件
         public NotifyIcon notifyIcon = new();
         public static List<PlayWindow> playWindowsList = new();
         public static GuideMode guideMode = GuideMode.N;
@@ -387,7 +389,7 @@ namespace DDTV_GUI.DDTV_Window
             //RoomPatrol.IsOn = false;
             this.Dispatcher.Invoke(new Action(() =>
             {
-                LoginQRDialog = new WPFControl.LoginQRDialog(LoginDialogDispose, "登陆信息失效，请使用哔哩哔哩手机客户端扫码登陆");
+                LoginQRDialog = new LoginQRDialog(LoginDialogDispose, "登陆信息失效，请使用哔哩哔哩手机客户端扫码登陆");
                 LogInQRDialog = Dialog.Show(LoginQRDialog);
             }));
 
@@ -2019,6 +2021,52 @@ namespace DDTV_GUI.DDTV_Window
             Growl.Success((Is ? "打开" : "关闭") + "云屏蔽和进房提示");
             Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, (Is ? "打开" : "关闭") + "云屏蔽和进房提示", false, null, false);
             CoreConfigFile.WriteConfigFile(true);
+        }
+
+
+        
+        /// <summary>
+        /// 监控列表搜索事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void LiveList_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyboardDevice.Modifiers == ModifierKeys.Control && e.Key == Key.F)
+            {
+                SearchDialogDispose += MainWindow_SearchDialogDispose;
+                SearchListDialog SearchListDialog;
+          
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                    SearchListDialog = new SearchListDialog(SearchDialogDispose);
+                    SearchDialog = Dialog.Show(SearchListDialog);
+                }));
+
+            }
+        }
+        public static int SearchIndex = 0;//返回的索引结果
+        /// <summary>
+        /// 搜索结束事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void MainWindow_SearchDialogDispose(object? sender, EventArgs e)
+        {
+            SearchDialog.Dispatcher.BeginInvoke(new Action(() => SearchDialog.Close()));
+
+            LiveList.ScrollIntoView(LiveList.Items[SearchIndex]);
+            LiveList.SelectedIndex = SearchIndex;
+
+            Task.Run(() =>
+            {
+                Thread.Sleep(100);
+                this.Dispatcher.Invoke(new Action(() =>
+               {
+                   LiveList.Focus();
+               }));
+
+            });
         }
     }
 }
