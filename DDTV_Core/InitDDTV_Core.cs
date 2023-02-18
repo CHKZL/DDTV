@@ -24,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-02-10 01:23:53";
+        public static string CompiledVersion = "2023-02-18 23:32:46";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -87,17 +87,8 @@ namespace DDTV_Core
                     break;
             }
             WhetherInitializationIsComplet = true;
-
-            var A = new test();
-
-            test C = new();
-
         }
 
-        public class test
-        {
-            string B { set; get; }
-        }
 
         private static void FileOperation_PathAlmostFull(object? sender, string e)
         {

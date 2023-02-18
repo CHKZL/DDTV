@@ -228,6 +228,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="WPFControl\SearchListDialog.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="WPFControl\OpenDanMuWindowDialog.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -259,6 +262,10 @@
 
   <ItemGroup>
     <Page Update="DDTV_Window\NewClipWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="WPFControl\SearchListDialog.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>
     </Page>
