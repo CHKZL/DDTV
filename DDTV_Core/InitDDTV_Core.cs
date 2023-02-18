@@ -87,6 +87,16 @@ namespace DDTV_Core
                     break;
             }
             WhetherInitializationIsComplet = true;
+
+            var A = new test();
+
+            test C = new();
+
+        }
+
+        public class test
+        {
+            string B { set; get; }
         }
 
         private static void FileOperation_PathAlmostFull(object? sender, string e)

@@ -134,7 +134,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// <returns></returns>
         public static string GetValue(long uid, DataCacheModule.DataCacheClass.CacheType cacheType)
         {
-            if (DataCacheModule.DataCache.GetCache(cacheType, uid.ToString(), out string Value))
+            if (DataCacheModule.DataCache.GetCache(cacheType, uid.ToString(), out string Value)&& !string.IsNullOrEmpty(Value))
             {
                 switch (cacheType)
                 {

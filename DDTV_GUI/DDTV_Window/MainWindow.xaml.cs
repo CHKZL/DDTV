@@ -64,41 +64,23 @@ namespace DDTV_GUI.DDTV_Window
         
         public MainWindow()
         {
-
-            InitializeComponent();
-
-            DDTV_GUI.App.Application_Startup();
-
-            //if (CheckRepeatedRun())
-            //{
-            //    Application.Current.Shutdown();
-            //    return;
-            //}
+            InitializeComponent();//初始化主界面
+            DDTV_GUI.App.Application_Startup();//检查是否重复启动
 #if DEBUG
             string Title = $"DDTV——你的地表最强B站播放器 {Ver}　(Dev版-编译时间:{InitDDTV_Core.CompiledVersion})";
 #endif
 #if !DEBUG
             string Title = $"DDTV——你的地表最强B站播放器 {Ver}　({InitDDTV_Core.Ver})";
 #endif
-
-
-            this.Title = Title;
-            DDTV_ICO.Text = Title;
-            //初始化DDTV_Core          
-            InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_GUI);
-
-            DefaultVolume = GUIConfig.DefaultVolume;
-            HideIconState = GUIConfig.HideIconState;
-            //if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
-            //{
-            //    CoreConfig.GUI_FirstStart = false;
-            //}
-            if (CoreConfig.GUI_FirstStart)
+            this.Title = Title;//设置标题
+            DDTV_ICO.Text = Title;//设置ICON名称
+            InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_GUI); //初始化DDTV_Core          
+            if (CoreConfig.GUI_FirstStart)//判断是否首次启动
             {
-                InitialBoot IB = new InitialBoot();
-                IB.ShowDialog();
+                InitialBoot IB = new InitialBoot();//初始化'初始化界面'
+                IB.ShowDialog();//阻塞显示初始化界面
             }
-            LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
+            LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");//初始化VLC播放器组件
             RoomPatrol.StartLive += RoomPatrol_StartLive;//注册开播提醒事件
             RoomPatrol.StartRec += RoomPatrol_StartRec;//注册开始录制提醒事件
             Download.DownloadCompleted += Download_DownloadCompleted;//注册录制完成提醒事件
@@ -108,20 +90,18 @@ namespace DDTV_GUI.DDTV_Window
             Tool.ServerInteraction.CheckUpdates.NewUpdate += CheckUpdates_NewUpdate;//检查更新事件
             Tool.ServerInteraction.Notice.NewNotice += Notice_NewNotice;//更新首页说明事件
             BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
-            BilibiliUserConfig.CheckAccount.CheckLoginValidity();
+            BilibiliUserConfig.CheckAccount.CheckLoginValidity();//启动账号有效性定时检查     
+            InitMainUI();//初始化UI组件显示内容     
+            UpdateInterface.Main.update(this);//定时更新界面数据
+            UpdateInterface.Main.ActivationInterface = 0;//设置默认显示0号界面
+            DelTmpFile();//检查临时文件夹，并删除里面的文件
 
-            //初始化UI组件显示内容
-            InitMainUI();
+            //GUI初始化启动完成
 
-            //定时更新界面数据
-            UpdateInterface.Main.update(this);
-            UpdateInterface.Main.ActivationInterface = 0;
+
 
             //系统托盘提示
             //UpdateInterface.Notify.NotifyUpdate += Notify_NotifyUpdate;
-
-
-
             //TimedTask.CheckUpdate.Check();
             //TimedTask.DokiDoki.Check();
             //ClipWindow clipWindow = new ClipWindow();
@@ -130,7 +110,7 @@ namespace DDTV_GUI.DDTV_Window
             //Tool.Beep.MessageBeep((uint)Tool.Beep.Type.Information);
 
             //Sprite.Show(new DDTV_Sprite());
-            DelTmpFile();
+
 
 
 
@@ -153,28 +133,28 @@ namespace DDTV_GUI.DDTV_Window
             //        }
             //    }
             //});
-            
-        }
-
-        public void TEST_B()
-        {
-            List<BindingData.LiveList> _ = new();
-            foreach (var item in Rooms.RoomInfo)
-            {
-                BindingData.LiveList live = new(item.Value.uname,
-                    item.Value.live_status == 1 ? "直播中" : " 摸了",
-                    item.Value.IsRemind ? "     √" : "      ",
-                    item.Value.IsAutoRec ? "     √" : "      ",
-                    item.Value.room_id,
-                    item.Value.uid,
-                    item.Value.live_status,
-                    item.Value.IsRecDanmu ? "     √" : "      ",
-                    item.Value.title);
-                _.Add(live);
-            }
-            TESTDG.ItemsSource = _;
 
         }
+
+        //public void TEST_B()
+        //{
+        //    List<BindingData.LiveList> _ = new();
+        //    foreach (var item in Rooms.RoomInfo)
+        //    {
+        //        BindingData.LiveList live = new(item.Value.uname,
+        //            item.Value.live_status == 1 ? "直播中" : " 摸了",
+        //            item.Value.IsRemind ? "     √" : "      ",
+        //            item.Value.IsAutoRec ? "     √" : "      ",
+        //            item.Value.room_id,
+        //            item.Value.uid,
+        //            item.Value.live_status,
+        //            item.Value.IsRecDanmu ? "     √" : "      ",
+        //            item.Value.title);
+        //        _.Add(live);
+        //    }
+        //    TESTDG.ItemsSource = _;
+
+        //}
 
 
         public static string GetPackageVersion()
@@ -430,6 +410,9 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         private void InitMainUI()
         {
+            DefaultVolume = GUIConfig.DefaultVolume;
+            HideIconState = GUIConfig.HideIconState;
+
             DefaultFileNameTextBox.Text = Download.DownloadFileName;
             DefaultFolderNameTextBox.Text = Download.DownloadFolderName;
             RecPathTextBox.Text = Download.DownloadPath;

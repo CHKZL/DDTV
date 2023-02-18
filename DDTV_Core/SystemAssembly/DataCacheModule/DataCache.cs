@@ -24,6 +24,10 @@ namespace DDTV_Core.SystemAssembly.DataCacheModule
                 {
                     if (Cache.ContainsKey(Key))
                     {
+                        if(!string.IsNullOrEmpty(Cache[Key].Value) && string.IsNullOrEmpty(Value))
+                        {
+                            return false;
+                        }
                         Cache[Key].Value = Value;
                         Cache[Key].ExTime = Tool.TimeModule.Time.Operate.GetRunMilliseconds() + ExTime;
                         //Log.Log.AddLog(nameof(DataCache), Log.LogClass.LogType.Trace, $"更新缓存:Type为[{CacheType}]的数据键[{Key}设置数据[{Value}]缓存成功，该缓存有效期至UTC零点时间+[{Cache[Key].ExTime}]毫秒");

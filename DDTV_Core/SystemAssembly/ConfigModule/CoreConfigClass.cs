@@ -409,6 +409,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Play   默认值：False
             /// </summary>
             BarrageSendingDefaultStatus,
+            /// <summary>
+            /// 是否保存直播间封面
+            /// 组：Download   默认值：False
+            /// </summary>
+            IsSaveCover,
         }
     }
 }

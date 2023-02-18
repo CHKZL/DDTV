@@ -10,27 +10,31 @@
 ```ini
 [Core]
 RoomListConfig=./RoomListConfig.json
-IsAutoTranscod=False
+IsAutoTranscod=True
 TranscodParmetrs=-i {Before} -vcodec copy -acodec copy {After}
 TranscodingCompleteAutoDeleteFiles=False
 GUI_FirstStart=False
 WEB_FirstStart=True
-InstanceAID=93A66F57-1
+InstanceAID=CA65FE45-9
 ConsoleMonitorMode=False
 ReplaceAPI=https://api.live.bilibili.com
 APIVersion=1
-AutoInsallUpdate=False
+AutoInsallUpdate=True
 WhetherToEnableProxy=True
+MandatoryUseIPv4=False
+IsBypass_SSL=False
+IsDev=True
+DanMuSaveType=2
+HighRiskWebAPIFixedCheckSign=ae323352-c2d6-4fd5-aa01-1ce5e118be8b
 DDcenterSwitch=False
 SpaceIsInsufficientWarn=False
-ClientAID=1e81168d-3ac0-4efc-ba7a-d96e81e79d8b
-IsDev=True
-DanMuSaveType=1
+ClientAID=4920bf5a-324b-4b1b-a933-2bf93376ca7b
 WebHookUrl=
 [Download]
 DownloadPath=./Rec/
 DownloadDirectoryName={ROOMID}_{NAME}
 DownloadFileName={DATE}_{TIME}_{TITLE}
+DownloadFolderName={yy}_{MM}_{dd}
 TmpPath=./tmp/
 RecQuality=10000
 IsRecDanmu=True
@@ -39,31 +43,43 @@ IsRecGuard=True
 IsRecSC=True
 IsFlvSplit=False
 FlvSplitSize=1073741824
+IsHls=True
+WaitHLSTime=15
 DoNotSleepWhileDownloading=True
 Shell=False
 ForceCDNResolution=False
+RealTimeTitleFileName=True
 [WEB_API]
 WEB_API_SSL=False
 AccessControlAllowOrigin=*
 AccessControlAllowCredentials=True
 WebUserName=ami
 WebPassword=ddtv
-AccessKeyId=b6fb1e591d9e490f94da263576cfb143
-AccessKeySecret=9f092770e2514c56b0d89d7331a1ac58
-ServerAID=d47b5033-e488-4146-83e4-d9ae5d296f7e
+AccessKeyId=3be75df7c99f457db6a2c0223ec5c52d
+AccessKeySecret=970403bce576495188cbec36dbc31882
+ServerAID=29f310aa-ca78-467a-9415-90e4c41fe0c6
 ServerName=DDTV_Server
 CookieDomain=
 pfxFileName=
 pfxPasswordFileName=
 [Play]
-DanmuColor=0xff,0xff,0xff
+DanmuColor=0xFF,0xFF,0xFF
 SubtitleColor=0x00,0xFF,0xFF
-DanMuFontSize=62
-PlayQuality=150
-DefaultVolume=0
-DanMuFontOpacity=0.2
+DanMuFontSize=26
+PlayQuality=250
+DefaultVolume=30
+DanMuFontOpacity=0.25
+DoesShieldTakeEffect=True
+BarrageSendingDefaultStatus=True
 [GUI]
-HideIconState=False
+IsXmlToAss=False
+DanmukuFactoryParameter=-o {AfterFilePath} -i {BeforeFilePath}
+HideIconState=True
+IsExitReminder=True
+ShowDanMuSwitch=True
+ShowGiftSwitch=False
+ShowSCSwitch=False
+ShowGuardSwitch=False
 ```
 ### 配置说明
 ```csharp
@@ -73,7 +89,7 @@ HideIconState=False
         public enum Group
         {
             /// <summary>
-            /// 缺省配置组(按道理应该给每个配置都设置组，不应该在缺省组里)
+            /// 默认配置组(按道理应该给每个配置都设置组，不应该在默认组里)
             /// </summary>
             Default,
             /// <summary>
@@ -382,5 +398,60 @@ HideIconState=False
             /// 组：Download   默认值：15
             /// </summary>
             WaitHLSTime,
+            /// <summary>
+            /// 用于请求高危API接口时一起提交校验的固定字符串
+            /// 组：Core   默认值：随机生成的GUID
+            /// </summary>
+            HighRiskWebAPIFixedCheckSign,
+            /// <summary>
+            /// 进行xml转ass文件时使用的参数语句 (应该是带{AfterFilePath}和{BeforeFilePath}的参数字符串，如:-o {AfterFilePath} -i {BeforeFilePath} )
+            /// 组：GUI   默认值：-o {AfterFilePath} -i {BeforeFilePath}
+            /// </summary>
+            DanmukuFactoryParameter,
+            /// <summary>
+            /// 是否对xml进行转码到ass
+            /// 组：GUI   默认值：False
+            /// </summary>
+            IsXmlToAss,
+            /// <summary>
+            /// 退出是否提醒
+            /// 组：GUI   默认值：true
+            /// </summary>
+            IsExitReminder,
+            /// <summary>
+            /// 弹幕窗口是否显示弹幕信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowDanMuSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示礼物信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowGiftSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示SC信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowSCSwitch,
+            /// <summary>
+            /// 弹幕窗口是否显示大航海信息
+            /// 组：GUI   默认值：true
+            /// </summary>
+            ShowGuardSwitch,
+            /// <summary>
+            /// 修复时文件名是否修改为实时的标题名称
+            /// 组：Download   默认值：true
+            /// </summary>
+            RealTimeTitleFileName,
+            /// <summary>
+            /// 是否使用云屏蔽列表(同步于B站直播间)
+            /// 组：Play   默认值：true
+            /// </summary>
+            DoesShieldTakeEffect,
+            /// <summary>
+            /// 弹幕发送窗口的默认状态
+            /// 组：Play   默认值：False
+            /// </summary>
+            BarrageSendingDefaultStatus,
         }
 ```
