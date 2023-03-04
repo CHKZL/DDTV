@@ -82,10 +82,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                         }
                     default:
                         {
-
-                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "-------\r按任意键开始触发登陆流程\r触发后请在5分钟内登陆\r超时请重启程序再试\r-------\r");
+                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n按任意键开始触发登陆流程\r\n触发后请在5分钟内登陆\r\n超时请重启程序再试\r\n-------\r\n");
                             Console.ReadKey();
-                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "-------\r开始登陆流程\r-------\r");
+                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n开始登陆流程\r\n-------\r\n");
                             ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                             ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                             QR_Object DEF = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
