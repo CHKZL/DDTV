@@ -528,9 +528,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             while (true)
                             {
                                
-                                if (NotUpdateCount > 3)
+                                if (NotUpdateCount > 5)
                                 {
-                                    //如果超过3次循环都没有获取到新的片段，尝试重连
+                                    //如果超过5次循环都没有获取到新的片段，触发策略1-7
                                     return 1;
                                 }
                                 if (error > 10)
@@ -641,6 +641,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             {
                                                 Thread.Sleep(3000);
                                                 DisposeFileStream(fs, downloads.FileName, downloadedFiles, roomInfo.Files, len);
+                                                hLSHostClass=HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false);
                                                 return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true);
                                             }
                                         }
