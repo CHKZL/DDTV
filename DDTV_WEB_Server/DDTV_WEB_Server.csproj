@@ -9,6 +9,7 @@
     <ApplicationIcon>DDTV.ico</ApplicationIcon>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'DDTV_WEB_API' " />
   <ItemGroup>
     <Compile Remove="新文件夹\**" />
     <Content Remove="新文件夹\**" />

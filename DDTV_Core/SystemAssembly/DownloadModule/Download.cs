@@ -52,12 +52,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             {
                 if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
-                    string is_sp = Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.is_sp);
-                    if (is_sp == "1")
-                    {
-                        AddVideoDownLoad_FLV(uid, IsNewTask);
-                    }
-                    else
+                    //if (Rooms.GetValue(uid, CacheType.is_sp) == "1")
+                    //{
+                    //    AddVideoDownLoad_FLV(uid, IsNewTask);
+                    //}
+                    //else
                     {
                         if (roomInfo.IsUserCancel)
                         {

@@ -79,25 +79,31 @@ namespace DDTV_WEB_Server.Controllers
         [HttpPost(Name = "Room_SummaryInfo")]
         public ActionResult Post([FromForm] string cmd)
         {
-            //Response.ContentType = "application/json";
-
-            List<RoomInfoClass.RoomInfo> roomInfos = new();
+            List<RoomInfo_Lite> roomInfos = new();
             foreach (var item in Rooms.RoomInfo)
             {
-                roomInfos.Add(new RoomInfoClass.RoomInfo
+                roomInfos.Add(new RoomInfo_Lite
                 {
                     IsAutoRec = item.Value.IsAutoRec,
                     IsDownload = item.Value.IsDownload,
                     IsRecDanmu = item.Value.IsRecDanmu,
-                    IsRemind = item.Value.IsRemind,           
-                    Like = item.Value.Like,
                     room_id = item.Value.room_id,
                     uid = item.Value.uid,
                     uname = item.Value.uname,
+                    cover_from_user= item.Value.cover_from_user,
                 });
             }
-
-            return Content(MessageBase.Success(nameof(Room_AllInfo), roomInfos), "application/json");
+            return Content(MessageBase.Success(nameof(Room_SummaryInfo), roomInfos), "application/json");
+        }
+        public class RoomInfo_Lite
+        {
+            public bool IsAutoRec { get; set; }
+            public bool IsDownload { get; set; }
+            public bool IsRecDanmu { get; set; }
+            public int room_id { get; set; }
+            public long uid { get; set; }
+            public string uname { get; set; }
+            public string cover_from_user { get; set; }
         }
     }
 

@@ -107,13 +107,13 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             }
         }
         /// <summary>
-        /// 以Post方式发送带参数和CookieContainer对象的http请求(该方法应该是为发送弹幕而特殊准备的)
+        /// 以Post方式发送带参数和CookieContainer对象的http请求(
         /// </summary>
         /// <param name="url"></param>
         /// <param name="dic"></param>
         /// <param name="cook"></param>
         /// <returns></returns>
-        public static string SendRequest_SendDanmu(string url, Dictionary<string, string> dic, CookieContainer cook)
+        public static string SendRequest(string url, Dictionary<string, string> dic, CookieContainer cook)
         {
             NetClass.API_Count(url);
             string result = "";

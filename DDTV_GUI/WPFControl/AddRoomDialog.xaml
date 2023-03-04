@@ -15,7 +15,7 @@
         <TextBlock Name="Reminder" HorizontalAlignment="Left" Margin="20,65,0,0" VerticalAlignment="Top" Text="选择添加的数据类型："></TextBlock>
         <UniformGrid Margin="140,62,46,106" Columns="2">
             <RadioButton Name="UIDRadio" Margin="0,0,0,0" BorderThickness="1" Content="UID" IsChecked="True"/>
-            <RadioButton Name="RoomIdRadio" Margin="0,0,0,0" BorderThickness="1" Content="RoomId"/>
+            <RadioButton Name="RoomIdRadio" Margin="0,0,0,0" BorderThickness="1" Content="房间号"/>
         </UniformGrid>
         <hc:TextBox x:Name="UIDInputBox" hc:InfoElement.Placeholder="（请根据上面选择的类型填写B站账号UID或者房间号）" Text="" Margin="20,90,20,0" Height="44" VerticalAlignment="Top"/>
         <Button Content="确定" Margin="0,145,0,0" Style="{StaticResource ButtonSuccess}" VerticalAlignment="Top" Width="100" Click="Button_Click"/>

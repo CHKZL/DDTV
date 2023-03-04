@@ -476,7 +476,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     
                     long SpeedCalibration_Size = 0;
                     int len = 0;
-                    int NotUpdateCount = 0;
+                    int NotUpdateCount = 0;//没有新文件的次数，如果多次循环都没有新文件，尝试重连获取新的下载地址
                     
                     int count = 1;
                     //Path="D:"+Path.Substring(1, Path.Length-1);
@@ -528,8 +528,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             while (true)
                             {
                                
-                                if (NotUpdateCount > 5)
+                                if (NotUpdateCount > 3)
                                 {
+                                    //如果超过3次循环都没有获取到新的片段，尝试重连
                                     return 1;
                                 }
                                 if (error > 10)
@@ -573,20 +574,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             {
                                 M3 = index.Split('\n');
                             }
-                          
-                            //StreamWriter sw = new StreamWriter("./HLS_TEST", true);
-                            //foreach (var item in M3)
-                            //{
-                            //    //if(!HLS_strings.Contains(item) && !item.Contains("EXT-X-MEDIA-SEQUENCE"))
-                            //    {
-                            //        sw.WriteLine(item);
-
-
-                            //        //HLS_strings.Add(item);
-                            //    }
-                            //}
-                            //sw.WriteLine("===============================");
-                            //sw.Close();
                             switch (ExtendedName)
                             {
                                 case "m4s":
@@ -604,11 +591,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             }
                                             Process.Add($"{EXTMAP}");
                                             byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + EXTMAP + "?" + hLSHostClass.extra);
-
-
-                                            //File.WriteAllBytes("./tmp/test1", fileInfo);
-
-
                                             if (fileInfo != null)
                                             {
                                                 downloads.TotalDownloadCount += fileInfo.Length;
