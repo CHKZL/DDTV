@@ -84,8 +84,6 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                             }
                         }
                     }
-
-
                     if (response != null)
                     {
                         response.Dispose();
@@ -113,7 +111,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
         /// <param name="dic"></param>
         /// <param name="cook"></param>
         /// <returns></returns>
-        public static string SendRequest(string url, Dictionary<string, string> dic, CookieContainer cook)
+        public static string SendRequest(string url, Dictionary<string, string> dic, CookieContainer cook,bool IsCookie =true)
         {
             NetClass.API_Count(url);
             string result = "";
@@ -155,12 +153,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             req.Method = "POST";
             req.ContentType = "application/x-www-form-urlencoded";
             req.UserAgent = NetClass.UA();
-            if (url.Contains("bilibili"))
+
+            if (IsCookie && !string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
             {
-                if (!string.IsNullOrEmpty(BilibiliUserConfig.account.cookie))
-                {
-                    req.CookieContainer = NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
-                }
+                req.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
             }
             #region 添加Post 参数  
             StringBuilder builder = new StringBuilder();
@@ -200,8 +196,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                     {
                         result = reader.ReadToEnd();
                     }
-                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求:SendRequest_SendDanmu完成");
-                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"发起POST请求完成：{url}", false, null, false);
+                    Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Trace_Web, $"弹幕发送请求URL：{url}", false, null, false);
                     if (resp != null)
                     {
                         resp.Dispose();
@@ -211,6 +206,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
                         if (req != null) req.Abort();
                     }
                     catch (Exception) { }
+                     //Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug, $"弹幕发送请求返回值：{result}", false, null, false);
                     return result;
                 }
             }
