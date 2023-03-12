@@ -22,24 +22,31 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
         {
             Task.Run(() =>
             {
-                CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
-                Dictionary<string, string> Params = new Dictionary<string, string>
+                try
                 {
-                    { "color", "16777215" },
-                    { "fontsize", "25" },
-                    { "mode", "1" },
-                    { "msg", Message },
-                    { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
-                    { "roomid", roomId },
-                    { "csrf_token", BilibiliUserConfig.account.csrf },
-                    { "csrf", BilibiliUserConfig.account.csrf }
-                };
-                JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/msg/send", Params, CK));
-                Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"弹幕发送成功");
+                    CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
+                    Dictionary<string, string> Params = new Dictionary<string, string>
+                    {
+                        { "color", "16777215" },
+                        { "fontsize", "25" },
+                        { "mode", "1" },
+                        { "msg", Message },
+                        { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
+                        { "roomid", roomId },
+                        { "csrf_token", BilibiliUserConfig.account.csrf },
+                        { "csrf", BilibiliUserConfig.account.csrf }
+                    };
+                    JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/msg/send", Params, CK));
+                    Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Debug, $"弹幕发送成功:{JO}");
+                }
+                catch (Exception e)
+                {
+                    Log.Log.AddLog(nameof(DanMu), Log.LogClass.LogType.Warn, $"弹幕发送出现错误", true, e, true);
+                }
             });
         }
 
-        
+
 
         /// <summary>
         /// 获取屏蔽词和屏蔽用户uid
@@ -157,7 +164,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             /// <summary>
             /// 
             /// </summary>
-            public Data data { get; set; } =  new();
+            public Data data { get; set; } = new();
             public class User_level
             {
                 /// <summary>
