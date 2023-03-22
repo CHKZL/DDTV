@@ -1941,13 +1941,17 @@ namespace DDTV_GUI.DDTV_Window
         private void WaitHLSTime_ValueChanged(object sender, HandyControl.Data.FunctionEventArgs<double> e)
         {
 
-            if (InitDDTV_Core.WhetherInitializationIsComplet && e.Info > 10)
+            if (InitDDTV_Core.WhetherInitializationIsComplet && e.Info >= 10)
             {
                 DDTV_Core.SystemAssembly.DownloadModule.Download.WaitHLSTime = (int)e.Info;
                 CoreConfig.SetValue(CoreConfigClass.Key.WaitHLSTime, ((int)e.Info).ToString(), CoreConfigClass.Group.Download);
                 Growl.Success($"设置HLS等待时间为{(int)e.Info}秒");
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"设置HLS等待时间为{(int)e.Info}秒", false, null, false);
                 CoreConfigFile.WriteConfigFile(true);
+            }
+            else
+            {
+                Growl.Warning($"设置HLS等待时间最低需要等待10秒");
             }
         }
 
