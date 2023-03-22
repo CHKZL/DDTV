@@ -113,8 +113,8 @@ namespace DDTV_Core.Tool
         /// </summary>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public static string ReplaceKeyword(long uid, string Text)
-        {
+        public static string ReplaceKeyword(long uid, string Text ,DateTime dateTime = default)
+        {  
             Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo);
  
             if (roomInfo.DownloadedFileInfo.AfterRepairFiles != null)
@@ -151,30 +151,58 @@ namespace DDTV_Core.Tool
 
             if (roomInfo.DownloadedFileInfo.GiftFile != null)
                 Text = Text.Replace("{GiftFile}", roomInfo.DownloadedFileInfo.GiftFile.FullName);
-
-            Text = Text
-                .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
-                .Replace("{YYYY}", DateTime.Now.ToString("yyyy"))
-                .Replace("{YY}", DateTime.Now.ToString("yy"))
-                .Replace("{MM}", DateTime.Now.ToString("MM"))
-                .Replace("{DD}", DateTime.Now.ToString("dd"))
-                .Replace("{HH}", DateTime.Now.ToString("HH"))
-                .Replace("{mm}", DateTime.Now.ToString("mm"))
-                .Replace("{SS}", DateTime.Now.ToString("ss"))
-                .Replace("{FFFF}", DateTime.Now.ToString("fff"))
-                .Replace("{yyyy}", DateTime.Now.ToString("yyyy"))
-                .Replace("{yy}", DateTime.Now.ToString("yy"))
-                .Replace("{MM}", DateTime.Now.ToString("MM"))
-                .Replace("{dd}", DateTime.Now.ToString("dd"))
-                .Replace("{HH}", DateTime.Now.ToString("HH"))
-                .Replace("{mm}", DateTime.Now.ToString("mm"))
-                .Replace("{ss}", DateTime.Now.ToString("ss"))
-                .Replace("{fff}", DateTime.Now.ToString("fff"))
-                .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
-                .Replace("{DATE}", DateTime.Now.ToString("yyyy_MM_dd"))
-                .Replace("{TIME}", DateTime.Now.ToString("HH_mm_ss"))
-                .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
-                .Replace("{R}", GetRandomStr(null, 5));
+              if(dateTime!=default)
+            {
+                Text = Text
+                    .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
+                    .Replace("{YYYY}", dateTime.ToString("yyyy"))
+                    .Replace("{YY}", dateTime.ToString("yy"))
+                    .Replace("{MM}", dateTime.ToString("MM"))
+                    .Replace("{DD}", dateTime.ToString("dd"))
+                    .Replace("{HH}", dateTime.ToString("HH"))
+                    .Replace("{mm}", dateTime.ToString("mm"))
+                    .Replace("{SS}", dateTime.ToString("ss"))
+                    .Replace("{FFFF}", dateTime.ToString("fff"))
+                    .Replace("{yyyy}", dateTime.ToString("yyyy"))
+                    .Replace("{yy}", dateTime.ToString("yy"))
+                    .Replace("{MM}", dateTime.ToString("MM"))
+                    .Replace("{dd}", dateTime.ToString("dd"))
+                    .Replace("{HH}", dateTime.ToString("HH"))
+                    .Replace("{mm}", dateTime.ToString("mm"))
+                    .Replace("{ss}", dateTime.ToString("ss"))
+                    .Replace("{fff}", dateTime.ToString("fff"))
+                    .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
+                    .Replace("{DATE}", dateTime.ToString("yyyy_MM_dd"))
+                    .Replace("{TIME}", dateTime.ToString("HH_mm_ss"))
+                    .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
+                    .Replace("{R}", GetRandomStr(null, 5));
+            }
+            else
+            {
+                Text = Text
+                    .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
+                    .Replace("{YYYY}", DateTime.Now.ToString("yyyy"))
+                    .Replace("{YY}", DateTime.Now.ToString("yy"))
+                    .Replace("{MM}", DateTime.Now.ToString("MM"))
+                    .Replace("{DD}", DateTime.Now.ToString("dd"))
+                    .Replace("{HH}", DateTime.Now.ToString("HH"))
+                    .Replace("{mm}", DateTime.Now.ToString("mm"))
+                    .Replace("{SS}", DateTime.Now.ToString("ss"))
+                    .Replace("{FFFF}", DateTime.Now.ToString("fff"))
+                    .Replace("{yyyy}", DateTime.Now.ToString("yyyy"))
+                    .Replace("{yy}", DateTime.Now.ToString("yy"))
+                    .Replace("{MM}", DateTime.Now.ToString("MM"))
+                    .Replace("{dd}", DateTime.Now.ToString("dd"))
+                    .Replace("{HH}", DateTime.Now.ToString("HH"))
+                    .Replace("{mm}", DateTime.Now.ToString("mm"))
+                    .Replace("{ss}", DateTime.Now.ToString("ss"))
+                    .Replace("{fff}", DateTime.Now.ToString("fff"))
+                    .Replace("{NAME}", Rooms.GetValue(uid, CacheType.uname))
+                    .Replace("{DATE}", DateTime.Now.ToString("yyyy_MM_dd"))
+                    .Replace("{TIME}", DateTime.Now.ToString("HH_mm_ss"))
+                    .Replace("{TITLE}", Rooms.GetValue(uid, CacheType.title))
+                    .Replace("{R}", GetRandomStr(null, 5));
+            }
             return Text;
         }
 

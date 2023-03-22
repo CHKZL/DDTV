@@ -98,6 +98,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// 该任务下所有任务的总下载字节数
             /// </summary>
             public long TotalDownloadCount { get; set; }
+
             /// <summary>
             /// 下载状态
             /// </summary>

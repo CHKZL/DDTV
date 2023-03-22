@@ -147,7 +147,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
-                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.mp4");
+                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.mp4",downloadClass.StartTime);
 
                     SaveCover(uid);
                     //弹幕录制结束处理
@@ -165,7 +165,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 roomInfo.roomWebSocket.LiveChatListener.Dispose();
                                 if (RealTimeTitleFileName)
                                 {
-                                    roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}"));
+                                    roomInfo.DanmuFile.FileName = roomInfo.DanmuFile.FileName.Replace(roomInfo.DanmuFile.FileName.Split('/')[roomInfo.DanmuFile.FileName.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}",downloadClass.StartTime));
                                 }
                                 Tool.DanMuKu.DanMuKuRec.SevaDanmuFile(roomInfo);
                                 if (IsRecDanmu && GUIConfig.IsXmlToAss)
@@ -210,7 +210,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             string After = string.Empty;
                             if(RealTimeTitleFileName)
                             {
-                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}",downloadClass.StartTime)).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                             }
                             else
                             {

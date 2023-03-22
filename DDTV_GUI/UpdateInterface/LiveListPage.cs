@@ -33,6 +33,7 @@ namespace DDTV_GUI.UpdateInterface
             Dictionary<long, RoomInfoClass.RoomInfo> keyValuePairs = new Dictionary<long, RoomInfoClass.RoomInfo>();
             foreach (var item in NotLive.OrderBy(p => p.Value.uname).ToDictionary(p => p.Key, o => o.Value))
             {
+                //如果该房间的“开播提醒”、“自动录制”、“弹幕录制”任意一个已经打开，这个房间在列表中优先靠前
                 if (item.Value.IsRemind || item.Value.IsAutoRec || item.Value.IsRecDanmu)
                 {
                     IsLive.Add(item.Key, item.Value);
