@@ -529,9 +529,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             while (true)
                             {
                                
-                                if (NotUpdateCount > 5)
+                                if (NotUpdateCount > 7)
                                 {
-                                    //如果超过5次循环都没有获取到新的片段，触发策略1-7
+                                    //如果超过7次循环都没有获取到新的片段，触发策略1-7
                                     return 1;
                                 }
                                 if (error > 10)
@@ -615,7 +615,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             {
                                                 if (!Process.Contains(M3[i + 1].Split('.')[0]))
                                                 {
-                                                    NotUpdates = false;
+
                                                     NotUpdateCount = 0;
                                                     Process.Add(M3[i + 1].Split('.')[0]);
                                                     byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + hLSHostClass.base_url + M3[i + 1] + "?" + hLSHostClass.extra);
@@ -626,6 +626,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                     //}
                                                     if (fileInfo != null)
                                                     {
+                                                        NotUpdates = false;
                                                         downloads.TotalDownloadCount += fileInfo.Length;
                                                         DownloadCount += fileInfo.Length;
                                                         fs.Write(fileInfo);

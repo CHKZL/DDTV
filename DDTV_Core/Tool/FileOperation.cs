@@ -33,7 +33,7 @@ namespace DDTV_Core.Tool
         {
             try
             {
-                if(string.IsNullOrEmpty(Url))
+                if (string.IsNullOrEmpty(Url))
                 {
                     return false;
                 }
@@ -61,12 +61,12 @@ namespace DDTV_Core.Tool
                 {
                     if (httpWebRequest != null) httpWebRequest.Abort();
                 }
-                catch (Exception){}
+                catch (Exception) { }
                 return true;
             }
-            catch(WebException e) 
+            catch (WebException e)
             {
-                if(DDTV_Core.InitDDTV_Core.IsDevDebug)
+                if (DDTV_Core.InitDDTV_Core.IsDevDebug)
                 {
                     Log.AddLog(nameof(FileOperation), LogClass.LogType.Debug, $"判断远端文件：文件不存在{e.Status}({(int)e.Status})[{Url}]");
                 }
@@ -113,10 +113,10 @@ namespace DDTV_Core.Tool
         /// </summary>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public static string ReplaceKeyword(long uid, string Text ,DateTime dateTime = default)
-        {  
+        public static string ReplaceKeyword(long uid, string Text, DateTime dateTime = default)
+        {
             Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo);
- 
+
             if (roomInfo.DownloadedFileInfo.AfterRepairFiles != null)
             {
                 string FileList = string.Empty;
@@ -151,7 +151,7 @@ namespace DDTV_Core.Tool
 
             if (roomInfo.DownloadedFileInfo.GiftFile != null)
                 Text = Text.Replace("{GiftFile}", roomInfo.DownloadedFileInfo.GiftFile.FullName);
-              if(dateTime!=default)
+            if (dateTime != default)
             {
                 Text = Text
                     .Replace("{ROOMID}", Rooms.GetValue(uid, CacheType.room_id))
@@ -206,7 +206,7 @@ namespace DDTV_Core.Tool
             return Text;
         }
 
-          /// <summary>
+        /// <summary>
         /// 随机字符串
         /// </summary>
         /// <param name="chars"></param>
@@ -245,7 +245,7 @@ namespace DDTV_Core.Tool
         /// <param name="KB_DemandForSpace">需要的空间_KB</param>
         /// <param name="B_DemandForSpace">需要的空间_B</param>
         /// <returns></returns>
-        public static bool SpaceWillBeEnough(string File, long GB_DemandForSpace=0, long MB_DemandForSpace=0, long KB_DemandForSpace=0, long B_DemandForSpace=0)
+        public static bool SpaceWillBeEnough(string File, long GB_DemandForSpace = 0, long MB_DemandForSpace = 0, long KB_DemandForSpace = 0, long B_DemandForSpace = 0)
         {
             if (System.IO.File.Exists(File))
             {
@@ -254,7 +254,7 @@ namespace DDTV_Core.Tool
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     string PathName = fileInfo.DirectoryName.Split(':').Length > 1 ? fileInfo.DirectoryName.Split(':')[0] : Path.GetFullPath(fileInfo.DirectoryName).Split(':')[0];
-                    if(GB_DemandForSpace!=0|| MB_DemandForSpace!=0|| KB_DemandForSpace !=0|| B_DemandForSpace!=0)
+                    if (GB_DemandForSpace != 0 || MB_DemandForSpace != 0 || KB_DemandForSpace != 0 || B_DemandForSpace != 0)
                     {
                         DemandForSpace = (GB_DemandForSpace * 1073741824) + (MB_DemandForSpace * 1048576) + (KB_DemandForSpace * 1024) + B_DemandForSpace;
                     }
@@ -269,7 +269,7 @@ namespace DDTV_Core.Tool
                 }
                 else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 {
-                
+
                     DriveInfo[] BB = DriveInfo.GetDrives();
                     foreach (var item in BB)
                     {
@@ -279,7 +279,7 @@ namespace DDTV_Core.Tool
                             {
                                 DemandForSpace = (GB_DemandForSpace * 1073741824) + (MB_DemandForSpace * 1048576) + (KB_DemandForSpace * 1024) + B_DemandForSpace;
                             }
-                            if (item.TotalFreeSpace< DemandForSpace)
+                            if (item.TotalFreeSpace < DemandForSpace)
                             {
                                 PathAlmostFull.Invoke(null, $"在准备操作文件{fileInfo.Name}的时候发现硬盘剩余空间低于警戒线，硬盘空间可能不足可能造成未知的错误");
                             }
@@ -299,7 +299,8 @@ namespace DDTV_Core.Tool
             if (!IsRSWD)
             {
                 IsRSWD = true;
-                Task.Run(() => {
+                Task.Run(() =>
+                {
                     while (true)
                     {
                         if (SpaceIsInsufficientWarn)
@@ -339,7 +340,7 @@ namespace DDTV_Core.Tool
                             }
                             catch (Exception) { }
                         }
-                        Thread.Sleep(300*1000);
+                        Thread.Sleep(300 * 1000);
                     }
                 });
             }
@@ -351,7 +352,7 @@ namespace DDTV_Core.Tool
         /// <param name="str_HardDiskName">盘符 如 C D E</param>
         /// <param name="Type">1为总空间，2为剩余空间</param>
         /// <returns></returns>
-        public static long GetHardDiskSpace(string str_HardDiskName,int Type)
+        public static long GetHardDiskSpace(string str_HardDiskName, int Type)
         {
             long totalSize = 0;
             str_HardDiskName = str_HardDiskName + ":\\";
@@ -396,7 +397,7 @@ namespace DDTV_Core.Tool
                     {
                         try
                         {
-                            for (int i = DelFilelist.Count - 1; i >=0; i--)
+                            for (int i = DelFilelist.Count - 1; i >= 0; i--)
                             {
                                 if (File.Exists(DelFilelist[i]))
                                 {
@@ -404,7 +405,7 @@ namespace DDTV_Core.Tool
                                     {
                                         File.Delete(DelFilelist[i]);
                                         DelFilelist.RemoveAt(i);
-                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile,$"删除文件完成[{DelFilelist[i]}]",false,null,false);
+                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile, $"删除文件完成[{DelFilelist[i]}]", false, null, false);
                                     }
                                     catch (Exception) { }
                                 }
@@ -413,7 +414,7 @@ namespace DDTV_Core.Tool
                                     try
                                     {
                                         DelFilelist.RemoveAt(i);
-                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile,$"删除文件,但文件不存在[{DelFilelist[i]}]",false,null,false);
+                                        Log.AddLog(nameof(DelEvent), LogClass.LogType.Info_DelFile, $"删除文件,但文件不存在[{DelFilelist[i]}]", false, null, false);
                                     }
                                     catch (Exception) { }
                                 }
@@ -444,7 +445,7 @@ namespace DDTV_Core.Tool
             }
             dirs = new();
             return list;
-        } 
+        }
         private static void GetDirs(string dirPath)
         {
             if (Directory.GetDirectories(dirPath).Length > 0)
@@ -463,7 +464,7 @@ namespace DDTV_Core.Tool
             {
                 int Conut = Directory.GetFiles(dirPath).Length;
                 string[] _ = new string[Conut];
-                for (int i = 0 ; i < Conut ; i++)
+                for (int i = 0; i < Conut; i++)
                 {
                     _[i] = Directory.GetFiles(dirPath)[i].Replace("\\", "/");
                 }
