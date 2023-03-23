@@ -100,7 +100,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Post
             }
             catch (WebException e)
             {
-                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status}({(int)e.Status})[{url}]", true, e, false);
+                Log.Log.AddLog(nameof(Post), Log.LogClass.LogType.Debug, $"Post请求发生网络层错误:{e.Status}({(int)e.Status})[{url}]", true, e, false);
                 return "";
             }
         }
