@@ -13,7 +13,7 @@ namespace DDTV_CLI
     {
         public static void Main(string[] args)
         {
-            InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI);
+            InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI,args.Contains("--no-update"));
             while (true)
             {
                 Thread.Sleep(60000);

@@ -32,7 +32,9 @@ namespace DDTV_Core
         /// <summary>
         /// 初始化COre
         /// </summary>
-        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core)
+        /// <param name="satrtType">启动类型</param>
+        /// <param name="EAU">是否启用自动更新和提示</param>
+        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core,bool EAU=true)
         {
             InitType = satrtType;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
@@ -52,6 +54,8 @@ namespace DDTV_Core
                 FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//注册硬盘空间不足事件
             }
             FileOperation.RemainingSpaceWarningDetection();//开始监控硬盘剩余空间
+            if (!EAU)//如果带--no-update则关闭自动更新功能
+                CoreConfig.AutoInsallUpdate = false;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
             //if(UserInfo.LoginValidityVerification())
             //{

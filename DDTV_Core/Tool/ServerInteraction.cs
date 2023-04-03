@@ -15,6 +15,9 @@ namespace DDTV_Core.Tool
 {
     public class ServerInteraction
     {
+        /// <summary>
+        /// 本体更新相关代码
+        /// </summary>
         public class CheckUpdates
         {
             private static bool IsChecked = false;
