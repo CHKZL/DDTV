@@ -16,8 +16,8 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
         public static void Main(string[] args)
         {
             Task.Run(() =>
-            {
-                DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB); 
+            {   
+                DDTV_Core.InitDDTV_Core.Core_Init(DDTV_Core.InitDDTV_Core.SatrtType.DDTV_WEB,args.Contains("--no-update")); 
             });    
             Thread.Sleep(3000);
            

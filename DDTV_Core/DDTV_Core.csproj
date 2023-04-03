@@ -22,6 +22,16 @@
     <PackageProjectUrl>https://github.com/CHKZL/DDTV</PackageProjectUrl>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1605</WarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702</NoWarn>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1605</WarningsAsErrors>
+  </PropertyGroup>
+
   <ItemGroup>
     <Folder Include="SystemAssembly\NetworkRequestModule\WebSocket\" />
   </ItemGroup>
