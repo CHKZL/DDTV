@@ -1,10 +1,10 @@
 # DDTV_CLI安装教程（Windows）
 ## 1.下载
-从以下地方选一个下载DDTV最新版本    
-[GitHub](https://github.com/CHKZL/DDTV/releases/latest)   
-[GitHub(fastgit镜像)](https://hub.fastgit.xyz/CHKZL/DDTV/releases/latest)  
+从以下地方选一个下载DDTV最新版本     
 QQ群共享(其实我推荐这个(这里的人超好的，还能直接和我对线(((  
 DDTV功能反馈讨论群:`338182356`  
+[GitHub](https://github.com/CHKZL/DDTV/releases/latest)   
+[GitHub(fastgit镜像)](https://hub.fgit.ml/CHKZL/DDTV/releases/latest)  
 DDTV聊天吹水群:`522865400`  
 
 ## 2.安装
@@ -18,7 +18,7 @@ DDTV_CLI是免安装的，把下载下来的压缩包解压到任意位置即可
 >DDTV_CLI依赖于`.NET6.0运行时`环境运行和`ffmpeg`，请先安装`.NET6.0运行时`和`ffmpeg`  
 
 .NET6.0运行时安装说明：   
->[点击打开下载.NET6.0运行时(x64)网页](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
+>[点击打开下载.NET6.0运行时(x64)网页](https://dotnet.microsoft.com/zh-cn/download/dotnet/thank-you/runtime-6.0.1-windows-x64-installer)   
 如果你的操作系统不是`64位Windows10或11`请到参考[微软文档](https://docs.microsoft.com/zh-cn/dotnet/core/install/windows?tabs=net60)进行环境的安装  
 
 ffmpeg安装说明：

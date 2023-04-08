@@ -24,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-03-24 00:53:14";
+        public static string CompiledVersion = "2023-04-09 00:56:23";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -164,6 +164,7 @@ namespace DDTV_Core
                         Console.WriteLine($"a：查看下载中的任务情况");
                         Console.WriteLine($"b：一键导入关注列表中的V(可能不全需要自己补一下)");
                         Console.WriteLine($"c：重登登陆");
+                        Console.WriteLine($"q：退出DDTV");
                         Console.WriteLine($"z：控制台开发者监控模式开关(会显示所有上下播信息和一大堆调试信息)");
                         switch (Console.ReadKey().Key)
                         {
@@ -250,6 +251,21 @@ namespace DDTV_Core
                                         {
                                             //这里如果为false说明InitType为GUI，走单独的UI登陆流程，控制台不打印二维码
                                         }
+                                    }
+                                    break;
+                                }
+                            case ConsoleKey.Q:
+                                {
+                                    Console.WriteLine("确定要退出DDTV么？YES/NO");
+                                    Console.WriteLine();
+                                    string? Cons = Console.ReadLine();
+                                    if (!string.IsNullOrEmpty(Cons) && (Cons.ToLower() == "yes" || Cons.ToLower() == "y"))
+                                    {
+                                        Environment.Exit(0);
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("已返回，DDTV正在运行中...");
                                     }
                                     break;
                                 }
