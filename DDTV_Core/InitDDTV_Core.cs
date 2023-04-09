@@ -50,8 +50,8 @@ namespace DDTV_Core
             if (satrtType != SatrtType.DDTV_GUI && satrtType != SatrtType.DDTV_DanMu)
             {
                 SeKey();//启动控制台菜单监听
-                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效事件
-                FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//注册硬盘空间不足事件
+                BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效WebHook事件
+                FileOperation.PathAlmostFull += FileOperation_PathAlmostFull;//注册硬盘空间不足WebHook事件
             }
             FileOperation.RemainingSpaceWarningDetection();//开始监控硬盘剩余空间
             if (!EAU)//如果带--no-update则关闭自动更新功能
@@ -212,26 +212,26 @@ namespace DDTV_Core
                                                 SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid));
                                                 break;
                                             }
-                                        case ConsoleKey.W://隐藏操作，导入vtbs列表中的所有人         
-                                            {
-                                                Console.WriteLine("触发隐藏操作，按Y导入vtbs列表中的所有人，按其他键取消");
-                                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
-                                                {
-                                                    //一键导入本地vtbs文件中的所有V
-                                                    SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), false, true);
-                                                }
-                                                break;
-                                            }
-                                        case ConsoleKey.Q://隐藏操作，导入关注列表中的所有人
-                                            {
-                                                Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有人，按其他键取消");
-                                                //一键导入所有关注列表
-                                                if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
-                                                {
-                                                    SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
-                                                }
-                                                break;
-                                            }
+                                        //case ConsoleKey.W://隐藏操作，导入vtbs列表中的所有人         
+                                        //    {
+                                        //        Console.WriteLine("触发隐藏操作，按Y导入vtbs列表中的所有人，按其他键取消");
+                                        //        if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                        //        {
+                                        //            //一键导入本地vtbs文件中的所有V
+                                        //            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), false, true);
+                                        //        }
+                                        //        break;
+                                        //    }
+                                        //case ConsoleKey.Q://隐藏操作，导入关注列表中的所有人
+                                        //    {
+                                        //        Console.WriteLine("触发隐藏操作，按Y导入关注列表中的所有人，按其他键取消");
+                                        //        //一键导入所有关注列表
+                                        //        if (Console.ReadKey().Key.Equals(ConsoleKey.Y))
+                                        //        {
+                                        //            SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid), true);
+                                        //        }
+                                        //        break;
+                                        //    }
                                         default:
                                             Console.WriteLine("放弃导入");
                                             break;
@@ -257,6 +257,7 @@ namespace DDTV_Core
                             case ConsoleKey.Q:
                                 {
                                     Console.WriteLine("确定要退出DDTV么？YES/NO");
+                                    Console.WriteLine(":");
                                     Console.WriteLine();
                                     string? Cons = Console.ReadLine();
                                     if (!string.IsNullOrEmpty(Cons) && (Cons.ToLower() == "yes" || Cons.ToLower() == "y"))

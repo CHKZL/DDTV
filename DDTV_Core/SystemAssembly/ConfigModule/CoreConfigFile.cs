@@ -58,19 +58,14 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     {
                         Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Error, "配置文件储存路径所属盘符剩余空间不足10MB！放弃更新储存配置文件！", true, null, true);
                         return;
-                    }
-
-                    //using FileStream fileStream = File.Create(ConfigFile);
+                    }             
                     string ConfigText = string.Empty;
-
                     foreach (var item1 in configTmp)
                     {
                         ConfigText += $"[{item1.G}]\r\n";
-                        //fileStream.Write(Encoding.UTF8.GetBytes($"[{item1.G}]\r\n"));
                         foreach (var item2 in item1.datas)
                         {
                             ConfigText += (item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n";
-                            //fileStream.Write(Encoding.UTF8.GetBytes((item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n"));
                         }
                     }
                     if (!string.IsNullOrEmpty(ConfigText))
@@ -86,7 +81,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             if (!File.Exists(ConfigFile))
             {
                 File.WriteAllText(ConfigFile, "");
-                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Warn, String.Format("配置文件不存在，新建{0}文件", ConfigFile));
+                Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Warn, String.Format($"配置文件不存在，新建{ConfigFile}文件"));
             }
             CoreConfigClass.config=new CoreConfigClass.Config();
             string[] ConfigLine = File.ReadAllLines(ConfigFile);
@@ -125,13 +120,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 }
             }
             Log.Log.AddLog(nameof(CoreConfigFile), Log.LogClass.LogType.Info, $"读取配置文件成功");
-        }
-        /// <summary>
-        /// 初始化配置文件的加载
-        /// </summary>
-        private static void InitConfigLoad()
-        {
-
         }
 
         internal class ConfigTmp : CoreConfigClass.Config

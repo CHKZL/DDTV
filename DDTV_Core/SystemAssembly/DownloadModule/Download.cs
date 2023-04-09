@@ -151,7 +151,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                     SaveCover(uid);
                     //弹幕录制结束处理
-                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
+                    bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool IsRecDanmu);
+                    if (IsRecDanmu && roomInfo.roomWebSocket.IsConnect)
                     {
                         roomInfo.roomWebSocket.IsConnect = false;
                         if (roomInfo.roomWebSocket.LiveChatListener != null)
@@ -188,7 +189,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)) && IsRecDanmu)
+                       
+                        bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec), out bool IsAutoRec);
+                        if (!IsAutoRec && IsRecDanmu)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec或IsRecDanmu为false，将不会储存弹幕相关数据");
                         }
@@ -386,7 +389,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv");
                     SaveCover(uid);
                     //弹幕录制结束处理
-                    if (bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu)) && roomInfo.roomWebSocket.IsConnect)
+                    bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool IsRecDanmu);
+                    if (IsRecDanmu && roomInfo.roomWebSocket.IsConnect)
                     {
                         roomInfo.roomWebSocket.IsConnect = false;
                         if (roomInfo.roomWebSocket.LiveChatListener != null)
@@ -423,7 +427,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
                     else
                     {
-                        if (!bool.Parse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec)))
+                        bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsAutoRec), out bool IsAutoRec);
+                        if (!IsAutoRec)
                         {
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.room_id})】的直播结束，检测到IsAutoRec或IsRecDanmu为false，将不会储存弹幕相关数据");
                         }
@@ -699,6 +704,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         downloadClass.FlvSplitSize = FlvSplitSize;
 
                         //弹幕录制
+
+
+
                         bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool RoomIsRecDanmu);
                         if (IsNewTask && IsRecDanmu && RoomIsRecDanmu)
                         {
