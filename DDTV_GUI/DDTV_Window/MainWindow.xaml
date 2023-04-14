@@ -326,6 +326,14 @@
                                     </Button>
                                     <TextBlock Name="ManualTranscodingProgress" HorizontalAlignment="Left" Margin="285,0,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" Width="540"/>
                                 </Grid>
+                                <Grid Width="825"  Margin="5">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="对录制的弹幕xml文件手动转换为ass文件：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Name="AssFile_SelectFilesManual" Content="选择文件" Margin="308,0,0,0" HorizontalAlignment="Left" Click="AssFile_SelectFilesManual_Click"  VerticalAlignment="Top">
+                                        <hc:AdornerElement.Instance>
+                                            <hc:Poptip Content="点击按钮，选择文件后会进行转换操作" PlacementType="BottomLeft"/>
+                                        </hc:AdornerElement.Instance>
+                                    </Button>
+                                </Grid>
                                 <!--<Grid Width="825"  Margin="5">
                                     <TextBlock HorizontalAlignment="Left" Margin="5" Text="打开弹幕浮窗：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
                                     <Button Name="DanMuWindowButton" Tag="0"  Content="选择文件" Margin="117,2,0,0" HorizontalAlignment="Left" Click="DanMuWindowButton_Click" VerticalAlignment="Top">
