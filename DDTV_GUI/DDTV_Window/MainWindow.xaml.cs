@@ -26,6 +26,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using System.Windows.Resources;
 using System.Data;
+using static DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -63,7 +64,7 @@ namespace DDTV_GUI.DDTV_Window
             W1_13,
         }
 
-        
+
         public MainWindow()
         {
             InitializeComponent();//初始化主界面
@@ -686,7 +687,7 @@ namespace DDTV_GUI.DDTV_Window
                 this.Activate();
                 this.Focus();
                 UpdateInterface.Main.ActivationInterface = UpdateInterface.Main.PreviousPage;
-                Process process =DDTV_GUI.App.RuningInstance(false);
+                Process process = DDTV_GUI.App.RuningInstance(false);
                 DDTV_GUI.App.HandleRunningInstance(process);
             }
 
@@ -1801,7 +1802,7 @@ namespace DDTV_GUI.DDTV_Window
         private void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
             //BilibiliUserConfig.account = new();
-            BilibiliUserConfig.account.cookie =  "";
+            BilibiliUserConfig.account.cookie = "";
             BilibiliUserConfig.WritUserFile();
             BilibiliUserConfig.CheckAccount.CheckLoginValidity();
         }
@@ -2085,6 +2086,27 @@ namespace DDTV_GUI.DDTV_Window
         private void LiveList_MenuItem_Search_Click(object sender, RoutedEventArgs e)
         {
             SearchLiveList();
+        }
+
+        private void AssFile_SelectFilesManual_Click(object sender, RoutedEventArgs e)
+        {
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.DefaultExtension = "xml";
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok && File.Exists(dialog.FileName))
+            {
+                FileInfo fileInfo = new FileInfo(dialog.FileName);
+
+                if (fileInfo.Extension.ToLower() != ".xml")
+                {
+                    MessageBox.Show("选择的文件不是DDTV录制的csv文件！");
+                    return;
+                }
+                Task.Factory.StartNew(() =>
+                {
+                   DDTV_Core.Tool.DanMuKu.DanMuKuRec.CallDanmakuFactory(fileInfo.DirectoryName+"/", fileInfo.Name.Replace(".xml", "_fix.ass"), fileInfo.Name);
+                }, cancellationTokenSource.Token);
+            }
+
         }
     }
 }
