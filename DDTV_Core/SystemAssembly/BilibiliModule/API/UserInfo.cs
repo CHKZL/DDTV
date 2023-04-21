@@ -4,6 +4,7 @@ using DDTV_Core.SystemAssembly.DataCacheModule;
 using DDTV_Core.SystemAssembly.Log;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,15 +24,21 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <returns></returns>
         internal static RoomInfoClass.RoomInfo info(long uid)
         {
-            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/space/acc/info?mid=" + uid);
-            
+            string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/space/wbi/acc/info?mid=" + uid);
+
+            if (WebText.Contains("{\"code\":-509"))
+            {
+                if(WebText.Replace("}{","㈨").Split('㈨').Length>1)
+                {
+                    WebText ="{"+ WebText.Replace("}{", "㈨").Split('㈨')[1];
+                }       
+            }
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"info获取网络数据为空或超时");
                 Thread.Sleep(500);
                 return info(uid);
             }
-
             JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
             if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
             {
