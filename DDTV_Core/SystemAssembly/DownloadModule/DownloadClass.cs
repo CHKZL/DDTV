@@ -577,6 +577,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             }
                             switch (ExtendedName)
                             {
+                                #region flv流模式
+                                //case "flv":
+                                //    {
+                                //        break;
+                                //    }
+                                #endregion
+                                #region HLS_m4s流模式
                                 case "m4s":
                                     {
                                         if (len == 0)
@@ -603,7 +610,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             {
                                                 WaitingTime = 100;
                                             }
-                                            if(len==0)
+                                            if (len == 0)
                                             {
                                                 goto D_start;
                                             }
@@ -643,7 +650,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             {
                                                 Thread.Sleep(3000);
                                                 DisposeFileStream(fs, downloads.FileName, downloadedFiles, roomInfo.Files, len);
-                                                hLSHostClass=HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false);
+                                                hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false);
                                                 return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true);
                                             }
                                         }
@@ -662,42 +669,43 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         }
                                         break;
                                     }
-                                    #region ts流模式
-                                    //case "ts":
-                                    //    {
-                                    //        for (int i = 0; i < M3.Length; i++)
-                                    //        {
-                                    //            if (M3[i].Contains("#EXTINF"))
-                                    //            {
-                                    //                if (!Process.Contains(M3[i + 1].Split('.')[0].Split('/')[1]))
-                                    //                {
-                                    //                    Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
-                                    //                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
-                                    //                    if (fileInfo != null)
-                                    //                    {
-                                    //                        downloads.TotalDownloadCount += fileInfo.Length;
-                                    //                        DownloadCount += fileInfo.Length;
-                                    //                        fs.Write(fileInfo);
-                                    //                        len++;
-                                    //                    }
-                                    //                    else
-                                    //                    {
-                                    //                        WaitingTime = 100;
-                                    //                    }
-                                    //                }
-                                    //            }
-                                    //        }
-                                    //        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
-                                    //        { 
-                                    //            DownloadCount = 0;
-                                    //            fs.Close();
-                                    //            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".ts";
-                                    //            fs = new FileStream(NewFilePath, FileMode.Create);
-                                    //            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
-                                    //        }
-                                    //        break;
-                                    //    }
-                                    #endregion
+                                #endregion
+                                #region HLS_ts流模式
+                                //case "ts":
+                                //    {
+                                //        for (int i = 0; i < M3.Length; i++)
+                                //        {
+                                //            if (M3[i].Contains("#EXTINF"))
+                                //            {
+                                //                if (!Process.Contains(M3[i + 1].Split('.')[0].Split('/')[1]))
+                                //                {
+                                //                    Process.Add(M3[i + 1].Split('.')[0].Split('/')[1]);
+                                //                    byte[] fileInfo = NetworkRequestModule.Get.Get.GetFile_Bytes(hLSHostClass.host + M3[i + 1]);
+                                //                    if (fileInfo != null)
+                                //                    {
+                                //                        downloads.TotalDownloadCount += fileInfo.Length;
+                                //                        DownloadCount += fileInfo.Length;
+                                //                        fs.Write(fileInfo);
+                                //                        len++;
+                                //                    }
+                                //                    else
+                                //                    {
+                                //                        WaitingTime = 100;
+                                //                    }
+                                //                }
+                                //            }
+                                //        }
+                                //        if (downloads.FlvSplit && DownloadCount > downloads.FlvSplitSize)
+                                //        {
+                                //            DownloadCount = 0;
+                                //            fs.Close();
+                                //            string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".ts";
+                                //            fs = new FileStream(NewFilePath, FileMode.Create);
+                                //            roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
+                                //        }
+                                //        break;
+                                //    }
+                                #endregion
                             }
 
                             Thread.Sleep(WaitingTime);

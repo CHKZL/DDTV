@@ -15,7 +15,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
     public class RoomInfo
     {
         public static bool ForceCDNResolution = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.ForceCDNResolution, "False", CoreConfigClass.Group.Download));
-
+        private static int RetryCountFor_get_status_info_by_uids = 0;
         /// <summary>
         /// 使用uids获取房间状态信息
         /// </summary>
@@ -44,10 +44,20 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 
                 if (string.IsNullOrEmpty(WebText))
                 {
-                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_status_info_by_uids获取网络数据为空或超时");
+                    if (RetryCountFor_get_status_info_by_uids > 5)
+                    {
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_status_info_by_uids获取网络数据为空或超时");
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"get_status_info_by_uids获取网络数据为空或超时",false,null,false);
+                    }
+                    RetryCountFor_get_status_info_by_uids++;
+                    
                     Thread.Sleep(800);
                     return get_status_info_by_uids(UIDList);
                 }
+                RetryCountFor_get_status_info_by_uids = 0;
                 JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
                 if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
                 {

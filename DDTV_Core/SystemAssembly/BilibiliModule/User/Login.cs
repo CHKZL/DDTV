@@ -44,11 +44,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                                 case InitDDTV_Core.SatrtType.DDTV_CLI:
                                     Console.WriteLine("等待登陆中，请用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误，请打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
                                     break;
-                                case InitDDTV_Core.SatrtType.DDTV_GUI:
-                                    return false;
+                               case InitDDTV_Core.SatrtType.DDTV_CLI_Docker:
+                                    Console.WriteLine("等待登陆中，请用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误，请打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
+                                    break;
+                               
+                                case InitDDTV_Core.SatrtType.DDTV_WEB_Docker:
+                                    Console.WriteLine("等待登陆中，访问" + "[http://本设备IP地址:11419/api/loginqr]查看二维码\r\n或者使用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
+                                    break;
                                 case InitDDTV_Core.SatrtType.DDTV_WEB:
                                     Console.WriteLine("等待登陆中，访问" + "[http://本设备IP地址:11419/api/loginqr]查看二维码\r\n或者使用bilibili手机客户端扫描控制台显示的二维码\r\n如果二维码排版错误打开DDTV根目录中生成的[./BiliQR.png]文件扫描进行登录");
                                     break;
+                                     case InitDDTV_Core.SatrtType.DDTV_GUI:
+                                    return false;
                                 default:
                                     break;
                             }
@@ -82,9 +89,22 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                         }
                     default:
                         {
-                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n按任意键开始触发登陆流程\r\n触发后请在5分钟内登陆\r\n超时请重启程序再试\r\n-------\r\n");
-                            Console.ReadKey();
-                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n开始登陆流程\r\n-------\r\n");
+
+                            Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------" +
+                                "\r\n按任意键开始触发登陆流程" +
+                                "\r\n触发后请在5分钟内登陆" +
+                                "\r\n超时请重启程序再试" +
+                                "\r\n-------\r\n");
+                            try
+                            {
+                                Console.ReadKey();
+                                Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n开始登陆流程\r\n-------\r\n");
+                            }
+                            catch (Exception)
+                            {
+                                Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------\r\n检测到当前并非控制台环境，跳过按键检测直接显示二维码等待扫码\r\n但请注意，长期触发该提示可能会导致风控\r\n-------\r\n");
+                            }
+                            
                             ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                             ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                             QR_Object DEF = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
