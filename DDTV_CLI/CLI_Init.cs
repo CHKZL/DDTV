@@ -14,7 +14,6 @@ namespace DDTV_CLI
     {
         public static void Main(string[] args)
         {
-
             //Test();
             InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI, args.Contains("--no-update"));
             while (true)

@@ -40,11 +40,18 @@ namespace DDTV_Core.Tool
                     case SatrtType.DDTV_GUI:
                         Type = "DDTV_GUI_x64";
                         break;
-                    case SatrtType.DDTV_WEB:
-                        Type = "DDTV_WEB_x64";
-                        break;
+
                     case SatrtType.DDTV_CLI:
                         Type = "DDTV_CLI_x64";
+                        break;
+                    case SatrtType.DDTV_CLI_Docker:
+                        Type = "DDTV_CLI_Docker";
+                        break;
+                    case SatrtType.DDTV_WEB:
+                        Type = "DDTV_WEB_Docker";
+                        break;
+                    case SatrtType.DDTV_WEB_Docker:
+                        Type = "DDTV_WEB_x64";
                         break;
                     case SatrtType.DDTV_DanMu:
                         return;

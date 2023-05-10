@@ -24,7 +24,7 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-04-21 09:18:53";
+        public static string CompiledVersion = "2023-05-11 00:05:37";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
@@ -34,20 +34,39 @@ namespace DDTV_Core
         /// </summary>
         /// <param name="satrtType">启动类型</param>
         /// <param name="EAU">是否启用自动更新和提示</param>
-        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core,bool EAU=true)
+        public static void Core_Init(SatrtType satrtType = SatrtType.DDTV_Core, bool EAU = true)
         {
-            InitType = satrtType;
+            string? DockerEnvironment = Environment.GetEnvironmentVariable("DDTV_Docker_Project");
+            if (!string.IsNullOrEmpty(DockerEnvironment))
+            {
+                switch (DockerEnvironment)
+                {
+                    case "DDTV_CLI":
+                        InitType = SatrtType.DDTV_CLI_Docker;
+                        break;
+                    case "DDTV_WEB_Server":
+                        InitType = SatrtType.DDTV_WEB_Docker;
+                        break;
+                    default:
+                        InitType = satrtType;
+                        break;
+                }
+            }
+            else
+            {
+                InitType = satrtType;
+            }
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
-            Console.WriteLine($"有任何问题欢迎加群：338182356 直接沟通");
+
             Log.LogInit(LogClass.LogType.Debug);//初始化日志系统，设置日志输出等级
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;//设置使用的最低安全协议（B站目前为Tls12）
             ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;//连接队列上线
             ServicePointManager.Expect100Continue = false;//禁止查询服务端post状态防止卡死
-            CoreConfig.ConfigInit(satrtType);//初始化设置系统
+            CoreConfig.ConfigInit(InitType);//初始化设置系统
             DDTV_Update.CheckUpdateProgram();//检查更新器是否有新版本
-            Task.Run(() => Tool.DDcenter.Init(satrtType));//初始化DDC采集系统
-            if (satrtType != SatrtType.DDTV_GUI && satrtType != SatrtType.DDTV_DanMu)
+            Task.Run(() => Tool.DDcenter.Init(InitType));//初始化DDC采集系统
+            if (InitType != SatrtType.DDTV_GUI && InitType != SatrtType.DDTV_DanMu)
             {
                 SeKey();//启动控制台菜单监听
                 BilibiliUserConfig.CheckAccount.CheckAccountChanged += CheckAccount_CheckAccountChanged;//注册登陆信息检查失效WebHook事件
@@ -57,11 +76,12 @@ namespace DDTV_Core
             if (!EAU)//如果带--no-update则关闭自动更新功能
                 CoreConfig.AutoInsallUpdate = false;
             Console.WriteLine($"========================\nDDTV_Core启动完成\n========================");
+            Console.WriteLine($"有任何问题欢迎加群：338182356 直接沟通");
             //if(UserInfo.LoginValidityVerification())
             //{
             //    Log.AddLog(nameof(InitDDTV_Core), LogClass.LogType.Error, "登陆已失效！请重新登陆！", false, null, false);
             //}
-            switch (satrtType)
+            switch (InitType)
             {
                 case SatrtType.DDTV_Core:
                     ServerInteraction.CheckUpdates.Update("Core");
@@ -73,7 +93,18 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("CLI");
                     BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
+                case SatrtType.DDTV_CLI_Docker:
+                    ServerInteraction.CheckUpdates.Update("CLI");
+                    ServerInteraction.Dokidoki.Start("CLI");
+                    BilibiliUserConfig.CheckAccount.CheckLoginValidity();
+                    break;
                 case SatrtType.DDTV_WEB:
+                    ServerInteraction.CheckUpdates.Update("WEB");
+                    ServerInteraction.Dokidoki.Start("WEB");
+                    ServerInteraction.UpdateNotice.Start("WEB");
+                    BilibiliUserConfig.CheckAccount.CheckLoginValidity();
+                    break;
+                case SatrtType.DDTV_WEB_Docker:
                     ServerInteraction.CheckUpdates.Update("WEB");
                     ServerInteraction.Dokidoki.Start("WEB");
                     ServerInteraction.UpdateNotice.Start("WEB");
@@ -148,6 +179,8 @@ namespace DDTV_Core
             DDTV_GUI,
             DDTV_CLI,
             DDTV_WEB,
+            DDTV_CLI_Docker,
+            DDTV_WEB_Docker,
             DDTV_DanMu,
             DDTV_Other = int.MaxValue
         }
