@@ -83,7 +83,7 @@ namespace DDTV_Core.Tool
                     {
                         while (true)
                         {
-                            if (DDTV_Core.Tool.DDcenter.DD_Center_UUID != "DDTVvtbs")
+                            if (DDTV_Core.Tool.DDcenter.DD_Center_UUID == "DDTVvtbs")
                             {
                                 try
                                 {
