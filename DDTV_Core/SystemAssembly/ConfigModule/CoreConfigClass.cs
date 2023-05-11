@@ -414,6 +414,16 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Download   默认值：False
             /// </summary>
             IsSaveCover,
+            /// <summary>
+            /// 用于请求DD_Center时用的UUID
+            /// 组：Core   默认值：DDTVvtbs
+            /// </summary>
+            DD_Center_UUID,
+            /// <summary>
+            /// 用于请求DD_Center时间隔等待的毫秒数
+            /// 组：Core   默认值：30000
+            /// </summary>
+            DD_Center_Waiting_Millisecond
         }
     }
 }

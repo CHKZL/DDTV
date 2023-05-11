@@ -83,21 +83,24 @@ namespace DDTV_Core.Tool
                     {
                         while (true)
                         {
-                            try
+                            if (DDTV_Core.Tool.DDcenter.DD_Center_UUID != "DDTVvtbs")
                             {
-                                string Time = GetDDCtime("DDcenterWaitingTime");
-                                ServerMessageClass.MessageBase.pack<string> pack = JsonConvert.DeserializeObject<ServerMessageClass.MessageBase.pack<string>>(Time);
-                                if (int.TryParse(pack.data, out int T))
+                                try
                                 {
-                                    if (T > 0)
+                                    string Time = GetDDCtime("DDcenterWaitingTime");
+                                    ServerMessageClass.MessageBase.pack<string> pack = JsonConvert.DeserializeObject<ServerMessageClass.MessageBase.pack<string>>(Time);
+                                    if (int.TryParse(pack.data, out int T))
                                     {
-                                        DDTV_Core.Tool.DDcenter.TimeIntervalBetween = T * 1000;
+                                        if (T > 0)
+                                        {
+                                            DDTV_Core.Tool.DDcenter.TimeIntervalBetween = T * 1000;
+                                        }
                                     }
                                 }
-                            }
-                            catch (Exception)
-                            {
+                                catch (Exception)
+                                {
 
+                                }
                             }
                             Thread.Sleep(10800 * 1000);
                         }
