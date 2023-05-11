@@ -18,7 +18,9 @@ namespace DDTV_Core.Tool
     public static class DDcenter
     {
         public static bool DDcenterSwitch = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DDcenterSwitch, "False", CoreConfigClass.Group.Core));
-        public static int TimeIntervalBetween = 60 * 1000;
+        public static string DD_Center_UUID = CoreConfig.GetValue(CoreConfigClass.Key.DD_Center_UUID, "DDTVvtbs", CoreConfigClass.Group.Core);
+        public static int DD_Center_Waiting_Millisecond = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DD_Center_Waiting_Millisecond, "30000", CoreConfigClass.Group.Core));
+        
         private static ClientWebSocket _webSocket = null;
         private static CancellationToken _cancellation = new CancellationToken();
         private static string Type = string.Empty;
@@ -40,7 +42,6 @@ namespace DDTV_Core.Tool
                     case SatrtType.DDTV_GUI:
                         Type = "DDTV_GUI_x64";
                         break;
-
                     case SatrtType.DDTV_CLI:
                         Type = "DDTV_CLI_x64";
                         break;
@@ -65,7 +66,7 @@ namespace DDTV_Core.Tool
                 }
                 _webSocket = new ClientWebSocket();
                 await _webSocket.ConnectAsync(new Uri(
-                                "wss://cluster.vtbs.moe/?uuid=DDTVvtbs" +
+                                "wss://cluster.vtbs.moe/?uuid=" + DD_Center_UUID +
                                 "&runtime=" + Type + "|" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version +
                                 "&version=" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version +
                                 "&platform=" + OS +
@@ -91,11 +92,11 @@ namespace DDTV_Core.Tool
                     {
 
                         HandleRequest();
-                        Thread.Sleep(TimeIntervalBetween);
+                        Thread.Sleep(DD_Center_Waiting_Millisecond);
                     }
                     if (!DDcenterSwitch)
                     {
-                        Thread.Sleep(TimeIntervalBetween);
+                        Thread.Sleep(DD_Center_Waiting_Millisecond);
                     }
                    
                 }
@@ -143,7 +144,7 @@ namespace DDTV_Core.Tool
 #else
                         Log.AddLog(nameof(DDcenter), LogClass.LogType.Debug_DDcenter, $"DDC采集成功:{(string)K["type"]}", false, null, false);
 #endif
-                                Thread.Sleep(TimeIntervalBetween);
+                                Thread.Sleep(DD_Center_Waiting_Millisecond);
                                 break;
                         }
                     }
