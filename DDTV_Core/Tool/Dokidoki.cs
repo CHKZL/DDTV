@@ -93,7 +93,7 @@ namespace DDTV_Core.Tool
                                     {
                                         if (T > 0)
                                         {
-                                            DDTV_Core.Tool.DDcenter.TimeIntervalBetween = T * 1000;
+                                            DDTV_Core.Tool.DDcenter.DD_Center_Waiting_Millisecond = T * 1000;
                                         }
                                     }
                                 }
