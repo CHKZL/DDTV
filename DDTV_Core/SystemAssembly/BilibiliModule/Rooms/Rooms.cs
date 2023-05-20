@@ -159,6 +159,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
 
             }
             var roominfo = SelectAPI(uid, cacheType);
+            if(cacheType == DataCacheModule.DataCacheClass.CacheType.live_status)
+            {
+                ;
+            }
             if (roominfo != null)
             {
                 string value = roominfo.GetType().GetProperty(Enum.GetName(typeof(DataCacheModule.DataCacheClass.CacheType), cacheType)).GetValue(roominfo, null).ToString();
@@ -206,13 +210,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 case DataCacheModule.DataCacheClass.CacheType.keyframe:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_status:
-                    return API.UserInfo.info(uid);
+                    return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.live_time:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.lock_till:
                     return API.RoomInfo.get_status_info_by_uids(new List<long>() { uid })[0];
                 case DataCacheModule.DataCacheClass.CacheType.room_id:
-                    return API.UserInfo.info(uid);
+                    return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.short_id:
                     return API.RoomInfo.get_info(uid);
                 case DataCacheModule.DataCacheClass.CacheType.tag_name:
