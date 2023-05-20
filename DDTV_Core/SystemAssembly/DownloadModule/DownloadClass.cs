@@ -511,7 +511,6 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             WaitingTime = 1000;
                             if (IsCancel)
                             {
-
                                 Status = DownloadStatus.Cancel;
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
