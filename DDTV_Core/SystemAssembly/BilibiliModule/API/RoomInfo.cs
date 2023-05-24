@@ -298,8 +298,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 return get_info(uid);
             }
             JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
-            if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
+            if (JO != null && JO.ContainsKey("code") && JO["code"] != null && ((int)JO["code"] == 0 ||(int)JO["code"]==1))
             {
+                if((int)JO["code"]==1)
+                {
+                    DataCache.SetCache(CacheType.roomStatus, uid.ToString(), "0", 7200 * 1000);
+                    return null;
+                }
                 if (JO.TryGetValue("data", out var RoomInit) && RoomInit != null)
                 {
 
