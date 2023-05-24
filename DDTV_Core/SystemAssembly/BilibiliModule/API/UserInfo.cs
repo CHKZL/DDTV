@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
 
@@ -17,6 +18,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 {
     public class UserInfo
     {
+        public static string imgKey = "";
+        public static string subKey = "";
+
         /// <summary>
         /// 获取账号信息
         /// </summary>
@@ -26,7 +30,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         {
             try
             {
-                string WebText = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/space/wbi/acc/info?mid=" + uid);
+                //这段算法感谢@ https://github.com/velvetflame/liveStatusCheck
+                long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+                string salt = NetworkRequestModule.NetClass.Get_salt(imgKey, subKey);
+                string Query = NetworkRequestModule.NetClass.Get_w_rid_string(uid, timestamp, salt);
+                string WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.bilibili.com/x/space/wbi/acc/info?{Query}");
 
                 if (WebText.Contains("{\"code\":-509"))
                 {
@@ -157,6 +165,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         {
                             if (T)
                             {
+                                try
+                                {
+                                    string img_url = data["wbi_img"]["img_url"].ToString();
+                                    string sub_url = data["wbi_img"]["sub_url"].ToString();
+                                    string pattern = @"([a-z0-9]+)(?=\.png)";
+                                    imgKey = Regex.Match(img_url, pattern).Value;
+                                    subKey = Regex.Match(sub_url, pattern).Value;
+                                }
+                                catch (Exception) { }
                                 BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
                                 return true;
                             }

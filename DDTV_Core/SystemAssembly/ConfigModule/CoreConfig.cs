@@ -48,7 +48,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     {
                         Log.Log.AddLog(nameof(CoreConfig), Log.LogClass.LogType.Debug, $"配置文件初始化完成");
                         //初始化哔哩哔哩账号系统
-                        BilibiliUserConfig.Init(satrtType);
+                        BilibiliUserConfig.Init(satrtType);              
                         //开始房间巡逻
                         //Rooms.UpdateRoomInfo();
                         RoomPatrolModule.RoomPatrol.Init();
@@ -66,6 +66,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     ClientAID = GetValue(CoreConfigClass.Key.ClientAID, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core) + "-" + BilibiliUserConfig.account.uid;
                     break;
             }
+            BilibiliModule.API.UserInfo.LoginValidityVerification();
             Tool.Dokidoki.DoNotSleepWhileDownloading();
             //开一个线程用于定时自动储存配置
             Task.Run(() =>
