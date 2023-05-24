@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -61,6 +62,36 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule
                     Thread.Sleep(30);
                 }
             });
+        }
+
+
+        public static string Get_w_rid_string(long uid, long timestamp, string salt)
+        {
+            string w_rid = GetMd5Hash("mid=" + uid + "&platform=web&token=&web_location=1550101&wts=" + timestamp + salt);
+            return $"mid={uid}&token=&platform=web&web_location=1550101&w_rid={w_rid}&wts={timestamp}";
+        }
+        private static string GetMd5Hash(string input)
+        {
+            MD5 md5Hash = MD5.Create();
+            byte[] data = md5Hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i=0;i<data.Length;i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
+        }
+        public static string Get_salt(string imgKey, string subKey)
+        {
+            var n = imgKey + subKey;
+            var array = n.ToCharArray();
+            var order = new int[] { 46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
+                33, 9, 42, 19, 29, 28, 14, 39, 12,
+                38, 41, 13, 37, 48, 7, 16,
+                24,55 ,40 ,61 ,26 ,17 ,0 ,1 ,60 ,51 ,30 ,4 ,22 ,25 ,54 ,21 ,56 ,59 ,6 ,63 ,57 ,62 ,
+                11 ,36 ,20 ,34 ,44 ,52 };
+            var salt = new string(order.Select(i => array[i]).ToArray()).Substring(0, 32); // 按照特定顺序混淆并取前32位
+            return salt;
         }
         public static void API_Count(string URL)
         {
