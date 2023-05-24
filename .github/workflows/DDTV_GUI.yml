@@ -53,3 +53,9 @@ jobs:
       run: cd DDTV_GUI && msbuild /property:Configuration=$env:Configuration /p:DebugType=None
       env:
         Configuration: ${{ matrix.configuration }}
+
+    - name: Upload debug release
+      uses: actions/upload-artifact@main
+      with:
+        name: DDTV_GUI_debug
+        path: D:\a\DDTV\DDTV\DDTV_GUI\bin\Release\net6.0-windows
