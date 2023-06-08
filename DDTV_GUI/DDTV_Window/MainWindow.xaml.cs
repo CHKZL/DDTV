@@ -983,6 +983,7 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
             LogWindow logWindow = new LogWindow();
             logWindow.Show();
         }

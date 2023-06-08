@@ -208,33 +208,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
         }
 
-        internal class Root
-        {
-            /// <summary>
-            /// 
-            /// </summary>
-            internal int code { get; set; }
-            /// <summary>
-            /// 消息
-            /// </summary>
-            internal string message { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            internal int ttl { get; set; }
-            /// <summary>
-            /// 
-            /// </summary>
-            internal Data data { get; set; }
-            internal class Data
-            {
-                /// <summary>
-                /// 是否登陆
-                /// </summary>
-                internal string isLogin { get; set; }
-            }
-        }
-
         /// <summary>
         /// 添加关注列表中的V到本地房间配置文件
         /// </summary>
@@ -355,6 +328,157 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             public long mid;
             public int roomid;
             public string name;
+        }
+
+        public class fansMedal
+        {
+            /// <summary>
+            /// 获取牌子信息
+            /// </summary>
+            /// <param name="uid"></param>
+            /// <param name="page"></param>
+            /// <returns></returns>
+            public static List<BilibiliUserConfig._FansMedal> GetFansMedal(long uid,int page = 1)
+            {
+                string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
+                string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/app-ucenter/v1/fansMedal/panel?page=1&page_size=10&target_id={uid}");
+
+                if (string.IsNullOrEmpty(WebText))
+                {
+                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"GetFansMedal获取网络数据为空或超时");
+                    Thread.Sleep(800);
+                    return GetFansMedal(uid,page);
+                }
+                List<BilibiliUserConfig._FansMedal> _FansMedal=new List<BilibiliUserConfig._FansMedal>();
+                Root? FM = JsonConvert.DeserializeObject<Root>(WebText);
+                foreach (var item in FM.data.list)
+                {
+                    _FansMedal.Add(new BilibiliUserConfig._FansMedal()
+                    {
+                        liver_uid=item.medal.target_id,
+                        liver_name=item.anchor_info.nick_name,
+                        level=item.medal.level,
+                        medal_name=item.medal.medal_name,
+                        roomid=item.room_info.room_id
+                    });
+                }
+                if(FM.data.page_info.total_page!=page)
+                {
+                    _FansMedal.AddRange(GetFansMedal(uid, page++));
+                }
+                return _FansMedal;
+            }
+
+            /// <summary>
+            /// 牌子信息结构体
+            /// </summary>
+            public class Root
+            {
+                /// <summary>
+                /// 
+                /// </summary>
+                public int code { get; set; }
+                /// <summary>
+                /// 
+                /// </summary>
+                public string message { get; set; }
+                /// <summary>
+                /// 
+                /// </summary>
+                public int ttl { get; set; }
+                /// <summary>
+                /// 
+                /// </summary>
+                public Data data { get; set; }
+
+                public class Medal
+                {
+                    /// <summary>
+                    /// 主播UID
+                    /// </summary>
+                    public long target_id { get; set; }
+                    /// <summary>
+                    /// 牌子等级
+                    /// </summary>
+                    public int level { get; set; }
+                    /// <summary>
+                    /// 牌子名称
+                    /// </summary>
+                    public string medal_name { get; set; }
+                }
+
+                public class Anchor_info
+                {
+                    /// <summary>
+                    /// 主播昵称
+                    /// </summary>
+                    public string nick_name { get; set; }
+                }
+
+                public class Room_info
+                {
+                    /// <summary>
+                    /// 对应的房间号
+                    /// </summary>
+                    public long room_id { get; set; }
+                }
+
+                public class ListItem
+                {
+                    /// <summary>
+                    /// 牌子信息
+                    /// </summary>
+                    public Medal medal { get; set; }
+                    /// <summary>
+                    /// 主播信息
+                    /// </summary>
+                    public Anchor_info anchor_info { get; set; }
+                    /// <summary>
+                    /// 房间信息
+                    /// </summary>
+                    public Room_info room_info { get; set; }
+                }
+
+                public class Page_info
+                {
+                    /// <summary>
+                    /// 本次请求有多少信息
+                    /// </summary>
+                    public int number { get; set; }
+                    /// <summary>
+                    /// 当前页码
+                    /// </summary>
+                    public int current_page { get; set; }
+                    /// <summary>
+                    /// 
+                    /// </summary>
+                    public string has_more { get; set; }
+                    /// <summary>
+                    /// 下一页的页码
+                    /// </summary>
+                    public int next_page { get; set; }
+                    /// <summary>
+                    /// 总共页数
+                    /// </summary>
+                    public int total_page { get; set; }
+                }
+
+                public class Data
+                {
+                    /// <summary>
+                    /// 详细信息
+                    /// </summary>
+                    public List<ListItem> list { get; set; }
+                    /// <summary>
+                    /// 请求信息
+                    /// </summary>
+                    public Page_info page_info { get; set; }
+                    /// <summary>
+                    /// 牌子总数
+                    /// </summary>
+                    public int total_number { get; set; }
+                }
+            }
         }
     }
 }

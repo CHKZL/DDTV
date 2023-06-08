@@ -17,6 +17,32 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         private static string UserConfigFile = "BiliUser.ini";
         public static Account AccClass = new();
         public static CookieInfo account = new CookieInfo();
+        public static List<_FansMedal> FansMedal = new List<_FansMedal>();
+
+        public class _FansMedal
+        {
+            /// <summary>
+            /// 主播UID
+            /// </summary>
+            public long liver_uid { get; set; }
+            /// <summary>
+            /// 主播昵称
+            /// </summary>
+            public string liver_name { get; set; }
+            /// <summary>
+            /// 房间号
+            /// </summary>
+            public long roomid { get; set; }
+            /// <summary>
+            /// 牌子等级
+            /// </summary>
+            public int level { get; set; }
+            /// <summary>
+            /// 牌子名字
+            /// </summary>
+            public string medal_name { get; set; }
+        }
+
         public class CookieInfo
         {
             /// <summary>
