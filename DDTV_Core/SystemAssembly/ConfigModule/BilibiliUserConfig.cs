@@ -1,4 +1,5 @@
 ﻿using BiliAccount;
+using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
@@ -41,6 +42,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 牌子名字
             /// </summary>
             public string medal_name { get; set; }
+            /// <summary>
+            /// 牌子ID
+            /// </summary>
+            public long medal_id { get; set; }
         }
 
         public class CookieInfo
@@ -240,6 +245,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                     Log.Log.AddLog(nameof(CheckAccount), LogClass.LogType.Error, "验证账号有效性出现意外错误", true, e);
                                 }
                             }
+                            BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
                             Thread.Sleep(IntervalTime);
                         }
                     });

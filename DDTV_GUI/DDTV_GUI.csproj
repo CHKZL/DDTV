@@ -27,6 +27,7 @@
     <None Remove="Resources\Img\UI\DanMu.png" />
     <None Remove="Resources\Img\UI\DDTV.ico" />
     <None Remove="Resources\Img\UI\delete.png" />
+    <None Remove="Resources\Img\UI\FansMedal.png" />
     <None Remove="Resources\Img\UI\folder-open.png" />
     <None Remove="Resources\Img\UI\fullscreen.png" />
     <None Remove="Resources\Img\UI\home.png" />
@@ -117,6 +118,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\delete.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Resources\Img\UI\FansMedal.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Resources\Img\UI\folder-open.png">

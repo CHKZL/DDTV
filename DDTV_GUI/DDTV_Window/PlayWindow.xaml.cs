@@ -1874,5 +1874,25 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
         }
+
+        private void SetFansMedal_Click(object sender, RoutedEventArgs e)
+        {
+            if(UserInfo.fansMedal.WearFansMedal(uid))
+            {
+                foreach (var item in BilibiliUserConfig.FansMedal)
+                {
+                    if(item.liver_uid==uid)
+                    {
+                        Growl.WarningGlobal($"粉丝牌已切换到{item.liver_name}[{item.medal_name}]");
+                        return;
+                    }
+                }
+                 Growl.WarningGlobal($"粉丝牌切换完成");
+            }
+            else
+            {
+                Growl.WarningGlobal("切换粉丝牌失败，请确认有该房间粉丝牌");
+            }
+        }
     }
 }
