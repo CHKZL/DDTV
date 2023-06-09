@@ -423,7 +423,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 用于请求DD_Center时间隔等待的毫秒数
             /// 组：Core   默认值：30000
             /// </summary>
-            DD_Center_Waiting_Millisecond
+            DD_Center_Waiting_Millisecond,
         }
     }
 }

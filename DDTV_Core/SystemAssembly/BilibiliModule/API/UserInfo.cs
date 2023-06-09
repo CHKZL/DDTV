@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -333,6 +334,37 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         public class fansMedal
         {
             /// <summary>
+            /// 佩戴牌子
+            /// </summary>
+            /// <param name="uid"></param>
+            /// <returns></returns>
+            public static bool WearFansMedal(long uid)
+            {
+                foreach (var item in BilibiliUserConfig.FansMedal)
+                {
+                    if (item.liver_uid == uid)
+                    {
+                        CookieContainer CK = NetworkRequestModule.NetClass.CookieContainerTransformation(BilibiliUserConfig.account.cookie);
+                        Dictionary<string, string> dic = new Dictionary<string, string>();
+                        dic.Add("medal_id", item.medal_id.ToString());
+                        dic.Add("csrf_token", BilibiliUserConfig.account.csrf);
+                        dic.Add("csrf", BilibiliUserConfig.account.csrf);
+                        dic.Add("visit_id", "");
+                        JObject JO = (JObject)NetworkRequestModule.Post.Post.SendRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/fansMedal/wear", dic, CK);
+                        if (JO.ContainsKey("code") && JO["code"].ToString() == "0")
+                        {
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return false;
+            }
+
+            /// <summary>
             /// 获取牌子信息
             /// </summary>
             /// <param name="uid"></param>
@@ -359,7 +391,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         liver_name=item.anchor_info.nick_name,
                         level=item.medal.level,
                         medal_name=item.medal.medal_name,
-                        roomid=item.room_info.room_id
+                        roomid=item.room_info.room_id,
+                        medal_id=item.medal.medal_id
                     });
                 }
                 if(FM.data.page_info.total_page!=page)
@@ -405,6 +438,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                     /// 牌子名称
                     /// </summary>
                     public string medal_name { get; set; }
+                    /// <summary>
+                    /// 牌子编号
+                    /// </summary>
+                    public long medal_id { get; set; }
                 }
 
                 public class Anchor_info

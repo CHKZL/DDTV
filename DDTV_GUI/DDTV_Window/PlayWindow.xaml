@@ -46,6 +46,11 @@
                         <MenuItem Name="qn80" Header="流畅" Tag="80" Width="90" Click="MenuItem_SwitchQuality_Click"/>
                     </MenuItem>
                     <Separator/>
+                    <MenuItem Header="佩戴该房间牌子(如果有)" Click="SetFansMedal_Click">
+                        <MenuItem.Icon>
+                            <Image Source="/Resources/Img/UI/FansMedal.png" Width="18" Height="18"/>
+                        </MenuItem.Icon>
+                    </MenuItem>
                     <MenuItem Header="弹幕菜单" >
                         <MenuItem.Icon>
                             <Image Source="/Resources/Img/UI/align-right.png" Width="18" Height="18"/>
