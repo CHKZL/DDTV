@@ -350,7 +350,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         dic.Add("csrf_token", BilibiliUserConfig.account.csrf);
                         dic.Add("csrf", BilibiliUserConfig.account.csrf);
                         dic.Add("visit_id", "");
-                        JObject JO = (JObject)NetworkRequestModule.Post.Post.SendRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/fansMedal/wear", dic, CK);
+                        JObject JO = (JObject)JsonConvert.DeserializeObject(NetworkRequestModule.Post.Post.SendRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/fansMedal/wear", dic, CK));
                         if (JO.ContainsKey("code") && JO["code"].ToString() == "0")
                         {
                             return true;
@@ -370,10 +370,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             /// <param name="uid"></param>
             /// <param name="page"></param>
             /// <returns></returns>
-            public static List<BilibiliUserConfig._FansMedal> GetFansMedal(long uid,int page = 1)
+            public static List<BilibiliUserConfig._FansMedal> GetFansMedal(long uid,int page = 1,bool isF =true)
             {
                 string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
-                string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/app-ucenter/v1/fansMedal/panel?page=1&page_size=10&target_id={uid}");
+                string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/app-ucenter/v1/fansMedal/panel?page={page}&page_size=10&target_id={uid}");
 
                 if (string.IsNullOrEmpty(WebText))
                 {
@@ -392,13 +392,19 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         level=item.medal.level,
                         medal_name=item.medal.medal_name,
                         roomid=item.room_info.room_id,
-                        medal_id=item.medal.medal_id
+                        medal_id = item.medal.medal_id
                     });
                 }
-                if(FM.data.page_info.total_page!=page)
+                if (isF)
                 {
-                    _FansMedal.AddRange(GetFansMedal(uid, page++));
+                    isF = false;
+                    while (FM.data.page_info.total_page >= page)
+                    {
+                        page = page + 1;
+                        _FansMedal.AddRange(GetFansMedal(uid, page, false));
+                    }
                 }
+                
                 return _FansMedal;
             }
 

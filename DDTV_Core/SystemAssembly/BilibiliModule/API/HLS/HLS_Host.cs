@@ -20,7 +20,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
         /// <param name="IsNewTask"></param>
         /// <param name="IsAlternative">是否查找备用fmp4的host信息(如果存在的话)</param>
         /// <returns></returns>
-        public static HLSHostClass Get_HLS_Host(ref RoomInfoClass.RoomInfo roomInfo, ref DownloadClass.Downloads downloads, bool IsNewTask = false,bool IsAlternative =false)
+        public static HLSHostClass Get_HLS_Host(ref RoomInfoClass.RoomInfo roomInfo, ref DownloadClass.Downloads downloads, bool IsNewTask = false,bool IsAlternative =false,bool IsPlay =false)
         {
             HLSHostClass hLSHostClass = new HLSHostClass();
             string WebText = String.Empty;
@@ -36,9 +36,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                     return hLSHostClass;
                 }
                 WebText = NetworkRequestModule.Get.Get.GetRequest($"{ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomInfo.room_id}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)Download.RecQuality}&platform=2&ptype=2", false, "https://www.bilibili.com/");
-                if (error > 10 || (IsFlvSteam && NoHlsSteam > Download.WaitHLSTime) || (!IsFlvSteam && NoHlsSteam > Download.WaitHLSTime+25))
+                if ((IsPlay && NoHlsSteam >0) || error > 10 || (IsFlvSteam && NoHlsSteam > Download.WaitHLSTime) || (!IsFlvSteam && NoHlsSteam > Download.WaitHLSTime+25))
                 {
-                    Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时重试10次超时");
+                    Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时重试次数超时");
                     hLSHostClass.IsEffective = false;
                     return hLSHostClass;
                 }
@@ -58,7 +58,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                             return hLSHostClass;
                         }
                         foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
-                        {
+                        {                         
                             if (Stream.ProtocolName == "http_hls")
                             {
                                 foreach (var Format in Stream.Formats)

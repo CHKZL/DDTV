@@ -3,6 +3,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -246,6 +247,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                 }
                             }
                             BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
+                            string B = JsonConvert.SerializeObject(BilibiliUserConfig.FansMedal);
                             Thread.Sleep(IntervalTime);
                         }
                     });

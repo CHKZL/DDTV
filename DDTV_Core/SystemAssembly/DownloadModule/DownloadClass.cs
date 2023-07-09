@@ -467,8 +467,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
             /// <param name="hLSHostClass">HOST类</param>
             /// <param name="Process">已下载片段记录</param>
             /// <param name="ExtendedName">拓展名格式</param>
+            /// <param name="IsPlay">是否为播放模式</param>
             /// <returns></returns>
-            internal int Download_HLS(ref Downloads downloads, ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process, string ExtendedName, bool Is_ENDLIST = false)
+            public int Download_HLS(ref Downloads downloads, ref RoomInfoClass.RoomInfo roomInfo, string Path, string FileName, HLS_Host.HLSHostClass hLSHostClass, List<string> Process, string ExtendedName, bool Is_ENDLIST = false,bool IsPlay=false)
             {
 
                 bool IsStart = false;
@@ -481,7 +482,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     
                     int count = 1;
                     //Path="D:"+Path.Substring(1, Path.Length-1);
-                    Path = Tool.FileOperation.CreateAll(Path);
+                    if (!IsPlay)
+                        Path = Tool.FileOperation.CreateAll(Path);
                     downloads.FlvFileList.Add(downloads.FilePath);
                     if (Is_ENDLIST)
                     {
@@ -493,6 +495,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     }
 
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
+                    roomInfo.HLS_Player_File = downloads.FileName;
                     DownloadedFiles downloadedFiles = new DownloadedFiles() { FilePath = downloads.FileName };
                     roomInfo.Files.Add(downloadedFiles);
                     int WaitingTime = 1000;
@@ -515,7 +518,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                 Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"用户取消[{roomInfo.uname}({roomInfo.room_id})]的HLS录制任务，该任务取消");
                                 roomInfo.IsDownload = false;
                                 DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
-                                Download.VideoDownloadCompleteTaskd_HLS(Uid, downloads, true);
+                                Download.VideoDownloadCompleteTaskd_HLS(Uid, downloads, true,IsPlay);
                                 return 0;
                             }
                             string TU = hLSHostClass.host + hLSHostClass.base_url + hLSHostClass.base_file_name + hLSHostClass.extra;
@@ -650,7 +653,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                                 Thread.Sleep(3000);
                                                 DisposeFileStream(fs, downloads.FileName, downloadedFiles, roomInfo.Files, len);
                                                 hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false);
-                                                return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true);
+                                                return Download_HLS(ref downloads, ref roomInfo, Path, FileName, hLSHostClass, Process, ExtendedName, true,IsPlay);
                                             }
                                         }
                                         if (NotUpdates)
@@ -664,6 +667,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             fs.Close();
                                             string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".mp4";
                                             fs = new FileStream(NewFilePath, FileMode.Create);
+                                            roomInfo.HLS_Player_File = NewFilePath;
                                             roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
                                         }
                                         break;

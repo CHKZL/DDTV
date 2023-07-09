@@ -63,7 +63,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"增加下载任务失败，原因：用户取消下载。该任务是否为新任务：[{(IsNewTask ? "是" : "否")}】");
                             if (IsHLS)
                             {
-                                VideoDownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1]);
+                                VideoDownloadCompleteTaskd_HLS(uid, roomInfo.DownloadingList[roomInfo.DownloadingList.Count() - 1],true);
                             }
                             else
                             {
@@ -132,18 +132,25 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// 下载任务结束处理(HLS任务)
         /// </summary>
         /// <param name="IsCancel">该任务是否已经取消</param>
-        internal static void VideoDownloadCompleteTaskd_HLS(long uid, DownloadClass.Downloads downloadClass, bool IsCancel = false)
+        internal static void VideoDownloadCompleteTaskd_HLS(long uid, DownloadClass.Downloads downloadClass, bool IsCancel = false,bool IsPlay = false)
         {
             try
             {
+                if(IsPlay)
+                {
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"{uid}的播放器下载任务已结束");
+                    Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
+                    return;
+                }
                 if (!Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo roomInfo))
                 {
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Warn, $"录制结束操作出现异常：该UID:{uid}不存在于本地监控列表中");
                 }
                 else
                 {
-                    roomInfo.IsUserCancel = false;
+                    roomInfo.IsUserCancel = IsPlay ? false : IsCancel;
                     downloadClass.EndTime = DateTime.Now;
+                    
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"开始执行[{roomInfo.uname}({roomInfo.room_id})]直播间的下载任务结束处理任务");
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
@@ -480,7 +487,13 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     string After = string.Empty;
                                     if (RealTimeTitleFileName)
                                     {
-                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}")).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                                        DateTime dateTime = default;
+
+                                        if (roomInfo.DownloadingList.Count > 0)
+                                        {
+                                            dateTime = roomInfo.DownloadingList[0].StartTime;
+                                        }
+                                        After = item.Replace(item.Split('/')[item.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}",dateTime)).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
                                     }
                                     else
                                     {
@@ -665,7 +678,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloadClass, IsNewTask);
                         if (!hLSHostClass.LiveStatus)
                         {
-                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass);
+                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass,false);
                             return;
                         }
                         if (hLSHostClass.IsUserCancel)
@@ -692,9 +705,25 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         Console.WriteLine(StarText);
                         downloadClass.IsHLS = true;
                         Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, StarText.Replace("\n", "　"), false, null, false);
-                        if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
-                            DownloadPath = DownloadPath + "/";
-                        string Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}{DownloadDirectoryName}");
+
+                        string Path = string.Empty;
+                        //if (IsPlay)
+                        //{
+                        //    if (TmpPath.Substring(TmpPath.Length - 1, 1) != "/")
+                        //    {
+                        //        TmpPath = TmpPath + "/";
+                        //    }
+                        //    Path = Tool.FileOperation.ReplaceKeyword(uid, $"{TmpPath}{DownloadDirectoryName}");
+                        //}
+                        //else
+                        {
+                            if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
+                            {
+                                DownloadPath = DownloadPath + "/";
+                            }
+                            Path = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}{DownloadDirectoryName}");
+                        }
+
                         string FileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}" + "_{R}");
                         //执行下载任务
                         Path = Tool.FileOperation.CreateAll(Path + $"/{Tool.FileOperation.ReplaceKeyword(uid, DownloadFolderName)}/");
@@ -720,7 +749,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"【{roomInfo.uname}({roomInfo.room_id})】HLS录制任务不进行弹幕录制，判断依据：是否为重连任务:[{(IsNewTask ? "否" : "是")}],弹幕总开关:[{(IsRecDanmu ? "是" : "否")}],房间弹幕录制设置:[{(RoomIsRecDanmu ? "是" : "否")}]");
                         }
 
-                        switch (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName))
+                        switch (downloadClass.Download_HLS(ref downloadClass, ref roomInfo, Path, FileName, hLSHostClass, downloadClass.HLSRecorded, downloadClass.ExtendedName,false))
                         {
                             case -1:
                                 Rooms.RoomInfo[uid].DownloadingList.Remove(downloadClass);
@@ -729,7 +758,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             case 0:
                                 if (!downloadClass.GetCancelState())
                                 {
-                                    VideoDownloadCompleteTaskd_HLS(uid, downloadClass);
+                                    VideoDownloadCompleteTaskd_HLS(uid, downloadClass,false);
                                 }
                                 return;
                             case 1:
