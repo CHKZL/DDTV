@@ -139,6 +139,12 @@
 
                 <!--<Label Background="White" FontSize="72">loading...</Label>-->
             </Grid>
+            <Grid Name="pause" Background="#7F5B5B5B" Visibility="Collapsed">
+                
+                <TextBlock Text="已暂停（空格快捷键）" Style="{StaticResource TextBlockLarge}" Foreground="#00a1d6" FontSize="20" />
+
+                <!--<Label Background="White" FontSize="72">loading...</Label>-->
+            </Grid>
 
             <Grid>
                 <Grid Name="DanMuSendGrid" Height="35" VerticalAlignment="Bottom" Background="#B2000000" Visibility="Collapsed">

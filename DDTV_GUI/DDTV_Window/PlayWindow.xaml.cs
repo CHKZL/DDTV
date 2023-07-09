@@ -35,6 +35,8 @@ using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 using System.Windows.Media;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu;
 using static DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu.DanMu;
+using DDTV_Core.Tool;
+using DDTV_Core.SystemAssembly.DataCacheModule;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -86,6 +88,15 @@ namespace DDTV_GUI.DDTV_Window
         private UserLiveInfo userLiveInfo = new();//屏蔽信息
         public DanMuOrbitInfo[] danMuOrbitInfos = new DanMuOrbitInfo[100];//弹幕发射轨道
 
+        public bool IsHls = false;
+        public _HlsMode hlsMode = new _HlsMode();
+
+        public class _HlsMode
+        {
+            internal DownloadClass.Downloads downloadClass = new DownloadClass.Downloads();
+            internal RoomInfoClass.RoomInfo roomInfo = new RoomInfoClass.RoomInfo();
+        }
+
         /// <summary>
         /// 屏幕渲染弹幕对象
         /// </summary>
@@ -132,7 +143,10 @@ namespace DDTV_GUI.DDTV_Window
         {
             InitializeComponent();
 
-           
+            if (Rooms.RoomInfo.TryGetValue(Uid, out RoomInfoClass.RoomInfo roomInfo))
+            {
+                hlsMode.roomInfo = roomInfo;
+            }
             downloader = new DownloadService(downloadOpt);
             roomId = int.Parse(Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.room_id));
             Task.Run(() =>
@@ -326,16 +340,70 @@ namespace DDTV_GUI.DDTV_Window
                         Growl.WarningGlobal($"{name}播间没有默认匹配的清晰度，已为您切换到原画");
                     }
                     string Url = RoomInfo.GetPlayUrl(Uid, (RoomInfoClass.Quality)Quality, (RoomInfoClass.Line)Line, true);
+
                     windowInfo.title = Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.uname) + "-" + Rooms.GetValue(Uid, DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass.CacheType.title);
-                    
+
                     this.Dispatcher.Invoke(() =>
                         this.Title = windowInfo.title
                     );
-                    StartDownload(Url);
+
+
+                    string Path = string.Empty;
+                    if (Download.TmpPath.Substring(Download.TmpPath.Length - 1, 1) != "/")
+                    {
+                        Download.TmpPath = Download.TmpPath + "/";
+                    }
+                    Path = FileOperation.ReplaceKeyword(uid, $"{Download.TmpPath}{Download.DownloadDirectoryName}");
+                    string FileName = FileOperation.ReplaceKeyword(uid, $"{Download.DownloadFileName}" + "_{R}");
+
+                    if (hlsMode.downloadClass.IsDownloading)
+                    {
+                        hlsMode.downloadClass.Cancel();
+                        if (!string.IsNullOrEmpty(hlsMode.roomInfo.HLS_Player_File))
+                        {
+                            DDTV_Core.Tool.FileOperation.Del(hlsMode.roomInfo.HLS_Player_File);
+                        }
+                    }
+
+                    hlsMode.downloadClass = new DownloadClass.Downloads()
+                    {
+                        Uid = uid,
+                        IsDownloading = true,
+                        Status = DownloadClass.Downloads.DownloadStatus.Standby,
+                        RoomId = Rooms.GetValue(uid, DataCacheClass.CacheType.room_id),
+                        Name = Rooms.GetValue(uid, DataCacheClass.CacheType.uname),
+                        Title = Rooms.GetValue(uid, DataCacheClass.CacheType.title),
+                        IsHLS = true,
+                        FilePath = Path,
+                        FileName = Path
+                    };
+
+                    HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref hlsMode.roomInfo, ref hlsMode.downloadClass, true,false,true);
+                    if (hLSHostClass.IsEffective)
+                    {
+                        Task.Run(() =>
+                       {
+                           IsHls = true;
+                           hlsMode.downloadClass.Download_HLS(ref hlsMode.downloadClass, ref hlsMode.roomInfo, Path, FileName, hLSHostClass, hlsMode.downloadClass.HLSRecorded, hlsMode.downloadClass.ExtendedName, false, true);
+                       });
+                    }
+                    else
+                    {
+                        IsHls = false;
+                        StartDownload(Url);
+                    }
 
                     Task.Run(() =>
                     {
-                        Thread.Sleep(3000);
+                        if (IsHls)
+                        {
+                            Thread.Sleep(5000);
+                        }
+                        else
+                        {
+                            Thread.Sleep(3000);
+                        }
+
                         VideoView.Dispatcher.Invoke(() =>
                         {
                             try
@@ -348,20 +416,37 @@ namespace DDTV_GUI.DDTV_Window
                                     }
                                     if (!IsClose)
                                     {
-                                        if (!File.Exists(FileDirectory))
+                                        if (!File.Exists(FileDirectory) && !File.Exists(hlsMode.roomInfo.HLS_Player_File))
                                         {
-                                             Growl.WarningGlobal($"{name}-直播间的直播流当前不可访问，该问题一般是由于B站服务器问题或者网络代理造成的，请稍后再试");
+                                            Growl.WarningGlobal($"{name}-直播间的直播流当前不可访问，该问题一般是由于B站服务器问题或者网络代理造成的，请稍后再试");
                                             return;
                                         }
                                         else
                                         {
-                                            FileInfo fileInfo = new FileInfo(FileDirectory);
-                                            if (fileInfo.Length < 100)
+                                            if (IsHls)
                                             {
-                                                Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
-                                                return;
+
+                                                FileInfo fileInfo = new FileInfo(hlsMode.roomInfo.HLS_Player_File);
+                                                if (fileInfo.Length < 100)
+                                                {
+                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
+                                                    return;
+                                                }
+
+                                                VideoView.MediaPlayer.Play(new Media(vlcVideo, hlsMode.roomInfo.HLS_Player_File));
                                             }
-                                            VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                            else
+                                            {
+                                                FileInfo fileInfo = new FileInfo(FileDirectory);
+                                                if (fileInfo.Length < 100)
+                                                {
+                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
+                                                    return;
+                                                }
+
+                                                VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
+                                            }
+
                                             //SetVolume(MainWindow.DefaultVolume);
                                         }
                                     }
@@ -494,8 +579,15 @@ namespace DDTV_GUI.DDTV_Window
                 httpWebResponse.Close();
                 httpWebResponse.Dispose();
             }
-          
-            if(downloader.Status == DownloadStatus.Running)
+            if (hlsMode.downloadClass.IsDownloading)
+            {
+                hlsMode.downloadClass.Cancel();
+                if (!string.IsNullOrEmpty(hlsMode.roomInfo.HLS_Player_File))
+                {
+                    DDTV_Core.Tool.FileOperation.Del(hlsMode.roomInfo.HLS_Player_File);
+                }
+            }
+            if (downloader.Status == DownloadStatus.Running)
             {
                 downloader.CancelAsync();
             }
@@ -1743,6 +1835,25 @@ namespace DDTV_GUI.DDTV_Window
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
             {
                 RefreshWindow();
+            }
+            //空格 暂停/播放 切换
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Space))
+            {
+                if (!IsClose && VideoView.MediaPlayer != null)
+                {
+                    if (VideoView.MediaPlayer.IsPlaying)
+                    {
+                        pause.Dispatcher.Invoke(() => pause.Visibility = Visibility.Visible);
+                        playSwitch.Content = "暂停";
+                        VideoView.MediaPlayer.Pause();
+                    }
+                    else
+                    {
+                        pause.Dispatcher.Invoke(() => pause.Visibility = Visibility.Collapsed);
+                        playSwitch.Content = "播放";
+                        VideoView.MediaPlayer.Play();
+                    }
+                }
             }
         }
 

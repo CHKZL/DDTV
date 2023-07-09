@@ -316,6 +316,10 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 public string FilePath { set; get; }
                 public bool IsTranscod { set; get; } = false;
             }
+            /// <summary>
+            /// HLS模式播放的文件路径
+            /// </summary>
+            public string HLS_Player_File { set; get; } = string.Empty;
         }
         public class RoomWebSocket
         {

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -419,7 +420,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             string roomId = Rooms.Rooms.GetValue(uid, CacheType.room_id);
             string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)qn}&platform=web&ptype=8");
-
             if (string.IsNullOrEmpty(WebText))
             {
                 Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"playUrl获取网络数据为空或超时，开始重试");
@@ -448,9 +448,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
 
                             Rooms.Rooms.RoomInfo.TryGetValue(uid, out Rooms.RoomInfoClass.RoomInfo roomInfo);
                             string url = string.Empty;
+                            if (url_http_stream_flv_avc == null)
+                            {
+                                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"该直播间未生成兼容的视频流，这通常是由于阿B视频云造成转码问题造成的，请稍后再试");
+                                return null;
+                            }
                             foreach (var item in url_http_stream_flv_avc.UrlInfos)
                             {
-                                if(item.Host.Contains(".bilivideo.com"))
+                                if (item.Host.Contains(".bilivideo.com"))
                                 {
                                     if (roomInfo != null && string.IsNullOrEmpty(roomInfo.Host))
                                         roomInfo.Host = item.Host;
