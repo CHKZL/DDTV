@@ -5,4 +5,4 @@
 |:--:|:--:|:--:|:--:|:--:|
 |RoomListConfig.json|✔️|✔️|房间配置信息|✔️|
 |DDTV_Config.ini|✔️|✔️|DDTV的通用配置文件|✔️|
-|BiliUser.ini|✔️|✔️|用户本地加密缓存扫码登陆bilibili信息||
+|BiliUser.ini|✔️|✔️|用户本地加密缓存扫码登陆阿B信息||
