@@ -3,7 +3,7 @@
 [![Stargazers over time](https://starchart.cc/CHKZL/DDTV.svg)](https://starchart.cc/CHKZL/DDTV)
 
 # DDTV3.0
-你的地表最强B站播放器
+你的地表最强阿B播放器
 
 * 有着良好的初始化引导流程和界面，方便新手上手使用
 * 支持一键导入关注列表中的VTB\VUP，不用手动配置冗长的房间信息
