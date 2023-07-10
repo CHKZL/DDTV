@@ -418,7 +418,7 @@ namespace DDTV_GUI.DDTV_Window
                                     {
                                         if (!File.Exists(FileDirectory) && !File.Exists(hlsMode.roomInfo.HLS_Player_File))
                                         {
-                                            Growl.WarningGlobal($"{name}-直播间的直播流当前不可访问，该问题一般是由于B站服务器问题或者网络代理造成的，请稍后再试");
+                                            Growl.WarningGlobal($"{name}-直播间的直播流当前不可访问，该问题一般是由于阿B服务器问题或者网络代理造成的，请稍后再试");
                                             return;
                                         }
                                         else
