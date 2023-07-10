@@ -1,7 +1,7 @@
 # DDTV Core通用配置文件
 ## Core配置文件说明
-配置文件`DDTV_Config.ini`为DDTV核心初始化配置文件，在DDTV_GUI和DDTV_WEB_Server中都存在   
-配置文件所属的分组必须正确，如果放错了分组，是不会被读取的  
+配置文件`DDTV_Config.ini`为DDTV核心初始化配置文件，在DDTV_GUI和DDTV_WEB_Server中都存在
+配置文件所属的分组必须正确，如果放错了分组，是不会被读取的
 
 ## 完整的配置文件示例
 :::tip
@@ -444,7 +444,7 @@ ShowGuardSwitch=False
             /// </summary>
             RealTimeTitleFileName,
             /// <summary>
-            /// 是否使用云屏蔽列表(同步于B站直播间)
+            /// 是否使用云屏蔽列表(同步于阿B直播间)
             /// 组：Play   默认值：true
             /// </summary>
             DoesShieldTakeEffect,

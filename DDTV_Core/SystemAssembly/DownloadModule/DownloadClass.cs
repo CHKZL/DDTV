@@ -484,6 +484,10 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     //Path="D:"+Path.Substring(1, Path.Length-1);
                     if (!IsPlay)
                         Path = Tool.FileOperation.CreateAll(Path);
+                    else
+                    {
+                        Tool.FileOperation.CreateAll(Download.TmpPath);
+                    }
                     downloads.FlvFileList.Add(downloads.FilePath);
                     if (Is_ENDLIST)
                     {

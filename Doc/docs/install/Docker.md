@@ -208,7 +208,7 @@ sudo docker run -d -p 11419:11419 \ # \后面不能有字符
 | WebHookUrl | `string` | `string.Empty` | WebHook的目标地址 |
 
 :::tip 使用dev开发版
-法1：初次启动容器，可设置环境变量`IsDev=True`后启动容器 <sup>2</sup>，在登陆bilibili（即配置文件写入）后关闭容器
+法1：初次启动容器，可设置环境变量`IsDev=True`后启动容器 <sup>2</sup>，在登陆阿B（即配置文件写入）后关闭容器
 <br>法2：停止容器，修改配置文件DDTV_Config.ini的配置`IsDev=True`
 <br>之后启动容器获取dev更新
 :::

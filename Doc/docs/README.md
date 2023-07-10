@@ -2,7 +2,7 @@
 home: true
 heroImage: /DDTV.png
 heroText: DDTV
-tagline: 你的地表最强B站播放器
+tagline: 你的地表最强阿B播放器
 actionText: 开始使用
 actionLink: /install/
 features:
@@ -30,9 +30,9 @@ features:
 * 支持完善的鉴权API和WEBAPI，方便大家二次开发
 
 还有更多特色功能请查看[进阶功能说明](AdvancedFeatures)
-  
+
 ---
-<br/>  
-  
-<center>GPL-2.0 Licensed | Copyright © 2018-2021 ami  | <a href="http://www.beian.gov.cn/" style="color:Gray">[渝ICP备16005470号-5]</a></center>  
-  
+<br/>
+
+<center>GPL-2.0 Licensed | Copyright © 2018-2021 ami  | <a href="http://www.beian.gov.cn/" style="color:Gray">[渝ICP备16005470号-5]</a></center>
+
