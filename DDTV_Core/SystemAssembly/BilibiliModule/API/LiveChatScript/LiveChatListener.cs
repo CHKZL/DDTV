@@ -83,7 +83,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             await _sendObject(7, new
             {
-                uid = 0,//string.IsNullOrEmpty(BilibiliModule.User.BilibiliUser.account.uid)?0:long.Parse(User.BilibiliUser.account.uid),
+                uid =mid,//DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid,
                 roomid = realRoomId,
                 protover = 2,
                 platform = "web",
@@ -272,6 +272,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 {
                     jsonBody = jsonBody.Replace("extra\":\"{\"send_from_me", "extra\":{\"send_from_me");
                     jsonBody = jsonBody.Replace("}\"}", "}}");
+                    jsonBody = jsonBody.Replace("\",\"mode\":", ",\"mode\":");
+
                 }
                 obj = JObject.Parse(jsonBody); ///JsonMapper.ToObject(jsonBody);
             }
