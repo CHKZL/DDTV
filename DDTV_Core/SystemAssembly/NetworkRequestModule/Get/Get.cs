@@ -16,7 +16,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
         /// 通过get请求获取返回信息
         /// </summary>
         /// <param name="url">请求目标网页地址</param>
-        /// <param name="IsCookie">是否需要携带B站cookie</param>
+        /// <param name="IsCookie">是否需要携带阿Bcookie</param>
         /// <param name="Referer">使用的referer（默认为空，如有必要请使用https://www.bilibili.com/）</param>
         /// <param name="ContentType">类型（默认使用application/x-www-form-urlencoded）</param>
         /// <param name="IsMandatoryIPv4">是否强制使用IPv4</param>

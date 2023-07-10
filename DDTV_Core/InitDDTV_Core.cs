@@ -60,7 +60,7 @@ namespace DDTV_Core
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
 
             Log.LogInit(LogClass.LogType.Debug);//初始化日志系统，设置日志输出等级
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;//设置使用的最低安全协议（B站目前为Tls12）
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;//设置使用的最低安全协议（阿B目前为Tls12）
             ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;//连接队列上线
             ServicePointManager.Expect100Continue = false;//禁止查询服务端post状态防止卡死
             CoreConfig.ConfigInit(InitType);//初始化设置系统

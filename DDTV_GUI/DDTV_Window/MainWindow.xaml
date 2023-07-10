@@ -127,7 +127,7 @@
                             <TextBlock x:Name="LiveBroadcastingCount" Margin="0,47,0,22" Text="加载中" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" VerticalAlignment="Stretch" FontSize="50" HorizontalAlignment="Stretch" TextAlignment="Center"/>
                         </Grid>
                         <Grid Margin="263,384,387,26" Background="#59A5A5A5">
-                            <TextBlock Margin="10,10,0,0" Text="Power By" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="40" VerticalAlignment="Top" Width="153" HorizontalAlignment="Left" FontSize="26"/>
+                            <TextBlock Margin="10,10,0,0" Text="Powered By" Style="{StaticResource TextBlockLargeBold}" Foreground="#00a1d6" Height="40" VerticalAlignment="Top" Width="153" HorizontalAlignment="Left" FontSize="26"/>
                             <Image Margin="53,50,53,15" Source="/Resources/Img/UI/logo1.png" Stretch="Fill"/>
                         </Grid>
                         <Grid Margin="263,205,387,205" Background="#59A5A5A5">
@@ -415,7 +415,7 @@
                                         <TextBlock HorizontalAlignment="Left" Margin="240,4,0,0" Text="HLS等待时间(秒)" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <hc:NumericUpDown Name="WaitHLSTime" Value="20" Minimum="10" Increment="5" DecimalPlaces="0" Margin="366,0,394,0" ValueChanged="WaitHLSTime_ValueChanged">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="因为B站的机制为开始推流后若干秒才会生成HLS流，所以需要设定一个等待时间，如果超时后还没有HLS会降级到FLV模式录制，最低10秒，推荐20秒以上" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="因为阿B的机制为开始推流后若干秒才会生成HLS流，所以需要设定一个等待时间，如果超时后还没有HLS会降级到FLV模式录制，最低10秒，推荐20秒以上" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </hc:NumericUpDown>
 
@@ -502,7 +502,7 @@
                                         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="开启[云屏蔽词]功能和[进房提示]功能" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <ToggleButton x:Name="DoesShieldTakeEffectSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="283,8,0,2" HorizontalAlignment="Left" Width="36" Click="DoesShieldTakeEffectSwitch_Click">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="打开后会显示弹幕同步B站直播间内的屏蔽词和屏蔽UID列表进行屏蔽，并且进房后主播会看见XXX进入直播间的提示(因为这是同一个接口无法分离，只能一起开关)" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="打开后会显示弹幕同步阿B直播间内的屏蔽词和屏蔽UID列表进行屏蔽，并且进房后主播会看见XXX进入直播间的提示(因为这是同一个接口无法分离，只能一起开关)" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                     </Grid>
@@ -553,7 +553,7 @@
                                         <hc:ButtonGroup Margin="445,0,166,0" Style="{StaticResource ButtonGroupSolid}" VerticalAlignment="Center">
                                             <RadioButton Name="SelectDanMu_v1" Content="兼容格式" IsChecked="True" Click="SelectDanMu_v1_Click" IsEnabled="False">
                                                 <hc:AdornerElement.Instance>
-                                                    <hc:Poptip Content="已移除(该功能后续更新在:B站官方饭盒内进行)" PlacementType="BottomLeft"/>
+                                                    <hc:Poptip Content="已移除(该功能后续更新在:阿B官方饭盒内进行)" PlacementType="BottomLeft"/>
                                                 </hc:AdornerElement.Instance>
                                             </RadioButton>
                                             <RadioButton Name="SelectDanMu_v2" Content="原始数据格式" Click="SelectDanMu_v2_Click">
@@ -572,7 +572,7 @@
                                         <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" Text="帮助DD@Electron进行数据采集" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                         <ToggleButton x:Name="DDcenterSwitch" Style="{StaticResource ToggleButtonSwitch}" Margin="246,10,0,0" HorizontalAlignment="Left" Width="36" Click="DDcenterSwitch_Click">
                                             <hc:AdornerElement.Instance>
-                                                <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加B站API调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
+                                                <hc:Poptip Content="打开后会帮助vtbs.moe进行数据采集，采集行为不会搜集您的个人信息，但是会增加阿BAPI调用次数，如果出现412相关警告谨慎打开本设置" PlacementType="BottomLeft"/>
                                             </hc:AdornerElement.Instance>
                                         </ToggleButton>
                                         <TextBlock HorizontalAlignment="Left" Margin="318,9,0,0" Text="自动更新DDTV" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>

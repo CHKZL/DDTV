@@ -70,10 +70,10 @@ namespace DDTV_GUI.DDTV_Window
             InitializeComponent();//初始化主界面
             DDTV_GUI.App.Application_Startup();//检查是否重复启动
 #if DEBUG
-            string Title = $"DDTV——你的地表最强B站播放器 {Ver}　(Dev版-编译时间:{InitDDTV_Core.CompiledVersion})";
+            string Title = $"DDTV——你的地表最强阿B播放器 {Ver}　(Dev版-编译时间:{InitDDTV_Core.CompiledVersion})";
 #endif
 #if !DEBUG
-            string Title = $"DDTV——你的地表最强B站播放器 {Ver}　({InitDDTV_Core.Ver})";
+            string Title = $"DDTV——你的地表最强阿B播放器 {Ver}　({InitDDTV_Core.Ver})";
 #endif
             this.Title = Title;//设置标题
             DDTV_ICO.Text = Title;//设置ICON名称
@@ -1795,7 +1795,7 @@ namespace DDTV_GUI.DDTV_Window
         }
 
         /// <summary>
-        /// 注销B站账号
+        /// 注销阿B账号
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
