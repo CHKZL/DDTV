@@ -12,11 +12,12 @@
     <Grid>
         <ListBox Name="DanMuLog" DisplayMemberPath="Text" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderBrush="{x:Null}" FontSize="16" IsHitTestVisible="False" Margin="0,0,0,30"/>
         <Grid Margin="0,0,0,46" Height="35" VerticalAlignment="Bottom">
-            <Grid Name="TypeSetGrid" RenderTransformOrigin="0.5,0.5" Background="#99969696" Visibility="Collapsed">
+            <Grid Name="TypeSetGrid" RenderTransformOrigin="0.5,0.5" Background="#99969696"  Visibility="Collapsed">
                 <CheckBox Name="ShowDanMuSwitch" Content="弹幕消息" HorizontalAlignment="Left" Margin="5,0,0,0" Click="ShowDanMuSwitch_Click"/>
                 <CheckBox Name="ShowGiftSwitch" Content="礼物消息" HorizontalAlignment="Left" Margin="97,0,0,0" Click="ShowGiftSwitch_Click"/>
                 <CheckBox Name="ShowSCSwitch" Content="SC消息" HorizontalAlignment="Left" Margin="189,0,0,0" Click="ShowSCSwitch_Click"/>
                 <CheckBox Name="ShowGuardSwitch" Content="大航海消息" HorizontalAlignment="Left" Margin="265,0,0,0" Click="ShowGuardSwitch_Click"/>
+                <CheckBox Name="ThisWindowTopping" Content="本窗口置顶" HorizontalAlignment="Left" Margin="313,-20,0,0" VerticalAlignment="Top" Click="ThisWindowTopping_Click"/>
             </Grid>
             <ToggleButton Name="TypeGridSwitch" Opacity="0.6" Margin="0,0,3,3" BorderThickness="0" IsChecked="True" Style="{StaticResource ToggleButtonFlip}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Click="TypeGridSwitch_Click">
                 <hc:StatusSwitchElement.CheckedElement>

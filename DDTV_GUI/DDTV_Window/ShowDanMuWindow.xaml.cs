@@ -19,6 +19,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace DDTV_GUI.DDTV_Window
 {
@@ -31,6 +32,7 @@ namespace DDTV_GUI.DDTV_Window
         private RoomInfoClass.RoomInfo _roominfo = new RoomInfoClass.RoomInfo();
         private DanMu.UserLiveInfo userLiveInfo = new();//屏蔽信息
         private int WordLimit = 20;
+        private DispatcherTimer timer;
 
         public ShowDanMuWindow(long UID)
         {
@@ -39,7 +41,7 @@ namespace DDTV_GUI.DDTV_Window
             ShowGiftSwitch.IsChecked = GUIConfig.ShowGiftSwitch;
             ShowSCSwitch.IsChecked = GUIConfig.ShowSCSwitch;
             ShowGuardSwitch.IsChecked = GUIConfig.ShowGuardSwitch;
-
+            Loaded += new RoutedEventHandler(Topping);
             if (Rooms.RoomInfo.TryGetValue(UID, out var roomInfo))
             {
 
@@ -68,6 +70,16 @@ namespace DDTV_GUI.DDTV_Window
                 Add($"处理失败，该房间不在DDTV监控列表中");
                 Add($"请先添加到监控列表");
             }
+        }
+        void Topping(object sender, RoutedEventArgs e)
+        {
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Tick += timer1_Tick;
+        }
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.Topmost = true;
         }
         private void Rec(long Uid)
         {
@@ -270,6 +282,20 @@ namespace DDTV_GUI.DDTV_Window
             else
             {
                 TypeSetGrid.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void ThisWindowTopping_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)ThisWindowTopping.IsChecked)
+            {
+                this.Topmost = true;
+                timer.Start();
+            }
+            else
+            {
+                timer.Stop();
+                this.Topmost = false;
             }
         }
     }
