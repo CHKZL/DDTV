@@ -397,7 +397,7 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         if (IsHls)
                         {
-                            Thread.Sleep(5000);
+                            Thread.Sleep(2000);
                         }
                         else
                         {
@@ -434,6 +434,10 @@ namespace DDTV_GUI.DDTV_Window
                                                 }
 
                                                 VideoView.MediaPlayer.Play(new Media(vlcVideo, hlsMode.roomInfo.HLS_Player_File));
+                                                ////Thread.Sleep(1000);
+                                                //long len = VideoView.MediaPlayer.Length;
+
+                                                //VideoView.MediaPlayer.SeekTo(new TimeSpan(0, 0, (int)len/1000));
                                             }
                                             else
                                             {
