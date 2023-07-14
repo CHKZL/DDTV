@@ -1860,6 +1860,12 @@ namespace DDTV_GUI.DDTV_Window
                     }
                 }
             }
+            //ESC焦点回到播放器
+            else if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            {
+                this.Activate();
+                this.Focus();
+            }
         }
 
         /// <summary>
@@ -1945,6 +1951,12 @@ namespace DDTV_GUI.DDTV_Window
                 Growl.Success("发送弹幕完成");
                 DanMuInput.Text = "";
             }
+            //ESC焦点回到播放器
+            else if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            {
+                this.Activate();
+                this.Focus();
+            }
         }
 
         private void MenuItem_OpenSeparateDanmuWindow_Click(object sender, RoutedEventArgs e)
@@ -2008,6 +2020,16 @@ namespace DDTV_GUI.DDTV_Window
             else
             {
                 Growl.WarningGlobal("切换粉丝牌失败，请确认有该房间粉丝牌");
+            }
+        }
+
+        private void DanMuGridSwitch_KeyDown(object sender, KeyEventArgs e)
+        {
+            //ESC焦点回到播放器
+            if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            {
+                this.Activate();
+                this.Focus();
             }
         }
     }
