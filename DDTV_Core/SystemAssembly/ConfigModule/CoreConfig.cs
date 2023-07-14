@@ -25,7 +25,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static bool IsDev = bool.Parse(GetValue(CoreConfigClass.Key.IsDev, "False", CoreConfigClass.Group.Core));
         public static int DanMuSaveType= int.Parse(GetValue(CoreConfigClass.Key.DanMuSaveType, "2", CoreConfigClass.Group.Core));
         public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
-
+        public static bool IsAutoPlayDanmu = bool.Parse(GetValue(CoreConfigClass.Key.IsAutoPlayDanmu, "False", CoreConfigClass.Group.Play));
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -163,6 +163,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _RealTimeTitleFileName = DDTV_Core.SystemAssembly.DownloadModule.Download.RealTimeTitleFileName;
             var _DoesShieldTakeEffect = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DoesShieldTakeEffect;
             var _BarrageSendingDefaultStatus = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.BarrageSendingDefaultStatus;
+            var _IsAutoPlayDanmu = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu;
         }
         /// <summary>
         /// 获取配置

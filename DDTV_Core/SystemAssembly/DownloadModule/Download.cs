@@ -208,43 +208,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         }
 
                     }
-                    //转码
-
-                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误。");
-                    int index = 0;
-                    foreach (var item in roomInfo.Files)
-                    {                 
-                        if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
-                        {
-                            index++;
-                            string After = string.Empty;
-                            if(RealTimeTitleFileName)
-                            {
-                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}",downloadClass.StartTime)).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
-                            }
-                            else
-                            {
-                                 After = item.FilePath.Replace(".mp4", $"_{index}_fix.mp4").Replace(".flv", $"_{index}_fix.mp4");
-                            }
-                            var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
-                            {
-                                AfterFilenameExtension = ".mp4",
-                                BeforeFilePath = item.FilePath,
-                                AfterFilePath = After
-                            }); 
-                            item.IsTranscod = true;
-                            roomInfo.DownloadedFileInfo.AfterRepairFiles.Add(new FileInfo(tm.AfterFilePath));
-                            WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
-                        }
-                        else
-                        {
-                            if (!item.IsTranscod)
-                            {
-                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item.FilePath}]不存在！");
-                            }
-                        }
-                    }
-                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】修复任务已全部完成");
+                    
                     if (!IsCancel)
                     {
                         //Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Debug, $"开始处理下播对象[{roomInfo.uname}({roomInfo.room_id})]（直播列表）→（历史列表）");
@@ -354,6 +318,43 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         roomInfo.live_status = 0;
                     }
+                    //转码
+
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误并修复文件。");
+                    int index = 0;
+                    foreach (var item in roomInfo.Files)
+                    {                 
+                        if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
+                        {
+                            index++;
+                            string After = string.Empty;
+                            if(RealTimeTitleFileName)
+                            {
+                                After = item.FilePath.Replace(item.FilePath.Split('/')[item.FilePath.Split('/').Length - 1].Split('.')[0], Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadFileName}_{index}",downloadClass.StartTime)).Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
+                            }
+                            else
+                            {
+                                 After = item.FilePath.Replace(".mp4", $"_{index}_fix.mp4").Replace(".flv", $"_{index}_fix.mp4");
+                            }
+                            var tm = Tool.TranscodModule.Transcod.CallFFMPEG(new Tool.TranscodModule.TranscodClass()
+                            {
+                                AfterFilenameExtension = ".mp4",
+                                BeforeFilePath = item.FilePath,
+                                AfterFilePath = After
+                            }); 
+                            item.IsTranscod = true;
+                            roomInfo.DownloadedFileInfo.AfterRepairFiles.Add(new FileInfo(tm.AfterFilePath));
+                            WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
+                        }
+                        else
+                        {
+                            if (!item.IsTranscod)
+                            {
+                                Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item.FilePath}]不存在！");
+                            }
+                        }
+                    }
+                    Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】修复任务已全部完成");
                     roomInfo.DownloadingList = new List<DownloadClass.Downloads>();
                     //任务结束流程完成
                 }
