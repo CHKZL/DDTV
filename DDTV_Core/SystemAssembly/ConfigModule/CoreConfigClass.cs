@@ -424,6 +424,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Core   默认值：30000
             /// </summary>
             DD_Center_Waiting_Millisecond,
+            /// <summary>
+            /// 打开播放器时是否自动连接并播放弹幕
+            /// 组：Play   默认值：False
+            /// </summary>
+            IsAutoPlayDanmu,
         }
     }
 }

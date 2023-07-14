@@ -131,7 +131,7 @@ namespace DDTV_GUI.DDTV_Window
             }
         };
 
-    
+
 
         public List<string> ShieldDanMuText = new List<string>()
         {
@@ -189,11 +189,11 @@ namespace DDTV_GUI.DDTV_Window
                         }
                     }
                 });
-                
+
                 Task.Run(() =>
                 {
                     Thread.Sleep(1000);
-                   
+
                     Play(uid);
                 });
                 VolumeTimer.Interval = new TimeSpan(0, 0, 0, 1); //参数分别为：天，小时，分，秒。此方法有重载，可根据实际情况调用
@@ -378,7 +378,7 @@ namespace DDTV_GUI.DDTV_Window
                         FileName = Path
                     };
 
-                    HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref hlsMode.roomInfo, ref hlsMode.downloadClass, true,false,true);
+                    HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref hlsMode.roomInfo, ref hlsMode.downloadClass, true, false, true);
                     if (hLSHostClass.IsEffective)
                     {
                         Task.Run(() =>
@@ -432,7 +432,10 @@ namespace DDTV_GUI.DDTV_Window
                                                     Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
                                                     return;
                                                 }
-
+                                                if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
+                                                {
+                                                    PlayDanmu();
+                                                }
                                                 VideoView.MediaPlayer.Play(new Media(vlcVideo, hlsMode.roomInfo.HLS_Player_File));
                                                 ////Thread.Sleep(1000);
                                                 //long len = VideoView.MediaPlayer.Length;
@@ -447,7 +450,10 @@ namespace DDTV_GUI.DDTV_Window
                                                     Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
                                                     return;
                                                 }
-
+                                                if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
+                                                {
+                                                    PlayDanmu();
+                                                }
                                                 VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
                                             }
 
@@ -709,7 +715,7 @@ namespace DDTV_GUI.DDTV_Window
                     if (showDanMuWindow != null)
                     {
                         //关闭播放窗时，如果播放窗口存在，一起关闭
-                        showDanMuWindow.Dispatcher.Invoke(() => showDanMuWindow.Close());              
+                        showDanMuWindow.Dispatcher.Invoke(() => showDanMuWindow.Close());
                     }
 
                     if (VideoView != null)
@@ -717,7 +723,7 @@ namespace DDTV_GUI.DDTV_Window
                         VideoView.Dispatcher.Invoke(() =>
                         {
                             if (VideoView.MediaPlayer != null && VideoView.MediaPlayer.IsPlaying)
-                            {     
+                            {
                                 VideoView.MediaPlayer.Stop();//停止播放
                             }
                             else
@@ -883,26 +889,21 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
-
-            //if (MainWindow.linkDMNum >= 3)
-            //{
-            //    Growl.InfoGlobal($"因为bilibili连接限制，最高只能打开3个房间的弹幕信息");
-            //    return;
-            //}
-
+            PlayDanmu();
+        }
+        /// <summary>
+        /// 连接并播放弹幕
+        /// </summary>
+        private void PlayDanmu()
+        {
             IsOpenDanmu = !IsOpenDanmu;
-
-
-
 
             if (IsOpenDanmu)
             {
                 Subtitle.Visibility = Visibility;
                 Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");
                 Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
-
                 canvas.Visibility = Visibility;
-
                 Task.Run(() =>
                 {
                     if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo RI))
@@ -924,14 +925,14 @@ namespace DDTV_GUI.DDTV_Window
             }
             else
             {
-            
+
                 canvas.Visibility = Visibility.Collapsed;
                 Subtitle.Text = "";
                 Subtitle.Visibility = Visibility.Collapsed;
                 LiveChatDispose();
             }
-
         }
+
         /// <summary>
         /// 直播间消息连接回收
         /// </summary>
@@ -1326,7 +1327,7 @@ namespace DDTV_GUI.DDTV_Window
             });
         }
 
-        private void AddDanmu(string DanmuText, bool IsSubtitle,long uid = 0)
+        private void AddDanmu(string DanmuText, bool IsSubtitle, long uid = 0)
         {
             if (IsSubtitle)
             {
@@ -1386,7 +1387,7 @@ namespace DDTV_GUI.DDTV_Window
                             break;
                         }
                     }
-                    danMuOrbitInfos[Index].Time = (int)(DDTV_Core.Tool.TimeModule.Time.Operate.GetRunMilliseconds()/1000);
+                    danMuOrbitInfos[Index].Time = (int)(DDTV_Core.Tool.TimeModule.Time.Operate.GetRunMilliseconds() / 1000);
                     //非UI线程调用UI组件
                     System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                     {
@@ -1766,14 +1767,14 @@ namespace DDTV_GUI.DDTV_Window
             DispatcherTimer timer = new DispatcherTimer()
             {
                 Interval = new TimeSpan(0, 0, 0, 0, 500),
-                IsEnabled = true,  
+                IsEnabled = true,
             };
             timer.Tick += (sender1, e1) => { timer.IsEnabled = false; i = 0; };
             if (i == 2)
             {
-                if( FullScreenMonitor_Top == this.Top && FullScreenMonitor_Left == this.Left)
+                if (FullScreenMonitor_Top == this.Top && FullScreenMonitor_Left == this.Left)
                 {
-                     FullScreenSwitch();
+                    FullScreenSwitch();
                 }
                 timer.IsEnabled = false;
                 i = 0;
@@ -1955,15 +1956,15 @@ namespace DDTV_GUI.DDTV_Window
 
         private void MenuItem_SwitchSubtitleDisplay_Click(object sender, RoutedEventArgs e)
         {
-            if(!IsOpenDanmu)
+            if (!IsOpenDanmu)
             {
-                 Growl.WarningGlobal("切换野生字幕显示状态失败！原因：未打开弹幕功能");
+                Growl.WarningGlobal("切换野生字幕显示状态失败！原因：未打开弹幕功能");
             }
             else
             {
-                if(Subtitle.Visibility== Visibility.Visible)
+                if (Subtitle.Visibility == Visibility.Visible)
                 {
-                    Subtitle.Visibility= Visibility.Collapsed;
+                    Subtitle.Visibility = Visibility.Collapsed;
                     Subtitle.Text = "";
                 }
                 else
@@ -1992,17 +1993,17 @@ namespace DDTV_GUI.DDTV_Window
 
         private void SetFansMedal_Click(object sender, RoutedEventArgs e)
         {
-            if(UserInfo.fansMedal.WearFansMedal(uid))
+            if (UserInfo.fansMedal.WearFansMedal(uid))
             {
                 foreach (var item in BilibiliUserConfig.FansMedal)
                 {
-                    if(item.liver_uid==uid)
+                    if (item.liver_uid == uid)
                     {
                         Growl.WarningGlobal($"粉丝牌已切换到{item.liver_name}[{item.medal_name}]");
                         return;
                     }
                 }
-                 Growl.WarningGlobal($"粉丝牌切换完成");
+                Growl.WarningGlobal($"粉丝牌切换完成");
             }
             else
             {
