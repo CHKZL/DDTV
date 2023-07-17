@@ -436,6 +436,10 @@ namespace DDTV_GUI.DDTV_Window
                                                 {
                                                     PlayDanmu();
                                                 }
+                                                EndGrid.Dispatcher.Invoke(() =>
+                                                {
+                                                    EndGrid.Visibility = Visibility.Collapsed;
+                                                 });
                                                 VideoView.MediaPlayer.Play(new Media(vlcVideo, hlsMode.roomInfo.HLS_Player_File));
                                                 ////Thread.Sleep(1000);
                                                 //long len = VideoView.MediaPlayer.Length;
@@ -454,6 +458,10 @@ namespace DDTV_GUI.DDTV_Window
                                                 {
                                                     PlayDanmu();
                                                 }
+                                                EndGrid.Dispatcher.Invoke(() =>
+                                                {
+                                                    EndGrid.Visibility = Visibility.Collapsed;
+                                                });
                                                 VideoView.MediaPlayer.Play(new Media(vlcVideo, FileDirectory));
                                             }
 
@@ -1861,7 +1869,7 @@ namespace DDTV_GUI.DDTV_Window
                 }
             }
             //ESC焦点回到播放器
-            else if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
             {
                 this.Activate();
                 this.Focus();
@@ -1952,7 +1960,7 @@ namespace DDTV_GUI.DDTV_Window
                 DanMuInput.Text = "";
             }
             //ESC焦点回到播放器
-            else if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            else if (e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
             {
                 this.Activate();
                 this.Focus();
@@ -2026,7 +2034,7 @@ namespace DDTV_GUI.DDTV_Window
         private void DanMuGridSwitch_KeyDown(object sender, KeyEventArgs e)
         {
             //ESC焦点回到播放器
-            if(e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
+            if (e.KeyStates == Keyboard.GetKeyStates(Key.Escape))
             {
                 this.Activate();
                 this.Focus();
