@@ -25,6 +25,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             [JsonProperty("encrypted")]
             public bool Encrypted { get; set; }
 
+            [JsonProperty("pwd_verified")]
+            public bool pwd_verified { set; get; }
+
             [JsonProperty("playurl_info")]
             public PlayurlInfoClass? PlayurlInfo { get; set; }
 

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using DDTV_Core.SystemAssembly.BilibiliModule.API.HLS;
 using static DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo;
+using System.Security.Cryptography;
 
 namespace DDTV_Core.SystemAssembly.DownloadModule
 {
@@ -552,6 +553,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     Thread.Sleep(100);
                                     hLSHostClass = HLS_Host.Get_HLS_Host(ref roomInfo, ref downloads, false, error % 2 == 1 ? true : false);
                                     if (!hLSHostClass.LiveStatus)
+                                    {
+                                        DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
+                                        return 0;
+                                    }
+                                    if (hLSHostClass.IsPassword)
                                     {
                                         DisposeFileStream(fs, downloads.FileName,downloadedFiles,roomInfo.Files,len);
                                         return 0;
