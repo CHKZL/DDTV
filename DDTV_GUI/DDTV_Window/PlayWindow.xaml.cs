@@ -379,6 +379,11 @@ namespace DDTV_GUI.DDTV_Window
                     };
 
                     HLS_Host.HLSHostClass hLSHostClass = HLS_Host.Get_HLS_Host(ref hlsMode.roomInfo, ref hlsMode.downloadClass, true, false, true);
+                    if (hLSHostClass.IsPassword)
+                    {
+                        Growl.WarningGlobal($"{name}-直播间已加密，无法观看");
+                        return;
+                    }
                     if (hLSHostClass.IsEffective)
                     {
                         Task.Run(() =>

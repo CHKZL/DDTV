@@ -62,6 +62,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                             hLSHostClass.LiveStatus = false;
                             return hLSHostClass;
                         }
+                        if(response.Data.PasswordVerified)
+                        {
+                            Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Info, $"检测到房间已加密：【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】的房间加密状态为‘已加密’，已放弃");
+                            hLSHostClass.LiveStatus = false;
+                            hLSHostClass.IsPassword = true;
+                            return hLSHostClass;
+                        }
                         foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
                         {                         
                             if (Stream.ProtocolName == "http_hls")
@@ -130,6 +137,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
             public string base_file_name { get; set; }
             public string ExtendedName { get; set; }
             public bool IsUserCancel { get; set; } = false;
+            public bool IsPassword { set; get; } = false;
         }
 
     }

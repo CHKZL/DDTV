@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using static DDTV_Core.SystemAssembly.BilibiliModule.Rooms.RoomInfoClass.RoomInfo;
 using static DDTV_Core.SystemAssembly.DataCacheModule.DataCacheClass;
 using static DDTV_Core.SystemAssembly.DownloadModule.DownloadClass.Downloads;
 
@@ -322,7 +323,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                     Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"直播间【{roomInfo.uname}({roomInfo.room_id})】直播结束。检并修复可能存在的错误并修复文件。");
                     int index = 0;
+                    List<DownloadedFiles> TmpeDownloadedFiles = new();
                     foreach (var item in roomInfo.Files)
+                    {
+                        TmpeDownloadedFiles.Add(item);
+                    }
+                    foreach (var item in TmpeDownloadedFiles)
                     {                 
                         if (!item.IsTranscod && !string.IsNullOrEmpty(item.FilePath) && File.Exists(item.FilePath))
                         {
@@ -345,6 +351,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             item.IsTranscod = true;
                             roomInfo.DownloadedFileInfo.AfterRepairFiles.Add(new FileInfo(tm.AfterFilePath));
                             WebHook.SendHook(WebHook.HookType.TranscodingComplete, uid);
+                             Log.Log.AddLog(nameof(Download), Log.LogClass.LogType.Info, $"修复文件：直播间【{roomInfo.uname}({roomInfo.room_id})】Fix文件：[{item.FilePath}]！");
                         }
                         else
                         {
@@ -683,6 +690,11 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             return;
                         }
                         if (hLSHostClass.IsUserCancel)
+                        {
+                            VideoDownloadCompleteTaskd_HLS(uid, downloadClass, true);
+                            return;
+                        }
+                        if (hLSHostClass.IsPassword)
                         {
                             VideoDownloadCompleteTaskd_HLS(uid, downloadClass, true);
                             return;
