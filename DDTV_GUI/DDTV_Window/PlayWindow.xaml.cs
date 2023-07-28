@@ -139,10 +139,10 @@ namespace DDTV_GUI.DDTV_Window
         };
 
 
-        public PlayWindow(long Uid, string Name, bool IsTemporaryPlay = false)
+        public PlayWindow(long Uid, string Name, bool IsTemporaryPlay = false,bool _IsOpenDanmu = false)
         {
             InitializeComponent();
-
+            IsOpenDanmu = _IsOpenDanmu;
             if (Rooms.RoomInfo.TryGetValue(Uid, out RoomInfoClass.RoomInfo roomInfo))
             {
                 hlsMode.roomInfo = roomInfo;
@@ -439,7 +439,7 @@ namespace DDTV_GUI.DDTV_Window
                                                 }
                                                 if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
                                                 {
-                                                    PlayDanmu();
+                                                    PlayDanmu(true);
                                                 }
                                                 EndGrid.Dispatcher.Invoke(() =>
                                                 {
@@ -461,7 +461,7 @@ namespace DDTV_GUI.DDTV_Window
                                                 }
                                                 if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
                                                 {
-                                                    PlayDanmu();
+                                                    PlayDanmu(true);
                                                 }
                                                 EndGrid.Dispatcher.Invoke(() =>
                                                 {
@@ -902,16 +902,15 @@ namespace DDTV_GUI.DDTV_Window
         /// <param name="e"></param>
         private void MenuItem_OpenDamu_Click(object sender, RoutedEventArgs e)
         {
+            IsOpenDanmu = !IsOpenDanmu;
             PlayDanmu();
         }
         /// <summary>
         /// 连接并播放弹幕
         /// </summary>
-        private void PlayDanmu()
+        private void PlayDanmu(bool IsAuto = false)
         {
-            IsOpenDanmu = !IsOpenDanmu;
-
-            if (IsOpenDanmu)
+            if (IsAuto || IsOpenDanmu)
             {
                 Subtitle.Visibility = Visibility;
                 Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");

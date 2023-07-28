@@ -63,6 +63,7 @@ namespace DDTV_GUI.DDTV_Window
                     WordLimit = 20;
                 }
                 Add($"尝试和弹幕服务器连接(RoomID:{roomInfo.room_id})");
+                Log.AddLog(nameof(ShowDanMuWindow), LogClass.LogType.Info, $"打开房间号[{roomInfo.room_id}]的弹幕窗口");
                 Rec(_roominfo.uid != 0 ? _roominfo.uid : long.Parse(DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid));
             }
             else
@@ -194,17 +195,26 @@ namespace DDTV_GUI.DDTV_Window
 
         private void Window_Closed(object sender, EventArgs e)
         {
-
+            Log.AddLog(nameof(ShowDanMuWindow), LogClass.LogType.Info, $"打关闭房间号[{_roominfo.room_id}]的弹幕窗口");
             if (_roominfo.roomWebSocket.LiveChatListener != null && _roominfo.roomWebSocket.LiveChatListener.startIn)
             {
                 MainWindow.linkDMNum--;
                 try
                 {
-                    Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"弹幕窗口关闭，断开弹幕连接", false);
-                    _roominfo.roomWebSocket.LiveChatListener.startIn = false;
-                    _roominfo.roomWebSocket.IsConnect = false;
-                    _roominfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
-                    _roominfo.roomWebSocket.LiveChatListener.Dispose();
+                    if (!_roominfo.IsDownload)
+                    {
+                        Log.AddLog(nameof(ShowDanMuWindow), LogClass.LogType.Info, $"弹幕窗口关闭，断开弹幕连接", false);
+                        _roominfo.roomWebSocket.LiveChatListener.startIn = false;
+                        _roominfo.roomWebSocket.IsConnect = false;
+                        _roominfo.roomWebSocket.LiveChatListener.IsUserDispose = true;
+                        _roominfo.roomWebSocket.LiveChatListener.Dispose();
+                    }
+                    else
+                    {
+                        Log.AddLog(nameof(ShowDanMuWindow), LogClass.LogType.Info, $"播放窗口关闭，但是还有录制任务，不断开弹幕连接", false);
+                    }
+
+
                 }
                 catch (Exception)
                 {
