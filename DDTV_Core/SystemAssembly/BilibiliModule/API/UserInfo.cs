@@ -133,7 +133,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             }
             catch (Exception e)
             {
-                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取账号信息出现意外错误");
+                Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"获取账号信息出现意外错误",true,e,false);
             }
             return null;
         }
@@ -212,7 +212,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
         /// <summary>
         /// 添加关注列表中的V到本地房间配置文件
         /// </summary>
-        /// <param name="uid"></param>
+        /// <param name="uid">要添加的直播间</param>
+        /// <param name="IsAll">是否添加关注列表所有直播间</param>
+        /// <param name="IsAllVrbsList">是添加Vtbs列表中所有V</param>
         /// <returns></returns>
         public static List<followClass> follow(long uid, bool IsAll = false, bool IsAllVrbsList = false)
         {

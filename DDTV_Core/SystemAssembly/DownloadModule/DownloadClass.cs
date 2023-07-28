@@ -502,6 +502,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     FileStream fs = new FileStream(downloads.FileName, FileMode.Create);
                     roomInfo.HLS_Player_File = downloads.FileName;
                     DownloadedFiles downloadedFiles = new DownloadedFiles() { FilePath = downloads.FileName };
+                    Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"任务文件建立：[{roomInfo.uname}({roomInfo.room_id})]第{count}个文件{downloadedFiles.FilePath}");
                     roomInfo.Files.Add(downloadedFiles);
                     int WaitingTime = 1000;
                     try
@@ -678,7 +679,9 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                             string NewFilePath = downloads.FilePath + Tool.FileOperation.ReplaceKeyword(roomInfo.uid, $"{Download.DownloadFileName}" + "_{R}") + ".mp4";
                                             fs = new FileStream(NewFilePath, FileMode.Create);
                                             roomInfo.HLS_Player_File = NewFilePath;
+                                            count++;
                                             roomInfo.Files.Add(new RoomInfoClass.RoomInfo.DownloadedFiles() { FilePath = NewFilePath });
+                                            Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Info, $"任务文件建立：[{roomInfo.uname}({roomInfo.room_id})]第{count}个文件{downloadedFiles.FilePath}");
                                         }
                                         break;
                                     }
