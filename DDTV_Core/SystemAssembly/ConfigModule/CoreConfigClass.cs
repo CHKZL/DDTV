@@ -429,6 +429,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Play   默认值：False
             /// </summary>
             IsAutoPlayDanmu,
+            /// <summary>
+            /// 播放器是否使用HLS模式
+            /// 组：Play   默认值：true
+            /// </summary>
+            PlayIsHLS,
         }
     }
 }
