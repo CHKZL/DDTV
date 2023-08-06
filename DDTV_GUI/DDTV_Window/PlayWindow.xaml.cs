@@ -384,7 +384,7 @@ namespace DDTV_GUI.DDTV_Window
                         Growl.WarningGlobal($"{name}-直播间已加密，无法观看");
                         return;
                     }
-                    if (hLSHostClass.IsEffective)
+                    if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.PlayIsHLS && hLSHostClass.IsEffective)
                     {
                         Task.Run(() =>
                        {
