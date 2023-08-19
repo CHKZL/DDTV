@@ -83,7 +83,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             await _sendObject(7, new
             {
-                uid =mid,//DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid,
+                uid = mid, //DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid,
                 roomid = realRoomId,
                 protover = 2,
                 platform = "web",

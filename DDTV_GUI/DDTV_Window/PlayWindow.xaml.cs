@@ -1404,7 +1404,7 @@ namespace DDTV_GUI.DDTV_Window
                     System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                     {
                         //显示弹幕
-                        barrageConfig.Barrage(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, Index, IsSubtitle);
+                        barrageConfig.Barrage_Stroke(new DanMuCanvas.Models.MessageInformation() { content = DanmuText }, Index, IsSubtitle);
                     });
 
                 });
