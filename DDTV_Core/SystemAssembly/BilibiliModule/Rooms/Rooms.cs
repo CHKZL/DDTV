@@ -134,6 +134,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
         /// <returns></returns>
         public static string GetValue(long uid, DataCacheModule.DataCacheClass.CacheType cacheType)
         {
+           
             if (DataCacheModule.DataCache.GetCache(cacheType, uid.ToString(), out string Value)&& !string.IsNullOrEmpty(Value))
             {
                 switch (cacheType)
@@ -158,6 +159,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
                 }
 
             }
+            
             var roominfo = SelectAPI(uid, cacheType);
             if(cacheType == DataCacheModule.DataCacheClass.CacheType.live_status)
             {
@@ -171,7 +173,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.Rooms
             }
             else
             {
-                Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Error, "获取信息失败");
+                Log.Log.AddLog(nameof(Rooms), Log.LogClass.LogType.Error, $"获取房间信息信息失败,uid:{uid}, cacheType:{cacheType}");
                 return null;
             }
         }
