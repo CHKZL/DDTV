@@ -36,19 +36,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                 string salt = NetworkRequestModule.NetClass.Get_salt(imgKey, subKey);
                 string Query = NetworkRequestModule.NetClass.Get_w_rid_string(uid, timestamp, salt);
                 string WebText = NetworkRequestModule.Get.Get.GetRequest($"https://api.bilibili.com/x/space/wbi/acc/info?{Query}");
-
+                if (string.IsNullOrEmpty(WebText))
+                {
+                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"info获取网络数据为空或超时");
+                    Thread.Sleep(500);
+                    return info(uid);
+                }
                 if (WebText.Contains("{\"code\":-509"))
                 {
                     if (WebText.Replace("}{", "㈨").Split('㈨').Length > 1)
                     {
                         WebText = "{" + WebText.Replace("}{", "㈨").Split('㈨')[1];
                     }
-                }
-                if (string.IsNullOrEmpty(WebText))
-                {
-                    Log.Log.AddLog(nameof(RoomInfo), Log.LogClass.LogType.Warn, $"info获取网络数据为空或超时");
-                    Thread.Sleep(500);
-                    return info(uid);
                 }
                 JObject JO = (JObject)JsonConvert.DeserializeObject(WebText);
                 if (JO != null && JO.ContainsKey("code") && JO["code"] != null && (int)JO["code"] == 0)
