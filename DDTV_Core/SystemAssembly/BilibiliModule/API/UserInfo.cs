@@ -67,7 +67,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         }
                         if (data.live_room == null)
                         {
-                            Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, $"房间信息");
+                            Log.Log.AddLog(nameof(UserInfo), Log.LogClass.LogType.Info, $"该uid名下没有直播间");
                             return null;
                         }
 
@@ -373,7 +373,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
             /// <returns></returns>
             public static List<BilibiliUserConfig._FansMedal> GetFansMedal(long uid,int page = 1,bool isF =true)
             {
-                string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
+             
+                //string roomid = Rooms.Rooms.GetValue(uid, CacheType.room_id);
                 string WebText = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/app-ucenter/v1/fansMedal/panel?page={page}&page_size=10&target_id={uid}");
 
                 if (string.IsNullOrEmpty(WebText))
