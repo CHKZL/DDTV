@@ -77,7 +77,7 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
                 req.Headers.Add("Cookie", BilibiliUserConfig.account.cookie);
 
             }
-            req.Timeout = 8000;
+            req.Timeout = 10000;
 
             try
             {
