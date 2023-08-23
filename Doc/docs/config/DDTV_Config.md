@@ -11,7 +11,7 @@
 [Core]
 RoomListConfig=./RoomListConfig.json
 IsAutoTranscod=True
-TranscodParmetrs=-i {Before} -vcodec copy -acodec copy {After}
+TranscodParmetrs=-y -i {Before} -c copy {After}
 TranscodingCompleteAutoDeleteFiles=False
 GUI_FirstStart=False
 WEB_FirstStart=True
@@ -149,8 +149,8 @@ ShowGuardSwitch=False
             /// </summary>
             DownloadFolderName,
             /// <summary>
-            /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-i {Before} -vcodec copy -acodec copy {After})
-            /// 组：Core      默认值：-i {Before} -vcodec copy -acodec copy {After}
+            /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-y -i {Before} -c copy {After})
+            /// 组：Core      默认值：-y -i {Before} -c copy {After}
             /// </summary>
             TranscodParmetrs,
             /// <summary>
