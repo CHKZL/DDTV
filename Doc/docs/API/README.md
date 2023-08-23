@@ -272,8 +272,8 @@ DDTV_WEB_Server自带swagger方便进行调试，请使用`http(s)://[IP地址]:
             /// </summary>
             DownloadFileName,
             /// <summary>
-            /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-i {Before} -vcodec copy -acodec copy {After})
-            /// 组：Core      默认值：-i {Before} -vcodec copy -acodec copy {After}
+            /// 转码默认参数 (应该是带{After}{Before}的ffmpeg参数字符串，如:-y -hide_banner -loglevel warning -i {Before} -c copy {After})
+            /// 组：Core      默认值：-y -hide_banner -loglevel warning -i {Before} -c copy {After}
             /// </summary>
             TranscodParmetrs,
             /// <summary>

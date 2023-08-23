@@ -17,7 +17,7 @@ namespace DDTV_Core.Tool.TranscodModule
     public class Transcod
     {
         public static bool IsAutoTranscod = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsAutoTranscod, "True", CoreConfigClass.Group.Core));
-        public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.TranscodParmetrs, "-i {Before} -vcodec copy -acodec copy {After}", CoreConfigClass.Group.Core);
+        public static string TranscodParmetrs = CoreConfig.GetValue(CoreConfigClass.Key.TranscodParmetrs, "-y -hide_banner -loglevel warning -i {Before} -c copy {After}", CoreConfigClass.Group.Core);
         public static bool TranscodingCompleteAutoDeleteFiles = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.TranscodingCompleteAutoDeleteFiles, "False", CoreConfigClass.Group.Core));
         /// <summary>
         /// 调用ffmpeg进行转码
