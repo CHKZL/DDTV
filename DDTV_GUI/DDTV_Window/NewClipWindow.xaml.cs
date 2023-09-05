@@ -340,7 +340,7 @@ namespace DDTV_GUI.DDTV_Window
                     .Replace(OriginalFilePath.Split('/')[OriginalFilePath.Split('/').Length - 1], "")+OriginalFilePath.Split('/')[OriginalFilePath.Split('/').Length - 1])
                     .Replace(".mp4", $"_激光切片_{new Random().Next(1000, 9999)}.mp4")
                     .Replace(".flv", $"_激光切片_{new Random().Next(1000, 9999)}.mp4"),
-                }, false, false, "-i {Before} -vcodec copy -acodec copy -ss " + Start.ToString("HH:mm:ss") + " -to " + End.ToString("HH:mm:ss") + " {After} ");
+                }, false, false, "-y -i {Before} -c copy -ss " + Start.ToString("HH:mm:ss") + " -to " + End.ToString("HH:mm:ss") + " {After} ");
                  SetLoading(0);
                 Growl.SuccessGlobal($"切片完成:{tm.AfterFilePath}");
             });
