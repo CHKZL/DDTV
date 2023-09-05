@@ -97,6 +97,10 @@ namespace DDTV_Core.SystemAssembly.NetworkRequestModule.Get
             }
             catch (WebException e)
             {
+                if(e.Status == WebExceptionStatus.Timeout)
+                {
+                    string B = url;
+                }
                 //Log.Log.AddLog(nameof(Get), Log.LogClass.LogType.Debug, $"GetRequest请求发生网络层错误:{e.Status},{IsCookie},{Referer},{IsMandatoryIPv4},{url}");
                  if(DDTV_Core.InitDDTV_Core.IsDevDebug)
                 {

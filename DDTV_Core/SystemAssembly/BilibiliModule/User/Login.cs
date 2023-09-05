@@ -15,6 +15,7 @@ using DDTV_Core.Tool;
 using System.Runtime.InteropServices;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
+using System.Net.Http;
 
 namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 {
@@ -135,6 +136,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     RoomPatrol.IsOn = true;
                     Log.Log.AddLog(nameof(login), Log.LogClass.LogType.Info, "QR扫码登陆bilibili成功");
                     BilibiliUserConfig.account.uid= account.Uid;
+                    BilibiliUserConfig.account.buvid = account.Buvid;
                     BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
                     foreach (var item in account.Cookies)
                     {
@@ -178,6 +180,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
                     BilibiliUserConfig.account.loginStatus = BilibiliUserConfig.LoginStatus.LoggedIn;
                     Log.Log.AddLog(nameof(login), LogClass.LogType.Info, "QR扫码登陆bilibili成功");
                     BilibiliUserConfig.account.uid = account.Uid;
+                    BilibiliUserConfig.account.buvid = account.Buvid;
                     foreach (var item in account.Cookies)
                     {
                         BilibiliUserConfig.account.cookie = BilibiliUserConfig.account.cookie + item + ";";

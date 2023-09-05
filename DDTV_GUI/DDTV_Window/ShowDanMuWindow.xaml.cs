@@ -128,6 +128,7 @@ namespace DDTV_GUI.DDTV_Window
                 if (!liveChatListener.IsUserDispose)
                 {
                     Add("与弹幕服务器断开连接，正在重连....");
+                    _roominfo.roomWebSocket.IsConnect = false;
                     Log.AddLog(nameof(DDTV_DanMu), LogClass.LogType.Info, $"{liveChatListener.TroomId}直播间弹幕连接中断，开始重连弹幕服务器");
                     Rec(liveChatListener.mid);
                 }

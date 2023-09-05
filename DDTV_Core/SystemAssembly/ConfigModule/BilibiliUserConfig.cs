@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,6 +69,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             public string uid { set; get; }
             /// <summary>
+            /// 设备id
+            /// </summary>
+            public string buvid { set; get; }
+            /// <summary>
             /// 当前登陆状态
             /// </summary>
             public LoginStatus loginStatus { set; get; }= LoginStatus.NotLoggedIn;
@@ -95,7 +100,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             Log.Log.AddLog(nameof(BilibiliUserConfig), Log.LogClass.LogType.Info, "加载Userinfo文件");
             ReadUserFile();
-            if (!string.IsNullOrEmpty(account.csrf)&&!string.IsNullOrEmpty(account.uid)&&!string.IsNullOrEmpty(account.cookie)&&account.ExTime>DateTime.UtcNow)
+            if (!string.IsNullOrEmpty(account.csrf) && !string.IsNullOrEmpty(account.uid) && !string.IsNullOrEmpty(account.cookie) && account.ExTime > DateTime.UtcNow)
             {
                 account.loginStatus = LoginStatus.LoggedIn;
                 return true;
@@ -106,14 +111,21 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 return login.VerifyLogin.QRLogin(satrtType);
             }
         }
+
+        public static string GetBuVid()
+        {
+            var result = new HttpClient().GetAsync("https://data.bilibili.com/v/").Result;
+            return result.Headers.GetValues("Set-Cookie").First().Split(';').First().Split('=').Last();
+        }
         public static bool WritUserFile()
         {
             using FileStream fileStream = File.Create(UserConfigFile);
             {
-                fileStream.Write(Encoding.UTF8.GetBytes($"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}"+"\r\n"));
+                fileStream.Write(Encoding.UTF8.GetBytes($"cookie={EncryptionModule.Encryption.AesStr(account.cookie)}" + "\r\n"));
                 fileStream.Write(Encoding.UTF8.GetBytes($"ExTime={account.ExTime.ToString("yyyy-MM-dd HH:mm:ss")}" + "\r\n"));
                 fileStream.Write(Encoding.UTF8.GetBytes($"csrf={account.csrf}" + "\r\n"));
                 fileStream.Write(Encoding.UTF8.GetBytes($"uid={account.uid}" + "\r\n"));
+                fileStream.Write(Encoding.UTF8.GetBytes($"buvid={account.buvid}" + "\r\n"));
             }
             return true;
         }
@@ -133,6 +145,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                     account.csrf=String.Empty;
                     account.ExTime=DateTime.MinValue;
                     account.uid=String.Empty;
+                    account.buvid=String.Empty;
                     foreach (var item in UserFileLine)
                     {
                         if (item.Split('=').Length>1)
@@ -167,6 +180,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                 case "uid":
                                     {
                                         account.uid = item.Split('=')[1];
+                                        break;
+                                    }
+                                case "buvid":
+                                    {
+                                        account.buvid = item.Split('=')[1];
                                         break;
                                     }
                             }
@@ -246,8 +264,9 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                     Log.Log.AddLog(nameof(CheckAccount), LogClass.LogType.Error, "验证账号有效性出现意外错误", true, e);
                                 }
                             }
-                            BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
-                            string B = JsonConvert.SerializeObject(BilibiliUserConfig.FansMedal);
+                           
+                            //BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
+                            //string B = JsonConvert.SerializeObject(BilibiliUserConfig.FansMedal);
                             Thread.Sleep(IntervalTime);
                         }
                     });

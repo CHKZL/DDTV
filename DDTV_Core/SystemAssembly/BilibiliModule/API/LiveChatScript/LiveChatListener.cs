@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.WebSockets;
@@ -70,7 +71,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
                 //因为下标为0的服务器握手好像改了，临时先屏蔽掉，用其他的
                 //await m_client.ConnectAsync(new Uri("wss://" + host.host_list[0].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
-                await m_client.ConnectAsync(new Uri("wss://" + host.host_list[new Random().Next(1, host.host_list.Count)].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token); 
+                string URL = "wss://" + host.host_list[new Random().Next(0, host.host_list.Count)].host + "/sub";
+                //string URL = "wss://" + host.host_list[0].host + "/sub";
+                //URL = "wss://tx-sh-live-comet-14.chat.bilibili.com/sub";
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"弹幕连接地址:\r\n{URL}");
+                await m_client.ConnectAsync(new Uri(URL), cancellationToken ?? new CancellationTokenSource(30000).Token);
             }
             catch (Exception e)
             {
@@ -79,18 +84,27 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //Console.WriteLine(e.ToString());
             }
 
-            int realRoomId = roomId;//await _getRealRoomId(roomId);
+            //int realRoomId = roomId;//await _getRealRoomId(roomId);
+
+
+            if (string.IsNullOrEmpty(ConfigModule.BilibiliUserConfig.account.buvid))
+            {
+                ConfigModule.BilibiliUserConfig.account.buvid = ConfigModule.BilibiliUserConfig.GetBuVid();
+                ConfigModule.BilibiliUserConfig.WritUserFile();
+            }
 
             await _sendObject(7, new
             {
-                uid = mid, //DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid,
-                roomid = realRoomId,
-                protover = 2,
+                uid = long.Parse(ConfigModule.BilibiliUserConfig.account.uid),
+                roomid = roomId,
+                protover = 3,
+                buvid = ConfigModule.BilibiliUserConfig.account.buvid,
                 platform = "web",
-                clientver = "1.14.0",
-                type = "1",
+                type = 2,
                 key = host.token
             });
+
+
 
             _ = _innerLoop().ContinueWith((t) =>
            {
@@ -121,6 +135,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
            });
             _ = _innerHeartbeat();
         }
+
+        
 
         public void Close()
         {
@@ -184,7 +200,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         {
 #if DEBUG
             //InfoLog.InfoPrintf("LiveChatListener开始连接，房间号:" + TroomId, InfoLog.InfoClass.Debug);
-            Console.WriteLine("LiveChatListender start.");
+            Console.WriteLine($"直播间长连握手开始(room_id:{TroomId})");
 #endif
             while (!m_innerRts.IsCancellationRequested)
             {
@@ -363,11 +379,11 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     case "ACTIVITY_RED_PACKET":
                         //红包抽奖弹幕
                         break;
-                        //切断直播间
+                    //切断直播间
                     case "CUT_OFF":
                         MessageReceived(this, new CutOffEventArg(obj));
                         break;
-                       
+
                     default:
                         //Console.WriteLine(cmd);
                         MessageReceived(this, new MessageEventArgs(obj));
@@ -444,6 +460,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
             string jsonBody = JsonMapper.ToJson(obj);
+            Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
             await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
         }
 
@@ -514,7 +531,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
         /// <summary>
         /// 消息处理
         /// </summary>
-        private void ProcessDanmakuData(int opt, byte[] buffer, int length)
+        private void ProcessDanmakuData(int opt, byte[] buffer, int length,bool IsBrotli = false)
         {
             switch (opt)
             {
@@ -531,9 +548,28 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     {
                         try
                         {
-                            string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
-                            jsonBody = Regex.Unescape(jsonBody);
-                            _parse(jsonBody);
+                            if (IsBrotli)
+                            {
+                                do
+                                {
+                                    int len = buffer[3] + (buffer[2] * 256) + (buffer[1] * 256 * 256) + (buffer[0] * 256 * 256 * 256);
+                                    byte[] a = new byte[len-16];
+                                    Array.Copy(buffer, 16, a, 0, len - 16);
+                                    string jsonBody = Encoding.UTF8.GetString(a, 0, len-16);
+                                    jsonBody = Regex.Unescape(jsonBody);
+                                    _parse(jsonBody);                                    
+                                    byte[] b = new byte[buffer.Length-len];
+                                    Array.Copy(buffer, len, b, 0, buffer.Length-len);
+                                    buffer = b;
+                                } while (buffer.Length > 0);
+                            }
+                            else
+                            {
+                                string jsonBody = Encoding.UTF8.GetString(buffer, 0, length);
+                                jsonBody = Regex.Unescape(jsonBody);
+                                _parse(jsonBody);
+                            }
+
                             //_parse("{\"cmd\":\"DDTV_T1\",\"T1\":1,\"roomID\":" + TroomId + "}");
                             //Debug.Log(jsonBody);
                             //ReceivedDanmaku?.Invoke(this, new ReceivedDanmakuArgs { Danmaku = new Danmaku(json) });
@@ -630,19 +666,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                         break;
                     }
                 case 3:
-                    ;
+                    using (var inputStream = new MemoryStream(buffer))
+                    using (var outputStream = new MemoryStream())
+                    using (var decompressionStream = new BrotliStream(inputStream, CompressionMode.Decompress))
+                    {
+                        decompressionStream.CopyTo(outputStream);
+                        buffer = outputStream.ToArray();
+                    }
+                    ProcessDanmakuData(protocol.Operation, buffer, buffer.Length, true);            
                     break;
-                case 5:
-                    ;
-                    break;
-                case 7:
-                    ;
-                    break;
-                case 8:
-                    ;
-                    break;
+
                 default:
-                    ;
+               
                     break;
             }
         }
