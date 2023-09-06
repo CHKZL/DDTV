@@ -161,9 +161,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     SaveCover(uid);
                     //弹幕录制结束处理
                     bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool IsRecDanmu);
-                    if (IsRecDanmu && roomInfo.roomWebSocket.IsConnect)
+                    if (IsRecDanmu || roomInfo.roomWebSocket.IsConnect)
                     {
-                        roomInfo.roomWebSocket.IsConnect = false;
+                        if(roomInfo.roomWebSocket!=null)
+                        {
+                            roomInfo.roomWebSocket.IsConnect = false;
+                        }
                         if (roomInfo.roomWebSocket.LiveChatListener != null)
                         {
                             try

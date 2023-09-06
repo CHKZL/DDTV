@@ -68,18 +68,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             {
 
                 //await m_client.ConnectAsync(new Uri("wss://broadcastlv.chat.bilibili.com/sub"), cancellationToken ?? new CancellationTokenSource(300000).Token);
-
-                //因为下标为0的服务器握手好像改了，临时先屏蔽掉，用其他的
-                //await m_client.ConnectAsync(new Uri("wss://" + host.host_list[0].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
                 string URL = "wss://" + host.host_list[new Random().Next(0, host.host_list.Count)].host + "/sub";
-                foreach (var item in host.host_list)
-                {
-                    if(item.host.Contains("hw-"))
-                    {
-                        URL = "wss://" + item.host + "/sub";
-                        break;
-                    }
-                }
+                //foreach (var item in host.host_list)
+                //{
+                //    if(item.host.Contains("hw-"))
+                //    {
+                //        URL = "wss://" + item.host + "/sub";
+                //        break;
+                //    }
+                //}
                 //URL = "wss://" + host.host_list[2].host + "/sub";
                 //URL = "wss://tx-sh-live-comet-14.chat.bilibili.com/sub";
                 Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"弹幕连接地址:\r\n{URL}");
