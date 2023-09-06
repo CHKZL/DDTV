@@ -914,25 +914,25 @@ namespace DDTV_GUI.DDTV_Window
             {
                 Subtitle.Visibility = Visibility;
                 Growl.InfoGlobal($"启动【{name}({roomId})】的弹幕连接");
-                Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
+                
                 canvas.Visibility = Visibility;
                 Task.Run(() =>
                 {
                     if (Rooms.RoomInfo.TryGetValue(uid, out RoomInfoClass.RoomInfo RI))
                     {
-                        if (RI.roomWebSocket.LiveChatListener == null || !RI.roomWebSocket.LiveChatListener.startIn)
+                        if (RI.roomWebSocket.LiveChatListener == null || !hlsMode.roomInfo.roomWebSocket.IsConnect)
                         {
                             MainWindow.linkDMNum++;
                             var T1 = DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket.WebSocket.ConnectRoomAsync(uid);
                             T1.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-
+                            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动【{name}({roomId})】的弹幕连接", false);
                         }
                         else
                         {
                             RI.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                            Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"【{name}({roomId})】的弹幕连接已存在，播放器复用", false);
                         }
                     }
-
                 });
             }
             else

@@ -72,10 +72,18 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //因为下标为0的服务器握手好像改了，临时先屏蔽掉，用其他的
                 //await m_client.ConnectAsync(new Uri("wss://" + host.host_list[0].host + "/sub"), cancellationToken ?? new CancellationTokenSource(30000).Token);
                 string URL = "wss://" + host.host_list[new Random().Next(0, host.host_list.Count)].host + "/sub";
-                //string URL = "wss://" + host.host_list[0].host + "/sub";
+                foreach (var item in host.host_list)
+                {
+                    if(item.host.Contains("hw-"))
+                    {
+                        URL = "wss://" + item.host + "/sub";
+                        break;
+                    }
+                }
+                //URL = "wss://" + host.host_list[2].host + "/sub";
                 //URL = "wss://tx-sh-live-comet-14.chat.bilibili.com/sub";
                 Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"弹幕连接地址:\r\n{URL}");
-                await m_client.ConnectAsync(new Uri(URL), cancellationToken ?? new CancellationTokenSource(30000).Token);
+                await m_client.ConnectAsync(new Uri(URL), cancellationToken ?? new CancellationTokenSource().Token);
             }
             catch (Exception e)
             {
@@ -98,7 +106,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 uid = long.Parse(ConfigModule.BilibiliUserConfig.account.uid),
                 roomid = roomId,
                 protover = 3,
-                buvid = ConfigModule.BilibiliUserConfig.account.buvid,
+                buvid = ConfigModule.BilibiliUserConfig.GetBuVid(),//ConfigModule.BilibiliUserConfig.account.buvid,
                 platform = "web",
                 type = 2,
                 key = host.token
@@ -295,15 +303,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             }
             catch (Exception) { return; }
             string cmd = (string)obj["cmd"];
-            if (cmd.Contains("DANMU_MSG"))
-            {
-                MessageReceived(this, new DanmuMessageEventArgs(obj));
-            }
-            else if (cmd.Contains("SUPER_CHAT_MESSAGE"))
-            {
-                MessageReceived(this, new SuperchatEventArg(obj));
-            }
-            else
+            //if (cmd.Contains("DANMU_MSG"))
+            //{
+            //    MessageReceived(this, new DanmuMessageEventArgs(obj));
+            //}
+            //else if (cmd.Contains("SUPER_CHAT_MESSAGE"))
+            //{
+            //    MessageReceived(this, new SuperchatEventArg(obj));
+            //}
+            
                 switch (cmd)
                 {
                     //弹幕信息
@@ -386,6 +394,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
                     default:
                         //Console.WriteLine(cmd);
+                        Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"收到未知CMD:{cmd}");
                         MessageReceived(this, new MessageEventArgs(obj));
                         break;
                 }
@@ -424,7 +433,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 {
                     //UnityEngine.Debug.Log("heartbeat");
                     await _sendBinary(2, Encoding.UTF8.GetBytes("[object Object]"));
-                    await Task.Delay(25 * 1000, m_innerRts.Token);
+                    await Task.Delay(10 * 1000, m_innerRts.Token);
                 }
                 catch (OperationCanceledException)
                 {
@@ -451,8 +460,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     bw.WriteBE(1);
                 }
             }
-            await m_client.SendAsync(new ArraySegment<byte>(head), WebSocketMessageType.Binary, false, CancellationToken.None);
-            await m_client.SendAsync(new ArraySegment<byte>(body), WebSocketMessageType.Binary, true, CancellationToken.None);
+            byte [] tail = new byte[16+body.Length];
+            Array.Copy(head, 0, tail, 0, 16);
+            Array.Copy(body, 0, tail, 16, body.Length);
+            await m_client.SendAsync(new ArraySegment<byte>(tail), WebSocketMessageType.Binary, true, CancellationToken.None);
+            //await m_client.SendAsync(new ArraySegment<byte>(head), WebSocketMessageType.Binary, false, CancellationToken.None);
+            //await m_client.SendAsync(new ArraySegment<byte>(body), WebSocketMessageType.Binary, true, CancellationToken.None);
         }
 
         private async Task _sendObject(int type, object obj)
@@ -462,18 +475,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             string jsonBody = JsonMapper.ToJson(obj);
             Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
             await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
-        }
-
-        private async Task<int> _getRealRoomId(int roomId)
-        {
-            using (HttpClient client = new HttpClient())
-            {
-                HttpResponseMessage ret = await client.PostAsync($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/room/v1/Room/room_init?id=" + roomId, new StringContent(""));
-                string k = await ret.Content.ReadAsStringAsync();
-                //dynamicClass cc = JsonConvert.DeserializeObject<dynamicClass>(k);
-                dynamicClass cc = JsonMapper.ToObject<dynamicClass>(k);
-                return cc.data.room_id;
-            }
         }
 
         private class dynamicClass
@@ -621,13 +622,15 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //InfoLog.InfoPrintf($@"{TroomId}房间收到协议PacketLength长度小于16，作为观测包更新心跳时间处理", InfoLog.InfoClass.Debug);
                 //ProcessDanmakuData(99, null, 0);
                 //throw new NotSupportedException($@"协议失败: (L:{protocol.PacketLength})");
-                Console.WriteLine("<16");
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"LiveChatListener初始化bodyLength出现错误长度<16");
+                //Console.WriteLine("<16");
                 return;
             }
             int bodyLength = protocol.PacketLength - 16;
             if (bodyLength == 0)
             {
                 //continue;
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Warn, $"LiveChatListener初始化bodyLength出现错误长度0");
                 return;
             }
             byte[] buffer = new byte[bodyLength];
