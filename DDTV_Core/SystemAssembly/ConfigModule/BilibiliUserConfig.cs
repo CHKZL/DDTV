@@ -4,6 +4,7 @@ using DDTV_Core.SystemAssembly.BilibiliModule.User;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -114,8 +115,20 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 
         public static string GetBuVid()
         {
-            var result = new HttpClient().GetAsync("https://data.bilibili.com/v/").Result;
-            return result.Headers.GetValues("Set-Cookie").First().Split(';').First().Split('=').Last();
+            string result = NetworkRequestModule.Get.Get.GetRequest("https://api.bilibili.com/x/frontend/finger/spi");
+            JObject JO = (JObject)JsonConvert.DeserializeObject(result);
+            if (!string.IsNullOrEmpty(JO["code"].ToString()))
+            {
+                if (JO["code"].ToString() == "0")
+                {
+                    if (!string.IsNullOrEmpty(JO["data"]["b_3"].ToString()))
+                    {
+                        return JO["data"]["b_3"].ToString();
+                    }
+                }
+            }
+            var T = new HttpClient().GetAsync("https://data.bilibili.com/v/").Result;
+            return T.Headers.GetValues("Set-Cookie").First().Split(';').First().Split('=').Last();
         }
         public static bool WritUserFile()
         {

@@ -86,7 +86,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.DanMu
             do
             {
                 Thread.Sleep(1000 * new Random().Next(1, 5));
-                data = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, false);
+                data = NetworkRequestModule.Get.Get.GetRequest($"{DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, true);
                 if (!string.IsNullOrEmpty(data))
                 {
                     break;
