@@ -166,6 +166,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _BarrageSendingDefaultStatus = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.BarrageSendingDefaultStatus;
             var _IsAutoPlayDanmu = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu;
             var _PlayIsHLS = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.PlayIsHLS;
+            var _DanMuSpeed = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuSpeed;
         }
         /// <summary>
         /// 获取配置

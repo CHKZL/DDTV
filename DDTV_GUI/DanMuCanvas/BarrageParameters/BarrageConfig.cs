@@ -35,12 +35,12 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
         #endregion
 
         #region 初始化
-        public BarrageConfig(Canvas canvas)
+        public BarrageConfig(Canvas canvas,double speed)
         {
             //InitializeColors();
             this.canvas = canvas;
             reduceSpeed = decimal.Parse("0.5");
-            initFinishTime = double.Parse("10");
+            initFinishTime = speed;
         }
 
         #endregion
@@ -109,7 +109,7 @@ namespace DDTV_GUI.DanMuCanvas.BarrageParameters
                                                          //从右往左
             animation.From = canvas.ActualWidth;
             animation.To = 0 - (GUIConfig.DanMuFontSize * textblock.Text.Length);
-            animation.Duration = TimeSpan.FromSeconds(initFinishTime);
+            animation.Duration = TimeSpan.FromSeconds(30-initFinishTime);
             animation.AutoReverse = false;
             animation.Completed += (object sender, EventArgs e) =>
             {

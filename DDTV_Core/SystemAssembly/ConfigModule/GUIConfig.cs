@@ -22,6 +22,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string SubtitleColor = CoreConfig.GetValue(CoreConfigClass.Key.SubtitleColor, "0x00,0xFF,0xFF", CoreConfigClass.Group.Play);
         public static int DanMuFontSize = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuFontSize, "26", CoreConfigClass.Group.Play));
         public static double DanMuFontOpacity = double.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuFontSize, "1", CoreConfigClass.Group.Play));
+        public static double DanMuSpeed = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuSpeed, "10", CoreConfigClass.Group.Play));
         public static bool DoesShieldTakeEffect = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DoesShieldTakeEffect, "True", CoreConfigClass.Group.Play));
         public static bool BarrageSendingDefaultStatus = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, "False", CoreConfigClass.Group.Play));
     }
