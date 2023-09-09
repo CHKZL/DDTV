@@ -91,6 +91,8 @@ namespace DDTV_GUI.DDTV_Window
         public bool IsHls = false;
         public _HlsMode hlsMode = new _HlsMode();
 
+        //public double danmu_speed = GUIConfig.DanMuSpeed;
+
         public class _HlsMode
         {
             internal DownloadClass.Downloads downloadClass = new DownloadClass.Downloads();
@@ -200,7 +202,7 @@ namespace DDTV_GUI.DDTV_Window
                 VolumeTimer.Tick += VolumeTimer_Tick;
                 VolumeTimer.Start();
 
-                barrageConfig = new BarrageConfig(canvas);
+                barrageConfig = new BarrageConfig(canvas,((double)LastWidth / 800.0) * GUIConfig.DanMuSpeed);
                 canvas.Dispatcher.Invoke(() =>
                 {
                     canvas.Opacity = GUIConfig.DanMuFontOpacity;
@@ -217,6 +219,7 @@ namespace DDTV_GUI.DDTV_Window
                 DanMuGridSwitch.Opacity = 0.4;
             }
             Loaded += new RoutedEventHandler(Topping);
+            
             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"启动播放窗口[UID:{Uid}]", false);
 
         }
@@ -227,7 +230,7 @@ namespace DDTV_GUI.DDTV_Window
             timer.Tick += timer1_Tick;
         }
         private void timer1_Tick(object sender, EventArgs e)
-        {
+        { 
             this.Topmost = true;
         }
         /// <summary>
@@ -656,6 +659,11 @@ namespace DDTV_GUI.DDTV_Window
             }
             LastWidth = (int)this.Width;
             LastHeight = (int)this.Height;
+            if(barrageConfig!=null)
+            {
+                barrageConfig.initFinishTime = ((double)LastWidth / 800.0) * GUIConfig.DanMuSpeed;
+            }
+            
         }
         /// <summary>
         /// 设置音量
@@ -929,7 +937,11 @@ namespace DDTV_GUI.DDTV_Window
                         }
                         else
                         {
-                            RI.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                            if (!RI.roomWebSocket.LiveChatListener.startIn)
+                            {
+                                RI.roomWebSocket.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                            }
+                            
                             Log.AddLog(nameof(PlayWindow), LogClass.LogType.Info, $"【{name}({roomId})】的弹幕连接已存在，播放器复用", false);
                         }
                     }
@@ -1187,6 +1199,7 @@ namespace DDTV_GUI.DDTV_Window
                 }
                 LastWidth = (int)this.Width;
                 LastHeight = (int)this.Height;
+                barrageConfig.initFinishTime = ((double)LastWidth / 800.0) * 10.0;
                 UpdateWindowInfo();
                 return true;
             }
@@ -1755,6 +1768,10 @@ namespace DDTV_GUI.DDTV_Window
 
         private void PlayWindow_DanMuConfigDialogDispose(object? sender, EventArgs e)
         {
+            if (barrageConfig != null)
+            {
+                barrageConfig.initFinishTime = ((double)LastWidth / 800.0) * GUIConfig.DanMuSpeed;
+            }
             canvas.Opacity = GUIConfig.DanMuFontOpacity;
             DanMuConfigDialog.Close();
         }

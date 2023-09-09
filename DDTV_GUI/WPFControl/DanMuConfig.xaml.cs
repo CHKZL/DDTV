@@ -25,23 +25,28 @@ namespace DDTV_GUI.WPFControl
         public event EventHandler<EventArgs> ColorPickerDialogDispose;
         EventHandler<EventArgs> eventHandler;
         private Dialog ColorPickerDialog;//取色盘弹出窗口
-        int fontSize = 26;
-        double Opacity = 1;
+        int _fontSize = 26;
+        double _Opacity = 1;
+        int _Speed = 1;
         public DanMuConfig(EventHandler<EventArgs> _)
         {
             InitializeComponent();
             eventHandler = _;
             FontSizeSlider.Value= GUIConfig.DanMuFontSize;
             FontOpacitySlider.Value = GUIConfig.DanMuFontOpacity;
+            SpeedSlider.Value = GUIConfig.DanMuSpeed;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            GUIConfig.DanMuFontSize = fontSize;
-            GUIConfig.DanMuFontOpacity = Opacity;
+            GUIConfig.DanMuFontSize = _fontSize;
+            GUIConfig.DanMuFontOpacity = _Opacity;
+            GUIConfig.DanMuSpeed = _Speed;
 
-            CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontSize, fontSize.ToString(), CoreConfigClass.Group.Play);
-            CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontOpacity, Opacity.ToString(), CoreConfigClass.Group.Play);
+            CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontSize, _fontSize.ToString(), CoreConfigClass.Group.Play);
+            CoreConfig.SetValue(CoreConfigClass.Key.DanMuFontOpacity, _Opacity.ToString(), CoreConfigClass.Group.Play);
+            CoreConfig.SetValue(CoreConfigClass.Key.DanMuSpeed, _Speed.ToString(), CoreConfigClass.Group.Play);
+            GUIConfig.DanMuSpeed = _Speed;
             eventHandler.Invoke(this, EventArgs.Empty);
         }
 
@@ -58,13 +63,13 @@ namespace DDTV_GUI.WPFControl
         }
         private void FontSizeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (fontSize > 0)
+            if ((int)e.NewValue > 0)
             {
-                fontSize = (int)e.NewValue;
-                FontSizeText.Text = "字体大小：" + fontSize;
+                _fontSize = (int)e.NewValue;
+                FontSizeText.Text = "字体大小：" + _fontSize;
                 if(PreviewText!=null)
                 {
-                    PreviewText.FontSize = fontSize;
+                    PreviewText.FontSize = _fontSize;
                 }
               
             }
@@ -72,15 +77,29 @@ namespace DDTV_GUI.WPFControl
 
         private void FontOpacitySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (Opacity > 0)
+            if (double.Parse(String.Format("{0:F}", e.NewValue)) > 0.0)
             {
-                Opacity = double.Parse(String.Format("{0:F}", e.NewValue));
-                FontOpacityText.Text = "透明度：" + Opacity;
+                _Opacity = double.Parse(String.Format("{0:F}", e.NewValue));
+                FontOpacityText.Text = "透明度：" + _Opacity;
                 if (PreviewText != null)
                 {
-                    PreviewText.Opacity = Opacity;
+                    PreviewText.Opacity = _Opacity;
                 }
                
+            }
+        }
+
+        private void SpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if ((int)e.NewValue > 0)
+            {
+                _Speed = (int)e.NewValue;
+                SpeedText.Text = "速度：" + _Speed;
+            }
+            else
+            {
+                _Speed = 1;
+                SpeedText.Text = "速度：" + _Speed;
             }
         }
     }

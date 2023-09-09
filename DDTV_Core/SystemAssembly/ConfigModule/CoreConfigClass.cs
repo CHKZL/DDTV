@@ -434,6 +434,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Play   默认值：true
             /// </summary>
             PlayIsHLS,
+            /// <summary>
+            /// 弹幕速度(int)
+            /// 组：Play   默认值：1.00
+            /// </summary>
+            DanMuSpeed,
         }
     }
 }
