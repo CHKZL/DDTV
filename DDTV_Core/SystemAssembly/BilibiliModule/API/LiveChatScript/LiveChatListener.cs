@@ -388,10 +388,9 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                     case "CUT_OFF":
                         MessageReceived(this, new CutOffEventArg(obj));
                         break;
-
                     default:
                         //Console.WriteLine(cmd);
-                        Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"收到未知CMD:{cmd}");
+                        //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"收到未知CMD:{cmd}");
                         MessageReceived(this, new MessageEventArgs(obj));
                         break;
                 }

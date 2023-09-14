@@ -12,6 +12,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         private static readonly bool InContainer = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") != null;
 
         public static bool GUI_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.GUI_FirstStart, "True", CoreConfigClass.Group.Core));
+        public static bool Core_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.Core_FirstStart, "True", CoreConfigClass.Group.Core));
         public static bool WEB_FirstStart = bool.Parse(GetValue(CoreConfigClass.Key.WEB_FirstStart, "True", CoreConfigClass.Group.Core));
         public static string WebHookUrl = GetValue(CoreConfigClass.Key.WebHookUrl, "", CoreConfigClass.Group.Core);
         public static string InstanceAID = GetValue(CoreConfigClass.Key.InstanceAID, Guid.NewGuid().ToString().Substring(0, 10).ToUpper(), CoreConfigClass.Group.Core);
@@ -167,6 +168,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _IsAutoPlayDanmu = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu;
             var _PlayIsHLS = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.PlayIsHLS;
             var _DanMuSpeed = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuSpeed;
+            var _Core_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Core_FirstStart;
         }
         /// <summary>
         /// 获取配置

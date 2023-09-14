@@ -26,7 +26,10 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 {
                     SaveTime = DateTime.Now;
                     List<ConfigTmp> configTmp = new List<ConfigTmp>();
-
+                    if(File.Exists(ConfigFile))
+                    {
+                        File.Copy(ConfigFile, $"{ConfigFile}_bak", true);
+                    }
                     foreach (var datas in CoreConfigClass.config.datas)
                     {
                         bool IsOK = false;
@@ -68,6 +71,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             ConfigText += (item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n";
                         }
                     }
+                    
                     if (!string.IsNullOrEmpty(ConfigText))
                         File.WriteAllText(ConfigFile, ConfigText);
                 }
@@ -76,31 +80,33 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         /// <summary>
         /// 读取配置文件
         /// </summary>
-        public static void ReadConfigFile(string ConfigFile = "./DDTV_Config.ini")
+        public static void ReadConfigFile(bool T = false, string ConfigFile = "./DDTV_Config.ini")
         {
+
             if (!File.Exists(ConfigFile))
             {
+
                 File.WriteAllText(ConfigFile, "");
                 Log.Log.AddLog(nameof(CoreConfigFile), LogClass.LogType.Warn, String.Format($"配置文件不存在，新建{ConfigFile}文件"));
             }
-            CoreConfigClass.config=new CoreConfigClass.Config();
+            CoreConfigClass.config = new CoreConfigClass.Config();
             string[] ConfigLine = File.ReadAllLines(ConfigFile);
             CoreConfigClass.Group Group = CoreConfigClass.Group.Default;
 
             foreach (var ConfigText in ConfigLine)
             {
                 if (string.IsNullOrEmpty(ConfigText)) continue;
-                if (ConfigText[..1]!="[")
+                if (ConfigText[..1] != "[")
                 {
-                    if (ConfigText.Split('=').Length==2&&ConfigText.Split('=')[0].Length>0&&ConfigText.Split('=')[1].Length>0)
+                    if (ConfigText.Split('=').Length == 2 && ConfigText.Split('=')[0].Length > 0 && ConfigText.Split('=')[1].Length > 0)
                     {
                         bool Enabled = true;
-                        if (ConfigText[..1]=="#")
+                        if (ConfigText[..1] == "#")
                         {
-                            Enabled=false;
+                            Enabled = false;
                             ConfigText.Trim('#');
                         }
-                        if(Enum.TryParse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' '), out var Key))
+                        if (Enum.TryParse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' '), out var Key))
                         {
                             CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
                             {
@@ -111,15 +117,28 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                 Group = Group
                             });
                         }
-                       
+
                     }
                 }
                 else
                 {
-                    Group=(CoreConfigClass.Group)Enum.Parse(typeof(CoreConfigClass.Group), ConfigText.Substring(1, ConfigText.Length-2));
+                    Group = (CoreConfigClass.Group)Enum.Parse(typeof(CoreConfigClass.Group), ConfigText.Substring(1, ConfigText.Length - 2));
                 }
             }
             Log.Log.AddLog(nameof(CoreConfigFile), Log.LogClass.LogType.Info, $"读取配置文件成功");
+            if (T)
+            {
+                return;
+            }
+            if (bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.Core_FirstStart, "True", CoreConfigClass.Group.Download)))
+            {
+                if (File.Exists($"{ConfigFile}_bak"))
+                {
+                    File.Copy($"{ConfigFile}_bak", ConfigFile, true);
+                    ReadConfigFile(true);
+                }
+
+            }
         }
 
         internal class ConfigTmp : CoreConfigClass.Config
