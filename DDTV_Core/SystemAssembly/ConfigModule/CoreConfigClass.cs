@@ -145,6 +145,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// </summary>
             WEB_FirstStart,
             /// <summary>
+            /// 核心初始启动标志位 (应该是一个布尔值第一次启动为真)
+            /// 组：Core      默认值：true
+            /// </summary>
+            Core_FirstStart,
+            /// <summary>
             /// 录制分辨率 (应该为有限的int值)
             /// 组：Download  默认值：10000  可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
             /// </summary>
