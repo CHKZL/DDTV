@@ -98,7 +98,12 @@ namespace DDTV_GUI.DDTV_Window
             UpdateInterface.Main.update(this);//定时更新界面数据
             UpdateInterface.Main.ActivationInterface = 0;//设置默认显示0号界面
             DelTmpFile();//检查临时文件夹，并删除里面的文件
-
+            if (DDTV_Core.InitDDTV_Core.IsSpecialEdition)
+            {
+                guanyu_tisi.Text = "本版本为SAB特供版，无其他功能";
+                teshushezi.Visibility = Visibility.Collapsed;
+            }
+            
             //GUI初始化启动完成
 
 
@@ -309,13 +314,20 @@ namespace DDTV_GUI.DDTV_Window
             N = sender as string;
             Notice.Dispatcher.Invoke(() =>
             {
-                Notice.Text = N;
+                if(DDTV_Core.InitDDTV_Core.IsSpecialEdition)
+                {
+                    Notice.Text = N.Replace("有问题或者建议请加群338182356","");
+                }
+                else
+                {
+                    Notice.Text = N;
+                }
             });
         }
 
         private void CheckUpdates_NewUpdate(object? sender, EventArgs e)
         {
-            if (!Tool.ExamineFullScreen.IsForegroundFullScreen())
+            if (!Tool.ExamineFullScreen.IsForegroundFullScreen() && !DDTV_Core.InitDDTV_Core.IsSpecialEdition)
             {
                 if (CoreConfig.AutoInsallUpdate)
                 {

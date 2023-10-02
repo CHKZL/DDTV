@@ -7,6 +7,8 @@ using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using DDTV_Core.Tool;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
+using DDTV_Core.SystemAssembly.Log;
+using DDTV_Core;
 
 namespace DDTV_WEB_Server//DDTVLiveRecWebServer
 {
@@ -41,7 +43,7 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
                                                       //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
                                                       //设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
                     });
-
+                Services.AddHostedService<DDTVService>();
             });
             //builder.Host.ConfigureWebHost(webBuilder =>
             //{
@@ -91,6 +93,25 @@ namespace DDTV_WEB_Server//DDTVLiveRecWebServer
          public static string GetPackageVersion()
         {
             return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        }
+
+    }
+    public class DDTVService : BackgroundService
+    {
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            return Task.Run(() =>
+            {
+                ;
+            });
+        }
+
+        public override Task StopAsync(CancellationToken stoppingToken)
+        {
+            return Task.Run(() =>
+            {
+                Log.AddLog(nameof(InitDDTV_Core), LogClass.LogType.Warn, "收到SIGINT信号(一般是用户Ctrl+C)，主进程被系统结束");
+            });
         }
     }
 }
