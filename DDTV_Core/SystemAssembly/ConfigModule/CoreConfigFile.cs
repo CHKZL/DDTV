@@ -21,6 +21,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         {
             if (InitDDTV_Core.WhetherInitializationIsComplet)
             {
+               
                 TimeSpan ts = DateTime.Now - SaveTime;  //计算时间差
                 if (ts.TotalSeconds > 5 || IsUser)
                 {
@@ -71,9 +72,15 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                             ConfigText += (item2.Enabled ? "" : "# ") + $"{item2.Key}={item2.Value}\r\n";
                         }
                     }
-                    
-                    if (!string.IsNullOrEmpty(ConfigText))
+                    var Fs = configTmp.Find(x => x.G == CoreConfigClass.Group.Core)?.datas.Find(x=>x.Key==CoreConfigClass.Key.Core_FirstStart);
+                    if (Fs != null && !bool.Parse(Fs.Value) && !string.IsNullOrEmpty(ConfigText))
+                    {
                         File.WriteAllText(ConfigFile, ConfigText);
+                    }
+                    else
+                    {
+                        Log.Log.AddLog(nameof(CoreConfigFile), Log.LogClass.LogType.Warn, $"写配置文件触发NFS问题");
+                    }
                 }
             }
         }
@@ -108,6 +115,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                         }
                         if (Enum.TryParse(typeof(CoreConfigClass.Key), ConfigText.Split('=')[0].Trim('#').Trim(' '), out var Key))
                         {
+                       
                             CoreConfigClass.config.datas.Add(new CoreConfigClass.Config.Data()
                             {
                                 Enabled = Enabled,
@@ -130,7 +138,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 return;
             }
-            if (bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.Core_FirstStart, "True", CoreConfigClass.Group.Download)))
+            
+            if (bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.Core_FirstStart, "True", CoreConfigClass.Group.Core)))
             {
                 if (File.Exists($"{ConfigFile}_bak"))
                 {

@@ -7,6 +7,8 @@ using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using DDTV_Core.Tool;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -24,10 +26,11 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-09-15 01:36:22";
+        public static string CompiledVersion = "2023-09-26 15:37:48";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
+        public static bool IsSpecialEdition = false;//特供版，不自动更新，不提示群号等信息
 
         /// <summary>
         /// 初始化COre
@@ -41,7 +44,7 @@ namespace DDTV_Core
             {
                 switch (DockerEnvironment)
                 {
-                    case "DDTV_CLI":
+                    case "DDTV_CLI":        
                         InitType = SatrtType.DDTV_CLI_Docker;
                         break;
                     case "DDTV_WEB_Server":
@@ -89,6 +92,7 @@ namespace DDTV_Core
                     BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
                 case SatrtType.DDTV_CLI:
+                     
                     ServerInteraction.CheckUpdates.Update("CLI");
                     ServerInteraction.Dokidoki.Start("CLI");
                     BilibiliUserConfig.CheckAccount.CheckLoginValidity();
@@ -121,9 +125,10 @@ namespace DDTV_Core
                     ServerInteraction.Dokidoki.Start("Core");
                     break;
             }
-            WhetherInitializationIsComplet = true;
             CoreConfig.SetValue(CoreConfigClass.Key.Core_FirstStart, "False", CoreConfigClass.Group.Core);
             CoreConfig.Core_FirstStart = false;
+            WhetherInitializationIsComplet = true;
+            ;
         }
 
 
@@ -317,8 +322,7 @@ namespace DDTV_Core
                 }
             });
         }
-
-
-
     }
+
+
 }
