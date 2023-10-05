@@ -25,5 +25,6 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static double DanMuSpeed = int.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DanMuSpeed, "10", CoreConfigClass.Group.Play));
         public static bool DoesShieldTakeEffect = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.DoesShieldTakeEffect, "True", CoreConfigClass.Group.Play));
         public static bool BarrageSendingDefaultStatus = bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, "False", CoreConfigClass.Group.Play));
+        public static bool IsHideBarrageInputIcon= bool.Parse(CoreConfig.GetValue(CoreConfigClass.Key.IsHideBarrageInputIcon, "False", CoreConfigClass.Group.Play));
     }
 }
