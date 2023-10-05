@@ -26,11 +26,11 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-10-05 21:51:56";
+        public static string CompiledVersion = "2023-10-05 23:22:26";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
-        public static bool IsSpecialEdition = false;//特供版，不自动更新，不提示群号等信息
+        public static bool IsSpecialEdition = false;//内部特供选项，用于根据配置文件监控特殊直播间，不自动更新，不提示群号等信息
 
         /// <summary>
         /// 初始化COre
