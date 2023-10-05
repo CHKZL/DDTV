@@ -444,6 +444,11 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 组：Play   默认值：1.00
             /// </summary>
             DanMuSpeed,
+            /// <summary>
+            /// 是否隐藏弹幕输入框
+            /// 组：Play   默认值：False
+            /// </summary> 
+            IsHideBarrageInputIcon
         }
     }
 }
