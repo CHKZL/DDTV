@@ -47,7 +47,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                 RoomConfigList = new List<RoomCardDiscard>();
             }
 
-            if (File.Exists("SAB.ini"))
+            if (InitDDTV_Core.IsSpecialEdition&&File.Exists("SAB.ini"))
             {
                 string[] SAB_LIST = File.ReadAllLines("SAB.ini");
                 foreach (var item in SAB_LIST)
