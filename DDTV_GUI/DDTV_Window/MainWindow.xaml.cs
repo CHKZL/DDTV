@@ -1501,7 +1501,7 @@ namespace DDTV_GUI.DDTV_Window
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Button_GetFollow(object sender, RoutedEventArgs e)
+        private void Button_ImportVTB(object sender, RoutedEventArgs e)
         {
             MessageBoxResult dr = MessageBox.Show($"确定要导入关注列表中的VUP/VTB的房间信息么？\n该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少需要手动补充", "导入列表", MessageBoxButton.OKCancel, MessageBoxImage.Question);
             if (dr == MessageBoxResult.OK)
@@ -2119,6 +2119,29 @@ namespace DDTV_GUI.DDTV_Window
                 }, cancellationTokenSource.Token);
             }
 
+        }
+
+        private void Button_ImportALL(object sender, RoutedEventArgs e)
+        {
+             MessageBoxResult dr = MessageBox.Show($"确定要导入关注列表中所有直播间信息么？","导入列表", MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            if (dr == MessageBoxResult.OK)
+            {
+                if (File.Exists("./DDTV_Update.exe"))
+                {
+                    ImportAllButton.Text = "导入中...请稍候...";
+                    Task.Run(() =>
+                    {
+                        int AddConut = DDTV_Core.SystemAssembly.BilibiliModule.API.UserInfo.follow(long.Parse(BilibiliUserConfig.account.uid),true).Count;
+                        Growl.Success($"成功导入{AddConut}个关注列表中的直播间到配置");
+                        Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, $"成功导入{AddConut}个关注列表中的房间到配置", false, null, false);
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            ImportAllButton.Text = "导入完成";
+                        }));
+
+                    });
+                }
+            }
         }
     }
 }
