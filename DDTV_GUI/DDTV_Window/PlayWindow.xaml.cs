@@ -216,7 +216,15 @@ namespace DDTV_GUI.DDTV_Window
             else
             {
                 DanMuSendGrid.Visibility = Visibility.Collapsed;
-                DanMuGridSwitch.Opacity = 0.4;
+                if(GUIConfig.IsHideBarrageInputIcon)
+                {
+                    DanMuGridSwitch.Opacity = 0;
+                }
+                else
+                {
+                    DanMuGridSwitch.Opacity = 0.4;
+                }
+                
             }
             Loaded += new RoutedEventHandler(Topping);
             
@@ -1940,11 +1948,19 @@ namespace DDTV_GUI.DDTV_Window
             if (DanMuSendGrid.Visibility == Visibility.Visible)
             {
                 DanMuSendGrid.Visibility = Visibility.Collapsed;
-                DanMuGridSwitch.Opacity = 0.4;
+                if (GUIConfig.IsHideBarrageInputIcon)
+                {
+                    DanMuGridSwitch.Opacity = 0;
+                }
+                else
+                {
+                    DanMuGridSwitch.Opacity = 0.4;
+                }
+
 
                 GUIConfig.BarrageSendingDefaultStatus = false;
                 CoreConfig.SetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, false.ToString(), CoreConfigClass.Group.Play);
-                Growl.Success("关闭" + "弹幕发送窗口的默认状态");
+                //Growl.Success("关闭" + "弹幕发送窗口的默认状态");
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "关闭" + "弹幕发送窗口的默认状态", false, null, false);
                 CoreConfigFile.WriteConfigFile(true);
             }
@@ -1955,7 +1971,7 @@ namespace DDTV_GUI.DDTV_Window
 
                 GUIConfig.BarrageSendingDefaultStatus = true;
                 CoreConfig.SetValue(CoreConfigClass.Key.BarrageSendingDefaultStatus, true.ToString(), CoreConfigClass.Group.Play);
-                Growl.Success("打开" + "弹幕发送窗口的默认状态");
+                //Growl.Success("打开" + "弹幕发送窗口的默认状态");
                 Log.AddLog(nameof(MainWindow), LogClass.LogType.Debug, "打开" + "弹幕发送窗口的默认状态", false, null, false);
                 CoreConfigFile.WriteConfigFile(true);
             }
