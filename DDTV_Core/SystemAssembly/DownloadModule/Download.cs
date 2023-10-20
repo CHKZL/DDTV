@@ -158,7 +158,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                         DownloadPath = DownloadPath + "/";
                     string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.mp4",downloadClass.StartTime);
 
-                    SaveCover(uid);
+                    SaveCover(uid,downloadClass.StartTime);
                     //弹幕录制结束处理
                     bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool IsRecDanmu);
                     if (IsRecDanmu || roomInfo.roomWebSocket.IsConnect)
@@ -407,8 +407,8 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     roomInfo.IsUserCancel = false;
                     if (DownloadPath.Substring(DownloadPath.Length - 1, 1) != "/")
                         DownloadPath = DownloadPath + "/";
-                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv");
-                    SaveCover(uid);
+                    string OkFileName = Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_{R}.flv",roomInfo.DownloadingList[0].StartTime);
+                    SaveCover(uid,roomInfo.DownloadingList[0].StartTime);
                     //弹幕录制结束处理
                     bool.TryParse(Rooms.GetValue(uid, DataCacheModule.DataCacheClass.CacheType.IsRecDanmu), out bool IsRecDanmu);
                     if (IsRecDanmu && roomInfo.roomWebSocket.IsConnect)
@@ -966,7 +966,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
         /// </summary>
         /// <param name="Url">封面地址</param>
         /// <param name="Path">保存地址</param>
-        internal static void SaveCover(long uid)
+        internal static void SaveCover(long uid,DateTime dateTime = default)
         {
             if (IsSaveCover)
             {
@@ -976,7 +976,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                     {
                         if (!string.IsNullOrEmpty(cover))
                         {
-                            NetworkRequestModule.Get.Get.GetFile(cover, Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_cover.png"));
+                            NetworkRequestModule.Get.Get.GetFile(cover, Tool.FileOperation.ReplaceKeyword(uid, $"{DownloadPath}" + $"{DownloadDirectoryName}" + $"/{DownloadFolderName}/" + $"{DownloadFileName}" + "_cover.png",dateTime));
                         }
                     }
                 });

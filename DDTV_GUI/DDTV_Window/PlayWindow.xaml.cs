@@ -194,7 +194,7 @@ namespace DDTV_GUI.DDTV_Window
 
                 Task.Run(() =>
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
 
                     Play(uid);
                 });
@@ -405,7 +405,7 @@ namespace DDTV_GUI.DDTV_Window
                     {
                         if (IsHls)
                         {
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                         }
                         else
                         {

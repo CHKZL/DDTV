@@ -46,6 +46,32 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             {
                 RoomConfigList = new List<RoomCardDiscard>();
             }
+
+            if (DDTV_Core.InitDDTV_Core.IsSpecialEdition && File.Exists("SAB.ini"))
+            {
+                string[] SAB_LIST = File.ReadAllLines("SAB.ini");
+                foreach (var item in SAB_LIST)
+                {
+                    if (!string.IsNullOrEmpty(item))
+                    {
+                        Rooms.RoomInfo.Add(long.Parse(item), new RoomInfoClass.RoomInfo()
+                        {
+                            IsAutoRec = false,
+                            IsRemind = false,
+                            Like = false,
+                            uid = long.Parse(item),
+                            IsRecDanmu = false,
+                            IsTemporaryPlay = false
+                        });
+                    }
+                }
+                Log.Log.AddLog(nameof(RoomConfigFile), Log.LogClass.LogType.Debug, $"SAB模式启动完成，一共读取到[{RoomConfigList.Count}]个房间配置");
+                WriteRoomConfigFile();
+                return;
+            }
+
+
+
             foreach (var item in RoomConfigList)
             {
                 if (Rooms.RoomInfo.TryGetValue(item.UID, out var roomInfo))
