@@ -7,6 +7,8 @@ using DDTV_Core.SystemAssembly.NetworkRequestModule;
 using DDTV_Core.SystemAssembly.NetworkRequestModule.WebHook;
 using DDTV_Core.SystemAssembly.RoomPatrolModule;
 using DDTV_Core.Tool;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -28,7 +30,7 @@ namespace DDTV_Core
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
-        public static bool IsSpecialEdition = false;//特供版，不自动更新，不提示群号等信息
+        public static bool IsSpecialEdition = false;//内部特供选项，用于根据配置文件监控特殊直播间，不自动更新，不提示群号等信息
 
         /// <summary>
         /// 初始化COre
@@ -42,7 +44,7 @@ namespace DDTV_Core
             {
                 switch (DockerEnvironment)
                 {
-                    case "DDTV_CLI":
+                    case "DDTV_CLI":        
                         InitType = SatrtType.DDTV_CLI_Docker;
                         break;
                     case "DDTV_WEB_Server":
@@ -90,6 +92,7 @@ namespace DDTV_Core
                     BilibiliUserConfig.CheckAccount.CheckLoginValidity();
                     break;
                 case SatrtType.DDTV_CLI:
+                     
                     ServerInteraction.CheckUpdates.Update("CLI");
                     ServerInteraction.Dokidoki.Start("CLI");
                     BilibiliUserConfig.CheckAccount.CheckLoginValidity();
@@ -318,8 +321,7 @@ namespace DDTV_Core
                 }
             });
         }
-
-
-
     }
+
+
 }

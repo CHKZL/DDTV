@@ -310,12 +310,17 @@
                             <WrapPanel Orientation="Horizontal">
                                 <Grid Width="630" Margin="5">
                                     <TextBlock HorizontalAlignment="Left" Margin="5" Text="匹配导入关注列表中的V：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
-                                    <Button Content="导入" Margin="191,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_GetFollow">
+                                    <Button Content="导入" Margin="191,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Button_ImportVTB">
                                         <hc:AdornerElement.Instance>
                                             <hc:Poptip Content="该功能基于缓存VTBS的数据与登陆账号的关注列表交叉比对，可能会有缺少" PlacementType="BottomLeft"/>
                                         </hc:AdornerElement.Instance>
                                     </Button>
                                     <TextBlock Name="ImportVTBButton" HorizontalAlignment="Left" Margin="242,3,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
+                                </Grid>
+                                <Grid Width="630" Margin="5">
+                                    <TextBlock HorizontalAlignment="Left" Margin="5" Text="匹配导入关注列表中所有直播间：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>
+                                    <Button Content="导入" Margin="245,0,0,0" HorizontalAlignment="Left" Click="Button_ImportALL"/>
+                                    <TextBlock Name="ImportAllButton" HorizontalAlignment="Left" Margin="300,3,0,0" Text="" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Top"/>
                                 </Grid>
                                 <Grid Width="825"  Margin="5">
                                     <TextBlock HorizontalAlignment="Left" Margin="5" Text="对文件进行手动修复/转码：" Style="{StaticResource TextBlockSubTitle}" VerticalAlignment="Center"/>

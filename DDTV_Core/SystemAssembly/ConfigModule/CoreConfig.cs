@@ -169,6 +169,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _PlayIsHLS = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.PlayIsHLS;
             var _DanMuSpeed = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuSpeed;
             var _Core_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Core_FirstStart;
+            var _IsHideBarrageInputIcon = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.IsHideBarrageInputIcon;
         }
         /// <summary>
         /// 获取配置
