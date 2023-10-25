@@ -308,9 +308,13 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
             //{
             //    MessageReceived(this, new SuperchatEventArg(obj));
             //}
-            
+            if(ConfigModule.CoreConfig.LiveChatListenerDebug)
+            {
+                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Debug, $"收到CMD:{cmd}，结构体:{(string)obj}");
+            }       
                 switch (cmd)
                 {
+                    
                     //弹幕信息
                     case "DANMU_MSG":
                         MessageReceived(this, new DanmuMessageEventArgs(obj));

@@ -17,12 +17,12 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.WebSocket
             if (Rooms.Rooms.RoomInfo.ContainsKey(uid))
             {
                 
-                if (!Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect)
+                if (Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect==false)
                 {
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener=new LiveChatListener();
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener.host =DanMu.DanMu.getDanmuInfo(uid);
                     Rooms.Rooms.RoomInfo[uid].roomWebSocket.LiveChatListener.Connect(Rooms.Rooms.RoomInfo[uid].room_id, uid);
-                    Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect=!Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect;
+                    Rooms.Rooms.RoomInfo[uid].roomWebSocket.IsConnect=true;
                     return Rooms.Rooms.RoomInfo[uid];
                 }
                 else

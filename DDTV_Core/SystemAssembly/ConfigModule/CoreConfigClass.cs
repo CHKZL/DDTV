@@ -448,7 +448,12 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             /// 是否隐藏弹幕输入框
             /// 组：Play   默认值：False
             /// </summary> 
-            IsHideBarrageInputIcon
+            IsHideBarrageInputIcon,
+            /// <summary>
+            /// 是否写入详细cmd数据到log
+            /// 组：Core   默认值：False
+            /// </summary> 
+            LiveChatListenerDebug
         }
     }
 }
