@@ -39,7 +39,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                         hLSHostClass.IsUserCancel = true;
                         return hLSHostClass;
                     }
-                    WebText = NetworkRequestModule.Get.Get.GetRequest($"{ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomInfo.room_id}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)Download.RecQuality}&platform=2&ptype=2", false, "https://www.bilibili.com/");
+                    WebText = NetworkRequestModule.Get.Get.GetRequest($"{ConfigModule.CoreConfig.ReplaceAPI}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={roomInfo.room_id}&protocol=0,1&format=0,1,2&codec=0,1&qn={(int)Download.RecQuality}&platform=2&ptype=2", true, "https://www.bilibili.com/");
                     EC = WebText;
                     if ((IsPlay && NoHlsSteam > 0) || error > 10 || (IsFlvSteam && NoHlsSteam > Download.WaitHLSTime) || (!IsFlvSteam && NoHlsSteam > Download.WaitHLSTime + 25))
                     {

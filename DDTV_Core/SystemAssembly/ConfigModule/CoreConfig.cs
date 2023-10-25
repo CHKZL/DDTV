@@ -28,6 +28,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
         public static string HighRiskWebAPIFixedCheckSign = GetValue(CoreConfigClass.Key.HighRiskWebAPIFixedCheckSign, Guid.NewGuid().ToString(), CoreConfigClass.Group.Core);
         public static bool IsAutoPlayDanmu = bool.Parse(GetValue(CoreConfigClass.Key.IsAutoPlayDanmu, "False", CoreConfigClass.Group.Play));
         public static bool PlayIsHLS=bool.Parse(GetValue(CoreConfigClass.Key.PlayIsHLS, "True", CoreConfigClass.Group.Play));
+        public static bool LiveChatListenerDebug=bool.Parse(GetValue(CoreConfigClass.Key.LiveChatListenerDebug, "False", CoreConfigClass.Group.Core));
         /// <summary>
         /// 初始化配置文件
         /// </summary>
@@ -170,6 +171,8 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
             var _DanMuSpeed = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.DanMuSpeed;
             var _Core_FirstStart = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.Core_FirstStart;
             var _IsHideBarrageInputIcon = DDTV_Core.SystemAssembly.ConfigModule.GUIConfig.IsHideBarrageInputIcon;
+            var _LiveChatListenerDebug = DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.LiveChatListenerDebug;
+            
         }
         /// <summary>
         /// 获取配置

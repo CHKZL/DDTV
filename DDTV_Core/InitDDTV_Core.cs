@@ -26,11 +26,13 @@ namespace DDTV_Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string ClientAID = string.Empty;
         public static SatrtType InitType = SatrtType.DDTV_Core;
-        public static string CompiledVersion = "2023-10-20 23:48:31";
+        public static string CompiledVersion = "2023-10-21 00:15:47";
         public static bool WhetherInitializationIsComplet = false;//是否初始化完成
         public static string UpdateNotice = string.Empty;
         public static bool IsDevDebug = false;
         public static bool IsSpecialEdition = false;//内部特供选项，用于根据配置文件监控特殊直播间，不自动更新，不提示群号等信息
+
+
 
         /// <summary>
         /// 初始化COre
@@ -61,7 +63,7 @@ namespace DDTV_Core
             }
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"========================\nDDTV_Core开始启动，当前版本:{InitType} {Ver}(编译时间:{CompiledVersion})\n========================");
-
+            
             Log.LogInit(LogClass.LogType.Debug);//初始化日志系统，设置日志输出等级
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;//设置使用的最低安全协议（阿B目前为Tls12）
             ServicePointManager.DefaultConnectionLimit = 1024 * 1024 * 8;//连接队列上线
