@@ -85,7 +85,7 @@ namespace DDTV_CLI
                 return Task.Run(() =>
                 {
                     InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI, CLI_Init._args.Contains("--no-update"));
-                    var response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(File.ReadAllText("./TEST.txt"));
+                    //var response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(File.ReadAllText("./TEST.txt"));
                 });
             }
 
