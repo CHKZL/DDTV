@@ -23,7 +23,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
         public static HLSHostClass Get_HLS_Host(ref RoomInfoClass.RoomInfo roomInfo, ref DownloadClass.Downloads downloads, bool IsNewTask = false, bool IsAlternative = false, bool IsPlay = false)
         {
             HLSHostClass hLSHostClass = new HLSHostClass();
-            string EC =string.Empty;
+            string EC = string.Empty;
             try
             {
 
@@ -74,59 +74,68 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                             //    hLSHostClass.IsPassword = true;
                             //    return hLSHostClass;
                             //}
-                            foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
+                            if (response.Data.PlayurlInfo.Playurl != null)
                             {
-                                if (Stream.ProtocolName == "http_hls")
+                                foreach (var Stream in response.Data.PlayurlInfo.Playurl.Streams)
                                 {
-                                    foreach (var Format in Stream.Formats)
+                                    if (Stream.ProtocolName == "http_hls")
                                     {
-                                        if (Format.FormatName.ToLower() == "fmp4")
+                                        foreach (var Format in Stream.Formats)
                                         {
-                                            hLSHostClass.IsEffective = true;
-                                            if (Format.Codecs[0].UrlInfos.Length > 1 && IsAlternative)
+                                            if (Format.FormatName.ToLower() == "fmp4")
                                             {
-                                                hLSHostClass.host = Format.Codecs[0].UrlInfos[1].Host;
-                                                hLSHostClass.extra = Format.Codecs[0].UrlInfos[1].Extra.Replace("\u0026", "&");
-                                            }
-                                            else
-                                            {
-                                                hLSHostClass.host = Format.Codecs[0].UrlInfos[0].Host;
-                                                hLSHostClass.extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
-                                            }
+                                                hLSHostClass.IsEffective = true;
+                                                if (Format.Codecs[0].UrlInfos.Length > 1 && IsAlternative)
+                                                {
+                                                    hLSHostClass.host = Format.Codecs[0].UrlInfos[1].Host;
+                                                    hLSHostClass.extra = Format.Codecs[0].UrlInfos[1].Extra.Replace("\u0026", "&");
+                                                }
+                                                else
+                                                {
+                                                    hLSHostClass.host = Format.Codecs[0].UrlInfos[0].Host;
+                                                    hLSHostClass.extra = Format.Codecs[0].UrlInfos[0].Extra.Replace("\u0026", "&");
+                                                }
 
-                                            hLSHostClass.base_url = Format.Codecs[0].BaseUrl;
-                                            hLSHostClass.base_file_name = hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1];
-                                            hLSHostClass.base_url = hLSHostClass.base_url.Replace(hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1], "");
-                                            hLSHostClass.ExtendedName = "m4s";
-                                            roomInfo.Host = "[HLS] " + hLSHostClass.host;
-                                            roomInfo.CurrentMode = 1;
-                                            downloads.ExtendedName = "m4s";
-                                            return hLSHostClass;
+                                                hLSHostClass.base_url = Format.Codecs[0].BaseUrl;
+                                                hLSHostClass.base_file_name = hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1];
+                                                hLSHostClass.base_url = hLSHostClass.base_url.Replace(hLSHostClass.base_url.Split('/')[hLSHostClass.base_url.Split('/').Length - 1], "");
+                                                hLSHostClass.ExtendedName = "m4s";
+                                                roomInfo.Host = "[HLS] " + hLSHostClass.host;
+                                                roomInfo.CurrentMode = 1;
+                                                downloads.ExtendedName = "m4s";
+                                                return hLSHostClass;
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            if (!IsFlvSteam)
-                            {
-                                string FlvFileUrl = RoomInfo.GetPlayUrl(roomInfo.uid, (RoomInfoClass.Quality)Download.RecQuality);
-                                if (Tool.FileOperation.IsExistsNetFile(FlvFileUrl))
+                                if (!IsFlvSteam)
                                 {
-                                    IsFlvSteam = true;
+                                    string FlvFileUrl = RoomInfo.GetPlayUrl(roomInfo.uid, (RoomInfoClass.Quality)Download.RecQuality);
+                                    if (Tool.FileOperation.IsExistsNetFile(FlvFileUrl))
+                                    {
+                                        IsFlvSteam = true;
+                                    }
                                 }
-                            }
-                            NoHlsSteam++;
-                            if (IsNewTask)
-                            {
-                                Thread.Sleep(1000);
+                                NoHlsSteam++;
+                                if (IsNewTask)
+                                {
+                                    Thread.Sleep(1000);
+                                }
+                                else
+                                {
+                                    Thread.Sleep(250);
+                                }
                             }
                             else
                             {
-                                Thread.Sleep(250);
+                                Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时Playurl为Null，尝试重试");
+                                Thread.Sleep(1000);
                             }
                         }
                         else
                         {
                             Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时网络超时，尝试重试");
+                            Thread.Sleep(500);
                         }
                     }
 
