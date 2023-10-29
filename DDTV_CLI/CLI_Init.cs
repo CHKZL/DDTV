@@ -1,4 +1,5 @@
 ﻿using DDTV_Core;
+using DDTV_Core.SystemAssembly.BilibiliModule.API;
 using DDTV_Core.SystemAssembly.BilibiliModule.Rooms;
 using DDTV_Core.SystemAssembly.Log;
 using DDTV_Core.SystemAssembly.NetworkRequestModule;
@@ -6,6 +7,7 @@ using DDTV_Core.Tool;
 using DDTV_Core.Tool.TranscodModule;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -83,6 +85,7 @@ namespace DDTV_CLI
                 return Task.Run(() =>
                 {
                     InitDDTV_Core.Core_Init(InitDDTV_Core.SatrtType.DDTV_CLI, CLI_Init._args.Contains("--no-update"));
+                    var response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(File.ReadAllText("./TEST.txt"));
                 });
             }
 
