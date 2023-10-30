@@ -3,6 +3,7 @@ using DDTV_Core.SystemAssembly.DownloadModule;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -53,11 +54,6 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                     }
                     else
                     {
-                        if (DDTV_Core.SystemAssembly.ConfigModule.BilibiliUserConfig.account.uid == "22988211")
-                        {
-                            Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Error, $"TEST[HLSHostClass]:{WebText}");
-                        }
-
                         response = JsonConvert.DeserializeObject<ApiClass.BilibiliApiResponse<ApiClass.RoomPlayInfo>>(WebText);
                         if (response != null)
                         {
