@@ -124,12 +124,14 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
                             }
                             else
                             {
+                                NoHlsSteam++;
                                 Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时Playurl为Null，尝试重试");
                                 Thread.Sleep(1000);
                             }
                         }
                         else
                         {
+                             NoHlsSteam++;
                             Log.Log.AddLog(nameof(HLS_Host), Log.LogClass.LogType.Debug, $"【{roomInfo.uname}({roomInfo.uid}:{roomInfo.room_id})】获取HLS地址时网络超时，尝试重试");
                             Thread.Sleep(500);
                         }

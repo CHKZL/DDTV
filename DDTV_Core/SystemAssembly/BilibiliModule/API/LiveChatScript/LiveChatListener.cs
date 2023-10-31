@@ -79,7 +79,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 //}
                 //URL = "wss://" + host.host_list[2].host + "/sub";
                 //URL = "wss://tx-sh-live-comet-14.chat.bilibili.com/sub";
-                Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"弹幕连接地址:\r\n{URL}");
+                //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"弹幕连接地址:\r\n{URL}");
                 await m_client.ConnectAsync(new Uri(URL), cancellationToken ?? new CancellationTokenSource().Token);
             }
             catch (Exception e)
@@ -473,7 +473,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
 
             //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
             string jsonBody = JsonMapper.ToJson(obj);
-            Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
+            //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
             await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
         }
 
