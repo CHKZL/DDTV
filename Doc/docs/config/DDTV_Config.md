@@ -3,84 +3,10 @@
 配置文件`DDTV_Config.ini`为DDTV核心初始化配置文件，在DDTV_GUI和DDTV_WEB_Server中都存在
 配置文件所属的分组必须正确，如果放错了分组，是不会被读取的
 
-## 完整的配置文件示例
 :::tip
 如没特殊需要，请勿手动修改，请使用GUI或者API接口进行程序化修改
 :::
-```ini
-[Core]
-RoomListConfig=./RoomListConfig.json
-IsAutoTranscod=True
-TranscodParmetrs=-y -i {Before} -c copy {After}
-TranscodingCompleteAutoDeleteFiles=False
-GUI_FirstStart=False
-WEB_FirstStart=True
-InstanceAID=CA65FE45-9
-ConsoleMonitorMode=False
-ReplaceAPI=https://api.live.bilibili.com
-APIVersion=1
-AutoInsallUpdate=True
-WhetherToEnableProxy=True
-MandatoryUseIPv4=False
-IsBypass_SSL=False
-IsDev=True
-DanMuSaveType=2
-HighRiskWebAPIFixedCheckSign=ae323352-c2d6-4fd5-aa01-1ce5e118be8b
-DDcenterSwitch=False
-SpaceIsInsufficientWarn=False
-ClientAID=4920bf5a-324b-4b1b-a933-2bf93376ca7b
-WebHookUrl=
-[Download]
-DownloadPath=./Rec/
-DownloadDirectoryName={ROOMID}_{NAME}
-DownloadFileName={DATE}_{TIME}_{TITLE}
-DownloadFolderName={yy}_{MM}_{dd}
-TmpPath=./tmp/
-RecQuality=10000
-IsRecDanmu=True
-IsRecGift=True
-IsRecGuard=True
-IsRecSC=True
-IsFlvSplit=False
-FlvSplitSize=1073741824
-IsHls=True
-WaitHLSTime=15
-DoNotSleepWhileDownloading=True
-Shell=False
-ForceCDNResolution=False
-RealTimeTitleFileName=True
-[WEB_API]
-WEB_API_SSL=False
-AccessControlAllowOrigin=*
-AccessControlAllowCredentials=True
-WebUserName=ami
-WebPassword=ddtv
-AccessKeyId=3be75df7c99f457db6a2c0223ec5c52d
-AccessKeySecret=970403bce576495188cbec36dbc31882
-ServerAID=29f310aa-ca78-467a-9415-90e4c41fe0c6
-ServerName=DDTV_Server
-CookieDomain=
-pfxFileName=
-pfxPasswordFileName=
-[Play]
-DanmuColor=0xFF,0xFF,0xFF
-SubtitleColor=0x00,0xFF,0xFF
-DanMuFontSize=26
-PlayQuality=250
-DefaultVolume=30
-DanMuFontOpacity=0.25
-DoesShieldTakeEffect=True
-BarrageSendingDefaultStatus=True
-[GUI]
-IsXmlToAss=False
-DanmukuFactoryParameter=-o {AfterFilePath} -i {BeforeFilePath}
-HideIconState=True
-IsExitReminder=True
-ShowDanMuSwitch=True
-ShowGiftSwitch=False
-ShowSCSwitch=False
-ShowGuardSwitch=False
-```
+
 ### 配置说明
 ```csharp
         /// <summary>
@@ -88,10 +14,6 @@ ShowGuardSwitch=False
         /// </summary>
         public enum Group
         {
-            /// <summary>
-            /// 默认配置组(按道理应该给每个配置都设置组，不应该在默认组里)
-            /// </summary>
-            Default,
             /// <summary>
             /// DDTV_Core运行相关的配置
             /// </summary>
@@ -113,6 +35,7 @@ ShowGuardSwitch=False
             /// </summary>
             GUI,
         }
+
         /// <summary>
         /// 配置键
         /// </summary>
@@ -188,6 +111,11 @@ ShowGuardSwitch=False
             /// 组：Core      默认值：true
             /// </summary>
             WEB_FirstStart,
+            /// <summary>
+            /// 核心初始启动标志位 (应该是一个布尔值第一次启动为真)
+            /// 组：Core      默认值：true
+            /// </summary>
+            Core_FirstStart,
             /// <summary>
             /// 录制分辨率 (应该为有限的int值)
             /// 组：Download  默认值：10000  可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
@@ -453,5 +381,45 @@ ShowGuardSwitch=False
             /// 组：Play   默认值：False
             /// </summary>
             BarrageSendingDefaultStatus,
+            /// <summary>
+            /// 是否保存直播间封面
+            /// 组：Download   默认值：False
+            /// </summary>
+            IsSaveCover,
+            /// <summary>
+            /// 用于请求DD_Center时用的UUID
+            /// 组：Core   默认值：DDTVvtbs
+            /// </summary>
+            DD_Center_UUID,
+            /// <summary>
+            /// 用于请求DD_Center时间隔等待的毫秒数
+            /// 组：Core   默认值：30000
+            /// </summary>
+            DD_Center_Waiting_Millisecond,
+            /// <summary>
+            /// 打开播放器时是否自动连接并播放弹幕
+            /// 组：Play   默认值：False
+            /// </summary>
+            IsAutoPlayDanmu,
+            /// <summary>
+            /// 播放器是否使用HLS模式
+            /// 组：Play   默认值：true
+            /// </summary>
+            PlayIsHLS,
+            /// <summary>
+            /// 弹幕速度(int)
+            /// 组：Play   默认值：1.00
+            /// </summary>
+            DanMuSpeed,
+            /// <summary>
+            /// 是否隐藏弹幕输入框
+            /// 组：Play   默认值：False
+            /// </summary> 
+            IsHideBarrageInputIcon,
+            /// <summary>
+            /// 是否写入详细cmd数据到log
+            /// 组：Core   默认值：False
+            /// </summary> 
+            LiveChatListenerDebug
         }
 ```

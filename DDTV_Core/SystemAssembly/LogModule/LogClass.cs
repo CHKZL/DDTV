@@ -51,6 +51,7 @@ namespace DDTV_Core.SystemAssembly.Log
             /// 删除文件消息
             /// </summary>
             Info_DelFile=35,
+            Debug_T = 39,
             /// <summary>
             /// 调试信息
             /// </summary>
