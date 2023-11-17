@@ -1691,7 +1691,7 @@ namespace DDTV_GUI.DDTV_Window
 
                     if (fileInfo.Extension.ToLower() != ".flv" && fileInfo.Extension.ToLower() != ".mp4")
                     {
-                        MessageBox.Show("选择的文件不是DDTV录制的FVL或mp4文件！");
+                        MessageBox.Show("选择的文件不是DDTV录制的flv或mp4文件！");
                         return;
                     }
                     bool IsMp4File = fileInfo.Extension.ToLower() == ".mp4" ? true : false;
