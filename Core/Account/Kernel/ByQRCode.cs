@@ -218,18 +218,11 @@ namespace Core.Account.Kernel
                 Monitor.Change(1000, 5000);
                 MonitorCallCount = 120;
             }
-
             string oauthKey = o.ToString();
-
             string str = Core.HTTP.Post.PostBody("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https%3A%2F%2Fwww.bilibili.com%2F", null, "application/x-www-form-urlencoded; charset=UTF-8", "https://passport.bilibili.com/login",$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62");
             if (!string.IsNullOrEmpty(str))
             {
-#if NETSTANDARD2_0 || NETCORE3_0
-                MonitorCallBack_Templete obj = JsonConvert.DeserializeObject<MonitorCallBack_Templete>(str);
-#else
                 MonitorCallBack_Templete obj = JsonSerializer.Deserialize<MonitorCallBack_Templete>(str);
-#endif
-
                 if (obj.status)
                 {
                     //关闭监视器
