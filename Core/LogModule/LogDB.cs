@@ -15,6 +15,7 @@ namespace Core.LogModule
         internal static string dbPath = string.Empty;
         internal static string ErrorFilePath = string.Empty;
         internal static StreamWriter streamWriter = default;
+        internal static string LogPath = $"./Logs";
 
         public static class Config
         {
@@ -28,9 +29,9 @@ namespace Core.LogModule
             {
                 try
                 {
-                    if (!Directory.Exists("./Log"))
+                    if (!Directory.Exists(LogPath))
                     {
-                        Directory.CreateDirectory("./Log");
+                        Directory.CreateDirectory(LogPath);
                     }
                     if (isLoadDb)
                     {
@@ -70,9 +71,9 @@ namespace Core.LogModule
             private static string GetDbFileName()
             {
                 string date = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fffff");
-                ErrorFilePath = $"./Log/DDTVCoreErrorLog_{date}.txt";
+                ErrorFilePath = $"{LogPath}/DDTVCoreErrorLog_{date}.txt";
                 streamWriter = new StreamWriter(ErrorFilePath, true, Encoding.UTF8);
-                return $"./Log/DDTVCoreLog_{date}.sqlite";
+                return $"{LogPath}/DDTVCoreLog_{date}.sqlite";
             }
         }
         public class Operate

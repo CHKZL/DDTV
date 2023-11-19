@@ -32,7 +32,7 @@ namespace Core.Account.Linq
         /// </summary>
         /// <param name="status">二维码状态</param>
         /// <param name="account">登录成功时有值，账号信息实例</param>
-        public delegate void QrCodeStatus_Changed_Handle(QrCodeStatus status, Core.Account.AccountInformation account = null);
+        public delegate void QrCodeStatus_Changed_Handle(QrCodeStatus status, AccountInformation account = null);
 
         #endregion Public Delegates
 
@@ -143,6 +143,17 @@ namespace Core.Account.Linq
             }
             else
                 throw new Exceptions.InvalidColorValue("strForeground and strBackground can not be same!");
+        }
+
+        /// <summary>
+        /// 将账号信息储存为配置文件
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="StoragePath"></param>
+        /// <returns></returns>
+        public static bool SaveAccount(AccountInformation account, string StoragePath)
+        {
+            return false;
         }
 
         #endregion Public Methods

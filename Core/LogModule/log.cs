@@ -211,25 +211,19 @@ namespace Core.LogModule
                         }
                         if (logClass.Type < LogClass.LogType.Trace)
                         {
-                            WeritDB(logClass);
-
+                            Task.Run(() =>
+                            {
+                                try
+                                {
+                                    LogDB.Operate.AddDb(logClass);
+                                }
+                                catch (Exception) { }
+                            });
                         }
                     }
 
                 }
             });
         }
-        private static void WeritDB(LogClass logClass)
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    LogDB.Operate.AddDb(logClass);
-                }
-                catch (Exception) { }
-            });
-        }
-
     }
 }
