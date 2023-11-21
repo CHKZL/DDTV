@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Masuit.Tools;
+using SixLabors.ImageSharp.Drawing;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace Core.Tools
     {
 
         #region 文件相关操作
+
         /// <summary>
         /// 获取文件MD5值
         /// </summary>
@@ -47,21 +50,10 @@ namespace Core.Tools
         /// <param name="key"></param>
         /// <param name="iv"></param>
         /// <param name="IsCreate">是否覆盖</param>
-        public static void EncryptFile(string inputText, string outputFile, byte[] key, byte[] iv,bool IsCreate)
+        public static void EncryptFile(string inputText, string outputFile)
         {
-            using (Aes aes = Aes.Create())
-            {
-                aes.Key = key;
-                aes.IV = iv;
-                using (FileStream fsEncrypted = new FileStream(outputFile, FileMode.Create, FileAccess.Write))
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream(fsEncrypted, aes.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        byte[] bytearrayinput = Encoding.UTF8.GetBytes(inputText);
-                        cryptoStream.Write(bytearrayinput, 0, bytearrayinput.Length);
-                    }
-                }
-            }
+            string ACC = AesStr(inputText, Config.Key, Config.IV);
+            File.WriteAllText(outputFile, ACC);
         }
 
         /// <summary>
@@ -72,27 +64,13 @@ namespace Core.Tools
         /// <param name="key"></param>
         /// <param name="iv"></param>
         /// <returns></returns>
-        public static bool DecryptFile(string inputFile,out string outputText, byte[] key, byte[] iv)
+        public static void DecryptFile(string inputFile, out string outputText)
         {
-            outputText = "";
-            using (Aes aes = Aes.Create())
+            using (FileStream fsInput = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
             {
-                aes.Key = key;
-                aes.IV = iv;
-
-                using (FileStream fsInput = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
-                {
-                    using (CryptoStream cryptoStream = new CryptoStream(fsInput, aes.CreateDecryptor(), CryptoStreamMode.Read))
-                    {
-                        byte[] bytearrayinput = new byte[fsInput.Length];
-                        fsInput.Read(bytearrayinput, 0, bytearrayinput.Length);
-                        cryptoStream.Write(bytearrayinput, 0, bytearrayinput.Length);
-                        outputText = Encoding.UTF8.GetString(bytearrayinput);
-                        return true;
-                    }
-                }
+                string source = fsInput.ReadAllText(Encoding.UTF8);
+                outputText = UnAesStr(source, Config.Key, Config.IV);
             }
-            return false;
         }
 
 

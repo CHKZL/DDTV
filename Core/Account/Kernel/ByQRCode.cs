@@ -317,6 +317,7 @@ namespace Core.Account.Kernel
         public class QR_Object
         {
             public SKData SKData { get; set; }
+            public SKBitmap SKBitmap { get; set; }
             public string OriginalString { get; set; }
         }
 

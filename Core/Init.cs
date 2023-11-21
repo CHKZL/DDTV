@@ -15,7 +15,22 @@ namespace Core
         public static bool IsDevDebug = false;
         public static void Start(string InitType = "DDTV", string ClientAID = "", bool IsDev = false)
         {
+            InitDirectoryAndFile();
             LogModule.Log.LogInit();
+        }
+        /// <summary>
+        /// 初始化文件和目录
+        /// </summary>
+        private static void InitDirectoryAndFile()
+        {
+            if(!Directory.Exists(Config.ConfigDirectory))
+            {
+                Directory.CreateDirectory(Config.ConfigDirectory);
+            }
+            if(!Directory.Exists(Config.LogFileDirectory))
+            {
+                Directory.CreateDirectory(Config.LogFileDirectory);
+            }
         }
     }
 }
