@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.Processing;
 using ZXing;
 using ZXing.QrCode;
 
-namespace Core.Tool
+namespace Core.Tools
 {
     public class QRConsole
     {

@@ -13,6 +13,11 @@ namespace Core.Account
         #region Public Fields
 
         /// <summary>
+        /// 登陆状态，是否有效
+        /// </summary>
+        public bool State { set; get; } = false;
+
+        /// <summary>
         /// Access_Token（使用二维码登录时此项为空）
         /// </summary>
         public string AccessToken;
@@ -20,7 +25,7 @@ namespace Core.Account
         /// <summary>
         /// Buvid/local_id
         /// </summary>
-        public string Buvid;
+        public string Buvid { set; get; }
 
         /// <summary>
         /// 验证码图片（仅当需要验证码验证时有值）
@@ -30,22 +35,22 @@ namespace Core.Account
         /// <summary>
         /// Cookies集合实例
         /// </summary>
-        public CookieCollection Cookies;
+        public CookieCollection Cookies { set; get; }
 
         /// <summary>
         /// csrf_token
         /// </summary>
-        public string CsrfToken;
+        public string CsrfToken { set; get; }
 
         /// <summary>
         /// 设备标识
         /// </summary>
-        public string DeviceGuid;
+        public string DeviceGuid { set; get; }
 
         /// <summary>
         /// device_id/bili_local_id
         /// </summary>
-        public string DeviceId;
+        public string DeviceId { set; get; }
 
         /// <summary>
         /// 加密过的密码（使用二维码登录时此项为空）
@@ -60,7 +65,7 @@ namespace Core.Account
         /// <summary>
         /// Cookies有效期
         /// </summary>
-        public DateTime Expires_Cookies;
+        public DateTime Expires_Cookies { set; get; }
 
         /// <summary>
         /// 指示是否登录成功
@@ -80,7 +85,7 @@ namespace Core.Account
         /// <summary>
         /// Cookies字符串
         /// </summary>
-        public string strCookies;
+        public string strCookies { set; get; }
 
         /// <summary>
         /// 手机号（仅当需要手机验证的时候有值）
@@ -90,7 +95,7 @@ namespace Core.Account
         /// <summary>
         /// 用户数字id
         /// </summary>
-        public string Uid;
+        public string Uid { set; get; }
 
         /// <summary>
         /// 手机验证链接（仅当需要手机验证的时候有值）
