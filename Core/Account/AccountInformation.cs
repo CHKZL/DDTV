@@ -1,4 +1,4 @@
-﻿using Core.HTTP;
+﻿using Core.Network;
 using System;
 using System.Drawing;
 using System.Net;
