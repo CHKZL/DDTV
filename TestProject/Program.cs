@@ -31,7 +31,7 @@ namespace TestProject
                 AccountInformation accountInformation = JsonSerializer.Deserialize<AccountInformation>(accountString);
                 if (accountInformation != null && accountInformation.State)
                 {
-                    Core.RuntimeObject.User.AccountInformation = accountInformation;
+                    Core.RuntimeObject.AccountUser.AccountInformation = accountInformation;
                 }
             }
         }
@@ -65,8 +65,8 @@ namespace TestProject
                 }
                 Console.WriteLine($"Expires_Cookies:{account.Expires_Cookies}");
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
-                Core.RuntimeObject.User.AccountInformation = account;
-                string accountString = JsonSerializer.Serialize(Core.RuntimeObject.User.AccountInformation);
+                Core.RuntimeObject.AccountUser.AccountInformation = account;
+                string accountString = JsonSerializer.Serialize(Core.RuntimeObject.AccountUser.AccountInformation);
                 Core.Tools.Encryption.EncryptFile(accountString, $"{Config.ConfigDirectory}{account.Uid}{Config.UserInfoCoinfFileExtension}");
             }
         }
