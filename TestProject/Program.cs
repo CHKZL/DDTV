@@ -2,6 +2,7 @@
 using Core.Account;
 using Core.Account.Linq;
 using Core.LogModule;
+using Core.Network;
 using SkiaSharp;
 using System;
 using System.Net;
@@ -17,10 +18,29 @@ namespace TestProject
         {
             Core.Init.Start();
             Testing_LoadingLoginStatus();
+
+            Testing_userinfo();
+            //Testing_nav();
             //test_QR();
             //Log_test();
             Console.ReadKey();
         }
+        #region 获取账号信息测试
+        public static void Testing_userinfo()
+        {
+            Core.Network.Methods.User.GetUserInfo();
+        }
+        #endregion
+
+        #region 登录态nav状态检测测试
+
+        public static void Testing_nav()
+        {
+            var B = Core.Network.Methods.Nav.GetNav();
+        }
+
+        #endregion
+
         #region 已登陆登录态加载测试
         private static void Testing_LoadingLoginStatus()
         {
