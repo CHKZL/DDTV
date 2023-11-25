@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ namespace Core
         public static void Start(string InitType = "DDTV", string ClientAID = "", bool IsDev = false)
         {
             InitDirectoryAndFile();
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            ServicePointManager.DefaultConnectionLimit = 4096;
+            ServicePointManager.Expect100Continue = false;
             LogModule.Log.LogInit();
         }
         /// <summary>

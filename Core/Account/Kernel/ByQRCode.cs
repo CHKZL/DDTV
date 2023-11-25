@@ -73,7 +73,7 @@ namespace Core.Account.Kernel
         /// <returns>二维码要包含的登录url</returns>
         public static string GetQrcodeUrl()
         {
-            return Core.Network.Get.GetBody("https://passport.bilibili.com/qrcode/getLoginUrl", null, "https://passport.bilibili.com/login", $"BiliAccount/{Core.Account.Parameter.Dll_Version}"); 
+            return Core.Network.Get.GetBody("https://passport.bilibili.com/qrcode/getLoginUrl", false, "https://passport.bilibili.com/login", $"BiliAccount/{Core.Account.Parameter.Dll_Version}"); 
         }
 
         /// <summary>

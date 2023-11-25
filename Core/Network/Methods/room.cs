@@ -6,7 +6,22 @@ using System.Threading.Tasks;
 
 namespace Core.Network.Methods
 {
-    internal class Room
+    public class Room
     {
+        #region Private Properties
+
+        #endregion
+
+        #region Public Method
+
+        #endregion
+
+        #region Private Method
+
+        #endregion
+
+        #region Public Class
+
+        #endregion
     }
 }

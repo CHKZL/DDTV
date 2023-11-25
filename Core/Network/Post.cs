@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Core.Network
 {
-    public class Post
+    internal class Post
     {
         /// <summary>
         /// POST方法
@@ -21,7 +21,7 @@ namespace Core.Network
         /// <param name="user_agent">User-agent</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        public static string PostBody(string url, string data = "", CookieCollection cookie = null,
+        internal static string PostBody(string url, string data = "", CookieCollection cookie = null,
             string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", string user_agent = "",
             WebHeaderCollection specialheaders = null)
         {
