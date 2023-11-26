@@ -3,12 +3,14 @@ using Core.Account;
 using Core.Account.Linq;
 using Core.LogModule;
 using Core.Network;
+using Core.Network.Methods;
 using SkiaSharp;
 using System;
 using System.Net;
 using System.Security.Principal;
 using System.Text.Json;
 using static Core.Account.Kernel.ByQRCode;
+using static Core.Network.Methods.User;
 
 namespace TestProject
 {
@@ -19,16 +21,47 @@ namespace TestProject
             Core.Init.Start();
             Testing_LoadingLoginStatus();
 
-            Testing_userinfo();
+            Testing_GetTitle();
+            //Testing_GetRoomId();
+            //testing_roomlist();
+            //Testing_userinfo();
             //Testing_nav();
             //test_QR();
             //Log_test();
             Console.ReadKey();
         }
+
+        #region Testing_GetRoomId
+        private static void Testing_GetTitle() 
+        {
+            var A = Core.RuntimeObject.Room.GetTitle(122459);
+            var B = Core.RuntimeObject.Room.GetTitle(122459);
+        }
+        #endregion
+
+        #region Testing_GetRoomId
+        private static void Testing_GetRoomId() 
+        {
+            var A = Core.RuntimeObject.Room.GetRoomId(122459);
+            var B = Core.RuntimeObject.Room.GetRoomId(122459);
+        }
+        #endregion
+
+        #region 获取房间列表信息
+
+        public static void testing_roomlist()
+        {
+           var A = Room.GetRoomList(new List<long> { 508963009 });
+        }
+
+        #endregion
+
         #region 获取账号信息测试
         public static void Testing_userinfo()
         {
-            Core.Network.Methods.User.GetUserInfo();
+            var A =  Core.Network.Methods.User.GetUserInfo(122459);
+            var B = typeof(UserInfo);
+
         }
         #endregion
 

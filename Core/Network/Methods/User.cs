@@ -13,32 +13,37 @@ namespace Core.Network.Methods
     public class User
     {
         #region Private Properties
+
         private static string imgKey = string.Empty;
         private static string subKey = string.Empty;
         private static long uid = 0;
-        private static string pattern = @"([a-z0-9]+)(?=\.png)";
+
         #endregion
 
         #region Public Method
-        public static UserInfo? GetUserInfo()
+
+        public static UserInfo? GetUserInfo(long Uid)
         {
-            return _UserInfo();
+            return _UserInfo(Uid);
         }
+
         #endregion
 
         #region Private Method
-        private static UserInfo? _UserInfo()
+
+        private static UserInfo? _UserInfo(long Uid)
         {
             if (string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey) || uid == 0)
             {
                 Nav_Class _Class = Nav.GetNav();
+                string pattern = @"([a-z0-9]+)(?=\.png)";
                 imgKey = Regex.Match(_Class.data.wbi_img.img_url, pattern).Value;
                 subKey = Regex.Match(_Class.data.wbi_img.sub_url, pattern).Value;
                 uid = _Class.data.mid;
             }
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             string salt = Get_salt(imgKey, subKey);
-            string Query = Get_w_rid_string(uid, timestamp, salt);
+            string Query = Get_w_rid_string(Uid, timestamp, salt);
             string WebText = Get.GetBody($"https://api.bilibili.com/x/space/wbi/acc/info?{Query}", true);
             UserInfo? UserInfo_Class = JsonSerializer.Deserialize<UserInfo>(WebText);
             return UserInfo_Class;
@@ -71,6 +76,7 @@ namespace Core.Network.Methods
             }
             return sBuilder.ToString();
         }
+
         #endregion
 
         #region Public Class
@@ -92,7 +98,7 @@ namespace Core.Network.Methods
             public long face_nft_type { get; set; }
             public string sign { get; set; }
             public long rank { get; set; }
-            public long level { get; set; }
+            public int level { get; set; }
             public long jointime { get; set; }
             public long moral { get; set; }
             public long silence { get; set; }
@@ -222,8 +228,8 @@ namespace Core.Network.Methods
 
         public class Live_Room
         {
-            public long roomStatus { get; set; }
-            public long liveStatus { get; set; }
+            public int roomStatus { get; set; }
+            public int liveStatus { get; set; }
             public string url { get; set; }
             public string title { get; set; }
             public string cover { get; set; }
