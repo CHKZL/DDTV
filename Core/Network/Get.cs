@@ -17,12 +17,11 @@ namespace Core.Network
         /// Get方法
         /// </summary>
         /// <param name="url">URL</param>
-        /// <param name="IscCookie">cookies集合实例</param>
+        /// <param name="IsCookie">cookies集合实例</param>
         /// <param name="referer">Referer</param>
-        /// <param name="user_agent">User-agent</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string GetBody(string url, bool IscCookie = false, string referer = "", string user_agent = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded")
+        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded")
         {
             string result = "";
             HttpWebRequest req = null;
@@ -38,9 +37,8 @@ namespace Core.Network
                 req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
-                if (!string.IsNullOrEmpty(user_agent)) req.UserAgent = user_agent;
                 if (specialheaders != null) req.Headers = specialheaders;
-                if (IscCookie) req.Headers.Add("Cookie", AccountUser.AccountInformation.strCookies);         
+                if (IsCookie) req.Headers.Add("Cookie", AccountUser.AccountInformation.strCookies);         
                 rep = (HttpWebResponse)req.GetResponse();
                 using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
                 {
