@@ -44,7 +44,7 @@ namespace Core.Network.Methods
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             string salt = Get_salt(imgKey, subKey);
             string Query = Get_w_rid_string(Uid, timestamp, salt);
-            string WebText = Get.GetBody($"https://api.bilibili.com/x/space/wbi/acc/info?{Query}", true);
+            string WebText = Get.GetBody($"{Config._MainDomainName}/x/space/wbi/acc/info?{Query}", true);
             UserInfo? UserInfo_Class = JsonSerializer.Deserialize<UserInfo>(WebText);
             return UserInfo_Class;
         }

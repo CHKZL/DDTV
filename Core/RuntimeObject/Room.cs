@@ -35,8 +35,8 @@ namespace Core.RuntimeObject
 
         private static long _GetRoomId(long Uid)
         {
-            RoomInfo roomInfo = roomInfos.Where(x => x.uid == Uid).FirstOrDefault();
-            if (roomInfo == null || roomInfo.room_id < 0)
+            RoomInfo roomInfo = roomInfos.Where(x => x.UID == Uid).FirstOrDefault();
+            if (roomInfo == null || roomInfo.RoomId < 0)
             {
                 UserInfo userInfo = User.GetUserInfo(Uid);
                 if (userInfo == null)
@@ -47,17 +47,17 @@ namespace Core.RuntimeObject
                 {
                     RoomInfo newRoomInfo = new RoomInfo()
                     {
-                        uid = userInfo.data.mid,
-                        room_id = userInfo.data.live_room.roomid,
-                        uname = userInfo.data.name,
-                        url = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}",
+                         UID = userInfo.data.mid,
+                        RoomId = userInfo.data.live_room.roomid,
+                        name = userInfo.data.name,
+                        url = new ExpansionType<string> { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                         roomStatus = new ExpansionType<int> { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
                         title = new ExpansionType<string> { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         cover_from_user = new ExpansionType<string> { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
-                        face = userInfo.data.face,
-                        sex = userInfo.data.sex,
-                        sign = userInfo.data.sign,
-                        level = userInfo.data.level,
+                        face = new ExpansionType<string> { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
+                        sex = new ExpansionType<string> { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
+                        sign = new ExpansionType<string> { Value = userInfo.data.sign, ExpirationTime = DateTime.MaxValue },
+                        level = new ExpansionType<int> { Value = userInfo.data.level, ExpirationTime = DateTime.MaxValue },
                     }; ;
                     if (roomInfo == null)
                     {
@@ -67,7 +67,7 @@ namespace Core.RuntimeObject
                     {
                         for (int i = 0; i < roomInfos.Count; i++)
                         {
-                            if (roomInfos[i].uid == newRoomInfo.uid)
+                            if (roomInfos[i].UID == newRoomInfo.UID)
                             {
                                 roomInfos[i] = newRoomInfo;
                             }
@@ -78,13 +78,13 @@ namespace Core.RuntimeObject
             }
             else
             {
-                return roomInfo.room_id;
+                return roomInfo.RoomId;
             }
         }
 
         private static string _GetTitle(long Uid)
         {
-            RoomInfo roomInfo = roomInfos.Where(x => x.uid == Uid).FirstOrDefault();
+            RoomInfo roomInfo = roomInfos.Where(x => x.UID == Uid).FirstOrDefault();
             if (roomInfo == null || string.IsNullOrEmpty(roomInfo.title.Value) || roomInfo.title.ExpirationTime < DateTime.Now)
             {
                 UserInfo userInfo = User.GetUserInfo(Uid);
@@ -96,17 +96,17 @@ namespace Core.RuntimeObject
                 {
                     RoomInfo newRoomInfo = new RoomInfo()
                     {
-                        uid = userInfo.data.mid,
-                        room_id = userInfo.data.live_room.roomid,
-                        uname = userInfo.data.name,
-                        url = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}",
+                        UID = userInfo.data.mid,
+                        RoomId = userInfo.data.live_room.roomid,
+                        name = userInfo.data.name,
+                        url = new ExpansionType<string> { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                         roomStatus = new ExpansionType<int> { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
                         title = new ExpansionType<string> { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         cover_from_user = new ExpansionType<string> { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
-                        face = userInfo.data.face,
-                        sex = userInfo.data.sex,
-                        sign = userInfo.data.sign,
-                        level = userInfo.data.level,
+                        face = new ExpansionType<string> { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
+                        sex = new ExpansionType<string> { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
+                        sign = new ExpansionType<string> { Value = userInfo.data.sign, ExpirationTime = DateTime.MaxValue },
+                        level = new ExpansionType<int> { Value = userInfo.data.level, ExpirationTime = DateTime.MaxValue },
                     }; ;
                     if (roomInfo == null)
                     {
@@ -116,7 +116,7 @@ namespace Core.RuntimeObject
                     {
                         for (int i = 0; i < roomInfos.Count; i++)
                         {
-                            if (roomInfos[i].uid == newRoomInfo.uid)
+                            if (roomInfos[i].UID == newRoomInfo.UID)
                             {
                                 roomInfos[i] = newRoomInfo;
                             }
@@ -130,50 +130,59 @@ namespace Core.RuntimeObject
                 return roomInfo.title.Value;
             }
         }
-
         #endregion
 
         #region internal Class
 
         private class RoomInfo
         {
-
             /// <summary>
-            /// 直播间房间号(直播间实际房间号)
+            /// 昵称
+            /// (Local值)
             /// </summary>
-            internal long room_id { get; set; } = -1;
+            internal string name { get; set; } = "";
             /// <summary>
-            /// 主播mid
-            /// </summary>
-            internal long uid { get; set; } = -1;
-            /// <summary>
-            /// 描述(Local值)
+            /// 描述
+            /// (Local值)
             /// </summary>
             internal string Description { get; set; } = "";
             /// <summary>
-            /// 是否自动录制(Local值)
+            /// 直播间房间号(长号)
+            /// (Local值)
             /// </summary>
-            internal bool IsAutoRec { set; get; }
+            internal long RoomId { get; set; } = -1;
+            /// <summary>
+            /// 主播mid
+            /// </summary>
+            internal long UID { get; set; } = -1;
+            /// <summary>
+            /// 是否自动录制
+            /// (Local值)
+            /// </summary>
+            internal bool IsAutoRec { set; get; } = false;
             /// <summary>
             /// 是否开播提醒(Local值)
             /// </summary>
-            internal bool IsRemind { set; get; }
+            internal bool IsRemind { set; get; } = false;
             /// <summary>
-            /// 是否录制弹幕(Local值)
+            /// 是否录制弹幕
+            /// (Local值)
             /// </summary>
-            internal bool IsRecDanmu { set; get; }
+            internal bool IsRecDanmu { set; get; } = false;
             /// <summary>
             /// 特殊标记(Local值)
             /// </summary>
-            internal bool Like { set; get; }
+            internal bool Like { set; get; } = false;
             /// <summary>
             /// 该房间录制完成后会执行的Shell命令
+            /// (Local值)
             /// </summary>
             internal string Shell { set; get; } = "";
             /// <summary>
             /// 是否持久化储存，用于判断是否需要写到房间配置文件
+            /// (Local值)
             /// </summary>
-            internal bool IsPersisting = false;
+            internal bool IsPersisting { set; get; } = false;
             /// <summary>
             /// 标题
             /// </summary>
@@ -181,7 +190,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 主播简介
             /// </summary>
-            internal string description = "";
+            internal ExpansionType<string> description = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 关注数
             /// </summary>
@@ -201,7 +210,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 直播间房间号(直播间短房间号，常见于签约主播)
             /// </summary>
-            internal int short_id = 0;
+            internal ExpansionType<int> short_id = new ExpansionType<int> { ExpirationTime = DateTime.UnixEpoch, Value = 0 };
             /// <summary>
             /// 直播间分区id
             /// </summary>
@@ -209,7 +218,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 直播间分区名
             /// </summary>
-            internal string area_name = "";
+            internal ExpansionType<string> area_name = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 直播间新版分区id
             /// </summary>
@@ -227,21 +236,17 @@ namespace Core.RuntimeObject
             /// </summary>
             internal ExpansionType<int> area_v2_parent_id = new ExpansionType<int> { ExpirationTime = DateTime.UnixEpoch, Value = 0 };
             /// <summary>
-            /// 用户名
-            /// </summary>
-            internal string uname = "";
-            /// <summary>
             /// 主播头像url
             /// </summary>
-            internal string face = "";
+            internal ExpansionType<string> face = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 系统tag列表(以逗号分割)
             /// </summary>
-            internal string tag_name = "";
+            internal ExpansionType<string> tag_name = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 用户自定义tag列表(以逗号分割)
             /// </summary>
-            internal string tags = "";
+            internal ExpansionType<string> tags = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 直播封面图
             /// </summary>
@@ -257,7 +262,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 直播间隐藏信息
             /// </summary>
-            internal string hidden_till = "";
+            internal ExpansionType<string> hidden_till = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 直播类型(0:普通直播，1：手机直播)
             /// </summary>
@@ -289,7 +294,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 未知
             /// </summary>
-            internal int room_shield = 0;
+            internal ExpansionType<int> room_shield = new ExpansionType<int> { ExpirationTime = DateTime.UnixEpoch, Value = 0 };
             /// <summary>
             /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
             /// </summary>
@@ -309,19 +314,19 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 直播间网页url
             /// </summary>
-            internal string url = "";
+            internal  ExpansionType<string> url = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 用户等级
             /// </summary>
-            internal int level = 0;
+            internal ExpansionType<int> level = new ExpansionType<int> { ExpirationTime = DateTime.UnixEpoch, Value = 0 };
             /// <summary>
             /// 主播性别
             /// </summary>
-            internal string sex = "";
+            internal  ExpansionType<string> sex = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 主播简介
             /// </summary>
-            internal string sign = "";
+            internal  ExpansionType<string> sign = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 下载标识符
             /// </summary>

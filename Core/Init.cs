@@ -21,19 +21,22 @@ namespace Core
             ServicePointManager.DefaultConnectionLimit = 4096;
             ServicePointManager.Expect100Continue = false;
             LogModule.Log.LogInit();
+
+            Config.ReadConfiguration();
+            Config.WriteConfiguration();
         }
         /// <summary>
         /// 初始化文件和目录
         /// </summary>
         private static void InitDirectoryAndFile()
         {
-            if(!Directory.Exists(Config.ConfigDirectory))
+            if(!Directory.Exists(Config._ConfigDirectory))
             {
-                Directory.CreateDirectory(Config.ConfigDirectory);
+                Directory.CreateDirectory(Config._ConfigDirectory);
             }
-            if(!Directory.Exists(Config.LogFileDirectory))
+            if(!Directory.Exists(Config._LogFileDirectory))
             {
-                Directory.CreateDirectory(Config.LogFileDirectory);
+                Directory.CreateDirectory(Config._LogFileDirectory);
             }
         }
     }
