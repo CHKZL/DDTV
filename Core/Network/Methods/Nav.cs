@@ -24,7 +24,7 @@ namespace Core.Network.Methods
         /// <returns></returns>
         private static Nav_Class? _NAV()
         {
-            string WebText = Get.GetBody("https://api.bilibili.com/x/web-interface/nav", true);
+            string WebText = Get.GetBody($"{Config._MainDomainName}/x/web-interface/nav", true);
             Nav_Class? Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
             return Nav_Class;
         }

@@ -4,13 +4,18 @@ using Core.Account.Linq;
 using Core.LogModule;
 using Core.Network;
 using Core.Network.Methods;
+using Microsoft.Extensions.Configuration.Ini;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.FileProviders;
 using SkiaSharp;
 using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Principal;
 using System.Text.Json;
 using static Core.Account.Kernel.ByQRCode;
 using static Core.Network.Methods.User;
+using Masuit.Tools.Reflection;
 
 namespace TestProject
 {
@@ -18,9 +23,14 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-            Core.Init.Start();
-            Testing_LoadingLoginStatus();
+           
 
+
+            Core.Init.Start();//初始化必须执行的
+            Testing_LoadingLoginStatus();//如果已经有登录态，必须执行的
+            //test_QR();//如果没有登录态，需要执行扫码
+            
+            //string a = wancheng("A");
             Testing_GetTitle();
             //Testing_GetRoomId();
             //testing_roomlist();
@@ -31,15 +41,16 @@ namespace TestProject
             Console.ReadKey();
         }
 
-        #region Testing_GetRoomId
-        private static void Testing_GetTitle() 
+
+        #region 获取标题
+        private static void Testing_GetTitle()
         {
             var A = Core.RuntimeObject.Room.GetTitle(122459);
             var B = Core.RuntimeObject.Room.GetTitle(122459);
         }
         #endregion
 
-        #region Testing_GetRoomId
+        #region 获取房间号
         private static void Testing_GetRoomId() 
         {
             var A = Core.RuntimeObject.Room.GetRoomId(122459);
@@ -77,7 +88,7 @@ namespace TestProject
         #region 已登陆登录态加载测试
         private static void Testing_LoadingLoginStatus()
         {
-            string[] files = Directory.GetFiles(Config.ConfigDirectory, $"*{Config.UserInfoCoinfFileExtension}");
+            string[] files = Directory.GetFiles(Config._ConfigDirectory, $"*{Config._UserInfoCoinfFileExtension}");
             if (files != null && files.Length > 0)
             {
                 Core.Tools.Encryption.DecryptFile(files[0], out string accountString);
@@ -120,7 +131,7 @@ namespace TestProject
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
                 Core.RuntimeObject.AccountUser.AccountInformation = account;
                 string accountString = JsonSerializer.Serialize(Core.RuntimeObject.AccountUser.AccountInformation);
-                Core.Tools.Encryption.EncryptFile(accountString, $"{Config.ConfigDirectory}{account.Uid}{Config.UserInfoCoinfFileExtension}");
+                Core.Tools.Encryption.EncryptFile(accountString, $"{Config._ConfigDirectory}{account.Uid}{Config._UserInfoCoinfFileExtension}");
             }
         }
 

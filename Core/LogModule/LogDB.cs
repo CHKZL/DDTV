@@ -66,9 +66,9 @@ namespace Core.LogModule
             private static string GetDbFileName()
             {
                 string date = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fffff");
-                ErrorFilePath = $"{Core.Config.LogFileDirectory}/DDTVCoreErrorLog_{date}.txt";
+                ErrorFilePath = $"{Core.Config._LogFileDirectory}/DDTVCoreErrorLog_{date}.txt";
                 streamWriter = new StreamWriter(ErrorFilePath, true, Encoding.UTF8);
-                return $"{Core.Config.LogFileDirectory}/DDTVCoreLog_{date}.sqlite";
+                return $"{Core.Config._LogFileDirectory}/DDTVCoreLog_{date}.sqlite";
             }
         }
         public class Operate
