@@ -38,7 +38,7 @@ namespace Core.Network
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
                 if (specialheaders != null) req.Headers = specialheaders;
-                if (IsCookie) req.Headers.Add("Cookie", AccountUser.AccountInformation.strCookies);         
+                if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);         
                 rep = (HttpWebResponse)req.GetResponse();
                 using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
                 {
