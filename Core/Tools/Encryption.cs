@@ -52,7 +52,7 @@ namespace Core.Tools
         /// <param name="IsCreate">是否覆盖</param>
         public static void EncryptFile(string inputText, string outputFile)
         {
-            string ACC = AesStr(inputText, Config._Key, Config._IV);
+            string ACC = AesStr(inputText, Config.Core._Key, Config.Core._IV);
             File.WriteAllText(outputFile, ACC);
         }
 
@@ -69,7 +69,7 @@ namespace Core.Tools
             using (FileStream fsInput = new FileStream(inputFile, FileMode.Open, FileAccess.Read))
             {
                 string source = fsInput.ReadAllText(Encoding.UTF8);
-                outputText = UnAesStr(source, Config._Key, Config._IV);
+                outputText = UnAesStr(source, Config.Core._Key, Config.Core._IV);
             }
         }
 

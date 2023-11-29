@@ -23,38 +23,40 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-           
+
 
 
             Core.Init.Start();//初始化必须执行的
             Testing_LoadingLoginStatus();//如果已经有登录态，必须执行的
-            //test_QR();//如果没有登录态，需要执行扫码
-            
-            //string a = wancheng("A");
-            Testing_GetTitle();
-            //Testing_GetRoomId();
-            //testing_roomlist();
-            //Testing_userinfo();
-            //Testing_nav();
-            //test_QR();
-            //Log_test();
+                                         //test_QR();//如果没有登录态，需要执行扫码
+
+           
+
+
             Console.ReadKey();
         }
 
+        #region 获取房间信息
+        private static void Testing_GetRoomInfo()
+        {
+            //var A = Core.RuntimeObject.Room.GetRoomInfo(122459);
+            
+        }
+        #endregion
 
         #region 获取标题
         private static void Testing_GetTitle()
         {
-            var A = Core.RuntimeObject.Room.GetTitle(122459);
-            var B = Core.RuntimeObject.Room.GetTitle(122459);
+            var A = Core.RuntimeObject.RoomList.GetTitle(122459);
+            var B = Core.RuntimeObject.RoomList.GetTitle(122459);
         }
         #endregion
 
         #region 获取房间号
         private static void Testing_GetRoomId() 
         {
-            var A = Core.RuntimeObject.Room.GetRoomId(122459);
-            var B = Core.RuntimeObject.Room.GetRoomId(122459);
+            var A = Core.RuntimeObject.RoomList.GetRoomId(122459);
+            var B = Core.RuntimeObject.RoomList.GetRoomId(122459);
         }
         #endregion
 
@@ -62,7 +64,7 @@ namespace TestProject
 
         public static void testing_roomlist()
         {
-           var A = Room.GetRoomList(new List<long> { 508963009 });
+           //var A = Room.GetRoomList(new List<long> { 508963009 });
         }
 
         #endregion
@@ -70,8 +72,8 @@ namespace TestProject
         #region 获取账号信息测试
         public static void Testing_userinfo()
         {
-            var A =  Core.Network.Methods.User.GetUserInfo(122459);
-            var B = typeof(UserInfo);
+            //var A =  Core.Network.Methods.User.GetUserInfo(122459);
+            //var B = typeof(UserInfo);
 
         }
         #endregion
@@ -88,16 +90,7 @@ namespace TestProject
         #region 已登陆登录态加载测试
         private static void Testing_LoadingLoginStatus()
         {
-            string[] files = Directory.GetFiles(Config._ConfigDirectory, $"*{Config._UserInfoCoinfFileExtension}");
-            if (files != null && files.Length > 0)
-            {
-                Core.Tools.Encryption.DecryptFile(files[0], out string accountString);
-                AccountInformation accountInformation = JsonSerializer.Deserialize<AccountInformation>(accountString);
-                if (accountInformation != null && accountInformation.State)
-                {
-                    Core.RuntimeObject.AccountUser.AccountInformation = accountInformation;
-                }
-            }
+            
         }
         #endregion
 
@@ -129,9 +122,9 @@ namespace TestProject
                 }
                 Console.WriteLine($"Expires_Cookies:{account.Expires_Cookies}");
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
-                Core.RuntimeObject.AccountUser.AccountInformation = account;
-                string accountString = JsonSerializer.Serialize(Core.RuntimeObject.AccountUser.AccountInformation);
-                Core.Tools.Encryption.EncryptFile(accountString, $"{Config._ConfigDirectory}{account.Uid}{Config._UserInfoCoinfFileExtension}");
+                Core.RuntimeObject.Account.AccountInformation = account;
+                string accountString = JsonSerializer.Serialize(Core.RuntimeObject.Account.AccountInformation);
+                Core.Tools.Encryption.EncryptFile(accountString, $"{Config.Core._ConfigDirectory}{account.Uid}{Config.Core._UserInfoCoinfFileExtension}");
             }
         }
 

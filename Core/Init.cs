@@ -30,13 +30,13 @@ namespace Core
         /// </summary>
         private static void InitDirectoryAndFile()
         {
-            if(!Directory.Exists(Config._ConfigDirectory))
+            if(!Directory.Exists(Config.Core._ConfigDirectory))
             {
-                Directory.CreateDirectory(Config._ConfigDirectory);
+                Directory.CreateDirectory(Config.Core._ConfigDirectory);
             }
-            if(!Directory.Exists(Config._LogFileDirectory))
+            if(!Directory.Exists(Config.Core._LogFileDirectory))
             {
-                Directory.CreateDirectory(Config._LogFileDirectory);
+                Directory.CreateDirectory(Config.Core._LogFileDirectory);
             }
         }
     }

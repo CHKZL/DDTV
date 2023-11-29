@@ -17,11 +17,26 @@ namespace Core.Network.Methods
 
         #endregion
 
-        #region Public Method
+        #region internal Method
 
-        public static UidsInfo_Class? GetRoomList(List<long> UIDList)
+        /// <summary>
+        /// 获取开播房间状态列表
+        /// </summary>
+        /// <param name="UIDList">要获取的直播中的房间</param>
+        /// <returns></returns>
+        internal static UidsInfo_Class GetRoomList(List<long> UIDList)
         {
             return get_status_info_by_uids(UIDList);
+        }
+
+        /// <summary>
+        /// 获取直播间状态信息
+        /// </summary>
+        /// <param name="RoomId"></param>
+        /// <returns></returns>
+        internal static RoomInfo GetRoomInfo(long RoomId)
+        {
+           return room_init(RoomId);
         }
 
         #endregion
@@ -33,22 +48,23 @@ namespace Core.Network.Methods
         /// </summary>
         /// <param name="UIDList">待获取的UID列表</param>
         /// <returns></returns>
-        private static UidsInfo_Class? get_status_info_by_uids(List<long> UIDList)
+        private static UidsInfo_Class get_status_info_by_uids(List<long> UIDList)
         {
             if (UIDList == null || UIDList.Count == 0)
             {
                 return null;
             }
             string LT = "{\"uids\":[" + string.Join(",", UIDList.Where(uid => uid != 0)) + "]}";
-            string WebText = Post.PostBody($"{Config._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
-            UidsInfo_Class? UserInfo_Class = JsonSerializer.Deserialize<UidsInfo_Class>(WebText);
+            string WebText = Post.PostBody($"{Config.Core._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
+            UidsInfo_Class UserInfo_Class = JsonSerializer.Deserialize<UidsInfo_Class>(WebText);
             return UserInfo_Class;
         }
 
-        private static void room_init(long RoomId)
+        private static RoomInfo room_init(long RoomId)
         {
-            string WebText = Get.GetBody($"{Config._LiveDomainName}/room/v1/Room/room_init?id=" + RoomId, true);
-            （施工中）
+            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/room/v1/Room/room_init?id=" + RoomId, true);
+            RoomInfo roomInfo = JsonSerializer.Deserialize<RoomInfo>(WebText);
+            return roomInfo;
         }
 
         #endregion
@@ -206,6 +222,33 @@ namespace Core.Network.Methods
                 public long roundStatus { get; set; }
                 public long broadcast_type { get; set; }
                 public Watched_Show watched_show { get; set; }
+            }
+        }
+
+        public class RoomInfo
+        {
+            public long code { get; set; }
+            public string msg { get; set; }
+            public string message { get; set; }
+            public Data data { get; set; }
+            public class Data
+            {
+                public long room_id { get; set; }
+                public int short_id { get; set; }
+                public long uid { get; set; }
+                public int need_p2p { get; set; }
+                public bool is_hidden { get; set; }
+                public bool is_locked { get; set; }
+                public bool is_portrait { get; set; }
+                public int live_status { get; set; }
+                public int hidden_till { get; set; }
+                public int lock_till { get; set; }
+                public bool encrypted { get; set; }
+                public bool pwd_verified { get; set; }
+                public long live_time { get; set; }
+                public int room_shield { get; set; }
+                public int is_sp { get; set; }
+                public int special_type { get; set; }
             }
         }
 

@@ -37,7 +37,7 @@ namespace Core.Network
                 req.UserAgent = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69";
                 if (specialheaders != null) req.Headers = specialheaders;
 
-                if (IsCookie) req.Headers.Add("Cookie", AccountUser.AccountInformation.strCookies);
+                if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
 
                 byte[] bdata = Encoding.UTF8.GetBytes(jsondate);
                 Stream sdata = req.GetRequestStream();
