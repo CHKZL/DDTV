@@ -10,12 +10,13 @@ namespace Core.RuntimeObject
 {
     public class Account
     {
-        private static AccountInformation accountInformation = null;
+        public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
+        private static AccountInformation accountInformation = new();
         public static AccountInformation AccountInformation
         {
             get
             {
-                if (accountInformation == null)
+                if (accountInformation == null || !accountInformation.State)
                 {
                     string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
                     if (files != null && files.Length > 0)
@@ -27,10 +28,22 @@ namespace Core.RuntimeObject
                             Account.accountInformation = accountInformation;
                         }
                     }
+                    if (accountInformation == null || !accountInformation.State)
+                    {
+                        LoginFailureEvent?.Invoke(null, new EventArgs());
+                    }
                 }
                 return accountInformation;
             }
             set { accountInformation = value; }
+        }
+        /// <summary>
+        /// 当前阿B登陆是否有效
+        /// </summary>
+        /// <returns></returns>
+        public static bool GetNavState()
+        {
+            return Network.Methods.Nav.GetNav() == null;
         }
     }
 }

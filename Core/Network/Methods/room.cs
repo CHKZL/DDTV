@@ -20,6 +20,16 @@ namespace Core.Network.Methods
         #region internal Method
 
         /// <summary>
+        /// 获取直播间视频源信息
+        /// </summary>
+        /// <param name="RoomId"></param>
+        /// <returns></returns>
+        internal static PlayInfo GetPlayInfo(long RoomId)
+        {
+            return _PlayInfo(RoomId);
+        }
+
+        /// <summary>
         /// 获取开播房间状态列表
         /// </summary>
         /// <param name="UIDList">要获取的直播中的房间</param>
@@ -42,6 +52,13 @@ namespace Core.Network.Methods
         #endregion
 
         #region Private Method
+
+        private static PlayInfo _PlayInfo(long RoomId)
+        {
+            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Download._DefaultResolution}&platform=2&ptype=2", true, "https://www.bilibili.com/");
+            PlayInfo hLSHostClass = JsonSerializer.Deserialize<PlayInfo>(WebText);
+            return hLSHostClass;
+        }
 
         /// <summary>
         /// 获取当前正在直播的直播间信息
@@ -252,7 +269,96 @@ namespace Core.Network.Methods
             }
         }
 
+         public class PlayInfo
+        {
+            public long code { get; set; }
+            public string message { get; set; }
+            public long ttl { get; set; }
+            public Data data { get; set; }
 
+            public class Data
+            {
+                public long room_id { get; set; }
+                public long short_id { get; set; }
+                public long uid { get; set; }
+                public bool is_hidden { get; set; }
+                public bool is_locked { get; set; }
+                public bool is_portrait { get; set; }
+                public long live_status { get; set; }
+                public long hidden_till { get; set; }
+                public long lock_till { get; set; }
+                public bool encrypted { get; set; }
+                public bool pwd_verified { get; set; }
+                public long live_time { get; set; }
+                public long room_shield { get; set; }
+                public List<long> all_special_types { get; set; }
+                public Playurl_Info playurl_info { get; set; }
+                public long official_type { get; set; }
+                public long official_room_id { get; set; }
+            }
+
+            public class Playurl_Info
+            {
+                public string conf_json { get; set; }
+                public Playurl playurl { get; set; }
+            }
+
+            public class Playurl
+            {
+                public long cid { get; set; }
+                public List<G_Qn_Desc> g_qn_desc { get; set; }
+                public List<Stream> stream { get; set; }
+                public P2P_Data p2p_data { get; set; }
+                public object dolby_qn { get; set; }
+            }
+
+            public class G_Qn_Desc
+            {
+                public long qn { get; set; }
+                public string desc { get; set; }
+                public string hdr_desc { get; set; }
+                public object attr_desc { get; set; }
+            }
+
+            public class Stream
+            {
+                public string protocol_name { get; set; }
+                public List<Format> format { get; set; }
+            }
+
+            public class Format
+            {
+                public string format_name { get; set; }
+                public List<Codec> codec { get; set; }
+            }
+
+            public class Codec
+            {
+                public string codec_name { get; set; }
+                public long current_qn { get; set; }
+                public List<long> accept_qn { get; set; }
+                public string base_url { get; set; }
+                public List<Url_Info> url_info { get; set; }
+                public object hdr_qn { get; set; }
+                public long dolby_type { get; set; }
+                public string attr_name { get; set; }
+            }
+
+            public class Url_Info
+            {
+                public string host { get; set; }
+                public string extra { get; set; }
+                public long stream_ttl { get; set; }
+            }
+
+            public class P2P_Data
+            {
+                public bool p2p { get; set; }
+                public long p2p_type { get; set; }
+                public bool m_p2p { get; set; }
+                public object m_servers { get; set; }
+            }
+        }
 
 
         #endregion

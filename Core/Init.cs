@@ -38,6 +38,10 @@ namespace Core
             {
                 Directory.CreateDirectory(Config.Core._LogFileDirectory);
             }
+              if(!Directory.Exists(Config.Core._TemporaryFileDirectory))
+            {
+                Directory.CreateDirectory(Config.Core._TemporaryFileDirectory);
+            }
         }
     }
 }

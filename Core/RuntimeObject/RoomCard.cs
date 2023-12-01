@@ -1,4 +1,5 @@
-﻿using static Core.Network.Methods.Room;
+﻿using Core.Network.Methods;
+using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
 
 namespace Core.RuntimeObject
@@ -10,6 +11,11 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
+
+        public static string GetNickname(long RoomId,long Uid)
+        {
+            return _GetNickname(RoomId, Uid);
+        }
 
         public static long GetUid(long RoomId)
         {
@@ -26,13 +32,34 @@ namespace Core.RuntimeObject
             return _GetTitle(Uid);
         }
 
+
+
         #endregion
 
         #region private Method
 
+        private static string _GetNickname(long RoomId, long Uid)
+        {
+            RoomCard? roomCard = RoomId != 0 ? roomInfos.FirstOrDefault(x => x.RoomId == RoomId) : roomInfos.FirstOrDefault(x => x.UID == Uid);
+            if (roomCard == null || roomCard.RoomId < 0)
+            {
+                RoomCard card = ToRoomCard(GetUserInfo(Uid));
+                if (card == null)
+                    return "获取昵称失败";
+                int index = RoomId != 0 ? roomInfos.FindIndex(x => x.RoomId == RoomId) : roomInfos.FindIndex(x => x.UID == Uid);
+                if (roomCard == null)
+                    roomInfos.Add(card);
+                else
+                    roomInfos[index] = card;
+                return card.name;
+            }
+            else
+                return roomCard.name;
+        }
+
         private static long _GetUid(long RoomId)
         {
-            RoomCard roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
+            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
             if (roomCard == null || roomCard.UID < 0)
             {
                 RoomCard card = ToRoomCard(GetRoomInfo(RoomId));
@@ -50,7 +77,7 @@ namespace Core.RuntimeObject
 
         private static long _GetRoomId(long Uid)
         {
-            RoomCard roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
+            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || roomCard.RoomId < 0)
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid));
@@ -68,7 +95,7 @@ namespace Core.RuntimeObject
 
         private static string _GetTitle(long Uid)
         {
-            RoomCard roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
+            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || string.IsNullOrEmpty(roomCard.title.Value) || roomCard.title.ExpirationTime < DateTime.Now)
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid));

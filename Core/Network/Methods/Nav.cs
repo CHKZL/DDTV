@@ -10,8 +10,8 @@ namespace Core.Network.Methods
 {
     public class Nav
     {
-        #region public Method
-        public static Nav_Class? GetNav()
+        #region internal Method
+        internal static Nav_Class? GetNav()
         {
             return _NAV();
         }
