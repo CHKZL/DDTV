@@ -16,6 +16,8 @@ using System.Text.Json;
 using static Core.Account.Kernel.ByQRCode;
 using static Core.Network.Methods.User;
 using Masuit.Tools.Reflection;
+using AngleSharp.Dom;
+using System.Text;
 
 namespace TestProject
 {
@@ -24,14 +26,17 @@ namespace TestProject
         static void Main(string[] args)
         {
 
-
-
             Core.Init.Start();//初始化必须执行的
+
             Testing_LoadingLoginStatus();//如果已经有登录态，必须执行的
-                                         //test_QR();//如果没有登录态，需要执行扫码
 
-           
+            //test_QR();//如果没有登录态，需要执行扫码
 
+            (bool Effective, string host, string base_url, string extra) a = Core.RuntimeObject.Download.Host.GetHlsHost_avc(21756924);
+
+            WebClient webClient = new WebClient();
+            webClient.Encoding = Encoding.UTF8;
+            webClient.DownloadFile($"{a.host}{a.base_url}?{a.extra}", $"{Config.Core._TemporaryFileDirectory}1.m3u8");
 
             Console.ReadKey();
         }
@@ -82,7 +87,7 @@ namespace TestProject
 
         public static void Testing_nav()
         {
-            var B = Core.Network.Methods.Nav.GetNav();
+            //var B = Core.Network.Methods.Nav.GetNav();
         }
 
         #endregion

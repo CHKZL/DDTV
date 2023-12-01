@@ -34,7 +34,7 @@ namespace Core.Network
                 req.ServicePoint.Expect100Continue = false;
                 req.Method = "POST";
                 if (string.IsNullOrEmpty(contenttype)) req.ContentType = contenttype;
-                req.UserAgent = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69";
+                req.UserAgent = Config.Core._HTTP_UA;
                 if (specialheaders != null) req.Headers = specialheaders;
 
                 if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);

@@ -33,12 +33,12 @@ namespace Core.Network
                 req.ServicePoint.Expect100Continue = false;
                 req.Method = "GET";
                 req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
-                req.UserAgent = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69";
+                req.UserAgent = Config.Core._HTTP_UA;
                 req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
                 if (specialheaders != null) req.Headers = specialheaders;
-                if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);         
+                if (IsCookie && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                 rep = (HttpWebResponse)req.GetResponse();
                 using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
                 {
