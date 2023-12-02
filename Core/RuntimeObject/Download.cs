@@ -13,12 +13,34 @@ namespace Core.RuntimeObject
     {
         public class Host
         {
+            #region Private Properties
+
+            #endregion
+
+            #region Public Method
+            public static (bool Effective, string host, string base_url, string extra) GetHlsHost_avc(long RoomId)
+            {
+                return _GetHlsHost_avc(RoomId);
+            }
+            public static (bool Effective, string host, string base_url, string extra) GetHlsHost_hevc(long RoomId)
+            {
+                return _GetHlsHost_hevc(RoomId);
+            }
+            public static (bool Effective, string host, string base_url, string extra) GetFlvHost_avc(long RoomId)
+            {
+                return _GetFlvHost_avc(RoomId);
+            }
+
+            #endregion
+
+            #region Private Method
+
             /// <summary>
             /// 获取avc编码HLS内容
             /// </summary>
             /// <param name="RoomId"></param>
             /// <returns>结果是否有效,host,base_url,extra</returns>
-            public static (bool Effective, string host, string base_url, string extra) GetHlsHost_avc(long RoomId)
+            private static (bool Effective, string host, string base_url, string extra) _GetHlsHost_avc(long RoomId)
             {
                 PlayInfo playInfo = GetPlayInfo(RoomId);
                 if (playInfo == null || playInfo.data.playurl_info.playurl == null)
@@ -41,7 +63,7 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="RoomId"></param>
             /// <returns>结果是否有效,host,base_url,extra</returns>
-            public static (bool Effective, string host, string base_url, string extra) GetHlsHost_hevc(long RoomId)
+            private static (bool Effective, string host, string base_url, string extra) _GetHlsHost_hevc(long RoomId)
             {
                 PlayInfo playInfo = GetPlayInfo(RoomId);
                 if (playInfo == null || playInfo.data.playurl_info.playurl == null)
@@ -64,7 +86,7 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="RoomId"></param>
             /// <returns>结果是否有效,host,base_url,extra</returns>
-            public static (bool Effective, string host, string base_url, string extra) GetFlvHost_avc(long RoomId)
+            private static (bool Effective, string host, string base_url, string extra) _GetFlvHost_avc(long RoomId)
             {
                 PlayInfo playInfo = GetPlayInfo(RoomId);
                 if (playInfo == null || playInfo.data.playurl_info.playurl == null)
@@ -81,9 +103,30 @@ namespace Core.RuntimeObject
                 var urlInfo = codec.url_info.FirstOrDefault(x => x.host.Contains("d1--cn")) ?? codec.url_info[new Random().Next(0, codec.url_info.Count - 1)];
                 return (true, urlInfo.host, codec.base_url, urlInfo.extra);
             }
+
+
+            #endregion
+
+            #region Public Class
+
+            #endregion
+
+
+
         }
 
+        public class File
+        {
+            public static void DlwnloadHlsMp4(long RoomId,string DirName,string FileName)
+            {
+                while (true)
+                {
+                    (bool Effective, string host, string base_url, string extra) a = Host.GetHlsHost_avc(21756924);
 
+                    string A = Network.Download.File.GetFileToString($"{a.host}{a.base_url}?{a.extra}");
+                }
+            }
+        }
 
     }
 }

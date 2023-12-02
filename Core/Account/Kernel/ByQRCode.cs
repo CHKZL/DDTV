@@ -46,16 +46,16 @@ namespace Core.Account.Kernel
         /// </summary>
         public static void CancelLogin()
         {
-            if(Monitor!=null)
+            if (Monitor != null)
             {
                 try
                 {
                     Monitor.Dispose();
                 }
                 catch (Exception)
-                {}
+                { }
             }
-            if (Refresher!=null)
+            if (Refresher != null)
             {
                 try
                 {
@@ -64,8 +64,8 @@ namespace Core.Account.Kernel
                 catch (Exception)
                 { }
             }
-           
-            
+
+
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace Core.Account.Kernel
         /// <returns>二维码要包含的登录url</returns>
         public static string GetQrcodeUrl()
         {
-            return Core.Network.Get.GetBody("https://passport.bilibili.com/qrcode/getLoginUrl", false, "https://passport.bilibili.com/login"); 
+            return Core.Network.Get.GetBody("https://passport.bilibili.com/x/passport-login/web/qrcode/generate", false, "https://passport.bilibili.com");
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Core.Account.Kernel
             {
                 CancelLogin();
                 MonitorCallCount = 0;
-                Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
+                Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
                 Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
             }
             return str;
@@ -108,7 +108,7 @@ namespace Core.Account.Kernel
         /// <param name="Background">背景颜色</param>
         /// <param name="IsBorderVisable">是否使用边框</param>
         /// <returns>二维码位图</returns>
-        public static QR_Object GetQrcode(Color Foreground,Color Background,bool IsBorderVisable)
+        public static QR_Object GetQrcode(Color Foreground, Color Background, bool IsBorderVisable)
         {
             QR_Object qrCodeImage = new QR_Object();
         re:
@@ -148,7 +148,7 @@ namespace Core.Account.Kernel
                                 //    data.SaveTo(stream);
                                 //}
                                 qrCodeImage.SKData = data;
-                                
+
                                 //string NM = @"TMPQR" + new Random().Next(1000, 9999);
                                 //using (var stream = File.OpenWrite(NM))
                                 //{
@@ -189,8 +189,8 @@ namespace Core.Account.Kernel
                     //}
                     CancelLogin();
                     MonitorCallCount = 0;
-                    Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
-                    Refresher = new Timer(RefresherCallback, new List<object>{ Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
+                    Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
+                    Refresher = new Timer(RefresherCallback, new List<object> { Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
                 }
             }
             else goto re;
@@ -219,25 +219,30 @@ namespace Core.Account.Kernel
                 Monitor.Change(1000, 5000);
                 MonitorCallCount = 120;
             }
-            string oauthKey = o.ToString();
-            string str = Post.PostBody("https://passport.bilibili.com/qrcode/getLoginInfo",null,false,"oauthKey=" + oauthKey + "&gourl=https%3A%2F%2Fwww.bilibili.com%2F",null,"https://passport.bilibili.com/login");
+            string qrcode_key = o.ToString();
+            string str = Get.GetBody($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}");
             if (!string.IsNullOrEmpty(str))
             {
                 MonitorCallBack_Templete obj = JsonSerializer.Deserialize<MonitorCallBack_Templete>(str);
-                if (obj.status)
+                if (obj.data.code == 0)
                 {
                     //关闭监视器
                     Monitor.Dispose();
                     Refresher.Dispose();
 
                     AccountInformation account = new AccountInformation();
-                    
-                    JsonElement element = (JsonElement)obj.data;
-                    CookieBack_Templete cookies = JsonSerializer.Deserialize<CookieBack_Templete>(element.GetRawText());
-                  
+
+
+                    CookieBack_Templete cookies = new()
+                    {
+                        refresh_token = obj.data.refresh_token,
+                        timestamp = obj.data.timestamp,
+                        url = obj.data.url
+                    };
+
                     string Querystring = cookies.url.Split('?')[1];
 
-                     
+
                     string[] KeyValuePair = Regex.Split(Querystring, "&");
                     account.Cookies = new CookieCollection();
                     for (int i = 0; i < KeyValuePair.Length - 1; i++)
@@ -277,26 +282,22 @@ namespace Core.Account.Kernel
                 }
                 else
                 {
-                    if (obj.data is JsonElement element && element.ValueKind == JsonValueKind.Number)
+                    switch (obj.data.code)
                     {
-                        if (element.TryGetInt32(out int DC))
-                        {
-                            if (DC == -4)
+
+                        case 86090:
                             {
-                                //未扫描
-                                Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                            }
-                            else if (DC == -5)
-                            {
+
                                 //已扫描
                                 Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
+                                break;
                             }
-                        }
-                        else
-                        {
-                            // 数值无法表示为 int
-                        }
+                        case 86101:
+                            //未扫描
+                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
+                            break;
                     }
+
                 }
             }
         }
@@ -329,11 +330,11 @@ namespace Core.Account.Kernel
         private class GetQrcode_DataTemplete
         {
             public int code { set; get; }
-            public Data_Templete data{ set; get; }
+            public Data_Templete data { set; get; }
             public class Data_Templete
             {
-                public string oauthKey{ set; get; }
-                public string url{ set; get; }
+                public string qrcode_key { set; get; }
+                public string url { set; get; }
             }
         }
 
@@ -344,9 +345,17 @@ namespace Core.Account.Kernel
         {
             #region Public Fields
 
-            public object data { set; get; }
-            public bool status { set; get; }
+            public Data data { set; get; }
+            public int code { set; get; }
 
+            public class Data
+            {
+                public string url { set; get; }
+                public string refresh_token { set; get; }
+                public long timestamp { set; get; }
+                public int code { set; get; }
+                public string message { set; get; }
+            }
             #endregion Public Fields
         }
 
