@@ -56,6 +56,18 @@ namespace Core.Network
                 byte[] data = client.DownloadData(new Uri(URL));
                 return Encoding.UTF8.GetString(data);
             }
+            public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "")
+            {
+                WebClient client = new WebClient();
+                client.Headers.Add("User-Agent", Config.Core._HTTP_UA);
+                client.Headers.Add("Accept-Language", "en-US,en;q=0.5");
+                if (!string.IsNullOrEmpty(referer)) client.Headers.Add("Referer", referer);
+                if (IsCookie && RuntimeObject.Account.AccountInformation.State) client.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                client.Encoding = Encoding.UTF8;
+                client.DownloadData(new Uri(URL));
+                byte[] data = client.DownloadData(new Uri(URL));
+                return data;
+            }
         }
     }
 }

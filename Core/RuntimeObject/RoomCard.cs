@@ -12,9 +12,9 @@ namespace Core.RuntimeObject
 
         #region Public Method
 
-        public static string GetNickname(long RoomId,long Uid)
+        public static string GetNickname(long Uid)
         {
-            return _GetNickname(RoomId, Uid);
+            return _GetNickname(Uid);
         }
 
         public static long GetUid(long RoomId)
@@ -38,19 +38,18 @@ namespace Core.RuntimeObject
 
         #region private Method
 
-        private static string _GetNickname(long RoomId, long Uid)
+        private static string _GetNickname( long Uid)
         {
-            RoomCard? roomCard = RoomId != 0 ? roomInfos.FirstOrDefault(x => x.RoomId == RoomId) : roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || roomCard.RoomId < 0)
+            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
+            if (roomCard == null || string.IsNullOrEmpty(roomCard.name))
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid));
                 if (card == null)
                     return "获取昵称失败";
-                int index = RoomId != 0 ? roomInfos.FindIndex(x => x.RoomId == RoomId) : roomInfos.FindIndex(x => x.UID == Uid);
-                if (roomCard == null)
+                 else if (roomCard == null)
                     roomInfos.Add(card);
                 else
-                    roomInfos[index] = card;
+                    roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
                 return card.name;
             }
             else
@@ -60,7 +59,7 @@ namespace Core.RuntimeObject
         private static long _GetUid(long RoomId)
         {
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
-            if (roomCard == null || roomCard.UID < 0)
+            if (roomCard == null || roomCard.RoomId < 0)
             {
                 RoomCard card = ToRoomCard(GetRoomInfo(RoomId));
                 if (card == null)
@@ -69,7 +68,7 @@ namespace Core.RuntimeObject
                     roomInfos.Add(card);
                 else
                     roomInfos[roomInfos.FindIndex(x => x.RoomId == RoomId)] = card;
-                return roomCard.UID;
+                return card.UID;
             }
             else
                 return roomCard.UID;
@@ -379,8 +378,8 @@ namespace Core.RuntimeObject
         }
         internal class ExpansionType<T>
         {
-            internal DateTime ExpirationTime;
-            internal T Value;
+            internal DateTime ExpirationTime { set; get; }
+            internal T Value { set; get; }
         }
 
         #endregion
