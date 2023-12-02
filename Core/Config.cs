@@ -39,7 +39,7 @@ namespace Core
         /// </summary>
         public static void ReadConfiguration()
         {
-            string[] A = File.ReadAllLines(Core._ConfigurationFile);
+            string[] A = File.Exists(Core._ConfigurationFile) ? File.ReadAllLines(Core._ConfigurationFile) : [];
             lock (varMap)
             {
                 foreach (var item in A)
@@ -137,10 +137,10 @@ namespace Core
             /// </summary>
             public static string _MainDomainName { get { return MainDomainName; } set { MainDomainName = value; } }
 
-            private static string HTTP_UA = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69";
+            private static string HTTP_UA = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0";
             /// <summary>
             /// 请求是默认使用的UA（字符串）
-            /// 默认值：$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.69"
+            /// 默认值：$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             /// </summary>
             public static string _HTTP_UA { get { return HTTP_UA; } }
         }
