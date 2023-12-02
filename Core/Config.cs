@@ -116,6 +116,13 @@ namespace Core
             /// </summary>
             public static string _LogFileDirectory { get { return LogFileDirectory; } }
 
+            private static string RecFileDirectory = "./Rec/";
+            /// <summary>
+            /// 录制文件储存路径（字符串）
+            /// 默认值：./Rec/
+            /// </summary>
+            public static string _RecFileDirectory { get { return RecFileDirectory; } }
+
             private static string TemporaryFileDirectory = "./Temporary/";
             /// <summary>
             /// 临时文件路径（字符串）
