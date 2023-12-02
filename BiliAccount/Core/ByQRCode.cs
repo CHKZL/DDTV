@@ -81,7 +81,7 @@ namespace BiliAccount.Core
         /// <returns>二维码要包含的登录url</returns>
         public static string GetQrcodeUrl()
         {
-            return Http.GetBody("https://passport.bilibili.com/qrcode/getLoginUrl", null, "https://passport.bilibili.com/login", $"BiliAccount/{Config.Dll_Version}"); 
+            return Http.GetBody("https://passport.bilibili.com/x/passport-login/web/qrcode/generate", null, "https://passport.bilibili.com/login"); 
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace BiliAccount.Core
                 {
                     CancelLogin();
                     MonitorCallCount = 0;
-                    Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
+                    Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
 
                 }
@@ -207,7 +207,7 @@ namespace BiliAccount.Core
                     //}
                     CancelLogin();
                     MonitorCallCount = 0;
-                    Monitor = new Timer(MonitorCallback, obj.data.oauthKey, 1000, 1000);
+                    Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
                     Refresher = new Timer(RefresherCallback, new List<object>{ Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
                 }
             }
@@ -238,9 +238,9 @@ namespace BiliAccount.Core
                 MonitorCallCount = 120;
             }
 
-            string oauthKey = o.ToString();
+            string qrcode_key = o.ToString();
 
-            string str = Http.PostBody("https://passport.bilibili.com/qrcode/getLoginInfo", "oauthKey=" + oauthKey + "&gourl=https%3A%2F%2Fwww.bilibili.com%2F", null, "application/x-www-form-urlencoded; charset=UTF-8", "https://passport.bilibili.com/login",$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.62");
+            string str = Http.GetBody($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}");
             if (!string.IsNullOrEmpty(str))
             {
 #if NETSTANDARD2_0 || NETCORE3_0
@@ -249,18 +249,15 @@ namespace BiliAccount.Core
                 MonitorCallBack_Templete obj = (new JavaScriptSerializer()).Deserialize<MonitorCallBack_Templete>(str);
 #endif
 
-                if (obj.status)
+                if (obj.data.code == 0)
                 {
                     //关闭监视器
                     Monitor.Dispose();
                     Refresher.Dispose();
 
                     Account account = new Account();
-#if NETSTANDARD2_0 || NETCORE3_0
-                    string Querystring = Regex.Split((obj.data as JObject)["url"].ToString(), "\\?")[1];
-#else
-                    string Querystring = Regex.Split((obj.data as Dictionary<string, object>)["url"].ToString(), "\\?")[1];
-#endif
+
+                    string Querystring = obj.data.url.Split('?')[1];
 
                     string[] KeyValuePair = Regex.Split(Querystring, "&");
                     account.Cookies = new CookieCollection();
@@ -301,19 +298,16 @@ namespace BiliAccount.Core
                 }
                 else
                 {
-                    int DC = Convert.ToInt32(obj.data);
-                    if(DC==-4)
+                    switch (obj.data.code)
                     {
-                        //未扫描
-                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                    }
-                    else if (DC == -5)
-                    {
-                        //已扫描
-                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
-                    }
-                    else
-                    {
+                        case 86090:
+                            //已扫描
+                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
+                            break;
+                        case 86101:
+                            //未扫描
+                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
+                            break;
                     }
                 }
             }
@@ -359,7 +353,7 @@ namespace BiliAccount.Core
             {
                 #region Public Fields
 
-                public string oauthKey;
+                public string qrcode_key;
                 public string url;
 
                 #endregion Public Fields
@@ -375,8 +369,17 @@ namespace BiliAccount.Core
         {
             #region Public Fields
 
-            public object data;
-            public bool status;
+            public Data data { set; get; }
+            public int code { set; get; }
+
+            public class Data
+            {
+                public string url { set; get; }
+                public string refresh_token { set; get; }
+                public long timestamp { set; get; }
+                public int code { set; get; }
+                public string message { set; get; }
+            }
 
             #endregion Public Fields
         }

@@ -93,8 +93,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.User
 
                             Log.Log.AddLog(nameof(login), LogClass.LogType.Warn, "\r\n-------" +
                                 "\r\n按任意键开始触发登陆流程" +
-                                "\r\n触发后请在5分钟内登陆" +
-                                "\r\n超时请重启程序再试" +
+                                ",触发后请在5分钟内登陆" +
+                                ",如果超时请重启程序再试" +
                                 "\r\n-------\r\n");
                             try
                             {
