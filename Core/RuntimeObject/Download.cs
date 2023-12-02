@@ -43,7 +43,7 @@ namespace Core.RuntimeObject
             private static (bool Effective, string host, string base_url, string extra) _GetHlsHost_avc(long RoomId)
             {
                 PlayInfo playInfo = GetPlayInfo(RoomId);
-                if (playInfo == null || playInfo.data.playurl_info.playurl == null)
+                if (playInfo == null ||playInfo.data.playurl_info == null || playInfo.data.playurl_info.playurl == null)
                     return (false, string.Empty, string.Empty, string.Empty);
                 PlayInfo.Stream? stream = playInfo.data.playurl_info.playurl.stream.FirstOrDefault(x => x.protocol_name == "http_hls");
                 if (stream == null)
@@ -121,9 +121,12 @@ namespace Core.RuntimeObject
             {
                 while (true)
                 {
-                    (bool Effective, string host, string base_url, string extra) a = Host.GetHlsHost_avc(21756924);
+                    (bool Effective, string host, string base_url, string extra) a = Host.GetHlsHost_avc(RoomId);
 
-                    string A = Network.Download.File.GetFileToString($"{a.host}{a.base_url}?{a.extra}");
+                    if (a.Effective)
+                    {
+                        string A = Network.Download.File.GetFileToString($"{a.host}{a.base_url}?{a.extra}");
+                    }
                 }
             }
         }
