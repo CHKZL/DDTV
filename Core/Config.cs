@@ -150,6 +150,13 @@ namespace Core
             /// 默认值：$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             /// </summary>
             public static string _HTTP_UA { get { return HTTP_UA; } }
+
+             private static int DetectIntervalTime = 10000;
+            /// <summary>
+            /// 直播间状态更新间隔时间（int，单位毫秒）
+            /// 默认值：10000
+            /// </summary>
+            public static int _DetectIntervalTime { get { return DetectIntervalTime; } set { DetectIntervalTime = value; } }
         }
         public class Download
         {
