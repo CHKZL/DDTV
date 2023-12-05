@@ -61,16 +61,16 @@ namespace Core.RuntimeObject
             private static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name)
             {
                 HostClass hostClass = new();
-                PlayInfo playInfo = GetPlayInfo(RoomId);
-                if (playInfo == null || playInfo.data.playurl_info.playurl == null)
+                PlayInfo_Class playInfo = GetPlayInfo(RoomId);
+                if (playInfo == null || playInfo.data.playurl_info == null || playInfo.data.playurl_info.playurl == null)
                     return hostClass;
-                PlayInfo.Stream? stream = playInfo.data.playurl_info.playurl.stream.FirstOrDefault(x => x.protocol_name == protocol_name);
+                PlayInfo_Class.Stream? stream = playInfo.data.playurl_info.playurl.stream.FirstOrDefault(x => x.protocol_name == protocol_name);
                 if (stream == null)
                     return hostClass;
-                PlayInfo.Format? format = stream.format.FirstOrDefault(x => x.format_name == format_name);
+                PlayInfo_Class.Format? format = stream.format.FirstOrDefault(x => x.format_name == format_name);
                 if (format == null)
                     return hostClass;
-                PlayInfo.Codec? codec = format.codec.FirstOrDefault(x => x.codec_name == codec_name);
+                PlayInfo_Class.Codec? codec = format.codec.FirstOrDefault(x => x.codec_name == codec_name);
                 if (codec == null)
                     return hostClass;
                 var urlInfo = codec.url_info.FirstOrDefault(x => x.host.Contains("d1--cn")) ?? codec.url_info[new Random().Next(0, codec.url_info.Count - 1)];
@@ -137,7 +137,7 @@ namespace Core.RuntimeObject
             /// <param name="RoomId">房间号</param>
             /// <param name="DirName">保存的路径</param>
             /// <param name="Title">标题</param>
-            public static void DlwnloadHls_avc_Mp4(long RoomId, string DirName, string Title)
+            public static async void DlwnloadHls_avc_Mp4(long RoomId, string DirName, string Title)
             {
                 bool Initialization = false;
                 long CurrentLocation = 0;
@@ -145,41 +145,44 @@ namespace Core.RuntimeObject
                 {
                     Directory.CreateDirectory(DirName);
                 }
-                using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
+                await Task.Run(() =>
                 {
-                    while (true)
+                    using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
                     {
-                        try
+                        while (true)
                         {
-                            HostClass m3u8 = GetHlsHost_avc(RoomId);
-                            if (m3u8.Effective)
+                            try
                             {
-                                EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}?{m3u8.extra}"));
-                                if (!Initialization)
+                                HostClass m3u8 = GetHlsHost_avc(RoomId);
+                                if (m3u8.Effective)
                                 {
-                                    Initialization = true;
-                                    WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}", eXTM3U.Map_URI);
-                                }
-                                foreach (var item in eXTM3U.eXTINFs)
-                                {
-                                    long.TryParse(item.FileName, out long index);
-                                    if (index > CurrentLocation)
+                                    EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}?{m3u8.extra}"));
+                                    if (!Initialization)
                                     {
-                                        WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}", item.FileName);
-                                        CurrentLocation = index;
+                                        Initialization = true;
+                                        WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}", eXTM3U.Map_URI);
                                     }
+                                    foreach (var item in eXTM3U.eXTINFs)
+                                    {
+                                        long.TryParse(item.FileName, out long index);
+                                        if (index > CurrentLocation)
+                                        {
+                                            WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}", item.FileName);
+                                            CurrentLocation = index;
+                                        }
+                                    }
+                                    if (eXTM3U.IsEND)
+                                        break;
+                                    Thread.Sleep(1500);
                                 }
-                                if (eXTM3U.IsEND)
-                                    break;
-                                Thread.Sleep(1500);
+                            }
+                            catch (Exception)
+                            {
+                                Thread.Sleep(500);
                             }
                         }
-                        catch (Exception)
-                        {
-                            Thread.Sleep(500);
-                        }
                     }
-                }
+                });
             }
 
             /// <summary>
