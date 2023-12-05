@@ -39,16 +39,20 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Private Method
+        /// <summary>
+        /// 房间轮询检查
+        /// </summary>
+        /// <returns></returns>
         private async Task RoomLoopDetection()
         {
             while (_state)
             {
                 await Task.Delay(Config.Core._DetectIntervalTime);
-                List<RoomCard> test = roomInfos.Select(item => item.Clone()).ToList();
-                await BatchUpdateRoomStatusForLiveStream(new List<long>() { 85997303, 1752208642, 399815233 });
+                List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
+                await BatchUpdateRoomStatusForLiveStream();
                 foreach (var item in roomInfos)
                 {
-                    RoomCard? oldCard = test.FirstOrDefault(x => x.UID == item.UID);
+                    RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
                     RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
                     if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                     {
