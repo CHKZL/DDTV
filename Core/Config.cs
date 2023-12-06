@@ -46,7 +46,11 @@ namespace Core
                 {
                     if (item.Split('=').Length == 2)
                     {
-                        varMap[item.Split('=')[0]].SetValue(null, item.Split('=')[1]);
+                        try
+                        {
+                            varMap[item.Split('=')[0]].SetValue(null, item.Split('=')[1]);
+                        }
+                        catch (Exception) { }
                     }
                 }
             }
@@ -151,7 +155,7 @@ namespace Core
             /// </summary>
             public static string _HTTP_UA { get { return HTTP_UA; } }
 
-             private static int DetectIntervalTime = 10000;
+            private static int DetectIntervalTime = 10000;
             /// <summary>
             /// 直播间状态更新间隔时间（int，单位毫秒）
             /// 默认值：10000
