@@ -26,8 +26,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BiliAccount", "BiliAccount\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DDTV_DanMu", "DDTV_DanMu\DDTV_DanMu.csproj", "{0ED9CC55-BA1C-4D1B-90D9-DA38575B56F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestProject", "TestProject\TestProject.csproj", "{B26DA43A-A3E7-473D-8C8E-0AF2E3DBB153}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
