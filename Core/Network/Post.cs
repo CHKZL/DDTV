@@ -25,6 +25,7 @@ namespace Core.Network
         /// <returns>请求返回体</returns>
         internal static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null)
         {
+            Retry:
             string result = "";
             HttpWebRequest req = null;
             HttpWebResponse rep = null;
@@ -88,6 +89,12 @@ namespace Core.Network
             {
                 if (rep != null) rep.Close();
                 if (req != null) req.Abort();
+            }
+
+            if(string.IsNullOrEmpty(result))
+            {
+                Thread.Sleep(100);
+                goto Retry;
             }
             return result;
         }

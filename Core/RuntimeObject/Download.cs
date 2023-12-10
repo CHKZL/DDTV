@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ZXing;
 using static Core.Network.Methods.Room;
+using static Core.RuntimeObject.Download.File;
 using static Core.RuntimeObject.Download.Host;
 
 namespace Core.RuntimeObject
@@ -29,7 +30,10 @@ namespace Core.RuntimeObject
 
             public static HostClass GetHlsHost_avc(long RoomId)
             {
-                return _GetHost(RoomId, "http_hls", "fmp4", "avc");
+                HostClass m3u8 = _GetHost(RoomId, "http_hls", "fmp4", "avc");
+                EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}{m3u8.extra}"));
+                m3u8.SteramInfo = eXTM3U.SteramInfo;
+                return m3u8;
             }
 
             /// <summary>
@@ -81,7 +85,7 @@ namespace Core.RuntimeObject
                     host = urlInfo.host,
                     base_url = codec.base_url.Replace($"{codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1]}", ""),
                     uri_name = codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1],
-                    extra = urlInfo.extra
+                    extra = urlInfo.extra,
                 };
                 return hostClass;
             }
@@ -113,6 +117,10 @@ namespace Core.RuntimeObject
                 /// 参数
                 /// </summary>
                 public string extra { get; set; }
+                /// <summary>
+                /// M3U8头
+                /// </summary>
+                internal string SteramInfo { get; set; }
             }
 
             #endregion
@@ -149,14 +157,21 @@ namespace Core.RuntimeObject
                 {
                     using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
                     {
+
+                        HostClass m3u8 = GetHlsHost_avc(RoomId);
+                        Console.WriteLine($"获取到任务Host{m3u8.base_url}");
                         while (true)
                         {
+
                             try
                             {
-                                HostClass m3u8 = GetHlsHost_avc(RoomId);
                                 if (m3u8.Effective)
                                 {
-                                    EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}?{m3u8.extra}"));
+                                    EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(m3u8.SteramInfo));
+                                    //if(eXTM3U.SteramInfo)
+                                    //{
+                                    //    EXTM3U eXTM3U 
+                                    //}
                                     if (!Initialization)
                                     {
                                         Initialization = true;
@@ -177,8 +192,9 @@ namespace Core.RuntimeObject
                                 }
                             }
                             catch (Exception)
-                            {
+                            { 
                                 Thread.Sleep(500);
+                                m3u8 = GetHlsHost_avc(RoomId);
                             }
                         }
                     }
@@ -193,7 +209,7 @@ namespace Core.RuntimeObject
             /// <param name="fileName"></param>
             private static void WriteToFile(FileStream fs, string url, string fileName)
             {
-                byte[] InitialFragment = Network.Download.File.GetFileToByte(url);
+                byte[] InitialFragment = Network.Download.File.GetFileToByte(url,true,"https://www.bilibili.com/");
                 fs.Write(InitialFragment, 0, InitialFragment.Length);
                 Console.WriteLine($"写入文件{fileName}");
             }
@@ -216,6 +232,10 @@ namespace Core.RuntimeObject
                 /// 初始标签
                 /// </summary>
                 internal long MediaSequence { get; set; }
+                /// <summary>
+                /// M3U8头
+                /// </summary>
+                internal string SteramInfo { get; set; }
                 /// <summary>
                 /// 最大时长标记
                 /// </summary>
