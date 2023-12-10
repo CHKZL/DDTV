@@ -108,11 +108,8 @@ namespace Core
                 else
                 {
                     Console.WriteLine("test");
-                    string TEXT = File.ReadAllText("./Config/RoomListConfig.json");
-                    //string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
-                    var options = new JsonSerializerOptions();
-                    options.TypeInfoResolver = null; // Unset the resolver for the options instance.
-                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT,options);
+                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
+                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
                     if (roomListDiscard != null)
                     {
                         foreach (var item in roomListDiscard.data)
@@ -154,14 +151,9 @@ namespace Core
                 {
                     roomListDiscard.data.Add(item);
                 }
-                var options = new JsonSerializerOptions
-                {
-                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-                };
-                string jsonString = JsonSerializer.Serialize(roomListDiscard,options);
+                string jsonString = JsonSerializer.Serialize(roomListDiscard);
                 File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", jsonString, Encoding.UTF8);
             }
-
             internal class RoomListDiscard
             {
                 [JsonPropertyName("data")]
