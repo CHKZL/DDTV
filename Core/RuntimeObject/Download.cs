@@ -175,14 +175,14 @@ namespace Core.RuntimeObject
                                     if (!Initialization)
                                     {
                                         Initialization = true;
-                                        WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}", eXTM3U.Map_URI);
+                                        WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}");
                                     }
                                     foreach (var item in eXTM3U.eXTINFs)
                                     {
                                         long.TryParse(item.FileName, out long index);
                                         if (index > CurrentLocation)
                                         {
-                                            WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}", item.FileName);
+                                            WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}");
                                             CurrentLocation = index;
                                         }
                                     }
@@ -206,12 +206,10 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="fs"></param>
             /// <param name="url"></param>
-            /// <param name="fileName"></param>
-            private static void WriteToFile(FileStream fs, string url, string fileName)
+            private static void WriteToFile(FileStream fs, string url)
             {
                 byte[] InitialFragment = Network.Download.File.GetFileToByte(url,true,"https://www.bilibili.com/");
                 fs.Write(InitialFragment, 0, InitialFragment.Length);
-                Console.WriteLine($"写入文件{fileName}");
             }
 
 
