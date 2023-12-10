@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Core.Network.Methods;
+using Masuit.Tools;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Ini;
 using Microsoft.Extensions.FileProviders;
@@ -9,8 +11,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using static Core.Network.Methods.Room;
+using static Core.RuntimeObject.RoomList;
 
 namespace Core
 {
@@ -25,11 +32,18 @@ namespace Core
         /// </summary>
         static Config()
         {
-            var fieldInfos = typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static);
+
+            var _Config = new List<FieldInfo>();
+            _Config.AddRange(typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
+            _Config.AddRange(typeof(Config.Download).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
+
             lock (varMap)
-                foreach (var fieldInfo in fieldInfos)
+                foreach (var fieldInfo in _Config)
                     varMap.Add(fieldInfo.Name, fieldInfo);
+
+            RoomConfig.LoadRoomConfigurationFile();
         }
+
         #endregion
 
         #region public Method
@@ -44,6 +58,10 @@ namespace Core
             {
                 foreach (var item in A)
                 {
+                    if (item == "DetectIntervalTime=10000")
+                    {
+                        int B = int.Parse(item.Split('=')[1]);
+                    }
                     if (item.Split('=').Length == 2)
                     {
                         try
@@ -66,7 +84,7 @@ namespace Core
                 {
                     foreach (var item in varMap)
                     {
-                        file.WriteLine($"{item.Key}={item.Value.GetValue(null) as string}");
+                        file.WriteLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
             }
@@ -76,8 +94,99 @@ namespace Core
 
         #region public Properties Method
 
+        public class RoomConfig
+        {
+            /// <summary>
+            /// 读取房间配置文件更新运行时参数
+            /// </summary>
+            public static void LoadRoomConfigurationFile()
+            {
+                if (!File.Exists($"{Core._ConfigDirectory}{Core._RoomConfig}"))
+                {
+                    File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
+                }
+                else
+                {
+                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
+                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
+                    if (roomListDiscard != null)
+                    {
+                        foreach (var item in roomListDiscard.data)
+                        {
+                            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
+                            if (roomCard != null)
+                            {
+                                int index = roomInfos.FindIndex(x => x.UID == item.UID);
+                                if (index != -1)
+                                {
+                                    roomInfos[index].UID = item.UID;
+                                    roomInfos[index].description = item.description;
+                                    roomInfos[index].RoomId = item.RoomId;
+                                    roomInfos[index].Name = item.Name;
+                                    roomInfos[index].IsAutoRec = item.IsAutoRec;
+                                    roomInfos[index].IsRemind = item.IsRemind;
+                                    roomInfos[index].IsRecDanmu = item.IsRecDanmu;
+                                    roomInfos[index].Like = item.Like;
+                                    roomInfos[index].Shell= item.Shell;
+                                }
+                            }
+                            else
+                            {
+                                 roomInfos.Add(new RoomCard()
+                                 {
+                                     UID= item.UID,
+                                     Description= item.Description,
+                                     RoomId= item.RoomId,
+                                     Name= item.Name,
+                                     IsAutoRec= item.IsAutoRec,
+                                     IsRemind= item.IsRemind,
+                                     IsRecDanmu= item.IsRecDanmu,
+                                     Like= item.Like,
+                                     Shell= item.Shell
+                                 });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
+                    }
+                }
+            }
+
+            public static void SaveRoomConfigurationFile()
+            {
+                RoomListDiscard roomListDiscard = new RoomListDiscard();
+                foreach (var item in roomInfos)
+                {
+                    roomListDiscard.data.Add(item);
+                }
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+                string jsonString = JsonSerializer.Serialize(roomListDiscard,options);
+                File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", jsonString, Encoding.UTF8);
+            }
+
+            internal class RoomListDiscard
+            {
+                [JsonPropertyName("data")]
+                public List<RuntimeObject.RoomList.RoomCard> data { set; get; } = [];
+            }
+
+        }
+
+
         public class Core
         {
+            private static string RoomConfig = "RoomListConfig.json";
+            /// <summary>
+            /// 房间配置文件路径（字符串）
+            /// 默认值：RoomListConfig.json
+            /// </summary>
+            public static string _RoomConfig { get { return RoomConfig; } }
+
             private static string ConfigDirectory = "./Config/";
             /// <summary>
             /// 配置文件路径（字符串）
@@ -155,21 +264,21 @@ namespace Core
             /// </summary>
             public static string _HTTP_UA { get { return HTTP_UA; } }
 
-            private static int DetectIntervalTime = 10000;
+            private static string DetectIntervalTime = "10000";
             /// <summary>
             /// 直播间状态更新间隔时间（int，单位毫秒）
             /// 默认值：10000
             /// </summary>
-            public static int _DetectIntervalTime { get { return DetectIntervalTime; } set { DetectIntervalTime = value; } }
+            public static int _DetectIntervalTime { get { return int.Parse(DetectIntervalTime); } set { DetectIntervalTime = value.ToString(); } }
         }
         public class Download
         {
-            private static int DefaultResolution = 10000;
+            private static string DefaultResolution = "10000";
             /// <summary>
             /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static int _DefaultResolution { get { return DefaultResolution; } set { DefaultResolution = value; } }
+            public static int _DefaultResolution { get { return int.Parse(DefaultResolution); } set { DefaultResolution = value.ToString(); } }
         }
 
 

@@ -13,6 +13,7 @@ namespace Core.RuntimeObject
     {
         #region Private Properties
         private bool _state = false;
+        private bool Initialization = false;
         #endregion
 
         #region public Properties
@@ -28,7 +29,11 @@ namespace Core.RuntimeObject
         #region Public Method
         public void start()
         {
-            Core.RuntimeObject.RoomList.BatchUpdateRoomStatusForLiveStream([85997303, 1752208642, 399815233]);
+            if(!Initialization)
+            {
+                RoomLoopDetection();
+                Initialization=true;
+            }
             _state = true;
         }
 
@@ -39,33 +44,38 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Private Method
+
         /// <summary>
         /// 房间轮询检查
         /// </summary>
         /// <returns></returns>
         private async Task RoomLoopDetection()
         {
-            while (_state)
+            while (true)
             {
-                await Task.Delay(Config.Core._DetectIntervalTime);
-                List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
-                await BatchUpdateRoomStatusForLiveStream();
-                foreach (var item in roomInfos)
+                while (_state)
                 {
-                    RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
-                    RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
-                    if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
+                    List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
+                    await BatchUpdateRoomStatusForLiveStream();
+                    foreach (var item in roomInfos)
                     {
-                        if (newCard.live_status.Value == 1)
+                        RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
+                        RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
+                        if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                         {
-                            LiveStart.Invoke(null, newCard);
-                        }
-                        else
-                        {
-                            LiveEnd.Invoke(null, newCard);
+                            if (newCard.live_status.Value == 1)
+                            {
+                                LiveStart.Invoke(null, newCard);
+                            }
+                            else if (oldCard.live_status.Value != -1)
+                            {
+                                LiveEnd.Invoke(null, newCard);
+                            }
                         }
                     }
+                    await Task.Delay(Config.Core._DetectIntervalTime);
                 }
+                await Task.Delay(1000);
             }
         }
         #endregion

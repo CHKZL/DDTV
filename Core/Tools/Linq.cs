@@ -58,6 +58,10 @@ namespace Core.Tools
                 {
                     eXTM3U.IsEND = true;
                 }  
+                else if (list[i].Contains("#EXT-X-STREAM-INF"))
+                {
+                    eXTM3U.SteramInfo = list[i + 1];
+                }
             }
             return eXTM3U;
         }

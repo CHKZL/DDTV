@@ -1,5 +1,6 @@
 ﻿using Core.Network.Methods;
 using Masuit.Tools.Hardware;
+using System.Text.Json.Serialization;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
 
@@ -119,7 +120,7 @@ namespace Core.RuntimeObject
         private static string _GetNickname(long Uid)
         {
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || string.IsNullOrEmpty(roomCard.name))
+            if (roomCard == null || string.IsNullOrEmpty(roomCard.Name))
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid));
                 if (card == null)
@@ -128,10 +129,10 @@ namespace Core.RuntimeObject
                     roomInfos.Add(card);
                 else
                     roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
-                return card.name;
+                return card.Name;
             }
             else
-                return roomCard.name;
+                return roomCard.Name;
         }
 
         private static long _GetUid(long RoomId)
@@ -194,6 +195,7 @@ namespace Core.RuntimeObject
             {
                 RoomCard card = new RoomCard()
                 {
+                    UID= data.uid,
                     title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
                     RoomId = data.room_id,
                     live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -205,7 +207,7 @@ namespace Core.RuntimeObject
                     area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    name = data.uname,
+                    Name = data.uname,
                     face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -229,9 +231,9 @@ namespace Core.RuntimeObject
             {
                 RoomCard card = new RoomCard()
                 {
+                    UID= roomInfo.data.uid,
                     RoomId = roomInfo.data.room_id,
                     short_id = new() { Value = roomInfo.data.short_id, ExpirationTime = DateTime.MaxValue },
-                    UID = roomInfo.data.uid,
                     need_p2p = new() { Value = roomInfo.data.need_p2p, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) },
                     is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -259,7 +261,7 @@ namespace Core.RuntimeObject
                 {
                     UID = userInfo.data.mid,
                     RoomId = userInfo.data.live_room.roomid,
-                    name = userInfo.data.name,
+                    Name = userInfo.data.name,
                     url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                     roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
                     title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
@@ -281,50 +283,63 @@ namespace Core.RuntimeObject
 
         #region public Class
 
+
         public class RoomCard
         {
+            [JsonPropertyName("name")]
             /// <summary>
             /// 昵称
             /// (Local值)
             /// </summary>
-            public string name { get; set; } = "";
+            public string Name { get; set; } = "";
+             [JsonPropertyName("Description")]
             /// <summary>
             /// 描述
             /// (Local值)
             /// </summary>
             public string Description { get; set; } = "";
+             [JsonPropertyName("RoomId")]
             /// <summary>
             /// 直播间房间号(长号)
             /// (Local值)
             /// </summary>
             public long RoomId { get; set; } = -1;
+             [JsonPropertyName("UID")]
             /// <summary>
             /// 主播mid
+            /// (Local值)
             /// </summary>
             public long UID { get; set; } = -1;
+             [JsonPropertyName("IsAutoRec")]
             /// <summary>
             /// 是否自动录制
             /// (Local值)
             /// </summary>
             public bool IsAutoRec { set; get; } = false;
+            [JsonPropertyName("IsRemind")]
             /// <summary>
             /// 是否开播提醒(Local值)
             /// </summary>
             public bool IsRemind { set; get; } = false;
+            [JsonPropertyName("IsRecDanmu")]
             /// <summary>
             /// 是否录制弹幕
             /// (Local值)
             /// </summary>
             public bool IsRecDanmu { set; get; } = false;
+            [JsonPropertyName("Like")]
             /// <summary>
-            /// 特殊标记(Local值)
+            /// 特殊标记
+            /// (Local值)
             /// </summary>
             public bool Like { set; get; } = false;
+            [JsonPropertyName("Shell")]
             /// <summary>
             /// 该房间录制完成后会执行的Shell命令
             /// (Local值)
             /// </summary>
             public string Shell { set; get; } = "";
+            [JsonPropertyName("IsPersisting")]
             /// <summary>
             /// 是否持久化储存，用于判断是否需要写到房间配置文件
             /// (Local值)
@@ -491,7 +506,7 @@ namespace Core.RuntimeObject
             {
                 return new RoomCard
                 {
-                    name = this.name,
+                    Name = this.Name,
                     Description = this.Description,
                     RoomId = this.RoomId,
                     UID = this.UID,
