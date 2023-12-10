@@ -159,7 +159,7 @@ namespace Core.RuntimeObject
                     {
 
                         HostClass m3u8 = GetHlsHost_avc(RoomId);
-                        Console.WriteLine($"获取到任务Host{m3u8.base_url}");
+                        Console.WriteLine($"获取到任务Host{m3u8.host}{m3u8.base_url}");
                         while (true)
                         {
 
@@ -167,11 +167,13 @@ namespace Core.RuntimeObject
                             {
                                 if (m3u8.Effective)
                                 {
-                                    EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(m3u8.SteramInfo));
-                                    //if(eXTM3U.SteramInfo)
-                                    //{
-                                    //    EXTM3U eXTM3U 
-                                    //}
+                                    EXTM3U eXTM3U = !string.IsNullOrEmpty(m3u8.SteramInfo) ? Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(m3u8.SteramInfo)) : Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}?{m3u8.extra}"));
+                                    if (eXTM3U.eXTINFs.Count < 1 || string.IsNullOrEmpty(m3u8.SteramInfo))
+                                    {
+                                        Thread.Sleep(500);
+                                        m3u8 = GetHlsHost_avc(RoomId);
+                                        eXTM3U = !string.IsNullOrEmpty(m3u8.SteramInfo) ? Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(m3u8.SteramInfo)) : Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}?{m3u8.extra}"));
+                                    }
                                     if (!Initialization)
                                     {
                                         Initialization = true;

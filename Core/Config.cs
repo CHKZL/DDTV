@@ -107,8 +107,12 @@ namespace Core
                 }
                 else
                 {
-                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
-                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
+                    Console.WriteLine("test");
+                    string TEXT = File.ReadAllText("./Config/RoomListConfig.json");
+                    //string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
+                    var options = new JsonSerializerOptions();
+                    options.TypeInfoResolver = null; // Unset the resolver for the options instance.
+                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT,options);
                     if (roomListDiscard != null)
                     {
                         foreach (var item in roomListDiscard.data)
@@ -132,18 +136,7 @@ namespace Core
                             }
                             else
                             {
-                                 roomInfos.Add(new RoomCard()
-                                 {
-                                     UID= item.UID,
-                                     Description= item.Description,
-                                     RoomId= item.RoomId,
-                                     Name= item.Name,
-                                     IsAutoRec= item.IsAutoRec,
-                                     IsRemind= item.IsRemind,
-                                     IsRecDanmu= item.IsRecDanmu,
-                                     Like= item.Like,
-                                     Shell= item.Shell
-                                 });
+                                 roomInfos.Add(item);
                             }
                         }
                     }
