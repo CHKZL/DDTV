@@ -156,6 +156,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.HLS
             public string ExtendedName { get; set; }
             public bool IsUserCancel { get; set; } = false;
             public bool IsPassword { set; get; } = false;
+            public string SteramInfo { get; set; }
         }
 
     }

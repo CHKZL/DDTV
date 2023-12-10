@@ -535,6 +535,17 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                             if (!string.IsNullOrEmpty(TU))
                             {
                                 index = NetworkRequestModule.Get.Get.GetRequest(TU);
+                                if(index.Contains("EXT-X-STREAM-INF"))
+                                {
+                                    var TMP1 = index.Split('\n');
+                                    for (int i = 0; i < TMP1.Length; i++)
+                                    {
+                                        if (TMP1[i].Contains("EXT-X-STREAM-INF"))
+                                        {
+                                            index = NetworkRequestModule.Get.Get.GetRequest(TMP1[i + 1]);
+                                        }
+                                    }
+                                }
                             }
                             int error = 0;
                             while (true)
