@@ -3,6 +3,7 @@ using Masuit.Tools.Hardware;
 using System.Text.Json.Serialization;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
+using static Core.RuntimeObject.RoomList;
 
 namespace Core.RuntimeObject
 {
@@ -84,9 +85,10 @@ namespace Core.RuntimeObject
                         if (uid > 0)
                         {
                             int index = roomInfos.FindIndex(x => x.UID == uid);
+                            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == uid);
                             if (index != -1)
                             {
-                                roomInfos[index] = ToRoomCard(item.Value);
+                                roomInfos[index] = ToRoomCard(item.Value,roomCard);
                             }
                         }
                     }
@@ -104,7 +106,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
             if (roomCard == null || roomCard.live_status.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId));
+                RoomCard card = ToRoomCard(GetRoomInfo(RoomId),roomCard);
                 if (card == null)
                     return false;
                 else if (roomCard == null)
@@ -122,7 +124,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || string.IsNullOrEmpty(roomCard.Name))
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid));
+                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
                 if (card == null)
                     return "获取昵称失败";
                 else if (roomCard == null)
@@ -140,7 +142,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
             if (roomCard == null || roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId));
+                RoomCard card = ToRoomCard(GetRoomInfo(RoomId),roomCard);
                 if (card == null)
                     return -1;
                 else if (roomCard == null)
@@ -158,7 +160,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid));
+                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
                 if (card == null)
                     return -1;
                 else if (roomCard == null)
@@ -176,7 +178,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || string.IsNullOrEmpty(roomCard.title.Value) || roomCard.title.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid));
+                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
                 if (card == null)
                     return "";
                 else if (roomCard == null)
@@ -189,35 +191,64 @@ namespace Core.RuntimeObject
                 return roomCard.title.Value;
         }
 
-        private static RoomCard ToRoomCard(UidsInfo_Class.Data data)
+        private static RoomCard ToRoomCard(UidsInfo_Class.Data data, RoomCard OldCard)
         {
             if (data != null)
             {
-                RoomCard card = new RoomCard()
+                if (OldCard == null)
                 {
-                    UID= data.uid,
-                    title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
-                    RoomId = data.room_id,
-                    live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
-                    short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area_v2_id = new() { Value = data.area_v2_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    Name = data.uname,
-                    face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    cover_from_user = new() { Value = data.cover_from_user, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    keyframe = new() { Value = data.keyframe, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    lock_till = new() { Value = data.lock_till, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    hidden_till = new() { Value = data.hidden_till, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    broadcast_type = new() { Value = data.broadcast_type, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                };
-                return card;
+                    RoomCard card = new RoomCard()
+                    {
+                        UID = data.uid,
+                        title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                        RoomId = data.room_id,
+                        live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
+                        short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area_v2_id = new() { Value = data.area_v2_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        Name = data.uname,
+                        face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        cover_from_user = new() { Value = data.cover_from_user, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        keyframe = new() { Value = data.keyframe, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        lock_till = new() { Value = data.lock_till, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        hidden_till = new() { Value = data.hidden_till, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        broadcast_type = new() { Value = data.broadcast_type, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                    };
+                    return card;
+                }
+                else
+                {
+                    OldCard.UID = data.uid;
+                    OldCard.title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                    OldCard.RoomId = data.room_id;
+                    OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) };
+                    OldCard.short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area_v2_id = new() { Value = data.area_v2_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.Name = data.uname;
+                    OldCard.face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.cover_from_user = new() { Value = data.cover_from_user, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.keyframe = new() { Value = data.keyframe, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.lock_till = new() { Value = data.lock_till, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.hidden_till = new() { Value = data.hidden_till, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.broadcast_type = new() { Value = data.broadcast_type, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    return OldCard;
+                }
+
             }
             else
             {
@@ -225,27 +256,47 @@ namespace Core.RuntimeObject
             }
         }
 
-        private static RoomCard ToRoomCard(RoomInfo_Class roomInfo)
+        private static RoomCard ToRoomCard(RoomInfo_Class roomInfo, RoomCard OldCard)
         {
             if (roomInfo != null)
             {
-                RoomCard card = new RoomCard()
+                if (OldCard == null)
                 {
-                    UID= roomInfo.data.uid,
-                    RoomId = roomInfo.data.room_id,
-                    short_id = new() { Value = roomInfo.data.short_id, ExpirationTime = DateTime.MaxValue },
-                    need_p2p = new() { Value = roomInfo.data.need_p2p, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
-                    encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                    live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                    room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) },
-                    is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                };
-                return card;
+                    RoomCard card = new RoomCard()
+                    {
+                        UID = roomInfo.data.uid,
+                        RoomId = roomInfo.data.room_id,
+                        short_id = new() { Value = roomInfo.data.short_id, ExpirationTime = DateTime.MaxValue },
+                        need_p2p = new() { Value = roomInfo.data.need_p2p, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
+                        encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                        live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                        room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) },
+                        is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                    };
+                    return card;
+                }
+                else
+                {
+                    OldCard.UID = roomInfo.data.uid;
+                    OldCard.RoomId = roomInfo.data.room_id;
+                    OldCard.short_id = new() { Value = roomInfo.data.short_id, ExpirationTime = DateTime.MaxValue };
+                    OldCard.need_p2p = new() { Value = roomInfo.data.need_p2p, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) };
+                    OldCard.encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    OldCard.live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                    OldCard.room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) };
+                    OldCard.is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                    return OldCard;
+                }
             }
             else
             {
@@ -253,25 +304,43 @@ namespace Core.RuntimeObject
             }
         }
 
-        private static RoomCard ToRoomCard(UserInfo userInfo)
+        private static RoomCard ToRoomCard(UserInfo userInfo, RoomCard OldCard)
         {
             if (userInfo != null)
             {
-                RoomCard card = new RoomCard()
+                if (OldCard == null)
                 {
-                    UID = userInfo.data.mid,
-                    RoomId = userInfo.data.live_room.roomid,
-                    Name = userInfo.data.name,
-                    url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
-                    roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
-                    title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
-                    cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
-                    face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
-                    sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
-                    sign = new() { Value = userInfo.data.sign, ExpirationTime = DateTime.MaxValue },
-                    level = new() { Value = userInfo.data.level, ExpirationTime = DateTime.MaxValue },
-                };
-                return card;
+                    RoomCard card = new RoomCard()
+                    {
+                        UID = userInfo.data.mid,
+                        RoomId = userInfo.data.live_room.roomid,
+                        Name = userInfo.data.name,
+                        url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
+                        roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
+                        title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                        cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
+                        face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
+                        sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
+                        sign = new() { Value = userInfo.data.sign, ExpirationTime = DateTime.MaxValue },
+                        level = new() { Value = userInfo.data.level, ExpirationTime = DateTime.MaxValue },
+                    };
+                    return card;
+                }
+                else
+                {
+                    OldCard.UID = userInfo.data.mid;
+                    OldCard.RoomId = userInfo.data.live_room.roomid;
+                    OldCard.Name = userInfo.data.name;
+                    OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
+                    OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) };
+                    OldCard.title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                    OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
+                    OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };
+                    OldCard.sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue };
+                    OldCard.sign = new() { Value = userInfo.data.sign, ExpirationTime = DateTime.MaxValue };
+                    OldCard.level = new() { Value = userInfo.data.level, ExpirationTime = DateTime.MaxValue };
+                    return OldCard;
+                }
             }
             else
             {
@@ -292,25 +361,25 @@ namespace Core.RuntimeObject
             /// (Local值)
             /// </summary>
             public string Name { get; set; } = "";
-             [JsonPropertyName("Description")]
+            [JsonPropertyName("Description")]
             /// <summary>
             /// 描述
             /// (Local值)
             /// </summary>
             public string Description { get; set; } = "";
-             [JsonPropertyName("RoomId")]
+            [JsonPropertyName("RoomId")]
             /// <summary>
             /// 直播间房间号(长号)
             /// (Local值)
             /// </summary>
             public long RoomId { get; set; } = -1;
-             [JsonPropertyName("UID")]
+            [JsonPropertyName("UID")]
             /// <summary>
             /// 主播mid
             /// (Local值)
             /// </summary>
             public long UID { get; set; } = -1;
-             [JsonPropertyName("IsAutoRec")]
+            [JsonPropertyName("IsAutoRec")]
             /// <summary>
             /// 是否自动录制
             /// (Local值)

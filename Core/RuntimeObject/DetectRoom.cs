@@ -29,17 +29,17 @@ namespace Core.RuntimeObject
         #region Public Method
         public void start()
         {
-            if(!Initialization)
+            if (!Initialization)
             {
                 RoomLoopDetection();
-                Initialization=true;
+                Initialization = true;
             }
             _state = true;
         }
 
         public void stop()
         {
-            _state= false;
+            _state = false;
         }
         #endregion
 
@@ -53,27 +53,34 @@ namespace Core.RuntimeObject
         {
             while (true)
             {
-                while (_state)
+                try
                 {
-                    List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
-                    await BatchUpdateRoomStatusForLiveStream();
-                    foreach (var item in roomInfos)
+                    while (_state)
                     {
-                        RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
-                        RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
-                        if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
+                        List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
+                        await BatchUpdateRoomStatusForLiveStream();
+                        foreach (var item in roomInfos)
                         {
-                            if (newCard.live_status.Value == 1)
+                            RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
+                            RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
+                            if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                             {
-                                LiveStart.Invoke(null, newCard);
-                            }
-                            else if (oldCard.live_status.Value != -1)
-                            {
-                                LiveEnd.Invoke(null, newCard);
+                                if (newCard.live_status.Value == 1 && newCard.IsAutoRec)
+                                {
+                                    LiveStart.Invoke(null, newCard);
+                                }
+                                else if (oldCard.live_status.Value != -1)
+                                {
+                                    LiveEnd.Invoke(null, newCard);
+                                }
                             }
                         }
+                        await Task.Delay(Config.Core._DetectIntervalTime);
                     }
-                    await Task.Delay(Config.Core._DetectIntervalTime);
+                }
+                catch (Exception)
+                {
+                    await Task.Delay(2000);
                 }
                 await Task.Delay(1000);
             }
