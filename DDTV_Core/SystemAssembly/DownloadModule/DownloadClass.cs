@@ -543,6 +543,12 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         if (TMP1[i].Contains("EXT-X-STREAM-INF"))
                                         {
                                             index = NetworkRequestModule.Get.Get.GetRequest(TMP1[i + 1]);
+                                            if(string.IsNullOrEmpty(index))
+                                            {
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"EXT-X-STREAM-INF为空");
+                                                index = NetworkRequestModule.Get.Get.GetRequest(TMP1[i + 1]);
+                                                Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"EXT-X-STREAM-INF重新获取：{index}");
+                                            }
                                         }
                                     }
                                 }
@@ -582,7 +588,7 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     }
                                     if (!hLSHostClass.IsEffective)
                                     {
-                                       
+
                                         break;
                                     }
                                     Thread.Sleep(300);
@@ -590,10 +596,27 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                     if (!string.IsNullOrEmpty(Url))
                                     {
                                         index = NetworkRequestModule.Get.Get.GetRequest(Url);
+                                        if (index.Contains("EXT-X-STREAM-INF"))
+                                        {
+                                            var TMP1 = index.Split('\n');
+                                            for (int i = 0; i < TMP1.Length; i++)
+                                            {
+                                                if (TMP1[i].Contains("EXT-X-STREAM-INF"))
+                                                {
+                                                    index = NetworkRequestModule.Get.Get.GetRequest(TMP1[i + 1]);
+                                                    if (string.IsNullOrEmpty(index))
+                                                    {
+                                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"EXT-X-STREAM-INF为空");
+                                                        index = NetworkRequestModule.Get.Get.GetRequest(TMP1[i + 1]);
+                                                        Log.Log.AddLog(nameof(DownloadClass), Log.LogClass.LogType.Warn, $"EXT-X-STREAM-INF重新获取：{index}");
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     else
                                     {
-                                        
+
                                         break;
                                     }
                                   
