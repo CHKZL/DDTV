@@ -45,10 +45,10 @@ namespace Core.LogModule
             LogDB.Config.SQLiteInit(false);
 
 #if DEBUG
-            Info(nameof(Log), $"{Init.InitType}|{Init.Ver}【Dev】({Init.CompiledVersion})");
+            Info(nameof(Log), $"{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
             Info(nameof(Log), "Log系统初始化完成（Dev模式）");
 #else
-            Info(nameof(Log),  $"{Init.InitType}|{Init.Ver} ({Init.CompiledVersion})");
+            Info(nameof(Log),  $"{Init.InitType}|{Init.Ver} (编译时间:{Init.CompiledVersion})");
             Info(nameof(Log),  "Log系统初始化完成");
 #endif
         }
