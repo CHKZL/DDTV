@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom.Events;
+using Core.LogModule;
 using Core.Network.Methods;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,7 @@ namespace Core.RuntimeObject
         {
             if (!Initialization)
             {
+                Log.Info(nameof(DetectRoom), $"房间状态监听已启动");
                 RoomLoopDetection();
                 Initialization = true;
             }
@@ -65,7 +67,7 @@ namespace Core.RuntimeObject
                             RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
                             if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                             {
-                                if (newCard.live_status.Value == 1 && newCard.IsAutoRec)
+                                if (newCard.live_status.Value == 1)
                                 {
                                     LiveStart.Invoke(null, newCard);
                                 }

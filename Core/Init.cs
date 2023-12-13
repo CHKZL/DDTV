@@ -12,10 +12,11 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2023-12-10 17:45:17";
+        public static string CompiledVersion = "2023-12-14 00:51:59";
         public static bool IsDevDebug = false;
-        public static void Start(string InitType = "DDTV", string ClientAID = "", bool IsDev = false)
+        public static void Start()
         {
+            System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096;
@@ -24,6 +25,8 @@ namespace Core
 
             Config.ReadConfiguration();
             Config.WriteConfiguration();
+            var _ = Core.RuntimeObject.Account.AccountInformation;
+
         }
         /// <summary>
         /// 初始化文件和目录

@@ -434,3 +434,4 @@ healthchecksdb
 /Doc/docs/.vuepress/dist/
 /DanMu_Demo
 /TestProject
+/Core/Account/Config/Parameter.cs

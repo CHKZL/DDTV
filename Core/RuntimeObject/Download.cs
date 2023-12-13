@@ -1,15 +1,19 @@
-﻿using Masuit.Tools;
+﻿using Core.LogModule;
+using Core.Network.Methods;
+using Masuit.Tools;
 using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using ZXing;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Download.File;
 using static Core.RuntimeObject.Download.Host;
+using static Core.RuntimeObject.RoomList;
 
 namespace Core.RuntimeObject
 {
@@ -31,8 +35,11 @@ namespace Core.RuntimeObject
             public static HostClass GetHlsHost_avc(long RoomId)
             {
                 HostClass m3u8 = _GetHost(RoomId, "http_hls", "fmp4", "avc");
-                EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}{m3u8.extra}"));
-                m3u8.SteramInfo = eXTM3U.SteramInfo;
+                if (m3u8.Effective)
+                {
+                    EXTM3U eXTM3U = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString($"{m3u8.host}{m3u8.base_url}{m3u8.uri_name}{m3u8.extra}"));
+                    m3u8.SteramInfo = eXTM3U.SteramInfo;
+                }
                 return m3u8;
             }
 
@@ -55,6 +62,8 @@ namespace Core.RuntimeObject
             {
                 return _GetHost(RoomId, "http_stream", "flv", "avc");
             }
+
+
 
             #endregion
 
@@ -134,35 +143,59 @@ namespace Core.RuntimeObject
 
             #region Public Method
 
-            #endregion
-
-            #region Private Method
-
-
             /// <summary>
             /// 录制HLS_avc制式的MP4文件
             /// </summary>
-            /// <param name="RoomId">房间号</param>
-            /// <param name="DirName">保存的路径</param>
-            /// <param name="Title">标题</param>
-            public static async void DlwnloadHls_avc_Mp4(long RoomId, string DirName, string Title)
+            /// <param name="Card"></param>
+            /// <returns></returns>
+            public static async Task<bool> DlwnloadHls_avc_Mp4(RoomList.RoomCard Card)
             {
+                bool Success = false;
+                Card.DownInfo.IsDownload = true;
+                Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
+                string Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(Card.RoomId)));
+                long RoomId = Card.RoomId;
+                string DirName = $"{Config.Core._RecFileDirectory}{Card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(Card.RoomId))}";
                 bool Initialization = false;
                 long CurrentLocation = 0;
+                DateTime LastTime = DateTime.MinValue;
                 if (!Directory.Exists(DirName))
                 {
                     Directory.CreateDirectory(DirName);
                 }
+                CancellationTokenSource cts = new CancellationTokenSource();
+                CancellationToken token = cts.Token;
                 await Task.Run(() =>
                 {
                     using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
                     {
+                        int HLS_Error_Count = 0;
+                        HostClass m3u8 = new();
+                        do
+                        {
+                            if (HLS_Error_Count > 3)
+                            {
+                                Log.Info(nameof(Download), $"获取HLS流失败，放弃该任务");
 
-                        HostClass m3u8 = GetHlsHost_avc(RoomId);
-                        Console.WriteLine($"获取到任务Host{m3u8.host}{m3u8.base_url}");
+                                Success = false;
+                                cts.Cancel();
+                            }
+                            m3u8 = GetHlsHost_avc(RoomId);
+                            HLS_Error_Count++;
+                            Thread.Sleep(1000 * 10);
+                        } while (!m3u8.Effective);
+                        string StarText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n" +
+                        $"直播间:{Card.RoomId}\n" +
+                        $"UID:{Card.UID}\n" +
+                        $"昵称:{Card.Name}\n" +
+                        $"标题:{Card.Title.Value}";
+
+                        Log.Info(nameof(Download), $"{StarText}");
+                        Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
+                        Card.DownInfo.StartTime = DateTime.Now;
                         while (true)
                         {
-
+                            long DownloadSizeForThisCycle = 0;
                             try
                             {
                                 if (m3u8.Effective)
@@ -177,44 +210,83 @@ namespace Core.RuntimeObject
                                     if (!Initialization)
                                     {
                                         Initialization = true;
-                                        WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}");
+                                        DownloadSizeForThisCycle += WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{eXTM3U.Map_URI}?{m3u8.extra}");
                                     }
                                     foreach (var item in eXTM3U.eXTINFs)
                                     {
                                         long.TryParse(item.FileName, out long index);
                                         if (index > CurrentLocation)
                                         {
-                                            WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}");
+                                            DownloadSizeForThisCycle += WriteToFile(fs, $"{m3u8.host}{m3u8.base_url}{item.FileName}.{item.ExtensionName}?{m3u8.extra}");
                                             CurrentLocation = index;
                                         }
                                     }
+                                    double mt = DateTime.Now.Subtract(LastTime).TotalMilliseconds;
+                                    Card.DownInfo.RealTimeDownloadSpe = (DownloadSizeForThisCycle / mt) * 1000;
+                                    LastTime = DateTime.Now;
+                                    Card.DownInfo.DownloadSize = Card.DownInfo.DownloadSize += DownloadSizeForThisCycle;
                                     if (eXTM3U.IsEND)
-                                        break;
-                                    Thread.Sleep(1500);
+                                        Success = true;
+                                    Thread.Sleep(1000);
+                                }
+                                else
+                                {
+                                    Success = false;
                                 }
                             }
                             catch (Exception)
-                            { 
+                            {
                                 Thread.Sleep(500);
                                 m3u8 = GetHlsHost_avc(RoomId);
                             }
                         }
                     }
-                });
+                },token);
+                DownloadCompletedReset(Card);
+                return Success;
             }
 
             /// <summary>
-            /// 文件写入
+            /// byte长度转换为表示大小的字符串
             /// </summary>
-            /// <param name="fs"></param>
-            /// <param name="url"></param>
-            private static void WriteToFile(FileStream fs, string url)
+            /// <param name="ByteLen"></param>
+            /// <returns></returns>
+            public static string ByteToSizeConversion(double ByteLen)
             {
-                byte[] InitialFragment = Network.Download.File.GetFileToByte(url,true,"https://www.bilibili.com/");
-                fs.Write(InitialFragment, 0, InitialFragment.Length);
+                return Tools.Linq.ConversionSize(ByteLen, Tools.Linq.ConversionSizeType.BitRate);
+            }
+
+            #endregion
+
+            #region Private Method
+
+            /// <summary>
+            /// 下载完成重置房间卡状态
+            /// </summary>
+            /// <param name="roomCard"></param>
+            private static void DownloadCompletedReset(RoomList.RoomCard roomCard)
+            {
+
+                roomCard.DownInfo.IsDownload = false;
+                roomCard.DownInfo.DownloadSize = 0;
+                roomCard.DownInfo.RealTimeDownloadSpe = 0;
+                roomCard.DownInfo.Status = RoomList.RoomCard.DownloadStatus.DownloadComplete;
+                roomCard.DownInfo.EndTime = DateTime.Now;
             }
 
 
+            /// <summary>
+            /// 从网络写入文件
+            /// </summary>
+            /// <param name="fs">待写入的FileStream</param>
+            /// <param name="url">待写入的文件原始网络路径</param>
+            /// <returns>写入的文件byte数</returns>
+            private static long WriteToFile(FileStream fs, string url)
+            {
+                byte[] InitialFragment = Network.Download.File.GetFileToByte(url, true, "https://www.bilibili.com/");
+                fs.Write(InitialFragment, 0, InitialFragment.Length);
+                return InitialFragment.Length;
+            }
             #endregion
 
             #region Public Class

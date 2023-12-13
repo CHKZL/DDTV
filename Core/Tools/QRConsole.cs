@@ -9,42 +9,67 @@ namespace Core.Tools
 {
     public class QRConsole
     {
-        /// <summary>
+        /// <summary>S
         /// 生成二维码内容输出到控制台
         /// </summary>
         /// <param name="text"></param>
         public static void Output(string text)
         {
-            var writer = new ZXing.Windows.Compatibility.BarcodeWriter
+            const int threshold = 180;
+            var writer = new ZXing.ImageSharp.BarcodeWriter<Rgba32>
             {
                 Format = BarcodeFormat.QR_CODE,
                 Options = new QrCodeEncodingOptions
                 {
-                    Height = 30,
-                    Width = 30,
+                    Width = 33,
+                    Height = 33,
                     Margin = 1
+
                 }
             };
-            var bitmap = writer.Write(text);
+            var image = writer.WriteAsImageSharp<Rgba32>(text);
 
-            // Convert the bitmap to a boolean array
-            bool[,] pixels = new bool[bitmap.Width, bitmap.Height];
-            for (int y = 0; y < bitmap.Height; y++)
+            int[,] points = new int[image.Width, image.Height];
+
+            for (var i = 0; i < image.Width; i++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (var j = 0; j < image.Height; j++)
                 {
-                    pixels[x, y] = bitmap.GetPixel(x, y).R == 0;
+                    //获取该像素点的RGB的颜色
+                    var color = image[i, j];
+                    if (color.B <= threshold)
+                    {
+                        points[i, j] = 1;
+                    }
+                    else
+                    {
+                        points[i, j] = 0;
+                    }
                 }
             }
 
-            // Print the QR code to the console
-            for (int y = 0; y < bitmap.Height; y++)
+
+            for (var i = 0; i < image.Width; i++)
             {
-                for (int x = 0; x < bitmap.Width; x++)
+                for (var j = 0; j < image.Height; j++)
                 {
-                    Console.Write(pixels[x, y] ? "██" : "  ");
+                    //获取该像素点的RGB的颜色
+                    if (points[i, j] == 0)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.Write("  ");
+                        Console.ResetColor();
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.ForegroundColor = ConsoleColor.White;
+                        Console.Write("  ");
+                        Console.ResetColor();
+                    }
                 }
-                Console.WriteLine();
+                Console.Write("\n");
             }
         }
 

@@ -14,7 +14,20 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
-
+        public static List<(int id, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> GetOverview()
+        {
+            List<(int id, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
+            int i = 1;
+            foreach (var item in roomInfos)
+            {
+                if (item.DownInfo.IsDownload)
+                {
+                    values.Add((id: i, uid: item.UID, roomid: item.RoomId, name: item.Name, title: item.Title.Value, downloadedSize: item.DownInfo.DownloadSize, downloadRate: item.DownInfo.RealTimeDownloadSpe, state: item.DownInfo.Status.ToString(), startTime: item.DownInfo.StartTime));
+                    i++;
+                }
+            }
+            return values;
+        }
         public static bool GetLiveStatus(long RoomId)
         {
             return _GetLiveStatus(RoomId);
@@ -176,7 +189,7 @@ namespace Core.RuntimeObject
         private static string _GetTitle(long Uid)
         {
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || string.IsNullOrEmpty(roomCard.title.Value) || roomCard.title.ExpirationTime < DateTime.Now)
+            if (roomCard == null || string.IsNullOrEmpty(roomCard.Title.Value) || roomCard.Title.ExpirationTime < DateTime.Now)
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
                 if (card == null)
@@ -185,10 +198,10 @@ namespace Core.RuntimeObject
                     roomInfos.Add(card);
                 else
                     roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
-                return card.title.Value;
+                return card.Title.Value;
             }
             else
-                return roomCard.title.Value;
+                return roomCard.Title.Value;
         }
 
         private static RoomCard ToRoomCard(UidsInfo_Class.Data data, RoomCard OldCard)
@@ -200,7 +213,7 @@ namespace Core.RuntimeObject
                     RoomCard card = new RoomCard()
                     {
                         UID = data.uid,
-                        title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                        Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
                         RoomId = data.room_id,
                         live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
                         live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
@@ -226,7 +239,7 @@ namespace Core.RuntimeObject
                 else
                 {
                     OldCard.UID = data.uid;
-                    OldCard.title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                    OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
                     OldCard.RoomId = data.room_id;
                     OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
                     OldCard.live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) };
@@ -317,7 +330,7 @@ namespace Core.RuntimeObject
                         Name = userInfo.data.name,
                         url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                         roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
-                        title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                        Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
                         cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
                         face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
                         sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
@@ -333,7 +346,7 @@ namespace Core.RuntimeObject
                     OldCard.Name = userInfo.data.name;
                     OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
                     OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) };
-                    OldCard.title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                    OldCard.Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
                     OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
                     OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };
                     OldCard.sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue };
@@ -417,7 +430,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 标题
             /// </summary>
-            public ExpansionType<string> title = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+            public ExpansionType<string> Title = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
             /// <summary>
             /// 主播简介
             /// </summary>
@@ -558,10 +571,7 @@ namespace Core.RuntimeObject
             /// 主播简介
             /// </summary>
             public ExpansionType<string> sign = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 下载标识符
-            /// </summary>
-            public bool IsDownload = false;
+       
             /// <summary>
             /// 当前Host地址
             /// </summary>
@@ -570,6 +580,50 @@ namespace Core.RuntimeObject
             /// 当前模式（1:FLV 2:HLS）
             /// </summary>
             public int CurrentMode = 0;
+            /// <summary>
+            /// 运行时下载相关信息
+            /// </summary>
+            public DownloadInfo DownInfo = new();
+            public class DownloadInfo
+            {
+                /// <summary>
+                /// 当前是否在下载
+                /// </summary>
+                public bool IsDownload = false;
+                /// <summary>
+                /// 当前房间下载任务总大小
+                /// </summary>
+                public long DownloadSize = 0;
+                /// <summary>
+                /// 实时下载速度
+                /// </summary>
+                public double RealTimeDownloadSpe = 0;
+                /// <summary>
+                /// 任务状态
+                /// </summary>
+                public DownloadStatus Status = DownloadStatus.NewTask;
+                /// <summary>
+                /// 任务开始时间
+                /// </summary>
+                public DateTime StartTime= DateTime.UnixEpoch;
+                /// <summary>
+                /// 任务结束时间
+                /// </summary>
+                public DateTime EndTime= DateTime.UnixEpoch;
+                public DownloadInfo Clone()
+                {
+                    return new DownloadInfo
+                    {
+                        IsDownload = this.IsDownload,
+                        DownloadSize = this.DownloadSize,
+                        RealTimeDownloadSpe = this.RealTimeDownloadSpe,
+                        Status = this.Status,
+                        StartTime = this.StartTime,
+                        EndTime = this.EndTime,
+                    };
+                }
+            }
+
 
             public RoomCard Clone()
             {
@@ -585,7 +639,7 @@ namespace Core.RuntimeObject
                     Like = this.Like,
                     Shell = this.Shell,
                     IsPersisting = this.IsPersisting,
-                    title = this.title.Clone(),
+                    Title = this.Title.Clone(),
                     description = this.description.Clone(),
                     attention = this.attention.Clone(),
                     online = this.online.Clone(),
@@ -621,9 +675,9 @@ namespace Core.RuntimeObject
                     level = this.level.Clone(),
                     sex = this.sex.Clone(),
                     sign = this.sign.Clone(),
-                    IsDownload = this.IsDownload,
                     Host = this.Host.Clone(),
-                    CurrentMode = this.CurrentMode
+                    CurrentMode = this.CurrentMode,
+                    DownInfo = this.DownInfo
                 };
             }
 
@@ -639,6 +693,29 @@ namespace Core.RuntimeObject
                         Value = this.Value
                     };
                 }
+            }
+             public enum DownloadStatus
+            {
+                /// <summary>
+                /// 新任务
+                /// </summary>
+                NewTask,
+                /// <summary>
+                /// 已准备
+                /// </summary>
+                Standby,
+                /// <summary>
+                /// 下载中
+                /// </summary>
+                Downloading,
+                /// <summary>
+                /// 下载结束
+                /// </summary>
+                DownloadComplete,
+                /// <summary>
+                /// 取消下载
+                /// </summary>
+                Cancel,
             }
         }
 
