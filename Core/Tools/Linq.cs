@@ -11,6 +11,8 @@ namespace Core.Tools
         internal static RuntimeObject.Download.File.EXTM3U SerializedM3U8(string str)
         {
             RuntimeObject.Download.File.EXTM3U eXTM3U = new();
+            if(string.IsNullOrEmpty(str))
+                return eXTM3U;
             int Ver = 0;
             int TimeOffSet = 0;
             long MediaSequence = 0;
