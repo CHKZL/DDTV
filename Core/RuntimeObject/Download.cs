@@ -284,8 +284,15 @@ namespace Core.RuntimeObject
             private static long WriteToFile(FileStream fs, string url)
             {
                 byte[] InitialFragment = Network.Download.File.GetFileToByte(url, true, "https://www.bilibili.com/");
-                fs.Write(InitialFragment, 0, InitialFragment.Length);
-                return InitialFragment.Length;
+                if (InitialFragment != null)
+                {
+                    fs.Write(InitialFragment, 0, InitialFragment.Length);
+                    return InitialFragment.Length;
+                }
+                else
+                {
+                    return 0;
+                }
             }
             #endregion
 
