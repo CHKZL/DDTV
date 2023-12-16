@@ -3,16 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.RuntimeObject.Download.Host;
 
 namespace Core.Tools
 {
     public class Linq
     {
-        internal static RuntimeObject.Download.File.EXTM3U SerializedM3U8(string str)
+        internal static RuntimeObject.Download.Host.HostClass SerializedM3U8(string str,ref HostClass hostClass)
         {
-            RuntimeObject.Download.File.EXTM3U eXTM3U = new();
             if(string.IsNullOrEmpty(str))
-                return eXTM3U;
+                return hostClass;
             int Ver = 0;
             int TimeOffSet = 0;
             long MediaSequence = 0;
@@ -23,49 +23,49 @@ namespace Core.Tools
                 if (list[i].Contains("#EXT-X-VERSION"))
                 {
                     int.TryParse(list[i].Split(':')[1], out Ver);
-                    eXTM3U.Version = Ver;
+                    hostClass.eXTM3U.Version = Ver;
                 }
                 else if (list[i].Contains("#EXT-X-START:TIME-OFFSET"))
                 {
                     int.TryParse(list[i].Split('=')[1], out TimeOffSet);
-                    eXTM3U.TimeOffSet = TimeOffSet;
+                    hostClass.eXTM3U.TimeOffSet = TimeOffSet;
                 }
                 else if (list[i].Contains("#EXT-X-MEDIA-SEQUENCE"))
                 {
                     long.TryParse(list[i].Split(':')[1], out MediaSequence);
-                    eXTM3U.MediaSequence = MediaSequence;
+                    hostClass.eXTM3U.MediaSequence = MediaSequence;
                 }
                 else if (list[i].Contains("#EXT-X-TARGETDURATION"))
                 {
                     double.TryParse(list[i].Split(':')[1], out Targetduration);
-                    eXTM3U.Targetduration = Targetduration;
+                    hostClass.eXTM3U.Targetduration = Targetduration;
                 }
                 else if (list[i].Contains("#EXT-X-MAP:URI"))
                 {
-                    eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"","");
+                    hostClass.eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"","");
                 }
                 else if (list[i].Contains("#EXTINF"))
                 {
                     double.TryParse(list[i].Split(':')[1].Split(',')[0], out double Duration);
-                    RuntimeObject.Download.File.EXTM3U.EXTINF eXTINF = new()
+                    RuntimeObject.Download.Host.HostClass.EXTM3U.EXTINF eXTINF = new()
                     {
                         Duration = Duration,
                         Aux = list[i - 1].Split(':')[1],
                         FileName = list[i + 1].Split('.')[0],
                         ExtensionName = list[i + 1].Split(".")[1]
                     };
-                    eXTM3U.eXTINFs.Add(eXTINF);
+                    hostClass.eXTM3U.eXTINFs.Add(eXTINF);
                 }
                 else if (list[i].Contains("#EXT-X-ENDLIST"))
                 {
-                    eXTM3U.IsEND = true;
+                    hostClass.eXTM3U.IsEND = true;
                 }  
                 else if (list[i].Contains("#EXT-X-STREAM-INF"))
                 {
-                    eXTM3U.SteramInfo = list[i + 1];
+                    hostClass.SteramInfo = list[i + 1];
                 }
             }
-            return eXTM3U;
+            return hostClass;
         }
 
         /// <summary>

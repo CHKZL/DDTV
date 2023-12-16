@@ -1,4 +1,6 @@
 ﻿using ConsoleTableExt;
+using Core.LogModule;
+using Core;
 using Core.RuntimeObject;
 using System;
 using System.Collections.Generic;
@@ -37,6 +39,7 @@ namespace CLI
 
         internal static void SeKey()
         {
+            Log.Info(nameof(SeKey),$"控制台菜单初始化完成");
             Task.Run(() =>
             {
                 while (true)

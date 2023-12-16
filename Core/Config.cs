@@ -1,4 +1,5 @@
-﻿using Core.Network.Methods;
+﻿using Core.LogModule;
+using Core.Network.Methods;
 using Masuit.Tools;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
@@ -72,6 +73,7 @@ namespace Core
                     }
                 }
             }
+            Log.Info(nameof(ReadConfiguration),$"读取配置文件完成");
         }
         /// <summary>
         /// 把当前配置写入到持久化配置文件
@@ -87,6 +89,7 @@ namespace Core
                         file.WriteLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
+                Log.Info(nameof(ReadConfiguration),$"刷新配置文件完成");
             }
         }
 
@@ -101,25 +104,27 @@ namespace Core
             /// </summary>
             public static void LoadRoomConfigurationFile()
             {
+                (int Total, int Success, int Fail) Count = new(0, 0, 0); 
                 if (!File.Exists($"{Core._ConfigDirectory}{Core._RoomConfig}"))
                 {
                     File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
                 }
                 else
                 {
-                    Console.WriteLine("test");
                     string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
                     RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
                     if (roomListDiscard != null)
                     {
                         foreach (var item in roomListDiscard.data)
                         {
+                            Count.Total++;
                             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
                             if (roomCard != null)
                             {
                                 int index = roomInfos.FindIndex(x => x.UID == item.UID);
                                 if (index != -1)
                                 {
+                                    Count.Success++;
                                     roomInfos[index].UID = item.UID;
                                     roomInfos[index].description = item.description;
                                     roomInfos[index].RoomId = item.RoomId;
@@ -128,12 +133,17 @@ namespace Core
                                     roomInfos[index].IsRemind = item.IsRemind;
                                     roomInfos[index].IsRecDanmu = item.IsRecDanmu;
                                     roomInfos[index].Like = item.Like;
-                                    roomInfos[index].Shell= item.Shell;
+                                    roomInfos[index].Shell = item.Shell;
+                                }
+                                else
+                                {
+                                    Count.Fail++;
                                 }
                             }
                             else
                             {
-                                 roomInfos.Add(item);
+                                Count.Success++;
+                                roomInfos.Add(item);
                             }
                         }
                     }
@@ -142,6 +152,7 @@ namespace Core
                         File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
                     }
                 }
+                Log.Info(nameof(LoadRoomConfigurationFile),$"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
             }
 
             public static void SaveRoomConfigurationFile()

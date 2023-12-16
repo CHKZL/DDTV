@@ -24,7 +24,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 10)
+        internal static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3)
         {
             string result = "";
             HttpWebRequest req = null;
@@ -97,7 +97,7 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        Log.Warn(nameof(PostBody), $"{ex.Status.ToString()}:{url}");
+                        Log.Warn(nameof(PostBody), $"{ex.Status.ToString()}:{url}", null, false);
 
                         if (attempt == maxAttempts - 1) // 如果已经达到最大尝试次数，就将结果设为空字符串
                         {
@@ -106,9 +106,15 @@ namespace Core.Network
                         }
                         else
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(300);
                             continue; // 如果没有达到最大尝试次数，就继续尝试
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Thread.Sleep(300);
+                        Log.Error(nameof(PostBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                        continue; // 如果没有达到最大尝试次数，就继续尝试
                     }
                 }
 

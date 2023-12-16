@@ -10,6 +10,8 @@ namespace CLI
 {
     internal class Record
     {
+       static bool TEST = true;
+
         /// <summary>
         /// 开播事件
         /// </summary>
@@ -17,20 +19,26 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(object? sender, RoomList.RoomCard e)
         {
-            if (e.IsRemind)
+            //if (TEST)
             {
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})开播，等待30秒使HLS源生效");
-            }
-            if (e.IsAutoRec)
-            {
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制");
-                do
+               
+                TEST = false;
+                if (e.IsRemind)
                 {
-                    await Download.File.DlwnloadHls_avc_Mp4(e);
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})开播，等待30秒使HLS源生效");
                 }
-                while (e.live_status.Value == 1);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束");
+                if (e.IsAutoRec)
+                {
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制");
+                    do
+                    {
+                        await Download.File.DlwnloadHls_avc_mp4(e);
+                    }
+                    while (RoomList.GetLiveStatus(e.RoomId));
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束");
+                }
             }
+
 
         }
 

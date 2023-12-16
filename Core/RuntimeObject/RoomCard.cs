@@ -53,6 +53,11 @@ namespace Core.RuntimeObject
             return _GetTitle(Uid);
         }
 
+        public static (int Total,int Download) GetTasksInDownloadCount()
+        {
+            return (roomInfos.Count, roomInfos.Count(roomCard => roomCard.DownInfo.IsDownload));
+        }
+
 
         #endregion
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.LogModule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,22 +13,25 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2023-12-16 18:08:38";
+        public static string CompiledVersion = "2023-12-17 04:09:44";
         public static bool IsDevDebug = false;
         public static void Start()
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
+            ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096;
             ServicePointManager.Expect100Continue = false;
             LogModule.Log.LogInit();
-
+            Log.Info(nameof(Init),$"初始化工作路径为:{Environment.CurrentDirectory}");
+            Log.Info(nameof(Init),$"检查和创建必要的目录");
+            Log.Info(nameof(Init),$"初始化ServicePointManager对象");
             Config.ReadConfiguration();
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
-
+            Log.Info(nameof(Init),$"Core初始化完成");
         }
         /// <summary>
         /// 初始化文件和目录
