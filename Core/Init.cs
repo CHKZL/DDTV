@@ -12,10 +12,11 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2023-12-14 00:51:59";
+        public static string CompiledVersion = "2023-12-16 18:08:38";
         public static bool IsDevDebug = false;
         public static void Start()
         {
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;

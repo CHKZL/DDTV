@@ -241,8 +241,8 @@ namespace Core.RuntimeObject
                             }
                         }
                     }
-                },token);
-                DownloadCompletedReset(Card);
+                }, token);
+                Card = DownloadCompletedReset(Card);
                 return Success;
             }
 
@@ -264,7 +264,7 @@ namespace Core.RuntimeObject
             /// 下载完成重置房间卡状态
             /// </summary>
             /// <param name="roomCard"></param>
-            private static void DownloadCompletedReset(RoomList.RoomCard roomCard)
+            private static RoomList.RoomCard DownloadCompletedReset(RoomList.RoomCard roomCard)
             {
 
                 roomCard.DownInfo.IsDownload = false;
@@ -272,6 +272,7 @@ namespace Core.RuntimeObject
                 roomCard.DownInfo.RealTimeDownloadSpe = 0;
                 roomCard.DownInfo.Status = RoomList.RoomCard.DownloadStatus.DownloadComplete;
                 roomCard.DownInfo.EndTime = DateTime.Now;
+                return roomCard;
             }
 
 

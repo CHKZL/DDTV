@@ -35,10 +35,10 @@ namespace Core.Network
                         switch (ex.Status)
                         {
                             case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(DownloadFile), $"Timeout:{URL}");
+                                Log.Warn(nameof(DownloadFile), $"Timeout:{URL}",null,false);
                                 break;
                             default:
-                                Log.Warn(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
+                                Log.Warn(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}",null,false);
                                 break;
                         }
                         retries++;
@@ -46,6 +46,7 @@ namespace Core.Network
                         throw;
                     }
                 }
+                Log.Warn(nameof(DownloadFile), $"重试{maxRetries}次均失败:{URL}");
                 return false;
             }
 
@@ -71,10 +72,10 @@ namespace Core.Network
                         switch (ex.Status)
                         {
                             case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(DownloadFileAsync), $"Timeout:{URL}");
+                                Log.Warn(nameof(DownloadFileAsync), $"Timeout:{URL}",null,false);
                                 break;
                             default:
-                                Log.Warn(nameof(DownloadFileAsync), $"{ex.Status.ToString()}:{URL}");
+                                Log.Warn(nameof(DownloadFileAsync), $"{ex.Status.ToString()}:{URL}",null,false);
                                 break;
                         }
                         retries++;
@@ -82,6 +83,7 @@ namespace Core.Network
                         throw;
                     }
                 }
+                Log.Warn(nameof(DownloadFileAsync), $"重试{maxRetries}次均失败:{URL}");
                 return default;
             }
 
@@ -109,10 +111,10 @@ namespace Core.Network
                         switch (ex.Status)
                         {
                             case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(GetFileToString), $"Timeout:{URL}");
+                                Log.Warn(nameof(GetFileToString), $"Timeout:{URL}",null,false);
                                 break;
                             default:
-                                Log.Warn(nameof(GetFileToString), $"{ex.Status.ToString()}:{URL}");
+                                Log.Warn(nameof(GetFileToString), $"{ex.Status.ToString()}:{URL}",null,false);
                                 break;
                         }
                         retries++;
@@ -120,6 +122,7 @@ namespace Core.Network
                         throw;
                     }
                 }
+                Log.Warn(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
                 return default;
             }
             public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "", int maxRetries = 10)
@@ -144,10 +147,10 @@ namespace Core.Network
                         switch (ex.Status)
                         {
                             case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(GetFileToByte), $"Timeout:{URL}");
+                                Log.Warn(nameof(GetFileToByte), $"Timeout:{URL}",null,false);
                                 break;
                             default:
-                                Log.Warn(nameof(GetFileToByte), $"{ex.Status.ToString()}:{URL}");
+                                Log.Warn(nameof(GetFileToByte), $"{ex.Status.ToString()}:{URL}",null,false);
                                 break;
                         }
                         retries++;
@@ -155,6 +158,7 @@ namespace Core.Network
                         throw;
                     }
                 }
+                Log.Warn(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
                 return default;
             }
 
