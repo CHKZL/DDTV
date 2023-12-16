@@ -8,6 +8,7 @@ using ConsoleTableExt;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 
 namespace CLI
 {
@@ -30,13 +31,12 @@ namespace CLI
             {
                 protected override Task ExecuteAsync(CancellationToken stoppingToken)
                 {
-                    return Task.Run(() =>
+                    return Task.Run(async () =>
                     {
                         Core.Init.Start();//初始化必须执行的
-
                         if (!Account.AccountInformation.State)
                         {
-                            Login.QR();//如果没有登录态，需要执行扫码
+                            await Login.QR();//如果没有登录态，需要执行扫码
                         }
                         while (!Account.AccountInformation.State)
                         {
@@ -46,7 +46,22 @@ namespace CLI
                         DetectRoom detectRoom = new();//实例化房间监听
                         detectRoom.start();//启动房间监听
                         detectRoom.LiveStart += Record.DetectRoom_LiveStart;//开播事件
+                        Log.Info(nameof(DetectRoom), $"注册开播事件");
                         detectRoom.LiveEnd += Record.DetectRoom_LiveEnd;//下播事件
+                        Log.Info(nameof(DetectRoom), $"注册下播事件");
+#if DEBUG
+                        Task.Run(() =>
+                        {
+                            while (true)
+                            {
+                                Process currentProcess = Process.GetCurrentProcess();
+                                long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
+                                (int Total, int Download) = Core.RuntimeObject.RoomList.GetTasksInDownloadCount();
+                                Log.Info("DokiDoki", $"总:{Total}|录制中:{Download}|使用内存:{Core.Tools.Linq.ConversionSize(totalBytesOfMemoryUsed, Core.Tools.Linq.ConversionSizeType.String)}|{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
+                                Thread.Sleep(60 * 1000);
+                            }
+                        });
+# endif
                     });
                 }
 

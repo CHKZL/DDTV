@@ -23,7 +23,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 10)
+        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
         {
             string result = "";
             HttpWebRequest req = null;
@@ -58,7 +58,6 @@ namespace Core.Network
                     catch (WebException ex)
                     {
                         Log.Warn(nameof(GetBody), $"{ex.Status.ToString()}:{url}", null, false);
-
                         if (attempt == maxAttempts - 1) // 如果已经达到最大尝试次数，就将结果设为空字符串
                         {
                             Log.Warn(nameof(GetBody), $"重试{maxAttempts}次均失败:{url}");
@@ -66,9 +65,15 @@ namespace Core.Network
                         }
                         else
                         {
-                            Thread.Sleep(100);
+                            Thread.Sleep(300);
                             continue; // 如果没有达到最大尝试次数，就继续尝试
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Thread.Sleep(300);
+                        Log.Error(nameof(GetBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                        continue; // 如果没有达到最大尝试次数，就继续尝试
                     }
                 }
 
