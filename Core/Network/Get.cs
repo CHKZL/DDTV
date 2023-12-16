@@ -1,4 +1,6 @@
-﻿using Core.RuntimeObject;
+﻿using AngleSharp.Dom;
+using Core.LogModule;
+using Core.RuntimeObject;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -21,7 +23,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded")
+        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 10)
         {
             string result = "";
             HttpWebRequest req = null;
@@ -39,11 +41,37 @@ namespace Core.Network
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
                 if (specialheaders != null) req.Headers = specialheaders;
                 if (IsCookie && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
-                rep = (HttpWebResponse)req.GetResponse();
-                using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
+                for (int attempt = 0; attempt < maxAttempts; attempt++)
                 {
-                    result = reader.ReadToEnd();
+                    try
+                    {
+                        rep = (HttpWebResponse)req.GetResponse();
+                        using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
+                        {
+                            result = reader.ReadToEnd();
+                        }
+                        if (!string.IsNullOrEmpty(result))
+                        {
+                            break; // 如果成功获取响应，就跳出循环
+                        }
+                    }
+                    catch (WebException ex)
+                    {
+                        Log.Warn(nameof(GetBody), $"{ex.Status.ToString()}:{url}", null, false);
+
+                        if (attempt == maxAttempts - 1) // 如果已经达到最大尝试次数，就将结果设为空字符串
+                        {
+                            Log.Warn(nameof(GetBody), $"重试{maxAttempts}次均失败:{url}");
+                            result = string.Empty;
+                        }
+                        else
+                        {
+                            Thread.Sleep(100);
+                            continue; // 如果没有达到最大尝试次数，就继续尝试
+                        }
+                    }
                 }
+
             }
             finally
             {
@@ -51,7 +79,6 @@ namespace Core.Network
                 if (req != null) req.Abort();
             }
             return result;
-
         }
     }
 }
