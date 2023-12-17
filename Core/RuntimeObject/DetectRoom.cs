@@ -69,7 +69,7 @@ namespace Core.RuntimeObject
                             {
                                 if (newCard.live_status.Value == 1)
                                 {
-                                    LiveStart.Invoke(null, newCard);
+                                    LiveStart.Invoke(null,newCard);
                                 }
                                 else if (oldCard.live_status.Value != -1)
                                 {

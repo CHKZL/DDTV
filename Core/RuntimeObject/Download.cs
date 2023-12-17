@@ -37,12 +37,17 @@ namespace Core.RuntimeObject
                 if (hostClass.Effective)
                 {
                     string Inp = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
-                    hostClass = Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(Inp), ref hostClass);
-                    if (hostClass.eXTM3U.eXTINFs.Count != 0 )
+                    string webref = Network.Download.File.GetFileToString(Inp, true);
+                    if (string.IsNullOrEmpty(webref))
+                    {
+                        Log.Debug("test", $"获取网络文件为空，房间号:{RoomId}");
+                    }
+                    hostClass = Tools.Linq.SerializedM3U8(webref, ref hostClass);
+                    if (hostClass.eXTM3U.eXTINFs.Count != 0)
                     {
                         return true;
                     }
-                    else if(hostClass.eXTM3U.eXTINFs.Count == 0 && RefreshHostClass(ref hostClass))
+                    else if (hostClass.eXTM3U.eXTINFs.Count == 0 && RefreshHostClass(RoomId, ref hostClass))
                     {
                         return false;
                     }
@@ -50,10 +55,13 @@ namespace Core.RuntimeObject
                 return false;
             }
 
-            internal static bool RefreshHostClass(ref HostClass m3u8)
+            internal static bool RefreshHostClass(long RoomId, ref HostClass m3u8)
             {
                 string fileContent = string.Empty;
-
+                if (!RoomList.GetLiveStatus(RoomId))
+                {
+                    return false;
+                }
                 if (!string.IsNullOrEmpty(m3u8.SteramInfo))
                 {
                     fileContent = m3u8.SteramInfo;
@@ -66,7 +74,12 @@ namespace Core.RuntimeObject
 
                 if (!string.IsNullOrEmpty(fileContent))
                 {
-                    Tools.Linq.SerializedM3U8(Network.Download.File.GetFileToString(fileContent), ref m3u8);
+                    string webref = Network.Download.File.GetFileToString(fileContent, true);
+                    if (string.IsNullOrEmpty(webref))
+                    {
+                        Log.Debug("test", $"获取网络文件为空，房间号:{RoomId}");
+                    }
+                    Tools.Linq.SerializedM3U8(webref, ref m3u8);
                     return true;
                 }
 
@@ -233,22 +246,20 @@ namespace Core.RuntimeObject
             public static async Task<bool> DlwnloadHls_avc_mp4(RoomList.RoomCard Card)
             {
                 bool Success = false;
-                Card.DownInfo.IsDownload = true;
-                Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
-                string Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(Card.RoomId)));
-                long RoomId = Card.RoomId;
-                string DirName = $"{Config.Core._RecFileDirectory}{Card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(Card.RoomId))}";
-                bool Initialization = false;
-                long CurrentLocation = 0;
-                DateTime LastTime = DateTime.MinValue;
-                if (!Directory.Exists(DirName))
-                {
-                    Directory.CreateDirectory(DirName);
-                }
-                CancellationTokenSource cts = new CancellationTokenSource();
-                CancellationToken token = cts.Token;
                 await Task.Run(() =>
                 {
+                    Card.DownInfo.IsDownload = true;
+                    Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
+                    string Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(Card.RoomId)));
+                    long RoomId = Card.RoomId;
+                    string DirName = $"{Config.Core._RecFileDirectory}{Card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(Card.RoomId))}";
+                    bool Initialization = false;
+                    long CurrentLocation = 0;
+                    DateTime LastTime = DateTime.MinValue;
+                    if (!Directory.Exists(DirName))
+                    {
+                        Directory.CreateDirectory(DirName);
+                    }
                     using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
                     {
                         int HLS_Error_Count = 0;
@@ -257,10 +268,15 @@ namespace Core.RuntimeObject
                         {
                             if (HLS_Error_Count > 3)
                             {
-                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"获取HLS流失败，放弃该任务");
-
+                                HLS_Error_Count = 0;
+                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{Card.Name}({Card.RoomId})]获取HLS流失败，10秒后重试该直播间");
                                 Success = false;
-                                cts.Cancel();
+                                if (!RoomList.GetLiveStatus(Card.RoomId))
+                                {
+                                    Success = false;
+                                }
+
+                                Thread.Sleep(1000 * 10);
                             }
                             HLS_Error_Count++;
                             Thread.Sleep(1000 * 10);
@@ -280,57 +296,61 @@ namespace Core.RuntimeObject
                             long DownloadSizeForThisCycle = 0;
                             try
                             {
-                                HLS_Error_Count = 0;
-                                while (!RefreshHostClass(ref hostClass))
+                                bool T = GetHlsHost_avc(RoomId, ref hostClass);
+                                if (!T)
                                 {
+                                    HLS_Error_Count++;
                                     if (HLS_Error_Count > 3)
                                     {
-                                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"获取HLS片段失败，跳过这个片段等待下一个周期重试");
-                                        GetHlsHost_avc(RoomId, ref hostClass);
-                                        break;
+                                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{Card.Name}({Card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
+                                        if (!RoomList.GetLiveStatus(Card.RoomId))
+                                        {
+                                            Success = false;
+                                            return;
+                                        }
+                                        Thread.Sleep(2000);
+                                        continue;
                                     }
-                                    HLS_Error_Count++;
-                                    Thread.Sleep(200);
+                                    Thread.Sleep(500);
                                 }
-                                if (HLS_Error_Count > 3)
+                                else
                                 {
-                                    continue;
-                                }
-                                if (!Initialization)
-                                {
-                                    Initialization = true;
-                                    DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
-                                }
-
-                                foreach (var item in hostClass.eXTM3U.eXTINFs)
-                                {
-                                    if (long.TryParse(item.FileName, out long index) && index > CurrentLocation)
+                                    if (!Initialization)
                                     {
-                                        DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
-                                        CurrentLocation = index;
+                                        Initialization = true;
+                                        DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                     }
+
+                                    foreach (var item in hostClass.eXTM3U.eXTINFs)
+                                    {
+                                        if (long.TryParse(item.FileName, out long index) && index > CurrentLocation)
+                                        {
+                                            DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
+                                            CurrentLocation = index;
+                                        }
+                                    }
+                                    hostClass.eXTM3U.eXTINFs = new();
+                                    double mt = DateTime.Now.Subtract(LastTime).TotalMilliseconds;
+                                    Card.DownInfo.RealTimeDownloadSpe = (DownloadSizeForThisCycle / mt) * 1000;
+                                    LastTime = DateTime.Now;
+                                    Card.DownInfo.DownloadSize += DownloadSizeForThisCycle;
+
+                                    if (hostClass.eXTM3U.IsEND)
+                                    {
+                                        Success = true;
+                                        return;
+                                    }
+                                    Thread.Sleep(500);
                                 }
-                                hostClass.eXTM3U.eXTINFs = new();
-                                double mt = DateTime.Now.Subtract(LastTime).TotalMilliseconds;
-                                Card.DownInfo.RealTimeDownloadSpe = (DownloadSizeForThisCycle / mt) * 1000;
-                                LastTime = DateTime.Now;
-                                Card.DownInfo.DownloadSize += DownloadSizeForThisCycle;
-
-                                if (hostClass.eXTM3U.IsEND)
-                                    Success = true;
-
-                                Thread.Sleep(500);
                             }
                             catch (Exception)
                             {
                                 Thread.Sleep(500);
                             }
                         }
-
                     }
-                }, token);
-                Card = DownloadCompletedReset(Card);
-                return Success;
+                });
+                return DownloadCompletedReset(Success, ref Card);
             }
 
 
@@ -352,15 +372,15 @@ namespace Core.RuntimeObject
             /// 下载完成重置房间卡状态
             /// </summary>
             /// <param name="roomCard"></param>
-            private static RoomList.RoomCard DownloadCompletedReset(RoomList.RoomCard roomCard)
+            private static bool DownloadCompletedReset(bool NormalEnd, ref RoomList.RoomCard roomCard)
             {
-
+                Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
                 roomCard.DownInfo.IsDownload = false;
                 roomCard.DownInfo.DownloadSize = 0;
                 roomCard.DownInfo.RealTimeDownloadSpe = 0;
                 roomCard.DownInfo.Status = RoomList.RoomCard.DownloadStatus.DownloadComplete;
                 roomCard.DownInfo.EndTime = DateTime.Now;
-                return roomCard;
+                return NormalEnd;
             }
 
 

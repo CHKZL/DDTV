@@ -22,6 +22,7 @@ namespace Core.Network
                     try
                     {
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                        request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
@@ -77,6 +78,7 @@ namespace Core.Network
                     try
                     {
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                        request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
@@ -132,6 +134,7 @@ namespace Core.Network
                     try
                     {
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                        request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
@@ -171,7 +174,7 @@ namespace Core.Network
                     }
                 }
                 Log.Warn(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
-                return default;
+                return null;
             }
             public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
@@ -181,6 +184,7 @@ namespace Core.Network
                     try
                     {
                         HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                        request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
                         request.ContentType = "application/x-www-form-urlencoded";
