@@ -290,7 +290,8 @@ namespace Core.RuntimeObject
                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"{StarText}");
                         Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
                         Card.DownInfo.StartTime = DateTime.Now;
-
+                        
+                        List<(long size, DateTime time)> values = new();
                         while (true)
                         {
                             long DownloadSizeForThisCycle = 0;
@@ -330,9 +331,13 @@ namespace Core.RuntimeObject
                                         }
                                     }
                                     hostClass.eXTM3U.eXTINFs = new();
-                                    double mt = DateTime.Now.Subtract(LastTime).TotalMilliseconds;
-                                    Card.DownInfo.RealTimeDownloadSpe = (DownloadSizeForThisCycle / mt) * 1000;
-                                    LastTime = DateTime.Now;
+                                    values.Add((DownloadSizeForThisCycle, DateTime.Now));
+                                    while (values.Count >= 10)
+                                    {
+                                        values.RemoveAt(0);
+                                    }
+
+                                    Card.DownInfo.RealTimeDownloadSpe = (values.Sum(x => x.size) / DateTime.Now.Subtract(values[0].time).TotalMilliseconds) * 1000;
                                     Card.DownInfo.DownloadSize += DownloadSizeForThisCycle;
 
                                     if (hostClass.eXTM3U.IsEND)
