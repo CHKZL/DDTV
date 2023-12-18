@@ -274,6 +274,7 @@ namespace Core.RuntimeObject
                                 if (!RoomList.GetLiveStatus(Card.RoomId))
                                 {
                                     Success = false;
+                                    return;
                                 }
 
                                 Thread.Sleep(1000 * 10);
