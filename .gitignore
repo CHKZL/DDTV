@@ -434,3 +434,4 @@ healthchecksdb
 /Doc/docs/.vuepress/dist/
 /DanMu_Demo
 /TestProject
+/CLI/Properties/launchSettings.json
