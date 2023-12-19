@@ -538,7 +538,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
 
                                 if (index == null)
                                 {
-                                    goto D_start;
+                                    if(Rooms.GetValue(Uid,DataCacheModule.DataCacheClass.CacheType.live_status)=="1")
+                                    {
+                                         goto D_start;
+                                    }
+                                    else
+                                    {
+                                        return 0;
+                                    }
                                 }
                                 else if (index.Contains("EXT-X-STREAM-INF"))
                                 {
@@ -604,7 +611,14 @@ namespace DDTV_Core.SystemAssembly.DownloadModule
                                         index = NetworkRequestModule.Get.Get.GetRequest(Url);
                                         if (index == null)
                                         {
-                                            break;
+                                            if (Rooms.GetValue(Uid, DataCacheModule.DataCacheClass.CacheType.live_status) == "1")
+                                            {
+                                                goto D_start;
+                                            }
+                                            else
+                                            {
+                                                return 0;
+                                            }
                                         }
                                         else if (index.Contains("EXT-X-STREAM-INF"))
                                         {

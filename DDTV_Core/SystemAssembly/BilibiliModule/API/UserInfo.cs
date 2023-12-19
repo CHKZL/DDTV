@@ -112,7 +112,7 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API
                         }
                         DataCache.SetCache(CacheType.room_id, uid.ToString(), data.live_room.roomid.ToString(), int.MaxValue);
                         DataCache.SetCache(CacheType.level, uid.ToString(), data.level.ToString(), 3600 * 1000);
-                        DataCache.SetCache(CacheType.live_status, uid.ToString(), data.live_room.liveStatus.ToString(), 0);
+                        DataCache.SetCache(CacheType.live_status, uid.ToString(), data.live_room.liveStatus.ToString(), 500);
                         DataCache.SetCache(CacheType.uname, uid.ToString(), data.name, int.MaxValue);
                         DataCache.SetCache(CacheType.face, uid.ToString(), data.face, int.MaxValue);
                         DataCache.SetCache(CacheType.roomStatus, uid.ToString(), data.live_room.roomStatus.ToString(), 300 * 1000);
