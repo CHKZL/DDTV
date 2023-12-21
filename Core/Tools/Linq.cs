@@ -42,19 +42,18 @@ namespace Core.Tools
                 }
                 else if (list[i].Contains("#EXT-X-MAP:URI"))
                 {
-                    hostClass.eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"","");
+                    hostClass.eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"", "");
                 }
                 else if (list[i].Contains("#EXTINF"))
                 {
                     double.TryParse(list[i].Split(':')[1].Split(',')[0], out double Duration);
-                    RuntimeObject.Download.Host.HostClass.EXTM3U.EXTINF eXTINF = new()
+                    hostClass.eXTM3U.eXTINFs.Add(new()
                     {
                         Duration = Duration,
                         Aux = list[i - 1].Split(':')[1],
                         FileName = list[i + 1].Split('.')[0],
                         ExtensionName = list[i + 1].Split(".")[1]
-                    };
-                    hostClass.eXTM3U.eXTINFs.Add(eXTINF);
+                    });
                 }
                 else if (list[i].Contains("#EXT-X-ENDLIST"))
                 {

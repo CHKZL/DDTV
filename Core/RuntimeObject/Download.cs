@@ -241,112 +241,77 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 录制HLS_avc制式的MP4文件
             /// </summary>
-            /// <param name="Card"></param>
-            /// <returns></returns>
-            public static async Task<bool> DlwnloadHls_avc_mp4(RoomList.RoomCard Card)
+            /// <param name="card">房间卡片信息</param>
+            /// <returns>是否成功下载</returns>
+            public static async Task<bool> DlwnloadHls_avc_mp4(RoomList.RoomCard card)
             {
-                bool Success = false;
+                bool isSuccess = false;
                 await Task.Run(() =>
                 {
-                    Card.DownInfo.IsDownload = true;
-                    Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
-                    string Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(Card.RoomId)));
-                    long RoomId = Card.RoomId;
-                    string DirName = $"{Config.Core._RecFileDirectory}{Card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(Card.RoomId))}";
-                    bool Initialization = false;
-                    long CurrentLocation = 0;
-                    DateTime LastTime = DateTime.MinValue;
-                    if (!Directory.Exists(DirName))
+                    // 初始化下载
+                    InitializeDownload(card);
+                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(card.RoomId)));
+                    long roomId = card.RoomId;
+                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(card.RoomId))}";
+                    bool isInitialized = false;
+                    long currentLocation = 0;
+
+                    // 如果目录不存在，则创建目录
+                    CreateDirectoryIfNotExists(dirName);
+
+                    // 使用FileStream进行文件操作
+                    using (FileStream fs = new FileStream($"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
                     {
-                        Directory.CreateDirectory(DirName);
-                    }
-                    using (FileStream fs = new FileStream($"{DirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}.mp4", FileMode.Append))
-                    {
-                        int HLS_Error_Count = 0;
+                        int hlsErrorCount = 0;
                         HostClass hostClass = new();
-                        while (!GetHlsHost_avc(RoomId, ref hostClass))
+                        while (!GetHlsHost_avc(roomId, ref hostClass))
                         {
-                            if (HLS_Error_Count > 3)
-                            {
-                                HLS_Error_Count = 0;
-                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{Card.Name}({Card.RoomId})]获取HLS流失败，10秒后重试该直播间");
-                                Success = false;
-                                if (!RoomList.GetLiveStatus(Card.RoomId))
-                                {
-                                    Success = false;
-                                    return;
-                                }
-
-                                Thread.Sleep(1000 * 10);
-                            }
-                            HLS_Error_Count++;
-                            Thread.Sleep(1000 * 10);
+                            // 处理HLS错误
+                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId);
                         }
-                        string StarText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n" +
-                        $"直播间:{Card.RoomId}\n" +
-                        $"UID:{Card.UID}\n" +
-                        $"昵称:{Card.Name}\n" +
-                        $"标题:{Card.Title.Value}";
 
-                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"{StarText}");
-                        Card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
-                        Card.DownInfo.StartTime = DateTime.Now;
-                        
+                        // 记录下载开始
+                        LogDownloadStart(card);
                         List<(long size, DateTime time)> values = new();
+
                         while (true)
                         {
-                            long DownloadSizeForThisCycle = 0;
+                            long downloadSizeForThisCycle = 0;
                             try
                             {
-                                bool T = GetHlsHost_avc(RoomId, ref hostClass);
-                                if (!T)
+                                bool isHlsHostAvailable = GetHlsHost_avc(roomId, ref hostClass);
+                                if (!isHlsHostAvailable)
                                 {
-                                    HLS_Error_Count++;
-                                    if (HLS_Error_Count > 3)
-                                    {
-                                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{Card.Name}({Card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
-                                        if (!RoomList.GetLiveStatus(Card.RoomId))
-                                        {
-                                            Success = false;
-                                            return;
-                                        }
-                                        Thread.Sleep(2000);
-                                        continue;
-                                    }
-                                    Thread.Sleep(500);
+                                    // 处理HLS片段错误
+                                    hlsErrorCount = HandleHlsSegmentError(hlsErrorCount, card, roomId);
+                                    continue;
                                 }
                                 else
                                 {
-                                    if (!Initialization)
+                                    if (!isInitialized)
                                     {
-                                        Initialization = true;
-                                        DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
+                                        isInitialized = true;
+                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                     }
 
                                     foreach (var item in hostClass.eXTM3U.eXTINFs)
                                     {
-                                        if (long.TryParse(item.FileName, out long index) && index > CurrentLocation)
+                                        if (long.TryParse(item.FileName, out long index) && index > currentLocation)
                                         {
-                                            DownloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
-                                            CurrentLocation = index;
+                                            downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
+                                            currentLocation = index;
                                         }
                                     }
-                                    hostClass.eXTM3U.eXTINFs = new();
-                                    values.Add((DownloadSizeForThisCycle, DateTime.Now));
-                                    while (values.Count >= 10)
-                                    {
-                                        values.RemoveAt(0);
-                                    }
 
-                                    Card.DownInfo.RealTimeDownloadSpe = (values.Sum(x => x.size) / DateTime.Now.Subtract(values[0].time).TotalMilliseconds) * 1000;
-                                    Card.DownInfo.DownloadSize += DownloadSizeForThisCycle;
+                                    hostClass.eXTM3U.eXTINFs = new();
+                                    values.Add((downloadSizeForThisCycle, DateTime.Now));
+                                    values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle);
 
                                     if (hostClass.eXTM3U.IsEND)
                                     {
-                                        Success = true;
+                                        isSuccess = true;
                                         return;
                                     }
-                                    Thread.Sleep(500);
                                 }
                             }
                             catch (Exception)
@@ -356,8 +321,114 @@ namespace Core.RuntimeObject
                         }
                     }
                 });
-                return DownloadCompletedReset(Success, ref Card);
+                return DownloadCompletedReset(isSuccess, ref card);
             }
+
+            /// <summary>
+            /// 初始化下载
+            /// </summary>
+            /// <param name="card">房间卡片信息</param>
+            private static void InitializeDownload(RoomList.RoomCard card)
+            {
+                card.DownInfo.IsDownload = true;
+                card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
+            }
+
+            /// <summary>
+            /// 如果目录不存在，则创建目录
+            /// </summary>
+            /// <param name="dirName">目录名称</param>
+            private static void CreateDirectoryIfNotExists(string dirName)
+            {
+                if (!Directory.Exists(dirName))
+                {
+                    Directory.CreateDirectory(dirName);
+                }
+            }
+
+            /// <summary>
+            /// 处理HLS错误
+            /// </summary>
+            /// <param name="hlsErrorCount">HLS错误计数</param>
+            /// <param name="card">房间卡片信息</param>
+            /// <param name="roomId">房间ID</param>
+            /// <returns>更新后的HLS错误计数</returns>
+            private static int HandleHlsError(int hlsErrorCount, RoomList.RoomCard card, long roomId)
+            {
+                if (hlsErrorCount > 3)
+                {
+                    hlsErrorCount = 0;
+                    Log.Info(nameof(DownloadHlsAvcMp4), $"[{card.Name}({card.RoomId})]获取HLS流失败，10秒后重试该直播间");
+                    if (!RoomList.GetLiveStatus(card.RoomId))
+                    {
+                        return hlsErrorCount;
+                    }
+                    Thread.Sleep(1000 * 10);
+                }
+                hlsErrorCount++;
+                Thread.Sleep(1000 * 10);
+                return hlsErrorCount;
+            }
+
+            /// <summary>
+            /// 记录下载开始
+            /// </summary>
+            /// <param name="card">房间卡片信息</param>
+            private static void LogDownloadStart(RoomList.RoomCard card)
+            {
+                string startText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n" +
+                $"直播间:{card.RoomId}\n" +
+                $"UID:{card.UID}\n" +
+                $"昵称:{card.Name}\n" +
+                $"标题:{card.Title.Value}";
+
+                Log.Info(nameof(DownloadHlsAvcMp4), $"{startText}");
+                card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
+                card.DownInfo.StartTime = DateTime.Now;
+            }
+
+            /// <summary>
+            /// 处理HLS片段错误
+            /// </summary>
+            /// <param name="hlsErrorCount">HLS错误计数</param>
+            /// <param name="card">房间卡片信息</param>
+            /// <param name="roomId">房间ID</param>
+            /// <returns>更新后的HLS错误计数</returns>
+            private static int HandleHlsSegmentError(int hlsErrorCount, RoomList.RoomCard card, long roomId)
+            {
+                hlsErrorCount++;
+                if (hlsErrorCount > 3)
+                {
+                    Log.Info(nameof(DownloadHlsAvcMp4), $"[{card.Name}({card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
+                    if (!RoomList.GetLiveStatus(card.RoomId))
+                    {
+                        return hlsErrorCount;
+                    }
+                    Thread.Sleep(2000);
+                }
+                Thread.Sleep(500);
+                return hlsErrorCount;
+            }
+
+            /// <summary>
+            /// 更新下载速度
+            /// </summary>
+            /// <param name="values">下载值列表</param>
+            /// <param name="card">房间卡片信息</param>
+            /// <param name="downloadSizeForThisCycle">本周期下载大小</param>
+            /// <returns>更新后的下载值列表</returns>
+            private static List<(long size, DateTime time)> UpdateDownloadSpeed(List<(long size, DateTime time)> values, RoomList.RoomCard card, long downloadSizeForThisCycle)
+            {
+                while (values.Count >= 10)
+                {
+                    values.RemoveAt(0);
+                }
+
+                card.DownInfo.RealTimeDownloadSpe = (values.Sum(x => x.size) / DateTime.Now.Subtract(values[0].time).TotalMilliseconds) * 1000;
+                card.DownInfo.DownloadSize += downloadSizeForThisCycle;
+                return values;
+            }
+
 
 
             /// <summary>

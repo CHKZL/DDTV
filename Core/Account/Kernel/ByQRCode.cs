@@ -329,7 +329,7 @@ namespace Core.Account.Kernel
         /// </summary>
         private class GetQrcode_DataTemplete
         {
-            public int code { set; get; }
+            public int code { set; get; } = -1;
             public Data_Templete data { set; get; }
             public class Data_Templete
             {

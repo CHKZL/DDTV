@@ -7,10 +7,20 @@ using static Core.RuntimeObject.RoomList;
 
 namespace Core.RuntimeObject
 {
+    public class _Room
+    {
+        private static Dictionary<(long, long), RoomCard> roomInfos = new Dictionary<(long Uid, long Room_Id), RoomCard>();
+        internal static RoomCard GetCardForUID(long UID)
+        {
+
+        }
+    }
+
+    
     public class RoomList
     {
         #region private Properties
-        internal static List<RoomCard> roomInfos = new List<RoomCard>();
+        
         #endregion
 
         #region Public Method
@@ -20,7 +30,7 @@ namespace Core.RuntimeObject
             int i = 1;
             foreach (var item in roomInfos)
             {
-                if (item.DownInfo.IsDownload)
+                if (item.Value.DownInfo.IsDownload)
                 {
                     values.Add((id: i, uid: item.UID, roomid: item.RoomId, name: item.Name, title: item.Title.Value, downloadedSize: item.DownInfo.DownloadSize, downloadRate: item.DownInfo.RealTimeDownloadSpe, state: item.DownInfo.Status.ToString(), startTime: item.DownInfo.StartTime));
                     i++;

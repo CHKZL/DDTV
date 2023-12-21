@@ -52,9 +52,10 @@ namespace CLI
 #if DEBUG
                         Task.Run(() =>
                         {
+                            Process currentProcess = null;
                             while (true)
                             {
-                                Process currentProcess = Process.GetCurrentProcess();
+                                currentProcess = Process.GetCurrentProcess();
                                 long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
                                 (int Total, int Download) = Core.RuntimeObject.RoomList.GetTasksInDownloadCount();
                                 Log.Info("DokiDoki", $"总:{Total}|录制中:{Download}|使用内存:{Core.Tools.Linq.ConversionSize(totalBytesOfMemoryUsed, Core.Tools.Linq.ConversionSizeType.String)}|{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
