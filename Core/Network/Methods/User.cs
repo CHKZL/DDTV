@@ -45,8 +45,17 @@ namespace Core.Network.Methods
             string salt = Get_salt(imgKey, subKey);
             string Query = Get_w_rid_string(Uid, timestamp, salt);
             string WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/space/wbi/acc/info?{Query}", true);
-            UserInfo? UserInfo_Class = JsonSerializer.Deserialize<UserInfo>(WebText);
-            return UserInfo_Class;
+            UserInfo? UserInfo_Class = new();
+            try
+            {
+                UserInfo_Class = JsonSerializer.Deserialize<UserInfo>(WebText);
+                return UserInfo_Class;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
         }
         private static string Get_salt(string imgKey, string subKey)
         {

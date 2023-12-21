@@ -46,7 +46,7 @@ namespace Core.Network.Methods
         /// <returns></returns>
         internal static RoomInfo_Class GetRoomInfo(long RoomId)
         {
-           return room_init(RoomId);
+            return room_init(RoomId);
         }
 
         #endregion
@@ -56,8 +56,17 @@ namespace Core.Network.Methods
         private static PlayInfo_Class _PlayInfo(long RoomId)
         {
             string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Download._DefaultResolution}&platform=2&ptype=2", true, "https://www.bilibili.com/");
-            PlayInfo_Class hLSHostClass = JsonSerializer.Deserialize<PlayInfo_Class>(WebText);
-            return hLSHostClass;
+            PlayInfo_Class hLSHostClass = new();
+            try
+            {
+                hLSHostClass = JsonSerializer.Deserialize<PlayInfo_Class>(WebText);
+                return hLSHostClass;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+
         }
 
         /// <summary>
@@ -73,15 +82,33 @@ namespace Core.Network.Methods
             }
             string LT = "{\"uids\":[" + string.Join(",", UIDList.Where(uid => uid != 0)) + "]}";
             string WebText = Post.PostBody($"{Config.Core._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
-            UidsInfo_Class UserInfo_Class = JsonSerializer.Deserialize<UidsInfo_Class>(WebText);
-            return UserInfo_Class;
+            UidsInfo_Class UserInfo_Class = new();
+            try
+            {
+                UserInfo_Class = JsonSerializer.Deserialize<UidsInfo_Class>(WebText);
+                return UserInfo_Class;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+
         }
 
         private static RoomInfo_Class room_init(long RoomId)
         {
             string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/room/v1/Room/room_init?id=" + RoomId, true);
-            RoomInfo_Class roomInfo = JsonSerializer.Deserialize<RoomInfo_Class>(WebText);
-            return roomInfo;
+            RoomInfo_Class roomInfo = new();
+            try
+            {
+                roomInfo = JsonSerializer.Deserialize<RoomInfo_Class>(WebText);
+                return roomInfo;
+            }
+            catch (JsonException)
+            {
+                return null;
+            }
+
         }
 
         #endregion
@@ -149,7 +176,7 @@ namespace Core.Network.Methods
             }
         }
 
-         public class PlayInfo_Class
+        public class PlayInfo_Class
         {
             public long code { get; set; }
             public string message { get; set; }

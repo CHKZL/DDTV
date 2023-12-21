@@ -25,8 +25,16 @@ namespace Core.Network.Methods
         private static Nav_Class? _NAV()
         {
             string WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
-            Nav_Class? Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
-            return Nav_Class;
+            Nav_Class? Nav_Class = new();
+            try
+            {
+                Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
+                return Nav_Class;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
 

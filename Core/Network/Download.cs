@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using AngleSharp.Io;
+using Core.LogModule;
 using Microsoft.AspNetCore.Components.RenderTree;
 using System;
 using System.Collections.Generic;
@@ -19,9 +20,10 @@ namespace Core.Network
                 int retries = 0;
                 while (retries < maxRetries)
                 {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
@@ -63,6 +65,10 @@ namespace Core.Network
                         Thread.Sleep(300);
                         Log.Error(nameof(DownloadFile), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
                     }
+                    finally
+                    {
+                        if (request != null) request.Abort();
+                    }
                 }
                 Log.Warn(nameof(DownloadFile), $"重试{maxRetries}次均失败:{URL}");
                 return false;
@@ -75,9 +81,10 @@ namespace Core.Network
                 int retries = 0;
                 while (retries < maxRetries)
                 {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
@@ -119,6 +126,10 @@ namespace Core.Network
                         Thread.Sleep(300);
                         Log.Error(nameof(DownloadFileAsync), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
                     }
+                    finally
+                    {
+                        if (request != null) request.Abort();
+                    }
                 }
                 Log.Warn(nameof(DownloadFileAsync), $"重试{maxRetries}次均失败:{URL}");
                 return default;
@@ -131,9 +142,10 @@ namespace Core.Network
                 int retries = 0;
                 while (retries < maxRetries)
                 {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
@@ -151,6 +163,7 @@ namespace Core.Network
                                 return B;
                             }
                         }
+
                     }
                     catch (WebException ex)
                     {
@@ -172,6 +185,10 @@ namespace Core.Network
                         Thread.Sleep(300);
                         Log.Error(nameof(GetFileToString), $"发生未知错误，详细堆栈:{ex.ToString()}", ex);
                     }
+                    finally
+                    {
+                        if (request != null) request.Abort();
+                    }
                 }
                 Log.Warn(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
                 return null;
@@ -181,9 +198,10 @@ namespace Core.Network
                 int retries = 0;
                 while (retries < maxRetries)
                 {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
@@ -225,6 +243,10 @@ namespace Core.Network
                         retries++;
                         Thread.Sleep(300);
                         Log.Error(nameof(GetFileToByte), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                    }
+                    finally
+                    {
+                        if (request != null) request.Abort();
                     }
                 }
                 Log.Warn(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");

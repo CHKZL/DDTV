@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "CLI": {
+      "commandName": "Project",
+      "remoteDebugEnabled": true,
+      "authenticationMode": "None"
+    }
+  }
+}
