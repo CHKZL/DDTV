@@ -250,9 +250,9 @@ namespace Core.RuntimeObject
                 {
                     // 初始化下载
                     InitializeDownload(card);
-                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(card.RoomId)));
+                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(card.UID));
                     long roomId = card.RoomId;
-                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(RoomList.GetUid(card.RoomId))}";
+                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}";
                     bool isInitialized = false;
                     long currentLocation = 0;
 
@@ -318,6 +318,7 @@ namespace Core.RuntimeObject
                             {
                                 Thread.Sleep(500);
                             }
+                            Thread.Sleep(1500);
                         }
                     }
                 });
@@ -473,6 +474,8 @@ namespace Core.RuntimeObject
                 if (InitialFragment != null)
                 {
                     fs.Write(InitialFragment, 0, InitialFragment.Length);
+                    int len = InitialFragment.Length;
+                    InitialFragment = new byte[0];
                     return InitialFragment.Length;
                 }
                 else

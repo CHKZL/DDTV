@@ -1,5 +1,6 @@
 ﻿using Core.LogModule;
 using Core.Network.Methods;
+using Core.RuntimeObject;
 using Masuit.Tools;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
@@ -73,7 +74,7 @@ namespace Core
                     }
                 }
             }
-            Log.Info(nameof(ReadConfiguration),$"读取配置文件完成");
+            Log.Info(nameof(ReadConfiguration), $"读取配置文件完成");
         }
         /// <summary>
         /// 把当前配置写入到持久化配置文件
@@ -89,7 +90,7 @@ namespace Core
                         file.WriteLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
-                Log.Info(nameof(ReadConfiguration),$"刷新配置文件完成");
+                Log.Info(nameof(ReadConfiguration), $"刷新配置文件完成");
             }
         }
 
@@ -104,66 +105,59 @@ namespace Core
             /// </summary>
             public static void LoadRoomConfigurationFile()
             {
-                (int Total, int Success, int Fail) Count = new(0, 0, 0); 
-                if (!File.Exists($"{Core._ConfigDirectory}{Core._RoomConfig}"))
+                (int Total, int Success, int Fail) Count = new(0, 0, 0);
+                if (!File.Exists($"{Core._ConfigDirectory}{Core._RoomConfigFile}"))
                 {
-                    File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
+                    File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", "{}");
                 }
                 else
                 {
-                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfig}");
+                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfigFile}");
                     RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
                     if (roomListDiscard != null)
                     {
                         foreach (var item in roomListDiscard.data)
                         {
                             Count.Total++;
-                            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
-                            if (roomCard != null)
+                            RoomCard? roomCard = new();
+                            if (_Room.GetCard(item.UID, ref roomCard))
                             {
-                                int index = roomInfos.FindIndex(x => x.UID == item.UID);
-                                if (index != -1)
-                                {
-                                    Count.Success++;
-                                    roomInfos[index].UID = item.UID;
-                                    roomInfos[index].description = item.description;
-                                    roomInfos[index].RoomId = item.RoomId;
-                                    roomInfos[index].Name = item.Name;
-                                    roomInfos[index].IsAutoRec = item.IsAutoRec;
-                                    roomInfos[index].IsRemind = item.IsRemind;
-                                    roomInfos[index].IsRecDanmu = item.IsRecDanmu;
-                                    roomInfos[index].Like = item.Like;
-                                    roomInfos[index].Shell = item.Shell;
-                                }
-                                else
-                                {
-                                    Count.Fail++;
-                                }
+                                Count.Success++;
+                                roomCard.UID = item.UID;
+                                roomCard.description = item.description;
+                                roomCard.RoomId = item.RoomId;
+                                roomCard.Name = item.Name;
+                                roomCard.IsAutoRec = item.IsAutoRec;
+                                roomCard.IsRemind = item.IsRemind;
+                                roomCard.IsRecDanmu = item.IsRecDanmu;
+                                roomCard.Like = item.Like;
+                                roomCard.Shell = item.Shell;
                             }
                             else
                             {
                                 Count.Success++;
-                                roomInfos.Add(item);
+                                _Room.SetRoomCardByUid(item.UID, item);
                             }
                         }
                     }
                     else
                     {
-                        File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", "{}");
+                        File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", "{}");
                     }
                 }
-                Log.Info(nameof(LoadRoomConfigurationFile),$"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
+                Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
             }
 
             public static void SaveRoomConfigurationFile()
             {
                 RoomListDiscard roomListDiscard = new RoomListDiscard();
+                var roomInfos = _Room.GetCardListClone();
                 foreach (var item in roomInfos)
                 {
-                    roomListDiscard.data.Add(item);
+                    roomListDiscard.data.Add(item.Value);
                 }
                 string jsonString = JsonSerializer.Serialize(roomListDiscard);
-                File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfig}", jsonString, Encoding.UTF8);
+                File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
             }
             internal class RoomListDiscard
             {
@@ -176,12 +170,12 @@ namespace Core
 
         public class Core
         {
-            private static string RoomConfig = "RoomListConfig.json";
+            private static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>
             /// 房间配置文件路径（字符串）
             /// 默认值：RoomListConfig.json
             /// </summary>
-            public static string _RoomConfig { get { return RoomConfig; } }
+            public static string _RoomConfigFile { get { return RoomConfigFile; } }
 
             private static string ConfigDirectory = "./Config/";
             /// <summary>
@@ -244,14 +238,14 @@ namespace Core
             /// 默认使用的直播API域名（字符串）
             /// 默认值：https://api.live.bilibili.com
             /// </summary>
-            public static string _LiveDomainName { get { return LiveDomainName; } set { LiveDomainName = value; } }
+            public static string _LiveDomainName { get { return LiveDomainName; } set { LiveDomainName = value; WriteConfiguration(); } }
 
             private static string MainDomainName = "https://api.bilibili.com";
             /// <summary>
             /// 默认使用的主站API域名（字符串）
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static string _MainDomainName { get { return MainDomainName; } set { MainDomainName = value; } }
+            public static string _MainDomainName { get { return MainDomainName; } set { MainDomainName = value; WriteConfiguration(); } }
 
             private static string HTTP_UA = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0";
             /// <summary>
@@ -265,7 +259,14 @@ namespace Core
             /// 直播间状态更新间隔时间（int，单位毫秒）
             /// 默认值：10000
             /// </summary>
-            public static int _DetectIntervalTime { get { return int.Parse(DetectIntervalTime); } set { DetectIntervalTime = value.ToString(); } }
+            public static int _DetectIntervalTime { get { return int.Parse(DetectIntervalTime); } set { DetectIntervalTime = value.ToString(); WriteConfiguration(); } }
+
+            private static string DebugMode = "false";
+            /// <summary>
+            /// 调试模式开关（bool）
+            /// 默认值：false
+            /// </summary>
+            public static bool _DebugMode { get { return bool.Parse(DebugMode); } set { DebugMode = value.ToString(); WriteConfiguration(); } }
         }
         public class Download
         {
@@ -274,7 +275,7 @@ namespace Core
             /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static int _DefaultResolution { get { return int.Parse(DefaultResolution); } set { DefaultResolution = value.ToString(); } }
+            public static int _DefaultResolution { get { return int.Parse(DefaultResolution); } set { DefaultResolution = value.ToString(); WriteConfiguration(); } }
         }
 
 

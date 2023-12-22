@@ -1,5 +1,6 @@
 ﻿using Core.Network.Methods;
 using Masuit.Tools.Hardware;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Text.Json.Serialization;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
@@ -9,63 +10,55 @@ namespace Core.RuntimeObject
 {
     public class _Room
     {
-        private static Dictionary<(long Uid, long Room_Id), RoomCard> roomInfos = new Dictionary<(long Uid, long Room_Id), RoomCard>();
-        internal static RoomCard GetCardForUID(long UID)
+        private static Dictionary<long, RoomCard> roomInfos = new Dictionary<long, RoomCard>();
+        /// <summary>
+        /// 通过UID获取房间卡
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <returns></returns>
+        internal static bool GetCard(long UID, ref RoomCard roomCard)
         {
-            return roomInfos.FirstOrDefault(x => x.Key.Uid == UID).Value;
+            roomCard = roomInfos.FirstOrDefault(x => x.Key == UID).Value;
+            if (roomCard != null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-        public static RoomCard GetCardForRoomId(long Room_Id)
+        /// <summary>
+        /// 获得房间列表字典的克隆轻备份
+        /// </summary>
+        /// <returns></returns>
+        public static Dictionary<long, RoomCard> GetCardListClone()
         {
-            return roomInfos.FirstOrDefault(x => x.Key.Room_Id == Room_Id).Value;
-        }
-        public static Dictionary<(long Uid, long Room_Id), RoomCard> GetCardClone(Dictionary<(long Uid, long Room_Id), RoomCard> original)
-        {
-            return new Dictionary<(long Uid, long Room_Id), RoomCard>(original);
+            return new Dictionary<long, RoomCard>(roomInfos);
         }
         private static object RoomCardLock = new object();
 
         /// <summary>
         /// 通过Uid设置RoomCard的值
         /// </summary>
-        /// <param name="uid">用户的Uid</param>
+        /// <param name="UID">用户的Uid</param>
         /// <param name="value">要设置的RoomCard值</param>
         /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
-        public static bool SetRoomCardByUid(long uid, RoomCard value)
+        public static bool SetRoomCardByUid(long UID, RoomCard value)
         {
             lock (RoomCardLock)
             {
                 foreach (var key in roomInfos.Keys)
                 {
-                    if (key.Uid == uid)
+                    if (key == UID)
                     {
                         roomInfos[key] = value;
                         return true;
                     }
                 }
+                roomInfos.Add(UID, value);
+                return true;
             }
-            return false;
-        }
-
-        /// <summary>
-        /// 通过Room_Id设置RoomCard的值
-        /// </summary>
-        /// <param name="roomId">房间的Room_Id</param>
-        /// <param name="value">要设置的RoomCard值</param>
-        /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
-        public static bool SetRoomCardByRoomId(long roomId, RoomCard value)
-        {
-            lock (RoomCardLock)
-            {
-                foreach (var key in roomInfos.Keys)
-                {
-                    if (key.Room_Id == roomId)
-                    {
-                        roomInfos[key] = value;
-                        return true;
-                    }
-                }
-            }
-            return false;
         }
     }
 
@@ -81,11 +74,12 @@ namespace Core.RuntimeObject
         {
             List<(int id, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
             int i = 1;
+            var roomInfos = _Room.GetCardListClone();
             foreach (var item in roomInfos)
             {
                 if (item.Value.DownInfo.IsDownload)
                 {
-                    values.Add((id: i, uid: item.UID, roomid: item.RoomId, name: item.Name, title: item.Title.Value, downloadedSize: item.DownInfo.DownloadSize, downloadRate: item.DownInfo.RealTimeDownloadSpe, state: item.DownInfo.Status.ToString(), startTime: item.DownInfo.StartTime));
+                    values.Add((id: i, uid: item.Value.UID, roomid: item.Value.RoomId, name: item.Value.Name, title: item.Value.Title.Value, downloadedSize: item.Value.DownInfo.DownloadSize, downloadRate: item.Value.DownInfo.RealTimeDownloadSpe, state: item.Value.DownInfo.Status.ToString(), startTime: item.Value.DownInfo.StartTime));
                     i++;
                 }
             }
@@ -118,7 +112,8 @@ namespace Core.RuntimeObject
 
         public static (int Total, int Download) GetTasksInDownloadCount()
         {
-            return (roomInfos.Count, roomInfos.Count(roomCard => roomCard.DownInfo.IsDownload));
+            var roomInfos = _Room.GetCardListClone();
+            return (roomInfos.Count, roomInfos.Count(roomCard => roomCard.Value.DownInfo.IsDownload));
         }
 
 
@@ -137,9 +132,10 @@ namespace Core.RuntimeObject
             if (UIDList == null)
             {
                 UIDList = new();
+                var roomInfos = _Room.GetCardListClone();
                 foreach (var item in roomInfos)
                 {
-                    UIDList.Add(item.UID);
+                    UIDList.Add(item.Value.UID);
                 }
             }
             var list = new List<List<long>>();
@@ -165,11 +161,10 @@ namespace Core.RuntimeObject
                         long.TryParse(item.Key, out long uid);
                         if (uid > 0)
                         {
-                            int index = roomInfos.FindIndex(x => x.UID == uid);
-                            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == uid);
-                            if (index != -1)
+                            RoomCard roomCard = new();
+                            if (_Room.GetCard(uid, ref roomCard))
                             {
-                                roomInfos[index] = ToRoomCard(item.Value, roomCard);
+                                _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard));
                             }
                         }
                     }
@@ -184,93 +179,117 @@ namespace Core.RuntimeObject
 
         private static bool _GetLiveStatus(long RoomId)
         {
-            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
-            if (roomCard == null || roomCard.live_status.ExpirationTime < DateTime.Now)
+            RoomCard roomCard = new();
+            if (!_Room.GetCard(GetUid(RoomId), ref roomCard))
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
-                if (card == null)
+                roomCard = ToRoomCard(GetRoomInfo(RoomId), roomCard);
+                if (roomCard == null)
                     return false;
-                else if (roomCard == null)
-                    roomInfos.Add(card);
-                else
-                    roomInfos[roomInfos.FindIndex(x => x.RoomId == RoomId)] = card;
-                return card.live_status.Value == 1 ? true : false;
+                _Room.SetRoomCardByUid(GetUid(RoomId), roomCard);
             }
-            else
-                return roomCard.live_status.Value == 1 ? true : false;
+            else if (roomCard.live_status.ExpirationTime < DateTime.Now)
+            {
+                RoomCard card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(roomCard.RoomId, card);
+                    roomCard = card;
+                }
+            }
+            return roomCard.live_status.Value == 1;
         }
+
 
         private static string _GetNickname(long Uid)
         {
-            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || string.IsNullOrEmpty(roomCard.Name))
+            RoomCard roomCard = new();
+            if (!_Room.GetCard(Uid, ref roomCard))
+            {
+                roomCard = ToRoomCard(GetUserInfo(Uid), roomCard);
+                if (roomCard == null)
+                    return "获取昵称失败";
+                _Room.SetRoomCardByUid(Uid, roomCard);
+            }
+            else if (string.IsNullOrEmpty(roomCard.Name))
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
-                if (card == null)
-                    return "获取昵称失败";
-                else if (roomCard == null)
-                    roomInfos.Add(card);
-                else
-                    roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
-                return card.Name;
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(Uid, card);
+                    roomCard = card;
+                }
             }
-            else
-                return roomCard.Name;
+            return roomCard.Name;
         }
 
-        private static long _GetUid(long RoomId)
+
+        private static long _GetUid(long Uid)
         {
-            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
-            if (roomCard == null || roomCard.RoomId < 0)
+            RoomCard roomCard = new();
+            if (!_Room.GetCard(Uid, ref roomCard))
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
-                if (card == null)
+                roomCard = ToRoomCard(GetRoomInfo(GetRoomId(Uid)), roomCard);
+                if (roomCard == null)
                     return -1;
-                else if (roomCard == null)
-                    roomInfos.Add(card);
-                else
-                    roomInfos[roomInfos.FindIndex(x => x.RoomId == RoomId)] = card;
-                return card.UID;
+                _Room.SetRoomCardByUid(Uid, roomCard);
             }
-            else
-                return roomCard.UID;
+            else if (roomCard.RoomId < 0)
+            {
+                RoomCard card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(Uid, card);
+                    roomCard = card;
+                }
+            }
+            return roomCard.UID;
         }
+
 
         private static long _GetRoomId(long Uid)
         {
-            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || roomCard.RoomId < 0)
+            RoomCard roomCard = new();
+            if (!_Room.GetCard(Uid, ref roomCard))
+            {
+                roomCard = ToRoomCard(GetUserInfo(Uid), roomCard);
+                if (roomCard == null)
+                    return -1;
+                _Room.SetRoomCardByUid(Uid, roomCard);
+            }
+            else if (roomCard.RoomId < 0)
             {
                 RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
-                if (card == null)
-                    return -1;
-                else if (roomCard == null)
-                    roomInfos.Add(card);
-                else
-                    roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
-                return card.RoomId;
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(Uid, card);
+                    roomCard = card;
+                }
             }
-            else
-                return roomCard.RoomId;
+            return roomCard.RoomId;
         }
 
         private static string _GetTitle(long Uid)
         {
-            RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
-            if (roomCard == null || string.IsNullOrEmpty(roomCard.Title.Value) || roomCard.Title.ExpirationTime < DateTime.Now)
+            RoomCard roomCard = new();
+            if (!_Room.GetCard(Uid, ref roomCard))
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
-                if (card == null)
+                roomCard = ToRoomCard(GetRoomInfo(GetRoomId(Uid)), roomCard);
+                if (roomCard == null)
                     return "";
-                else if (roomCard == null)
-                    roomInfos.Add(card);
-                else
-                    roomInfos[roomInfos.FindIndex(x => x.UID == Uid)] = card;
-                return card.Title.Value;
+                _Room.SetRoomCardByUid(Uid, roomCard);
             }
-            else
-                return roomCard.Title.Value;
+            else if (string.IsNullOrEmpty(roomCard.Title.Value) || roomCard.Title.ExpirationTime < DateTime.Now)
+            {
+                RoomCard card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(Uid, card);
+                    roomCard = card;
+                }
+            }
+            return roomCard.Title.Value;
         }
+
 
         private static RoomCard ToRoomCard(UidsInfo_Class.Data data, RoomCard OldCard)
         {
@@ -281,10 +300,10 @@ namespace Core.RuntimeObject
                     RoomCard card = new RoomCard()
                     {
                         UID = data.uid,
-                        Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                        Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         RoomId = data.room_id,
                         live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                        live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
+                        live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
                         short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
                         area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
                         area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -307,10 +326,10 @@ namespace Core.RuntimeObject
                 else
                 {
                     OldCard.UID = data.uid;
-                    OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                    OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
                     OldCard.RoomId = data.room_id;
                     OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
-                    OldCard.live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) };
+                    OldCard.live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) };
                     OldCard.short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
                     OldCard.area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) };
                     OldCard.area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
@@ -352,7 +371,7 @@ namespace Core.RuntimeObject
                         is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) },
                         is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) },
                         is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                        live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) },
+                        live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
                         encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -370,7 +389,7 @@ namespace Core.RuntimeObject
                     OldCard.is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) };
                     OldCard.is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) };
                     OldCard.is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) };
-                    OldCard.live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(1) };
+                    OldCard.live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) };
                     OldCard.encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) };
                     OldCard.pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) };
                     OldCard.live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
@@ -397,7 +416,7 @@ namespace Core.RuntimeObject
                         RoomId = userInfo.data.live_room.roomid,
                         Name = userInfo.data.name,
                         url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
-                        roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) },
+                        roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) },
                         Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
                         cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
                         face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
@@ -413,7 +432,7 @@ namespace Core.RuntimeObject
                     OldCard.RoomId = userInfo.data.live_room.roomid;
                     OldCard.Name = userInfo.data.name;
                     OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
-                    OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(5) };
+                    OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) };
                     OldCard.Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
                     OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
                     OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };

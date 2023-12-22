@@ -74,7 +74,12 @@ namespace CLI
                                     }
                                     break;
                                 }
-
+                            case ConsoleKey.Z:
+                                {
+                                    Console.WriteLine((Config.Core._DebugMode ? "关闭" : "打开" )+ "调试模式");
+                                    Config.Core._DebugMode = !Config.Core._DebugMode;
+                                    break;
+                                }
                             default:
                                 break;
                         }
