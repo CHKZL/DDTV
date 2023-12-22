@@ -358,7 +358,7 @@ namespace Core.RuntimeObject
                 if (hlsErrorCount > 3)
                 {
                     hlsErrorCount = 0;
-                    Log.Info(nameof(DownloadHlsAvcMp4), $"[{card.Name}({card.RoomId})]获取HLS流失败，10秒后重试该直播间");
+                    Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]获取HLS流失败，10秒后重试该直播间");
                     if (!RoomList.GetLiveStatus(card.RoomId))
                     {
                         return hlsErrorCount;
@@ -382,7 +382,7 @@ namespace Core.RuntimeObject
                 $"昵称:{card.Name}\n" +
                 $"标题:{card.Title.Value}";
 
-                Log.Info(nameof(DownloadHlsAvcMp4), $"{startText}");
+                Log.Info(nameof(LogDownloadStart), $"{startText}");
                 card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
                 card.DownInfo.StartTime = DateTime.Now;
             }
@@ -399,7 +399,7 @@ namespace Core.RuntimeObject
                 hlsErrorCount++;
                 if (hlsErrorCount > 3)
                 {
-                    Log.Info(nameof(DownloadHlsAvcMp4), $"[{card.Name}({card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
+                    Log.Info(nameof(HandleHlsSegmentError), $"[{card.Name}({card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
                     if (!RoomList.GetLiveStatus(card.RoomId))
                     {
                         return hlsErrorCount;

@@ -9,18 +9,71 @@ namespace Core.RuntimeObject
 {
     public class _Room
     {
-        private static Dictionary<(long, long), RoomCard> roomInfos = new Dictionary<(long Uid, long Room_Id), RoomCard>();
+        private static Dictionary<(long Uid, long Room_Id), RoomCard> roomInfos = new Dictionary<(long Uid, long Room_Id), RoomCard>();
         internal static RoomCard GetCardForUID(long UID)
         {
+            return roomInfos.FirstOrDefault(x => x.Key.Uid == UID).Value;
+        }
+        public static RoomCard GetCardForRoomId(long Room_Id)
+        {
+            return roomInfos.FirstOrDefault(x => x.Key.Room_Id == Room_Id).Value;
+        }
+        public static Dictionary<(long Uid, long Room_Id), RoomCard> GetCardClone(Dictionary<(long Uid, long Room_Id), RoomCard> original)
+        {
+            return new Dictionary<(long Uid, long Room_Id), RoomCard>(original);
+        }
+        private static object RoomCardLock = new object();
 
+        /// <summary>
+        /// 通过Uid设置RoomCard的值
+        /// </summary>
+        /// <param name="uid">用户的Uid</param>
+        /// <param name="value">要设置的RoomCard值</param>
+        /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
+        public static bool SetRoomCardByUid(long uid, RoomCard value)
+        {
+            lock (RoomCardLock)
+            {
+                foreach (var key in roomInfos.Keys)
+                {
+                    if (key.Uid == uid)
+                    {
+                        roomInfos[key] = value;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 通过Room_Id设置RoomCard的值
+        /// </summary>
+        /// <param name="roomId">房间的Room_Id</param>
+        /// <param name="value">要设置的RoomCard值</param>
+        /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
+        public static bool SetRoomCardByRoomId(long roomId, RoomCard value)
+        {
+            lock (RoomCardLock)
+            {
+                foreach (var key in roomInfos.Keys)
+                {
+                    if (key.Room_Id == roomId)
+                    {
+                        roomInfos[key] = value;
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
-    
+
     public class RoomList
     {
         #region private Properties
-        
+
         #endregion
 
         #region Public Method
@@ -63,7 +116,7 @@ namespace Core.RuntimeObject
             return _GetTitle(Uid);
         }
 
-        public static (int Total,int Download) GetTasksInDownloadCount()
+        public static (int Total, int Download) GetTasksInDownloadCount()
         {
             return (roomInfos.Count, roomInfos.Count(roomCard => roomCard.DownInfo.IsDownload));
         }
@@ -116,7 +169,7 @@ namespace Core.RuntimeObject
                             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == uid);
                             if (index != -1)
                             {
-                                roomInfos[index] = ToRoomCard(item.Value,roomCard);
+                                roomInfos[index] = ToRoomCard(item.Value, roomCard);
                             }
                         }
                     }
@@ -134,7 +187,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
             if (roomCard == null || roomCard.live_status.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId),roomCard);
+                RoomCard card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
                 if (card == null)
                     return false;
                 else if (roomCard == null)
@@ -152,7 +205,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || string.IsNullOrEmpty(roomCard.Name))
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
+                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (card == null)
                     return "获取昵称失败";
                 else if (roomCard == null)
@@ -170,7 +223,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.RoomId == RoomId);
             if (roomCard == null || roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId),roomCard);
+                RoomCard card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
                 if (card == null)
                     return -1;
                 else if (roomCard == null)
@@ -188,7 +241,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
+                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (card == null)
                     return -1;
                 else if (roomCard == null)
@@ -206,7 +259,7 @@ namespace Core.RuntimeObject
             RoomCard? roomCard = roomInfos.FirstOrDefault(x => x.UID == Uid);
             if (roomCard == null || string.IsNullOrEmpty(roomCard.Title.Value) || roomCard.Title.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid),roomCard);
+                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (card == null)
                     return "";
                 else if (roomCard == null)
@@ -586,7 +639,7 @@ namespace Core.RuntimeObject
             /// 主播简介
             /// </summary>
             public ExpansionType<string> sign = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-       
+
             /// <summary>
             /// 当前Host地址
             /// </summary>
@@ -620,11 +673,11 @@ namespace Core.RuntimeObject
                 /// <summary>
                 /// 任务开始时间
                 /// </summary>
-                public DateTime StartTime= DateTime.UnixEpoch;
+                public DateTime StartTime = DateTime.UnixEpoch;
                 /// <summary>
                 /// 任务结束时间
                 /// </summary>
-                public DateTime EndTime= DateTime.UnixEpoch;
+                public DateTime EndTime = DateTime.UnixEpoch;
                 public DownloadInfo Clone()
                 {
                     return new DownloadInfo
@@ -709,7 +762,7 @@ namespace Core.RuntimeObject
                     };
                 }
             }
-             public enum DownloadStatus
+            public enum DownloadStatus
             {
                 /// <summary>
                 /// 新任务
