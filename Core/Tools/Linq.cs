@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.LogModule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,62 +10,70 @@ namespace Core.Tools
 {
     public class Linq
     {
-        internal static RuntimeObject.Download.Host.HostClass SerializedM3U8(string str,ref HostClass hostClass)
+        internal static RuntimeObject.Download.Host.HostClass SerializedM3U8(string str, ref HostClass hostClass)
         {
-            if(string.IsNullOrEmpty(str))
-                return hostClass;
-            int Ver = 0;
-            int TimeOffSet = 0;
-            long MediaSequence = 0;
-            double Targetduration = 0;
-            string[] list = str.Split('\n');
-            for (int i = 0; i < list.Length; i++)
+            try
             {
-                if (list[i].Contains("#EXT-X-VERSION"))
+                if (string.IsNullOrEmpty(str))
+                    return hostClass;
+                int Ver = 0;
+                int TimeOffSet = 0;
+                long MediaSequence = 0;
+                double Targetduration = 0;
+                string[] list = str.Split('\n');
+                for (int i = 0; i < list.Length; i++)
                 {
-                    int.TryParse(list[i].Split(':')[1], out Ver);
-                    hostClass.eXTM3U.Version = Ver;
-                }
-                else if (list[i].Contains("#EXT-X-START:TIME-OFFSET"))
-                {
-                    int.TryParse(list[i].Split('=')[1], out TimeOffSet);
-                    hostClass.eXTM3U.TimeOffSet = TimeOffSet;
-                }
-                else if (list[i].Contains("#EXT-X-MEDIA-SEQUENCE"))
-                {
-                    long.TryParse(list[i].Split(':')[1], out MediaSequence);
-                    hostClass.eXTM3U.MediaSequence = MediaSequence;
-                }
-                else if (list[i].Contains("#EXT-X-TARGETDURATION"))
-                {
-                    double.TryParse(list[i].Split(':')[1], out Targetduration);
-                    hostClass.eXTM3U.Targetduration = Targetduration;
-                }
-                else if (list[i].Contains("#EXT-X-MAP:URI"))
-                {
-                    hostClass.eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"", "");
-                }
-                else if (list[i].Contains("#EXTINF"))
-                {
-                    double.TryParse(list[i].Split(':')[1].Split(',')[0], out double Duration);
-                    hostClass.eXTM3U.eXTINFs.Add(new()
+                    if (list[i].Contains("#EXT-X-VERSION"))
                     {
-                        Duration = Duration,
-                        Aux = list[i - 1].Split(':')[1],
-                        FileName = list[i + 1].Split('.')[0],
-                        ExtensionName = list[i + 1].Split(".")[1]
-                    });
+                        int.TryParse(list[i].Split(':')[1], out Ver);
+                        hostClass.eXTM3U.Version = Ver;
+                    }
+                    else if (list[i].Contains("#EXT-X-START:TIME-OFFSET"))
+                    {
+                        int.TryParse(list[i].Split('=')[1], out TimeOffSet);
+                        hostClass.eXTM3U.TimeOffSet = TimeOffSet;
+                    }
+                    else if (list[i].Contains("#EXT-X-MEDIA-SEQUENCE"))
+                    {
+                        long.TryParse(list[i].Split(':')[1], out MediaSequence);
+                        hostClass.eXTM3U.MediaSequence = MediaSequence;
+                    }
+                    else if (list[i].Contains("#EXT-X-TARGETDURATION"))
+                    {
+                        double.TryParse(list[i].Split(':')[1], out Targetduration);
+                        hostClass.eXTM3U.Targetduration = Targetduration;
+                    }
+                    else if (list[i].Contains("#EXT-X-MAP:URI"))
+                    {
+                        hostClass.eXTM3U.Map_URI = list[i].Split('=')[1].Replace("\"", "");
+                    }
+                    else if (list[i].Contains("#EXTINF"))
+                    {
+                        double.TryParse(list[i].Split(':')[1].Split(',')[0], out double Duration);
+                        hostClass.eXTM3U.eXTINFs.Add(new()
+                        {
+                            Duration = Duration,
+                            Aux = list[i - 1].Split(':')[1],
+                            FileName = list[i + 1].Split('.')[0],
+                            ExtensionName = list[i + 1].Split(".")[1]
+                        });
+                    }
+                    else if (list[i].Contains("#EXT-X-ENDLIST"))
+                    {
+                        hostClass.eXTM3U.IsEND = true;
+                    }
+                    else if (list[i].Contains("#EXT-X-STREAM-INF"))
+                    {
+                        hostClass.SteramInfo = list[i + 1];
+                    }
                 }
-                else if (list[i].Contains("#EXT-X-ENDLIST"))
-                {
-                    hostClass.eXTM3U.IsEND = true;
-                }  
-                else if (list[i].Contains("#EXT-X-STREAM-INF"))
-                {
-                    hostClass.SteramInfo = list[i + 1];
-                }
+                return hostClass;
             }
-            return hostClass;
+            catch (Exception e)
+            {
+                Log.Error(nameof(SerializedM3U8), $"M3U8解析发生致命错误，错误的解析原文：{str}", e, true);
+                return hostClass;
+            }
         }
 
         /// <summary>

@@ -59,12 +59,13 @@ namespace Core.RuntimeObject
                 {
                     while (_state)
                     {
-                        List<RoomCard> oldList = roomInfos.Select(item => item.Clone()).ToList();
+                        var roomInfos = _Room.GetCardListClone();
+                        List<RoomCard> oldList = roomInfos.Select(item => item.Value.Clone()).ToList();
                         await BatchUpdateRoomStatusForLiveStream();
                         foreach (var item in roomInfos)
                         {
-                            RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.UID);
-                            RoomCard? newCard = roomInfos.FirstOrDefault(x => x.UID == item.UID);
+                            RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.Value.UID);
+                            RoomCard? newCard = roomInfos.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
                             if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                             {
                                 if (newCard.live_status.Value == 1)
