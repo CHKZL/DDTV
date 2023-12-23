@@ -1,4 +1,5 @@
-﻿using AngleSharp.Io;
+﻿using AngleSharp.Dom;
+using AngleSharp.Io;
 using Core.LogModule;
 using Microsoft.AspNetCore.Components.RenderTree;
 using System;
@@ -17,6 +18,7 @@ namespace Core.Network
         {
             public static bool DownloadFile(string URL, string SavePath, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+                Log.Debug(nameof(DownloadFile), $"发起Get请求，目标:{URL}");
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -47,15 +49,7 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        switch (ex.Status)
-                        {
-                            case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(DownloadFile), $"Timeout:{URL}", null, false);
-                                break;
-                            default:
-                                Log.Warn(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}", null, false);
-                                break;
-                        }
+                        Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
                         Thread.Sleep(300);
                     }
@@ -70,7 +64,7 @@ namespace Core.Network
                         if (request != null) request.Abort();
                     }
                 }
-                Log.Warn(nameof(DownloadFile), $"重试{maxRetries}次均失败:{URL}");
+                Log.Debug(nameof(DownloadFile), $"重试{maxRetries}次均失败:{URL}");
                 return false;
             }
 
@@ -78,6 +72,7 @@ namespace Core.Network
 
             public static HttpWebRequest DownloadFileAsync(string URL, string SavePath, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+                Log.Debug(nameof(DownloadFileAsync), $"发起Get请求，目标:{URL}");
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -108,15 +103,7 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        switch (ex.Status)
-                        {
-                            case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(DownloadFileAsync), $"Timeout:{URL}", null, false);
-                                break;
-                            default:
-                                Log.Warn(nameof(DownloadFileAsync), $"{ex.Status.ToString()}:{URL}", null, false);
-                                break;
-                        }
+                        Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
                         Thread.Sleep(300);
                     }
@@ -131,7 +118,7 @@ namespace Core.Network
                         if (request != null) request.Abort();
                     }
                 }
-                Log.Warn(nameof(DownloadFileAsync), $"重试{maxRetries}次均失败:{URL}");
+                Log.Debug(nameof(DownloadFileAsync), $"重试{maxRetries}次均失败:{URL}");
                 return default;
             }
 
@@ -139,6 +126,7 @@ namespace Core.Network
 
             public static string GetFileToString(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+                Log.Debug(nameof(GetFileToString), $"发起Get请求，目标:{URL}");
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -167,15 +155,7 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        switch (ex.Status)
-                        {
-                            case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(GetFileToString), $"Timeout:{URL}");
-                                break;
-                            default:
-                                Log.Warn(nameof(GetFileToString), $"{ex.Status.ToString()}:{URL}");
-                                break;
-                        }
+                        Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
                         Thread.Sleep(300);
                     }
@@ -190,11 +170,12 @@ namespace Core.Network
                         if (request != null) request.Abort();
                     }
                 }
-                Log.Warn(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
+                Log.Debug(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
                 return null;
             }
             public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+                Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -226,15 +207,7 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        switch (ex.Status)
-                        {
-                            case WebExceptionStatus.Timeout:
-                                Log.Warn(nameof(GetFileToByte), $"Timeout:{URL}", null, false);
-                                break;
-                            default:
-                                Log.Warn(nameof(GetFileToByte), $"{ex.Status.ToString()}:{URL}", null, false);
-                                break;
-                        }
+                        Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
                         Thread.Sleep(300);
                     }
@@ -249,7 +222,7 @@ namespace Core.Network
                         if (request != null) request.Abort();
                     }
                 }
-                Log.Warn(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
+                Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
                 return default;
             }
 
