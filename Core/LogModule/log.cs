@@ -21,7 +21,7 @@ namespace Core.LogModule
         /// <summary>
         /// 日志记录
         /// </summary>
-        public static List<LogClass> LogList = new();
+        //public static List<LogClass> LogList = new();
         /// <summary>
         /// 新增日志事件
         /// </summary>
@@ -171,7 +171,7 @@ namespace Core.LogModule
                         }
                         if (logClass.Type <= LogLevel && logClass.Type != LogClass.LogType.Info_Transcod && logClass.IsDisplay && ( Config.Core._DebugMode || logClass.Type< LogType.Debug))
                         {
-                            LogList.Add(logClass);
+                            //LogList.Add(logClass);
                             string _ = $"{logClass.Time}:[{Enum.GetName(typeof(LogClass.LogType), (int)logClass.Type)}][{logClass.Source}]{logClass.Message}";
                             console.Write($"{logClass.Time}:", ConsoleColor.White);
 

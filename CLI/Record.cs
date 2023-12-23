@@ -19,7 +19,7 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(object? sender, RoomList.RoomCard e)
         {
-            //if (TEST)
+            //if(TEST)
             {
                 TEST = false;
                 if (e.IsRemind)
@@ -31,13 +31,32 @@ namespace CLI
                     do
                     {
                         Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制");
-                        await Download.File.DlwnloadHls_avc_mp4(e);
+                        var result = await Download.File.DlwnloadHls_avc_mp4(e);
+                        if(result.Item1)
+                        {
+                            Core.Tools.Transcode transcode = new Core.Tools.Transcode();
+                            try
+                            {
+                                transcode.TranscodeAsync(result.Item2, result.Item2.Replace(".mp4", "_fix.mp4"),e.RoomId);
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.Error(nameof(DetectRoom_LiveStart),$"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.Item2}");
+                            }
+                        }
                     }
                     while (RoomList.GetLiveStatus(e.RoomId));
                     Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束");
                 }
             }
         }
+
+        private static void Transcode_ProgressChanged((double Progress, long RoomId, string before, string after) obj)
+        {
+            Console.WriteLine($"房间{obj.RoomId}的录制任务[{obj.after}]修复进度:{obj.Progress.ToString("0.00")}%");
+        }
+
+
 
         /// <summary>
         /// 下播事件

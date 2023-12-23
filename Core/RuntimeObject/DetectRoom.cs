@@ -59,13 +59,13 @@ namespace Core.RuntimeObject
                 {
                     while (_state)
                     {
-                        var roomInfos = _Room.GetCardListClone();
-                        List<RoomCard> oldList = roomInfos.Select(item => item.Value.Clone()).ToList();
+                        var oldList = _Room.GetCardListDeepClone();
                         await BatchUpdateRoomStatusForLiveStream();
-                        foreach (var item in roomInfos)
+                        var NewList = _Room.GetCardListDeepClone();
+                        foreach (var item in oldList)
                         {
-                            RoomCard? oldCard = oldList.FirstOrDefault(x => x.UID == item.Value.UID);
-                            RoomCard? newCard = roomInfos.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                            RoomCard oldCard = oldList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                            RoomCard newCard = NewList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
                             if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                             {
                                 if (newCard.live_status.Value == 1)
@@ -77,7 +77,11 @@ namespace Core.RuntimeObject
                                     LiveEnd.Invoke(null, newCard);
                                 }
                             }
+                            oldCard = null;
+                            newCard = null;
                         }
+                        oldList = null;
+                        NewList = null;
                         await Task.Delay(Config.Core._DetectIntervalTime);
                     }
                 }

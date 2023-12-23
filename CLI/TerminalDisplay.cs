@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace CLI
 {
@@ -39,7 +40,7 @@ namespace CLI
 
         internal static void SeKey()
         {
-            Log.Info(nameof(SeKey),$"控制台菜单初始化完成");
+            Log.Info(nameof(SeKey), $"控制台菜单初始化完成");
             Task.Run(() =>
             {
                 while (true)
@@ -50,6 +51,7 @@ namespace CLI
                         Console.WriteLine($"请按对应的按键查看或修改配置：");
                         Console.WriteLine($"a：查看下载中的任务情况");
                         Console.WriteLine($"q：退出DDTV");
+                        Console.WriteLine($"z：打开调试模式查看debug输出");
                         Console.WriteLine();
                         switch (Console.ReadKey().Key)
                         {
@@ -76,7 +78,7 @@ namespace CLI
                                 }
                             case ConsoleKey.Z:
                                 {
-                                    Console.WriteLine((Config.Core._DebugMode ? "关闭" : "打开" )+ "调试模式");
+                                    Console.WriteLine((Config.Core._DebugMode ? "关闭" : "打开") + "调试模式");
                                     Config.Core._DebugMode = !Config.Core._DebugMode;
                                     break;
                                 }
