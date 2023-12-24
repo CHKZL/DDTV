@@ -238,6 +238,7 @@ namespace Core.LiveChat
                         }
                         catch (Exception e)
                         {
+                            Log.Info(nameof(_innerLoop), $"_sendObject:{e.ToString()}");
                             throw;
                         }
                     }
@@ -251,24 +252,24 @@ namespace Core.LiveChat
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_ObjectDisposedException", $"_sendObject:{ex.ToString()}");
                     continue;
                 }
                 catch (WebSocketException we)
                 {
-                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{we.ToString()}");
-                    throw we;
+                    Log.Info(nameof(_innerLoop) + "_WebSocketException", $"_sendObject:{we.ToString()}");
+                  
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
-                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_JsonException", $"_sendObject:{ex.ToString()}");
                     continue;
                 }
                 catch (Exception e)
                 {
-                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{e.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_Exception", $"_sendObject:{e.ToString()}");
                     //UnityEngine.Debug.LogException(e);
-                    throw e;
+                    
                 }
             }
         }
