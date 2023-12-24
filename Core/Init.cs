@@ -13,7 +13,7 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2023-12-24 03:40:20";
+        public static string CompiledVersion = "2023-12-24 21:37:21";
         public static bool IsDevDebug = false;
         public static void Start()
         {

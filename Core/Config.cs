@@ -106,13 +106,13 @@ namespace Core
             public static void LoadRoomConfigurationFile()
             {
                 (int Total, int Success, int Fail) Count = new(0, 0, 0);
-                if (!File.Exists($"{Core._ConfigDirectory}{Core._RoomConfigFile}"))
+                if (!File.Exists($"{Core._RoomConfigFile}"))
                 {
-                    File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", "{}");
+                    File.WriteAllText($"{Core._RoomConfigFile}", "{}");
                 }
                 else
                 {
-                    string TEXT = File.ReadAllText($@"{Core._ConfigDirectory}{Core._RoomConfigFile}");
+                    string TEXT = File.ReadAllText($@"{Core._RoomConfigFile}");
                     RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
                     if (roomListDiscard != null)
                     {
@@ -142,7 +142,7 @@ namespace Core
                     }
                     else
                     {
-                        File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", "{}");
+                        File.WriteAllText($"{Core._RoomConfigFile}", "{}");
                     }
                 }
                 Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
@@ -157,7 +157,7 @@ namespace Core
                     roomListDiscard.data.Add(item.Value);
                 }
                 string jsonString = JsonSerializer.Serialize(roomListDiscard);
-                File.WriteAllText($"{Core._ConfigDirectory}{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
+                File.WriteAllText($"{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
             }
             internal class RoomListDiscard
             {
@@ -173,9 +173,9 @@ namespace Core
             private static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>
             /// 房间配置文件路径（字符串）
-            /// 默认值：RoomListConfig.json
+            /// 默认值：./Config/RoomListConfig.json
             /// </summary>
-            public static string _RoomConfigFile { get { return RoomConfigFile; } }
+            public static string _RoomConfigFile { get { return $"{_ConfigDirectory}{RoomConfigFile}"; } }
 
             private static string ConfigDirectory = "./Config/";
             /// <summary>
@@ -184,12 +184,12 @@ namespace Core
             /// </summary>
             public static string _ConfigDirectory { get { return ConfigDirectory; } }
 
-            private static string ConfigurationFile = $"{ConfigDirectory}DDTV_Config.ini";
+            private static string ConfigurationFile = $"DDTV_Config.ini";
             /// <summary>
             /// 默认的配置文件路径（字符串）
             /// 默认值：./Config/DDTV_Config.ini
             /// </summary>
-            public static string _ConfigurationFile { get { return ConfigurationFile; } }
+            public static string _ConfigurationFile { get { return $"{_ConfigDirectory}{ConfigurationFile}"; } }
 
             private static string Key = "34D3D9‭9D34894461‭91AB9B8‭582454669";
             /// <summary>

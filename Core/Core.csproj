@@ -19,10 +19,4 @@
     <PackageReference Include="ZXing.Net.Bindings.ImageSharp" Version="0.16.14" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="plugins\ffmpeg\ffmpeg.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

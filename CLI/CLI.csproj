@@ -1,19 +1,43 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ConsoleTableExt" Version="3.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-  </ItemGroup>
+	<!--包含ffmpeg.exe -->
+	<ItemGroup Condition="'@(Contain->Contains($(RuntimeIdentifier)))' == 'True'">
+		<None Update="plugins\ffmpeg\ffmpeg.exe">
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Contain Include="win-x86;win-x64" />
+	</ItemGroup>
+
+	<!-- 不包含ffmpeg.exe -->
+	<ItemGroup Condition="'@(Exclud->Contains($(RuntimeIdentifier)))' == 'True'">
+		<None Update="plugins\ffmpeg\ffmpeg.exe">
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Exclud Include="linux-x64;linux-arm;linux-arm64;win-arm;win-arm64;osx-x64;osx-arm64" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
+
 
 </Project>

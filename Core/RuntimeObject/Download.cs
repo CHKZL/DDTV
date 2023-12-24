@@ -75,6 +75,10 @@ namespace Core.RuntimeObject
                 if (!string.IsNullOrEmpty(fileContent))
                 {
                     string webref = Network.Download.File.GetFileToString(fileContent, true);
+                    if(string.IsNullOrEmpty(webref))
+                    {
+                        return false;
+                    }
                     Tools.Linq.SerializedM3U8(webref, ref m3u8);
                     return true;
                 }
@@ -223,8 +227,6 @@ namespace Core.RuntimeObject
 
                 #endregion
 
-
-
             }
         }
 
@@ -238,7 +240,7 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="card">房间卡片信息</param>
             /// <returns>是否成功下载</returns>
-            public static async Task<(bool, string)> DlwnloadHls_avc_mp4(RoomList.RoomCard card)
+            public static async Task<(bool isSuccess, string FileName)> DlwnloadHls_avc_mp4(RoomList.RoomCard card)
             {
                 bool isSuccess = false;
                 string File = string.Empty;
@@ -254,7 +256,7 @@ namespace Core.RuntimeObject
 
                     // 如果目录不存在，则创建目录
                     CreateDirectoryIfNotExists(dirName);
-                    File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(1000, 9999)}.mp4";
+                    File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4";
                     // 使用FileStream进行文件操作
                     using (FileStream fs = new FileStream(File, FileMode.Append))
                     {
@@ -267,8 +269,15 @@ namespace Core.RuntimeObject
                             if (hlsErrorCount == -1)
                             {
                                 System.IO.FileInfo fileInfo = new(File);
-                                if (fileInfo.Length > 1024)
+                                //文件大于3MB返回true，小于3MB当作无效录制，删除文件并返回false
+                                if (fileInfo.Length > 3 * 1024 * 1024)
+                                {
                                     isSuccess = true;
+                                }
+                                else
+                                {
+                                    Task.Run(() => System.IO.File.Delete(File));                             
+                                }
                                 return;
                             }
                         }
@@ -282,7 +291,6 @@ namespace Core.RuntimeObject
                             long downloadSizeForThisCycle = 0;
                             try
                             {
-                                // bool isHlsHostAvailable = GetHlsHost_avc(card, ref hostClass);
                                 bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
                                 if (!isHlsHostAvailable)
                                 {
@@ -382,11 +390,11 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             private static void LogDownloadStart(RoomList.RoomCard card)
             {
-                string startText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务:\n" +
-                $"直播间:{card.RoomId}\n" +
-                $"UID:{card.UID}\n" +
-                $"昵称:{card.Name}\n" +
-                $"标题:{card.Title.Value}";
+                string startText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务：\n" +
+                $"直播间：{card.RoomId}\n" +
+                $"UID：{card.UID}\n" +
+                $"昵称：{card.Name}\n" +
+                $"标题：{card.Title.Value}";
 
                 Log.Info(nameof(LogDownloadStart), $"{startText}");
                 card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
