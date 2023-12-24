@@ -76,16 +76,29 @@ namespace Core.Tools
             };
             // 等待Process退出
             await process.WaitForExitAsync();
-            using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
+            if (Core.Config.Core._DebugMode)
             {
-                foreach (var item in LogText)
+                using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
                 {
-                    fileStream.WriteLine(item);
+                    foreach (var item in LogText)
+                    {
+                        fileStream.WriteLine(item);
+                    }
+                }
+                Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
+            }
+            // 转码完成后，如果目标文件存在且大小合理，删除源文件
+            if (File.Exists(after))
+            {
+                FileInfo fileInfo = new FileInfo(after);
+                if (fileInfo.Length > 3 * 1024 * 1024)
+                {
+                    Task.Run(() => System.IO.File.Delete(before));
                 }
             }
-            // 转码完成后，删除源文件，将目标文件重命名为源文件
-            File.Delete(before);
-            File.Move(after, before);
+            if (process != null)
+                 process = null;
+            LogText = null;
         }
     }
 }

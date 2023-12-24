@@ -2,9 +2,11 @@
 using Core.LogModule;
 using Core.Network;
 using Core.Network.Methods;
+using Core.RuntimeObject;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
@@ -26,12 +28,17 @@ namespace Core.LiveChat
         private bool _disposed = false;
         private byte[] m_ReceiveBuffer;
         private CancellationTokenSource m_innerRts;
-        private long RoomId = 0;
         private DanMuWssInfo WssInfo = new();
 
+        public long RoomId = 0;
+        public string Title = string.Empty;
+        public string Name=string.Empty;
+        public string File = string.Empty;
         public event EventHandler<MessageEventArgs> MessageReceived;
         public event EventHandler<EventArgs> DisposeSent;
         public bool State = false;
+        public RuntimeObject.Danmu.DanmuMessage DanmuMessage = new();
+        public Stopwatch TimeStopwatch;
 
         #endregion
 
@@ -39,13 +46,17 @@ namespace Core.LiveChat
         public LiveChatListener(long roomId)
         {
             RoomId = roomId;
+            Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(roomId)));
+            Name = RoomList.GetNickname(RoomList.GetUid(roomId));
+            string dirName = $"{Config.Core._RecFileDirectory}{roomId}-{Name}";
+            File = $"{dirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}";
         }
 
         public async void Connect()
         {
             try
             {
-                m_ReceiveBuffer = new byte[8192 * 1024];
+                m_ReceiveBuffer = new byte[1024 * 512];
                 State = true;
                 await ConnectAsync();
             }
@@ -59,7 +70,8 @@ namespace Core.LiveChat
         public void Close()
         {
             m_ReceiveBuffer = null;
-
+            TimeStopwatch.Stop();
+            TimeStopwatch = null;
             try
             {
                 if (m_innerRts != null)
@@ -94,6 +106,7 @@ namespace Core.LiveChat
             if (DisposeSent != null)
                 DisposeSent.Invoke(this, EventArgs.Empty);
             _disposed = true;
+             State = false; 
         }
 
 
@@ -162,6 +175,7 @@ namespace Core.LiveChat
                else
                {
                    Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接断开");
+                   Dispose();
                }
                try
                {
@@ -178,7 +192,7 @@ namespace Core.LiveChat
 
         private async Task _innerHeartbeat()
         {
-             //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:start");
+            //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:start");
             while (!m_innerRts.IsCancellationRequested)
             {
                 //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:in");
@@ -204,8 +218,9 @@ namespace Core.LiveChat
         {
 #if DEBUG
             //InfoLog.InfoPrintf("LiveChatListener开始连接，房间号:" + TroomId, InfoLog.InfoClass.Debug);
-            Console.WriteLine($"直播间长连握手开始(room_id:{RoomId})");
+            Log.Info(nameof(LiveChatListener) + "_" + nameof(_innerLoop), $"建立与(room_id:{RoomId})直播间的长连");
 #endif
+            TimeStopwatch = Stopwatch.StartNew();
             while (!m_innerRts.IsCancellationRequested)
             {
                 try
@@ -236,22 +251,22 @@ namespace Core.LiveChat
                 }
                 catch (ObjectDisposedException ex)
                 {
-                     Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
                     continue;
                 }
                 catch (WebSocketException we)
                 {
-                     Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{we.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{we.ToString()}");
                     throw we;
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
-                     Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
                     continue;
                 }
                 catch (Exception e)
                 {
-                     Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{e.ToString()}");
+                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{e.ToString()}");
                     //UnityEngine.Debug.LogException(e);
                     throw e;
                 }
@@ -507,12 +522,18 @@ namespace Core.LiveChat
 
         private async Task _sendObject(int type, object obj)
         {
+            try
+            {
+                //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
+                string jsonBody = JsonSerializer.Serialize(obj);
+                //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
+                //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
+                await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
+            }
+            catch (Exception)
+            {
 
-            //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
-            string jsonBody = JsonSerializer.Serialize(obj);
-             //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
-            //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
-            await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
+            }
         }
         private async Task _sendBinary(int type, byte[] body)
         {

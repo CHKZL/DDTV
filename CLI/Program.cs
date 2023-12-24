@@ -93,13 +93,13 @@ namespace CLI
                             Thread.Sleep(1000);//等待登陆
                         }
                         TerminalDisplay.SeKey();
-                        //DetectRoom detectRoom = new();//实例化房间监听
-                        //detectRoom.start();//启动房间监听
-                        //detectRoom.LiveStart += Record.DetectRoom_LiveStart;//开播事件
-                        //Log.Info(nameof(DetectRoom), $"注册开播事件");
-                        //detectRoom.LiveEnd += Record.DetectRoom_LiveEnd;//下播事件
-                        //Log.Info(nameof(DetectRoom), $"注册下播事件");
-                        TEST();
+                        DetectRoom detectRoom = new();//实例化房间监听
+                        detectRoom.start();//启动房间监听
+                        detectRoom.LiveStart += Record.DetectRoom_LiveStart;//开播事件
+                        Log.Info(nameof(DetectRoom), $"注册开播事件");
+                        detectRoom.LiveEnd += Record.DetectRoom_LiveEnd;//下播事件
+                        Log.Info(nameof(DetectRoom), $"注册下播事件");
+                        //TEST();
 #if DEBUG
                         Task.Run(() =>
                         {

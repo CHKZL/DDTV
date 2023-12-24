@@ -53,6 +53,7 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         private async Task RoomLoopDetection()
         {
+            bool FirstTime = true;
             while (true)
             {
                 try
@@ -70,11 +71,11 @@ namespace Core.RuntimeObject
                             {
                                 if (newCard.live_status.Value == 1)
                                 {
-                                    LiveStart.Invoke(null,newCard);
+                                    LiveStart.Invoke(FirstTime?true:false,newCard);
                                 }
                                 else if (oldCard.live_status.Value != -1)
                                 {
-                                    LiveEnd.Invoke(null, newCard);
+                                    LiveEnd.Invoke(FirstTime?true:false, newCard);
                                 }
                             }
                             oldCard = null;
