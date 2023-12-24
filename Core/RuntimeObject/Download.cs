@@ -282,8 +282,8 @@ namespace Core.RuntimeObject
                             }
                         }
 
-                        // 记录下载开始
-                        LogDownloadStart(card);
+                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
+
                         List<(long size, DateTime time)> values = new();
 
                         while (true)
@@ -302,6 +302,8 @@ namespace Core.RuntimeObject
                                 {
                                     if (!isInitialized)
                                     {
+                                          // 记录下载开始
+                                        LogDownloadStart(card);
                                         isInitialized = true;
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                     }
