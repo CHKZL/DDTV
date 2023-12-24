@@ -29,7 +29,8 @@ namespace Core.RuntimeObject
             liveChatListener.DanmuMessage.GuardBuy = new();
             SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, liveChatListener.File);
             liveChatListener.DanmuMessage.SuperChat = new();
-            liveChatListener.TimeStopwatch.Restart();
+            if (liveChatListener.TimeStopwatch != null)
+                liveChatListener.TimeStopwatch.Restart();
             Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{liveChatListener.File}");
         }
         #endregion

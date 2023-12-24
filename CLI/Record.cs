@@ -19,13 +19,12 @@ namespace CLI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async void DetectRoom_LiveStart(object? sender, RoomList.RoomCard e)
-        {      
-            
+        internal static async void DetectRoom_LiveStart(Object? sender, RoomList.RoomCard e)
+        {               
             bool Initialization = true;
             if (e.IsRemind)
             {
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})开播，等待30秒使HLS源生效");
+                Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
             }
           
             if (e.IsAutoRec)
