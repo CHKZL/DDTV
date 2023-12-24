@@ -247,27 +247,27 @@ namespace Core.LiveChat
                 }
                 catch (OperationCanceledException ex)
                 {
-                    Log.Info(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}");
+                    Log.Warn(nameof(_innerLoop) + "_OperationCanceledException", $"_sendObject:{ex.ToString()}", ex, false);
                     continue;
                 }
                 catch (ObjectDisposedException ex)
                 {
-                    Log.Info(nameof(_innerLoop) + "_ObjectDisposedException", $"_sendObject:{ex.ToString()}");
+                    Log.Warn(nameof(_innerLoop) + "_ObjectDisposedException", $"_sendObject:{ex.ToString()}", ex, false);
                     continue;
                 }
                 catch (WebSocketException we)
                 {
-                    Log.Info(nameof(_innerLoop) + "_WebSocketException", $"_sendObject:{we.ToString()}");
+                    Log.Warn(nameof(_innerLoop) + "_WebSocketException", $"_sendObject:{we.ToString()}", we, false);
                   
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
-                    Log.Info(nameof(_innerLoop) + "_JsonException", $"_sendObject:{ex.ToString()}");
+                    Log.Warn(nameof(_innerLoop) + "_JsonException", $"_sendObject:{ex.ToString()}", ex, false);
                     continue;
                 }
                 catch (Exception e)
                 {
-                    Log.Info(nameof(_innerLoop) + "_Exception", $"_sendObject:{e.ToString()}");
+                    Log.Warn(nameof(_innerLoop) + "_Exception", $"_sendObject:{e.ToString()}", e, false);
                     //UnityEngine.Debug.LogException(e);
                     
                 }
