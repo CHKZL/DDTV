@@ -183,7 +183,7 @@ namespace Core.LiveChat
                }
                catch (Exception ex)
                {
-                   Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生意料外的错误", ex, true);
+                   Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生意料外的错误", ex, false);
                    Dispose();
                }
            });
@@ -525,6 +525,10 @@ namespace Core.LiveChat
         {
             try
             {
+                if (!State)
+                {
+                    return;
+                }
                 //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
                 string jsonBody = JsonSerializer.Serialize(obj);
                 //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
