@@ -238,7 +238,7 @@ namespace Core.LiveChat
                         }
                         catch (Exception e)
                         {
-                            Log.Info(nameof(_innerLoop), $"_sendObject:{e.ToString()}");
+                            Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
                             throw;
                         }
                     }

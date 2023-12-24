@@ -21,17 +21,30 @@ namespace Core.RuntimeObject
         #region Public Method
         public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener)
         {
-            SevaDanmu(liveChatListener.DanmuMessage.Danmu, liveChatListener.File, liveChatListener.Name, liveChatListener.RoomId);
-            liveChatListener.DanmuMessage.Danmu = new();
-            SevaGift(liveChatListener.DanmuMessage.Gift, liveChatListener.File);
-            liveChatListener.DanmuMessage.Gift = new();
-            SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, liveChatListener.File);
-            liveChatListener.DanmuMessage.GuardBuy = new();
-            SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, liveChatListener.File);
-            liveChatListener.DanmuMessage.SuperChat = new();
+            if (liveChatListener.DanmuMessage.Danmu != null && liveChatListener.DanmuMessage.Danmu.Count > 0)
+            {
+                SevaDanmu(liveChatListener.DanmuMessage.Danmu, liveChatListener.File, liveChatListener.Name, liveChatListener.RoomId);
+                liveChatListener.DanmuMessage.Danmu = new();
+                Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{liveChatListener.File}");
+            }
+            if (liveChatListener.DanmuMessage.Gift != null && liveChatListener.DanmuMessage.Gift.Count > 0)
+            {
+                SevaGift(liveChatListener.DanmuMessage.Gift, liveChatListener.File);
+                liveChatListener.DanmuMessage.Gift = new();
+            }
+            if (liveChatListener.DanmuMessage.GuardBuy != null && liveChatListener.DanmuMessage.GuardBuy.Count > 0)
+            {
+                SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, liveChatListener.File);
+                liveChatListener.DanmuMessage.GuardBuy = new();
+            }
+            if (liveChatListener.DanmuMessage.SuperChat != null && liveChatListener.DanmuMessage.SuperChat.Count > 0)
+            {
+                SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, liveChatListener.File);
+                liveChatListener.DanmuMessage.SuperChat = new();
+            }
             if (liveChatListener.TimeStopwatch != null)
                 liveChatListener.TimeStopwatch.Restart();
-            Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{liveChatListener.File}");
+            
         }
         #endregion
 
