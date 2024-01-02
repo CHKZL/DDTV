@@ -193,16 +193,26 @@ namespace Core.Network
                         request.Method = "GET";
                         request.Timeout = 10000; // 10 seconds
 
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                        try
                         {
-                            using (Stream dataStream = response.GetResponseStream())
+                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                             {
-                                using (MemoryStream ms = new MemoryStream())
+                                using (Stream dataStream = response.GetResponseStream())
                                 {
-                                    dataStream.CopyTo(ms);
-                                    return ms.ToArray();
+                                    using (MemoryStream ms = new MemoryStream())
+                                    {
+                                        dataStream.CopyTo(ms);
+                                        dataStream.Dispose();
+                                        byte[] T = ms.ToArray();
+                                        ms.Dispose();
+                                        return T;
+                                    }
                                 }
                             }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(nameof(GetFileToByte), $"有脏东西，在内存里面乱跑，详细堆栈:{ex.ToString()}", ex, true);
                         }
                     }
                     catch (WebException ex)
