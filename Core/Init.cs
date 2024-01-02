@@ -13,7 +13,7 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2023-12-24 21:37:21";
+        public static string CompiledVersion = "2024-01-02 20:37:35";
         public static bool IsDevDebug = false;
         public static void Start()
         {
@@ -24,6 +24,7 @@ namespace Core
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096;
             ServicePointManager.Expect100Continue = false;
+            Thread.Sleep(2000);
             LogModule.Log.LogInit();
             Log.Info(nameof(Init),$"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init),$"检查和创建必要的目录");
