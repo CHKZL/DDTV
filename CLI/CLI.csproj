@@ -10,10 +10,11 @@
 	<ItemGroup>
 		<PackageReference Include="ConsoleTableExt" Version="3.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
 	<!--包含ffmpeg.exe -->
-	<ItemGroup Condition="'@(Contain->Contains($(RuntimeIdentifier)))' == 'True'">
+	<ItemGroup Condition="'@(Contain-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
 		<None Update="plugins\ffmpeg\ffmpeg.exe">
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
@@ -24,7 +25,7 @@
 	</ItemGroup>
 
 	<!-- 不包含ffmpeg.exe -->
-	<ItemGroup Condition="'@(Exclud->Contains($(RuntimeIdentifier)))' == 'True'">
+	<ItemGroup Condition="'@(Exclud-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
 		<None Update="plugins\ffmpeg\ffmpeg.exe">
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
 		</None>

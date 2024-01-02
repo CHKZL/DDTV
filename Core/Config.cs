@@ -38,6 +38,7 @@ namespace Core
             var _Config = new List<FieldInfo>();
             _Config.AddRange(typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
             _Config.AddRange(typeof(Config.Download).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
+            _Config.AddRange(typeof(Config.Web).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
 
             lock (varMap)
                 foreach (var fieldInfo in _Config)
@@ -60,10 +61,6 @@ namespace Core
             {
                 foreach (var item in A)
                 {
-                    if (item == "DetectIntervalTime=10000")
-                    {
-                        int B = int.Parse(item.Split('=')[1]);
-                    }
                     if (item.Split('=').Length == 2)
                     {
                         try
@@ -175,77 +172,145 @@ namespace Core
             /// 房间配置文件路径（字符串）
             /// 默认值：./Config/RoomListConfig.json
             /// </summary>
-            public static string _RoomConfigFile { get { return $"{_ConfigDirectory}{RoomConfigFile}"; } }
+            public static string _RoomConfigFile
+            {
+                get
+                {
+                    return $"{_ConfigDirectory}{RoomConfigFile}";
+                }
+            }
 
             private static string ConfigDirectory = "./Config/";
             /// <summary>
             /// 配置文件路径（字符串）
             /// 默认值：./Config/
             /// </summary>
-            public static string _ConfigDirectory { get { return ConfigDirectory; } }
+            public static string _ConfigDirectory
+            {
+                get
+                {
+                    return ConfigDirectory;
+                }
+            }
 
             private static string ConfigurationFile = $"DDTV_Config.ini";
             /// <summary>
             /// 默认的配置文件路径（字符串）
             /// 默认值：./Config/DDTV_Config.ini
             /// </summary>
-            public static string _ConfigurationFile { get { return $"{_ConfigDirectory}{ConfigurationFile}"; } }
+            public static string _ConfigurationFile
+            {
+                get
+                {
+                    return $"{_ConfigDirectory}{ConfigurationFile}";
+                }
+            }
 
             private static string Key = "34D3D9‭9D34894461‭91AB9B8‭582454669";
             /// <summary>
             /// 默认的AES加密秘钥（字符串）
             /// 默认值：34D3D9‭9D34894461‭91AB9B8‭582454669
             /// </summary>
-            public static string _Key { get { return Key; } }
+            public static string _Key
+            {
+                get
+                {
+                    return Key;
+                }
+            }
 
             private static string IV = "B3FF‭40627013‭F53F";
             /// <summary>
             /// 默认的AES加密初始化向量（字符串）
             /// 默认值：B3FF‭40627013‭F53F
             /// </summary>
-            public static string _IV { get { return IV; } }
+            public static string _IV
+            {
+                get
+                {
+                    return IV;
+                }
+            }
 
             private static string UserInfoCoinfFileExtension = ".Duser";
             /// <summary>
             /// 用户配置文件拓展名（字符串）
             /// 默认值：.Duser
             /// </summary>
-            public static string _UserInfoCoinfFileExtension { get { return UserInfoCoinfFileExtension; } }
+            public static string _UserInfoCoinfFileExtension
+            {
+                get
+                {
+                    return UserInfoCoinfFileExtension;
+                }
+            }
 
             private static string LogFileDirectory = "./Logs/";
             /// <summary>
             /// 日志文件路径（字符串）
             /// 默认值：./Logs/
             /// </summary>
-            public static string _LogFileDirectory { get { return LogFileDirectory; } }
+            public static string _LogFileDirectory
+            {
+                get
+                {
+                    return LogFileDirectory;
+                }
+            }
 
             private static string RecFileDirectory = "./Rec/";
             /// <summary>
             /// 录制文件储存路径（字符串）
             /// 默认值：./Rec/
             /// </summary>
-            public static string _RecFileDirectory { get { return RecFileDirectory; } }
+            public static string _RecFileDirectory
+            {
+                get
+                {
+                    return RecFileDirectory;
+                }
+            }
 
             private static string TemporaryFileDirectory = "./Temporary/";
             /// <summary>
             /// 临时文件路径（字符串）
             /// 默认值：./Temporary/
             /// </summary>
-            public static string _TemporaryFileDirectory { get { return TemporaryFileDirectory; } }
+            public static string _TemporaryFileDirectory
+            {
+                get
+                {
+                    return TemporaryFileDirectory;
+                }
+            }
 
             private static string LiveDomainName = "https://api.live.bilibili.com";
             /// <summary>
             /// 默认使用的直播API域名（字符串）
             /// 默认值：https://api.live.bilibili.com
             /// </summary>
-            public static string _LiveDomainName { get { return LiveDomainName; } set { LiveDomainName = value; WriteConfiguration(); } }
+            public static string _LiveDomainName
+            {
+                get
+                {
+                    return LiveDomainName;
+                }
+                set { LiveDomainName = value; WriteConfiguration(); }
+            }
 
             private static string MainDomainName = "https://api.bilibili.com";
             /// <summary>
             /// 默认使用的主站API域名（字符串）
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static string _MainDomainName { get { return MainDomainName; } set { MainDomainName = value; WriteConfiguration(); } }
+            public static string _MainDomainName
+            {
+                get
+                {
+                    return MainDomainName;
+                }
+                set { MainDomainName = value; WriteConfiguration(); }
+            }
 
             private static string HTTP_UA = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0";
             /// <summary>
@@ -259,14 +324,28 @@ namespace Core
             /// 直播间状态更新间隔时间（int，单位毫秒）
             /// 默认值：10000
             /// </summary>
-            public static int _DetectIntervalTime { get { return int.Parse(DetectIntervalTime); } set { DetectIntervalTime = value.ToString(); WriteConfiguration(); } }
+            public static int _DetectIntervalTime
+            {
+                get
+                {
+                    return int.Parse(DetectIntervalTime);
+                }
+                set { DetectIntervalTime = value.ToString(); WriteConfiguration(); }
+            }
 
             private static string DebugMode = "false";
             /// <summary>
             /// 调试模式开关（bool）
             /// 默认值：false
             /// </summary>
-            public static bool _DebugMode { get { return bool.Parse(DebugMode); } set { DebugMode = value.ToString(); WriteConfiguration(); } }
+            public static bool _DebugMode
+            {
+                get
+                {
+                    return bool.Parse(DebugMode);
+                }
+                set { DebugMode = value.ToString(); WriteConfiguration(); }
+            }
         }
         public class Download
         {
@@ -275,7 +354,47 @@ namespace Core
             /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static int _DefaultResolution { get { return int.Parse(DefaultResolution); } set { DefaultResolution = value.ToString(); WriteConfiguration(); } }
+            public static int _DefaultResolution
+            {
+                get
+                {
+                    return int.Parse(DefaultResolution);
+                }
+                set { DefaultResolution = value.ToString(); WriteConfiguration(); }
+            }
+        }
+
+
+        public class Web
+        {
+            private static string AccessControlAllowCredentials = "true";
+            /// <summary>
+            /// WEB的Credentials设置 (布尔值)
+            /// 默认值：true
+            /// </summary>
+            public static string _AccessControlAllowCredentials
+            {
+                get
+                {
+                    return AccessControlAllowCredentials;
+                }
+                set { AccessControlAllowCredentials = value.ToString(); WriteConfiguration(); }
+            }
+
+            private static string AccessControlAllowOrigin = "*";
+            /// <summary>
+            /// WEB跨域设置路径 （字符串:为*或者完整URL）（应为前端网址，必须带协议和端口号，如：http://127.0.0.1:5500）
+            /// 默认值：*
+            /// </summary>
+            public static string _AccessControlAllowOrigin
+            {
+                get { return AccessControlAllowOrigin; }
+                set
+                {
+                    AccessControlAllowOrigin = value.ToString();
+                    WriteConfiguration();
+                }
+            }
         }
 
 

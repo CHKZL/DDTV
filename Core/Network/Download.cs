@@ -173,6 +173,14 @@ namespace Core.Network
                 Log.Debug(nameof(GetFileToString), $"重试{maxRetries}次均失败:{URL}");
                 return null;
             }
+            /// <summary>
+            /// 获取网络byte数据流
+            /// </summary>
+            /// <param name="URL">目标地址</param>
+            /// <param name="IsCookie">是否携带cookie</param>
+            /// <param name="referer">默认referer</param>
+            /// <param name="maxRetries">重试次数</param>
+            /// <returns></returns>
             public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
                 Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
@@ -193,26 +201,38 @@ namespace Core.Network
                         request.Method = "GET";
                         request.Timeout = 10000; // 10 seconds
 
-                        try
+                        int maxAttempts = 3;
+                        for (int attempt = 0; attempt < maxAttempts; attempt++)
                         {
-                            using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                            try
                             {
-                                using (Stream dataStream = response.GetResponseStream())
+                                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                                 {
-                                    using (MemoryStream ms = new MemoryStream())
+                                    using (Stream dataStream = response.GetResponseStream())
                                     {
-                                        dataStream.CopyTo(ms);
-                                        dataStream.Dispose();
-                                        byte[] T = ms.ToArray();
-                                        ms.Dispose();
-                                        return T;
+                                        using (MemoryStream ms = new MemoryStream())
+                                        {
+                                            dataStream.CopyTo(ms);
+                                            dataStream.Dispose();
+                                            byte[] T = ms.ToArray();
+                                            ms.Dispose();
+                                            return T;
+                                        }
                                     }
                                 }
                             }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(nameof(GetFileToByte), $"有脏东西，在内存里面乱跑，详细堆栈:{ex.ToString()}", ex, true);
+                            catch (WebException ex)
+                            {
+                                if (attempt == maxAttempts - 1)
+                                {
+                                    Log.Error(nameof(GetFileToByte), $"获取网络流重试{maxAttempts}次均失败，详细堆栈:{ex.ToString()}", ex, true);
+                                }
+                                else
+                                {
+                                    Log.Warn(nameof(GetFileToByte), $"获取网络byte流出现错误，进行重试，详细堆栈:{ex.ToString()}", ex, false);
+                                    Thread.Sleep(200);
+                                }
+                            }
                         }
                     }
                     catch (WebException ex)
