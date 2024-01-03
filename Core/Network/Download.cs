@@ -187,10 +187,10 @@ namespace Core.Network
                 int retries = 0;
                 while (retries < maxRetries)
                 {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                    HttpWebRequest request = null;
                     try
                     {
-
+                        request = (HttpWebRequest)WebRequest.Create(URL);
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
                         request.UserAgent = Config.Core._HTTP_UA;
@@ -239,6 +239,7 @@ namespace Core.Network
                     {
                         Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
+                        if (request != null) request.Abort();
                         Thread.Sleep(300);
                     }
                     catch (Exception ex)
@@ -246,10 +247,6 @@ namespace Core.Network
                         retries++;
                         Thread.Sleep(300);
                         Log.Error(nameof(GetFileToByte), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
-                    }
-                    finally
-                    {
-                        if (request != null) request.Abort();
                     }
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
