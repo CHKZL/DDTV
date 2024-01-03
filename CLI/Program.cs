@@ -114,6 +114,10 @@ namespace CLI
                                 long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
                                 (int Total, int Download) = Core.RuntimeObject.RoomList.GetTasksInDownloadCount();
                                 Log.Info("DokiDoki", $"总:{Total}|录制中:{Download}|使用内存:{Core.Tools.Linq.ConversionSize(totalBytesOfMemoryUsed, Core.Tools.Linq.ConversionSizeType.String)}|{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
+                                if (totalBytesOfMemoryUsed > 4294967296)
+                                {
+                                    Environment.Exit(-114514);
+                                }
                                 Thread.Sleep(60 * 1000);
                             }
                         });
