@@ -13,7 +13,7 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2024-01-02 20:37:35";
+        public static string CompiledVersion = "2024-01-03 20:02:24";
         public static bool IsDevDebug = false;
         public static void Start()
         {
@@ -22,7 +22,7 @@ namespace Core
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            ServicePointManager.DefaultConnectionLimit = 4096;
+            ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;
             Thread.Sleep(2000);
             LogModule.Log.LogInit();

@@ -66,7 +66,9 @@ namespace CLI
                 FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Environment.CurrentDirectory + @"/static")),
                 RequestPath = new PathString("/static")
             });
-            app.Urls.Add("http://0.0.0.0:11419");
+            string rurl = $"http://0.0.0.0:11419";
+            app.Urls.Add(rurl);
+            Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
             app.Run();
         }
 
