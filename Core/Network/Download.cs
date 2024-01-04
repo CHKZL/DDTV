@@ -185,10 +185,9 @@ namespace Core.Network
             {
                 Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
                 int retries = 0;
-                HttpWebRequest request = null;
                 while (retries < maxRetries)
                 {
-
+                    HttpWebRequest request = null;
                     try
                     {
                         request = (HttpWebRequest)WebRequest.Create(URL);
@@ -205,27 +204,22 @@ namespace Core.Network
                         int maxAttempts = 3;
                         for (int attempt = 0; attempt < maxAttempts; attempt++)
                         {
+                            HttpWebResponse response = null;
+                            Stream dataStream = null;
+                            MemoryStream ms = null;
                             try
                             {
-                                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                                {
-                                    using (Stream dataStream = response.GetResponseStream())
-                                    {
-                                        using (MemoryStream memoryStream = new MemoryStream())
-                                        {
-                                            byte[] buffer = new byte[1024];
-                                            int bytesRead;
-                                            while ((bytesRead = dataStream.Read(buffer, 0, buffer.Length)) > 0)
-                                            {
-                                                memoryStream.Write(buffer, 0, bytesRead);
-                                            }
-                                            byte[] result = memoryStream.ToArray();
-                                            memoryStream.Dispose();
-                                            if (request != null) request = null;
-                                            return result;
-                                        }
-                                    }
-                                }
+                                response = (HttpWebResponse)request.GetResponse();
+                                dataStream = response.GetResponseStream();
+                                ms = new MemoryStream();
+                                dataStream.CopyTo(ms);                    
+                                byte[] T = ms.ToArray();
+                                response.Dispose();
+                                dataStream.Dispose();
+                                ms = new();
+                                ms.Dispose();
+                                return T;
+
                             }
                             catch (WebException ex)
                             {
@@ -239,13 +233,22 @@ namespace Core.Network
                                     Thread.Sleep(200);
                                 }
                             }
+                            catch (Exception ex)
+                            {
+                                response.Dispose();
+                                dataStream.Dispose();
+                                ms = new();
+                                ms.Dispose();
+                                Thread.Sleep(300);
+                                Log.Error(nameof(GetFileToByte), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                            }
                         }
                     }
                     catch (WebException ex)
                     {
                         Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
-                       
+                        if (request != null) request.Abort();
                         Thread.Sleep(300);
                     }
                     catch (Exception ex)
@@ -256,8 +259,7 @@ namespace Core.Network
                     }
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
-                if (request != null) request = null;
-                return null;
+                return default;
             }
 
 
