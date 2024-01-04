@@ -185,9 +185,10 @@ namespace Core.Network
             {
                 Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
                 int retries = 0;
+                HttpWebRequest request = null;
                 while (retries < maxRetries)
                 {
-                    HttpWebRequest request = null;
+
                     try
                     {
                         request = (HttpWebRequest)WebRequest.Create(URL);
@@ -220,6 +221,7 @@ namespace Core.Network
                                             }
                                             byte[] result = memoryStream.ToArray();
                                             memoryStream.Dispose();
+                                            if (request != null) request = null;
                                             return result;
                                         }
                                     }
@@ -254,7 +256,7 @@ namespace Core.Network
                     }
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
-               
+                if (request != null) request = null;
                 return null;
             }
 
