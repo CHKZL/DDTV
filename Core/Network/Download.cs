@@ -223,6 +223,10 @@ namespace Core.Network
                             }
                             catch (WebException ex)
                             {
+                                 response.Dispose();
+                                dataStream.Dispose();
+                                ms = new();
+                                ms.Dispose();
                                 if (attempt == maxAttempts - 1)
                                 {
                                     Log.Error(nameof(GetFileToByte), $"获取网络流重试{maxAttempts}次均失败，详细堆栈:{ex.ToString()}", ex, true);
