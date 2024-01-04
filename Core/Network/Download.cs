@@ -2,6 +2,7 @@
 using AngleSharp.Io;
 using Core.LogModule;
 using Microsoft.AspNetCore.Components.RenderTree;
+using SharpCompress.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -181,7 +182,7 @@ namespace Core.Network
             /// <param name="referer">默认referer</param>
             /// <param name="maxRetries">重试次数</param>
             /// <returns></returns>
-            public static byte[] GetFileToByte(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
+            public static long GetFileToByte(FileStream fs,string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
                 Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
                 int retries = 0;
@@ -204,29 +205,21 @@ namespace Core.Network
                         int maxAttempts = 3;
                         for (int attempt = 0; attempt < maxAttempts; attempt++)
                         {
-                            HttpWebResponse response = null;
-                            Stream dataStream = null;
-                            MemoryStream ms = null;
                             try
                             {
-                                response = (HttpWebResponse)request.GetResponse();
-                                dataStream = response.GetResponseStream();
-                                ms = new MemoryStream();
-                                dataStream.CopyTo(ms);                    
-                                byte[] T = ms.ToArray();
-                                response.Dispose();
-                                dataStream.Dispose();
-                                ms = new();
-                                ms.Dispose();
-                                return T;
-
+                                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                                {
+                                    using (Stream dataStream = response.GetResponseStream())
+                                    {
+                                        long old = fs.Length;
+                                        dataStream.CopyTo(fs);
+                                        long n = fs.Length;
+                                        return n - old;
+                                    }
+                                }
                             }
                             catch (WebException ex)
                             {
-                                 response.Dispose();
-                                dataStream.Dispose();
-                                ms = new();
-                                ms.Dispose();
                                 if (attempt == maxAttempts - 1)
                                 {
                                     Log.Error(nameof(GetFileToByte), $"获取网络流重试{maxAttempts}次均失败，详细堆栈:{ex.ToString()}", ex, true);
@@ -236,15 +229,6 @@ namespace Core.Network
                                     Log.Warn(nameof(GetFileToByte), $"获取网络byte流出现错误，进行重试，详细堆栈:{ex.ToString()}", ex, false);
                                     Thread.Sleep(200);
                                 }
-                            }
-                            catch (Exception ex)
-                            {
-                                response.Dispose();
-                                dataStream.Dispose();
-                                ms = new();
-                                ms.Dispose();
-                                Thread.Sleep(300);
-                                Log.Error(nameof(GetFileToByte), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
                             }
                         }
                     }
@@ -263,7 +247,7 @@ namespace Core.Network
                     }
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
-                return default;
+                return 0;
             }
 
 
