@@ -210,13 +210,17 @@ namespace Core.Network
                                 {
                                     using (Stream dataStream = response.GetResponseStream())
                                     {
-                                        using (MemoryStream ms = new MemoryStream())
+                                        using (MemoryStream memoryStream = new MemoryStream())
                                         {
-                                            dataStream.CopyTo(ms);
-                                            dataStream.Dispose();
-                                            byte[] T = ms.ToArray();
-                                            ms.Dispose();
-                                            return T;
+                                            byte[] buffer = new byte[1024];
+                                            int bytesRead;
+                                            while ((bytesRead = dataStream.Read(buffer, 0, buffer.Length)) > 0)
+                                            {
+                                                memoryStream.Write(buffer, 0, bytesRead);
+                                            }
+                                            byte[] result = memoryStream.ToArray();
+                                            memoryStream.Dispose();
+                                            return result;
                                         }
                                     }
                                 }
@@ -239,7 +243,7 @@ namespace Core.Network
                     {
                         Log.Debug(nameof(DownloadFile), $"{ex.Status.ToString()}:{URL}");
                         retries++;
-                        if (request != null) request.Abort();
+                       
                         Thread.Sleep(300);
                     }
                     catch (Exception ex)
@@ -250,6 +254,7 @@ namespace Core.Network
                     }
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
+               
                 return default;
             }
 
