@@ -255,7 +255,7 @@ namespace Core.Network
                 }
                 Log.Debug(nameof(GetFileToByte), $"重试{maxRetries}次均失败:{URL}");
                
-                return default;
+                return null;
             }
 
 
