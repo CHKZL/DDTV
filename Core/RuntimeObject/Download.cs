@@ -490,19 +490,8 @@ namespace Core.RuntimeObject
             /// <returns>写入的文件byte数</returns>
             private static long WriteToFile(FileStream fs, string url)
             {
-                byte[] InitialFragment = Network.Download.File.GetFileToByte(url, true, "https://www.bilibili.com/");
-                if (InitialFragment != null)
-                {
-                    fs.Write(InitialFragment, 0, InitialFragment.Length);
-                    int len = InitialFragment.Length;
-                    InitialFragment = null;
-                    return len;
-                }
-                else
-                {
-                    InitialFragment = null;
-                    return 0;
-                }
+                long len = Network.Download.File.GetFileToByte(fs,url, true, "https://www.bilibili.com/");
+                return len;
             }
             #endregion
 
