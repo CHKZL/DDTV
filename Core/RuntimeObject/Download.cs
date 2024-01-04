@@ -500,6 +500,7 @@ namespace Core.RuntimeObject
                 }
                 else
                 {
+                    InitialFragment = null;
                     return 0;
                 }
             }
