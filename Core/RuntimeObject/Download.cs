@@ -75,7 +75,7 @@ namespace Core.RuntimeObject
                 if (!string.IsNullOrEmpty(fileContent))
                 {
                     string webref = Network.Download.File.GetFileToString(fileContent, true);
-                    if(string.IsNullOrEmpty(webref))
+                    if (string.IsNullOrEmpty(webref))
                     {
                         return false;
                     }
@@ -276,7 +276,7 @@ namespace Core.RuntimeObject
                                 }
                                 else
                                 {
-                                    Task.Run(() => System.IO.File.Delete(File));                             
+                                    Task.Run(() => System.IO.File.Delete(File));
                                 }
                                 return;
                             }
@@ -309,14 +309,14 @@ namespace Core.RuntimeObject
                                     }
                                     // 处理HLS片段错误
                                     hlsErrorCount = HandleHlsSegmentError(hlsErrorCount, card, roomId, ref hostClass);
-                                    
+
                                     continue;
                                 }
                                 else
                                 {
                                     if (!isInitialized)
                                     {
-                                          // 记录下载开始
+                                        // 记录下载开始
                                         LogDownloadStart(card);
                                         isInitialized = true;
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
@@ -504,7 +504,7 @@ namespace Core.RuntimeObject
             /// <returns>写入的文件byte数</returns>
             private static long WriteToFile(FileStream fs, string url)
             {
-                long len = Network.Download.File.GetFileToByte(fs,url, true, "https://www.bilibili.com/");
+                long len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
                 return len;
             }
             #endregion

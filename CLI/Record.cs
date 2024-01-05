@@ -78,9 +78,9 @@ namespace CLI
                 while (RoomList.GetLiveStatus(e.RoomId));
                 if (e.IsRecDanmu)
                 {
-                    if(liveChatListener.State)
+                    if(!liveChatListener._Cancel)
                     {
-                        liveChatListener.Dispose();
+                        liveChatListener.Cancel();
                     }
                 }
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束");
@@ -90,7 +90,16 @@ namespace CLI
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            Danmu.SevaDanmu(liveChatListener);
+            //Danmu.SevaDanmu(liveChatListener);
+            if (!liveChatListener._Cancel)
+            {
+                liveChatListener.Connect();
+            }
+            else
+            {
+                liveChatListener.Cancel();
+                liveChatListener = null;
+            }
         }
 
 

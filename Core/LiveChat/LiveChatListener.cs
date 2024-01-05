@@ -30,6 +30,7 @@ namespace Core.LiveChat
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
 
+        public bool _Cancel=false;
         public long RoomId = 0;
         public string Title = string.Empty;
         public string Name=string.Empty;
@@ -66,7 +67,11 @@ namespace Core.LiveChat
                 Dispose();
             }
         }
-
+        public void Cancel()
+        {
+            _Cancel = true;
+            Dispose();
+        }
         public void Close()
         {
             m_ReceiveBuffer = null;
@@ -320,7 +325,7 @@ namespace Core.LiveChat
                                 buffer = new byte[bodyLength];
                             }
                             deflate.Read(buffer, 0, bodyLength);
-                            ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
+                            ProcessDanmakuData(protocol.Operation, buffer, bodyLength);//对加密消息进行解密
                         }
                         ms.Dispose();
                         deflate.Dispose();
@@ -329,12 +334,12 @@ namespace Core.LiveChat
                 case 3:
                     using (var inputStream = new MemoryStream(buffer))
                     using (var outputStream = new MemoryStream())
-                    using (var decompressionStream = new BrotliStream(inputStream, CompressionMode.Decompress))
+                    using (var decompressionStream = new BrotliStream(inputStream, CompressionMode.Decompress))//Brotli是好文明，不用自己写轮子
                     {
                         decompressionStream.CopyTo(outputStream);
                         buffer = outputStream.ToArray();
                     }
-                    ProcessDanmakuData(protocol.Operation, buffer, buffer.Length, true);
+                    ProcessDanmakuData(protocol.Operation, buffer, buffer.Length, true);//对加密消息进行解密
                     break;
 
                 default:
@@ -372,7 +377,7 @@ namespace Core.LiveChat
                                     Array.Copy(buffer, 16, a, 0, len - 16);
                                     string jsonBody = Encoding.UTF8.GetString(a, 0, len - 16);
                                     jsonBody = Regex.Unescape(jsonBody);
-                                    _parse(jsonBody);
+                                    _parse(jsonBody);//如果是有效包，就丢给MessageReceived事件触发
                                     byte[] b = new byte[buffer.Length - len];
                                     Array.Copy(buffer, len, b, 0, buffer.Length - len);
                                     buffer = b;
