@@ -244,24 +244,32 @@ namespace Core.RuntimeObject
             {
                 bool isSuccess = false;
                 string File = string.Empty;
+
+                // 使用异步任务执行下载操作
                 await Task.Run(() =>
                 {
                     // 初始化下载
                     InitializeDownload(card);
+                    // 获取标题并替换关键字符
                     string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(card.UID));
+                    // 获取房间ID
                     long roomId = card.RoomId;
+                    // 定义目录名称
                     string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}";
+                    // 初始化标志
                     bool isInitialized = false;
+                    // 当前位置
                     long currentLocation = 0;
-
                     // 如果目录不存在，则创建目录
                     CreateDirectoryIfNotExists(dirName);
+                    // 定义文件路径和名称
                     File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4";
                     // 使用FileStream进行文件操作
                     using (FileStream fs = new FileStream(File, FileMode.Append))
                     {
                         int hlsErrorCount = 0;
                         HostClass hostClass = new();
+                        // 获取HLS主机
                         while (!GetHlsHost_avc(card, ref hostClass))
                         {
                             // 处理HLS错误
@@ -281,17 +289,15 @@ namespace Core.RuntimeObject
                                 return;
                             }
                         }
-
                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
-
                         List<(long size, DateTime time)> values = new();
-
                         while (true)
                         {
                             long downloadSizeForThisCycle = 0;
                             try
                             {
                                 bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
+
                                 if (!isHlsHostAvailable)
                                 {
                                     if (hlsErrorCount > 3)
@@ -321,7 +327,6 @@ namespace Core.RuntimeObject
                                         isInitialized = true;
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                     }
-
                                     foreach (var item in hostClass.eXTM3U.eXTINFs)
                                     {
                                         if (long.TryParse(item.FileName, out long index) && index > currentLocation)
@@ -330,11 +335,9 @@ namespace Core.RuntimeObject
                                             currentLocation = index;
                                         }
                                     }
-
                                     hostClass.eXTM3U.eXTINFs = new();
                                     values.Add((downloadSizeForThisCycle, DateTime.Now));
                                     values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle);
-
                                     if (hostClass.eXTM3U.IsEND)
                                     {
                                         isSuccess = true;
