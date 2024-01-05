@@ -473,7 +473,7 @@ namespace Core.LiveChat
                     break;
                 //管理员警告
                 case "WARNING":
-                    MessageReceived(this, new WarningEventArg(obj));
+                    //MessageReceived(this, new WarningEventArg(obj));
                     break;
                 //开播_心跳
                 case "LIVE":
@@ -502,12 +502,12 @@ namespace Core.LiveChat
                     break;
                 //切断直播间
                 case "CUT_OFF":
-                    MessageReceived(this, new CutOffEventArg(obj));
+                    //MessageReceived(this, new CutOffEventArg(obj));
                     break;
                 default:
                     //Console.WriteLine(cmd);
                     //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"收到未知CMD:{cmd}");
-                    MessageReceived(this, new MessageEventArgs(obj));
+                    //MessageReceived(this, new MessageEventArgs(obj));
                     break;
             }
             return;
