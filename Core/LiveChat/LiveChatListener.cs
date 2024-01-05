@@ -76,7 +76,11 @@ namespace Core.LiveChat
         {
             m_ReceiveBuffer = null;
             TimeStopwatch.Stop();
-            TimeStopwatch = null;
+            if(TimeStopwatch!=null)
+            {
+                TimeStopwatch.Stop();
+                TimeStopwatch = null;
+            }
             try
             {
                 if (m_innerRts != null)
