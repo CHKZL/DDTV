@@ -310,7 +310,9 @@ namespace Core.RuntimeObject
 
                                     if (hostClass.eXTM3U.IsEND) // 如果结束，则设置isSuccess为true
                                     {
+                                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
                                         isSuccess = true;
+                                        Thread.Sleep(1000 * 10);
                                         return;
                                     }
                                 }
@@ -412,7 +414,7 @@ namespace Core.RuntimeObject
                 if (hlsErrorCount > 3)
                 {
                     hlsErrorCount = 0;
-                    Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]获取HLS流失败，10秒后重试该直播间");
+                    Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但未检测到HLS流，10秒后重试");
                     if (!RoomList.GetLiveStatus(card.RoomId))
                     {
                         return -1;
