@@ -69,8 +69,11 @@ namespace Core.LiveChat
         }
         public void Cancel()
         {
-            _Cancel = true;
-            Dispose();
+            if (!_Cancel)
+            {
+                _Cancel = true;
+                Dispose();
+            }
         }
         public void Close()
         {
