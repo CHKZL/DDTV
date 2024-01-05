@@ -294,8 +294,30 @@ namespace Core.RuntimeObject
                                 bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
                                 if (!isHlsHostAvailable)
                                 {
+                                    if (hlsErrorCount > 3)
+                                    {
+                                        if (!GetHlsHost_avc(card, ref hostClass))
+                                        {
+                                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId);
+                                            if (hlsErrorCount == -1)
+                                            {
+                                                System.IO.FileInfo fileInfo = new(File);
+                                                //文件大于3MB返回true，小于3MB当作无效录制，删除文件并返回false
+                                                if (fileInfo.Length > 3 * 1024 * 1024)
+                                                {
+                                                    isSuccess = true;
+                                                }
+                                                else
+                                                {
+                                                    Task.Run(() => System.IO.File.Delete(File));
+                                                }
+                                                return;
+                                            }
+                                        }
+                                    }
                                     // 处理HLS片段错误
                                     hlsErrorCount = HandleHlsSegmentError(hlsErrorCount, card, roomId, ref hostClass);
+                                    
                                     continue;
                                 }
                                 else
