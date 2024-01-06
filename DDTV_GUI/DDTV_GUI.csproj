@@ -7,9 +7,10 @@
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\Img\UI\DDTV.ico</ApplicationIcon>
     <AssemblyVersion></AssemblyVersion>
-    <Version>3.5.11.974</Version>
+    <Version>3.5.12.975</Version>
     <Authors>ami</Authors>
     <UseWindowsForms>true</UseWindowsForms>
+    <UserSecretsId>dc023890-673e-444d-86e4-2cb9edf80330</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
