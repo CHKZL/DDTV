@@ -267,7 +267,7 @@ namespace Core.RuntimeObject
                             if (hlsErrorCount == -1)
                             {
                                 isSuccess = CheckAndHandleFile(File); // 检查并处理文件
-                                if (!isSuccess) return;
+                                return;
                             }
                         }
 
@@ -284,7 +284,11 @@ namespace Core.RuntimeObject
                                 if (!isHlsHostAvailable) // 如果HLS主机不可用，则处理Host刷新
                                 {
                                     hlsErrorCount = HandleHostRefresh(hlsErrorCount, card, roomId, ref hostClass, File);
-                                    if (hlsErrorCount == -1) return;
+                                    if (hlsErrorCount == -1)
+                                    {
+                                        isSuccess = CheckAndHandleFile(File); // 检查并处理文件
+                                        return;
+                                    }
                                 }
                                 else
                                 {
