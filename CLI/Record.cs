@@ -103,6 +103,12 @@ namespace CLI
             //Danmu.SevaDanmu(liveChatListener);
             if (!liveChatListener._Cancel)
             {
+                if (liveChatListener._disposed)
+                {
+                    new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
+                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+                }
                 liveChatListener.Connect();
             }
             else
