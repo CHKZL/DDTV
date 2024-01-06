@@ -103,6 +103,7 @@ namespace Core.LogModule
                                 cmd.Parameters.AddRange(pms);
                                 //执行
                                 int i = cmd.ExecuteNonQuery();
+                                cmd.Dispose();
                                 if (i > 0)
                                 {
                                     return true;
