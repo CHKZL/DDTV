@@ -82,6 +82,10 @@ namespace Core.LogModule
             {
                 try
                 {
+                    if (SQLiteConn==null)
+                    {
+                        SQLiteConn = new();
+                    }
                     lock (SQLiteConn)
                     {
                         if (logClass != null && logClass.Source != null)

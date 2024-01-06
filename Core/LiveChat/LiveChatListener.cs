@@ -25,11 +25,11 @@ namespace Core.LiveChat
     {
         #region Properties
         private ClientWebSocket m_client;
-        private bool _disposed = false;
         private byte[] m_ReceiveBuffer;
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
 
+        public bool _disposed = false;
         public bool _Cancel=false;
         public long RoomId = 0;
         public string Title = string.Empty;
@@ -111,14 +111,21 @@ namespace Core.LiveChat
         }
         public void Dispose()
         {
-            if (!_disposed)
+            try
             {
-                Close();
+                if (!_disposed)
+                {
+                    Close();
+                }
+                if (DisposeSent != null)
+                    DisposeSent.Invoke(this, EventArgs.Empty);
+                _disposed = true;
+                State = false;
             }
-            if (DisposeSent != null)
-                DisposeSent.Invoke(this, EventArgs.Empty);
-            _disposed = true;
-             State = false; 
+            catch (Exception E)
+            {
+                Log.Error(nameof(LiveChatListener), "关闭LiveChatListener连接时出现未知错误", E, false);
+            }
         }
 
 
@@ -237,7 +244,7 @@ namespace Core.LiveChat
             {
                 try
                 {
-                    WebSocketReceiveResult result;
+                    WebSocketReceiveResult result = null;
                     int length = 0;
                     do
                     {
@@ -251,10 +258,10 @@ namespace Core.LiveChat
                         catch (Exception e)
                         {
                             Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
-                            throw;
+                            Dispose();
                         }
                     }
-                    while (!result.EndOfMessage);
+                    while (!result.EndOfMessage );
                     DepackDanmakuData(m_ReceiveBuffer);
                 }
                 catch (OperationCanceledException ex)
