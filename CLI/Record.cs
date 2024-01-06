@@ -83,6 +83,16 @@ namespace CLI
                         liveChatListener.Cancel();
                     }
                 }
+                if(liveChatListener!=null)
+                {
+                    liveChatListener.DanmuMessage = null;
+                    try
+                    {
+                        liveChatListener.Dispose();
+                    }
+                    catch (Exception)
+                    {}
+                }
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束");
             }
         }
