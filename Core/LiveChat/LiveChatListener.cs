@@ -78,7 +78,6 @@ namespace Core.LiveChat
         public void Close()
         {
             m_ReceiveBuffer = null;
-            TimeStopwatch.Stop();
             if(TimeStopwatch!=null)
             {
                 TimeStopwatch.Stop();
@@ -259,6 +258,7 @@ namespace Core.LiveChat
                         {
                             Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
                             Dispose();
+                            return;
                         }
                     }
                     while (!result.EndOfMessage );
