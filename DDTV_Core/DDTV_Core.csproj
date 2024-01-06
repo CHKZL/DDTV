@@ -8,7 +8,7 @@
     <AssemblyVersion></AssemblyVersion>
     <FileVersion>3.0.2.0</FileVersion>
     <Authors>ami</Authors>
-    <Version>3.5.11.974</Version>
+    <Version>3.5.12.975</Version>
     <Description>这是DDTV3.0的核心库，提供如无人值守、稳定的开播自动录制功能；
 并且对主播开播中任何断流导致的文件分段提供自动合并功能，如果需要也能进行录制完成后自动转码功能
 

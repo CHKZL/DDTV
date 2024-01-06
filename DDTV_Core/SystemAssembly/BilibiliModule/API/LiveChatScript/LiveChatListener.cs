@@ -293,7 +293,8 @@ namespace DDTV_Core.SystemAssembly.BilibiliModule.API.LiveChatScript
                 {
                     jsonBody = jsonBody.Replace("extra\":\"{\"send_from_me", "extra\":{\"send_from_me");
                     jsonBody = jsonBody.Replace("}\"}", "}}");
-                    jsonBody = jsonBody.Replace("}\",\"user", "},\"user");
+                    jsonBody = jsonBody.Replace("\"{}\",", "");
+                    jsonBody = jsonBody.Replace("}\",", "},");
 
                 }
                 if (jsonBody.Contains("DM_INTERACTION"))
