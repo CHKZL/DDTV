@@ -38,5 +38,48 @@ namespace Core.Tools
             Directory.CreateDirectory(Path);
             return Path;
         }
+
+
+        private static List<string> _DelFileList = new();
+        private static bool DelState = false;
+        public static void Delete(string Path)
+        {
+            if (!DelState)
+            {
+                DelState = true;
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            for (int i = 0; i < _DelFileList.Count; i++)
+                            {
+                                try
+                                {
+                                    File.Delete(_DelFileList[i]);
+                                    _DelFileList.RemoveAt(i);
+                                    i--;
+                                }
+                                catch (Exception)
+                                {
+                                    if (!File.Exists(_DelFileList[i]))
+                                    {
+                                        _DelFileList.RemoveAt(i);
+                                        i--;
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Warn(nameof(Delete), "清理文件出现意外的错误，稍后重试，错误堆栈已写日志", e, true);
+                        }
+                        Thread.Sleep(1000);
+                    }
+                });
+            }
+            _DelFileList.Add(Path);
+        }
     }
 }

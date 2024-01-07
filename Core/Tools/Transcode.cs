@@ -91,13 +91,13 @@ namespace Core.Tools
             if (File.Exists(after))
             {
                 FileInfo fileInfo = new FileInfo(after);
-                if (fileInfo.Length > 3 * 1024 * 1024)
+                if (fileInfo.Length > 10 * 1024 * 1024)
                 {
-                    Task.Run(() => System.IO.File.Delete(before));
+                    Tools.FileOperations.Delete(before);
                 }
             }
             if (process != null)
-                 process = null;
+                process = null;
             LogText = null;
         }
     }
