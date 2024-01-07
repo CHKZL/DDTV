@@ -252,6 +252,7 @@ namespace Core.RuntimeObject
                     long roomId = card.RoomId; // 获取房间ID
                     string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}"; // 创建目录名
                     bool isInitialized = false;
+                    bool InitialRequest = true;
                     long currentLocation = 0;
                     CreateDirectoryIfNotExists(dirName); // 如果目录不存在，则创建
                     File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4"; // 创建文件名
@@ -314,11 +315,23 @@ namespace Core.RuntimeObject
 
                                     if (hostClass.eXTM3U.IsEND) // 如果结束，则设置isSuccess为true
                                     {
-                                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
-                                        isSuccess = true;
-                                        Thread.Sleep(1000 * 10);
-                                        return;
+                                        if (InitialRequest)
+                                        {
+                                            isSuccess = CheckAndHandleFile(File); // 检查并处理文件
+                                            isSuccess = false;
+                                            Thread.Sleep(1000 * 10);
+                                            return;
+                                        }
+                                        else
+                                        {
+                                            Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
+                                            isSuccess = true;
+                                            Thread.Sleep(1000 * 10);
+                                            return;
+                                        }
+
                                     }
+                                    InitialRequest = false;
                                 }
                             }
                             catch (Exception)
@@ -342,7 +355,7 @@ namespace Core.RuntimeObject
             {
                 System.IO.FileInfo fileInfo = new(File);
                 //文件大于3MB返回true，小于3MB当作无效录制，删除文件并返回false
-                if (fileInfo.Length > 3 * 1024 * 1024)
+                if (fileInfo.Length > 10 * 1024 * 1024)
                 {
                     return true;
                 }
