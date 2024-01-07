@@ -234,7 +234,7 @@ namespace Core.Tools
             {
                 EnText.AppendFormat("{0:x2}", iByte);
             }
-            return EnText.ToString().ToUpper();
+            return EnText.ToString().ToLower();
         }
         #endregion
         #region 内部方法

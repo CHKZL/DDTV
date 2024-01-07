@@ -30,7 +30,7 @@ namespace CLI
             //{
             //    return;
             //}
-
+            return;
             bool Initialization = true;
             if (e.IsRemind)
             {
