@@ -189,7 +189,7 @@ namespace Core.RuntimeObject
             {
                 UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
                 UIDList = null;
-                if (uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
+                if (uidsInfo_Class!=null &&  uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
                 {
                     foreach (var item in uidsInfo_Class.data)
                     {
