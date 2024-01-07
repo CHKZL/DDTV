@@ -244,80 +244,68 @@ namespace Core.RuntimeObject
             {
                 bool isSuccess = false;
                 string File = string.Empty;
-
                 await Task.Run(() =>
                 {
-                    InitializeDownload(card); // 初始化下载
-                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(card.UID)); // 获取标题
-                    long roomId = card.RoomId; // 获取房间ID
-                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}"; // 创建目录名
-                    bool isInitialized = false;
-                    bool InitialRequest = true;
-                    long currentLocation = 0;
-                    CreateDirectoryIfNotExists(dirName); // 如果目录不存在，则创建
-                    File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4"; // 创建文件名
-
-                    using (FileStream fs = new FileStream(File, FileMode.Append)) // 使用FileStream写入文件
+                    InitializeDownload(card);
+                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(card.UID));
+                    long roomId = card.RoomId;
+                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}";
+                    CreateDirectoryIfNotExists(dirName);
+                    File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4";
+                    using (FileStream fs = new FileStream(File, FileMode.Append))
                     {
                         int hlsErrorCount = 0;
-                        HostClass hostClass = new(); // 创建HostClass实例
-                                                     // 获取HLS主机
-                        while (!GetHlsHost_avc(card, ref hostClass)) // 如果获取HLS主机失败，则处理HLS错误
+                        HostClass hostClass = new();
+                        while (!GetHlsHost_avc(card, ref hostClass))
                         {
                             hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId);
                             if (hlsErrorCount == -1)
                             {
-                                isSuccess = CheckAndHandleFile(File); // 检查并处理文件
+                                isSuccess = CheckAndHandleFile(File);
                                 return;
                             }
                         }
-
                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
                         List<(long size, DateTime time)> values = new();
-
+                        bool InitialRequest = true;
+                        long currentLocation = 0;
                         while (true)
                         {
                             long downloadSizeForThisCycle = 0;
                             try
                             {
-                                bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass); // 刷新HostClass
-
-                                if (!isHlsHostAvailable) // 如果HLS主机不可用，则处理Host刷新
+                                bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
+                                if (!isHlsHostAvailable)
                                 {
                                     hlsErrorCount = HandleHostRefresh(hlsErrorCount, card, roomId, ref hostClass, File);
                                     if (hlsErrorCount == -1)
                                     {
-                                        isSuccess = CheckAndHandleFile(File); // 检查并处理文件
+                                        isSuccess = CheckAndHandleFile(File);
                                         return;
                                     }
                                 }
                                 else
                                 {
-                                    if (!isInitialized) // 如果未初始化，则记录下载开始
+                                    if (InitialRequest)
                                     {
-                                        LogDownloadStart(card);
-                                        isInitialized = true;
-                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}"); // 写入文件
+                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                     }
-
-                                    foreach (var item in hostClass.eXTM3U.eXTINFs) // 遍历eXTINFs
+                                    foreach (var item in hostClass.eXTM3U.eXTINFs)
                                     {
                                         if (long.TryParse(item.FileName, out long index) && index > currentLocation)
                                         {
-                                            downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}"); // 写入文件
+                                            downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                             currentLocation = index;
                                         }
                                     }
-
                                     hostClass.eXTM3U.eXTINFs = new();
                                     values.Add((downloadSizeForThisCycle, DateTime.Now));
-                                    values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle); // 更新下载速度
-
-                                    if (hostClass.eXTM3U.IsEND) // 如果结束，则设置isSuccess为true
+                                    values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle);
+                                    if (hostClass.eXTM3U.IsEND)
                                     {
                                         if (InitialRequest)
                                         {
-                                            isSuccess = CheckAndHandleFile(File); // 检查并处理文件
+                                            isSuccess = CheckAndHandleFile(File);
                                             isSuccess = false;
                                             Thread.Sleep(1000 * 10);
                                             return;
@@ -329,20 +317,23 @@ namespace Core.RuntimeObject
                                             Thread.Sleep(1000 * 10);
                                             return;
                                         }
-
+                                    }
+                                    if (InitialRequest)
+                                    {
+                                        LogDownloadStart(card);
                                     }
                                     InitialRequest = false;
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
+                                Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制循环中出现未知错误，写入日志", e, true);
                                 Thread.Sleep(1000);
                             }
                             Thread.Sleep(2000);
                         }
                     }
                 });
-
                 return (DownloadCompletedReset(isSuccess, ref card), File);
             }
 
@@ -361,7 +352,7 @@ namespace Core.RuntimeObject
                 }
                 else
                 {
-                    Task.Run(() => System.IO.File.Delete(File));
+                    Tools.FileOperations.Delete(File);
                     return false;
                 }
             }
