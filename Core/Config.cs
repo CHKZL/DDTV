@@ -395,6 +395,38 @@ namespace Core
                     WriteConfiguration();
                 }
             }
+
+
+
+            private static string AccessKeyId = "ddtv";
+            /// <summary>
+            /// API鉴权所使用的AccessKeyId 为字符串，默认"ddtv"
+            /// 默认值：*
+            /// </summary>
+            public static string _AccessKeyId
+            {
+                get { return AccessKeyId; }
+                set
+                {
+                    AccessKeyId = value.ToString();
+                    WriteConfiguration();
+                }
+            }
+
+            private static string AccessKeySecret = "ddtv";
+            /// <summary>
+            /// API鉴权所使用的AccessKeySecret 为字符串，默认"ami"
+            /// 默认值：*
+            /// </summary>
+            public static string _AccessKeySecret
+            {
+                get { return AccessKeySecret; }
+                set
+                {
+                    AccessKeySecret = value.ToString();
+                    WriteConfiguration();
+                }
+            }
         }
 
 
