@@ -2,20 +2,11 @@ name: DDTV_Dev_CLI
 
 on:
   push:
-    branches-ignore: 
-      - master 
-    paths-ignore:
-      - '**.md'
     commit-message:
       startsWith: '[dev]'
   pull_request:
-    branches-ignore: 
-      - master 
-    paths-ignore:
-      - '**.md'
     commit-message:
       startsWith: '[dev]'
-  workflow_dispatch:
 
 jobs:
   build:
