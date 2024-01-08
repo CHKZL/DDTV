@@ -49,6 +49,7 @@ jobs:
         run: |
           mkdir CLI\\build_output\\${{ matrix.runtime }}\\plugins\\ffmpeg
           copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\${{ matrix.runtime }}\\plugins\\ffmpeg\\ffmpeg.exe
+          dir CLI\\build_output\\${{ matrix.runtime }}\\plugins\\ffmpeg
   
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
