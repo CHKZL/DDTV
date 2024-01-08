@@ -7,6 +7,7 @@ on:
       - 'main'
 
 jobs:
+#第一个job，确认commit info是否是[dev]开头
   check-commit:
     runs-on: ubuntu-latest
     outputs:
