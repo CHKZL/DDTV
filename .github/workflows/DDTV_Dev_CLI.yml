@@ -2,12 +2,8 @@ name: DDTV_Dev_CLI
 
 on:
   push:
-    branches-ignore: 
-      - master 
-    paths:
-      - 'CLI/**'
-      - '.github/workflows/DDTV_Dev_CLI.yml'
-      - '!**/README.md'
+    tags:
+      - "dev*"
   pull_request:
     branches-ignore: 
       - master 
@@ -18,21 +14,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  check_commit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Check commit message
-        run: |
-          commit_message=$(git log --format=%B -n 1 ${{ github.event.after }})
-          if [[ $commit_message != \[dev\]* ]]; then
-            echo "Commit message does not start with '[dev]'. Failing workflow."
-            exit 1
-          fi
-
   build:
-    needs: check_commit
     strategy:
       matrix:
         os: 
