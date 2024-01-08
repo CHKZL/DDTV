@@ -21,6 +21,13 @@ jobs:
           - ubuntu-latest
           - windows-latest
           - macOS-latest
+        runtime: 
+          - linux-x64
+          - win-x64
+          - osx-x64
+          - linux-arm
+          - win-arm
+          - osx-arm
 
     runs-on: ${{ matrix.os }}
 
@@ -37,7 +44,7 @@ jobs:
         run: cd CLI && dotnet restore
   
       - name: Build
-        run: cd CLI && dotnet build --no-restore --output build_output
+        run: cd CLI && dotnet build --no-restore --output build_output --runtime ${{ matrix.runtime }} --self-contained true
   
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
