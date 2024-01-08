@@ -13,7 +13,6 @@ namespace CLI.WebAppServices.Middleware
         [Produces(MediaTypeNames.Application.Json)]
         [ApiController]
         [Route("api/[controller]")]
-        [AllowAnonymous]
         [Login]
         public class ApiControllerBase : ControllerBase
         {
