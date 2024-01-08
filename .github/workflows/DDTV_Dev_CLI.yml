@@ -8,6 +8,7 @@ on:
       - master 
     paths:
       - 'CLI/**'
+      - 'Core/**'
       - '.github/workflows/DDTV_Dev_CLI.yml'
       - '!**/README.md'
   pull_request:
