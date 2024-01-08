@@ -1,9 +1,14 @@
-name: CLI_Dev
+name: DDTV_Dev_CLI
 
 on:
   push:
-    tags:
-      - "dev*"
+    branches-ignore: 
+      - master 
+    paths:
+      - 'CLI/**'
+      - 'Core/**'
+      - '.github/workflows/DDTV_Dev_CLI.yml'
+      - '!**/README.md'
   pull_request:
     branches-ignore: 
       - master 
@@ -28,19 +33,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Check commit message
+        id: check_msg
+        run: |
+          MSG=$(git log --format=%B -n 1 ${{ github.event.after }})
+          if [[ $MSG == dev* ]]; then
+            echo "::set-output name=run_job::true"
+          else
+            echo "::set-output name=run_job::false"
+          fi
+        shell: bash
+
       - name: Use .NET 8.x
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
+        if: steps.check_msg.outputs.run_job == 'true'
 
       - name: Restore dependencies
         run: cd CLI && dotnet restore
+        if: steps.check_msg.outputs.run_job == 'true'
   
       - name: Build
         run: cd CLI && dotnet build --no-restore --output build_output
+        if: steps.check_msg.outputs.run_job == 'true'
   
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
           name: DDTV-CLI-${{ matrix.os }}
           path: CLI/build_output
+        if: steps.check_msg.outputs.run_job == 'true'
