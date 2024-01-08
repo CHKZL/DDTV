@@ -47,6 +47,10 @@ jobs:
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
+          cd CLI/build_output/${{ matrix.runtime }}
+          mkdir plugins
+          cd plugins
+          mkdir ffmpeg
           cp CLI/plugins/ffmpeg/ffmpeg.exe CLI/build_output/${{ matrix.runtime }}/plugins/ffmpeg/ffmpeg.exe
   
       - name: Archive production artifacts
