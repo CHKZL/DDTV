@@ -21,20 +21,20 @@ namespace CLI.WebAppServices.Middleware
         public class PostCommonParameters
         {
             [FromForm]
-            public string sig { get; set; }
+            public string? sig { get; set; }
             [FromForm]
             public long time { get; set; }
             [FromForm]
-            public string accesskeyid { get; set; }
+            public string? accesskeyid { get; set; }
         }
         public class GetCommonParameters
         {
             [FromQuery]
-            public string sig { get; set; }
+            public string? sig { get; set; }
             [FromQuery]
             public long time { get; set; }
             [FromQuery]
-            public string accesskeyid { get; set; }
+            public string? accesskeyid { get; set; }
         }
     }
     /// <summary>

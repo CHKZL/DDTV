@@ -10,7 +10,7 @@ namespace Core
 {
     public class Init
     {
-        public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
+        public static string Ver = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}-{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}";
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "2024-01-08 01:35:02";

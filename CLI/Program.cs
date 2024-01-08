@@ -104,9 +104,10 @@ namespace CLI
                         Log.Info(nameof(DetectRoom), $"注册下播事件");
                         //TEST();
 #if DEBUG
+#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
                         Task.Run(() =>
                         {
-                            Process currentProcess = null;
+                            Process? currentProcess = null;
                             while (true)
                             {
                                 currentProcess = Process.GetCurrentProcess();
@@ -120,7 +121,8 @@ namespace CLI
                                 Thread.Sleep(60 * 1000);
                             }
                         });
-# endif
+#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
+#endif
                     });
                 }
 

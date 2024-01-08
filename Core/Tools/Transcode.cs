@@ -40,7 +40,10 @@ namespace Core.Tools
             {
                 try
                 {
-                    LogText.Add(e.Data);
+                    if (e != null && e.Data != null)
+                    {
+                        LogText.Add(e.Data);
+                    }
                 }
                 catch (Exception)
                 {
@@ -50,7 +53,10 @@ namespace Core.Tools
             {
                 try
                 {
-                    LogText.Add(e.Data);
+                    if (e != null && e.Data != null)
+                    {
+                        LogText.Add(e.Data);
+                    }
                 }
                 catch (Exception)
                 {
@@ -69,12 +75,14 @@ namespace Core.Tools
             process.Start();
             // 开始异步读取错误输出
             process.BeginErrorReadLine();
+#pragma warning disable CS8622 // 参数类型中引用类型的为 Null 性与目标委托不匹配(可能是由于为 Null 性特性)。
             process.Exited += delegate (object sender, EventArgs e)
             {
                 Process P = (Process)sender;
                 Log.Info(nameof(TranscodeAsync), "修复/转码任务完成:" + P.StartInfo.Arguments);
             };
-            // 等待Process退出
+#pragma warning restore CS8622 // 参数类型中引用类型的为 Null 性与目标委托不匹配(可能是由于为 Null 性特性)。
+                              // 等待Process退出
             await process.WaitForExitAsync();
             if (Core.Config.Core._DebugMode)
             {
@@ -98,7 +106,7 @@ namespace Core.Tools
             }
             if (process != null)
                 process = null;
-            LogText = null;
+            LogText = new();
         }
     }
 }

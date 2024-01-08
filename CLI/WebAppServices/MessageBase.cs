@@ -5,19 +5,19 @@ namespace CLI
 {
     public class MessageBase
     {
-        public static string Success<T>(string cmd, T data,string massage="",code code=code.ok)
+        public static string Success<T>(string cmd, T data,string massage="",MessageCode code=MessageCode.ok)
         {
-            string MESS = "";
+            string? MESS = "";
             if (typeof(T).Name.Equals("string")|| typeof(T).Name.Equals("String"))
             {
-                MESS=data as string;
+                MESS = data as string;
             }
             Log.Info(nameof(MessageBase),cmd+" "+ code);
-            pack<T> pack = new pack<T>()
+            Pack<T> pack = new Pack<T>()
             {
                 cmd = cmd,
                 code= code,
-                data = data,
+                Data = data,
                 massage = massage
             };
             string B = JsonConvert.SerializeObject(pack);
@@ -27,7 +27,7 @@ namespace CLI
         /// <summary>
         /// 返回的状态码
         /// </summary>
-        public enum code
+        public enum MessageCode
         {
             /// <summary>
             /// 请求成功
@@ -55,24 +55,26 @@ namespace CLI
             OperationFailed = 7000,
           
         }
-        public class pack<T>
+        public class Pack<T>
         {
             /// <summary>
             /// 状态码
             /// </summary>
-            public code code { get; set; }
+            public MessageCode code { get; set; }
             /// <summary>
             /// 接口名称
             /// </summary>
-            public string cmd { get; set; }
+            public string? cmd { get; set; }
             /// <summary>
             /// 信息
             /// </summary>
-            public string massage { get; set; }
+            public string? massage { get; set; }
             /// <summary>
             /// 对应的接口数据
             /// </summary>
-            public T data { get; set; }
+#pragma warning disable CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
+            public T Data { get; set; }
+#pragma warning restore CS8618 // 在退出构造函数时，不可为 null 的字段必须包含非 null 值。请考虑声明为可以为 null。
         }
       
     }

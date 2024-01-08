@@ -22,15 +22,7 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomList.RoomCard e)
         {
-            //if(test)
-            //{
-            //    test = false;
-            //}
-            //else
-            //{
-            //    return;
-            //}
-            return;
+           
             bool Initialization = true;
             if (e.IsRemind)
             {
@@ -67,11 +59,13 @@ namespace CLI
                         Core.Tools.Transcode transcode = new Core.Tools.Transcode();
                         try
                         {
+#pragma warning disable CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
                             transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4"), e.RoomId);
+#pragma warning restore CS4014 // 由于此调用不会等待，因此在调用完成前将继续执行当前方法
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
+                            Log.Error(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.FileName}", ex, false);
                         } 
                     }
                 }
@@ -85,7 +79,7 @@ namespace CLI
                 }
                 if(liveChatListener!=null)
                 {
-                    liveChatListener.DanmuMessage = null;
+                    liveChatListener.DanmuMessage = new();
                     try
                     {
                         liveChatListener.Dispose();
@@ -99,23 +93,29 @@ namespace CLI
 
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
+#pragma warning disable CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            //Danmu.SevaDanmu(liveChatListener);
-            if (!liveChatListener._Cancel)
+#pragma warning restore CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
+                              //Danmu.SevaDanmu(liveChatListener);
+            if (liveChatListener != null)
             {
-                if (liveChatListener._disposed)
+                if (!liveChatListener._Cancel)
                 {
-                    liveChatListener = new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
-                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                    liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+                    if (liveChatListener._disposed)
+                    {
+                        liveChatListener = new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
+                        liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                        liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
+                    }
+                    liveChatListener.Connect();
                 }
-                liveChatListener.Connect();
+                else
+                {
+                    liveChatListener.Cancel();
+                    liveChatListener = new(0);
+                }
             }
-            else
-            {
-                liveChatListener.Cancel();
-                liveChatListener = null;
-            }
+
         }
 
 
@@ -173,79 +173,84 @@ namespace CLI
             //        break;
             //}
 
+#pragma warning disable CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            switch (e)
+#pragma warning restore CS8600 // 将 null 字面量或可能为 null 的值转换为非 null 类型。
+            if (liveChatListener != null)
             {
-                case DanmuMessageEventArgs Danmu:
-                    {
 
-                        liveChatListener.DanmuMessage.Danmu.Add(new Danmu.DanmuInfo
-                        {
-                            color = Danmu.MessageColor,
-                            pool = 0,
-                            size = 25,
-                            timestamp = Danmu.Timestamp,
-                            type = Danmu.MessageType,
-                            time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            uid = Danmu.UserId,
-                            Message = Danmu.Message,
-                            Nickname = Danmu.UserName,
-                            LV = Danmu.GuardLV
-                        });
-                        break;
-                    }
-                case SuperchatEventArg SuperchatEvent:
-                    {
 
-                        liveChatListener.DanmuMessage.SuperChat.Add(new Danmu.SuperChatInfo()
+                switch (e)
+                {
+                    case DanmuMessageEventArgs Danmu:
                         {
-                            Message = SuperchatEvent.Message,
-                            MessageTrans = SuperchatEvent.messageTrans,
-                            Price = SuperchatEvent.Price,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = SuperchatEvent.Timestamp,
-                            UserId = SuperchatEvent.UserId,
-                            UserName = SuperchatEvent.UserName,
-                            TimeLength = SuperchatEvent.TimeLength
-                        });
-                        break;
-                    }
-                case GuardBuyEventArgs GuardBuyEvent:
-                    {
 
-                        liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                            liveChatListener.DanmuMessage.Danmu.Add(new Danmu.DanmuInfo
+                            {
+                                color = Danmu.MessageColor,
+                                pool = 0,
+                                size = 25,
+                                timestamp = Danmu.Timestamp,
+                                type = Danmu.MessageType,
+                                time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                uid = Danmu.UserId,
+                                Message = Danmu.Message,
+                                Nickname = Danmu.UserName,
+                                LV = Danmu.GuardLV
+                            });
+                            break;
+                        }
+                    case SuperchatEventArg SuperchatEvent:
                         {
-                            GuardLevel = GuardBuyEvent.GuardLevel,
-                            GuradName = GuardBuyEvent.GuardName,
-                            Number = GuardBuyEvent.Number,
-                            Price = GuardBuyEvent.Price,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = GuardBuyEvent.Timestamp,
-                            UserId = GuardBuyEvent.UserId,
-                            UserName = GuardBuyEvent.UserName
-                        });
 
-                        break;
-                    }
-                case SendGiftEventArgs sendGiftEventArgs:
-                    {
-                        liveChatListener.DanmuMessage.Gift.Add(new Danmu.GiftInfo()
+                            liveChatListener.DanmuMessage.SuperChat.Add(new Danmu.SuperChatInfo()
+                            {
+                                Message = SuperchatEvent.Message,
+                                MessageTrans = SuperchatEvent.messageTrans,
+                                Price = SuperchatEvent.Price,
+                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                Timestamp = SuperchatEvent.Timestamp,
+                                UserId = SuperchatEvent.UserId,
+                                UserName = SuperchatEvent.UserName,
+                                TimeLength = SuperchatEvent.TimeLength
+                            });
+                            break;
+                        }
+                    case GuardBuyEventArgs GuardBuyEvent:
                         {
-                            Amount = sendGiftEventArgs.Amount,
-                            GiftName = sendGiftEventArgs.GiftName,
-                            Price = sendGiftEventArgs.GiftPrice,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = sendGiftEventArgs.Timestamp,
-                            UserId = sendGiftEventArgs.UserId,
-                            UserName = sendGiftEventArgs.UserName
-                        });
+
+                            liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                            {
+                                GuardLevel = GuardBuyEvent.GuardLevel,
+                                GuradName = GuardBuyEvent.GuardName,
+                                Number = GuardBuyEvent.Number,
+                                Price = GuardBuyEvent.Price,
+                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                Timestamp = GuardBuyEvent.Timestamp,
+                                UserId = GuardBuyEvent.UserId,
+                                UserName = GuardBuyEvent.UserName
+                            });
+
+                            break;
+                        }
+                    case SendGiftEventArgs sendGiftEventArgs:
+                        {
+                            liveChatListener.DanmuMessage.Gift.Add(new Danmu.GiftInfo()
+                            {
+                                Amount = sendGiftEventArgs.Amount,
+                                GiftName = sendGiftEventArgs.GiftName,
+                                Price = sendGiftEventArgs.GiftPrice,
+                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                                Timestamp = sendGiftEventArgs.Timestamp,
+                                UserId = sendGiftEventArgs.UserId,
+                                UserName = sendGiftEventArgs.UserName
+                            });
+                            break;
+                        }
+                    default:
                         break;
-                    }
-                default:
-                    break;
+                }
             }
-
         }
-
     }
 }
