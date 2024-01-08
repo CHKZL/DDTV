@@ -1,16 +1,9 @@
-name: DDTV_Dev_CLI
+name: CLI_Dev
 
 on:
   push:
     tags:
       - "dev*"
-    branches-ignore: 
-      - master 
-    paths:
-      - 'CLI/**'
-      - 'Core/**'
-      - '.github/workflows/DDTV_Dev_CLI.yml'
-      - '!**/README.md'
   pull_request:
     branches-ignore: 
       - master 
