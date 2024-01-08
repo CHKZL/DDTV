@@ -32,7 +32,7 @@ jobs:
           fi
 
   build:
-
+#第二个job才是正片开始，以下是原本的build流程
     needs: check-commit
     if: needs.check-commit.outputs.should-run == 'true'
 
