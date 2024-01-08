@@ -16,14 +16,21 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
-        runtime: 
-          - linux-x64
-          - win-x64
-          - osx-x64
-          - linux-arm
-          - win-arm
-          - osx-arm
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: ubuntu-latest
+            runtime: linux-arm
+          - os: windows-latest
+            runtime: win-x64
+          - os: windows-latest
+            runtime: win-arm
+          - os: macOS-latest
+            runtime: osx-x64
+          - os: macOS-latest
+            runtime: osx-arm
 
     runs-on: ${{ matrix.os }}
 
@@ -45,5 +52,5 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DDTV-CLI-${{ matrix.os }}
+          name: DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}
           path: CLI/build_output
