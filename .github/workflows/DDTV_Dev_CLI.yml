@@ -2,23 +2,39 @@ name: DDTV_Dev_CLI
 
 on:
   push:
-    branches-ignore: 
-      - master 
-    paths-ignore:
-      - '**.md'
-    commit-message:
-      startsWith: '[dev]'
-  pull_request:
-    branches-ignore: 
-      - master 
-    paths-ignore:
-      - '**.md'
-    commit-message:
-      startsWith: '[dev]'
-  workflow_dispatch:
+    branches-ignore:
+      - 'master'
+      - 'main'
 
 jobs:
+  check-commit:
+    runs-on: ubuntu-latest
+    outputs:
+      should-run: ${{ steps.check-message.outputs.should-run }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Get the commit message
+        id: get-commit-message
+        run: echo "::set-output name=message::$(git log -1 --pretty=%B)"
+      
+      - name: Check if commit message starts with [dev]
+        id: check-message
+        run: |
+          if [[ "${{ steps.get-commit-message.outputs.message }}" == "[dev]"* ]]; then
+            echo "运行之后的工作流..."
+            echo "::set-output name=should-run::true"
+          else
+            echo "跳过之后的工作流..."
+            echo "::set-output name=should-run::false"
+          fi
+
   build:
+
+    needs: check-commit
+    if: needs.check-commit.outputs.should-run == 'true'
+
     strategy:
       matrix:
         os: 
