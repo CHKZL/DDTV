@@ -2,6 +2,8 @@ name: DDTV_Dev_CLI
 
 on:
   push:
+    tags:
+      - "update*"
     branches-ignore: 
       - master 
     paths:
