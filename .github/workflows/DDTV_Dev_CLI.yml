@@ -55,6 +55,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}
-          path: |
-            CLI/build_output/${{ matrix.runtime }}
-            CLI/build_output/${{ matrix.runtime }}/plugins/ffmpeg/ffmpeg.exe
+          path: CLI/build_output/
