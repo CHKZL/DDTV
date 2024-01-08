@@ -17,10 +17,6 @@ jobs:
   build:
     strategy:
       matrix:
-        os: 
-          - ubuntu-latest
-          - windows-latest
-          - macOS-latest
         runtime: 
           - linux-x64
           - win-x64
