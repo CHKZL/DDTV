@@ -17,15 +17,15 @@ jobs:
   build:
     strategy:
       matrix:
-        os: 
-          - ubuntu-latest
-          - windows-latest
-          - macOS-latest
-        runtime:
-          - win-x64
-          - linux-x64
-          - linux-arm
-          - osx-arm64
+        include:
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: ubuntu-latest
+            runtime: linux-arm
+          - os: windows-latest
+            runtime: win-x64
+          - os: macOS-latest
+            runtime: osx-arm64
 
     runs-on: ${{ matrix.os }}
 
