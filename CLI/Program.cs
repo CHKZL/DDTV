@@ -1,23 +1,14 @@
 ﻿using Core;
 using Core.LogModule;
-using Core.Network.Methods;
 using Core.RuntimeObject;
-using static Core.RuntimeObject.RoomList.RoomCard;
-using System.Runtime.Intrinsics.X86;
-using ConsoleTableExt;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
-using Core.LiveChat;
-using static System.Net.Mime.MediaTypeNames;
-using System;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using static CLI.Program.Service;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace CLI
 {
@@ -29,10 +20,6 @@ namespace CLI
             Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-            builder.Services.AddMvc();
 
             ////注册Cookie认证服务
             //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
@@ -45,15 +32,32 @@ namespace CLI
             //    //设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
             //});
 
-            //builder.Services.AddHostedService<DDTVService>();
-            builder.Services.AddSwaggerGen();
-            var app = builder.Build();
-            //用于检测是否为开发环境
-            //if (app.Environment.IsDevelopment())
+
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "DDTV5_API",
+                    License = new OpenApiLicense
+                    {
+                        Name = "[项目地址]",
+                        Url = new Uri("https://github.com/CHKZL/DDTV")
+                    }
+                });
+
+                // using System.Reflection;
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+            });
+            builder.Services.AddMvc();
+
+
+            var app = builder.Build();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.UseMiddleware<WebAppServices.Middleware.AccessControl>();
             //app.UseHttpsRedirection();
             app.UseAuthorization();
