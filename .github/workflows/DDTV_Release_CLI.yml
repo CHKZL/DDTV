@@ -1,16 +1,8 @@
-name: Dev
-
+name: Release CLI
 on:
   push:
     tags:
-      - "dev*"
-  pull_request:
-    paths:
-      - 'CLI/**'
-      - '.github/workflows/DDTV_Dev_CLI.yml'
-      - '!**/README.md'
-  workflow_dispatch:
-
+      - "Ver*"
 jobs:
   build:
     strategy:
@@ -26,7 +18,8 @@ jobs:
             runtime: osx-arm64
 
     runs-on: ${{ matrix.os }}
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +28,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.x'
-
+  
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
   
@@ -50,3 +43,20 @@ jobs:
         with:
           name: DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}
           path: CLI/build_output
+
+      - name: Zip Artifacts
+        if: matrix.os != 'windows-latest'
+        run: |
+          cd CLI/build_output
+          zip -r ../../DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}.zip *
+
+      - name: Zip Artifacts (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          Compress-Archive -Path CLI\build_output\* -DestinationPath DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}.zip
+
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}.zip
