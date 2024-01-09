@@ -22,14 +22,6 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomList.RoomCard e)
         {
-            //if(test)
-            //{
-            //    test = false;
-            //}
-            //else
-            //{
-            //    return;
-            //}
             return;
             bool Initialization = true;
             if (e.IsRemind)

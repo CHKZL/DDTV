@@ -56,12 +56,35 @@ namespace CLI.WebAppServices.Middleware
             // 根据请求方法从表单或查询字符串中获取参数
             var parameters = context.HttpContext.Request.Method == "POST" ? new Dictionary<string, StringValues>(context.HttpContext.Request.Form) : new Dictionary<string, StringValues>(context.HttpContext.Request.Query);
 
-            // 检查参数是否包含"accesskeysecret"或是否缺少"sig"，如果是，则返回未授权
-            if (parameters.ContainsKey("accesskeysecret") || !parameters.ContainsKey("sig"))
+
+
+            // 检查参数，如果满足任意条件则返回未授权：【提交了"accesskeysecret"】【未包含"sig"】【未包含"accesskeyid"】【"accesskeyid"和配置文件中不一致】【不包含"time"】【"time"和当前服务器时间差距超过300秒】
+            if (parameters.ContainsKey("accesskeysecret") ||
+               !parameters.ContainsKey("sig") ||
+               !parameters.ContainsKey("accesskeyid") ||
+                parameters["accesskeyid"] != Core.Config.Web._AccessKeyId ||
+               !parameters.ContainsKey("time"))
             {
                 Unauthorized(context);
                 return;
             }
+
+            if (int.TryParse(parameters["time"], out int time))
+            {
+                //时间戳和当前差距超过300秒
+                if (!(Math.Abs(time - DateTimeOffset.Now.ToUnixTimeSeconds()) <= 300))
+                {
+                    Unauthorized(context);
+                    return;
+                }
+            }
+            else
+            {
+                Unauthorized(context);
+                return;
+            }
+
+
 
             // 将"accesskeysecret"添加到参数字典中
             parameters.Add("accesskeysecret", Core.Config.Web._AccessKeySecret);

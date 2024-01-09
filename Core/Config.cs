@@ -145,6 +145,9 @@ namespace Core
                 Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
             }
 
+            /// <summary>
+            /// 将房间配置写入配置文件
+            /// </summary>
             public static void SaveRoomConfigurationFile()
             {
                 RoomListDiscard roomListDiscard = new RoomListDiscard();
@@ -156,6 +159,9 @@ namespace Core
                 string jsonString = JsonSerializer.Serialize(roomListDiscard);
                 File.WriteAllText($"{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
             }
+
+           
+
             internal class RoomListDiscard
             {
                 [JsonPropertyName("data")]

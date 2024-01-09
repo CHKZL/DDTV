@@ -48,6 +48,44 @@ namespace Core.RuntimeObject
                 return false;
             }
         }
+
+        /// <summary>
+        /// 修改某个房间的录制配置
+        /// </summary>
+        /// <param name="UID">UID</param>
+        /// <param name="State">设置为的录制配置</param>
+        /// <returns>修改成功的数量</returns>
+        public static int ModifyRecordingSettings(long UID, bool State)
+        {
+            int _count = 0;
+            if(roomInfos.TryGetValue(UID, out RoomCard roomCard))
+            {
+                _count++;
+                roomCard.IsAutoRec = State;
+            }
+            return _count;
+        }
+        /// <summary>
+        /// 批量修改某个房间的录制配置
+        /// </summary>
+        /// <param name="UID">UID</param>
+        /// <param name="State">设置为的录制配置</param>
+        /// <returns>修改成功的房间列表</returns>
+        public static List<long> ModifyRecordingSettings(List<long> UID, bool State)
+        {
+            List<long> _count = new();
+            foreach (var item in UID)
+            {
+                if (roomInfos.TryGetValue(item, out RoomCard roomCard))
+                {
+                    _count.Add(item);
+                    roomCard.IsAutoRec = State;
+                }
+            }
+            Config.RoomConfig.SaveRoomConfigurationFile();
+            return _count;
+        }
+
         public static Dictionary<long, RoomCard> GetCardList()
         {
             return roomInfos;
