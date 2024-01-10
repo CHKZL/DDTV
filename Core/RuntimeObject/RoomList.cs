@@ -66,7 +66,7 @@ namespace Core.RuntimeObject
             return _count;
         }
         /// <summary>
-        /// 批量修改某个房间的录制配置
+        /// 批量修改房间的录制配置
         /// </summary>
         /// <param name="UID">UID</param>
         /// <param name="State">设置为的录制配置</param>
@@ -79,7 +79,28 @@ namespace Core.RuntimeObject
                 if (roomInfos.TryGetValue(item, out RoomCard roomCard))
                 {
                     _count.Add(item);
-                    roomCard.IsAutoRec = State;
+                    roomCard.IsRemind = State;
+                }
+            }
+            Config.RoomConfig.SaveRoomConfigurationFile();
+            return _count;
+        }
+
+        /// <summary>
+        /// 批量修改房间提示设置
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="State"></param>
+        /// <returns></returns>
+        public static List<long> ModifyRoomPromptSettings(List<long> UID, bool State)
+        {
+            List<long> _count = new();
+            foreach (var item in UID)
+            {
+                if (roomInfos.TryGetValue(item, out RoomCard roomCard))
+                {
+                    _count.Add(item);
+                    roomCard.IsRemind= State;
                 }
             }
             Config.RoomConfig.SaveRoomConfigurationFile();

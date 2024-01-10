@@ -19,7 +19,7 @@ namespace CLI.WebAppServices.Api
     public class Example : ControllerBase
     {
         /// <summary>
-        /// 测试函数，计算a+b的返回值
+        /// 计算a+b的返回值（测试用，用来测试sig计算）
         /// </summary>
         /// <param name="a">数值A，int</param>
         /// <param name="b">数值B，int</param>
@@ -30,8 +30,8 @@ namespace CLI.WebAppServices.Api
         {
             return Content(MessageBase.Success(nameof(Example), a + b), "application/json");
         }
-         /// <summary>
-        /// 测试函数，计算a+b的返回值
+        /// <summary>
+        /// 计算a+b的返回值（测试用，用来测试sig计算）
         /// </summary>
         /// <param name="a">数值A，int</param>
         /// <param name="b">数值B，int</param>
