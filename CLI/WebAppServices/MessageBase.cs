@@ -34,9 +34,9 @@ namespace CLI
             /// </summary>
             ok = 0,
             /// <summary>
-            /// UID不存在
+            /// 参数有误
             /// </summary>
-            UIDFailed=-2,
+            ParameterError= 5000,
             /// <summary>
             /// 登陆信息失效
             /// </summary>
