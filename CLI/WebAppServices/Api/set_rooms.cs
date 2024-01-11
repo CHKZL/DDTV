@@ -21,7 +21,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
-    public class ModifyRecordingSettings : ControllerBase
+    public class modify_recording_settings : ControllerBase
     {
         /// <summary>
         /// 批量修改房间的录制设置
@@ -30,11 +30,11 @@ namespace CLI.WebAppServices.Api
         /// <param name="state">将房间的录制状态设置为什么状态</param>
         /// <param name="commonParameters"></param>
         /// <returns></returns>
-        [HttpPost(Name = "ModifyRecordingSettings")]
+        [HttpPost(Name = "modify_recording_settings")]
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRecordingSettings(uid, state);
-            return Content(MessageBase.Success(nameof(ModifyRecordingSettings),count,$"返回列表中的房间的自动录制修改为{state}"), "application/json");
+            return Content(MessageBase.Success(nameof(modify_recording_settings),count,$"返回列表中的房间的自动录制修改为{state}"), "application/json");
         }
     }
 
@@ -43,9 +43,9 @@ namespace CLI.WebAppServices.Api
     /// </summary>
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
-    [Route("api/Rooms/[controller]")]
+    [Route("api/set_rooms/[controller]")]
     [Login]
-    public class ModifyRoomPromptSettings : ControllerBase
+    public class modify_room_prompt_settings : ControllerBase
     {
         /// <summary>
         /// 批量修改房间的录制设置
@@ -54,11 +54,11 @@ namespace CLI.WebAppServices.Api
         /// <param name="state">将房间的开播提示状态设置为什么状态</param>
         /// <param name="commonParameters"></param>
         /// <returns></returns>
-        [HttpPost(Name = "ModifyRoomPromptSettings")]
+        [HttpPost(Name = "modify_room_prompt_settings")]
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRoomPromptSettings(uid, state);
-            return Content(MessageBase.Success(nameof(ModifyRoomPromptSettings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
+            return Content(MessageBase.Success(nameof(modify_room_prompt_settings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
         }
     }
 }

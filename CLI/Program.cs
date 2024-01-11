@@ -91,6 +91,20 @@ namespace CLI
                         Core.Init.Start();//初始化必须执行的
                         if (!Account.AccountInformation.State)
                         {
+                            Log.Info(nameof(DDTVService),"\r\n当前状态:未登录\r\n" +
+                                "使用前须知：\r\n" +
+                                "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
+                                "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
+                                "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
+                                "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
+
+                            ConsoleKeyInfo keyInfo = Console.ReadKey();
+                            if (keyInfo.Key != ConsoleKey.Y)
+                            {
+                                // 用户按了其他键，退出程序
+                                Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
+                                Environment.Exit(0);
+                            }
                             await Login.QR();//如果没有登录态，需要执行扫码
                         }
                         while (!Account.AccountInformation.State)
@@ -108,14 +122,11 @@ namespace CLI
 #if DEBUG
                         Task.Run(() =>
                         {
-                            Process currentProcess = null;
                             while (true)
                             {
-                                currentProcess = Process.GetCurrentProcess();
-                                long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-                                (int Total, int Download) = Core.RuntimeObject.RoomList.GetTasksInDownloadCount();
-                                Log.Info("DokiDoki", $"总:{Total}|录制中:{Download}|使用内存:{Core.Tools.Linq.ConversionSize(totalBytesOfMemoryUsed, Core.Tools.Linq.ConversionSizeType.String)}|{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
-                                if (totalBytesOfMemoryUsed > 4294967296)
+                                var doki = Core.Tools.DokiDoki.GetDoki();
+                                Log.Info("DokiDoki", $"总:{doki.Total}|录制中:{doki.Downloading}|使用内存:{doki.UsingMemoryStr}|{doki.InitType}|{doki.Ver}【{doki.Mode}】(编译时间:{doki.CompiledVersion})");
+                                if (doki.UsingMemory > 4294967296)
                                 {
                                     Environment.Exit(-114514);
                                 }
