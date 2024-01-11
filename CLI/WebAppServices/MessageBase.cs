@@ -5,14 +5,18 @@ namespace CLI
 {
     public class MessageBase
     {
-        public static string Success<T>(string cmd, T data,string massage="",code code=code.ok)
+        public static string Success<T>(string cmd, T data, string massage = "", code code = code.ok)
         {
-            string MESS = "";
-            if (typeof(T).Name.Equals("string")|| typeof(T).Name.Equals("String"))
+            if (!Core.Config.Core._LoginStatus)
             {
-                MESS=data as string;
+                code = code.LoginInfoFailure;
             }
-            Log.Info(nameof(MessageBase),cmd+" "+ code);
+            string MESS = "";
+            if (typeof(T).Name.Equals("string") || typeof(T).Name.Equals("String"))
+            {
+                MESS = data as string;
+            }
+            Log.Info(nameof(MessageBase), cmd + " " + code);
             pack<T> pack = new pack<T>()
             {
                 cmd = cmd,
@@ -21,7 +25,6 @@ namespace CLI
                 massage = massage
             };
             string B = JsonConvert.SerializeObject(pack);
-            //string B= JsonSerializer.Serialize<pack<T>>(pack);
             return B;
         }
         /// <summary>
