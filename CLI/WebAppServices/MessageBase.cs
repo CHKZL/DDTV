@@ -42,14 +42,6 @@ namespace CLI
             /// </summary>
             LoginInfoFailure =6000,
             /// <summary>
-            /// 登陆验证失败
-            /// </summary>
-            LoginVeriicationFailed=6001,
-            /// <summary>
-            /// APIsig计算鉴权失败
-            /// </summary>
-            APIAuthenticationFailed=6002,
-            /// <summary>
             /// 操作失败
             /// </summary>
             OperationFailed = 7000,

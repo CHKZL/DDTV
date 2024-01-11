@@ -24,7 +24,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
-    public class AllCompleteRoomInformation : ControllerBase
+    public class all_complete_room_information : ControllerBase
     {
         /// <summary>
         /// 获取所有配置中房间完整信息
@@ -33,7 +33,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
         /// <param name="page">获取的页数，当分页数量不为0时有效</param>
         /// <returns></returns>
-        [HttpPost(Name = "AllCompleteRoomInformation")]
+        [HttpPost(Name = "all_complete_room_information")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0)
         {
             try
@@ -129,11 +129,11 @@ namespace CLI.WebAppServices.Api
                 }
                 roomlist.Clear();
                 roomlist = null;
-                return Content(MessageBase.Success(nameof(AllBasicRoomInformation), basicInfolist), "application/json");
+                return Content(MessageBase.Success(nameof(all_complete_room_information), basicInfolist), "application/json");
             }
             catch (Exception)
             {
-                return Content(MessageBase.Success(nameof(AllBasicRoomInformation), "", "请求错误", MessageBase.code.ParameterError), "application/json");
+                return Content(MessageBase.Success(nameof(all_complete_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
             }
         }
         public class Data
@@ -191,7 +191,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
-    public class AllBasicRoomInformation : ControllerBase
+    public class all_basic_room_information : ControllerBase
     {
         /// <summary>
         /// 获取所有配置中房间基本信息
@@ -200,7 +200,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
         /// <param name="page">获取的页数，当分页数量不为0时有效</param>
         /// <returns></returns>
-        [HttpPost(Name = "AllBasicRoomInformation")]
+        [HttpPost(Name = "all_basic_room_information")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0)
         {
             try
@@ -260,11 +260,11 @@ namespace CLI.WebAppServices.Api
                 }
                 roomlist.Clear();
                 roomlist = null;
-                return Content(MessageBase.Success(nameof(AllBasicRoomInformation), basicInfolist), "application/json");
+                return Content(MessageBase.Success(nameof(all_basic_room_information), basicInfolist), "application/json");
             }
             catch (Exception)
             {
-                return Content(MessageBase.Success(nameof(AllBasicRoomInformation), "", "请求错误", MessageBase.code.ParameterError), "application/json");
+                return Content(MessageBase.Success(nameof(all_basic_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
             }
         }
         public class Data

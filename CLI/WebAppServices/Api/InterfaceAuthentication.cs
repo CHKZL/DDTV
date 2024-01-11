@@ -26,7 +26,7 @@ namespace CLI.WebAppServices.Middleware
             [FromForm]
             public long time { get; set; }
             [FromForm]
-            public string accesskeyid { get; set; }
+            public string access_key_id { get; set; }
         }
         public class GetCommonParameters
         {
@@ -35,7 +35,7 @@ namespace CLI.WebAppServices.Middleware
             [FromQuery]
             public long time { get; set; }
             [FromQuery]
-            public string accesskeyid { get; set; }
+            public string access_key_id { get; set; }
         }
     }
     /// <summary>
@@ -59,10 +59,10 @@ namespace CLI.WebAppServices.Middleware
 
 
             // 检查参数，如果满足任意条件则返回未授权：【提交了"accesskeysecret"】【未包含"sig"】【未包含"accesskeyid"】【"accesskeyid"和配置文件中不一致】【不包含"time"】【"time"和当前服务器时间差距超过300秒】
-            if (parameters.ContainsKey("accesskeysecret") ||
+            if (parameters.ContainsKey("access_key_secret") ||
                !parameters.ContainsKey("sig") ||
-               !parameters.ContainsKey("accesskeyid") ||
-                parameters["accesskeyid"] != Core.Config.Web._AccessKeyId ||
+               !parameters.ContainsKey("access_key_id") ||
+                parameters["access_key_id"] != Core.Config.Web._AccessKeyId ||
                !parameters.ContainsKey("time"))
             {
                 Unauthorized(context);
@@ -87,7 +87,7 @@ namespace CLI.WebAppServices.Middleware
 
 
             // 将"accesskeysecret"添加到参数字典中
-            parameters.Add("accesskeysecret", Core.Config.Web._AccessKeySecret);
+            parameters.Add("access_key_secret", Core.Config.Web._AccessKeySecret);
 
             // 创建签名字符串，排除"sig"，并按键排序（字母顺序）
             string AuthenticationOriginalStr = string.Join(";", parameters.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));
@@ -112,7 +112,7 @@ namespace CLI.WebAppServices.Middleware
         private static void Unauthorized(ActionExecutingContext context)
         {
             context.HttpContext.Response.StatusCode = 401;
-            context.HttpContext.Response.Redirect("/api/Unauthorized");
+            context.HttpContext.Response.Redirect("/api/unauthorized");
             context.Result = new UnauthorizedResult();
         }
     }
