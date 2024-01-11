@@ -89,7 +89,7 @@ namespace CLI
                     return Task.Run(async () =>
                     {
                         Core.Init.Start();//初始化必须执行的
-                        //if (!Account.AccountInformation.State)
+                        if (!Account.AccountInformation.State)
                         {
                             Log.Info(nameof(DDTVService),"\r\n当前状态:未登录\r\n" +
                                 "使用前须知：\r\n" +
