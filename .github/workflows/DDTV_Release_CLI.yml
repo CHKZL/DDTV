@@ -2,7 +2,7 @@ name: Release CLI
 on:
   push:
     tags:
-      - "Ver*"
+      - "Ver5*"
 jobs:
   build:
     strategy:
