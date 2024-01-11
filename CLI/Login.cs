@@ -18,10 +18,10 @@ namespace CLI
                 ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                 QR_Object QR = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
                 ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
-                //using (var stream = File.OpenWrite("./BiliQR.png"))
-                //{
-                //    QR.SKData.SaveTo(stream);
-                //}
+                using (var stream = File.OpenWrite($"./{Core.Config.Core._QrFileNmae}"))
+                {
+                    QR.SKData.SaveTo(stream);
+                }
                 Core.Tools.QRConsole.Output(QR.OriginalString);
             });
         }

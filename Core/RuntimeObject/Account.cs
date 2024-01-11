@@ -64,33 +64,40 @@ namespace Core.RuntimeObject
             if (!_AccountCheckRunningStatus!)
             {
                 _AccountCheckRunningStatus = true;
-                while (true)
+                Task.Run(() =>
                 {
-                    try
+                    while (true)
                     {
-                        if (GetNavState())
+                        try
                         {
-                            _AccountStatus=true;
-                            if (!Core.Config.Core._LoginStatus)
-                                Core.Config.Core._LoginStatus = true;
+                            if (GetNavState())
+                            {
+                                _AccountStatus = true;
+                                if (!Core.Config.Core._LoginStatus)
+                                    Core.Config.Core._LoginStatus = true;
 
+                            }
+                            else
+                            {
+                                _AccountStatus = false;
+                                if (Core.Config.Core._LoginStatus)
+                                    Core.Config.Core._LoginStatus = false;
+                            }
+                            if (accountInformation == null || !accountInformation.State)
+                            {
+                                LoginFailureEvent?.Invoke(null, new EventArgs());
+                            }
                         }
-                        else
+                        catch (Exception)
                         {
-                            _AccountStatus=false;
-                            if (Core.Config.Core._LoginStatus)
-                                Core.Config.Core._LoginStatus = false;
+                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆");
                         }
+                        if (!_AccountStatus)
+                            Thread.Sleep(1000 * 60 * 10);
+                        else
+                            Thread.Sleep(1000 * 60);
                     }
-                    catch (Exception)
-                    {
-                        Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆");
-                    }
-                    if (!_AccountStatus)
-                        Thread.Sleep(1000 * 60 * 10);
-                    else
-                        Thread.Sleep(1000 * 60);
-                }
+                });
             }
         }
 
