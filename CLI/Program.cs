@@ -89,7 +89,7 @@ namespace CLI
                     return Task.Run(async () =>
                     {
                         Core.Init.Start();//初始化必须执行的
-                        if (!Account.AccountInformation.State)
+                        //if (!Account.AccountInformation.State)
                         {
                             Log.Info(nameof(DDTVService),"\r\n当前状态:未登录\r\n" +
                                 "使用前须知：\r\n" +
@@ -98,12 +98,23 @@ namespace CLI
                                 "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
                                 "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
 
-                            ConsoleKeyInfo keyInfo = Console.ReadKey();
-                            if (keyInfo.Key != ConsoleKey.Y)
+                            Task.Run(() =>
                             {
-                                // 用户按了其他键，退出程序
-                                Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
-                                Environment.Exit(0);
+                                while (true)
+                                {
+                                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                                    if (keyInfo.Key != ConsoleKey.Y && Core.Config.Core._UseAgree)
+                                    {
+                                        // 用户按了其他键，退出程序
+                                        Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
+                                        Environment.Exit(0);
+                                    }
+                                }
+                            });
+                            
+                            while(!Core.Config.Core._UseAgree)
+                            {
+                                Thread.Sleep(500);
                             }
                             await Login.QR();//如果没有登录态，需要执行扫码
                         }

@@ -173,6 +173,34 @@ namespace Core
 
         public class Core
         {
+            private static string UseAgree = "false";
+            /// <summary>
+            /// 用户协议同意状态
+            /// 默认值：false
+            /// </summary>
+            public static bool _UseAgree
+            {
+                get
+                {
+                    return bool.Parse(UseAgree);
+                }
+                set { UseAgree = value.ToString(); WriteConfiguration(); }
+            }
+
+            private static string QrFileNmae = "LoginQr.png";
+            /// <summary>
+            /// 登陆用扫码二维码路径和文件名
+            /// 默认值：./Temporary/LoginQr.png
+            /// </summary>
+            public static string _QrFileNmae
+            {
+                get
+                {
+                    return $"{_TemporaryFileDirectory}{QrFileNmae}";
+                }
+
+            }
+
             private static string LoginStatus = "false";
             /// <summary>
             /// 登陆状态
