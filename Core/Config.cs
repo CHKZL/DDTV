@@ -173,6 +173,20 @@ namespace Core
 
         public class Core
         {
+            private static string LoginStatus = "false";
+            /// <summary>
+            /// 登陆状态
+            /// 默认值：false
+            /// </summary>
+            public static bool _LoginStatus
+            {
+                get
+                {
+                    return bool.Parse(LoginStatus);
+                }
+                set { LoginStatus = value.ToString(); WriteConfiguration(); }
+            }
+
             private static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>
             /// 房间配置文件路径（字符串）

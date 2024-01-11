@@ -24,18 +24,27 @@ namespace Core.Network.Methods
         /// <returns></returns>
         private static Nav_Class? _NAV()
         {
-            string WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
-            Nav_Class? Nav_Class = new();
-            try
+            const int maxAttempts = 3;
+            for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
-                Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
-                return Nav_Class;
+                try
+                {
+                    string WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
+                    Nav_Class? Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
+                    return Nav_Class;
+                }
+                catch (Exception)
+                {
+                    if (attempt == maxAttempts - 1)
+                    {
+                        return null;
+                    }
+                }
+                Thread.Sleep(500);
             }
-            catch (Exception)
-            {
-                return null;
-            }
+            return null;
         }
+
         #endregion
 
         #region Public Class

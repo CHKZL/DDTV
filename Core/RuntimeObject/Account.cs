@@ -1,5 +1,6 @@
 ﻿using Core.Account;
 using Core.Account.Linq;
+using Core.LogModule;
 using Core.Tools;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace Core.RuntimeObject
                         if (accountInformation != null && accountInformation.State)
                         {
                             Account.accountInformation = accountInformation;
+                            if (!Core.Config.Core._LoginStatus)
+                                Core.Config.Core._LoginStatus = true;
                         }
                     }
                     if (accountInformation == null || !accountInformation.State)
@@ -51,6 +54,43 @@ namespace Core.RuntimeObject
                 accountInformation.strCookies = Cookies;
                 accountInformation.State = true;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
+            }
+        }
+
+        private static bool _AccountCheckRunningStatus = false;
+        private static bool _AccountStatus = false;
+        internal static void CheckLoginStatus()
+        {
+            if (!_AccountCheckRunningStatus!)
+            {
+                _AccountCheckRunningStatus = true;
+                while (true)
+                {
+                    try
+                    {
+                        if (GetNavState())
+                        {
+                            _AccountStatus=true;
+                            if (!Core.Config.Core._LoginStatus)
+                                Core.Config.Core._LoginStatus = true;
+
+                        }
+                        else
+                        {
+                            _AccountStatus=false;
+                            if (Core.Config.Core._LoginStatus)
+                                Core.Config.Core._LoginStatus = false;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆");
+                    }
+                    if (!_AccountStatus)
+                        Thread.Sleep(1000 * 60 * 10);
+                    else
+                        Thread.Sleep(1000 * 60);
+                }
             }
         }
 

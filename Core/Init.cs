@@ -32,6 +32,7 @@ namespace Core
             Config.ReadConfiguration();
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
+            Core.RuntimeObject.Account.CheckLoginStatus();
             Log.Info(nameof(Init),$"Core初始化完成");
         }
         /// <summary>
