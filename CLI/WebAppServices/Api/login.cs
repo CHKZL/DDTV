@@ -10,12 +10,9 @@ using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
 
 namespace CLI.WebAppServices.Api
 {
-    /// <summary>
-    /// 修改开播提示设置
-    /// </summary>
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
-    [Route("api/set_rooms/[controller]")]
+    [Route("api/login/[controller]")]
     public class get_login_qr : ControllerBase
     {
         /// <summary>
@@ -23,7 +20,7 @@ namespace CLI.WebAppServices.Api
         /// </summary>
         /// <returns></returns>
         [HttpPost(Name = "get_login_qr")]
-        public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
+        public ActionResult Get()
         {
             FileInfo fi = new FileInfo(Core.Config.Core._QrFileNmae);
             FileStream fs = fi.OpenRead(); ;
@@ -35,12 +32,9 @@ namespace CLI.WebAppServices.Api
             return response;
         }
     }
-    /// <summary>
-    /// 修改开播提示设置
-    /// </summary>
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
-    [Route("api/set_rooms/[controller]")]
+    [Route("api/login/[controller]")]
     public class use_agree : ControllerBase
     {
         /// <summary>
@@ -49,7 +43,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="check"></param>
         /// <returns></returns>
         [HttpPost(Name = "use_agree")]
-        public ActionResult Get([FromQuery] string check = "n")
+        public ActionResult Post([FromForm] string check = "n")
         {
             if (check == "y")
             {
@@ -59,8 +53,24 @@ namespace CLI.WebAppServices.Api
             else
             {
                 Core.Config.Core._UseAgree = false;
-                return Content(MessageBase.Success(nameof(use_agree), false, $"用户未同意使用须知",MessageBase.code.LoginInfoFailure), "application/json");
+                return Content(MessageBase.Success(nameof(use_agree), false, $"用户未同意使用须知", MessageBase.code.LoginInfoFailure), "application/json");
             }
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/login/[controller]")]
+    public class re_login : ControllerBase
+    {
+        /// <summary>
+        /// 重新登陆
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost(Name = "re_login")]
+        public ActionResult Get(PostCommonParameters commonParameters)
+        {
+            Login.QR();
+            return Content(MessageBase.Success(nameof(re_login), false, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", MessageBase.code.LoginInfoFailure), "application/json");
         }
     }
 }
