@@ -159,7 +159,24 @@ namespace Core.LiveChat
             JObject JO = new JObject();
             try
             {
-                WssInfo = GetWssInfo();
+                int tra = 0;
+                do
+                {
+                    WssInfo = GetWssInfo();
+                    if (WssInfo == null)
+                    {
+                        Log.Warn(nameof(LiveChatListener) + "_" + nameof(ConnectAsync) + "_" + nameof(GetWssInfo), $"请求wss地址出现空地址", null, false);
+                    }
+                    tra++;
+                    if (tra >= 3)
+                    {
+                        Log.Warn(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接3次都超时，放弃本次连接，10秒后重试", null, true);
+                        Dispose();
+                        return;
+                    }
+                    Thread.Sleep(1000);
+                } while (WssInfo == null);
+
                 string URL = "wss://" + WssInfo.data.host_list[new Random().Next(0, WssInfo.data.host_list.Count)].host + "/sub";
                 //Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"弹幕连接地址:[{URL}]");
                 await m_client.ConnectAsync(new Uri(URL), new CancellationTokenSource().Token);
@@ -197,7 +214,10 @@ namespace Core.LiveChat
                }
                try
                {
-                   m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+                   if (m_client.State == WebSocketState.Open)
+                   {
+                       m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+                   }
                }
                catch (Exception ex)
                {
