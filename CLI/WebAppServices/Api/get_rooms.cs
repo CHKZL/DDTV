@@ -38,98 +38,98 @@ namespace CLI.WebAppServices.Api
         {
             try
             {
-                Data basicInfolist = new Data();
-                var roomlist = _Room.GetCardListDeepClone();
-                basicInfolist.Total = roomlist.Count;
+                Data completeRoomInfoRes = new Data();
+                var roomList = _Room.GetCardListDeepClone();
+                completeRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
-                    foreach (var room in roomlist)
+                    foreach (var room in roomList)
                     {
-                        Data.BasicInfo basicInfo = new Data.BasicInfo();
-                        basicInfo.userInfo = new()
+                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
+                        completeInfo.userInfo = new()
                         {
-                            IsAutoRec = room.Value.IsAutoRec,
-                            Description = room.Value.Description,
-                            IsRecDanmu = room.Value.IsRecDanmu,
-                            IsRemind = room.Value.IsRemind,
-                            Name = room.Value.Name,
-                            Sex = room.Value.sex.Value,
-                            Sign = room.Value.sign.Value,
-                            UID = room.Value.UID
+                            isAutoRec = room.Value.IsAutoRec,
+                            description = room.Value.Description,
+                            isRecDanmu = room.Value.IsRecDanmu,
+                            isRemind = room.Value.IsRemind,
+                            name = room.Value.Name,
+                            sex = room.Value.sex.Value,
+                            sign = room.Value.sign.Value,
+                            uid = room.Value.UID
                         };
-                        basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
+                        completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
                         {
-                            AreaName = room.Value.area_v2_name.Value,
-                            Attention = room.Value.attention.Value,
-                            CoverFromUser = room.Value.cover_from_user.Value,
-                            Face = room.Value.face.Value,
-                            KeyFrame = room.Value.keyframe.Value,
-                            LiveStatus = room.Value.live_status.Value == 1 ? true : false,
-                            LiveTime = room.Value.live_time.Value,
-                            RoomId = room.Value.RoomId,
-                            ShortId = room.Value.short_id.Value,
+                            areaName = room.Value.area_v2_name.Value,
+                            attention = room.Value.attention.Value,
+                            coverFromUser = room.Value.cover_from_user.Value,
+                            face = room.Value.face.Value,
+                            keyFrame = room.Value.keyframe.Value,
+                            liveStatus = room.Value.live_status.Value == 1 ? true : false,
+                            liveTime = room.Value.live_time.Value,
+                            roomId = room.Value.RoomId,
+                            shortId = room.Value.short_id.Value,
                             tags = room.Value.tags.Value,
-                            Title = room.Value.Title.Value,
-                            Url = $"https://live.bilibili.com/{room.Value.RoomId}"
+                            title = room.Value.Title.Value,
+                            url = $"https://live.bilibili.com/{room.Value.RoomId}"
                         };
-                        basicInfo.taskStatus = new Data.BasicInfo.TaskStatus()
+                        completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
-                            DownloadSize = room.Value.DownInfo.DownloadSize,
-                            EndTime = room.Value.DownInfo.EndTime,
-                            IsDownload = room.Value.DownInfo.IsDownload,
-                            StartTime = room.Value.DownInfo.StartTime,
-                            Title = room.Value.Title.Value,
-                            Status = room.Value.DownInfo.Status,
+                            downloadSize = room.Value.DownInfo.DownloadSize,
+                            endTime = room.Value.DownInfo.EndTime,
+                            isDownload = room.Value.DownInfo.IsDownload,
+                            startTime = room.Value.DownInfo.StartTime,
+                            title = room.Value.Title.Value,
+                            status = room.Value.DownInfo.Status,
                         };
-                        basicInfolist.basicInfolist.Add(basicInfo);
+                        completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
                 }
                 else
                 {
-                    for (int i = page * quantity - quantity; i < roomlist.Count && i < page * quantity + quantity; i++)
+                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity + quantity; i++)
                     {
-                        Data.BasicInfo basicInfo = new Data.BasicInfo();
-                        basicInfo.userInfo = new()
+                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
+                        completeInfo.userInfo = new()
                         {
-                            IsAutoRec = roomlist.ElementAt(i).Value.IsAutoRec,
-                            Description = roomlist.ElementAt(i).Value.Description,
-                            IsRecDanmu = roomlist.ElementAt(i).Value.IsRecDanmu,
-                            IsRemind = roomlist.ElementAt(i).Value.IsRemind,
-                            Name = roomlist.ElementAt(i).Value.Name,
-                            Sex = roomlist.ElementAt(i).Value.sex.Value,
-                            Sign = roomlist.ElementAt(i).Value.sign.Value,
-                            UID = roomlist.ElementAt(i).Value.UID
+                            isAutoRec = roomList.ElementAt(i).Value.IsAutoRec,
+                            description = roomList.ElementAt(i).Value.Description,
+                            isRecDanmu = roomList.ElementAt(i).Value.IsRecDanmu,
+                            isRemind = roomList.ElementAt(i).Value.IsRemind,
+                            name = roomList.ElementAt(i).Value.Name,
+                            sex = roomList.ElementAt(i).Value.sex.Value,
+                            sign = roomList.ElementAt(i).Value.sign.Value,
+                            uid = roomList.ElementAt(i).Value.UID
                         };
-                        basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
+                        completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
                         {
-                            AreaName = roomlist.ElementAt(i).Value.area_v2_name.Value,
-                            Attention = roomlist.ElementAt(i).Value.attention.Value,
-                            CoverFromUser = roomlist.ElementAt(i).Value.cover_from_user.Value,
-                            Face = roomlist.ElementAt(i).Value.face.Value,
-                            KeyFrame = roomlist.ElementAt(i).Value.keyframe.Value,
-                            LiveStatus = roomlist.ElementAt(i).Value.live_status.Value == 1 ? true : false,
-                            LiveTime = roomlist.ElementAt(i).Value.live_time.Value,
-                            RoomId = roomlist.ElementAt(i).Value.RoomId,
-                            ShortId = roomlist.ElementAt(i).Value.short_id.Value,
-                            tags = roomlist.ElementAt(i).Value.tags.Value,
-                            Title = roomlist.ElementAt(i).Value.Title.Value,
-                            Url = $"https://live.bilibili.com/{roomlist.ElementAt(i).Value.RoomId}"
+                            areaName = roomList.ElementAt(i).Value.area_v2_name.Value,
+                            attention = roomList.ElementAt(i).Value.attention.Value,
+                            coverFromUser = roomList.ElementAt(i).Value.cover_from_user.Value,
+                            face = roomList.ElementAt(i).Value.face.Value,
+                            keyFrame = roomList.ElementAt(i).Value.keyframe.Value,
+                            liveStatus = roomList.ElementAt(i).Value.live_status.Value == 1 ? true : false,
+                            liveTime = roomList.ElementAt(i).Value.live_time.Value,
+                            roomId = roomList.ElementAt(i).Value.RoomId,
+                            shortId = roomList.ElementAt(i).Value.short_id.Value,
+                            tags = roomList.ElementAt(i).Value.tags.Value,
+                            title = roomList.ElementAt(i).Value.Title.Value,
+                            url = $"https://live.bilibili.com/{roomList.ElementAt(i).Value.RoomId}"
                         };
-                        basicInfo.taskStatus = new Data.BasicInfo.TaskStatus()
+                        completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
-                            DownloadSize = roomlist.ElementAt(i).Value.DownInfo.DownloadSize,
-                            EndTime = roomlist.ElementAt(i).Value.DownInfo.EndTime,
-                            IsDownload = roomlist.ElementAt(i).Value.DownInfo.IsDownload,
-                            StartTime = roomlist.ElementAt(i).Value.DownInfo.StartTime,
-                            Title = roomlist.ElementAt(i).Value.Title.Value,
-                            Status = roomlist.ElementAt(i).Value.DownInfo.Status,
+                            downloadSize = roomList.ElementAt(i).Value.DownInfo.DownloadSize,
+                            endTime = roomList.ElementAt(i).Value.DownInfo.EndTime,
+                            isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,
+                            startTime = roomList.ElementAt(i).Value.DownInfo.StartTime,
+                            title = roomList.ElementAt(i).Value.Title.Value,
+                            status = roomList.ElementAt(i).Value.DownInfo.Status,
                         };
-                        basicInfolist.basicInfolist.Add(basicInfo);
+                        completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
                 }
-                roomlist.Clear();
-                roomlist = null;
-                return Content(MessageBase.Success(nameof(all_complete_room_information), basicInfolist), "application/json");
+                roomList.Clear();
+                roomList = null;
+                return Content(MessageBase.Success(nameof(all_complete_room_information), completeRoomInfoRes), "application/json");
             }
             catch (Exception)
             {
@@ -138,48 +138,48 @@ namespace CLI.WebAppServices.Api
         }
         public class Data
         {
-            public int Total { get; set; } = 0;
-            public List<BasicInfo> basicInfolist { get; set; } = new();
-            public class BasicInfo
+            public int total { get; set; } = 0;
+            public List<CompleteInfo> completeInfoList { get; set; } = new();
+            public class CompleteInfo
             {
                 public UserInfo userInfo { get; set; } = new();
                 public RoomInfo roomInfo { get; set; } = new();
                 public TaskStatus taskStatus { get; set; } = new();
                 public class UserInfo
                 {
-                    public string Name { get; set; }
-                    public string Description { get; set; }
-                    public long UID { get; set; }
-                    public bool IsAutoRec { get; set; }
-                    public bool IsRemind { get; set; }
-                    public bool IsRecDanmu { get; set; }
-                    public string Sex { get; set; }
-                    public string Sign { get; set; }
+                    public string name { get; set; }
+                    public string description { get; set; }
+                    public long uid { get; set; }
+                    public bool isAutoRec { get; set; }
+                    public bool isRemind { get; set; }
+                    public bool isRecDanmu { get; set; }
+                    public string sex { get; set; }
+                    public string sign { get; set; }
                 }
                 public class RoomInfo
                 {
-                    public long RoomId { get; set; }
-                    public string Title { get; set; }
-                    public int Attention { get; set; }
-                    public long LiveTime { get; set; }
-                    public bool LiveStatus { get; set; }
-                    public int ShortId { get; set; }
-                    public string AreaName { get; set; }
-                    public string Face { get; set; }
+                    public long roomId { get; set; }
+                    public string title { get; set; }
+                    public int attention { get; set; }
+                    public long liveTime { get; set; }
+                    public bool liveStatus { get; set; }
+                    public int shortId { get; set; }
+                    public string areaName { get; set; }
+                    public string face { get; set; }
                     public string tags { get; set; }
-                    public string CoverFromUser { get; set; }
-                    public string KeyFrame { get; set; }
-                    public string Url { get; set; }
+                    public string coverFromUser { get; set; }
+                    public string keyFrame { get; set; }
+                    public string url { get; set; }
 
                 }
                 public class TaskStatus
                 {
-                    public bool IsDownload { get; set; }
-                    public long DownloadSize { get; set; }
-                    public DownloadStatus Status { get; set; }
-                    public DateTime StartTime { get; set; }
-                    public DateTime EndTime { get; set; }
-                    public string Title { get; set; }
+                    public bool isDownload { get; set; }
+                    public long downloadSize { get; set; }
+                    public DownloadStatus status { get; set; }
+                    public DateTime startTime { get; set; }
+                    public DateTime endTime { get; set; }
+                    public string title { get; set; }
                 }
             }
         }
@@ -205,62 +205,62 @@ namespace CLI.WebAppServices.Api
         {
             try
             {
-                Data basicInfolist = new Data();
-                var roomlist = _Room.GetCardListDeepClone();
-                basicInfolist.Total = roomlist.Count;
+                Data basicRoomInfoRes = new Data();
+                var roomList = _Room.GetCardListDeepClone();
+                basicRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
-                    foreach (var room in roomlist)
+                    foreach (var room in roomList)
                     {
                         Data.BasicInfo basicInfo = new Data.BasicInfo();
                         basicInfo.userInfo = new()
                         {
-                            Name = room.Value.Name,
-                            UID = room.Value.UID
+                            name = room.Value.Name,
+                            uid = room.Value.UID
                         };
                         basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
                         {
-                            LiveStatus = room.Value.live_status.Value == 1 ? true : false,
-                            RoomId = room.Value.RoomId,
-                            Title = room.Value.Title.Value,
+                            liveStatus = room.Value.live_status.Value == 1 ? true : false,
+                            roomId = room.Value.RoomId,
+                            title = room.Value.Title.Value,
                         };
                         basicInfo.taskStatus = new Data.BasicInfo.TaskStatus()
                         {
-                            DownloadSize = room.Value.DownInfo.DownloadSize,
-                            IsDownload = room.Value.DownInfo.IsDownload,
-                            Status = room.Value.DownInfo.Status,
+                            downloadSize = room.Value.DownInfo.DownloadSize,
+                            isDownload = room.Value.DownInfo.IsDownload,
+                            status = room.Value.DownInfo.Status,
                         };
-                        basicInfolist.basicInfolist.Add(basicInfo);
+                        basicRoomInfoRes.basicInfoList.Add(basicInfo);
                     }
                 }
                 else
                 {
-                    for (int i = page * quantity - quantity; i < roomlist.Count && i < page * quantity + quantity; i++)
+                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity + quantity; i++)
                     {
                         Data.BasicInfo basicInfo = new Data.BasicInfo();
                         basicInfo.userInfo = new()
                         {
-                            Name = roomlist.ElementAt(i).Value.Name,
-                            UID = roomlist.ElementAt(i).Value.UID
+                            name = roomList.ElementAt(i).Value.Name,
+                            uid = roomList.ElementAt(i).Value.UID
                         };
                         basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
                         {
-                            LiveStatus = roomlist.ElementAt(i).Value.live_status.Value == 1 ? true : false,
-                            RoomId = roomlist.ElementAt(i).Value.RoomId,
-                            Title = roomlist.ElementAt(i).Value.Title.Value,
+                            liveStatus = roomList.ElementAt(i).Value.live_status.Value == 1 ? true : false,
+                            roomId = roomList.ElementAt(i).Value.RoomId,
+                            title = roomList.ElementAt(i).Value.Title.Value,
                         };
                         basicInfo.taskStatus = new Data.BasicInfo.TaskStatus()
                         {
-                            DownloadSize = roomlist.ElementAt(i).Value.DownInfo.DownloadSize,
-                            IsDownload = roomlist.ElementAt(i).Value.DownInfo.IsDownload,               
-                            Status = roomlist.ElementAt(i).Value.DownInfo.Status,
+                            downloadSize = roomList.ElementAt(i).Value.DownInfo.DownloadSize,
+                            isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,               
+                            status = roomList.ElementAt(i).Value.DownInfo.Status,
                         };
-                        basicInfolist.basicInfolist.Add(basicInfo);
+                        basicRoomInfoRes.basicInfoList.Add(basicInfo);
                     }
                 }
-                roomlist.Clear();
-                roomlist = null;
-                return Content(MessageBase.Success(nameof(all_basic_room_information), basicInfolist), "application/json");
+                roomList.Clear();
+                roomList = null;
+                return Content(MessageBase.Success(nameof(all_basic_room_information), basicRoomInfoRes), "application/json");
             }
             catch (Exception)
             {
@@ -269,9 +269,9 @@ namespace CLI.WebAppServices.Api
         }
         public class Data
         {
-            public int Total { get; set; } = 0;
-            public int CurrentPage { get; set; } = 1;
-            public List<BasicInfo> basicInfolist { get; set; } = new();
+            public int total { get; set; } = 0;
+            public int currentPage { get; set; } = 1;
+            public List<BasicInfo> basicInfoList { get; set; } = new();
             public class BasicInfo
             {
                 public UserInfo userInfo { get; set; } = new();
@@ -279,21 +279,21 @@ namespace CLI.WebAppServices.Api
                 public TaskStatus taskStatus { get; set; } = new();
                 public class UserInfo
                 {
-                    public string Name { get; set; }
-                    public long UID { get; set; }
+                    public string name { get; set; }
+                    public long uid { get; set; }
                 }
                 public class RoomInfo
                 {
-                    public long RoomId { get; set; }
-                    public string Title { get; set; }
-                    public bool LiveStatus { get; set; }
+                    public long roomId { get; set; }
+                    public string title { get; set; }
+                    public bool liveStatus { get; set; }
 
                 }
                 public class TaskStatus
                 {
-                    public bool IsDownload { get; set; }
-                    public long DownloadSize { get; set; }
-                    public DownloadStatus Status { get; set; }
+                    public bool isDownload { get; set; }
+                    public long downloadSize { get; set; }
+                    public DownloadStatus status { get; set; }
                 }
             }
         }
