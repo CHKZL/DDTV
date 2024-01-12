@@ -45,8 +45,8 @@ namespace CLI.WebAppServices.Api
                 {
                     foreach (var room in roomList)
                     {
-                        Data.CompleteInfo basicInfo = new Data.BasicInfo();
-                        basicInfo.userInfo = new()
+                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
+                        completeInfo.userInfo = new()
                         {
                             isAutoRec = room.Value.IsAutoRec,
                             description = room.Value.Description,
@@ -57,7 +57,7 @@ namespace CLI.WebAppServices.Api
                             sign = room.Value.sign.Value,
                             uid = room.Value.UID
                         };
-                        basicInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
+                        completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
                         {
                             areaName = room.Value.area_v2_name.Value,
                             attention = room.Value.attention.Value,
@@ -72,7 +72,7 @@ namespace CLI.WebAppServices.Api
                             title = room.Value.Title.Value,
                             url = $"https://live.bilibili.com/{room.Value.RoomId}"
                         };
-                        basicInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
+                        completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
                             downloadSize = room.Value.DownInfo.DownloadSize,
                             endTime = room.Value.DownInfo.EndTime,
@@ -81,14 +81,14 @@ namespace CLI.WebAppServices.Api
                             title = room.Value.Title.Value,
                             status = room.Value.DownInfo.Status,
                         };
-                        completeRoomInfoRes.completeInfoList.Add(basicInfo);
+                        completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
                 }
                 else
                 {
                     for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity + quantity; i++)
                     {
-                        Data.CompleteInfo completeInfo = new Data.BasicInfo();
+                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
                         completeInfo.userInfo = new()
                         {
                             isAutoRec = roomList.ElementAt(i).Value.IsAutoRec,
