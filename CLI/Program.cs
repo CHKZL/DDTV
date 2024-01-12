@@ -117,6 +117,10 @@ namespace CLI
                                         Core.Config.Core._UseAgree = true;
                                         return;
                                     }
+                                    else
+                                    {
+                                        return;
+                                    }
                                 }
                             });
 
@@ -138,7 +142,7 @@ namespace CLI
                         detectRoom.LiveEnd += Record.DetectRoom_LiveEnd;//下播事件
                         Log.Info(nameof(DetectRoom), $"注册下播事件");
                         //TEST();
-#if DEBUG
+
                         Task.Run(() =>
                         {
                             while (true)
@@ -149,10 +153,14 @@ namespace CLI
                                 {
                                     Environment.Exit(-114514);
                                 }
+#if DEBUG
                                 Thread.Sleep(60 * 1000);
+#else
+                                Thread.Sleep(300 * 1000);
+#endif
                             }
                         });
-# endif
+
                     });
                 }
 
