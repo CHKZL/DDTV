@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CLI.WebAppServices.Api
 {
     /// <summary>
-    /// 路由器根页面index
+    /// index首页
     /// </summary>
     [Route("[controller]")]
     [ApiController]
@@ -18,11 +18,28 @@ namespace CLI.WebAppServices.Api
         /// 请求WEB页首页
         /// </summary>
         /// <returns></returns>
-        [HttpGet(Name = "/")]
+        [HttpGet(Name = "index")]
         public ActionResult Get()
         {
             string Html = System.IO.File.ReadAllText(@"index.html");
             return Content(Html, "text/html");
+        }
+    }
+    /// <summary>
+    /// 路由器根页面跳转
+    /// </summary>
+    [Route("/")]
+    [ApiController]
+    public class root : ControllerBase
+    {
+        /// <summary>
+        /// 请求WEB页首页
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "root")]
+        public ActionResult Get()
+        {
+            return Redirect("/index");
         }
     }
 }
