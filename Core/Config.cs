@@ -431,7 +431,7 @@ namespace Core
 
             private static string AccessControlAllowOrigin = "*";
             /// <summary>
-            /// WEB跨域设置路径 （字符串:为*或者完整URL）（应为前端网址，必须带协议和端口号，如：http://127.0.0.1:5500）
+            /// WEB跨域设置路径 （字符串:为*或者完整URL）（完整URL应为前端网址，必须带协议和端口号，如：http://127.0.0.1:11419）
             /// 默认值：*
             /// </summary>
             public static string _AccessControlAllowOrigin
