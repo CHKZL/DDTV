@@ -18,10 +18,11 @@ namespace CLI.WebAppServices.Api
         /// 请求WEB页首页
         /// </summary>
         /// <returns></returns>
-        [HttpGet(Name = "index")]
+        [HttpGet(Name = "/")]
         public ActionResult Get()
         {
-            return Redirect("/index.html");
+            string Html = System.IO.File.ReadAllText(@"./static/index.html");
+            return Content(Html, "text/html");
         }
     }
 }
