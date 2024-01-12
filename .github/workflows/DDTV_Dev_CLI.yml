@@ -20,6 +20,8 @@ jobs:
             runtime: linux-x64
           - os: ubuntu-latest
             runtime: linux-arm
+          - os: ubuntu-latest
+            runtime: linux-arm64
           - os: windows-latest
             runtime: win-x64
           - os: macOS-latest
