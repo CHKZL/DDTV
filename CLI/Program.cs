@@ -61,7 +61,7 @@ namespace CLI
             app.UseAuthorization();
 
             app.MapControllers();
-            app.UseFileServer(new FileServerOptions()
+            app.UseFileServer(new FileServerOptions()//注册文件服务
             {
                 EnableDirectoryBrowsing = false,
                 FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Environment.CurrentDirectory + @"/static")),
