@@ -10,7 +10,7 @@ namespace CLI.WebAppServices.Api
     /// <summary>
     /// index首页
     /// </summary>
-    [Route("[controller]")]
+    [Route("/")]
     [ApiController]
     public class index : ControllerBase
     {
@@ -21,25 +21,7 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "index")]
         public ActionResult Get()
         {
-            string Html = System.IO.File.ReadAllText(@"index.html");
-            return Content(Html, "text/html");
-        }
-    }
-    /// <summary>
-    /// 路由器根页面跳转
-    /// </summary>
-    [Route("/")]
-    [ApiController]
-    public class root : ControllerBase
-    {
-        /// <summary>
-        /// 请求WEB页首页
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet(Name = "root")]
-        public ActionResult Get()
-        {
-            return Redirect("/index");
+            return Redirect("/index.html");
         }
     }
 }

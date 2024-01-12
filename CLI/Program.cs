@@ -61,11 +61,10 @@ namespace CLI
             app.UseAuthorization();
 
             app.MapControllers();
-            app.UseFileServer(new FileServerOptions()//注册文件服务
+            app.UseStaticFiles(new StaticFileOptions
             {
-                EnableDirectoryBrowsing = false,
                 FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Environment.CurrentDirectory + @"/static")),
-                RequestPath = new PathString("/static")
+                RequestPath = ""
             });
             string rurl = $"http://0.0.0.0:11419";
             app.Urls.Add(rurl);
