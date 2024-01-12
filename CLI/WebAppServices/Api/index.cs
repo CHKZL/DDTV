@@ -10,6 +10,24 @@ namespace CLI.WebAppServices.Api
     /// <summary>
     /// index首页
     /// </summary>
+    [Route("webui")]
+    [ApiController]
+    public class webui : ControllerBase
+    {
+        /// <summary>
+        /// 请求WEB页首页
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "webui")]
+        public ActionResult Get()
+        {
+            string Html = System.IO.File.ReadAllText(@"./static/index.html");
+            return Content(Html, "text/html");
+        }
+    }
+    /// <summary>
+    /// 根路径跳转到webui
+    /// </summary>
     [Route("/")]
     [ApiController]
     public class index : ControllerBase
@@ -21,8 +39,7 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "/")]
         public ActionResult Get()
         {
-            string Html = System.IO.File.ReadAllText(@"./static/index.html");
-            return Content(Html, "text/html");
+            return Redirect("/webui");
         }
     }
 }
