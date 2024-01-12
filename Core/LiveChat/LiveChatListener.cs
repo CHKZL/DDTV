@@ -116,10 +116,10 @@ namespace Core.LiveChat
                 {
                     Close();
                 }
-                if (DisposeSent != null)
-                    DisposeSent.Invoke(this, EventArgs.Empty);
                 _disposed = true;
                 State = false;
+                if (DisposeSent != null)
+                    DisposeSent.Invoke(this, EventArgs.Empty);
             }
             catch (Exception E)
             {
@@ -214,7 +214,7 @@ namespace Core.LiveChat
                }
                try
                {
-                   if (m_client.State == WebSocketState.Open)
+                   if (m_client.State == WebSocketState.Open && !_disposed)
                    {
                        m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
                    }
