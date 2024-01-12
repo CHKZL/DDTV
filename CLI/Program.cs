@@ -99,16 +99,28 @@ namespace CLI
                                 while (true)
                                 {
                                     ConsoleKeyInfo keyInfo = Console.ReadKey();
-                                    if (keyInfo.Key != ConsoleKey.Y && Core.Config.Core._UseAgree)
+                                    if (keyInfo.Key != ConsoleKey.Y)
                                     {
-                                        // 用户按了其他键，退出程序
-                                        Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
-                                        Environment.Exit(0);
+                                        if (!Core.Config.Core._UseAgree)
+                                        {
+                                            // 用户按了其他键，退出程序
+                                            Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
+                                            Environment.Exit(0);
+                                        }
+                                        else
+                                        {
+                                            return;
+                                        }
+                                    }
+                                    else if (keyInfo.Key == ConsoleKey.Y && !Core.Config.Core._UseAgree)
+                                    {
+                                        Core.Config.Core._UseAgree = true;
+                                        return;
                                     }
                                 }
                             });
-                            
-                            while(!Core.Config.Core._UseAgree)
+
+                            while (!Core.Config.Core._UseAgree)
                             {
                                 Thread.Sleep(500);
                             }
