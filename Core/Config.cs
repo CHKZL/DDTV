@@ -148,7 +148,7 @@ namespace Core
 
         public class RoomConfig
         {
-             private static object _RoomConfigurationLock = new();
+            private static object _RoomConfigurationLock = new();
 
 
             /// <summary>
@@ -156,53 +156,53 @@ namespace Core
             /// </summary>
             public static void LoadRoomConfigurationFile()
             {
-                lock(_RoomConfigurationLock)
+                lock (_RoomConfigurationLock)
                 {
                     (int Total, int Success, int Fail) Count = new(0, 0, 0);
-                if (!File.Exists($"{Core._RoomConfigFile}"))
-                {
-                    File.WriteAllText($"{Core._RoomConfigFile}", "{}");
-                }
-                else
-                {
-                    string TEXT = File.ReadAllText($@"{Core._RoomConfigFile}");
-                    RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
-                    if (roomListDiscard != null)
-                    {
-                        foreach (var item in roomListDiscard.data)
-                        {
-                            Count.Total++;
-                            RoomCardClass? roomCard = new();
-                            if (_Room.GetCardForUID(item.UID, ref roomCard))
-                            {
-                                Count.Success++;
-                                roomCard.UID = item.UID;
-                                roomCard.description = item.description;
-                                roomCard.RoomId = item.RoomId;
-                                roomCard.Name = item.Name;
-                                roomCard.IsAutoRec = item.IsAutoRec;
-                                roomCard.IsRemind = item.IsRemind;
-                                roomCard.IsRecDanmu = item.IsRecDanmu;
-                                roomCard.Like = item.Like;
-                                roomCard.Shell = item.Shell;
-                            }
-                            else
-                            {
-                                Count.Success++;
-                                _Room.SetRoomCardByUid(item.UID, item);
-                            }
-                        }
-                    }
-                    else
+                    if (!File.Exists($"{Core._RoomConfigFile}"))
                     {
                         File.WriteAllText($"{Core._RoomConfigFile}", "{}");
                     }
-                }
-                Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
+                    else
+                    {
+                        string TEXT = File.ReadAllText($@"{Core._RoomConfigFile}");
+                        RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
+                        if (roomListDiscard != null)
+                        {
+                            foreach (var item in roomListDiscard.data)
+                            {
+                                Count.Total++;
+                                RoomCardClass? roomCard = new();
+                                if (_Room.GetCardForUID(item.UID, ref roomCard))
+                                {
+                                    Count.Success++;
+                                    roomCard.UID = item.UID;
+                                    roomCard.description = item.description;
+                                    roomCard.RoomId = item.RoomId;
+                                    roomCard.Name = item.Name;
+                                    roomCard.IsAutoRec = item.IsAutoRec;
+                                    roomCard.IsRemind = item.IsRemind;
+                                    roomCard.IsRecDanmu = item.IsRecDanmu;
+                                    roomCard.Like = item.Like;
+                                    roomCard.Shell = item.Shell;
+                                }
+                                else
+                                {
+                                    Count.Success++;
+                                    _Room.SetRoomCardByUid(item.UID, item);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            File.WriteAllText($"{Core._RoomConfigFile}", "{}");
+                        }
+                    }
+                    Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
                 }
             }
 
-           
+
             /// <summary>
             /// 将房间配置写入配置文件
             /// </summary>
@@ -256,15 +256,13 @@ namespace Core
             /// </summary>
             public static bool _UseAgree
             {
-                get
-                {
-                    return bool.Parse(UseAgree);
-                }
+                get => bool.Parse(UseAgree);
                 set
                 {
                     if (value.ToString() != UseAgree)
                     {
                         UseAgree = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -276,10 +274,7 @@ namespace Core
             /// </summary>
             public static string _QrUrl
             {
-                get
-                {
-                    return $"{_TemporaryFileDirectory}{QrUrl}";
-                }
+                get => $"{_TemporaryFileDirectory}{QrUrl}";
             }
 
             private static string QrFileNmae = "LoginQr.png";
@@ -289,10 +284,7 @@ namespace Core
             /// </summary>
             public static string _QrFileNmae
             {
-                get
-                {
-                    return $"{_TemporaryFileDirectory}{QrFileNmae}";
-                }
+                get => $"{_TemporaryFileDirectory}{QrFileNmae}";
 
             }
 
@@ -303,15 +295,13 @@ namespace Core
             /// </summary>
             public static bool _LoginStatus
             {
-                get
-                {
-                    return bool.Parse(LoginStatus);
-                }
+                get => bool.Parse(LoginStatus);
                 set
                 {
                     if (value.ToString() != LoginStatus)
                     {
                         LoginStatus = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -323,10 +313,7 @@ namespace Core
             /// </summary>
             public static string _RoomConfigFile
             {
-                get
-                {
-                    return $"{_ConfigDirectory}{RoomConfigFile}";
-                }
+                get => $"{_ConfigDirectory}{RoomConfigFile}";
             }
 
             private static string ConfigDirectory = "./Config/";
@@ -336,10 +323,7 @@ namespace Core
             /// </summary>
             public static string _ConfigDirectory
             {
-                get
-                {
-                    return ConfigDirectory;
-                }
+                get => ConfigDirectory;
             }
 
             private static string ConfigurationFile = $"DDTV_Config.ini";
@@ -349,10 +333,7 @@ namespace Core
             /// </summary>
             public static string _ConfigurationFile
             {
-                get
-                {
-                    return $"{_ConfigDirectory}{ConfigurationFile}";
-                }
+                get => $"{_ConfigDirectory}{ConfigurationFile}";
             }
 
             private static string Key = "34D3D9‭9D34894461‭91AB9B8‭582454669";
@@ -362,10 +343,7 @@ namespace Core
             /// </summary>
             public static string _Key
             {
-                get
-                {
-                    return Key;
-                }
+                get => Key;
             }
 
             private static string IV = "B3FF‭40627013‭F53F";
@@ -375,10 +353,7 @@ namespace Core
             /// </summary>
             public static string _IV
             {
-                get
-                {
-                    return IV;
-                }
+                get => IV;
             }
 
             private static string UserInfoCoinfFileExtension = ".Duser";
@@ -388,10 +363,7 @@ namespace Core
             /// </summary>
             public static string _UserInfoCoinfFileExtension
             {
-                get
-                {
-                    return UserInfoCoinfFileExtension;
-                }
+                get => UserInfoCoinfFileExtension;
             }
 
             private static string LogFileDirectory = "./Logs/";
@@ -401,10 +373,7 @@ namespace Core
             /// </summary>
             public static string _LogFileDirectory
             {
-                get
-                {
-                    return LogFileDirectory;
-                }
+                get => LogFileDirectory;
             }
 
             private static string RecFileDirectory = "./Rec/";
@@ -414,10 +383,7 @@ namespace Core
             /// </summary>
             public static string _RecFileDirectory
             {
-                get
-                {
-                    return RecFileDirectory;
-                }
+                get => RecFileDirectory;
             }
 
             private static string TemporaryFileDirectory = "./Temporary/";
@@ -427,10 +393,7 @@ namespace Core
             /// </summary>
             public static string _TemporaryFileDirectory
             {
-                get
-                {
-                    return TemporaryFileDirectory;
-                }
+                get => TemporaryFileDirectory;
             }
 
             private static string LiveDomainName = "https://api.live.bilibili.com";
@@ -440,15 +403,13 @@ namespace Core
             /// </summary>
             public static string _LiveDomainName
             {
-                get
-                {
-                    return LiveDomainName;
-                }
+                get => LiveDomainName;
                 set
                 {
                     if (value != LiveDomainName)
                     {
                         LiveDomainName = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -460,15 +421,13 @@ namespace Core
             /// </summary>
             public static string _MainDomainName
             {
-                get
-                {
-                    return MainDomainName;
-                }
+                get => MainDomainName;
                 set
                 {
                     if (value != MainDomainName)
                     {
                         MainDomainName = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -487,15 +446,13 @@ namespace Core
             /// </summary>
             public static int _DetectIntervalTime
             {
-                get
-                {
-                    return int.Parse(DetectIntervalTime);
-                }
+                get => int.Parse(DetectIntervalTime);
                 set
                 {
                     if (value.ToString() != DetectIntervalTime)
                     {
                         DetectIntervalTime = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -516,6 +473,7 @@ namespace Core
                     if (value.ToString() != DebugMode)
                     {
                         DebugMode = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -529,15 +487,13 @@ namespace Core
             /// </summary>
             public static int _DefaultResolution
             {
-                get
-                {
-                    return int.Parse(DefaultResolution);
-                }
+                get => int.Parse(DefaultResolution);
                 set
                 {
                     if (value.ToString() != DefaultResolution)
                     {
                         DefaultResolution = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -553,15 +509,13 @@ namespace Core
             /// </summary>
             public static string _AccessControlAllowCredentials
             {
-                get
-                {
-                    return AccessControlAllowCredentials;
-                }
+                get => AccessControlAllowCredentials;
                 set
                 {
                     if (value != AccessControlAllowCredentials)
                     {
                         AccessControlAllowCredentials = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -573,12 +527,13 @@ namespace Core
             /// </summary>
             public static string _AccessControlAllowOrigin
             {
-                get { return AccessControlAllowOrigin; }
+                get => AccessControlAllowOrigin;
                 set
                 {
                     if (value != AccessControlAllowOrigin)
                     {
                         AccessControlAllowOrigin = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -592,12 +547,13 @@ namespace Core
             /// </summary>
             public static string _AccessKeyId
             {
-                get { return AccessKeyId; }
+                get => AccessKeyId;
                 set
                 {
                     if (value != AccessKeyId)
                     {
                         AccessKeyId = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
@@ -609,12 +565,13 @@ namespace Core
             /// </summary>
             public static string _AccessKeySecret
             {
-                get { return AccessKeySecret; }
+                get => AccessKeySecret;
                 set
                 {
                     if (value != AccessKeySecret)
                     {
                         AccessKeySecret = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
                     }
                 }
             }
