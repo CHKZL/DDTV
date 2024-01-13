@@ -34,6 +34,7 @@ namespace CLI
         {
             if (status == ByQRCode.QrCodeStatus.Success)
             {
+                account.State = true;
                 Core.RuntimeObject.Account.AccountInformation = account;
                 Console.WriteLine($"登陆成功");
                 Console.WriteLine($"Uid:{account.Uid}");

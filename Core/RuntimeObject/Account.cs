@@ -87,6 +87,7 @@ namespace Core.RuntimeObject
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
+                                 Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
                                 LoginFailureEvent?.Invoke(null, new EventArgs());
                             }
                         }
