@@ -17,12 +17,12 @@ namespace Core.RuntimeObject
     public class Account
     {
         public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
-        private static AccountInformation accountInformation = new();
+        private static AccountInformation _accountInformation = new();
         public static AccountInformation AccountInformation
         {
             get
             {
-                if (accountInformation == null || !accountInformation.State)
+                if (_accountInformation == null || !_accountInformation.State)
                 {
                     string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
@@ -31,21 +31,26 @@ namespace Core.RuntimeObject
                         var tempAccountInfo = JsonSerializer.Deserialize<AccountInformation>(accountString);
                         if (tempAccountInfo?.State == true)
                         {
-                            accountInformation = tempAccountInfo;
+                            _accountInformation = tempAccountInfo;
                             Core.Config.Core._LoginStatus = true;
                         }
+                        else
+                        {
+                            LoginFailureEvent?.Invoke(null, new EventArgs());
+                        }
                     }
-                    LoginFailureEvent?.Invoke(null, new EventArgs());
                 }
-                return accountInformation;
+                if (_accountInformation.State)
+                {
+                    Core.Config.Core._LoginStatus = true;
+                }
+                return _accountInformation;
             }
             set
             {
-                accountInformation = value;
-                accountInformation.strCookies = string.Join(";", accountInformation.Cookies) + ";";
-                accountInformation.State = true;
-                Core.Config.Core._LoginStatus = true;
-                Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
+                _accountInformation = value;
+                Core.Config.Core._LoginStatus = value.State;
+                Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{_accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
             }
         }
 
@@ -64,25 +69,26 @@ namespace Core.RuntimeObject
                         {
                             if (GetNavState())
                             {
+                                AccountInformation.State = true;
                                 _AccountStatus = true;
                                 if (!Core.Config.Core._LoginStatus)
                                     Core.Config.Core._LoginStatus = true;
-
                             }
                             else
                             {
+                                AccountInformation.State = false;
                                 _AccountStatus = false;
                                 if (Core.Config.Core._LoginStatus)
                                     Core.Config.Core._LoginStatus = false;
                             }
-                            if (accountInformation == null || !accountInformation.State)
+                            if (_accountInformation == null || !_accountInformation.State)
                             {
                                 LoginFailureEvent?.Invoke(null, new EventArgs());
                             }
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆");
+                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆",e);
                         }
                         if (!_AccountStatus)
                             Thread.Sleep(1000 * 60 * 10);
