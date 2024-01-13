@@ -74,7 +74,7 @@ namespace CLI.WebAppServices.Api
         /// </summary>
         /// <returns></returns>
         [HttpPost(Name = "re_login")]
-        public ActionResult Get(PostCommonParameters commonParameters)
+        public ActionResult Post(PostCommonParameters commonParameters)
         {
             Login.QR();
             return Content(MessageBase.Success(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", MessageBase.code.LoginInfoFailure), "application/json");
@@ -90,7 +90,7 @@ namespace CLI.WebAppServices.Api
         /// </summary>
         /// <returns></returns>
         [HttpPost(Name = "use_agree_state")]
-        public ActionResult Get(PostCommonParameters commonParameters)
+        public ActionResult Post(PostCommonParameters commonParameters)
         {
             return Content(MessageBase.Success(nameof(use_agree_state), Core.Config.Core._UseAgree, $"获取用户初始化授权状态"), "application/json");
         }
@@ -105,7 +105,7 @@ namespace CLI.WebAppServices.Api
         /// </summary>
         /// <returns></returns>
         [HttpPost(Name = "get_login_status")]
-        public ActionResult Get(PostCommonParameters commonParameters)
+        public ActionResult Post(PostCommonParameters commonParameters)
         {
             return Content(MessageBase.Success(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus, $"获取本地登录态AccountInformation的有效状态"), "application/json");
         }
