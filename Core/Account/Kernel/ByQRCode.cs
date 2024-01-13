@@ -318,8 +318,17 @@ namespace Core.Account.Kernel
 
         public class QR_Object
         {
+            /// <summary>
+            /// 二维码结构体
+            /// </summary>
             public SKData SKData { get; set; }
+            /// <summary>
+            /// 二维码Bitmap对象
+            /// </summary>
             public SKBitmap SKBitmap { get; set; }
+            /// <summary>
+            /// 用于生成二维码的url
+            /// </summary>
             public string OriginalString { get; set; }
         }
 

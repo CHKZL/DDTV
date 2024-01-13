@@ -1,4 +1,5 @@
 ﻿using CLI.WebAppServices.Middleware;
+using Masuit.Tools;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -42,9 +43,44 @@ namespace CLI.WebAppServices.Api
                     waitTime += 1000;
                 }
             }
-            return Content(MessageBase.Success(nameof(use_agree), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
+            return Content(MessageBase.Success(nameof(get_login_qr), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
         }
     }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/login/[controller]")]
+    public class get_login_url : ControllerBase
+    {
+        /// <summary>
+        /// 获取登陆二维码
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "get_login_url")]
+        public async Task<ActionResult> Get()
+        {
+            int waitTime = 0;
+            while (waitTime <= 3000)
+            {
+                if (System.IO.File.Exists(Core.Config.Core._QrUrl))
+                {
+                    FileInfo fi = new FileInfo(Core.Config.Core._QrUrl);
+                    using (FileStream fs = fi.OpenRead())
+                    {
+
+                        return Content(MessageBase.Success(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串", MessageBase.code.OperationFailed), "application/json");
+                    }
+                }
+                else
+                {
+                    await Task.Delay(1000);
+                    waitTime += 1000;
+                }
+            }
+            return Content(MessageBase.Success(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
+        }
+    }
+
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]

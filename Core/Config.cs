@@ -239,6 +239,19 @@ namespace Core
                 }
             }
 
+            private static string QrUrl = "QrUrlPipeline";
+            /// <summary>
+            /// 登陆用扫码二维码路径和文件名
+            /// 默认值：./Temporary/QrUrlPipeline
+            /// </summary>
+            public static string _QrUrl
+            {
+                get
+                {
+                    return $"{_TemporaryFileDirectory}{QrUrl}";
+                }
+            }
+
             private static string QrFileNmae = "LoginQr.png";
             /// <summary>
             /// 登陆用扫码二维码路径和文件名
