@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Core.RuntimeObject.RoomList;
+using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
 {
@@ -18,8 +18,8 @@ namespace Core.RuntimeObject
         #endregion
 
         #region public Properties
-        public event EventHandler<RoomList.RoomCard> LiveStart;
-        public event EventHandler<RoomList.RoomCard> LiveEnd;
+        public event EventHandler<RoomCardClass> LiveStart;
+        public event EventHandler<RoomCardClass> LiveEnd;
         #endregion
 
         public DetectRoom()
@@ -65,8 +65,8 @@ namespace Core.RuntimeObject
                         var NewList = _Room.GetCardListDeepClone();
                         foreach (var item in oldList)
                         {
-                            RoomCard oldCard = oldList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
-                            RoomCard newCard = NewList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                            RoomCardClass oldCard = oldList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                            RoomCardClass newCard = NewList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
                             if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
                             {
                                 if (newCard.live_status.Value == 1)

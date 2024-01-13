@@ -20,7 +20,7 @@ namespace CLI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static async void DetectRoom_LiveStart(Object? sender, RoomList.RoomCard e)
+        internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
 #if DEBUG
             return;
@@ -68,7 +68,7 @@ namespace CLI
                         } 
                     }
                 }
-                while (RoomList.GetLiveStatus(e.RoomId));
+                while (RoomInfo.GetLiveStatus(e.RoomId));
                 if (e.IsRecDanmu)
                 {
                     if(!liveChatListener._Cancel)
@@ -117,7 +117,7 @@ namespace CLI
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        internal static void DetectRoom_LiveEnd(object? sender, RoomList.RoomCard e)
+        internal static void DetectRoom_LiveEnd(object? sender, RoomCardClass e)
         {
             if (e.IsRemind)
             {

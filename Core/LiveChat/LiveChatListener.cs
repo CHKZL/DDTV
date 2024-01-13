@@ -47,8 +47,8 @@ namespace Core.LiveChat
         public LiveChatListener(long roomId)
         {
             RoomId = roomId;
-            Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(RoomList.GetUid(roomId)));
-            Name = RoomList.GetNickname(RoomList.GetUid(roomId));
+            Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
+            Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
             string dirName = $"{Config.Core._RecFileDirectory}{roomId}-{Name}";
             File = $"{dirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}";
         }
