@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Security.Principal;
 using System.Text;
 using System.Text.Json;
@@ -48,6 +49,7 @@ namespace Core.RuntimeObject
             }
             set
             {
+                Log.Info(nameof(AccountInformation), $"更新登录态缓存:[{MethodBase.GetCurrentMethod().Name}]]");
                 _accountInformation = value;
                 Core.Config.Core._LoginStatus = value.State;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{_accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
@@ -87,13 +89,13 @@ namespace Core.RuntimeObject
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
-                                 Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
+                                Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
                                 LoginFailureEvent?.Invoke(null, new EventArgs());
                             }
                         }
                         catch (Exception e)
                         {
-                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆",e);
+                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆", e);
                         }
                         if (!_AccountStatus)
                             Thread.Sleep(1000 * 60 * 10);
@@ -111,7 +113,14 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         public static bool GetNavState()
         {
-            return Network.Methods.Nav.GetNav() == null;
+            if (Network.Methods.Nav.GetNav() == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
 
         /// <summary>
