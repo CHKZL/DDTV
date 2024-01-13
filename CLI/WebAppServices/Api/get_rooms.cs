@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
-using static Core.RuntimeObject.RoomList.RoomCard;
+using static Core.RuntimeObject.RoomCardClass;
 
 namespace CLI.WebAppServices.Api
 {

@@ -19,7 +19,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
-using static Core.RuntimeObject.RoomList;
+using static Core.RuntimeObject.RoomInfo;
 
 namespace Core
 {
@@ -45,8 +45,28 @@ namespace Core
                     varMap.Add(fieldInfo.Name, fieldInfo);
 
             RoomConfig.LoadRoomConfigurationFile();
-        }
+            bool isFirstRun = true;
 
+            if (isFirstRun)
+            {
+                isFirstRun = false;
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            RoomConfig.SaveRoomConfigurationFile();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(nameof(RoomConfig.SaveRoomConfigurationFile), $"将房间配置写入配置文件时出错", e, false);
+                        }
+                        Thread.Sleep(1000 * 30);
+                    }
+                });
+            }
+        }
         #endregion
 
         #region public Method
@@ -97,12 +117,17 @@ namespace Core
 
         public class RoomConfig
         {
+             private static object _RoomConfigurationLock = new();
+
+
             /// <summary>
             /// 读取房间配置文件更新运行时参数
             /// </summary>
             public static void LoadRoomConfigurationFile()
             {
-                (int Total, int Success, int Fail) Count = new(0, 0, 0);
+                lock(_RoomConfigurationLock)
+                {
+                    (int Total, int Success, int Fail) Count = new(0, 0, 0);
                 if (!File.Exists($"{Core._RoomConfigFile}"))
                 {
                     File.WriteAllText($"{Core._RoomConfigFile}", "{}");
@@ -116,8 +141,8 @@ namespace Core
                         foreach (var item in roomListDiscard.data)
                         {
                             Count.Total++;
-                            RoomCard? roomCard = new();
-                            if (_Room.GetCard(item.UID, ref roomCard))
+                            RoomCardClass? roomCard = new();
+                            if (_Room.GetCardForUID(item.UID, ref roomCard))
                             {
                                 Count.Success++;
                                 roomCard.UID = item.UID;
@@ -143,29 +168,49 @@ namespace Core
                     }
                 }
                 Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
+                }
             }
 
+           
             /// <summary>
             /// 将房间配置写入配置文件
             /// </summary>
             public static void SaveRoomConfigurationFile()
             {
-                RoomListDiscard roomListDiscard = new RoomListDiscard();
-                var roomInfos = _Room.GetCardListClone();
-                foreach (var item in roomInfos)
+                lock (_RoomConfigurationLock)
                 {
-                    roomListDiscard.data.Add(item.Value);
+                    RoomListDiscard roomListDiscard = new RoomListDiscard();
+                    var roomInfos = _Room.GetCardListClone();
+                    foreach (var item in roomInfos)
+                    {
+                        roomListDiscard.data.Add(item.Value);
+                    }
+                    string jsonString = JsonSerializer.Serialize(roomListDiscard);
+
+                    string filePath = $"{Core._RoomConfigFile}";
+                    if (File.Exists(filePath))
+                    {
+                        string existingContent = File.ReadAllText(filePath, Encoding.UTF8);
+                        if (existingContent == jsonString)
+                        {
+                            // 如果文件中的内容与即将写入的内容一致，则跳过写入
+                            return;
+                        }
+                    }
+
+                    // 如果文件不存在，或者文件中的内容与即将写入的内容不一致，则进行写入
+                    File.WriteAllText(filePath, jsonString, Encoding.UTF8);
+                    Log.Info(nameof(SaveRoomConfigurationFile), $"房间配置发生变化，写入文件");
                 }
-                string jsonString = JsonSerializer.Serialize(roomListDiscard);
-                File.WriteAllText($"{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
             }
+
 
 
 
             internal class RoomListDiscard
             {
                 [JsonPropertyName("data")]
-                public List<RuntimeObject.RoomList.RoomCard> data { set; get; } = [];
+                public List<RuntimeObject.RoomCardClass> data { set; get; } = [];
             }
 
         }
@@ -508,7 +553,7 @@ namespace Core
             private static string AccessKeyId = "ddtv";
             /// <summary>
             /// API鉴权所使用的AccessKeyId 为字符串，默认"ddtv"
-            /// 默认值：*
+            /// 默认值：ddtv
             /// </summary>
             public static string _AccessKeyId
             {
@@ -525,8 +570,8 @@ namespace Core
 
             private static string AccessKeySecret = "ddtv";
             /// <summary>
-            /// API鉴权所使用的AccessKeySecret 为字符串，默认"ami"
-            /// 默认值：*
+            /// API鉴权所使用的AccessKeySecret 为字符串，默认"ddtv"
+            /// 默认值：ddtv
             /// </summary>
             public static string _AccessKeySecret
             {

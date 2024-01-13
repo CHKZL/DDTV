@@ -61,4 +61,29 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.Success(nameof(modify_room_prompt_settings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
         }
     }
+
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    public class add_room : ControllerBase
+    {
+        /// <summary>
+        /// 添加房间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="auto_rec">是否自动录制</param>
+        /// <param name="remind">是否开播提示</param>
+        /// <param name="rec_danmu">是否录制弹幕</param>
+        /// <param name="uid"></param>
+        /// <param name="room_id"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "add_room")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu, [FromForm] long uid = 0, [FromForm] long room_id = 0)
+        {
+            var addInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id);
+            return Content(MessageBase.Success(nameof(modify_room_prompt_settings), addInfo.State, $"{addInfo.Message}"), "application/json");
+        }
+    }
 }

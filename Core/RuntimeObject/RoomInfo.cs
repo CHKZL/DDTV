@@ -3,23 +3,24 @@ using Core.Network.Methods;
 using Masuit.Tools;
 using Masuit.Tools.Hardware;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
-using static Core.RuntimeObject.RoomList;
+using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
 {
     public class _Room
     {
-        private static Dictionary<long, RoomCard> roomInfos = new Dictionary<long, RoomCard>();
+        private static Dictionary<long, RoomCardClass> roomInfos = new Dictionary<long, RoomCardClass>();
         /// <summary>
         /// 通过UID获取房间卡
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        internal static bool GetCard(long UID, ref RoomCard roomCard)
+        internal static bool GetCardForUID(long UID, ref RoomCardClass roomCard)
         {
             roomCard = roomInfos.FirstOrDefault(x => x.Key == UID).Value;
             if (roomCard != null)
@@ -36,7 +37,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        internal static bool GetCardFoRoomId(long RoomId, ref RoomCard roomCard)
+        internal static bool GetCardFoRoomId(long RoomId, ref RoomCardClass roomCard)
         {
             roomCard = roomInfos.FirstOrDefault(x => x.Value.RoomId == RoomId).Value;
             if (roomCard != null)
@@ -58,7 +59,7 @@ namespace Core.RuntimeObject
         public static int ModifyRecordingSettings(long UID, bool State)
         {
             int _count = 0;
-            if(roomInfos.TryGetValue(UID, out RoomCard roomCard))
+            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
             {
                 _count++;
                 roomCard.IsAutoRec = State;
@@ -76,13 +77,12 @@ namespace Core.RuntimeObject
             List<long> _count = new();
             foreach (var item in UID)
             {
-                if (roomInfos.TryGetValue(item, out RoomCard roomCard))
+                if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
                 {
                     _count.Add(item);
-                    roomCard.IsRemind = State;
+                    roomCard.IsRecDanmu = State;
                 }
             }
-            Config.RoomConfig.SaveRoomConfigurationFile();
             return _count;
         }
 
@@ -97,17 +97,16 @@ namespace Core.RuntimeObject
             List<long> _count = new();
             foreach (var item in UID)
             {
-                if (roomInfos.TryGetValue(item, out RoomCard roomCard))
+                if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
                 {
                     _count.Add(item);
-                    roomCard.IsRemind= State;
+                    roomCard.IsRemind = State;
                 }
             }
-            Config.RoomConfig.SaveRoomConfigurationFile();
             return _count;
         }
 
-        public static Dictionary<long, RoomCard> GetCardList()
+        public static Dictionary<long, RoomCardClass> GetCardList()
         {
             return roomInfos;
         }
@@ -115,15 +114,15 @@ namespace Core.RuntimeObject
         /// 获得房间列表字典的克隆轻备份
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<long, RoomCard> GetCardListClone()
+        public static Dictionary<long, RoomCardClass> GetCardListClone()
         {
-            return new Dictionary<long, RoomCard>(roomInfos);
+            return new Dictionary<long, RoomCardClass>(roomInfos);
         }
         /// <summary>
         /// 获得房间列表字典的深度克隆
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<long, RoomCard> GetCardListDeepClone()
+        public static Dictionary<long, RoomCardClass> GetCardListDeepClone()
         {
             return roomInfos.DeepClone();
         }
@@ -135,7 +134,7 @@ namespace Core.RuntimeObject
         /// <param name="UID">用户的Uid</param>
         /// <param name="value">要设置的RoomCard值</param>
         /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
-        public static bool SetRoomCardByUid(long UID, RoomCard value)
+        public static bool SetRoomCardByUid(long UID, RoomCardClass value)
         {
             lock (RoomCardLock)
             {
@@ -151,10 +150,50 @@ namespace Core.RuntimeObject
                 return true;
             }
         }
+        /// <summary>
+        /// 添加房间配置(UID和房间号二选一即可)
+        /// </summary>
+        /// <param name="UID">UID</param>
+        /// <param name="RoomId">房间号</param>
+        /// <param name="IsAutoRec">是否自动录制</param>
+        /// <param name="IsRemind">是否提醒</param>
+        /// <param name="IsRecDanmu">是否录制弹幕</param>
+        /// <returns>1：成功  2：房间已添加  3：房间不存在  4：参数有误</returns>
+        public static (int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0)
+        {
+            int State = 0;
+            string Message = string.Empty;
+            RoomCardClass roomCard = new();
+            long id = UID != 0 ? UID : RoomId;
+            if (id != 0)
+            {
+                if ((UID != 0 && GetCardForUID(UID, ref roomCard)) || (RoomId != 0 && GetCardFoRoomId(RoomId, ref roomCard)))
+                {
+                    State = 2;
+                    Message = "房间已添加";
+                }
+                else if (GetRoomId(id) != 0)
+                {
+                    State = 1;
+                    Message = "成功";
+                }
+                else
+                {
+                    State = 3;
+                    Message = "房间不存在";
+                }
+            }
+            else
+            {
+                State = 4;
+                Message = "参数有误";
+            }
+            return (State, Message);
+        }
     }
 
 
-    public class RoomList
+    public class RoomInfo
     {
         #region private Properties
 
@@ -248,15 +287,15 @@ namespace Core.RuntimeObject
             {
                 UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
                 UIDList = null;
-                if (uidsInfo_Class!=null &&  uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
+                if (uidsInfo_Class != null && uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
                 {
                     foreach (var item in uidsInfo_Class.data)
                     {
                         long.TryParse(item.Key, out long uid);
                         if (uid > 0)
                         {
-                            RoomCard roomCard = new();
-                            if (_Room.GetCard(uid, ref roomCard))
+                            RoomCardClass roomCard = new();
+                            if (_Room.GetCardForUID(uid, ref roomCard))
                             {
                                 _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard));
                             }
@@ -275,8 +314,8 @@ namespace Core.RuntimeObject
 
         private static bool _GetLiveStatus(long RoomId)
         {
-            RoomCard roomCard = new();
-            if (!_Room.GetCard(GetUid(RoomId), ref roomCard))
+            RoomCardClass roomCard = new();
+            if (!_Room.GetCardForUID(GetUid(RoomId), ref roomCard))
             {
                 roomCard = ToRoomCard(GetRoomInfo(RoomId), roomCard);
                 if (roomCard == null)
@@ -285,7 +324,7 @@ namespace Core.RuntimeObject
             }
             else if (roomCard.live_status.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                RoomCardClass card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
                 if (card != null)
                 {
                     _Room.SetRoomCardByUid(card.UID, card);
@@ -298,8 +337,8 @@ namespace Core.RuntimeObject
 
         private static string _GetNickname(long Uid)
         {
-            RoomCard roomCard = new();
-            if (!_Room.GetCard(Uid, ref roomCard))
+            RoomCardClass roomCard = new();
+            if (!_Room.GetCardForUID(Uid, ref roomCard))
             {
                 roomCard = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (roomCard == null)
@@ -308,7 +347,7 @@ namespace Core.RuntimeObject
             }
             else if (string.IsNullOrEmpty(roomCard.Name))
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
+                RoomCardClass card = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (card != null)
                 {
                     _Room.SetRoomCardByUid(card.UID, card);
@@ -321,7 +360,7 @@ namespace Core.RuntimeObject
 
         private static long _GetUid(long RoomId)
         {
-            RoomCard roomCard = new();
+            RoomCardClass roomCard = new();
             if (!_Room.GetCardFoRoomId(RoomId, ref roomCard))
             {
                 roomCard = ToRoomCard(GetRoomInfo(RoomId), roomCard);
@@ -331,7 +370,7 @@ namespace Core.RuntimeObject
             }
             else if (roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
+                RoomCardClass card = ToRoomCard(GetRoomInfo(RoomId), roomCard);
                 if (card != null)
                 {
                     _Room.SetRoomCardByUid(card.UID, card);
@@ -344,8 +383,8 @@ namespace Core.RuntimeObject
 
         private static long _GetRoomId(long Uid)
         {
-            RoomCard roomCard = new();
-            if (!_Room.GetCard(Uid, ref roomCard))
+            RoomCardClass roomCard = new();
+            if (!_Room.GetCardForUID(Uid, ref roomCard))
             {
                 roomCard = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (roomCard == null)
@@ -354,7 +393,7 @@ namespace Core.RuntimeObject
             }
             else if (roomCard.RoomId < 0)
             {
-                RoomCard card = ToRoomCard(GetUserInfo(Uid), roomCard);
+                RoomCardClass card = ToRoomCard(GetUserInfo(Uid), roomCard);
                 if (card != null)
                 {
                     _Room.SetRoomCardByUid(card.UID, card);
@@ -366,8 +405,8 @@ namespace Core.RuntimeObject
 
         private static string _GetTitle(long Uid)
         {
-            RoomCard roomCard = new();
-            if (!_Room.GetCard(Uid, ref roomCard))
+            RoomCardClass roomCard = new();
+            if (!_Room.GetCardForUID(Uid, ref roomCard))
             {
                 roomCard = ToRoomCard(GetRoomInfo(GetRoomId(Uid)), roomCard);
                 if (roomCard == null)
@@ -376,7 +415,7 @@ namespace Core.RuntimeObject
             }
             else if (string.IsNullOrEmpty(roomCard.Title.Value) || roomCard.Title.ExpirationTime < DateTime.Now)
             {
-                RoomCard card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                RoomCardClass card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
                 if (card != null)
                 {
                     _Room.SetRoomCardByUid(card.UID, card);
@@ -387,7 +426,7 @@ namespace Core.RuntimeObject
         }
 
 
-        private static RoomCard ToRoomCard(UidsInfo_Class.Data data, RoomCard OldCard)
+        private static RoomCardClass ToRoomCard(UidsInfo_Class.Data data, RoomCardClass OldCard)
         {
             try
             {
@@ -397,7 +436,7 @@ namespace Core.RuntimeObject
                 {
                     if (OldCard == null)
                     {
-                        RoomCard card = new RoomCard()
+                        RoomCardClass card = new RoomCardClass()
                         {
                             UID = data.uid,
                             Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
@@ -464,7 +503,7 @@ namespace Core.RuntimeObject
             }
         }
 
-        private static RoomCard ToRoomCard(RoomInfo_Class roomInfo, RoomCard OldCard)
+        private static RoomCardClass ToRoomCard(RoomInfo_Class roomInfo, RoomCardClass OldCard)
         {
             try
             {
@@ -474,7 +513,7 @@ namespace Core.RuntimeObject
                 {
                     if (OldCard == null)
                     {
-                        RoomCard card = new RoomCard()
+                        RoomCardClass card = new RoomCardClass()
                         {
                             UID = roomInfo.data.uid,
                             RoomId = roomInfo.data.room_id,
@@ -524,7 +563,7 @@ namespace Core.RuntimeObject
             }
         }
 
-        private static RoomCard ToRoomCard(UserInfo userInfo, RoomCard OldCard)
+        private static RoomCardClass ToRoomCard(UserInfo userInfo, RoomCardClass OldCard)
         {
             try
             {
@@ -532,7 +571,7 @@ namespace Core.RuntimeObject
                 {
                     if (OldCard == null)
                     {
-                        RoomCard card = new RoomCard()
+                        RoomCardClass card = new RoomCardClass()
                         {
                             UID = userInfo.data.mid,
                             RoomId = userInfo.data.live_room.roomid,
@@ -581,365 +620,359 @@ namespace Core.RuntimeObject
 
         #endregion
 
-        #region public Class
+    }
+    #region public Class
+    public class RoomCardClass
+    {
+        [JsonPropertyName("name")]
+        /// <summary>
+        /// 昵称
+        /// (Local值)
+        /// </summary>
+        public string Name { get; set; } = "";
+        [JsonPropertyName("Description")]
+        /// <summary>
+        /// 描述
+        /// (Local值)
+        /// </summary>
+        public string Description { get; set; } = "";
+        [JsonPropertyName("RoomId")]
+        /// <summary>
+        /// 直播间房间号(长号)
+        /// (Local值)
+        /// </summary>
+        public long RoomId { get; set; } = -1;
+        [JsonPropertyName("UID")]
+        /// <summary>
+        /// 主播mid
+        /// (Local值)
+        /// </summary>
+        public long UID { get; set; } = -1;
+        [JsonPropertyName("IsAutoRec")]
+        /// <summary>
+        /// 是否自动录制
+        /// (Local值)
+        /// </summary>
+        public bool IsAutoRec { set; get; } = false;
+        [JsonPropertyName("IsRemind")]
+        /// <summary>
+        /// 是否开播提醒(Local值)
+        /// </summary>
+        public bool IsRemind { set; get; } = false;
+        [JsonPropertyName("IsRecDanmu")]
+        /// <summary>
+        /// 是否录制弹幕
+        /// (Local值)
+        /// </summary>
+        public bool IsRecDanmu { set; get; } = false;
+        [JsonPropertyName("Like")]
+        /// <summary>
+        /// 特殊标记
+        /// (Local值)
+        /// </summary>
+        public bool Like { set; get; } = false;
+        [JsonPropertyName("Shell")]
+        /// <summary>
+        /// 该房间录制完成后会执行的Shell命令
+        /// (Local值)
+        /// </summary>
+        public string Shell { set; get; } = "";
+        [JsonPropertyName("IsPersisting")]
+        /// <summary>
+        /// 是否持久化储存，用于判断是否需要写到房间配置文件
+        /// (Local值)
+        /// </summary>
+        public bool IsPersisting { set; get; } = false;
+        /// <summary>
+        /// 标题
+        /// </summary>
+        public ExpansionType<string> Title = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 主播简介
+        /// </summary>
+        public ExpansionType<string> description = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 关注数
+        /// </summary>
+        public ExpansionType<int> attention = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间在线人数
+        /// </summary>
+        public ExpansionType<int> online = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 开播时间(未开播时为-62170012800,live_status为1时有效)
+        /// </summary>
+        public ExpansionType<long> live_time = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播状态(1为正在直播，2为轮播中)
+        /// </summary>
+        public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间房间号(直播间短房间号，常见于签约主播)
+        /// </summary>
+        public ExpansionType<int> short_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间分区id
+        /// </summary>
+        public ExpansionType<int> area = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间分区名
+        /// </summary>
+        public ExpansionType<string> area_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播间新版分区id
+        /// </summary>
+        public ExpansionType<int> area_v2_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间新版分区名
+        /// </summary>
+        public ExpansionType<string> area_v2_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播间父分区名
+        /// </summary>
+        public ExpansionType<string> area_v2_parent_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播间父分区id
+        /// </summary>
+        public ExpansionType<int> area_v2_parent_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 主播头像url
+        /// </summary>
+        public ExpansionType<string> face = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 系统tag列表(以逗号分割)
+        /// </summary>
+        public ExpansionType<string> tag_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 用户自定义tag列表(以逗号分割)
+        /// </summary>
+        public ExpansionType<string> tags = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播封面图
+        /// </summary>
+        public ExpansionType<string> cover_from_user = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播关键帧图
+        /// </summary>
+        public ExpansionType<string> keyframe = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播间锁定时间戳
+        /// </summary>
+        public ExpansionType<string> lock_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 隐藏时间戳
+        /// </summary>
+        public ExpansionType<string> hidden_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 直播类型(0:普通直播，1：手机直播)
+        /// </summary>
+        public ExpansionType<int> broadcast_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 是否p2p
+        /// </summary>
+        public ExpansionType<int> need_p2p = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 是否隐藏
+        /// </summary>
+        public ExpansionType<bool> is_hidden = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        /// <summary>
+        /// 是否锁定
+        /// </summary>
+        public ExpansionType<bool> is_locked = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        /// <summary>
+        /// 是否竖屏
+        /// </summary>
+        public ExpansionType<bool> is_portrait = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        /// <summary>
+        /// 是否加密
+        /// </summary>
+        public ExpansionType<bool> encrypted = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        /// <summary>
+        /// 加密房间是否通过密码验证(encrypted=true时才有意义)
+        /// </summary>
+        public ExpansionType<bool> pwd_verified = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        /// <summary>
+        /// 房间屏蔽列表应用状态
+        /// </summary>
+        public ExpansionType<int> room_shield = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
+        /// </summary>
+        public ExpansionType<int> is_sp = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 特殊直播间标志(0：普通直播间 1：付费直播间 2：拜年祭直播间)
+        /// </summary>
+        public ExpansionType<int> special_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间状态(0:无房间 1:有房间)
+        /// </summary>
+        public ExpansionType<int> roomStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 轮播状态(0：未轮播 1：轮播)
+        /// </summary>
+        public ExpansionType<int> roundStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 直播间网页url
+        /// </summary>
+        public ExpansionType<string> url = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 用户等级
+        /// </summary>
+        public ExpansionType<int> level = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// 主播性别
+        /// </summary>
+        public ExpansionType<string> sex = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        /// <summary>
+        /// 主播简介
+        /// </summary>
+        public ExpansionType<string> sign = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
 
-
-        public class RoomCard
+        /// <summary>
+        /// 当前Host地址
+        /// </summary>
+        public ExpansionType<string> Host = new() { ExpirationTime = DateTime.UnixEpoch, Value = "" };
+        /// <summary>
+        /// 当前模式（1:FLV 2:HLS）
+        /// </summary>
+        public int CurrentMode = 0;
+        /// <summary>
+        /// 运行时下载相关信息
+        /// </summary>
+        public DownloadInfo DownInfo = new();
+        public class DownloadInfo
         {
-            [JsonPropertyName("name")]
             /// <summary>
-            /// 昵称
-            /// (Local值)
+            /// 当前是否在下载
             /// </summary>
-            public string Name { get; set; } = "";
-            [JsonPropertyName("Description")]
+            public bool IsDownload = false;
             /// <summary>
-            /// 描述
-            /// (Local值)
+            /// 当前房间下载任务总大小
             /// </summary>
-            public string Description { get; set; } = "";
-            [JsonPropertyName("RoomId")]
+            public long DownloadSize = 0;
             /// <summary>
-            /// 直播间房间号(长号)
-            /// (Local值)
+            /// 实时下载速度
             /// </summary>
-            public long RoomId { get; set; } = -1;
-            [JsonPropertyName("UID")]
+            public double RealTimeDownloadSpe = 0;
             /// <summary>
-            /// 主播mid
-            /// (Local值)
+            /// 任务状态
             /// </summary>
-            public long UID { get; set; } = -1;
-            [JsonPropertyName("IsAutoRec")]
+            public DownloadStatus Status = DownloadStatus.NewTask;
             /// <summary>
-            /// 是否自动录制
-            /// (Local值)
+            /// 任务开始时间
             /// </summary>
-            public bool IsAutoRec { set; get; } = false;
-            [JsonPropertyName("IsRemind")]
+            public DateTime StartTime = DateTime.UnixEpoch;
             /// <summary>
-            /// 是否开播提醒(Local值)
+            /// 任务结束时间
             /// </summary>
-            public bool IsRemind { set; get; } = false;
-            [JsonPropertyName("IsRecDanmu")]
-            /// <summary>
-            /// 是否录制弹幕
-            /// (Local值)
-            /// </summary>
-            public bool IsRecDanmu { set; get; } = false;
-            [JsonPropertyName("Like")]
-            /// <summary>
-            /// 特殊标记
-            /// (Local值)
-            /// </summary>
-            public bool Like { set; get; } = false;
-            [JsonPropertyName("Shell")]
-            /// <summary>
-            /// 该房间录制完成后会执行的Shell命令
-            /// (Local值)
-            /// </summary>
-            public string Shell { set; get; } = "";
-            [JsonPropertyName("IsPersisting")]
-            /// <summary>
-            /// 是否持久化储存，用于判断是否需要写到房间配置文件
-            /// (Local值)
-            /// </summary>
-            public bool IsPersisting { set; get; } = false;
-            /// <summary>
-            /// 标题
-            /// </summary>
-            public ExpansionType<string> Title = new ExpansionType<string> { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 主播简介
-            /// </summary>
-            public ExpansionType<string> description = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 关注数
-            /// </summary>
-            public ExpansionType<int> attention = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间在线人数
-            /// </summary>
-            public ExpansionType<int> online = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 开播时间(未开播时为-62170012800,live_status为1时有效)
-            /// </summary>
-            public ExpansionType<long> live_time = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播状态(1为正在直播，2为轮播中)
-            /// </summary>
-            public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间房间号(直播间短房间号，常见于签约主播)
-            /// </summary>
-            public ExpansionType<int> short_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间分区id
-            /// </summary>
-            public ExpansionType<int> area = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间分区名
-            /// </summary>
-            public ExpansionType<string> area_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播间新版分区id
-            /// </summary>
-            public ExpansionType<int> area_v2_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间新版分区名
-            /// </summary>
-            public ExpansionType<string> area_v2_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播间父分区名
-            /// </summary>
-            public ExpansionType<string> area_v2_parent_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播间父分区id
-            /// </summary>
-            public ExpansionType<int> area_v2_parent_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 主播头像url
-            /// </summary>
-            public ExpansionType<string> face = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 系统tag列表(以逗号分割)
-            /// </summary>
-            public ExpansionType<string> tag_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 用户自定义tag列表(以逗号分割)
-            /// </summary>
-            public ExpansionType<string> tags = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播封面图
-            /// </summary>
-            public ExpansionType<string> cover_from_user = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播关键帧图
-            /// </summary>
-            public ExpansionType<string> keyframe = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播间锁定时间戳
-            /// </summary>
-            public ExpansionType<string> lock_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 隐藏时间戳
-            /// </summary>
-            public ExpansionType<string> hidden_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 直播类型(0:普通直播，1：手机直播)
-            /// </summary>
-            public ExpansionType<int> broadcast_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 是否p2p
-            /// </summary>
-            public ExpansionType<int> need_p2p = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 是否隐藏
-            /// </summary>
-            public ExpansionType<bool> is_hidden = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
-            /// <summary>
-            /// 是否锁定
-            /// </summary>
-            public ExpansionType<bool> is_locked = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
-            /// <summary>
-            /// 是否竖屏
-            /// </summary>
-            public ExpansionType<bool> is_portrait = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
-            /// <summary>
-            /// 是否加密
-            /// </summary>
-            public ExpansionType<bool> encrypted = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
-            /// <summary>
-            /// 加密房间是否通过密码验证(encrypted=true时才有意义)
-            /// </summary>
-            public ExpansionType<bool> pwd_verified = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
-            /// <summary>
-            /// 房间屏蔽列表应用状态
-            /// </summary>
-            public ExpansionType<int> room_shield = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
-            /// </summary>
-            public ExpansionType<int> is_sp = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 特殊直播间标志(0：普通直播间 1：付费直播间 2：拜年祭直播间)
-            /// </summary>
-            public ExpansionType<int> special_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间状态(0:无房间 1:有房间)
-            /// </summary>
-            public ExpansionType<int> roomStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 轮播状态(0：未轮播 1：轮播)
-            /// </summary>
-            public ExpansionType<int> roundStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 直播间网页url
-            /// </summary>
-            public ExpansionType<string> url = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 用户等级
-            /// </summary>
-            public ExpansionType<int> level = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-            /// <summary>
-            /// 主播性别
-            /// </summary>
-            public ExpansionType<string> sex = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-            /// <summary>
-            /// 主播简介
-            /// </summary>
-            public ExpansionType<string> sign = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-
-            /// <summary>
-            /// 当前Host地址
-            /// </summary>
-            public ExpansionType<string> Host = new() { ExpirationTime = DateTime.UnixEpoch, Value = "" };
-            /// <summary>
-            /// 当前模式（1:FLV 2:HLS）
-            /// </summary>
-            public int CurrentMode = 0;
-            /// <summary>
-            /// 运行时下载相关信息
-            /// </summary>
-            public DownloadInfo DownInfo = new();
-            public class DownloadInfo
+            public DateTime EndTime = DateTime.UnixEpoch;
+            public DownloadInfo Clone()
             {
-                /// <summary>
-                /// 当前是否在下载
-                /// </summary>
-                public bool IsDownload = false;
-                /// <summary>
-                /// 当前房间下载任务总大小
-                /// </summary>
-                public long DownloadSize = 0;
-                /// <summary>
-                /// 实时下载速度
-                /// </summary>
-                public double RealTimeDownloadSpe = 0;
-                /// <summary>
-                /// 任务状态
-                /// </summary>
-                public DownloadStatus Status = DownloadStatus.NewTask;
-                /// <summary>
-                /// 任务开始时间
-                /// </summary>
-                public DateTime StartTime = DateTime.UnixEpoch;
-                /// <summary>
-                /// 任务结束时间
-                /// </summary>
-                public DateTime EndTime = DateTime.UnixEpoch;
-                public DownloadInfo Clone()
+                return new DownloadInfo
                 {
-                    return new DownloadInfo
-                    {
-                        IsDownload = this.IsDownload,
-                        DownloadSize = this.DownloadSize,
-                        RealTimeDownloadSpe = this.RealTimeDownloadSpe,
-                        Status = this.Status,
-                        StartTime = this.StartTime,
-                        EndTime = this.EndTime,
-                    };
-                }
-            }
-
-
-            public RoomCard Clone()
-            {
-                return new RoomCard
-                {
-                    Name = this.Name,
-                    Description = this.Description,
-                    RoomId = this.RoomId,
-                    UID = this.UID,
-                    IsAutoRec = this.IsAutoRec,
-                    IsRemind = this.IsRemind,
-                    IsRecDanmu = this.IsRecDanmu,
-                    Like = this.Like,
-                    Shell = this.Shell,
-                    IsPersisting = this.IsPersisting,
-                    Title = this.Title.Clone(),
-                    description = this.description.Clone(),
-                    attention = this.attention.Clone(),
-                    online = this.online.Clone(),
-                    live_time = this.live_time.Clone(),
-                    live_status = this.live_status.Clone(),
-                    short_id = this.short_id.Clone(),
-                    area = this.area.Clone(),
-                    area_name = this.area_name.Clone(),
-                    area_v2_id = this.area_v2_id.Clone(),
-                    area_v2_name = this.area_v2_name.Clone(),
-                    area_v2_parent_name = this.area_v2_parent_name.Clone(),
-                    area_v2_parent_id = this.area_v2_parent_id.Clone(),
-                    face = this.face.Clone(),
-                    tag_name = this.tag_name.Clone(),
-                    tags = this.tags.Clone(),
-                    cover_from_user = this.cover_from_user.Clone(),
-                    keyframe = this.keyframe.Clone(),
-                    lock_till = this.lock_till.Clone(),
-                    hidden_till = this.hidden_till.Clone(),
-                    broadcast_type = this.broadcast_type.Clone(),
-                    need_p2p = this.need_p2p.Clone(),
-                    is_hidden = this.is_hidden.Clone(),
-                    is_locked = this.is_locked.Clone(),
-                    is_portrait = this.is_portrait.Clone(),
-                    encrypted = this.encrypted.Clone(),
-                    pwd_verified = this.pwd_verified.Clone(),
-                    room_shield = this.room_shield.Clone(),
-                    is_sp = this.is_sp.Clone(),
-                    special_type = this.special_type.Clone(),
-                    roomStatus = this.roomStatus.Clone(),
-                    roundStatus = this.roundStatus.Clone(),
-                    url = this.url.Clone(),
-                    level = this.level.Clone(),
-                    sex = this.sex.Clone(),
-                    sign = this.sign.Clone(),
-                    Host = this.Host.Clone(),
-                    CurrentMode = this.CurrentMode,
-                    DownInfo = this.DownInfo
+                    IsDownload = this.IsDownload,
+                    DownloadSize = this.DownloadSize,
+                    RealTimeDownloadSpe = this.RealTimeDownloadSpe,
+                    Status = this.Status,
+                    StartTime = this.StartTime,
+                    EndTime = this.EndTime,
                 };
-            }
-
-            public class ExpansionType<T>
-            {
-                public DateTime ExpirationTime { set; get; }
-                public T Value { set; get; }
-                public ExpansionType<T> Clone()
-                {
-                    return new ExpansionType<T>
-                    {
-                        ExpirationTime = this.ExpirationTime,
-                        Value = this.Value
-                    };
-                }
-            }
-            public enum DownloadStatus
-            {
-                /// <summary>
-                /// 新任务
-                /// </summary>
-                NewTask,
-                /// <summary>
-                /// 已准备
-                /// </summary>
-                Standby,
-                /// <summary>
-                /// 下载中
-                /// </summary>
-                Downloading,
-                /// <summary>
-                /// 下载结束
-                /// </summary>
-                DownloadComplete,
-                /// <summary>
-                /// 取消下载
-                /// </summary>
-                Cancel,
             }
         }
 
 
-        #endregion
+        public RoomCardClass Clone()
+        {
+            return new RoomCardClass
+            {
+                Name = this.Name,
+                Description = this.Description,
+                RoomId = this.RoomId,
+                UID = this.UID,
+                IsAutoRec = this.IsAutoRec,
+                IsRemind = this.IsRemind,
+                IsRecDanmu = this.IsRecDanmu,
+                Like = this.Like,
+                Shell = this.Shell,
+                IsPersisting = this.IsPersisting,
+                Title = this.Title.Clone(),
+                description = this.description.Clone(),
+                attention = this.attention.Clone(),
+                online = this.online.Clone(),
+                live_time = this.live_time.Clone(),
+                live_status = this.live_status.Clone(),
+                short_id = this.short_id.Clone(),
+                area = this.area.Clone(),
+                area_name = this.area_name.Clone(),
+                area_v2_id = this.area_v2_id.Clone(),
+                area_v2_name = this.area_v2_name.Clone(),
+                area_v2_parent_name = this.area_v2_parent_name.Clone(),
+                area_v2_parent_id = this.area_v2_parent_id.Clone(),
+                face = this.face.Clone(),
+                tag_name = this.tag_name.Clone(),
+                tags = this.tags.Clone(),
+                cover_from_user = this.cover_from_user.Clone(),
+                keyframe = this.keyframe.Clone(),
+                lock_till = this.lock_till.Clone(),
+                hidden_till = this.hidden_till.Clone(),
+                broadcast_type = this.broadcast_type.Clone(),
+                need_p2p = this.need_p2p.Clone(),
+                is_hidden = this.is_hidden.Clone(),
+                is_locked = this.is_locked.Clone(),
+                is_portrait = this.is_portrait.Clone(),
+                encrypted = this.encrypted.Clone(),
+                pwd_verified = this.pwd_verified.Clone(),
+                room_shield = this.room_shield.Clone(),
+                is_sp = this.is_sp.Clone(),
+                special_type = this.special_type.Clone(),
+                roomStatus = this.roomStatus.Clone(),
+                roundStatus = this.roundStatus.Clone(),
+                url = this.url.Clone(),
+                level = this.level.Clone(),
+                sex = this.sex.Clone(),
+                sign = this.sign.Clone(),
+                Host = this.Host.Clone(),
+                CurrentMode = this.CurrentMode,
+                DownInfo = this.DownInfo
+            };
+        }
 
-
+        public class ExpansionType<T>
+        {
+            public DateTime ExpirationTime { set; get; }
+            public T Value { set; get; }
+            public ExpansionType<T> Clone()
+            {
+                return new ExpansionType<T>
+                {
+                    ExpirationTime = this.ExpirationTime,
+                    Value = this.Value
+                };
+            }
+        }
+        public enum DownloadStatus
+        {
+            /// <summary>
+            /// 新任务
+            /// </summary>
+            NewTask,
+            /// <summary>
+            /// 已准备
+            /// </summary>
+            Standby,
+            /// <summary>
+            /// 下载中
+            /// </summary>
+            Downloading,
+            /// <summary>
+            /// 下载结束
+            /// </summary>
+            DownloadComplete,
+            /// <summary>
+            /// 取消下载
+            /// </summary>
+            Cancel,
+        }
     }
+    #endregion
 }

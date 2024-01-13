@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using ZXing;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Download.Host;
-using static Core.RuntimeObject.RoomList;
+using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
 {
@@ -31,9 +31,9 @@ namespace Core.RuntimeObject
             /// <param name="RoomId"></param>
             /// <returns></returns>
 
-            internal static bool GetHlsHost_avc(RoomList.RoomCard roomCard, ref HostClass hostClass)
+            internal static bool GetHlsHost_avc(RoomCardClass roomCard, ref HostClass hostClass)
             {
-                if (!RoomList.GetLiveStatus(roomCard.RoomId))
+                if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
                 {
                     return false;
                 }
@@ -59,7 +59,7 @@ namespace Core.RuntimeObject
                 return false;
             }
 
-            internal static bool RefreshHostClass(RoomList.RoomCard roomCard, ref HostClass m3u8)
+            internal static bool RefreshHostClass(RoomCardClass roomCard, ref HostClass m3u8)
             {
                 string fileContent = string.Empty;
                 if (!string.IsNullOrEmpty(m3u8.SteramInfo))
@@ -240,16 +240,16 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="card">房间卡片信息</param>
             /// <returns>下载是否成功以及文件名</returns>
-            public static async Task<(bool isSuccess, string FileName)> DlwnloadHls_avc_mp4(RoomList.RoomCard card)
+            public static async Task<(bool isSuccess, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card)
             {
                 bool isSuccess = false;
                 string File = string.Empty;
                 await Task.Run(() =>
                 {
                     InitializeDownload(card);
-                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomList.GetTitle(card.UID));
+                    string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                     long roomId = card.RoomId;
-                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomList.GetNickname(card.UID)}";
+                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomInfo.GetNickname(card.UID)}";
                     CreateDirectoryIfNotExists(dirName);
                     File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4";
                     using (FileStream fs = new FileStream(File, FileMode.Append))
@@ -366,11 +366,11 @@ namespace Core.RuntimeObject
             /// <param name="hostClass">HostClass实例</param>
             /// <param name="File">文件名</param>
             /// <returns>HLS错误计数</returns>
-            private static int HandleHostRefresh(int hlsErrorCount, RoomList.RoomCard card, long roomId, ref HostClass hostClass, string File)
+            private static int HandleHostRefresh(int hlsErrorCount, RoomCardClass card, long roomId, ref HostClass hostClass, string File)
             {
                 if (hlsErrorCount > 3)
                 {
-                    if (!GetHlsHost_avc(card, ref hostClass) && !RoomList.GetLiveStatus(card.RoomId))
+                    if (!GetHlsHost_avc(card, ref hostClass) && !RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]刷新Host时发现直播间已下播");
                         if (CheckAndHandleFile(File)) return -1;
@@ -391,10 +391,10 @@ namespace Core.RuntimeObject
             /// 初始化下载
             /// </summary>
             /// <param name="card">房间卡片信息</param>
-            private static void InitializeDownload(RoomList.RoomCard card)
+            private static void InitializeDownload(RoomCardClass card)
             {
                 card.DownInfo.IsDownload = true;
-                card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Standby;
+                card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                 _Room.SetRoomCardByUid(card.UID, card);
             }
 
@@ -417,13 +417,13 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             /// <param name="roomId">房间ID</param>
             /// <returns>更新后的HLS错误计数,返回-1表示已下播</returns>
-            private static int HandleHlsError(int hlsErrorCount, RoomList.RoomCard card, long roomId)
+            private static int HandleHlsError(int hlsErrorCount, RoomCardClass card, long roomId)
             {
                 if (hlsErrorCount > 3)
                 {
                     hlsErrorCount = 0;
                     Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但未检测到HLS流，10秒后重试");
-                    if (!RoomList.GetLiveStatus(card.RoomId))
+                    if (!RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         return -1;
                     }
@@ -438,7 +438,7 @@ namespace Core.RuntimeObject
             /// 记录下载开始
             /// </summary>
             /// <param name="card">房间卡片信息</param>
-            private static void LogDownloadStart(RoomList.RoomCard card)
+            private static void LogDownloadStart(RoomCardClass card)
             {
                 string startText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务：\n" +
                 $"直播间：{card.RoomId}\n" +
@@ -447,7 +447,7 @@ namespace Core.RuntimeObject
                 $"标题：{card.Title.Value}";
 
                 Log.Info(nameof(LogDownloadStart), $"{startText}");
-                card.DownInfo.Status = RoomList.RoomCard.DownloadStatus.Downloading;
+                card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
                 card.DownInfo.StartTime = DateTime.Now;
             }
 
@@ -458,13 +458,13 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             /// <param name="roomId">房间ID</param>
             /// <returns>更新后的HLS错误计数</returns>
-            private static int HandleHlsSegmentError(int hlsErrorCount, RoomList.RoomCard card, long roomId, ref HostClass hostClass)
+            private static int HandleHlsSegmentError(int hlsErrorCount, RoomCardClass card, long roomId, ref HostClass hostClass)
             {
                 hlsErrorCount++;
                 if (hlsErrorCount > 3)
                 {
                     Log.Info(nameof(HandleHlsSegmentError), $"[{card.Name}({card.RoomId})]获取HLS片段失败，跳过这个片段等待下一个周期重试", false);
-                    if (!RoomList.GetLiveStatus(card.RoomId))
+                    if (!RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         return hlsErrorCount;
                     }
@@ -485,7 +485,7 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             /// <param name="downloadSizeForThisCycle">本周期下载大小</param>
             /// <returns>更新后的下载值列表</returns>
-            private static List<(long size, DateTime time)> UpdateDownloadSpeed(List<(long size, DateTime time)> values, RoomList.RoomCard card, long downloadSizeForThisCycle)
+            private static List<(long size, DateTime time)> UpdateDownloadSpeed(List<(long size, DateTime time)> values, RoomCardClass card, long downloadSizeForThisCycle)
             {
                 while (values.Count >= 10)
                 {
@@ -517,13 +517,13 @@ namespace Core.RuntimeObject
             /// 下载完成重置房间卡状态
             /// </summary>
             /// <param name="roomCard"></param>
-            private static bool DownloadCompletedReset(bool NormalEnd, ref RoomList.RoomCard roomCard)
+            private static bool DownloadCompletedReset(bool NormalEnd, ref RoomCardClass roomCard)
             {
                 Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
                 roomCard.DownInfo.IsDownload = false;
                 roomCard.DownInfo.DownloadSize = 0;
                 roomCard.DownInfo.RealTimeDownloadSpe = 0;
-                roomCard.DownInfo.Status = RoomList.RoomCard.DownloadStatus.DownloadComplete;
+                roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.DownloadComplete;
                 roomCard.DownInfo.EndTime = DateTime.Now;
                 _Room.SetRoomCardByUid(roomCard.UID, roomCard);
                 return NormalEnd;

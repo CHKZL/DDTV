@@ -16,7 +16,7 @@ namespace Core.Tools
             Process currentProcess = null;
             currentProcess = Process.GetCurrentProcess();
             long totalBytesOfMemoryUsed = currentProcess.WorkingSet64;
-            (int Total, int Download) = Core.RuntimeObject.RoomList.GetTasksInDownloadCount();
+            (int Total, int Download) = Core.RuntimeObject.RoomInfo.GetTasksInDownloadCount();
             DokiClass dokiClass = new DokiClass()
             {
                 CompiledVersion = Init.CompiledVersion,
