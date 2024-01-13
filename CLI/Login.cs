@@ -1,5 +1,6 @@
 ﻿using Core.Account;
 using Core.Account.Linq;
+using Masuit.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,10 @@ namespace CLI
                 {
                     QR.SKData.SaveTo(stream);
                 }
+                using (var stream = File.OpenWrite($"./{Core.Config.Core._QrUrl}"))
+                {
+                    stream.WriteAllText(QR.OriginalString, Encoding.UTF8);
+                }
                 Core.Tools.QRConsole.Output(QR.OriginalString);
             });
         }
@@ -35,14 +40,20 @@ namespace CLI
                 Console.WriteLine($"Buvid:{account.Buvid}");
                 Console.WriteLine($"Expires_Cookies:{account.Expires_Cookies}");
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
+                Core.Tools.FileOperations.Delete(Core.Config.Core._QrFileNmae);
+                Core.Tools.FileOperations.Delete(Core.Config.Core._QrUrl);
             }
         }
 
         private static void ByQRCode_QrCodeRefresh(Core.Account.Kernel.ByQRCode.QR_Object newQrCode)
         {
-            using (var stream = File.OpenWrite("./BiliQR.png"))
+            using (var stream = File.OpenWrite($"./{Core.Config.Core._QrFileNmae}"))
             {
                 newQrCode.SKData.SaveTo(stream);
+            }
+            using (var stream = File.OpenWrite($"./{Core.Config.Core._QrUrl}"))
+            {
+                stream.WriteAllText(newQrCode.OriginalString, Encoding.UTF8);
             }
         }
     }
