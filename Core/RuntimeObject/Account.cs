@@ -25,33 +25,24 @@ namespace Core.RuntimeObject
                 if (accountInformation == null || !accountInformation.State)
                 {
                     string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
-                    if (files != null && files.Length > 0)
+                    if (files.Length > 0)
                     {
                         Tools.Encryption.DecryptFile(files[0], out string accountString);
-                        AccountInformation accountInformation = JsonSerializer.Deserialize<AccountInformation>(accountString);
-                        if (accountInformation != null && accountInformation.State)
+                        var tempAccountInfo = JsonSerializer.Deserialize<AccountInformation>(accountString);
+                        if (tempAccountInfo?.State == true)
                         {
-                            Account.accountInformation = accountInformation;
-                            if (!Core.Config.Core._LoginStatus)
-                                Core.Config.Core._LoginStatus = true;
+                            accountInformation = tempAccountInfo;
+                            Core.Config.Core._LoginStatus = true;
                         }
                     }
-                    if (accountInformation == null || !accountInformation.State)
-                    {
-                        LoginFailureEvent?.Invoke(null, new EventArgs());
-                    }
+                    LoginFailureEvent?.Invoke(null, new EventArgs());
                 }
                 return accountInformation;
             }
             set
             {
                 accountInformation = value;
-                string Cookies = "";
-                foreach (var item in accountInformation.Cookies)
-                {
-                    Cookies += item + ";";
-                }
-                accountInformation.strCookies = Cookies;
+                accountInformation.strCookies = string.Join(";", accountInformation.Cookies) + ";";
                 accountInformation.State = true;
                 Core.Config.Core._LoginStatus = true;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
@@ -118,7 +109,7 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         public static bool GetLoginStatus()
         {
-            return accountInformation.State;
+            return AccountInformation.State;
         }
     }
 }
