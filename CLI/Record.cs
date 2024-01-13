@@ -22,12 +22,14 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomList.RoomCard e)
         {
+#if DEBUG
+            return;
+#endif
             bool Initialization = true;
             if (e.IsRemind)
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
-            }
-          
+            }      
             if (e.IsAutoRec)
             {
                 Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(e.RoomId);

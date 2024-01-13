@@ -35,13 +35,14 @@ namespace CLI.WebAppServices.Api
             }
             else
             {
-                return Content(MessageBase.Success(nameof(use_agree), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期",MessageBase.code.OperationFailed), "application/json");
+                return Content(MessageBase.Success(nameof(use_agree), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
             }
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Login]
     public class use_agree : ControllerBase
     {
         /// <summary>
@@ -67,6 +68,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Login]
     public class re_login : ControllerBase
     {
         /// <summary>
@@ -83,6 +85,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Login]
     public class use_agree_state : ControllerBase
     {
         /// <summary>
@@ -98,6 +101,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Login]
     public class get_login_status : ControllerBase
     {
         /// <summary>
@@ -107,7 +111,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "get_login_status")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            return Content(MessageBase.Success(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus, $"获取本地登录态AccountInformation的有效状态"), "application/json");
+            return Content(MessageBase.Success(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus(), $"获取本地登录态AccountInformation的有效状态"), "application/json");
         }
     }
 }
