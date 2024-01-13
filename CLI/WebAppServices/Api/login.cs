@@ -43,7 +43,7 @@ namespace CLI.WebAppServices.Api
                     waitTime += 1000;
                 }
             }
-            return Content(MessageBase.Success(nameof(get_login_qr), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
+            return Content(MessageBase.Success(nameof(get_login_qr), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期"), "application/json");
         }
     }
 
@@ -67,8 +67,7 @@ namespace CLI.WebAppServices.Api
                     FileInfo fi = new FileInfo(Core.Config.Core._QrUrl);
                     using (FileStream fs = fi.OpenRead())
                     {
-
-                        return Content(MessageBase.Success(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串", MessageBase.code.OperationFailed), "application/json");
+                        return Content(MessageBase.Success(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串"), "application/json");
                     }
                 }
                 else
@@ -77,7 +76,7 @@ namespace CLI.WebAppServices.Api
                     waitTime += 1000;
                 }
             }
-            return Content(MessageBase.Success(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期", MessageBase.code.OperationFailed), "application/json");
+            return Content(MessageBase.Success(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期"), "application/json");
         }
     }
 
