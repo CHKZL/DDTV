@@ -160,7 +160,7 @@ namespace Core
                 File.WriteAllText($"{Core._RoomConfigFile}", jsonString, Encoding.UTF8);
             }
 
-           
+
 
             internal class RoomListDiscard
             {
@@ -184,7 +184,14 @@ namespace Core
                 {
                     return bool.Parse(UseAgree);
                 }
-                set { UseAgree = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value.ToString() != UseAgree)
+                    {
+                        UseAgree = value.ToString();
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string QrFileNmae = "LoginQr.png";
@@ -212,7 +219,14 @@ namespace Core
                 {
                     return bool.Parse(LoginStatus);
                 }
-                set { LoginStatus = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value.ToString() != LoginStatus)
+                    {
+                        LoginStatus = value.ToString();
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string RoomConfigFile = "RoomListConfig.json";
@@ -343,7 +357,14 @@ namespace Core
                 {
                     return LiveDomainName;
                 }
-                set { LiveDomainName = value; WriteConfiguration(); }
+                set
+                {
+                    if (value != LiveDomainName)
+                    {
+                        LiveDomainName = value;
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string MainDomainName = "https://api.bilibili.com";
@@ -357,7 +378,14 @@ namespace Core
                 {
                     return MainDomainName;
                 }
-                set { MainDomainName = value; WriteConfiguration(); }
+                set
+                {
+                    if (value != MainDomainName)
+                    {
+                        MainDomainName = value;
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string HTTP_UA = $"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0";
@@ -378,7 +406,14 @@ namespace Core
                 {
                     return int.Parse(DetectIntervalTime);
                 }
-                set { DetectIntervalTime = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value.ToString() != DetectIntervalTime)
+                    {
+                        DetectIntervalTime = value.ToString();
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string DebugMode = "false";
@@ -392,7 +427,14 @@ namespace Core
                 {
                     return bool.Parse(DebugMode);
                 }
-                set { DebugMode = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value.ToString() != DebugMode)
+                    {
+                        DebugMode = value.ToString();
+                        WriteConfiguration();
+                    }
+                }
             }
         }
         public class Download
@@ -408,7 +450,14 @@ namespace Core
                 {
                     return int.Parse(DefaultResolution);
                 }
-                set { DefaultResolution = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value.ToString() != DefaultResolution)
+                    {
+                        DefaultResolution = value.ToString();
+                        WriteConfiguration();
+                    }
+                }
             }
         }
 
@@ -426,7 +475,14 @@ namespace Core
                 {
                     return AccessControlAllowCredentials;
                 }
-                set { AccessControlAllowCredentials = value.ToString(); WriteConfiguration(); }
+                set
+                {
+                    if (value != AccessControlAllowCredentials)
+                    {
+                        AccessControlAllowCredentials = value;
+                        WriteConfiguration();
+                    }
+                }
             }
 
             private static string AccessControlAllowOrigin = "*";
@@ -439,8 +495,11 @@ namespace Core
                 get { return AccessControlAllowOrigin; }
                 set
                 {
-                    AccessControlAllowOrigin = value.ToString();
-                    WriteConfiguration();
+                    if (value != AccessControlAllowOrigin)
+                    {
+                        AccessControlAllowOrigin = value;
+                        WriteConfiguration();
+                    }
                 }
             }
 
@@ -456,8 +515,11 @@ namespace Core
                 get { return AccessKeyId; }
                 set
                 {
-                    AccessKeyId = value.ToString();
-                    WriteConfiguration();
+                    if (value != AccessKeyId)
+                    {
+                        AccessKeyId = value;
+                        WriteConfiguration();
+                    }
                 }
             }
 
@@ -471,8 +533,11 @@ namespace Core
                 get { return AccessKeySecret; }
                 set
                 {
-                    AccessKeySecret = value.ToString();
-                    WriteConfiguration();
+                    if (value != AccessKeySecret)
+                    {
+                        AccessKeySecret = value;
+                        WriteConfiguration();
+                    }
                 }
             }
         }
