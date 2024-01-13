@@ -65,49 +65,80 @@ namespace Core
                         Thread.Sleep(1000 * 30);
                     }
                 });
+                Task.Run(() =>
+                {
+                    while (true)
+                    {
+                        try
+                        {
+                            WriteConfiguration();
+                        }
+                        catch (Exception e)
+                        {
+                            Log.Error(nameof(WriteConfiguration), $"将本地配置写入配置文件时出错", e, false);
+                        }
+                        Thread.Sleep(1000 * 30);
+                    }
+                });
             }
         }
         #endregion
 
         #region public Method
 
+        private static object _ConfigurationLock = new();
+
         /// <summary>
         /// 从持久化配置文件读取配置刷新本地配置
         /// </summary>
         public static void ReadConfiguration()
         {
-            string[] A = File.Exists(Core._ConfigurationFile) ? File.ReadAllLines(Core._ConfigurationFile) : [];
-            lock (varMap)
+            lock (_ConfigurationLock)
             {
-                foreach (var item in A)
+                string[] A = File.Exists(Core._ConfigurationFile) ? File.ReadAllLines(Core._ConfigurationFile) : [];
+                lock (varMap)
                 {
-                    if (item.Split('=').Length == 2)
+                    foreach (var item in A)
                     {
-                        try
+                        if (item.Split('=').Length == 2)
                         {
-                            varMap[item.Split('=')[0]].SetValue(null, item.Split('=')[1]);
+                            try
+                            {
+                                varMap[item.Split('=')[0]].SetValue(null, item.Split('=')[1]);
+                            }
+                            catch (Exception) { }
                         }
-                        catch (Exception) { }
                     }
                 }
+                Log.Info(nameof(ReadConfiguration), $"读取配置文件完成");
             }
-            Log.Info(nameof(ReadConfiguration), $"读取配置文件完成");
+
         }
         /// <summary>
         /// 把当前配置写入到持久化配置文件
         /// </summary>
         public static void WriteConfiguration()
         {
-            using (StreamWriter file = new(Core._ConfigurationFile))
+            lock (_ConfigurationLock)
             {
+                StringBuilder newConfig = new StringBuilder();
                 lock (varMap)
                 {
                     foreach (var item in varMap)
                     {
-                        file.WriteLine($"{item.Key}={item.Value.GetValue(null)}");
+                        newConfig.AppendLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
-                Log.Info(nameof(ReadConfiguration), $"刷新配置文件完成");
+
+                string existingConfig = File.ReadAllText(Core._ConfigurationFile);
+                if (existingConfig != newConfig.ToString())
+                {
+                    using (StreamWriter file = new StreamWriter(Core._ConfigurationFile))
+                    {
+                        file.Write(newConfig.ToString());
+                    }
+                    Log.Info(nameof(ReadConfiguration), $"配置信息发生变化，写入文件");
+                }
             }
         }
 
@@ -234,7 +265,6 @@ namespace Core
                     if (value.ToString() != UseAgree)
                     {
                         UseAgree = value.ToString();
-                        WriteConfiguration();
                     }
                 }
             }
@@ -282,7 +312,6 @@ namespace Core
                     if (value.ToString() != LoginStatus)
                     {
                         LoginStatus = value.ToString();
-                        WriteConfiguration();
                     }
                 }
             }
@@ -420,7 +449,6 @@ namespace Core
                     if (value != LiveDomainName)
                     {
                         LiveDomainName = value;
-                        WriteConfiguration();
                     }
                 }
             }
@@ -441,7 +469,6 @@ namespace Core
                     if (value != MainDomainName)
                     {
                         MainDomainName = value;
-                        WriteConfiguration();
                     }
                 }
             }
@@ -469,7 +496,6 @@ namespace Core
                     if (value.ToString() != DetectIntervalTime)
                     {
                         DetectIntervalTime = value.ToString();
-                        WriteConfiguration();
                     }
                 }
             }
@@ -490,7 +516,6 @@ namespace Core
                     if (value.ToString() != DebugMode)
                     {
                         DebugMode = value.ToString();
-                        WriteConfiguration();
                     }
                 }
             }
@@ -513,7 +538,6 @@ namespace Core
                     if (value.ToString() != DefaultResolution)
                     {
                         DefaultResolution = value.ToString();
-                        WriteConfiguration();
                     }
                 }
             }
@@ -538,7 +562,6 @@ namespace Core
                     if (value != AccessControlAllowCredentials)
                     {
                         AccessControlAllowCredentials = value;
-                        WriteConfiguration();
                     }
                 }
             }
@@ -556,7 +579,6 @@ namespace Core
                     if (value != AccessControlAllowOrigin)
                     {
                         AccessControlAllowOrigin = value;
-                        WriteConfiguration();
                     }
                 }
             }
@@ -576,7 +598,6 @@ namespace Core
                     if (value != AccessKeyId)
                     {
                         AccessKeyId = value;
-                        WriteConfiguration();
                     }
                 }
             }
@@ -594,7 +615,6 @@ namespace Core
                     if (value != AccessKeySecret)
                     {
                         AccessKeySecret = value;
-                        WriteConfiguration();
                     }
                 }
             }
