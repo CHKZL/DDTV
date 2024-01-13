@@ -12,7 +12,7 @@ namespace CLI
                 code = code.LoginInfoFailure;
             }
             string MESS = "";
-            if (typeof(T).Name.Equals("string") || typeof(T).Name.Equals("String"))
+            if (typeof(T).Name.ToLower().Equals("string"))
             {
                 MESS = data as string;
             }

@@ -19,17 +19,24 @@ namespace CLI.WebAppServices.Api
         /// 获取登陆二维码
         /// </summary>
         /// <returns></returns>
-        [HttpPost(Name = "get_login_qr")]
+        [HttpGet(Name = "get_login_qr")]
         public ActionResult Get()
         {
-            FileInfo fi = new FileInfo(Core.Config.Core._QrFileNmae);
-            FileStream fs = fi.OpenRead(); ;
-            byte[] buffer = new byte[fi.Length];
-            //读取图片字节流
-            fs.Read(buffer, 0, Convert.ToInt32(fi.Length));
-            var response = File(buffer, "image/png");
-            fs.Close();
-            return response;
+            if (System.IO.File.Exists(Core.Config.Core._QrFileNmae))
+            {
+                FileInfo fi = new FileInfo(Core.Config.Core._QrFileNmae);
+                FileStream fs = fi.OpenRead(); ;
+                byte[] buffer = new byte[fi.Length];
+                //读取图片字节流
+                fs.Read(buffer, 0, Convert.ToInt32(fi.Length));
+                var response = File(buffer, "image/png");
+                fs.Close();
+                return response;
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(use_agree), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期",MessageBase.code.OperationFailed), "application/json");
+            }
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
