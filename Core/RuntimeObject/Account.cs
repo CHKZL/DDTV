@@ -40,7 +40,7 @@ namespace Core.RuntimeObject
                         }
                     }
                 }
-                if (_accountInformation.State)
+                if (_accountInformation.State && !Core.Config.Core._LoginStatus)
                 {
                     Core.Config.Core._LoginStatus = true;
                 }
