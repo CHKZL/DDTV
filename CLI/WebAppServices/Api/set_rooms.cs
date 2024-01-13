@@ -48,7 +48,7 @@ namespace CLI.WebAppServices.Api
     public class modify_room_prompt_settings : ControllerBase
     {
         /// <summary>
-        /// 批量修改房间的录制设置
+        /// 批量修改房间的开播提醒设置
         /// </summary>
         /// <param name="uid">要修改开播提示提示状态的房间UID列表</param>
         /// <param name="state">将房间的开播提示状态设置为什么状态</param>

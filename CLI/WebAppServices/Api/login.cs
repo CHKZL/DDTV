@@ -70,7 +70,37 @@ namespace CLI.WebAppServices.Api
         public ActionResult Get(PostCommonParameters commonParameters)
         {
             Login.QR();
-            return Content(MessageBase.Success(nameof(re_login), false, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", MessageBase.code.LoginInfoFailure), "application/json");
+            return Content(MessageBase.Success(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", MessageBase.code.LoginInfoFailure), "application/json");
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/login/[controller]")]
+    public class use_agree_state : ControllerBase
+    {
+        /// <summary>
+        /// 获得用户初始化授权状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost(Name = "use_agree_state")]
+        public ActionResult Get(PostCommonParameters commonParameters)
+        {
+            return Content(MessageBase.Success(nameof(use_agree_state), Core.Config.Core._UseAgree, $"获取用户初始化授权状态"), "application/json");
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/login/[controller]")]
+    public class get_login_status : ControllerBase
+    {
+        /// <summary>
+        /// 获取本地登录态AccountInformation的有效状态
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost(Name = "get_login_status")]
+        public ActionResult Get(PostCommonParameters commonParameters)
+        {
+            return Content(MessageBase.Success(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus, $"获取本地登录态AccountInformation的有效状态"), "application/json");
         }
     }
 }
