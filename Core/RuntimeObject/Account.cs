@@ -53,6 +53,7 @@ namespace Core.RuntimeObject
                 }
                 accountInformation.strCookies = Cookies;
                 accountInformation.State = true;
+                Core.Config.Core._LoginStatus = true;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
             }
         }
@@ -103,12 +104,21 @@ namespace Core.RuntimeObject
 
 
         /// <summary>
-        /// 当前阿B登陆是否有效
+        /// 验证当前阿B登陆是否有效
         /// </summary>
         /// <returns></returns>
         public static bool GetNavState()
         {
             return Network.Methods.Nav.GetNav() == null;
+        }
+
+        /// <summary>
+        /// 获取本地登录态AccountInformation的有效状态
+        /// </summary>
+        /// <returns></returns>
+        public static bool GetLoginStatus()
+        {
+            return accountInformation.State;
         }
     }
 }
