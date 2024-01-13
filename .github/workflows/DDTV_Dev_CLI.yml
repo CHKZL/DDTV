@@ -2,8 +2,8 @@ name: Dev
 
 on:
   push:
-    tags:
-      - "dev*"
+#     tags:
+#      - "dev*"
   pull_request:
     paths:
       - 'CLI/**'
