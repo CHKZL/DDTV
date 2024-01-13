@@ -56,6 +56,9 @@ namespace Core.RuntimeObject
 
         private static bool _AccountCheckRunningStatus = false;
         private static bool _AccountStatus = false;
+        /// <summary>
+        /// 检查登陆信息有效性
+        /// </summary>
         internal static void CheckLoginStatus()
         {
             if (!_AccountCheckRunningStatus!)
@@ -63,6 +66,7 @@ namespace Core.RuntimeObject
                 _AccountCheckRunningStatus = true;
                 Task.Run(() =>
                 {
+                    Thread.Sleep(1000 * 10);
                     while (true)
                     {
                         try
