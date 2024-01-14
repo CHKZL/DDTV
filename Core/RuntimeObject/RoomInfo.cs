@@ -80,8 +80,25 @@ namespace Core.RuntimeObject
                 if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
                 {
                     _count.Add(item);
-                    roomCard.IsRecDanmu = State;
+                    roomCard.IsAutoRec = State;
                 }
+            }
+            return _count;
+        }
+
+        /// <summary>
+        /// 修改某个房间的提示设置
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="State"></param>
+        /// <returns></returns>
+        public static long ModifyRoomPromptSettings(long UID, bool State)
+        {
+            int _count = 0;
+            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
+            {
+                _count++;
+                roomCard.IsRemind = State;
             }
             return _count;
         }
@@ -101,6 +118,43 @@ namespace Core.RuntimeObject
                 {
                     _count.Add(item);
                     roomCard.IsRemind = State;
+                }
+            }
+            return _count;
+        }
+
+        /// <summary>
+        /// 修改某个房间的弹幕录制设置
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="State"></param>
+        /// <returns></returns>
+        public static long ModifyRoomDmSettings(long UID, bool State)
+        {
+            int _count = 0;
+            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
+            {
+                _count++;
+                roomCard.IsRecDanmu = State;
+            }
+            return _count;
+        }
+
+        /// <summary>
+        /// 批量修改房间弹幕录制设置
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="State"></param>
+        /// <returns></returns>
+        public static List<long> ModifyRoomDmSettings(List<long> UID, bool State)
+        {
+            List<long> _count = new();
+            foreach (var item in UID)
+            {
+                if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
+                {
+                    _count.Add(item);
+                    roomCard.IsRecDanmu = State;
                 }
             }
             return _count;
