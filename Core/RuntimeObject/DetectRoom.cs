@@ -60,29 +60,26 @@ namespace Core.RuntimeObject
                 {
                     while (_state)
                     {
-                        var oldList = _Room.GetCardListClone();
                         await BatchUpdateRoomStatusForLiveStream();
-                        var NewList = _Room.GetCardListClone();
-                        foreach (var item in oldList)
+                        var List = _Room.GetCardListClone();
+                        foreach (var item in List)
                         {
-                            RoomCardClass oldCard = oldList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
-                            RoomCardClass newCard = NewList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
-                            if (oldCard != null && newCard != null && oldCard.live_status.Value != newCard.live_status.Value)
+                            RoomCardClass Card = List.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                            if (Card == null)
                             {
-                                if (newCard.live_status.Value == 1)
-                                {
-                                    LiveStart.Invoke(FirstTime?true:false,newCard);
-                                }
-                                else if (oldCard.live_status.Value != -1)
-                                {
-                                    LiveEnd.Invoke(FirstTime?true:false, newCard);
-                                }
+                                continue;
                             }
-                            oldCard = null;
-                            newCard = null;
+                            if (Card.live_status_start_event && Card.live_status.Value == 1)
+                            {
+                                Card.live_status_start_event = false;
+                                LiveStart.Invoke(FirstTime ? true : false, Card);
+                            }
+                            if (Card.live_status_end_event && Card.live_status.Value != 1)
+                            {
+                                Card.live_status_end_event = false;
+                                LiveEnd.Invoke(FirstTime ? true : false, Card);
+                            }
                         }
-                        oldList = null;
-                        NewList = null;
                         await Task.Delay(Config.Core._DetectIntervalTime);
                     }
                 }

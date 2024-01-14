@@ -453,7 +453,7 @@ namespace Core.RuntimeObject
                             Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
                             live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                            live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
+                            live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },                       
                             short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -471,6 +471,11 @@ namespace Core.RuntimeObject
                             hidden_till = new() { Value = data.hidden_till, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             broadcast_type = new() { Value = data.broadcast_type, ExpirationTime = DateTime.Now.AddSeconds(30) },
                         };
+                        if (card.live_status.Value == 1)
+                        {
+                            //触发开播事件
+                            card.live_status_start_event = true;
+                        }
                         return card;
                     }
                     else
@@ -479,6 +484,17 @@ namespace Core.RuntimeObject
                         OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.RoomId = data.room_id;
                         OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
+
+                        if(OldCard.live_status.Value!=1 && data.live_status ==1)
+                        {
+                            //触发开播事件
+                            OldCard.live_status_start_event = true;
+                        }
+                        else if(OldCard.live_status.Value==1 && data.live_status !=1)
+                        {
+                            //触发下播事件
+                            OldCard.live_status_end_event = true;
+                        }
                         OldCard.live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) };
                         OldCard.short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) };
@@ -539,6 +555,11 @@ namespace Core.RuntimeObject
                             is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             special_type = new() { Value = roomInfo.data.special_type, ExpirationTime = DateTime.Now.AddSeconds(30) }
                         };
+                        if (card.live_status.Value == 1)
+                        {
+                            //触发开播事件
+                            card.live_status_start_event = true;
+                        }
                         return card;
                     }
                     else
@@ -550,6 +571,16 @@ namespace Core.RuntimeObject
                         OldCard.is_hidden = new() { Value = roomInfo.data.is_hidden, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.is_locked = new() { Value = roomInfo.data.is_locked, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.is_portrait = new() { Value = roomInfo.data.is_portrait, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                        if (OldCard.live_status.Value != 1 && roomInfo.data.live_status == 1)
+                        {
+                            //触发开播事件
+                            OldCard.live_status_start_event = true;
+                        }
+                        else if(OldCard.live_status.Value==1 && roomInfo.data.live_status !=1)
+                        {
+                            //触发下播事件
+                            OldCard.live_status_end_event = true;
+                        }
                         OldCard.live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) };
                         OldCard.encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) };
@@ -718,6 +749,14 @@ namespace Core.RuntimeObject
         /// 直播状态(1为正在直播，2为轮播中)
         /// </summary>
         public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        /// <summary>
+        /// live_status_start_event
+        /// </summary>
+        public bool live_status_start_event = false;
+        /// <summary>
+        /// live_status_end_event
+        /// </summary>
+        public bool live_status_end_event = false;
         /// <summary>
         /// 直播间房间号(直播间短房间号，常见于签约主播)
         /// </summary>
