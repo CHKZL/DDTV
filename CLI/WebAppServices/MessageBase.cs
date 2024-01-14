@@ -16,7 +16,7 @@ namespace CLI
             {
                 MESS = data as string;
             }
-            Log.Info(nameof(MessageBase), cmd + " " + code);
+            Log.Debug(nameof(MessageBase), cmd + " " + code, false);
             pack<T> pack = new pack<T>()
             {
                 cmd = cmd,
