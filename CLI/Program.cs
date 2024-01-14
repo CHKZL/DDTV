@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace CLI
 {
@@ -17,18 +18,10 @@ namespace CLI
             Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
 
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-
-            ////注册Cookie认证服务
-            //builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, option =>
-            //{
-            //    option.AccessDeniedPath = "api/LoginErrer"; //当用户尝试访问资源但没有通过任何授权策略时，这时请求会重定向的相对路径资源
-            //    option.LoginPath = "api/Login/";
-            //    option.Cookie.Name = "DDTVUser";//设置存储用户登录信息（用户Token信息）的Cookie名称
-            //    option.Cookie.HttpOnly = true;//设置存储用户登录信息（用户Token信息）的Cookie，无法通过客户端浏览器脚本(如JavaScript等)访问到
-            //    //option.Cookie.SecurePolicy = Microsoft.AspNetCore.Http.CookieSecurePolicy.Always;
-            //    //设置存储用户登录信息（用户Token信息）的Cookie，只会通过HTTPS协议传递，如果是HTTP协议，Cookie不会被发送。注意，option.Cookie.SecurePolicy属性的默认值是Microsoft.AspNetCore.Http.CookieSecurePolicy.SameAsRequest
-            //});
-
+            builder.Logging.AddFilter((category, level) =>
+            {
+                return level >= LogLevel.Warning;
+            });
 
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -48,7 +41,7 @@ namespace CLI
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
             builder.Services.AddMvc();
-
+            
 
             var app = builder.Build();
             app.UseSwagger();
