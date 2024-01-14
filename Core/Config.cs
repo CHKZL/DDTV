@@ -15,8 +15,10 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.RoomInfo;
@@ -216,7 +218,12 @@ namespace Core
                     {
                         roomListDiscard.data.Add(item.Value);
                     }
-                    string jsonString = JsonSerializer.Serialize(roomListDiscard);
+                    // 支持基本拉丁语和中文字符
+                    var options1 = new JsonSerializerOptions
+                    {
+                        Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                    };
+                    string jsonString = JsonSerializer.Serialize(roomListDiscard, options1);
 
                     string filePath = $"{Core._RoomConfigFile}";
                     if (File.Exists(filePath))

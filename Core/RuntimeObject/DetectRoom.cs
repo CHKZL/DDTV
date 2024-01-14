@@ -60,9 +60,9 @@ namespace Core.RuntimeObject
                 {
                     while (_state)
                     {
-                        var oldList = _Room.GetCardListDeepClone();
+                        var oldList = _Room.GetCardListClone();
                         await BatchUpdateRoomStatusForLiveStream();
-                        var NewList = _Room.GetCardListDeepClone();
+                        var NewList = _Room.GetCardListClone();
                         foreach (var item in oldList)
                         {
                             RoomCardClass oldCard = oldList.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
