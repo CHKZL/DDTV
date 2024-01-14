@@ -40,7 +40,7 @@ namespace CLI.WebAppServices.Api
             try
             {
                 Data completeRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListDeepClone();
+                var roomList = _Room.GetCardListClone();
                 completeRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
@@ -213,7 +213,7 @@ namespace CLI.WebAppServices.Api
             try
             {
                 Data basicRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListDeepClone();
+                var roomList = _Room.GetCardListClone();
                 basicRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
