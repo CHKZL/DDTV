@@ -164,7 +164,7 @@ namespace Core.RuntimeObject
         /// <param name="IsAutoRec">是否自动录制</param>
         /// <param name="IsRemind">是否提醒</param>
         /// <param name="IsRecDanmu">是否录制弹幕</param>
-        /// <returns>1：成功  2：房间已添加  3：房间不存在  4：参数有误</returns>
+        /// <returns>1：添加成功  2：房间已存在  3：房间不存在  4：参数有误</returns>
         public static (int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0)
         {
             int State = 0;
@@ -176,12 +176,17 @@ namespace Core.RuntimeObject
                 if ((UID != 0 && GetCardForUID(UID, ref roomCard)) || (RoomId != 0 && GetCardFoRoomId(RoomId, ref roomCard)))
                 {
                     State = 2;
-                    Message = "房间已添加";
+                    Message = "房间已存在";
                 }
-                else if (GetRoomId(id) != 0)
+                else if (UID != 0 && GetRoomId(UID) != 0)
                 {
                     State = 1;
-                    Message = "成功";
+                    Message = "添加成功";
+                }
+                else if (RoomId != 0 && GetUid(RoomId) != 0)
+                {
+                    State = 1;
+                    Message = "添加成功";
                 }
                 else
                 {
@@ -532,7 +537,7 @@ namespace Core.RuntimeObject
                             live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) },
                             is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                            special_type = new() { Value=roomInfo.data.special_type,ExpirationTime= DateTime.Now.AddSeconds(30)}
+                            special_type = new() { Value = roomInfo.data.special_type, ExpirationTime = DateTime.Now.AddSeconds(30) }
                         };
                         return card;
                     }

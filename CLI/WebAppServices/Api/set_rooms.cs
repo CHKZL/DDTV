@@ -94,7 +94,7 @@ namespace CLI.WebAppServices.Api
     public class add_room : ControllerBase
     {
         /// <summary>
-        /// 添加房间
+        /// 添加房间(UID和房间号二选一)
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="auto_rec">是否自动录制</param>
