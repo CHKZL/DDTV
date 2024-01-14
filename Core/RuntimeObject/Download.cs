@@ -138,6 +138,7 @@ namespace Core.RuntimeObject
                     base_url = codec.base_url.Replace($"{codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1]}", ""),
                     uri_name = codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1],
                     extra = urlInfo.extra,
+                    all_special_types=playInfo.data.all_special_types
                 };
                 return hostClass;
             }
@@ -173,6 +174,10 @@ namespace Core.RuntimeObject
                 /// M3U8头
                 /// </summary>
                 internal string SteramInfo { get; set; }
+                /// <summary>
+                /// 房间付费类型
+                /// </summary>
+                internal List<long> all_special_types {  get; set; }=new List<long>();
                 internal EXTM3U eXTM3U { get; set; } = new();
                 internal class EXTM3U
                 {
@@ -258,7 +263,7 @@ namespace Core.RuntimeObject
                         HostClass hostClass = new();
                         while (!GetHlsHost_avc(card, ref hostClass))
                         {
-                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId);
+                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId,hostClass);
                             if (hlsErrorCount == -1)
                             {
                                 isSuccess = CheckAndHandleFile(File);
@@ -417,12 +422,21 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             /// <param name="roomId">房间ID</param>
             /// <returns>更新后的HLS错误计数,返回-1表示已下播</returns>
-            private static int HandleHlsError(int hlsErrorCount, RoomCardClass card, long roomId)
+            private static int HandleHlsError(int hlsErrorCount, RoomCardClass card, long roomId,HostClass hostClass)
             {
                 if (hlsErrorCount > 3)
                 {
                     hlsErrorCount = 0;
-                    Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但未检测到HLS流，10秒后重试");
+                    if(hostClass.all_special_types.Contains(1))
+                    {                      
+                        Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，请确认有权限，30秒后重试");
+                        card.DownInfo.Status= RoomCardClass.DownloadStatus.Special;
+                    }
+                    else
+                    {                     
+                        Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但没获取到HLS流，30秒后重试");
+                         card.DownInfo.Status= RoomCardClass.DownloadStatus.Standby;
+                    }
                     if (!RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         return -1;

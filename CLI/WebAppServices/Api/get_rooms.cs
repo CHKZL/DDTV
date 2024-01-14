@@ -12,6 +12,7 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static CLI.WebAppServices.Api.all_complete_room_information.Data;
 using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
 using static Core.RuntimeObject.RoomCardClass;
 
@@ -46,6 +47,8 @@ namespace CLI.WebAppServices.Api
                     foreach (var room in roomList)
                     {
                         Data.CompleteInfo completeInfo = new Data.CompleteInfo();
+                        completeInfo.uid = room.Value.UID;
+                        completeInfo.roomId = room.Value.RoomId;
                         completeInfo.userInfo = new()
                         {
                             isAutoRec = room.Value.IsAutoRec,
@@ -70,7 +73,8 @@ namespace CLI.WebAppServices.Api
                             shortId = room.Value.short_id.Value,
                             tags = room.Value.tags.Value,
                             title = room.Value.Title.Value,
-                            url = $"https://live.bilibili.com/{room.Value.RoomId}"
+                            url = $"https://live.bilibili.com/{room.Value.RoomId}",
+                            specialType = roomList.ElementAt(i).Value.special_type.Value,
                         };
                         completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
@@ -142,6 +146,8 @@ namespace CLI.WebAppServices.Api
             public List<CompleteInfo> completeInfoList { get; set; } = new();
             public class CompleteInfo
             {
+                public long uid { get; set; }
+                public long roomId { get; set; }
                 public UserInfo userInfo { get; set; } = new();
                 public RoomInfo roomInfo { get; set; } = new();
                 public TaskStatus taskStatus { get; set; } = new();
@@ -170,6 +176,7 @@ namespace CLI.WebAppServices.Api
                     public string coverFromUser { get; set; }
                     public string keyFrame { get; set; }
                     public string url { get; set; }
+                    public int specialType { get; set; }
 
                 }
                 public class TaskStatus
@@ -213,6 +220,8 @@ namespace CLI.WebAppServices.Api
                     foreach (var room in roomList)
                     {
                         Data.BasicInfo basicInfo = new Data.BasicInfo();
+                        basicInfo.uid = room.Value.UID;
+                        basicInfo.roomId = room.Value.RoomId;
                         basicInfo.userInfo = new()
                         {
                             name = room.Value.Name,
@@ -248,11 +257,12 @@ namespace CLI.WebAppServices.Api
                             liveStatus = roomList.ElementAt(i).Value.live_status.Value == 1 ? true : false,
                             roomId = roomList.ElementAt(i).Value.RoomId,
                             title = roomList.ElementAt(i).Value.Title.Value,
+                            specialType = roomList.ElementAt(i).Value.special_type.Value,
                         };
                         basicInfo.taskStatus = new Data.BasicInfo.TaskStatus()
                         {
                             downloadSize = roomList.ElementAt(i).Value.DownInfo.DownloadSize,
-                            isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,               
+                            isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,
                             status = roomList.ElementAt(i).Value.DownInfo.Status,
                         };
                         basicRoomInfoRes.basicInfoList.Add(basicInfo);
@@ -274,6 +284,8 @@ namespace CLI.WebAppServices.Api
             public List<BasicInfo> basicInfoList { get; set; } = new();
             public class BasicInfo
             {
+                public long uid { get; set; }
+                public long roomId { get; set; }
                 public UserInfo userInfo { get; set; } = new();
                 public RoomInfo roomInfo { get; set; } = new();
                 public TaskStatus taskStatus { get; set; } = new();
@@ -287,6 +299,7 @@ namespace CLI.WebAppServices.Api
                     public long roomId { get; set; }
                     public string title { get; set; }
                     public bool liveStatus { get; set; }
+                    public int specialType { get; set; }
 
                 }
                 public class TaskStatus
