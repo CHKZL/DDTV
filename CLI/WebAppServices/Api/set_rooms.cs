@@ -34,7 +34,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRecordingSettings(uid, state);
-            return Content(MessageBase.Success(nameof(modify_recording_settings),count,$"返回列表中的房间的自动录制修改为{state}"), "application/json");
+            return Content(MessageBase.Success(nameof(modify_recording_settings), count, $"返回列表中的房间的自动录制修改为{state}"), "application/json");
         }
     }
 
@@ -59,6 +59,30 @@ namespace CLI.WebAppServices.Api
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRoomPromptSettings(uid, state);
             return Content(MessageBase.Success(nameof(modify_room_prompt_settings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
+        }
+    }
+
+    /// <summary>
+    /// 修改弹幕录制设置
+    /// </summary>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    public class modify_room_dm_settings : ControllerBase
+    {
+        /// <summary>
+        /// 批量修改房间的弹幕录制设置
+        /// </summary>
+        /// <param name="uid">要修改弹幕录制状态的房间UID列表</param>
+        /// <param name="state">将房间的弹幕录制设置为什么状态</param>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "modify_room_dm_settings")]
+        public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
+        {
+            List<long> count = Core.RuntimeObject._Room.ModifyRoomDmSettings(uid, state);
+            return Content(MessageBase.Success(nameof(modify_room_dm_settings), count, $"返回列表中房间的弹幕录制修改为{state}"), "application/json");
         }
     }
 

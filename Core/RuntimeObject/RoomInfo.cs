@@ -51,22 +51,6 @@ namespace Core.RuntimeObject
         }
 
         /// <summary>
-        /// 修改某个房间的录制配置
-        /// </summary>
-        /// <param name="UID">UID</param>
-        /// <param name="State">设置为的录制配置</param>
-        /// <returns>修改成功的数量</returns>
-        public static int ModifyRecordingSettings(long UID, bool State)
-        {
-            int _count = 0;
-            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
-            {
-                _count++;
-                roomCard.IsAutoRec = State;
-            }
-            return _count;
-        }
-        /// <summary>
         /// 批量修改房间的录制配置
         /// </summary>
         /// <param name="UID">UID</param>
@@ -86,22 +70,6 @@ namespace Core.RuntimeObject
             return _count;
         }
 
-        /// <summary>
-        /// 修改某个房间的提示设置
-        /// </summary>
-        /// <param name="UID"></param>
-        /// <param name="State"></param>
-        /// <returns></returns>
-        public static long ModifyRoomPromptSettings(long UID, bool State)
-        {
-            int _count = 0;
-            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
-            {
-                _count++;
-                roomCard.IsRemind = State;
-            }
-            return _count;
-        }
 
         /// <summary>
         /// 批量修改房间提示设置
@@ -123,22 +91,6 @@ namespace Core.RuntimeObject
             return _count;
         }
 
-        /// <summary>
-        /// 修改某个房间的弹幕录制设置
-        /// </summary>
-        /// <param name="UID"></param>
-        /// <param name="State"></param>
-        /// <returns></returns>
-        public static long ModifyRoomDmSettings(long UID, bool State)
-        {
-            int _count = 0;
-            if (roomInfos.TryGetValue(UID, out RoomCardClass roomCard))
-            {
-                _count++;
-                roomCard.IsRecDanmu = State;
-            }
-            return _count;
-        }
 
         /// <summary>
         /// 批量修改房间弹幕录制设置
