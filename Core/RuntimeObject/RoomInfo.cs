@@ -513,8 +513,6 @@ namespace Core.RuntimeObject
         {
             try
             {
-
-
                 if (roomInfo != null)
                 {
                     if (OldCard == null)
@@ -534,6 +532,7 @@ namespace Core.RuntimeObject
                             live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) },
                             is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            special_type = new() { Value=roomInfo.data.special_type,ExpirationTime= DateTime.Now.AddSeconds(30)}
                         };
                         return card;
                     }
@@ -552,6 +551,7 @@ namespace Core.RuntimeObject
                         OldCard.live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) };
                         OldCard.is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.special_type = new() { Value = roomInfo.data.special_type, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         return OldCard;
                     }
                 }
