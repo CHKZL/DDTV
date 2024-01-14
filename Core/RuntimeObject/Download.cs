@@ -120,6 +120,7 @@ namespace Core.RuntimeObject
                 PlayInfo_Class playInfo = GetPlayInfo(RoomId);
                 if (playInfo == null || playInfo.data.playurl_info == null || playInfo.data.playurl_info.playurl == null)
                     return hostClass;
+                hostClass.all_special_types = playInfo.data.all_special_types;
                 PlayInfo_Class.Stream? stream = playInfo.data.playurl_info.playurl.stream.FirstOrDefault(x => x.protocol_name == protocol_name);
                 if (stream == null)
                     return hostClass;
@@ -137,8 +138,7 @@ namespace Core.RuntimeObject
                     host = urlInfo.host,
                     base_url = codec.base_url.Replace($"{codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1]}", ""),
                     uri_name = codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1],
-                    extra = urlInfo.extra,
-                    all_special_types=playInfo.data.all_special_types
+                    extra = urlInfo.extra
                 };
                 return hostClass;
             }

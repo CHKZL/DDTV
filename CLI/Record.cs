@@ -23,6 +23,7 @@ namespace CLI
         internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
 #if DEBUG
+            if(e.RoomId!=8982686)
             return;
 #endif
             bool Initialization = true;
