@@ -978,6 +978,10 @@ namespace Core.RuntimeObject
             /// 取消下载
             /// </summary>
             Cancel,
+            /// <summary>
+            /// 特殊状态(大航海和门票等收费没权限的状态)
+            /// </summary>
+            Special
         }
     }
     #endregion
