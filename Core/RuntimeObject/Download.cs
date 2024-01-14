@@ -429,7 +429,7 @@ namespace Core.RuntimeObject
                     hlsErrorCount = 0;
                     if(hostClass.all_special_types.Contains(1))
                     {                      
-                        Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，请确认有权限，30秒后重试");
+                        Log.Warn(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，请确认有权限，30秒后重试");
                         card.DownInfo.Status= RoomCardClass.DownloadStatus.Special;
                     }
                     else
