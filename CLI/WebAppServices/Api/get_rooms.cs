@@ -74,7 +74,7 @@ namespace CLI.WebAppServices.Api
                             tags = room.Value.tags.Value,
                             title = room.Value.Title.Value,
                             url = $"https://live.bilibili.com/{room.Value.RoomId}",
-                            specialType = roomList.ElementAt(i).Value.special_type.Value,
+                            specialType = room.Value.special_type.Value,
                         };
                         completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
