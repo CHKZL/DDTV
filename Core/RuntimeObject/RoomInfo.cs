@@ -286,7 +286,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="UIDList">如果传null则是更新整个roomInfos状态</param>
         /// <returns></returns>
-        internal static async Task BatchUpdateRoomStatusForLiveStream(List<long> UIDList = null)
+        internal static async Task BatchUpdateRoomStatusForLiveStream(List<long>? UIDList = null)
         {
             int _PageSize = 1500;
             if (UIDList == null)

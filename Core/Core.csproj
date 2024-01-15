@@ -7,6 +7,14 @@
     <Version>5.0.1.6</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;8602;8603</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;8602;8603</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Masuit.Tools.AspNetCore" Version="1.2.8.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
