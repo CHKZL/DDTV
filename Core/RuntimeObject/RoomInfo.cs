@@ -20,7 +20,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        internal static bool GetCardForUID(long UID, ref RoomCardClass roomCard)
+        public static bool GetCardForUID(long UID, ref RoomCardClass roomCard)
         {
             roomCard = roomInfos.FirstOrDefault(x => x.Key == UID).Value;
             if (roomCard != null)
@@ -37,7 +37,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="UID"></param>
         /// <returns></returns>
-        internal static bool GetCardFoRoomId(long RoomId, ref RoomCardClass roomCard)
+        public static bool GetCardFoRoomId(long RoomId, ref RoomCardClass roomCard)
         {
             roomCard = roomInfos.FirstOrDefault(x => x.Value.RoomId == RoomId).Value;
             if (roomCard != null)
@@ -119,10 +119,27 @@ namespace Core.RuntimeObject
         /// <summary>
         /// 获得房间列表字典的克隆轻备份
         /// </summary>
+        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
         /// <returns></returns>
-        public static Dictionary<long, RoomCardClass> GetCardListClone()
+        public static Dictionary<long, RoomCardClass> GetCardListClone(int type = 0)
         {
-            return new Dictionary<long, RoomCardClass>(roomInfos);
+            switch (type)
+            {
+                case 1:
+                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby));
+                case 2:
+                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1));
+                case 3:
+                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value != 1));
+                default:
+                    var sortedRoomInfos = roomInfos
+                        .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
+                        .ThenByDescending(x => x.Value.live_status.Value == 1)
+                        .ToDictionary(x => x.Key, x => x.Value);
+
+                    return new Dictionary<long, RoomCardClass>(sortedRoomInfos);
+            }
+            
         }
         /// <summary>
         /// 获得房间列表字典的深度克隆
@@ -201,6 +218,8 @@ namespace Core.RuntimeObject
             }
             return (State, Message);
         }
+
+
     }
 
 

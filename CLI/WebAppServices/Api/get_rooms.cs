@@ -12,35 +12,71 @@ using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static CLI.WebAppServices.Api.all_complete_room_information.Data;
 using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
 using static Core.RuntimeObject.RoomCardClass;
 
 namespace CLI.WebAppServices.Api
 {
     /// <summary>
-    /// 获取房间完整信息
+    /// 查询单个房间信息
     /// </summary>
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
-    public class all_complete_room_information : ControllerBase
+    public class room_information : ControllerBase
     {
         /// <summary>
-        /// 获取所有配置中房间完整信息
+        /// 请求当前运行心跳信息(UID或房间号二选一即可)
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid">UID</param>
+        /// <param name="room_id">房间号</param>
+        /// <returns></returns>
+        [HttpPost(Name = "complete_room_information")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id= 0)
+        {
+            RoomCardClass roomCardClass = new RoomCardClass();
+            if(uid!=0 && _Room.GetCardForUID(uid,ref roomCardClass))
+            {
+                return Content(MessageBase.Success(nameof(room_information), roomCardClass), "application/json");
+            }
+            else if(room_id!=0 && _Room.GetCardFoRoomId(room_id,ref roomCardClass))
+            {
+                return Content(MessageBase.Success(nameof(room_information), roomCardClass), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.Success(nameof(room_information), false,"请求的房间不存在",MessageBase.code.OperationFailed), "application/json");
+            }
+            
+        }
+    }
+
+    /// <summary>
+    /// 批量获取配置中房间完整信息
+    /// </summary>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/get_rooms/[controller]")]
+    [Login]
+    public class batch_complete_room_information : ControllerBase
+    {
+        /// <summary>
+        /// 批量获取配置中房间完整信息
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
         /// <param name="page">获取的页数，当分页数量不为0时有效</param>
+        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
         /// <returns></returns>
-        [HttpPost(Name = "all_complete_room_information")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0)
+        [HttpPost(Name = "batch_complete_room_information")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] int type =0)
         {
             try
             {
                 Data completeRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListClone();
+                var roomList = _Room.GetCardListClone(type);
                 completeRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
@@ -133,11 +169,11 @@ namespace CLI.WebAppServices.Api
                 }
                 roomList.Clear();
                 roomList = null;
-                return Content(MessageBase.Success(nameof(all_complete_room_information), completeRoomInfoRes), "application/json");
+                return Content(MessageBase.Success(nameof(batch_complete_room_information), completeRoomInfoRes), "application/json");
             }
             catch (Exception)
             {
-                return Content(MessageBase.Success(nameof(all_complete_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
+                return Content(MessageBase.Success(nameof(batch_complete_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
             }
         }
         public class Data
@@ -192,28 +228,29 @@ namespace CLI.WebAppServices.Api
         }
     }
     /// <summary>
-    /// 获取房间基本信息
+    /// 批量获取房间基本信息
     /// </summary>
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
-    public class all_basic_room_information : ControllerBase
+    public class batch_basic_room_information : ControllerBase
     {
         /// <summary>
-        /// 获取所有配置中房间基本信息
+        /// 批量获取配置中房间基本信息
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
         /// <param name="page">获取的页数，当分页数量不为0时有效</param>
+        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
         /// <returns></returns>
-        [HttpPost(Name = "all_basic_room_information")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0)
+        [HttpPost(Name = "batch_basic_room_information")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] int type =0)
         {
             try
             {
                 Data basicRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListClone();
+                var roomList = _Room.GetCardListClone(type);
                 basicRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
@@ -270,11 +307,11 @@ namespace CLI.WebAppServices.Api
                 }
                 roomList.Clear();
                 roomList = null;
-                return Content(MessageBase.Success(nameof(all_basic_room_information), basicRoomInfoRes), "application/json");
+                return Content(MessageBase.Success(nameof(batch_basic_room_information), basicRoomInfoRes), "application/json");
             }
             catch (Exception)
             {
-                return Content(MessageBase.Success(nameof(all_basic_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
+                return Content(MessageBase.Success(nameof(batch_basic_room_information), "", "请求错误", MessageBase.code.ParameterError), "application/json");
             }
         }
         public class Data
