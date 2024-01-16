@@ -66,7 +66,7 @@ namespace Core.RuntimeObject
                 {
                     if (Initialization)
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制");
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制【触发类型:"+(triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks)?"手动触发":"自动触发")+"】");
                         Initialization = false;
                         if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
                         {
@@ -135,10 +135,12 @@ namespace Core.RuntimeObject
                     liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
                     liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
                 }
+                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接，但直播未结束，触发重连");
                 liveChatListener.Connect();
             }
             else
             {
+                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接");
                 liveChatListener.Cancel();
                 liveChatListener = null;
             }

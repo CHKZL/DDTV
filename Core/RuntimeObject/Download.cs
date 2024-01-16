@@ -318,7 +318,7 @@ namespace Core.RuntimeObject
                                         {
                                             isSuccess = CheckAndHandleFile(File);
                                             isSuccess = false;
-                                            if (card.DownInfo.Unmark)
+                                            if (!card.DownInfo.Unmark)
                                                 Thread.Sleep(1000 * 10);
                                             return;
                                         }
@@ -326,7 +326,7 @@ namespace Core.RuntimeObject
                                         {
                                             Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
                                             isSuccess = true;
-                                            if (card.DownInfo.Unmark)
+                                            if (!card.DownInfo.Unmark)
                                                 Thread.Sleep(1000 * 10);
                                             return;
                                         }
@@ -342,10 +342,10 @@ namespace Core.RuntimeObject
                             catch (Exception e)
                             {
                                 Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制循环中出现未知错误，写入日志", e, true);
-                                if (card.DownInfo.Unmark)
+                                if (!card.DownInfo.Unmark)
                                     Thread.Sleep(1000);
                             }
-                            if (card.DownInfo.Unmark)
+                            if (!card.DownInfo.Unmark)
                                 Thread.Sleep(2000);
                         }
                     }
@@ -451,11 +451,11 @@ namespace Core.RuntimeObject
                     {
                         return -1;
                     }
-                    if (card.DownInfo.Unmark)
+                    if (!card.DownInfo.Unmark)
                         Thread.Sleep(1000 * 10);
                 }
                 hlsErrorCount++;
-                if (card.DownInfo.Unmark)
+                if (!card.DownInfo.Unmark)
                     Thread.Sleep(1000 * 10);
                 return hlsErrorCount;
             }
@@ -498,10 +498,10 @@ namespace Core.RuntimeObject
                     {
                         GetHlsHost_avc(card, ref hostClass);
                     }
-                    if (card.DownInfo.Unmark)
+                    if (!card.DownInfo.Unmark)
                         Thread.Sleep(2000);
                 }
-                if (card.DownInfo.Unmark)
+                if (!card.DownInfo.Unmark)
                     Thread.Sleep(1000);
                 return hlsErrorCount;
             }
