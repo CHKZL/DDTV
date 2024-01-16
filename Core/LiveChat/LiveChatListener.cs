@@ -209,7 +209,7 @@ namespace Core.LiveChat
                }
                else
                {
-                   Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接断开");
+                   Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接断开并回收");
                    Dispose();
                }
                try
