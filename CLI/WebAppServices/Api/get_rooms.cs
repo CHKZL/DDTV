@@ -27,7 +27,7 @@ namespace CLI.WebAppServices.Api
     public class room_information : ControllerBase
     {
         /// <summary>
-        /// 请求当前运行心跳信息(UID或房间号二选一即可)
+        /// 请求单个房间信息(UID或房间号二选一即可)
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="uid">UID</param>
@@ -48,8 +48,7 @@ namespace CLI.WebAppServices.Api
             else
             {
                 return Content(MessageBase.Success(nameof(room_information), false,"请求的房间不存在",MessageBase.code.OperationFailed), "application/json");
-            }
-            
+            }      
         }
     }
 
@@ -66,17 +65,18 @@ namespace CLI.WebAppServices.Api
         /// 批量获取配置中房间完整信息
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
-        /// <param name="page">获取的页数，当分页数量不为0时有效</param>
-        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="quantity">【非必填】分页后每页数量，默认或传0为全部</param>
+        /// <param name="page">【非必填】获取的页数，当分页数量不为0时有效</param>
+        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="screen_name">【非必填】搜索的昵称含有对应字符串的房间</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_complete_room_information")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] int type =0)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] _Room.SearchType type=_Room.SearchType.All, [FromForm] string screen_name = "")
         {
             try
             {
                 Data completeRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListClone(type);
+                var roomList = _Room.GetCardListClone(type, screen_name);
                 completeRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {
@@ -240,17 +240,18 @@ namespace CLI.WebAppServices.Api
         /// 批量获取配置中房间基本信息
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="quantity">分页后每页数量，非必填，默认或传0为全部</param>
-        /// <param name="page">获取的页数，当分页数量不为0时有效</param>
-        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="quantity">【非必填】分页后每页数量，默认或传0为全部</param>
+        /// <param name="page">【非必填】获取的页数，当分页数量不为0时有效</param>
+        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="screen_name">【非必填】搜索的昵称含有对应字符串的房间</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_basic_room_information")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] int type =0)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] _Room.SearchType type = _Room.SearchType.All, [FromForm] string screen_name = "")
         {
             try
             {
                 Data basicRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListClone(type);
+                var roomList = _Room.GetCardListClone(type, screen_name);
                 basicRoomInfoRes.total = roomList.Count;
                 if (quantity == 0)
                 {

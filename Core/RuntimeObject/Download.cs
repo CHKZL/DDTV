@@ -398,7 +398,6 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             private static void InitializeDownload(RoomCardClass card)
             {
-                card.DownInfo.IsDownload = true;
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                 _Room.SetRoomCardByUid(card.UID, card);
             }
@@ -534,7 +533,6 @@ namespace Core.RuntimeObject
             private static bool DownloadCompletedReset(bool NormalEnd, ref RoomCardClass roomCard)
             {
                 Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
-                roomCard.DownInfo.IsDownload = false;
                 roomCard.DownInfo.DownloadSize = 0;
                 roomCard.DownInfo.RealTimeDownloadSpe = 0;
                 roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.DownloadComplete;

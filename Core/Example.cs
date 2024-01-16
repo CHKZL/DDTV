@@ -24,5 +24,9 @@ namespace Core
         #region Public Class
 
         #endregion
+
+        #region Public Enmu
+
+        #endregion
     }
 }
