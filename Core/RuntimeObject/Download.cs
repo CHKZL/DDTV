@@ -177,7 +177,7 @@ namespace Core.RuntimeObject
                 /// <summary>
                 /// 房间付费类型
                 /// </summary>
-                internal List<long> all_special_types {  get; set; }=new List<long>();
+                internal List<long> all_special_types { get; set; } = new List<long>();
                 internal EXTM3U eXTM3U { get; set; } = new();
                 internal class EXTM3U
                 {
@@ -263,8 +263,9 @@ namespace Core.RuntimeObject
                         HostClass hostClass = new();
                         while (!GetHlsHost_avc(card, ref hostClass))
                         {
-                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId,hostClass);
-                            if (hlsErrorCount == -1)
+
+                            hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId, hostClass);
+                            if (hlsErrorCount == -1 || card.DownInfo.Unmark)
                             {
                                 isSuccess = CheckAndHandleFile(File);
                                 return;
@@ -279,6 +280,11 @@ namespace Core.RuntimeObject
                             long downloadSizeForThisCycle = 0;
                             try
                             {
+                                if (card.DownInfo.Unmark)
+                                {
+                                    isSuccess = CheckAndHandleFile(File);
+                                    return;
+                                }
                                 bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
                                 if (!isHlsHostAvailable)
                                 {
@@ -312,19 +318,22 @@ namespace Core.RuntimeObject
                                         {
                                             isSuccess = CheckAndHandleFile(File);
                                             isSuccess = false;
-                                            Thread.Sleep(1000 * 10);
+                                            if (card.DownInfo.Unmark)
+                                                Thread.Sleep(1000 * 10);
                                             return;
                                         }
                                         else
                                         {
                                             Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
                                             isSuccess = true;
-                                            Thread.Sleep(1000 * 10);
+                                            if (card.DownInfo.Unmark)
+                                                Thread.Sleep(1000 * 10);
                                             return;
                                         }
                                     }
                                     if (InitialRequest)
                                     {
+                                        //正式开始下载提示
                                         LogDownloadStart(card);
                                     }
                                     InitialRequest = false;
@@ -333,9 +342,11 @@ namespace Core.RuntimeObject
                             catch (Exception e)
                             {
                                 Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制循环中出现未知错误，写入日志", e, true);
-                                Thread.Sleep(1000);
+                                if (card.DownInfo.Unmark)
+                                    Thread.Sleep(1000);
                             }
-                            Thread.Sleep(2000);
+                            if (card.DownInfo.Unmark)
+                                Thread.Sleep(2000);
                         }
                     }
                 });
@@ -421,29 +432,31 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             /// <param name="roomId">房间ID</param>
             /// <returns>更新后的HLS错误计数,返回-1表示已下播</returns>
-            private static int HandleHlsError(int hlsErrorCount, RoomCardClass card, long roomId,HostClass hostClass)
+            private static int HandleHlsError(int hlsErrorCount, RoomCardClass card, long roomId, HostClass hostClass)
             {
                 if (hlsErrorCount > 3)
                 {
                     hlsErrorCount = 0;
-                    if(hostClass.all_special_types.Contains(1))
-                    {                      
+                    if (hostClass.all_special_types.Contains(1))
+                    {
                         Log.Warn(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，请确认有权限，30秒后重试");
-                        card.DownInfo.Status= RoomCardClass.DownloadStatus.Special;
+                        card.DownInfo.Status = RoomCardClass.DownloadStatus.Special;
                     }
                     else
-                    {                     
+                    {
                         Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但没获取到HLS流，30秒后重试");
-                         card.DownInfo.Status= RoomCardClass.DownloadStatus.Standby;
+                        card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                     }
                     if (!RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         return -1;
                     }
-                    Thread.Sleep(1000 * 10);
+                    if (card.DownInfo.Unmark)
+                        Thread.Sleep(1000 * 10);
                 }
                 hlsErrorCount++;
-                Thread.Sleep(1000 * 10);
+                if (card.DownInfo.Unmark)
+                    Thread.Sleep(1000 * 10);
                 return hlsErrorCount;
             }
 
@@ -485,9 +498,11 @@ namespace Core.RuntimeObject
                     {
                         GetHlsHost_avc(card, ref hostClass);
                     }
-                    Thread.Sleep(2000);
+                    if (card.DownInfo.Unmark)
+                        Thread.Sleep(2000);
                 }
-                Thread.Sleep(1000);
+                if (card.DownInfo.Unmark)
+                    Thread.Sleep(1000);
                 return hlsErrorCount;
             }
 
@@ -535,7 +550,8 @@ namespace Core.RuntimeObject
                 Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
                 roomCard.DownInfo.DownloadSize = 0;
                 roomCard.DownInfo.RealTimeDownloadSpe = 0;
-                roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.DownloadComplete;
+
+                roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;
                 roomCard.DownInfo.EndTime = DateTime.Now;
                 _Room.SetRoomCardByUid(roomCard.UID, roomCard);
                 return NormalEnd;

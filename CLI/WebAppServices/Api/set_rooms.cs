@@ -110,4 +110,26 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.Success(nameof(modify_room_prompt_settings), addInfo.State, $"{addInfo.Message}"), "application/json");
         }
     }
+
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    public class del_room : ControllerBase
+    {
+        /// <summary>
+        /// 删除房间(UID和房间号二选一)
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid"></param>
+        /// <param name="room_id"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "del_room")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
+        {
+            var addInfo = Core.RuntimeObject._Room.DelRoom(uid, room_id);
+            return Content(MessageBase.Success(nameof(del_room), addInfo.State, $"{addInfo.Message}"), "application/json");
+        }
+    }
 }
