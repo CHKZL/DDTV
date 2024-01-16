@@ -256,6 +256,24 @@ namespace Core
 
         public class Core
         {
+            private static string ApiPort = "11419";
+            /// <summary>
+            /// Api提供的端口地址
+            /// 默认值：11419
+            /// </summary>
+            public static bool _ApiPort
+            {
+                get => bool.Parse(ApiPort);
+                set
+                {
+                    if (value.ToString() != ApiPort)
+                    {
+                        ApiPort = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
+            }
+
             private static string UseAgree = "false";
             /// <summary>
             /// 用户协议同意状态

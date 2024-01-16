@@ -22,16 +22,23 @@ namespace CLI
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
-#if DEBUG
-            //return;
-#endif
+
             bool Initialization = true;
-            if (e.IsRemind)
+            if (e.IsRemind && (sender is bool) ? sender is bool : true)
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
-            }      
+            }
+#if DEBUG
+            return;
+#endif
             if (e.IsAutoRec)
             {
+                if (e.DownInfo.IsDownload)
+                {
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                    return;
+                }
+                e.DownInfo.IsDownload = true;
                 Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(e.RoomId);
                 do
                 {
@@ -69,6 +76,7 @@ namespace CLI
                     }
                 }
                 while (RoomInfo.GetLiveStatus(e.RoomId));
+                e.DownInfo.IsDownload = false;
                 if (e.IsRecDanmu)
                 {
                     if(!liveChatListener._Cancel)

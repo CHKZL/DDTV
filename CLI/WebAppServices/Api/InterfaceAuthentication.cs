@@ -19,6 +19,9 @@ namespace CLI.WebAppServices.Middleware
         {
 
         }
+        /// <summary>
+        /// 用于计算sig的公共参数（Post请求）
+        /// </summary>
         public class PostCommonParameters
         {
             [FromForm]
@@ -28,6 +31,9 @@ namespace CLI.WebAppServices.Middleware
             [FromForm]
             public string access_key_id { get; set; }
         }
+        /// <summary>
+        /// 用于计算sig的公共参数（Get请求）
+        /// </summary>
         public class GetCommonParameters
         {
             [FromQuery]
@@ -78,6 +84,7 @@ namespace CLI.WebAppServices.Middleware
                     return;
                 }
             }
+            //如果不包含time字符或time不符合int要求
             else
             {
                 Unauthorized(context);

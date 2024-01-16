@@ -2,6 +2,7 @@
 using Core.LogModule;
 using Core.Network.Methods;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,11 @@ using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
 {
+    public class Detect
+    {
+       public static DetectRoom detectRoom = new();//实例化房间监听    
+    }
+
     public class DetectRoom
     {
         #region Private Properties
@@ -20,6 +26,7 @@ namespace Core.RuntimeObject
         #region public Properties
         public event EventHandler<RoomCardClass> LiveStart;
         public event EventHandler<RoomCardClass> LiveEnd;
+        public bool State { get { return _state; } }
         #endregion
 
         public DetectRoom()
@@ -43,6 +50,39 @@ namespace Core.RuntimeObject
         {
             _state = false;
         }
+
+        /// <summary>
+        /// 手动触发一个直播间的录制(UID和房间号二选一)
+        /// </summary>
+        /// <param name="UID">触发的UID</param>
+        /// <param name="RoomId">触发的房间号</param>
+        public void ManuallyTriggerRecord(long UID = 0, long RoomId = 0)
+        {
+            if (UID != 0)
+            {
+                RoomCardClass Card = new();
+                if (_Room.GetCardForUID(UID, ref Card))
+                {
+                    if (LiveStart != null)
+                    {
+                        LiveStart.Invoke(true, Card);
+                        return;
+                    }
+                }
+            }
+            if (RoomId != 0)
+            {
+                RoomCardClass Card = new();
+                if (_Room.GetCardFoRoomId(RoomId, ref Card))
+                {
+                    if (LiveStart != null)
+                    {
+                        LiveStart.Invoke(true, Card);
+                        return;
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Private Method
@@ -53,7 +93,6 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         private async Task RoomLoopDetection()
         {
-            bool FirstTime = true;
             while (true)
             {
                 try
@@ -72,12 +111,14 @@ namespace Core.RuntimeObject
                             if (Card.live_status_start_event && Card.live_status.Value == 1)
                             {
                                 Card.live_status_start_event = false;
-                                LiveStart.Invoke(FirstTime ? true : false, Card);
+                                if (LiveStart != null)
+                                    LiveStart.Invoke(true, Card);
                             }
                             if (Card.live_status_end_event && Card.live_status.Value != 1)
                             {
                                 Card.live_status_end_event = false;
-                                LiveEnd.Invoke(FirstTime ? true : false, Card);
+                                 if (LiveEnd != null)
+                                    LiveEnd.Invoke(true, Card);
                             }
                         }
                         await Task.Delay(Config.Core._DetectIntervalTime);

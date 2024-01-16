@@ -65,6 +65,10 @@ namespace Core.RuntimeObject
                 {
                     _count.Add(item);
                     roomCard.IsAutoRec = State;
+                    if (State && roomCard.live_status.Value == 1 && Detect.detectRoom.State)
+                    {
+                        Detect.detectRoom.ManuallyTriggerRecord(item);
+                    }
                 }
             }
             return _count;
@@ -119,28 +123,63 @@ namespace Core.RuntimeObject
         /// <summary>
         /// 获得房间列表字典的克隆轻备份
         /// </summary>
-        /// <param name="type">返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="type">返回数据类型</param>
+        /// <param name="Nickname">搜索的昵称含有对应字符串的对象</param>
         /// <returns></returns>
-        public static Dictionary<long, RoomCardClass> GetCardListClone(int type = 0)
+        public static Dictionary<long, RoomCardClass> GetCardListClone(SearchType type = SearchType.All, string Screen = "")
         {
+            Dictionary<long, RoomCardClass> keyValuePairs = new();
             switch (type)
             {
-                case 1:
-                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby));
-                case 2:
-                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1));
-                case 3:
-                    return new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value != 1));
+                //录制中
+                case SearchType.RecordingInProgress:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby));
+                    break;
+                //开播中的；默认按照【录制中的】>【打开自动录制】>【打开开播提醒】>【其他】排序
+                case SearchType.LiveStreamingInProgress:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1));
+                    keyValuePairs = keyValuePairs
+                        .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
+                        .ThenByDescending(x => x.Value.IsAutoRec)
+                        .ThenByDescending(x => x.Value.IsRemind)
+                        .ToDictionary(x => x.Key, x => x.Value);
+                    break;
+                //未开播的；默认按照【打开自动录制】>【打开开播提醒】>【其他】排序
+                case SearchType.NotLiveStream:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value != 1));
+                    keyValuePairs = keyValuePairs
+                        .OrderByDescending(x => x.Value.IsAutoRec)
+                        .ThenByDescending(x => x.Value.IsRemind)
+                        .ToDictionary(x => x.Key, x => x.Value);
+                    break;
+                //开播但未打开录制的；
+                case SearchType.LiveButNotRecord:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1 && !x.Value.IsAutoRec));
+                    break;
+                //其他，返回全部；默认按照【录制中】>【开播中】>【打开自动录制】>【打开开播提醒】>【其他】排序
                 default:
-                    var sortedRoomInfos = roomInfos
+                    keyValuePairs = roomInfos
                         .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
                         .ThenByDescending(x => x.Value.live_status.Value == 1)
+                        .ThenByDescending(x => x.Value.IsAutoRec)
+                        .ThenByDescending(x => x.Value.IsRemind)
                         .ToDictionary(x => x.Key, x => x.Value);
-
-                    return new Dictionary<long, RoomCardClass>(sortedRoomInfos);
+                    break;
             }
-            
+            //如果昵称字符串部位空，搜索昵称符合条件的人返回；按照【录制中】>【开播中】>【打开自动录制】>【打开开播提醒】>【其他】排序
+            if (!string.IsNullOrEmpty(Screen))
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.Contains(Screen)).ToDictionary(x => x.Key, x => x.Value);
+                keyValuePairs = keyValuePairs
+                      .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
+                      .ThenByDescending(x => x.Value.live_status.Value == 1)
+                      .ThenByDescending(x => x.Value.IsAutoRec)
+                      .ThenByDescending(x => x.Value.IsRemind)
+                      .ToDictionary(x => x.Key, x => x.Value);
+            }
+            return keyValuePairs;
         }
+
         /// <summary>
         /// 获得房间列表字典的深度克隆
         /// </summary>
@@ -157,7 +196,7 @@ namespace Core.RuntimeObject
         /// <param name="UID">用户的Uid</param>
         /// <param name="value">要设置的RoomCard值</param>
         /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
-        public static bool SetRoomCardByUid(long UID, RoomCardClass value)
+        internal static bool SetRoomCardByUid(long UID, RoomCardClass value)
         {
             lock (RoomCardLock)
             {
@@ -219,7 +258,29 @@ namespace Core.RuntimeObject
             return (State, Message);
         }
 
-
+        public enum SearchType
+        {
+            /// <summary>
+            /// 全部
+            /// </summary>
+            All,
+            /// <summary>
+            /// 录制中
+            /// </summary>
+            RecordingInProgress,
+            /// <summary>
+            /// 开播中
+            /// </summary>
+            LiveStreamingInProgress,
+            /// <summary>
+            /// 未直播
+            /// </summary>
+            NotLiveStream,
+            /// <summary>
+            /// 开但未录制
+            /// </summary>
+            LiveButNotRecord
+        }
     }
 
 
@@ -472,7 +533,7 @@ namespace Core.RuntimeObject
                             Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
                             live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                            live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },                       
+                            live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
                             short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area_name = new() { Value = data.area_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -504,12 +565,12 @@ namespace Core.RuntimeObject
                         OldCard.RoomId = data.room_id;
                         OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
 
-                        if(OldCard.live_status.Value!=1 && data.live_status ==1)
+                        if (OldCard.live_status.Value != 1 && data.live_status == 1)
                         {
                             //触发开播事件
                             OldCard.live_status_start_event = true;
                         }
-                        else if(OldCard.live_status.Value==1 && data.live_status !=1)
+                        else if (OldCard.live_status.Value == 1 && data.live_status != 1)
                         {
                             //触发下播事件
                             OldCard.live_status_end_event = true;
@@ -595,7 +656,7 @@ namespace Core.RuntimeObject
                             //触发开播事件
                             OldCard.live_status_start_event = true;
                         }
-                        else if(OldCard.live_status.Value==1 && roomInfo.data.live_status !=1)
+                        else if (OldCard.live_status.Value == 1 && roomInfo.data.live_status != 1)
                         {
                             //触发下播事件
                             OldCard.live_status_end_event = true;
