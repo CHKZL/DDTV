@@ -3,6 +3,7 @@ using Core.Network.Methods;
 using Masuit.Tools;
 using Masuit.Tools.Hardware;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -14,7 +15,7 @@ namespace Core.RuntimeObject
 {
     public class _Room
     {
-        private static Dictionary<long, RoomCardClass> roomInfos = new Dictionary<long, RoomCardClass>();
+        private static ConcurrentDictionary<long, RoomCardClass> roomInfos = new ConcurrentDictionary<long, RoomCardClass>();
         /// <summary>
         /// 通过UID获取房间卡
         /// </summary>
@@ -116,7 +117,7 @@ namespace Core.RuntimeObject
             return _count;
         }
 
-        public static Dictionary<long, RoomCardClass> GetCardList()
+        public static ConcurrentDictionary<long, RoomCardClass> GetCardList()
         {
             return roomInfos;
         }
@@ -184,7 +185,7 @@ namespace Core.RuntimeObject
         /// 获得房间列表字典的深度克隆
         /// </summary>
         /// <returns></returns>
-        public static Dictionary<long, RoomCardClass> GetCardListDeepClone()
+        public static ConcurrentDictionary<long, RoomCardClass> GetCardListDeepClone()
         {
             return roomInfos.DeepClone();
         }
@@ -208,7 +209,8 @@ namespace Core.RuntimeObject
                         return true;
                     }
                 }
-                roomInfos.Add(UID, value);
+
+                roomInfos.TryAdd(UID, value);
                 return true;
             }
         }
@@ -255,6 +257,107 @@ namespace Core.RuntimeObject
                 State = 4;
                 Message = "参数有误";
             }
+            return (State, Message);
+        }
+
+        public static (bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
+        {
+            bool State = false;
+            string Message = "传入参数有误";
+            RoomCardClass roomCard = new();
+            if (UID != 0 || RoomId != 0)
+            {
+                if ((UID != 0 && GetCardForUID(UID, ref roomCard)) || (RoomId != 0 && GetCardFoRoomId(RoomId, ref roomCard)))
+                {
+                    RoomCardClass roomCardClass = new();
+                    if (roomInfos.TryRemove(roomCard.UID, out roomCardClass))
+                    {
+                        Message = "删除成功";
+                    }
+                    else
+                    {
+                        Message = "房间不存在1";
+                    }
+                }
+                else
+                {
+                    Message = "房间不存在2";
+                }
+            }
+            return (State, Message);
+        }
+
+
+
+        /// <summary>
+        /// 取消录制（UID和房间号二选一即可）
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="RoomId"></param>
+        public static (bool State, string Message) CancelTask(long UID = 0, long RoomId = 0)
+        {
+            RoomCardClass roomCardClass = new();
+            bool State = false;
+            string Message = "传入参数有误";
+            if (UID != 0 || RoomId != 0)
+            {
+                if (UID != 0 ? GetCardForUID(UID, ref roomCardClass) : GetCardFoRoomId(RoomId, ref roomCardClass))
+                {
+                    if (roomCardClass.DownInfo.IsDownload)
+                    {
+                        roomCardClass.DownInfo.Unmark = true;
+                        State = true;
+                        Message = "取消请求已触发";
+                    }
+                    else
+                    {
+                        State = false;
+                        Message = "该直播间目前没有录制任务";
+                    }
+                }
+                else
+                {
+                    State = false;
+                    Message = "该直播间不存在";
+                }
+            }
+            return (State, Message);
+        }
+
+        /// <summary>
+        /// 新增录制任务（UID和房间号二选一即可）
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="RoomId"></param>
+        public static (bool State, string Message) AddTask(long UID = 0, long RoomId = 0)
+        {
+            RoomCardClass roomCardClass = new();
+            bool State = false;
+            string Message = "传入参数有误";
+
+            if (UID != 0 || RoomId != 0)
+            {
+                if (UID != 0 ? GetCardForUID(UID, ref roomCardClass) : GetCardFoRoomId(RoomId, ref roomCardClass))
+                {
+                    if (!roomCardClass.DownInfo.IsDownload)
+                    {
+                        RuntimeObject.Detect.detectRoom.ManuallyTriggerRecord(roomCardClass.UID);
+                        State = true;
+                        Message = "取消请求已触发";
+                    }
+                    else
+                    {
+                        State = false;
+                        Message = "该直播间目前已有录制任务进行中";
+                    }
+                }
+                else
+                {
+                    State = false;
+                    Message = "该直播间不存在";
+                }
+            }
+
             return (State, Message);
         }
 
@@ -996,6 +1099,10 @@ namespace Core.RuntimeObject
             /// 任务结束时间
             /// </summary>
             public DateTime EndTime = DateTime.UnixEpoch;
+            /// <summary>
+            /// 取消录制标记
+            /// </summary>
+            public bool Unmark = false;
             public DownloadInfo Clone()
             {
                 return new DownloadInfo
@@ -1099,7 +1206,7 @@ namespace Core.RuntimeObject
             /// </summary>
             DownloadComplete,
             /// <summary>
-            /// 取消下载
+            /// 取消下载中
             /// </summary>
             Cancel,
             /// <summary>
