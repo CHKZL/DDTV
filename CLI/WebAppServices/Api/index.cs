@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace CLI.WebAppServices.Api
     /// </summary>
     [Route("webui")]
     [ApiController]
+    [Tags("index")]
     public class webui : ControllerBase
     {
         /// <summary>
@@ -30,6 +32,7 @@ namespace CLI.WebAppServices.Api
     /// </summary>
     [Route("/")]
     [ApiController]
+    [Tags("index")]
     public class index : ControllerBase
     {
         /// <summary>

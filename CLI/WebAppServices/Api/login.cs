@@ -1,5 +1,6 @@
 ﻿using CLI.WebAppServices.Middleware;
 using Masuit.Tools;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Tags("login")]
     public class get_login_qr : ControllerBase
     {
         /// <summary>
@@ -50,6 +52,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/login/[controller]")]
+    [Tags("login")]
     public class get_login_url : ControllerBase
     {
         /// <summary>
@@ -84,6 +87,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/login/[controller]")]
     [Login]
+    [Tags("login")]
     public class use_agree : ControllerBase
     {
         /// <summary>
@@ -110,6 +114,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/login/[controller]")]
     [Login]
+    [Tags("login")]
     public class re_login : ControllerBase
     {
         /// <summary>
@@ -127,6 +132,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/login/[controller]")]
     [Login]
+    [Tags("login")]
     public class use_agree_state : ControllerBase
     {
         /// <summary>
@@ -143,6 +149,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/login/[controller]")]
     [Login]
+    [Tags("login")]
     public class get_login_status : ControllerBase
     {
         /// <summary>

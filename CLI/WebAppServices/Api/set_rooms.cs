@@ -1,6 +1,7 @@
 ﻿using CLI.WebAppServices.Middleware;
 using Core.LogModule;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -21,6 +22,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
+    [Tags("set_rooms")]
     public class modify_recording_settings : ControllerBase
     {
         /// <summary>
@@ -45,6 +47,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
+    [Tags("set_rooms")]
     public class modify_room_prompt_settings : ControllerBase
     {
         /// <summary>
@@ -69,6 +72,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
+    [Tags("set_rooms")]
     public class modify_room_dm_settings : ControllerBase
     {
         /// <summary>
@@ -91,6 +95,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
+    [Tags("set_rooms")]
     public class add_room : ControllerBase
     {
         /// <summary>
@@ -116,6 +121,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
+    [Tags("set_rooms")]
     public class del_room : ControllerBase
     {
         /// <summary>
