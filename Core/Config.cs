@@ -1,27 +1,12 @@
 ﻿using Core.LogModule;
-using Core.Network.Methods;
 using Core.RuntimeObject;
-using Masuit.Tools;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Ini;
-using Microsoft.Extensions.FileProviders;
-using Newtonsoft.Json.Linq;
-using SharpCompress.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Core.Tools;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
-using System.Threading.Tasks;
-using static Core.Network.Methods.Room;
-using static Core.RuntimeObject.RoomInfo;
 
 namespace Core
 {
@@ -214,7 +199,8 @@ namespace Core
                 {
                     RoomListDiscard roomListDiscard = new RoomListDiscard();
                     var roomInfos = _Room.GetCardListClone();
-                    foreach (var item in roomInfos)
+                    var sorted = roomInfos.OrderBy(item => item.Key);
+                    foreach (var item in sorted)
                     {
                         roomListDiscard.data.Add(item.Value);
                     }
@@ -229,7 +215,9 @@ namespace Core
                     if (File.Exists(filePath))
                     {
                         string existingContent = File.ReadAllText(filePath, Encoding.UTF8);
-                        if (existingContent == jsonString)
+                        string oldmd5 = Encryption.Md532(existingContent);
+                        string newmd5 = Encryption.Md532(jsonString);
+                        if (oldmd5 == newmd5)
                         {
                             // 如果文件中的内容与即将写入的内容一致，则跳过写入
                             return;
