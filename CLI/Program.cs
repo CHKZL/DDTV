@@ -7,6 +7,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Core;
 
 namespace CLI
 {
@@ -41,7 +42,7 @@ namespace CLI
                 options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
             });
             builder.Services.AddMvc();
-            
+
 
             var app = builder.Build();
             app.UseSwagger();
@@ -53,8 +54,13 @@ namespace CLI
             app.MapControllers();
             app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Environment.CurrentDirectory + @"/static")),
+                FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),
                 RequestPath = ""
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
+                RequestPath = Config.Web._RecordingStorageDirectory
             });
             string rurl = $"http://0.0.0.0:11419";
             app.Urls.Add(rurl);
