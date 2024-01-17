@@ -1,4 +1,5 @@
 ﻿using CLI.WebAppServices.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/[controller]")]
     [Login]
+    [Tags("dokidoki")]
     public class dokidoki : ControllerBase
     {
         /// <summary>

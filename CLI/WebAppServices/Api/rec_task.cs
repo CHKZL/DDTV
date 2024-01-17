@@ -1,4 +1,5 @@
 ﻿using CLI.WebAppServices.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/rec_task/[controller]")]
     [Login]
+    [Tags("rec_task")]
     public class cancel_task : ControllerBase
     {
         /// <summary>
@@ -35,6 +37,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/rec_task/[controller]")]
     [Login]
+    [Tags("rec_task")]
     public class single_record : ControllerBase
     {
         /// <summary>

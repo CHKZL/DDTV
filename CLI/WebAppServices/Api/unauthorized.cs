@@ -1,4 +1,5 @@
 ﻿using CLI.WebAppServices.Middleware;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace CLI.WebAppServices.Api
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/[controller]")]
+    [Tags("unauthorized")]
     public class unauthorized : ControllerBase
     {
         /// <summary>

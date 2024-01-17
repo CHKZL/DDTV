@@ -3,6 +3,7 @@ using Core.LogModule;
 using Core.Network.Methods;
 using Core.RuntimeObject;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections;
@@ -24,6 +25,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
+    [Tags("get_rooms")]
     public class room_information : ControllerBase
     {
         /// <summary>
@@ -59,6 +61,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
+    [Tags("get_rooms")]
     public class batch_complete_room_information : ControllerBase
     {
         /// <summary>
@@ -234,6 +237,7 @@ namespace CLI.WebAppServices.Api
     [ApiController]
     [Route("api/get_rooms/[controller]")]
     [Login]
+    [Tags("get_rooms")]
     public class batch_basic_room_information : ControllerBase
     {
         /// <summary>
