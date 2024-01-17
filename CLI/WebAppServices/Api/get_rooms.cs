@@ -126,7 +126,7 @@ namespace CLI.WebAppServices.Api
                 }
                 else
                 {
-                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity + quantity; i++)
+                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity; i++)
                     {
                         Data.CompleteInfo completeInfo = new Data.CompleteInfo();
                         completeInfo.userInfo = new()
@@ -282,7 +282,7 @@ namespace CLI.WebAppServices.Api
                 }
                 else
                 {
-                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity + quantity; i++)
+                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity; i++)
                     {
                         Data.BasicInfo basicInfo = new Data.BasicInfo();
                         basicInfo.userInfo = new()
