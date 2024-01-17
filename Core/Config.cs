@@ -116,8 +116,7 @@ namespace Core
                         newConfig.AppendLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
-
-                string existingConfig = File.ReadAllText(Core._ConfigurationFile);
+                string existingConfig = File.Exists(Core._ConfigurationFile) ? File.ReadAllText(Core._ConfigurationFile) : string.Empty;
                 if (existingConfig != newConfig.ToString())
                 {
                     using (StreamWriter file = new StreamWriter(Core._ConfigurationFile))
@@ -329,6 +328,8 @@ namespace Core
                 get => $"{_ConfigDirectory}{RoomConfigFile}";
             }
 
+
+
             private static string ConfigDirectory = "./Config/";
             /// <summary>
             /// 配置文件路径（字符串）
@@ -397,6 +398,14 @@ namespace Core
             public static string _RecFileDirectory
             {
                 get => RecFileDirectory;
+                set
+                {
+                    if (value != RecFileDirectory)
+                    {
+                        RecFileDirectory = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
             }
 
             private static string TemporaryFileDirectory = "./Temporary/";
@@ -515,6 +524,26 @@ namespace Core
 
         public class Web
         {
+            private static string RecordingStorageDirectory = "/rec_file";
+            /// <summary>
+            /// Web返回录制文件的相对根路径（字符串）
+            /// 默认值：/rec_file
+            /// </summary>
+            public static string _RecordingStorageDirectory
+            {
+                get => RecordingStorageDirectory;
+            }
+
+            private static string WebUiDirectory = "./static/";
+            /// <summary>
+            /// WebUi文件路径（字符串）
+            /// 默认值：./static/
+            /// </summary>
+            public static string _WebUiDirectory
+            {
+                get => WebUiDirectory;
+            }
+
             private static string AccessControlAllowCredentials = "true";
             /// <summary>
             /// WEB的Credentials设置 (布尔值)

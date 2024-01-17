@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Core.Tools
@@ -80,6 +81,56 @@ namespace Core.Tools
                 });
             }
             _DelFileList.Add(Path);
+        }
+        /// <summary>
+        /// 获取目标路径的文件结构和信息
+        /// </summary>
+        public class DirectoryHelper
+        {
+            public static DirectoryNode GetDirectoryStructure(string directoryPath)
+            {
+                DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
+                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName,directoryPath);
+                return directoryStructure;
+            }
+
+            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath,string directoryPath)
+            {
+                var directoryNode = new DirectoryNode
+                {
+                    Name = directoryInfo.Name,
+                    Type = "folder"
+                };
+
+                foreach (var file in directoryInfo.GetFiles())
+                {
+                    directoryNode.Children.Add(new DirectoryNode
+                    {
+                        Name = file.Name,
+                        Type = "file",
+                        Size = file.Length,
+                        RelativePath = Config.Web._RecordingStorageDirectory + "/" + file.FullName.Replace(rootPath, "").Replace("\\", "/"),
+                        Extension = file.Extension
+                    });
+                }
+
+                foreach (var directory in directoryInfo.GetDirectories())
+                {
+                    directoryNode.Children.Add(GetDirectoryStructure(directory,rootPath, directoryPath));
+                }
+
+                return directoryNode;
+            }
+        }
+
+        public class DirectoryNode
+        {
+            public string Name { get; set; }
+            public string Type { get; set; }
+            public long? Size { get; set; }
+            public string RelativePath { get; set; }
+            public string Extension { get; set; }
+            public List<DirectoryNode> Children { get; set; } = new List<DirectoryNode>();
         }
     }
 }
