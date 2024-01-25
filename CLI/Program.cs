@@ -17,7 +17,7 @@ namespace CLI
         {
             //注册DDTV主要服务
             Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
-
+            Thread.Sleep(1000*3);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
             builder.Logging.AddFilter((category, level) =>
             {

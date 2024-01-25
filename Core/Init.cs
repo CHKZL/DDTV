@@ -19,6 +19,7 @@ namespace Core
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+            Config.ReadConfiguration();
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
