@@ -243,6 +243,44 @@ namespace Core
 
         public class Core
         {
+            private static string DefaultFilePathNameFormat = "{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}";
+            /// <summary>
+            /// 保存的文件以怎样的路径和名称格式保存在录制文件夹中
+            /// 默认值：{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}    (默认值例：2233_哔哩哔哩弹幕网/标题名称_2024_01_27_19_46_58_122)；文件名会固定以[_original.mp4]或[_fix.mp4]结尾，具体是哪个取决于[AutomaticRepair]配置状态
+            /// 支持的配置项：房间号{ROOMID}、昵称{NAME}、日期(年_月_日){DATE}、时间(时_分_秒){TIME}、标题{TITLE})、年(2012和12){yyyy和yy}、时{HH}、分{mm}、秒{ss}、毫秒{fff}
+            /// </summary>
+            public static string _DefaultFilePathNameFormat
+            {
+                get => DefaultFilePathNameFormat;
+                set
+                {
+                    if (value != DefaultFilePathNameFormat)
+                    {
+                        DefaultFilePathNameFormat = value;
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
+            }
+
+            private static string AutomaticRepair = "true";
+            /// <summary>
+            /// 录制完成自动修复和转码设置
+            /// 默认值：true
+            /// </summary>
+            public static bool _AutomaticRepair
+            {
+                get => bool.Parse(AutomaticRepair);
+                set
+                {
+                    if (value.ToString() != AutomaticRepair)
+                    {
+                        AutomaticRepair = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
+            }
+
+
             private static string ApiPort = "11419";
             /// <summary>
             /// Api提供的端口地址
