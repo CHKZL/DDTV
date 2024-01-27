@@ -13,7 +13,7 @@ namespace Core
         public static string Ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString();
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
-        public static string CompiledVersion = "2024-01-27 20:20:36";
+        public static string CompiledVersion = "2024-01-28 00:38:03";
         public static bool IsDevDebug = false;
         public static void Start()
         {
@@ -30,7 +30,6 @@ namespace Core
             Log.Info(nameof(Init),$"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init),$"检查和创建必要的目录");
             Log.Info(nameof(Init),$"初始化ServicePointManager对象");
-            Config.ReadConfiguration();
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
             Core.RuntimeObject.Account.CheckLoginStatus();
