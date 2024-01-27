@@ -2,6 +2,7 @@
 using Core.Network.Methods;
 using Masuit.Tools;
 using SharpCompress.Common;
+using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -254,9 +255,17 @@ namespace Core.RuntimeObject
                     InitializeDownload(card);
                     string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                     long roomId = card.RoomId;
-                    string dirName = $"{Config.Core._RecFileDirectory}{card.RoomId}-{RoomInfo.GetNickname(card.UID)}";
-                    CreateDirectoryIfNotExists(dirName);
-                    File = $"{dirName}/{title}_{DateTime.Now:yyyyMMdd_HHmmss}_{new Random().Next(100, 999)}_original.mp4";
+                    string File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.mp4";
+                    CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
+                    Thread.Sleep(5);
+                    if (Core.Config.Core._AutomaticRepair)
+                    {
+                        card.DownInfo.DownloadFileList.VideoFile.Add(File.Replace("_original.mp4", "_fix.mp4"));
+                    }
+                    else
+                    {
+                        card.DownInfo.DownloadFileList.VideoFile.Add(File);
+                    }
                     using (FileStream fs = new FileStream(File, FileMode.Append))
                     {
                         int hlsErrorCount = 0;
@@ -267,7 +276,7 @@ namespace Core.RuntimeObject
                             hlsErrorCount = HandleHlsError(hlsErrorCount, card, roomId, hostClass);
                             if (hlsErrorCount == -1 || card.DownInfo.Unmark)
                             {
-                                isSuccess = CheckAndHandleFile(File);
+                                isSuccess = CheckAndHandleFile(File, ref card);
                                 return;
                             }
                         }
@@ -282,7 +291,7 @@ namespace Core.RuntimeObject
                             {
                                 if (card.DownInfo.Unmark)
                                 {
-                                    isSuccess = CheckAndHandleFile(File);
+                                    isSuccess = CheckAndHandleFile(File,ref card);
                                     return;
                                 }
                                 bool isHlsHostAvailable = RefreshHostClass(card, ref hostClass);
@@ -291,7 +300,7 @@ namespace Core.RuntimeObject
                                     hlsErrorCount = HandleHostRefresh(hlsErrorCount, card, roomId, ref hostClass, File);
                                     if (hlsErrorCount == -1)
                                     {
-                                        isSuccess = CheckAndHandleFile(File);
+                                        isSuccess = CheckAndHandleFile(File, ref card);
                                         return;
                                     }
                                 }
@@ -316,7 +325,7 @@ namespace Core.RuntimeObject
                                     {
                                         if (InitialRequest)
                                         {
-                                            isSuccess = CheckAndHandleFile(File);
+                                            isSuccess = CheckAndHandleFile(File,ref card);
                                             isSuccess = false;
                                             if (!card.DownInfo.Unmark)
                                                 Thread.Sleep(1000 * 10);
@@ -350,7 +359,8 @@ namespace Core.RuntimeObject
                         }
                     }
                 });
-                return (DownloadCompletedReset(isSuccess, ref card), File);
+                card.DownInfo.DownloadSize = 0;
+                return (isSuccess, File);
             }
 
             /// <summary>
@@ -358,20 +368,27 @@ namespace Core.RuntimeObject
             /// </summary>
             /// <param name="File">文件名</param>
             /// <returns>是否成功</returns>
-            private static bool CheckAndHandleFile(string File)
+            private static bool CheckAndHandleFile(string File, ref RoomCardClass card)
             {
-                System.IO.FileInfo fileInfo = new(File);
-                //文件大于3MB返回true，小于3MB当作无效录制，删除文件并返回false
-                if (fileInfo.Length > 10 * 1024 * 1024)
+                const long FileSizeThreshold = 10 * 1024 * 1024; // 10MB
+                bool fileExists = System.IO.File.Exists(File);
+                if (fileExists)
                 {
-                    return true;
+                    System.IO.FileInfo fileInfo = new(File);
+                    if (fileInfo.Length > FileSizeThreshold)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        Tools.FileOperations.Delete(File);
+                    }
                 }
-                else
-                {
-                    Tools.FileOperations.Delete(File);
-                    return false;
-                }
+                card.DownInfo.DownloadFileList.VideoFile.RemoveAt(card.DownInfo.DownloadFileList.VideoFile.Count - 1);
+                return false;
             }
+
+
 
             /// <summary>
             /// 处理Host刷新
@@ -389,7 +406,8 @@ namespace Core.RuntimeObject
                     if (!GetHlsHost_avc(card, ref hostClass) && !RoomInfo.GetLiveStatus(card.RoomId))
                     {
                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]刷新Host时发现直播间已下播");
-                        if (CheckAndHandleFile(File)) return -1;
+                        //if (CheckAndHandleFile(File, ref card))
+                        return -1;
                     }
                     else
                     {
@@ -541,21 +559,6 @@ namespace Core.RuntimeObject
 
             #region Private Method
 
-            /// <summary>
-            /// 下载完成重置房间卡状态
-            /// </summary>
-            /// <param name="roomCard"></param>
-            private static bool DownloadCompletedReset(bool NormalEnd, ref RoomCardClass roomCard)
-            {
-                Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
-                roomCard.DownInfo.DownloadSize = 0;
-                roomCard.DownInfo.RealTimeDownloadSpe = 0;
-
-                roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;
-                roomCard.DownInfo.EndTime = DateTime.Now;
-                _Room.SetRoomCardByUid(roomCard.UID, roomCard);
-                return NormalEnd;
-            }
 
 
             /// <summary>

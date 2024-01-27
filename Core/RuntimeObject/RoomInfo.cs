@@ -1103,6 +1103,20 @@ namespace Core.RuntimeObject
             /// 取消录制标记
             /// </summary>
             public bool Unmark = false;
+            /// <summary>
+            /// 该录制任务的文件名缓存
+            /// </summary>
+            public DownloadFile DownloadFileList = new();
+
+            public class DownloadFile
+            {
+                public List<string> VideoFile { get; set; } = new();
+                public List<string> DanmuFile { get; set; } = new();
+                public List<string> SCFile { get; set; } = new();
+                public List<string> GiftFile { get; set; } = new();
+                public List<string> GuardFile { get; set; } = new();
+            }
+
             public DownloadInfo Clone()
             {
                 return new DownloadInfo
@@ -1113,6 +1127,8 @@ namespace Core.RuntimeObject
                     Status = this.Status,
                     StartTime = this.StartTime,
                     EndTime = this.EndTime,
+                    Unmark = this.Unmark,
+                    DownloadFileList = this.DownloadFileList,
                 };
             }
         }

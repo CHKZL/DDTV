@@ -49,9 +49,6 @@ namespace Core.RuntimeObject
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
             }
-#if DEBUG
-            return;
-#endif
 
             if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
             {
@@ -77,14 +74,14 @@ namespace Core.RuntimeObject
                     }
                     else
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制进程退出，但检测到房间还在开播状态，尝试重连...");
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})弹幕录制进程被服务器终止，但检测到房间还在开播状态，尝试重连...");
                     }
                     var result = await Download.File.DlwnloadHls_avc_mp4(e);
                     if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
                     {
-                        Danmu.SevaDanmu(liveChatListener);
+                        Danmu.SevaDanmu(liveChatListener,ref e);
                     }
-                    if (result.isSuccess)
+                    if (result.isSuccess && Core.Config.Core._AutomaticRepair)
                     {
                         Core.Tools.Transcode transcode = new Core.Tools.Transcode();
                         try
@@ -98,6 +95,7 @@ namespace Core.RuntimeObject
                     }
                 }
                 while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
+                DownloadCompletedReset(ref e);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                 e.DownInfo.Unmark = false;
                 e.DownInfo.IsDownload = false;
@@ -121,6 +119,21 @@ namespace Core.RuntimeObject
 
             }
 
+        }
+
+        /// <summary>
+        /// 下载完成重置房间卡状态
+        /// </summary>
+        /// <param name="roomCard"></param>
+        private static void DownloadCompletedReset(ref RoomCardClass roomCard)
+        {
+            Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
+
+            roomCard.DownInfo.RealTimeDownloadSpe = 0;
+            roomCard.DownInfo.DownloadSize = 0;
+            roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;
+            roomCard.DownInfo.EndTime = DateTime.Now;
+            _Room.SetRoomCardByUid(roomCard.UID, roomCard);
         }
 
         private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)

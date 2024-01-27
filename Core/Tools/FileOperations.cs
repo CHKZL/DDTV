@@ -1,15 +1,22 @@
 ﻿using Core.LogModule;
+using Core.RuntimeObject;
+using Masuit.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Core.Network.Methods.Room;
 
 namespace Core.Tools
 {
     public class FileOperations
     {
+
+
+
         /// <summary>
         /// 异步循环递归删除文件
         /// </summary>
@@ -90,11 +97,11 @@ namespace Core.Tools
             public static DirectoryNode GetDirectoryStructure(string directoryPath)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
-                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName,directoryPath);
+                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName, directoryPath);
                 return directoryStructure;
             }
 
-            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath,string directoryPath)
+            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath)
             {
                 var directoryNode = new DirectoryNode
                 {
@@ -116,7 +123,7 @@ namespace Core.Tools
 
                 foreach (var directory in directoryInfo.GetDirectories())
                 {
-                    directoryNode.Children.Add(GetDirectoryStructure(directory,rootPath, directoryPath));
+                    directoryNode.Children.Add(GetDirectoryStructure(directory, rootPath, directoryPath));
                 }
 
                 return directoryNode;
