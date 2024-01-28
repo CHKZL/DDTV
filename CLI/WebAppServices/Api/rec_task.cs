@@ -41,7 +41,7 @@ namespace CLI.WebAppServices.Api
     public class single_record : ControllerBase
     {
         /// <summary>
-        /// 手动增加一个录制任务(UID和房间号二选一)
+        /// 手动增加一个录制任务(UID和房间号二选一)，如果直播还未开始，则预约下一场开始的直播（如果主播中途下播再上播则不会再次录制）
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="uid"></param>

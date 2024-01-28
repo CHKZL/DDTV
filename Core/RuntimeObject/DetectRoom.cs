@@ -31,6 +31,7 @@ namespace Core.RuntimeObject
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
+           
             List<TriggerType> triggerTypes = sender as List<TriggerType>;
             if (triggerTypes == null)
             {
@@ -50,8 +51,9 @@ namespace Core.RuntimeObject
                 Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
             }
 
-            if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
+            if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || e.AppointmentRecord)
             {
+                e.AppointmentRecord = false;
                 if (e.DownInfo.IsDownload)
                 {
                     Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
@@ -308,17 +310,15 @@ namespace Core.RuntimeObject
         /// <param name="UID">触发的UID</param>
         public void ManuallyTriggerRecord(long UID = 0)
         {
-            if (UID != 0)
+            RoomCardClass Card = new();
+            if (UID != 0 && _Room.GetCardForUID(UID, ref Card) && LiveStart != null)
             {
-                RoomCardClass Card = new();
-                if (_Room.GetCardForUID(UID, ref Card))
+                Card.AppointmentRecord = true;
+                if(RoomInfo.GetLiveStatus(Card.UID))
                 {
-                    if (LiveStart != null)
-                    {
-                        LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
-                        return;
-                    }
-                }
+                    LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
+                }               
+                return;
             }
         }
         #endregion

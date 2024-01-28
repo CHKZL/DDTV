@@ -171,6 +171,7 @@ namespace Core
                                     roomCard.IsRecDanmu = item.IsRecDanmu;
                                     roomCard.Like = item.Like;
                                     roomCard.Shell = item.Shell;
+                                    roomCard.AppointmentRecord = item.AppointmentRecord;
                                 }
                                 else
                                 {
