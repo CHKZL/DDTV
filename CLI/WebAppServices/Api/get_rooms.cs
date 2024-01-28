@@ -97,7 +97,8 @@ namespace CLI.WebAppServices.Api
                             name = room.Value.Name,
                             sex = room.Value.sex.Value,
                             sign = room.Value.sign.Value,
-                            uid = room.Value.UID
+                            uid = room.Value.UID,
+                            appointmentRecord = room.Value.AppointmentRecord,
                         };
                         completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
                         {
@@ -141,7 +142,8 @@ namespace CLI.WebAppServices.Api
                             name = roomList.ElementAt(i).Value.Name,
                             sex = roomList.ElementAt(i).Value.sex.Value,
                             sign = roomList.ElementAt(i).Value.sign.Value,
-                            uid = roomList.ElementAt(i).Value.UID
+                            uid = roomList.ElementAt(i).Value.UID,
+                            appointmentRecord=roomList.ElementAt(i).Value.AppointmentRecord
                         };
                         completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
                         {
@@ -200,6 +202,7 @@ namespace CLI.WebAppServices.Api
                     public bool isRecDanmu { get; set; }
                     public string sex { get; set; }
                     public string sign { get; set; }
+                    public bool appointmentRecord {  get; set; }
                 }
                 public class RoomInfo
                 {
@@ -267,7 +270,8 @@ namespace CLI.WebAppServices.Api
                         basicInfo.userInfo = new()
                         {
                             name = room.Value.Name,
-                            uid = room.Value.UID
+                            uid = room.Value.UID,
+                            appointmentRecord=room.Value.AppointmentRecord,
                         };
                         basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
                         {
@@ -292,7 +296,8 @@ namespace CLI.WebAppServices.Api
                         basicInfo.userInfo = new()
                         {
                             name = roomList.ElementAt(i).Value.Name,
-                            uid = roomList.ElementAt(i).Value.UID
+                            uid = roomList.ElementAt(i).Value.UID,
+                            appointmentRecord=roomList.ElementAt(i).Value.AppointmentRecord
                         };
                         basicInfo.roomInfo = new Data.BasicInfo.RoomInfo()
                         {
@@ -335,6 +340,7 @@ namespace CLI.WebAppServices.Api
                 {
                     public string name { get; set; }
                     public long uid { get; set; }
+                    public bool appointmentRecord {  get; set; }
                 }
                 public class RoomInfo
                 {

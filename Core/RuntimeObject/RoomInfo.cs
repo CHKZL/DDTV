@@ -303,18 +303,29 @@ namespace Core.RuntimeObject
             {
                 if (UID != 0 ? GetCardForUID(UID, ref roomCardClass) : GetCardFoRoomId(RoomId, ref roomCardClass))
                 {
+                    //如果有录制中的任务，取消当前任务，并且取消可能存在的预约直播
                     if (roomCardClass.DownInfo.IsDownload)
                     {
+                        roomCardClass.AppointmentRecord = false;//同时取消预约下一场直播
                         roomCardClass.DownInfo.Unmark = true;
                         State = true;
                         Message = "取消请求已触发";
                     }
+                    //如果当前没有录制，但是有预约，取消预约
+                    else if (roomCardClass.AppointmentRecord)
+                    {
+                        roomCardClass.AppointmentRecord = false;
+                        State = true;
+                        Message = "取消预约下一场直播的录制";
+                    }
+                    //没有录制中的，也没有预约
                     else
                     {
                         State = false;
                         Message = "该直播间目前没有录制任务";
                     }
                 }
+                //房间不存在
                 else
                 {
                     State = false;
@@ -343,7 +354,7 @@ namespace Core.RuntimeObject
                     {
                         RuntimeObject.Detect.detectRoom.ManuallyTriggerRecord(roomCardClass.UID);
                         State = true;
-                        Message = "取消请求已触发";
+                        Message = "录制请求已触发，如果当前直播间未开播，则默认预约下次单场直播";
                     }
                     else
                     {
@@ -902,12 +913,12 @@ namespace Core.RuntimeObject
         /// (Local值)
         /// </summary>
         public string Shell { set; get; } = "";
-        [JsonPropertyName("IsPersisting")]
+        [JsonPropertyName("AppointmentRecord")]
         /// <summary>
-        /// 是否持久化储存，用于判断是否需要写到房间配置文件
+        /// 是否预约下一次录制
         /// (Local值)
         /// </summary>
-        public bool IsPersisting { set; get; } = false;
+        public bool AppointmentRecord { set; get; } = false;
         /// <summary>
         /// 标题
         /// </summary>
@@ -1147,7 +1158,7 @@ namespace Core.RuntimeObject
                 IsRecDanmu = this.IsRecDanmu,
                 Like = this.Like,
                 Shell = this.Shell,
-                IsPersisting = this.IsPersisting,
+                AppointmentRecord = this.AppointmentRecord,
                 Title = this.Title.Clone(),
                 description = this.description.Clone(),
                 attention = this.attention.Clone(),
@@ -1186,7 +1197,9 @@ namespace Core.RuntimeObject
                 sign = this.sign.Clone(),
                 Host = this.Host.Clone(),
                 CurrentMode = this.CurrentMode,
-                DownInfo = this.DownInfo
+                DownInfo = this.DownInfo,
+                live_status_end_event=this.live_status_end_event,
+                live_status_start_event=this.live_status_start_event
             };
         }
 
