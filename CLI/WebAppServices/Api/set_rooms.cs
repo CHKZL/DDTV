@@ -138,4 +138,28 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.Success(nameof(del_room), addInfo.State, $"{addInfo.Message}"), "application/json");
         }
     }
+    /// <summary>
+    /// 修改单个房间配置
+    /// </summary>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    [Tags("set_rooms")]
+    public class modify_room_settings : ControllerBase
+    {
+        /// <summary>
+        /// 修改单个房间配置
+        /// </summary>
+        /// <param name="uid">要修改开播提示提示状态的房间UID列表</param>
+        /// <param name="state">将房间的开播提示状态设置为什么状态</param>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "modify_room_settings")]
+        public ActionResult Post([FromForm] long uid, [FromForm] bool AutoRec, [FromForm] bool Remind, [FromForm] bool RecDanmu, PostCommonParameters commonParameters)
+        {
+            bool state = Core.RuntimeObject._Room.ModifyRoomSettings(uid, AutoRec,Remind,RecDanmu);
+            return Content(MessageBase.Success(nameof(modify_room_settings), state, $"修改房间设置" + (state ? "成功" : "失败")), "application/json");
+        }
+    }
 }
