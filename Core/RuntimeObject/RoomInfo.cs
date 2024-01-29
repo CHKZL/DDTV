@@ -336,7 +336,7 @@ namespace Core.RuntimeObject
         }
 
         /// <summary>
-        /// 新增录制任务（UID和房间号二选一即可）
+        /// 新增录制任务（UID和房间号二选一即可），如果直播还未开始，则预约下一场开始的直播（如果主播中途下播再上播则不会再次录制）
         /// </summary>
         /// <param name="UID"></param>
         /// <param name="RoomId"></param>
@@ -352,6 +352,7 @@ namespace Core.RuntimeObject
                 {
                     if (!roomCardClass.DownInfo.IsDownload)
                     {
+                        roomCardClass.AppointmentRecord = true;
                         RuntimeObject.Detect.detectRoom.ManuallyTriggerRecord(roomCardClass.UID);
                         State = true;
                         Message = "录制请求已触发，如果当前直播间未开播，则默认预约下次单场直播";
@@ -940,7 +941,7 @@ namespace Core.RuntimeObject
         /// </summary>
         public ExpansionType<long> live_time = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
         /// <summary>
-        /// 直播状态(1为正在直播，2为轮播中)
+        /// 直播状态(0:未直播   1:正在直播   2:轮播中)
         /// </summary>
         public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
         /// <summary>
