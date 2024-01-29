@@ -52,6 +52,30 @@ namespace Core.RuntimeObject
         }
 
         /// <summary>
+        /// 修改单个房间配置
+        /// </summary>
+        /// <param name="UID">要修改房间的UID</param>
+        /// <param name="AutoRec">是否打开自动录制</param>
+        /// <param name="Remind">是否打开开播提示</param>
+        /// <param name="RecDanmu">是否录制弹幕</param>
+        /// <returns></returns>
+        public static bool ModifyRoomSettings(long UID, bool AutoRec, bool Remind, bool RecDanmu)
+        {
+            try
+            {
+                ModifyRecordingSettings(new List<long> { UID }, AutoRec);
+                ModifyRoomPromptSettings(new List<long> { UID }, Remind);
+                ModifyRoomDmSettings(new List<long> { UID }, RecDanmu);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Log.Warn(nameof(ModifyRoomSettings), $"在修改单房间配时出现意外错误，V:[{UID}][{AutoRec}][{Remind}][{RecDanmu}]", e, true);
+                return false;
+            }
+        }
+
+        /// <summary>
         /// 批量修改房间的录制配置
         /// </summary>
         /// <param name="UID">UID</param>
@@ -1206,7 +1230,13 @@ namespace Core.RuntimeObject
 
         public class ExpansionType<T>
         {
+            /// <summary>
+            /// 有效时间戳
+            /// </summary>
             public DateTime ExpirationTime { set; get; }
+            /// <summary>
+            /// 当前值
+            /// </summary>
             public T Value { set; get; }
             public ExpansionType<T> Clone()
             {
