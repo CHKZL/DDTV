@@ -312,8 +312,7 @@ namespace Core.RuntimeObject
         {
             RoomCardClass Card = new();
             if (UID != 0 && _Room.GetCardForUID(UID, ref Card) && LiveStart != null)
-            {
-                Card.AppointmentRecord = true;
+            {               
                 if(RoomInfo.GetLiveStatus(Card.UID))
                 {
                     LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
