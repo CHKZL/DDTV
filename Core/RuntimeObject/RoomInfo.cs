@@ -969,11 +969,11 @@ namespace Core.RuntimeObject
         /// </summary>
         public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
         /// <summary>
-        /// live_status_start_event
+        /// live_status_start_event 触发开播事件缓存（表示该房间目前为开播事件触发状态，但是事件还未处理完成）
         /// </summary>
         public bool live_status_start_event = false;
         /// <summary>
-        /// live_status_end_event
+        /// live_status_end_event 触发下播事件缓存（表示该房间目前为开播事件触发状态，但是事件还未处理完成）
         /// </summary>
         public bool live_status_end_event = false;
         /// <summary>

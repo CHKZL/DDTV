@@ -16,6 +16,7 @@ namespace Core.RuntimeObject
     {
         public static DetectRoom detectRoom = new();//实例化房间监听    
 
+
         public Detect()
         {
             detectRoom.LiveStart += DetectRoom_LiveStart;//开播事件
@@ -31,7 +32,7 @@ namespace Core.RuntimeObject
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
-           
+
             List<TriggerType> triggerTypes = sender as List<TriggerType>;
             if (triggerTypes == null)
             {
@@ -53,6 +54,7 @@ namespace Core.RuntimeObject
 
             if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || e.AppointmentRecord)
             {
+                bool AppointmentRecord = e.AppointmentRecord;
                 e.AppointmentRecord = false;
                 if (e.DownInfo.IsDownload)
                 {
@@ -65,23 +67,27 @@ namespace Core.RuntimeObject
                 {
                     if (Initialization)
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制【触发类型:"+(triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks)?"手动触发":"自动触发")+"】");
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
                         Initialization = false;
-                        if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
+                        if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || AppointmentRecord)
                         {
+
                             liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
                             liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
                             liveChatListener.Connect();
+
                         }
                     }
                     else
                     {
                         Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})弹幕录制进程被服务器终止，但检测到房间还在开播状态，尝试重连...");
                     }
+
                     var result = await Download.File.DlwnloadHls_avc_mp4(e);
-                    if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks))
+                    if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || AppointmentRecord)
                     {
-                        Danmu.SevaDanmu(liveChatListener,ref e);
+
+                        Danmu.SevaDanmu(liveChatListener, ref e);
                     }
                     if (result.isSuccess && Core.Config.Core._AutomaticRepair)
                     {
@@ -95,12 +101,17 @@ namespace Core.RuntimeObject
                             Log.Error(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                         }
                     }
+
                 }
+
+
+                //while (false) ;
                 while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
                 DownloadCompletedReset(ref e);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                 e.DownInfo.Unmark = false;
                 e.DownInfo.IsDownload = false;
+
                 if (e.IsRecDanmu)
                 {
                     if (!liveChatListener._Cancel)
@@ -118,6 +129,7 @@ namespace Core.RuntimeObject
                     catch (Exception)
                     { }
                 }
+
 
             }
 
@@ -312,11 +324,11 @@ namespace Core.RuntimeObject
         {
             RoomCardClass Card = new();
             if (UID != 0 && _Room.GetCardForUID(UID, ref Card) && LiveStart != null)
-            {               
-                if(RoomInfo.GetLiveStatus(Card.UID))
+            {
+                if (RoomInfo.GetLiveStatus(Card.RoomId))
                 {
                     LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
-                }               
+                }
                 return;
             }
         }
