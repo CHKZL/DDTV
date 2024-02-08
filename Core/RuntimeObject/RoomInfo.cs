@@ -194,7 +194,7 @@ namespace Core.RuntimeObject
             //如果昵称字符串部位空，搜索昵称符合条件的人返回；按照【录制中】>【开播中】>【打开自动录制】>【打开开播提醒】>【其他】排序
             if (!string.IsNullOrEmpty(Screen))
             {
-                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.Contains(Screen)).ToDictionary(x => x.Key, x => x.Value);
+                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.IndexOf(Screen, StringComparison.OrdinalIgnoreCase) >= 0).ToDictionary(x => x.Key, x => x.Value);
                 keyValuePairs = keyValuePairs
                       .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
                       .ThenByDescending(x => x.Value.live_status.Value == 1)
