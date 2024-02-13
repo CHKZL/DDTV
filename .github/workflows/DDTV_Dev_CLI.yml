@@ -42,6 +42,17 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Download and extract latest release
+        run: |
+          mkdir -p static
+          FILE_URL=$(curl -s https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest \
+          | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
+          | cut -d : -f 2,3 \
+          | tr -d \")
+          wget $FILE_URL -O ddtv-gui-react.zip
+          unzip ddtv-gui-react.zip -d static
+          rm ddtv-gui-react.zip
+
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
   
