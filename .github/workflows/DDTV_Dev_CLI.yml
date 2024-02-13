@@ -42,15 +42,55 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+      - name: Download and extract latest release (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p static
+          FILE_URL=$(curl -s https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest \
+          | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
+          | cut -d : -f 2,3 \
+          | tr -d \")
+          wget $FILE_URL -O ddtv-gui-react.zip
+          unzip ddtv-gui-react.zip -d static
+          rm ddtv-gui-react.zip
+        shell: bash
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir static
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
-  
+
+      - name: Copy static folder to build_output
+        run: cp -r static CLI/build_output/static
+
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
           mkdir CLI\\build_output\\plugins\\ffmpeg
           copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\ffmpeg\\ffmpeg.exe
-  
+
+      - name: Move all files to bin folder and create shortcut
+        run: |
+          mkdir CLI/build_output/bin
+          find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "Creating shortcut for CLI.exe"
+            powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\CLI.lnk");$Shortcut.TargetPath = "CLI\\build_output\\bin\\CLI.exe";$Shortcut.Save()'
+          else
+            echo "Creating symbolic link for CLI"
+            ln -s bin/CLI CLI/build_output/CLI
+          fi  
+        shell: bash
+
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
