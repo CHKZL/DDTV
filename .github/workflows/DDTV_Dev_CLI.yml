@@ -84,7 +84,7 @@ jobs:
           find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
             echo "Creating shortcut for CLI.exe"
-            powershell -Command "$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut('CLI\\build_output\\CLI.lnk');$Shortcut.TargetPath = 'bin\\CLI.exe';$Shortcut.Save()"
+            powershell -Command "& {$WshShell = New-Object -comObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('CLI\\build_output\\CLI.lnk'); $Shortcut.TargetPath = 'CLI\\build_output\\bin\\CLI.exe'; $Shortcut.Save()}"
           else
             echo "Creating symbolic link for CLI"
             ln -s bin/CLI CLI/build_output/CLI
