@@ -72,11 +72,23 @@ jobs:
       - name: Copy static folder to build_output
         run: cp -r static CLI/build_output/static
 
+      - name: Move files to bin folder and create shortcut
+        run: |
+          mkdir CLI/build_output/bin
+          mv CLI/build_output/* CLI/build_output/bin
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            echo "CLI/build_output/bin/CLI.exe" > CLI/build_output/CLI.bat
+          else
+            echo "#!/bin/sh" > CLI/build_output/CLI.sh
+            echo "CLI/build_output/bin/CLI" >> CLI/build_output/CLI.sh
+            chmod +x CLI/build_output/CLI.sh
+          fi
+
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir CLI\\build_output\\plugins\\ffmpeg
-          copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir CLI\\build_output\\bin\\plugins\\ffmpeg
+          copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\bin\\plugins\\ffmpeg\\ffmpeg.exe
   
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
