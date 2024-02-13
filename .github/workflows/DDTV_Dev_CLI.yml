@@ -68,7 +68,10 @@ jobs:
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
-  
+
+      - name: Copy static folder to build_output
+        run: cp -r static CLI/build_output/static
+
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
