@@ -87,7 +87,7 @@ jobs:
             powershell -Command "$WshShell = New-Object -comObject WScript.Shell; $Shortcut = $WshShell.CreateShortcut('CLI\\build_output\\CLI.lnk'); $Shortcut.TargetPath = 'CLI\\build_output\\bin\\CLI.exe'; $Shortcut.Save()"
           else
             echo "Creating symbolic link for CLI"
-            ln -s CLI/build_output/bin/CLI CLI/build_output/CLI
+            ln -s bin/CLI CLI/build_output/CLI
           fi
         shell: bash
 
@@ -96,4 +96,3 @@ jobs:
         with:
           name: DDTV-CLI-${{ matrix.os }}-${{ matrix.runtime }}
           path: CLI/build_output
- 
