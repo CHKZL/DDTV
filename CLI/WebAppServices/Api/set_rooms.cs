@@ -116,6 +116,32 @@ namespace CLI.WebAppServices.Api
         }
     }
 
+        [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    [Tags("set_rooms")]
+    public class batch_delete_rooms : ControllerBase
+    {
+        /// <summary>
+        /// 批量删除房间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "batch_delete_rooms")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[]uid)
+        {
+            List<(long key, bool State, string Message)> list = new();
+            foreach (var item in uid)
+            {
+                (long key ,bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item);
+                list.Add(Info);
+            }
+            return Content(MessageBase.Success(nameof(batch_delete_rooms), list), "application/json");
+        }
+    }
+
 
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
