@@ -106,7 +106,8 @@ namespace Core.Tools
                 var directoryNode = new DirectoryNode
                 {
                     Name = directoryInfo.Name,
-                    Type = "folder"
+                    Type = "folder",
+                    RelativePath = Config.Web._RecordingStorageDirectory + "/" + directoryInfo.FullName.Replace(rootPath, "").Replace("\\", "/"),
                 };
 
                 foreach (var file in directoryInfo.GetFiles())

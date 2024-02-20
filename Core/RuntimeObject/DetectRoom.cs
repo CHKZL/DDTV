@@ -54,8 +54,7 @@ namespace Core.RuntimeObject
 
             if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || e.AppointmentRecord)
             {
-                bool AppointmentRecord = e.AppointmentRecord;
-                e.AppointmentRecord = false;
+
                 if (e.DownInfo.IsDownload)
                 {
                     Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
@@ -69,7 +68,7 @@ namespace Core.RuntimeObject
                     {
                         Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
                         Initialization = false;
-                        if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || AppointmentRecord)
+                        if (e.IsRecDanmu)
                         {
 
                             liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
@@ -84,7 +83,7 @@ namespace Core.RuntimeObject
                     }
 
                     var result = await Download.File.DlwnloadHls_avc_mp4(e);
-                    if (e.IsRecDanmu || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || AppointmentRecord)
+                    if (e.IsRecDanmu)
                     {
 
                         Danmu.SevaDanmu(liveChatListener, ref e);

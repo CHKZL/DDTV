@@ -263,11 +263,13 @@ namespace Core.RuntimeObject
                 else if (UID != 0 && GetRoomId(UID) != 0)
                 {
                     State = 1;
+                    ModifyRoomSettings(UID, IsAutoRec, IsRemind, IsRecDanmu);
                     Message = "添加成功";
                 }
                 else if (RoomId != 0 && GetUid(RoomId) != 0)
                 {
                     State = 1;
+                    ModifyRoomSettings(UID, IsAutoRec, IsRemind, IsRecDanmu);
                     Message = "添加成功";
                 }
                 else
@@ -284,10 +286,11 @@ namespace Core.RuntimeObject
             return (State, Message);
         }
 
-        public static (bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
+        public static (long key ,bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
         {
             bool State = false;
             string Message = "传入参数有误";
+            long key = UID != 0 ? UID : RoomId;
             RoomCardClass roomCard = new();
             if (UID != 0 || RoomId != 0)
             {
@@ -308,9 +311,8 @@ namespace Core.RuntimeObject
                     Message = "房间不存在2";
                 }
             }
-            return (State, Message);
+            return (key, State, Message);
         }
-
 
 
         /// <summary>
