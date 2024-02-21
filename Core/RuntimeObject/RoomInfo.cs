@@ -149,13 +149,27 @@ namespace Core.RuntimeObject
         /// 获得房间列表字典的克隆轻备份
         /// </summary>
         /// <param name="type">返回数据类型</param>
-        /// <param name="Nickname">搜索的昵称含有对应字符串的对象</param>
+        /// <param name="Screen">搜索的昵称含有对应字符串的对象</param>
         /// <returns></returns>
         public static Dictionary<long, RoomCardClass> GetCardListClone(SearchType type = SearchType.All, string Screen = "")
         {
             Dictionary<long, RoomCardClass> keyValuePairs = new();
+            //如果昵称字符串部位空，先过滤搜索一次昵称符合条件的，然后根据Type进行搜索
+            if (!string.IsNullOrEmpty(Screen))
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.IndexOf(Screen, StringComparison.OrdinalIgnoreCase) >= 0).ToDictionary(x => x.Key, x => x.Value);
+            }
             switch (type)
             {
+                //全部
+                case SearchType.All:
+                    keyValuePairs = keyValuePairs
+                          .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
+                          .ThenByDescending(x => x.Value.live_status.Value == 1)
+                          .ThenByDescending(x => x.Value.IsAutoRec)
+                          .ThenByDescending(x => x.Value.IsRemind)
+                          .ToDictionary(x => x.Key, x => x.Value);
+                    break;
                 //录制中
                 case SearchType.RecordingInProgress:
                     keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby));
@@ -177,9 +191,15 @@ namespace Core.RuntimeObject
                         .ThenByDescending(x => x.Value.IsRemind)
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
-                //开播但未打开录制的；
+                //开播但未打开录制的
                 case SearchType.LiveButNotRecord:
                     keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1 && !x.Value.IsAutoRec));
+                    break;
+                //全部以原始字母顺序排列返回
+                case SearchType.Original:
+                    keyValuePairs = keyValuePairs
+                        .OrderBy(pair => pair.Value.Name, StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(pair => pair.Key, pair => pair.Value);
                     break;
                 //其他，返回全部；默认按照【录制中】>【开播中】>【打开自动录制】>【打开开播提醒】>【其他】排序
                 default:
@@ -190,17 +210,6 @@ namespace Core.RuntimeObject
                         .ThenByDescending(x => x.Value.IsRemind)
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
-            }
-            //如果昵称字符串部位空，搜索昵称符合条件的人返回；按照【录制中】>【开播中】>【打开自动录制】>【打开开播提醒】>【其他】排序
-            if (!string.IsNullOrEmpty(Screen))
-            {
-                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.IndexOf(Screen, StringComparison.OrdinalIgnoreCase) >= 0).ToDictionary(x => x.Key, x => x.Value);
-                keyValuePairs = keyValuePairs
-                      .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
-                      .ThenByDescending(x => x.Value.live_status.Value == 1)
-                      .ThenByDescending(x => x.Value.IsAutoRec)
-                      .ThenByDescending(x => x.Value.IsRemind)
-                      .ToDictionary(x => x.Key, x => x.Value);
             }
             return keyValuePairs;
         }
@@ -420,7 +429,11 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 开但未录制
             /// </summary>
-            LiveButNotRecord
+            LiveButNotRecord,
+            /// <summary>
+            /// 原始数据(按照字母顺序升序排列)
+            /// </summary>
+            Original,
         }
     }
 
