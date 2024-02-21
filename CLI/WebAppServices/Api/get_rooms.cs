@@ -70,7 +70,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="commonParameters"></param>
         /// <param name="quantity">【非必填】分页后每页数量，默认或传0为全部</param>
         /// <param name="page">【非必填】获取的页数，当分页数量不为0时有效</param>
-        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播   4：开但未录制   5: 全部以原始字母顺序排列返回)</param>
         /// <param name="screen_name">【非必填】搜索的昵称含有对应字符串的房间</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_complete_room_information")]
@@ -249,7 +249,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="commonParameters"></param>
         /// <param name="quantity">【非必填】分页后每页数量，默认或传0为全部</param>
         /// <param name="page">【非必填】获取的页数，当分页数量不为0时有效</param>
-        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播)</param>
+        /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播   4：开但未录制   5: 全部以原始字母顺序排列返回4：开但未录制   5: 全部以原始字母顺序排列返回)</param>
         /// <param name="screen_name">【非必填】搜索的昵称含有对应字符串的房间</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_basic_room_information")]
