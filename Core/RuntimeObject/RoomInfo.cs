@@ -154,15 +154,11 @@ namespace Core.RuntimeObject
         public static Dictionary<long, RoomCardClass> GetCardListClone(SearchType type = SearchType.All, string Screen = "")
         {
             Dictionary<long, RoomCardClass> keyValuePairs = new();
-            //如果昵称字符串部位空，先过滤搜索一次昵称符合条件的，然后根据Type进行搜索
-            if (!string.IsNullOrEmpty(Screen))
-            {
-                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.IndexOf(Screen, StringComparison.OrdinalIgnoreCase) >= 0).ToDictionary(x => x.Key, x => x.Value);
-            }
             switch (type)
             {
                 //全部
                 case SearchType.All:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos);
                     keyValuePairs = keyValuePairs
                           .OrderByDescending(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading)
                           .ThenByDescending(x => x.Value.live_status.Value == 1)
@@ -195,8 +191,9 @@ namespace Core.RuntimeObject
                 case SearchType.LiveButNotRecord:
                     keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1 && !x.Value.IsAutoRec));
                     break;
-                //全部以原始字母顺序排列返回
+                //把全部以原始字母顺序排列返回
                 case SearchType.Original:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos);
                     keyValuePairs = keyValuePairs
                         .OrderBy(pair => pair.Value.Name, StringComparer.OrdinalIgnoreCase)
                         .ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -210,6 +207,11 @@ namespace Core.RuntimeObject
                         .ThenByDescending(x => x.Value.IsRemind)
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
+            }
+            //如果昵称字符串不为空，搜索昵称符合条件的人返回
+            if (!string.IsNullOrEmpty(Screen))
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.Name.IndexOf(Screen, StringComparison.OrdinalIgnoreCase) >= 0).ToDictionary(x => x.Key, x => x.Value);
             }
             return keyValuePairs;
         }
@@ -295,7 +297,7 @@ namespace Core.RuntimeObject
             return (State, Message);
         }
 
-        public static (long key ,bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
+        public static (long key, bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
         {
             bool State = false;
             string Message = "传入参数有误";
@@ -1238,8 +1240,8 @@ namespace Core.RuntimeObject
                 Host = this.Host.Clone(),
                 CurrentMode = this.CurrentMode,
                 DownInfo = this.DownInfo,
-                live_status_end_event=this.live_status_end_event,
-                live_status_start_event=this.live_status_start_event
+                live_status_end_event = this.live_status_end_event,
+                live_status_start_event = this.live_status_start_event
             };
         }
 
