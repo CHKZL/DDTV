@@ -52,11 +52,12 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir -p static
-          FILE_URL=$(curl -s https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest \
-          | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
-          | cut -d : -f 2,3 \
-          | tr -d \")
-          wget $FILE_URL -O ddtv-gui-react.zip
+          header="authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+          FILE_URL=$(curl -sH "$header" "https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest" \
+              | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
+              | cut -d : -f 2,3 \
+              | tr -d \")
+          wget --header="$header" $FILE_URL -O ddtv-gui-react.zip
           unzip ddtv-gui-react.zip -d static
           rm ddtv-gui-react.zip
         shell: bash
@@ -65,9 +66,12 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir static
-          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
           $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
-          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
           Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
