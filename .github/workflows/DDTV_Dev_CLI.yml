@@ -89,16 +89,17 @@ jobs:
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
         run: |  
-          [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
-          $current_date = Get-Date -Format "yyyy-MM-dd"
-          $current_time = Get-Date -Format "HH:mm:ss"
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
 
 
+
       - name: Build
-        run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+        run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release /nowarn --self-contained true --output build_output
 
       - name: Copy static folder to build_output
         run: cp -r static CLI/build_output/static
