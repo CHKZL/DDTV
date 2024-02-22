@@ -79,7 +79,9 @@ jobs:
       - name: Replace string with current date (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d %H:%M:%S)/g" Core/Init.cs
+          current_date=$(date +%Y-%m-%d %H:%M:%S)
+          echo ${current_date}
+          sed -i.bak "s/CompilationTime/${current_date}/g" Core/Init.cs
       
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
