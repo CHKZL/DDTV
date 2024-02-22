@@ -79,6 +79,7 @@ jobs:
       - name: Replace string with current date (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
+          export TZ='Asia/Shanghai'
           current_date=$(date +%Y-%m-%d)
           current_time=$(date +%H:%M:%S)
           combined_date_time="${current_date} ${current_time}"
@@ -88,7 +89,13 @@ jobs:
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
         run: |  
-          powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Set-Content Core/Init.cs"
+          [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = Get-Date -Format "yyyy-MM-dd"
+          $current_time = Get-Date -Format "HH:mm:ss"
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
