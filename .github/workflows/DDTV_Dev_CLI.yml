@@ -76,13 +76,15 @@ jobs:
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
-      - name: Replace string with current date
+      - name: Replace string with current date (Linux or macOS)
+        if: runner.os != 'Windows'
         run: |
-          if [[ "$RUNNER_OS" == "Windows" ]]; then
-            powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
-          else
-            sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d-%H:%M:%S)/g" Core/Init.cs && rm Core/Init.cs.bak
-          fi
+          sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d-%H:%M:%S)/g" Core/Init.cs && rm Core/Init.cs.bak
+      
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
