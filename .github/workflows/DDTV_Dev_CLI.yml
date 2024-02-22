@@ -77,12 +77,12 @@ jobs:
         shell: powershell
 
        - name: Replace string with current date
-       run: |
-        if [[ "$RUNNER_OS" == "Windows" ]]; then
-          powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
-        else
-          sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d-%H:%M:%S)/g" Core/Init.cs && rm Core/Init.cs.bak
-        fi
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
+          else
+            sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d-%H:%M:%S)/g" Core/Init.cs && rm Core/Init.cs.bak
+          fi
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
