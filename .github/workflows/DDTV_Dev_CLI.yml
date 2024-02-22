@@ -79,12 +79,12 @@ jobs:
       - name: Replace string with current date (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d-%H:%M:%S)/g" Core/Init.cs && rm Core/Init.cs.bak
+          sed -i.bak "s/CompilationTime/$(date +%Y-%m-%d %H:%M:%S)/g" Core/Init.cs
       
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
         run: |  
-          powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
+          powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') | Set-Content Core/Init.cs"
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
@@ -99,15 +99,12 @@ jobs:
           copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\ffmpeg\\ffmpeg.exe
 
       - name: Move all files to bin folder and create shortcut
-        run: |
-          mkdir CLI/build_output/bin
-          find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
+        run: |       
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            mkdir CLI/build_output/bin
+            find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
             echo "Creating shortcut for CLI.exe"
             powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\CLI.lnk");$Shortcut.TargetPath = "CLI\\build_output\\bin\\CLI.exe";$Shortcut.Save()'
-          else
-            echo "Creating symbolic link for CLI"
-            ln -s bin/CLI CLI/build_output/CLI
           fi  
         shell: bash
 
