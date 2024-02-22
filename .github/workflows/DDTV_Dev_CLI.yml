@@ -76,7 +76,7 @@ jobs:
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
-       - name: Replace string with current date
+      - name: Replace string with current date
         run: |
           if [[ "$RUNNER_OS" == "Windows" ]]; then
             powershell -Command "(Get-Content Core/Init.cs) -replace 'CompilationTime', (Get-Date -Format 'yyyy-MM-dd-HH:mm:ss') | Set-Content Core/Init.cs"
