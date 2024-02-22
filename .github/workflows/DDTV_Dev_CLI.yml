@@ -76,6 +76,28 @@ jobs:
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
+      - name: Replace string with current date (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          export TZ='Asia/Shanghai'
+          current_date=$(date +%Y-%m-%d)
+          current_time=$(date +%H:%M:%S)
+          combined_date_time="${current_date} ${current_time}"
+          echo ${combined_date_time}
+          sed -i.bak "s/CompilationTime/${combined_date_time}/g" Core/Init.cs
+      
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+
+
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
@@ -89,15 +111,12 @@ jobs:
           copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\ffmpeg\\ffmpeg.exe
 
       - name: Move all files to bin folder and create shortcut
-        run: |
-          mkdir CLI/build_output/bin
-          find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
+        run: |       
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            mkdir CLI/build_output/bin
+            find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
             echo "Creating shortcut for CLI.exe"
             powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\CLI.lnk");$Shortcut.TargetPath = "CLI\\build_output\\bin\\CLI.exe";$Shortcut.Save()'
-          else
-            echo "Creating symbolic link for CLI"
-            ln -s bin/CLI CLI/build_output/CLI
           fi  
         shell: bash
 
