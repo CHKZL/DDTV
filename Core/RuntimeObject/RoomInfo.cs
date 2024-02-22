@@ -280,7 +280,7 @@ namespace Core.RuntimeObject
                 else if (RoomId != 0 && GetUid(RoomId) != 0)
                 {
                     State = 1;
-                    ModifyRoomSettings(UID, IsAutoRec, IsRemind, IsRecDanmu);
+                    ModifyRoomSettings(GetUid(RoomId), IsAutoRec, IsRemind, IsRecDanmu);
                     Message = "添加成功";
                 }
                 else
