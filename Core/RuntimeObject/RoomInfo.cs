@@ -845,7 +845,7 @@ namespace Core.RuntimeObject
         {
             try
             {
-                if (userInfo != null)
+                if (userInfo != null && userInfo.data.live_room!=null)
                 {
                     if (OldCard == null)
                     {
