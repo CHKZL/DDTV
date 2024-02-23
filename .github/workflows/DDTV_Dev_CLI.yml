@@ -42,6 +42,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Use .NET 8.x
         uses: actions/setup-dotnet@v3
@@ -104,8 +106,8 @@ jobs:
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
           echo ${FINAL_VERSION}
-          sed -i "s/999.999.999.999/${FINAL_VERSION}/g" Core/Core.csproj
-          sed -i "s/999.999.999.999/${FINAL_VERSION}/g" CLI/CLI.csproj
+          sed -i.bak "s/999.999.999.999/${FINAL_VERSION}/g" Core/Core.csproj
+          sed -i.bak "s/999.999.999.999/${FINAL_VERSION}/g" CLI/CLI.csproj
 
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
