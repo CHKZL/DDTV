@@ -96,7 +96,29 @@ jobs:
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
 
+      - name: Replace VerString (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -e 's/^.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*$/\1/p')
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
+          echo ${FINAL_VERSION}
+          sed -i "s/999.999.999.999/${FINAL_VERSION}/g" Core/Core.csproj
+          sed -i "s/999.999.999.999/${FINAL_VERSION}/g" CLI/CLI.csproj
 
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "999.999.999.999", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content CLI/CLI.csproj) | Foreach-Object { $_ -replace "999.999.999.999", $FINAL_VERSION } | Set-Content CLI/CLI.csproj
+          
+        shell: pwsh
 
       - name: Build
         run: cd CLI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
