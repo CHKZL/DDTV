@@ -87,6 +87,7 @@ jobs:
           combined_date_time="${current_date} ${current_time}"
           echo ${combined_date_time}
           sed -i.bak "s/CompilationTime/${combined_date_time}/g" Core/Init.cs
+          sed -i.bak "s/IsDevDebug = true/'IsDevDebug = false'/g" Core/Init.cs
       
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
@@ -97,6 +98,7 @@ jobs:
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+          (Get-Content Core/Init.cs) -replace 'IsDevDebug = true', 'IsDevDebug = false' | Set-Content Core/Init.cs
 
       - name: Replace VerString (Linux or macOS)
         if: runner.os != 'Windows'
@@ -106,8 +108,8 @@ jobs:
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
           echo ${FINAL_VERSION}
-          sed -i.bak "s/999.999.999.999/${FINAL_VERSION}/g" Core/Core.csproj
-          sed -i.bak "s/999.999.999.999/${FINAL_VERSION}/g" CLI/CLI.csproj
+          sed -i.bak "s/5.0.0.0/${FINAL_VERSION}/g" Core/Core.csproj
+          sed -i.bak "s/5.0.0.0/${FINAL_VERSION}/g" CLI/CLI.csproj
 
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
@@ -117,8 +119,8 @@ jobs:
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
           Write-Output $FINAL_VERSION
-          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "999.999.999.999", $FINAL_VERSION } | Set-Content Core/Core.csproj
-          (Get-Content CLI/CLI.csproj) | Foreach-Object { $_ -replace "999.999.999.999", $FINAL_VERSION } | Set-Content CLI/CLI.csproj
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content CLI/CLI.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content CLI/CLI.csproj
           
         shell: pwsh
 
