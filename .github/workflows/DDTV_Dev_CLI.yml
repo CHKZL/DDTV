@@ -87,7 +87,6 @@ jobs:
           combined_date_time="${current_date} ${current_time}"
           echo ${combined_date_time}
           sed -i.bak "s/CompilationTime/${combined_date_time}/g" Core/Init.cs
-          sed -i.bak "s/IsDevDebug = true/'IsDevDebug = false'/g" Core/Init.cs
       
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
@@ -98,7 +97,6 @@ jobs:
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
-          (Get-Content Core/Init.cs) -replace 'IsDevDebug = true', 'IsDevDebug = false' | Set-Content Core/Init.cs
 
       - name: Replace VerString (Linux or macOS)
         if: runner.os != 'Windows'
