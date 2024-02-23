@@ -56,7 +56,7 @@ namespace CLI.WebAppServices.Api
     public class get_login_url : ControllerBase
     {
         /// <summary>
-        /// 获取登陆二维码
+        /// 获取用于生成登陆二维码的字符串
         /// </summary>
         /// <returns></returns>
         [HttpGet(Name = "get_login_url")]

@@ -209,6 +209,10 @@ namespace Core.RuntimeObject
                             Nickname = Danmu.UserName,
                             LV = Danmu.GuardLV
                         });
+                        if (Init.IsDevDebug)
+                        {
+                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到弹幕:{Danmu.UserName}[{Danmu.UserId}]:{Danmu.Message}");
+                        }
                         break;
                     }
                 case SuperchatEventArg SuperchatEvent:
@@ -225,6 +229,10 @@ namespace Core.RuntimeObject
                             UserName = SuperchatEvent.UserName,
                             TimeLength = SuperchatEvent.TimeLength
                         });
+                        if (Init.IsDevDebug)
+                        {
+                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到SC:{SuperchatEvent.UserName}[{SuperchatEvent.UserId}]:{SuperchatEvent.Message}");
+                        }
                         break;
                     }
                 case GuardBuyEventArgs GuardBuyEvent:
@@ -241,7 +249,10 @@ namespace Core.RuntimeObject
                             UserId = GuardBuyEvent.UserId,
                             UserName = GuardBuyEvent.UserName
                         });
-
+                        if (Init.IsDevDebug)
+                        {
+                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到大航海:{GuardBuyEvent.UserName}[{GuardBuyEvent.UserId}]:{GuardBuyEvent.GuardName}");
+                        }
                         break;
                     }
                 case SendGiftEventArgs sendGiftEventArgs:
@@ -256,6 +267,10 @@ namespace Core.RuntimeObject
                             UserId = sendGiftEventArgs.UserId,
                             UserName = sendGiftEventArgs.UserName
                         });
+                        if (Init.IsDevDebug)
+                        {
+                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到礼物:{sendGiftEventArgs.UserName}[{sendGiftEventArgs.UserId}]:{sendGiftEventArgs.GiftName} x {sendGiftEventArgs.Amount}个");
+                        }
                         break;
                     }
                 default:

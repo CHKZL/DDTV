@@ -569,7 +569,10 @@ namespace Core.RuntimeObject
             /// <returns>写入的文件byte数</returns>
             private static long WriteToFile(FileStream fs, string url)
             {
-                long len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
+                long len = 0;
+                if (!Core.Init.IsDevDebug)
+                    len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
+
                 return len;
             }
             #endregion
