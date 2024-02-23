@@ -6,6 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>999.999.999.999</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
