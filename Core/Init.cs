@@ -14,7 +14,11 @@ namespace Core
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
+#if DEBUG
+        public static bool IsDevDebug = true;
+#else
         public static bool IsDevDebug = false;
+#endif
         public static void Start()
         {
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录

@@ -50,8 +50,8 @@ namespace CLI
             app.UseMiddleware<WebAppServices.Middleware.AccessControl>();
             //app.UseHttpsRedirection();
             app.UseAuthorization();
-
             app.MapControllers();
+            app.UseStatusCodePagesWithRedirects("/api/not_found");
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),

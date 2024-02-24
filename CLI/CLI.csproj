@@ -44,4 +44,11 @@
 	</ItemGroup>
 
 
+	<ItemGroup>
+	  <None Update="resource\not_found.png">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+
 </Project>
