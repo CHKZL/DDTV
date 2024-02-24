@@ -339,23 +339,23 @@ namespace Core
 
             }
 
-            private static string LoginStatus = "false";
-            /// <summary>
-            /// 登陆状态
-            /// 默认值：false
-            /// </summary>
-            public static bool _LoginStatus
-            {
-                get => bool.Parse(LoginStatus);
-                set
-                {
-                    if (value.ToString() != LoginStatus)
-                    {
-                        LoginStatus = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
-                    }
-                }
-            }
+            //private static string LoginStatus = "false";
+            ///// <summary>
+            ///// 配置文件登陆状态缓存
+            ///// 默认值：false
+            ///// </summary>
+            //public static bool _LoginStatus
+            //{
+            //    get => bool.Parse(LoginStatus);
+            //    set
+            //    {
+            //        if (value.ToString() != LoginStatus)
+            //        {
+            //            LoginStatus = value.ToString();
+            //            Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+            //        }
+            //    }
+            //}
 
             private static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>

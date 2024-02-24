@@ -28,12 +28,13 @@ namespace Core.RuntimeObject
                     string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
                     {
+                        Log.Info(nameof(AccountInformation),$"读取User配置文件{files[0]}");
                         Tools.Encryption.DecryptFile(files[0], out string accountString);
                         var tempAccountInfo = JsonSerializer.Deserialize<AccountInformation>(accountString);
                         if (tempAccountInfo?.State == true)
                         {
                             _accountInformation = tempAccountInfo;
-                            Core.Config.Core._LoginStatus = true;
+                            //Core.Config.Core._LoginStatus = true;
                         }
                         else
                         {
@@ -41,17 +42,17 @@ namespace Core.RuntimeObject
                         }
                     }
                 }
-                if (_accountInformation.State && !Core.Config.Core._LoginStatus)
-                {
-                    Core.Config.Core._LoginStatus = true;
-                }
+                //if (_accountInformation.State && !Core.Config.Core._LoginStatus)
+                //{
+                //    Core.Config.Core._LoginStatus = true;
+                //}
                 return _accountInformation;
             }
             set
             {
                 Log.Info(nameof(AccountInformation), $"更新登录态缓存:[{MethodBase.GetCurrentMethod().Name}]]");
                 _accountInformation = value;
-                Core.Config.Core._LoginStatus = value.State;
+                //Core.Config.Core._LoginStatus = value.State;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{_accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
             }
         }
@@ -77,15 +78,15 @@ namespace Core.RuntimeObject
                             {
                                 AccountInformation.State = true;
                                 _AccountStatus = true;
-                                if (!Core.Config.Core._LoginStatus)
-                                    Core.Config.Core._LoginStatus = true;
+                                //if (!Core.Config.Core._LoginStatus)
+                                //    Core.Config.Core._LoginStatus = true;
                             }
                             else
                             {
                                 AccountInformation.State = false;
                                 _AccountStatus = false;
-                                if (Core.Config.Core._LoginStatus)
-                                    Core.Config.Core._LoginStatus = false;
+                                //if (Core.Config.Core._LoginStatus)
+                                //    Core.Config.Core._LoginStatus = false;
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
@@ -113,13 +114,14 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         public static bool GetNavState()
         {
-            if (Network.Methods.Nav.GetNav() == null)
+            var LoginStatus = Network.Methods.Nav.GetNav();
+            if (LoginStatus != null && LoginStatus.code == 0)
             {
-                return false;
+                return true;
             }
             else
             {
-                return true;
+                return false;
             }
         }
 
