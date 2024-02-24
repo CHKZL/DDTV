@@ -49,7 +49,8 @@ namespace Core.RuntimeObject
 
             if (e.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
-                Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
+                //Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
+                //这里应该是开播广播事件
             }
 
             if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || e.AppointmentRecord)
@@ -100,12 +101,9 @@ namespace Core.RuntimeObject
                             Log.Error(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                         }
                     }
-
                 }
-
-
                 //while (false) ;
-                while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
+                while (RoomInfo.GetLiveStatus(e.RoomId) || !e.DownInfo.Unmark);
                 DownloadCompletedReset(ref e);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                 e.DownInfo.Unmark = false;
@@ -211,7 +209,7 @@ namespace Core.RuntimeObject
                         });
                         if (Init.IsDevDebug)
                         {
-                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到弹幕:{Danmu.UserName}[{Danmu.UserId}]:{Danmu.Message}");
+                            //Log.Info(nameof(LiveChatListener_MessageReceived),$"收到弹幕:{Danmu.UserName}[{Danmu.UserId}]:{Danmu.Message}");
                         }
                         break;
                     }
@@ -231,7 +229,7 @@ namespace Core.RuntimeObject
                         });
                         if (Init.IsDevDebug)
                         {
-                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到SC:{SuperchatEvent.UserName}[{SuperchatEvent.UserId}]:{SuperchatEvent.Message}");
+                            //Log.Info(nameof(LiveChatListener_MessageReceived),$"收到SC:{SuperchatEvent.UserName}[{SuperchatEvent.UserId}]:{SuperchatEvent.Message}");
                         }
                         break;
                     }
@@ -251,7 +249,7 @@ namespace Core.RuntimeObject
                         });
                         if (Init.IsDevDebug)
                         {
-                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到大航海:{GuardBuyEvent.UserName}[{GuardBuyEvent.UserId}]:{GuardBuyEvent.GuardName}");
+                           // Log.Info(nameof(LiveChatListener_MessageReceived),$"收到大航海:{GuardBuyEvent.UserName}[{GuardBuyEvent.UserId}]:{GuardBuyEvent.GuardName}");
                         }
                         break;
                     }
@@ -269,7 +267,7 @@ namespace Core.RuntimeObject
                         });
                         if (Init.IsDevDebug)
                         {
-                            Log.Info(nameof(LiveChatListener_MessageReceived),$"收到礼物:{sendGiftEventArgs.UserName}[{sendGiftEventArgs.UserId}]:{sendGiftEventArgs.GiftName} x {sendGiftEventArgs.Amount}个");
+                           // Log.Info(nameof(LiveChatListener_MessageReceived),$"收到礼物:{sendGiftEventArgs.UserName}[{sendGiftEventArgs.UserId}]:{sendGiftEventArgs.GiftName} x {sendGiftEventArgs.Amount}个");
                         }
                         break;
                     }
