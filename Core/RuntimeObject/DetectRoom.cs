@@ -80,7 +80,7 @@ namespace Core.RuntimeObject
                     }
                     else
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})弹幕录制进程被服务器终止，但检测到房间还在开播状态，尝试重连...");
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})检测到录制任务重连，同步录制状态，尝试重连...");
                     }
 
                     var result = await Download.File.DlwnloadHls_avc_mp4(e);

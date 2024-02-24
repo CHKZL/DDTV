@@ -7,7 +7,8 @@ namespace CLI
     {
         public static string Success<T>(string cmd, T data, string massage = "", code code = code.ok)
         {
-            if (!Core.Config.Core._LoginStatus)
+            //if (!Core.Config.Core._LoginStatus)
+            if(!Core.RuntimeObject.Account.AccountInformation.State)
             {
                 code = code.LoginInfoFailure;
             }
