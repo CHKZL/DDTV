@@ -145,7 +145,7 @@ jobs:
           echo "\$dir/bin/CLI" >> CLI/build_output/DDTV_CLI.sh
           chmod +x CLI/build_output/DDTV_CLI.sh
 
-       - name: Move all files to bin folder and create shortcut (Windows)
+      - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
         run: |       
