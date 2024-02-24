@@ -49,8 +49,8 @@ namespace Core.LiveChat
             RoomId = roomId;
             Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
-            string dirName = $"{Config.Core._RecFileDirectory}{roomId}-{Name}";
-            File = $"{dirName}/{Title}_{DateTime.Now:yyyyMMdd_HHmmss}";
+            File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(RoomInfo.GetUid(roomId), Core.Config.Core._DefaultFilePathNameFormat)}";
+          
         }
 
         public async void Connect()
