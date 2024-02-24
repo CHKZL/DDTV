@@ -280,7 +280,7 @@ namespace Core.RuntimeObject
                                 return;
                             }
                         }
-                        Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
+                        //Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
                         List<(long size, DateTime time)> values = new();
                         bool InitialRequest = true;
                         long currentLocation = 0;
@@ -484,12 +484,10 @@ namespace Core.RuntimeObject
             /// <param name="card">房间卡片信息</param>
             private static void LogDownloadStart(RoomCardClass card)
             {
-                string startText = $"({DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss")})开始录制任务：\n" +
-                $"直播间：{card.RoomId}\n" +
-                $"UID：{card.UID}\n" +
-                $"昵称：{card.Name}\n" +
+                string startText = $"开始录制任务：" +
+                $"{card.Name}({card.RoomId})|" +
+                $"UID：{card.UID}|" +
                 $"标题：{card.Title.Value}";
-
                 Log.Info(nameof(LogDownloadStart), $"{startText}");
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
                 card.DownInfo.StartTime = DateTime.Now;
