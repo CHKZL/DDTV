@@ -102,8 +102,7 @@ namespace Core.RuntimeObject
                         }
                     }
                 }
-                //while (false) ;
-                while (RoomInfo.GetLiveStatus(e.RoomId) || !e.DownInfo.Unmark);
+                while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
                 DownloadCompletedReset(ref e);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                 e.DownInfo.Unmark = false;
