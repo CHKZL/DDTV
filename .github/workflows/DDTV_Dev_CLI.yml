@@ -155,7 +155,7 @@ jobs:
           $Shortcut = $WshShell.CreateShortcut("CLI\build_output\DDTV_CLI.lnk")
           $Shortcut.TargetPath = "C:\Windows\explorer.exe"
           $Shortcut.Arguments="bin\CLI.exe"
-          $Shortcut.IconLocation = "CLI\build_output\bin\resource\DDTV.ico"
+          $Shortcut.IconLocation = "bin\resource\DDTV.ico"
           $Shortcut.Save()
         
 
