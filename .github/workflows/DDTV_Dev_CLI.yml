@@ -140,16 +140,15 @@ jobs:
             mkdir CLI/build_output/bin
             find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
             echo "Creating shortcut for CLI.exe"
-            echo "@echo off" > CLI\\build_output\\CLI.bat
-            echo "start .\\bin\\CLI.exe" >> CLI\\build_output\\CLI.bat
+            powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\DDTV_CLI.lnk");$Shortcut.TargetPath = "C:\\Windows\\explorer.exe ..\\bin\\CLI.exe";$Shortcut.IconLocation = "CLI\\build_output\\bin\\Rresource\\DDTV.ico";$Shortcut.Save()'
           else
             mkdir -p CLI/build_output/bin
             find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
             echo "Creating shortcut for CLI"
-            echo "#!/bin/bash" > CLI/build_output/CLI.sh
-            echo "dir=\$(cd \"\$(dirname \"\$0\")\"; pwd)" >> CLI/build_output/CLI.sh
-            echo "\$dir/bin/CLI" >> CLI/build_output/CLI.sh
-            chmod +x CLI/build_output/CLI.sh
+            echo "#!/bin/bash" > CLI/build_output/start.sh
+            echo "dir=\$(cd \"\$(dirname \"\$0\")\"; pwd)" >> CLI/build_output/start.sh
+            echo "\$dir/bin/CLI" >> CLI/build_output/start.sh
+            chmod +x CLI/build_output/start.sh
           fi  
         shell: bash
 

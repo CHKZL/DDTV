@@ -7,7 +7,12 @@
 		<Nullable>enable</Nullable>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Version>5.0.0.0</Version>
+		<ApplicationIcon>resource\DDTV.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="resource\DDTV.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="ConsoleTableExt" Version="3.2.0" />
@@ -33,6 +38,9 @@
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
+	<ItemGroup>
+	  <Content Include="resource\DDTV.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<Exclud Include="linux-x64;linux-arm;linux-arm64;win-arm;win-arm64;osx-x64;osx-arm64" />
@@ -41,6 +49,13 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Resource Include="resource\DDTV.ico">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 
