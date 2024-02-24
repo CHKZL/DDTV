@@ -140,7 +140,7 @@ jobs:
             mkdir CLI/build_output/bin
             find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
             echo "Creating shortcut for CLI.exe"
-            powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\DDTV_CLI.lnk");$Shortcut.TargetPath = "C:\\Windows\\explorer.exe bin\\CLI.exe";$Shortcut.IconLocation = "bin\\resource\\DDTV.ico";$Shortcut.Save()'
+            powershell -Command '$WshShell = New-Object -comObject WScript.Shell;$Shortcut = $WshShell.CreateShortcut("CLI\\build_output\\DDTV_CLI.lnk");$Shortcut.TargetPath = "C:\\Windows\\explorer.exe";$Shortcut.Arguments="bin\\CLI.exe";$Shortcut.IconLocation = "bin\\resource\\DDTV.ico";$Shortcut.Save()'
           else
             mkdir -p CLI/build_output/bin
             find CLI/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} CLI/build_output/bin \;
