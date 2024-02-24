@@ -11,10 +11,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="resource\DDTV.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="ConsoleTableExt" Version="3.2.0" />
 		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="8.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
@@ -53,13 +49,9 @@
 
 
 	<ItemGroup>
-	  <Resource Include="resource\DDTV.ico">
+	  <None Update="resource\DDTV.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </Resource>
-	</ItemGroup>
-
-
-	<ItemGroup>
+	  </None>
 	  <None Update="resource\not_found.png">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
