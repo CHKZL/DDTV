@@ -39,14 +39,16 @@ namespace Core.RuntimeObject.Download
                 }
                 using (FileStream fs = new FileStream(File, FileMode.Append))
                 {
-                   
+
                     HostClass hostClass = new();
-                    if (First)//初次任务，等待HLS流生成，等待时间根据配置文件来
-                    {
-                        Thread.Sleep(Config.Core._HlsWaitingTime * 1000);
-                    }
+
                     while (!GetHlsHost_avc(card, ref hostClass))
                     {
+                        hlsState = HandleHlsError(card, hostClass);
+                        if (First && hlsState == HlsState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
+                        {
+                            Thread.Sleep(Config.Core._HlsWaitingTime * 1000);
+                        }
                         hlsState = HandleHlsError(card, hostClass);
                         switch (hlsState)
                         {
@@ -229,8 +231,7 @@ namespace Core.RuntimeObject.Download
                 return HlsState.PaidLiveStream;
             }
             else
-            {
-                
+            {              
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                 return HlsState.NoHLSStreamExists;
             }
