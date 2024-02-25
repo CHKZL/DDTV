@@ -82,6 +82,7 @@ namespace Core.RuntimeObject
                     }
 
                     var result = await HLS.DlwnloadHls_avc_mp4(e,Initialization);
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS录制进程中断，状态:{result.hlsState}");
                     Initialization = false;
                     if (e.IsRecDanmu)
                     {
