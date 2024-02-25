@@ -40,6 +40,7 @@ namespace Core.LiveChat
         public bool State = false;
         public RuntimeObject.Danmu.DanmuMessage DanmuMessage = new();
         public Stopwatch TimeStopwatch;
+        public int SaveCount = 1;
 
         #endregion
 
