@@ -500,6 +500,24 @@ namespace Core
             /// </summary>
             public static string _HTTP_UA { get { return HTTP_UA; } }
 
+            private static string HlsWaitingTime = "50";
+            /// <summary>
+            /// 直播间状态更新间隔时间（int，单位秒）
+            /// 默认值：50
+            /// </summary>
+            public static int _HlsWaitingTime
+            {
+                get => int.Parse(HlsWaitingTime);
+                set
+                {
+                    if (value.ToString() != HlsWaitingTime)
+                    {
+                        HlsWaitingTime = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
+            }
+
             private static string DetectIntervalTime = "10000";
             /// <summary>
             /// 直播间状态更新间隔时间（int，单位毫秒）
