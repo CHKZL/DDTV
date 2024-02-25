@@ -1,4 +1,6 @@
-﻿using Core.LogModule;
+﻿using ConsoleTableExt;
+using Core.LogModule;
+using SQLitePCL;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,11 +42,17 @@ namespace Core.RuntimeObject.Download
         /// <param name="card">房间卡片信息</param>
         internal static void LogDownloadStart(RoomCardClass card)
         {
-            string startText = $"开始录制任务：" +
-            $"{card.Name}({card.RoomId})|" +
-            $"UID：{card.UID}|" +
-            $"标题：{card.Title.Value}";
-            Log.Info(nameof(LogDownloadStart), $"{startText}");
+            var tableData = new List<List<object>>
+            {
+                new List<object> { "名称", "房间号", "UID", "直播标题" },
+                new List<object> { card.Name, card.RoomId, card.UID, card.Title.Value }
+            };
+            ConsoleTableBuilder.From(tableData).WithTitle("开始录制任务").ExportAndWriteLine();
+            string startText = $"[开始录制任务]：" +
+           $"{card.Name}({card.RoomId})|" +
+           $"UID：{card.UID}|" +
+           $"标题：{card.Title.Value}";
+            Log.Info(nameof(LogDownloadStart), $"{startText}", false);
             card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
             card.DownInfo.StartTime = DateTime.Now;
         }
