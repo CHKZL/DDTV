@@ -163,7 +163,7 @@ namespace Core.RuntimeObject
                 if (liveChatListener._disposed)
                 {
                     liveChatListener = new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
-                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;                   
                     liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
                 }
                 Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接，但直播未结束，触发重连");
