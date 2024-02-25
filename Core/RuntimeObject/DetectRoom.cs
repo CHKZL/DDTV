@@ -3,12 +3,14 @@ using Core.LiveChat;
 using Core.LogModule;
 using Core.Network.Methods;
 using Core.RuntimeObject.Download;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.RuntimeObject.Download.HLS;
 using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
@@ -82,7 +84,7 @@ namespace Core.RuntimeObject
                     }
 
                     var result = await HLS.DlwnloadHls_avc_mp4(e,Initialization);
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS录制进程中断，状态:{result.hlsState}");
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(HlsState), result.hlsState)}");
                     Initialization = false;
                     if (e.IsRecDanmu)
                     {
