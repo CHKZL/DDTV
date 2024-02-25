@@ -4,13 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Core.RuntimeObject.Download.Host;
+using static Core.RuntimeObject.Download.Basics;
 
 namespace Core.Tools
 {
     public class Linq
     {
-        internal static RuntimeObject.Download.Host.HostClass SerializedM3U8(string str, ref HostClass hostClass)
+        internal static RuntimeObject.Download.Basics.HostClass SerializedM3U8(string str, ref HostClass hostClass)
         {
             try
             {

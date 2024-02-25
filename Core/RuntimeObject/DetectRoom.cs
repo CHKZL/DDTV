@@ -2,6 +2,7 @@
 using Core.LiveChat;
 using Core.LogModule;
 using Core.Network.Methods;
+using Core.RuntimeObject.Download;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -32,7 +33,6 @@ namespace Core.RuntimeObject
         /// <param name="e"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
         {
-
             List<TriggerType> triggerTypes = sender as List<TriggerType>;
             if (triggerTypes == null)
             {
@@ -43,8 +43,6 @@ namespace Core.RuntimeObject
                 Log.Warn(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
                 return;
             }
-
-
             bool Initialization = true;
 
             if (e.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
@@ -58,7 +56,7 @@ namespace Core.RuntimeObject
 
                 if (e.DownInfo.IsDownload)
                 {
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
                     return;
                 }
                 e.DownInfo.IsDownload = true;
@@ -67,8 +65,8 @@ namespace Core.RuntimeObject
                 {
                     if (Initialization)
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
-                        Initialization = false;
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
+                        
                         if (e.IsRecDanmu)
                         {
 
@@ -80,16 +78,16 @@ namespace Core.RuntimeObject
                     }
                     else
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})检测到录制任务重连，同步录制状态，尝试重连...");
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
                     }
 
-                    var result = await Download.File.DlwnloadHls_avc_mp4(e);
+                    var result = await HLS.DlwnloadHls_avc_mp4(e,Initialization);
+                    Initialization = false;
                     if (e.IsRecDanmu)
                     {
-
                         Danmu.SevaDanmu(liveChatListener, ref e);
                     }
-                    if (result.isSuccess && Core.Config.Core._AutomaticRepair)
+                    if (result.hlsState== HLS.HlsState.Success && Core.Config.Core._AutomaticRepair)
                     {
                         Core.Tools.Transcode transcode = new Core.Tools.Transcode();
                         try
@@ -98,13 +96,20 @@ namespace Core.RuntimeObject
                         }
                         catch (Exception ex)
                         {
-                            Log.Error(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
+                            Log.Error(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                         }
+                    }
+                    switch(result.hlsState)
+                    {
+                        case HLS.HlsState.NoHLSStreamExists:
+                            Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS未生成，这里应该降级到FLV开始录制，但是因为FLV录制还没写好，这里跳过，30秒继续重试HLS");
+                            Thread.Sleep(30*1000);
+                            break;
                     }
                 }
                 while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
                 DownloadCompletedReset(ref e);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
+                Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                 e.DownInfo.Unmark = false;
                 e.DownInfo.IsDownload = false;
 
