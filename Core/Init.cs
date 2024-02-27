@@ -15,7 +15,7 @@ namespace Core
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
 #if DEBUG
-        public static bool IsDevDebug = false;
+        public static bool IsDevDebug = true;
 #else
         public static bool IsDevDebug = false;
 #endif
