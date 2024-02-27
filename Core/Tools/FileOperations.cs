@@ -38,10 +38,27 @@ namespace Core.Tools
         /// </summary>
         /// <param name="Path">指定的路径</param>
         /// <returns></returns>
-        public static string CreateAll(string Path)
+        public static string CreateAll(string path)
         {
-            Directory.CreateDirectory(Path);
-            return Path;
+            try
+            {
+                // 检查路径是否存在
+                if (Directory.Exists(path))
+                {
+                    return path;
+                }
+                else
+                {
+                    // 尝试创建新的文件夹
+                    Directory.CreateDirectory(path);
+                    return path;
+                }
+            }
+            catch (Exception)
+            {
+                // 如果出现异常，比如权限问题，返回空
+                return string.Empty;
+            }
         }
 
 
