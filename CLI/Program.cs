@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Core;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace CLI
 {
@@ -19,6 +20,10 @@ namespace CLI
             Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
             Thread.Sleep(1000*3);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = 1024 * 1024;
+            });
             builder.Logging.AddFilter((category, level) =>
             {
                 return level >= LogLevel.Warning;
