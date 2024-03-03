@@ -29,6 +29,7 @@ namespace Core
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls13 | System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
             Thread.Sleep(2000);
             LogModule.Log.LogInit();
             Log.Info(nameof(Init),$"初始化工作路径为:{Environment.CurrentDirectory}");

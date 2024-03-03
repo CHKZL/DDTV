@@ -16,11 +16,10 @@ namespace Core.RuntimeObject.Download
         /// <param name="card">房间卡片信息</param>
         /// <param name="First">是否为初次任务</param>
         /// <returns>[TaskStatus]任务状态；[FileName]下载成功的文件名</returns>
-        public static async Task<(HlsState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool First=false)
+        public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool First=false)
         {
-            HlsState hlsState = HlsState.Recording;
+            DlwnloadTaskState hlsState = DlwnloadTaskState.Recording;
             string File = string.Empty;
-            bool HlsError= false;
             await Task.Run(() =>
             {
                 InitializeDownload(card);
@@ -34,27 +33,27 @@ namespace Core.RuntimeObject.Download
                 {
 
                     HostClass hostClass = new();
-
+                    GetFlvHost_avc(card);
                     while (!GetHlsHost_avc(card, ref hostClass))
                     {
                         hlsState = HandleHlsError(card, hostClass);
-                        if (First && hlsState == HlsState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
+                        if (First && hlsState == DlwnloadTaskState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
                         {
                             Thread.Sleep(Config.Core._HlsWaitingTime * 1000);
                         }
                         hlsState = HandleHlsError(card, hostClass);
                         switch (hlsState)
                         {
-                            case HlsState.StopLive:
+                            case DlwnloadTaskState.StopLive:
                                 hlsState = CheckAndHandleFile(File, ref card);
                                 return;
-                            case HlsState.UserCancellation:
+                            case DlwnloadTaskState.UserCancellation:
                                 hlsState = CheckAndHandleFile(File, ref card);
                                 return;
-                            case HlsState.PaidLiveStream:
+                            case DlwnloadTaskState.PaidLiveStream:
                                 Log.Warn(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，创建任务失败，跳过当前任务");
                                 return;
-                            case HlsState.NoHLSStreamExists:
+                            case DlwnloadTaskState.NoHLSStreamExists:
                                 Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但没获取到HLS流，降级到FLV模式");
                                 return;
                         }
@@ -74,19 +73,19 @@ namespace Core.RuntimeObject.Download
                                 return;
                             }
                             //刷新Host信息，获取最新的直播流片段
-                            bool isHlsHostAvailable = RefreshHlsHostClass(card, ref hostClass);
+                            bool isHlsHostAvailable = RefreshHlsHost_avc(card, ref hostClass);
                             if (!isHlsHostAvailable)
                             {
                                 hlsState = HandleHostRefresh(card, ref hostClass);
                                 switch (hlsState)
                                 {
-                                    case HlsState.StopLive:
+                                    case DlwnloadTaskState.StopLive:
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
-                                    case HlsState.UserCancellation:
+                                    case DlwnloadTaskState.UserCancellation:
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
-                                    case HlsState.Recording:
+                                    case DlwnloadTaskState.Recording:
                                         break;
                                 }
                             }
@@ -112,7 +111,7 @@ namespace Core.RuntimeObject.Download
                                     if (InitialRequest)
                                     {
                                         hlsState = CheckAndHandleFile(File, ref card);
-                                        hlsState = HlsState.SuccessfulButNotStream;
+                                        hlsState = DlwnloadTaskState.SuccessfulButNotStream;
                                         if (!card.DownInfo.Unmark)
                                             Thread.Sleep(1000 * 10);
                                         return;
@@ -120,7 +119,7 @@ namespace Core.RuntimeObject.Download
                                     else
                                     {
                                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
-                                        hlsState = HlsState.Success;
+                                        hlsState = DlwnloadTaskState.Success;
                                         if (!card.DownInfo.Unmark)
                                             Thread.Sleep(1000 * 10);
                                         return;
@@ -149,30 +148,7 @@ namespace Core.RuntimeObject.Download
             return (hlsState, File);
         }
 
-        /// <summary>
-        /// 检查并处理文件
-        /// </summary>
-        /// <param name="File">文件名</param>
-        /// <returns>是否成功</returns>
-        private static HlsState CheckAndHandleFile(string File, ref RoomCardClass card)
-        {
-            const long FileSizeThreshold = 10 * 1024 * 1024; // 10MB
-            bool fileExists = System.IO.File.Exists(File);
-            if (fileExists)
-            {
-                System.IO.FileInfo fileInfo = new(File);
-                if (fileInfo.Length > FileSizeThreshold)
-                {
-                    return HlsState.Success;
-                }
-                else
-                {
-                    Tools.FileOperations.Delete(File);
-                }
-            }
-            card.DownInfo.DownloadFileList.VideoFile.RemoveAt(card.DownInfo.DownloadFileList.VideoFile.Count - 1);
-            return HlsState.SuccessfulButNotStream;
-        }
+
 
 
 
@@ -182,19 +158,19 @@ namespace Core.RuntimeObject.Download
         /// <param name="card">房间信息</param>
         /// <param name="hostClass">HostClass实例</param>
         /// <returns>HLS错误计数</returns>
-        private static HlsState HandleHostRefresh(RoomCardClass card, ref HostClass hostClass)
+        private static DlwnloadTaskState HandleHostRefresh(RoomCardClass card, ref HostClass hostClass)
         {
             if (!GetHlsHost_avc(card, ref hostClass) && !RoomInfo.GetLiveStatus(card.RoomId))
             {
                 Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]刷新Host时发现直播间已下播");
-                return HlsState.StopLive;
+                return DlwnloadTaskState.StopLive;
             }
             if (card.DownInfo.Unmark)
             {
-                return HlsState.UserCancellation;
+                return DlwnloadTaskState.UserCancellation;
             }
             Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]触发Host刷新");
-            return HlsState.Recording;
+            return DlwnloadTaskState.Recording;
         }
 
 
@@ -206,27 +182,27 @@ namespace Core.RuntimeObject.Download
         /// <param name="card">房间卡片信息</param>
         /// <param name="hostClass">主播类</param>
         /// <returns>当前HLS状态</returns>
-        private static HlsState HandleHlsError(RoomCardClass card, HostClass hostClass)
+        private static DlwnloadTaskState HandleHlsError(RoomCardClass card, HostClass hostClass)
         {
             if (!RoomInfo.GetLiveStatus(card.RoomId))
             {
-                return HlsState.StopLive;
+                return DlwnloadTaskState.StopLive;
             }
             if(card.DownInfo.Unmark)
             {
-                return HlsState.UserCancellation;
+                return DlwnloadTaskState.UserCancellation;
             }
             //是否为收费直播
             bool isPaidLiveStream = hostClass.all_special_types.Contains(1);
             if (isPaidLiveStream)
             {   
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Special;            
-                return HlsState.PaidLiveStream;
+                return DlwnloadTaskState.PaidLiveStream;
             }
             else
             {              
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
-                return HlsState.NoHLSStreamExists;
+                return DlwnloadTaskState.NoHLSStreamExists;
             }
         }
 
@@ -248,36 +224,6 @@ namespace Core.RuntimeObject.Download
             return values;
         }
 
-        public enum HlsState
-        {
-            /// <summary>
-            /// 初始状态(该状态不应该被传递出去，使用前必须状态已变化)
-            /// </summary>
-            Recording,
-            /// <summary>
-            /// 成功
-            /// </summary>
-            Success,
-            /// <summary>
-            /// 成功(但该任务未推流，未生成文件)
-            /// </summary>
-            SuccessfulButNotStream,
-            /// <summary>
-            /// 已下播
-            /// </summary>
-            StopLive,
-            /// <summary>
-            /// 不存在HLS流
-            /// </summary>
-            NoHLSStreamExists,
-            /// <summary>
-            /// 用户取消
-            /// </summary>
-            UserCancellation,
-            /// <summary>
-            /// 当前为付费直播
-            /// </summary>
-            PaidLiveStream
-        }
+
     }
 }
