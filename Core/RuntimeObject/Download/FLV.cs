@@ -23,7 +23,8 @@ namespace Core.RuntimeObject.Download
             string File = string.Empty;
             await Task.Run(async () =>
             {
-                InitializeDownload(card);
+                
+                InitializeDownload(card,RoomCardClass.TaskType.FLV_AVC);
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
                 File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.flv";

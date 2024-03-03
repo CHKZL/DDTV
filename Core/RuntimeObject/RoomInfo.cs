@@ -9,6 +9,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
+using static Core.RuntimeObject.RoomCardClass;
 using static Core.RuntimeObject.RoomInfo;
 
 namespace Core.RuntimeObject
@@ -447,16 +448,16 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
-        public static List<(int id, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> GetOverview()
+        public static List<(int id,TaskType TaskType, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> GetOverview()
         {
-            List<(int id, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
+            List<(int id, TaskType TaskType,long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
             int i = 1;
             var roomInfos = _Room.GetCardList();
             foreach (var item in roomInfos)
             {
                 if (item.Value.DownInfo.IsDownload)
                 {
-                    values.Add((id: i, uid: item.Value.UID, roomid: item.Value.RoomId, name: item.Value.Name, title: item.Value.Title.Value, downloadedSize: item.Value.DownInfo.DownloadSize, downloadRate: item.Value.DownInfo.RealTimeDownloadSpe, state: item.Value.DownInfo.Status.ToString(), startTime: item.Value.DownInfo.StartTime));
+                    values.Add((id: i,TaskType:item.Value.DownInfo.taskType, uid: item.Value.UID, roomid: item.Value.RoomId, name: item.Value.Name, title: item.Value.Title.Value, downloadedSize: item.Value.DownInfo.DownloadSize, downloadRate: item.Value.DownInfo.RealTimeDownloadSpe, state: item.Value.DownInfo.Status.ToString(), startTime: item.Value.DownInfo.StartTime));
                     i++;
                 }
             }
@@ -1133,6 +1134,10 @@ namespace Core.RuntimeObject
             /// </summary>
             public bool IsDownload = false;
             /// <summary>
+            /// 任务类型
+            /// </summary>
+            public TaskType taskType = TaskType.NewTask;
+            /// <summary>
             /// 当前房间下载任务总大小
             /// </summary>
             public long DownloadSize = 0;
@@ -1290,6 +1295,12 @@ namespace Core.RuntimeObject
             /// 特殊状态(大航海和门票等收费没权限的状态)
             /// </summary>
             Special
+        }
+        public enum TaskType
+        {
+            NewTask,
+            HLS_AVC,
+            FLV_AVC,
         }
     }
     #endregion

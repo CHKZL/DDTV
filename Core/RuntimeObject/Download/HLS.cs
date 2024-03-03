@@ -22,7 +22,7 @@ namespace Core.RuntimeObject.Download
             string File = string.Empty;
             await Task.Run(() =>
             {
-                InitializeDownload(card);
+                InitializeDownload(card,RoomCardClass.TaskType.HLS_AVC);
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
                 File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.mp4";
