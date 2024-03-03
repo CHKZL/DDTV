@@ -28,157 +28,72 @@ namespace Core.RuntimeObject
             Log.Info(nameof(DetectRoom), $"注册下播事件");
             Detect.detectRoom.start();//启动房间监听
         }
+
+
         /// <summary>
         /// 开播事件
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
-        internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass e)
+        /// <param name="roomCard"></param>
+        internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass roomCard)
         {
-            List<TriggerType> triggerTypes = sender as List<TriggerType>;
-            if (triggerTypes == null)
+            List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
+
+            if (roomCard.live_status.Value != 1)
             {
-                triggerTypes = new List<TriggerType>();
-            }
-            if (e.live_status.Value != 1)
-            {
-                Log.Warn(nameof(DetectRoom_LiveStart), $"{e.RoomId}({e.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
+                Log.Warn(nameof(DetectRoom_LiveStart), $"{roomCard.RoomId}({roomCard.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
                 return;
             }
-            bool Initialization = true;
 
-            if (e.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
+            bool isFirstTime = true;
+
+            if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
-                //Log.Info(nameof(DetectRoom_LiveStart), $"检测到通知对象：{e.RoomId}({e.Name})开播");
-                //这里应该是开播广播事件
+                // 这里应该是开播广播事件
             }
 
-            if (e.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || e.AppointmentRecord)
+            if (roomCard.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || roomCard.AppointmentRecord)
             {
-
-                if (e.DownInfo.IsDownload)
+                if (roomCard.DownInfo.IsDownload)
                 {
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
                     return;
                 }
-                e.DownInfo.IsDownload = true;
-                Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(e.RoomId);
-                do
+
+                roomCard.DownInfo.IsDownload = true;
+
+                Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                try
                 {
-                    if (Initialization)
+                    do
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
-                        
-                        if (e.IsRecDanmu)
-                        {
-
-                            liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                            liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-                            liveChatListener.Connect();
-
-                        }
+                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, liveChatListener, isFirstTime);
+                        isFirstTime = false;
                     }
-                    else
-                    {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
-                    }
+                    while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark);
 
-                    var result = await HLS.DlwnloadHls_avc_mp4(e, Initialization);
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(HlsState), result.hlsState)}");
-                    Initialization = false;
-                    if (e.IsRecDanmu)
+                    Basics.DownloadCompletedReset(ref roomCard);
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : ""));
+                    roomCard.DownInfo.Unmark = false;
+                    roomCard.DownInfo.IsDownload = false;
+                }
+                finally
+                {
+                    if (liveChatListener != null)
                     {
-                        Danmu.SevaDanmu(liveChatListener, ref e);
-                    }
-                    if (result.hlsState== HLS.HlsState.Success && Core.Config.Core._AutomaticRepair)
-                    {
-                        Core.Tools.Transcode transcode = new Core.Tools.Transcode();
+                        liveChatListener.DanmuMessage = null;
                         try
                         {
-                            transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4"), e.RoomId);
-                            e.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4"));
+                            liveChatListener.Dispose();
                         }
-                        catch (Exception ex)
-                        {
-                            Log.Error(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
-                        }
+                        catch (Exception)
+                        { }
                     }
-                    else
-                    {
-                        e.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
-                    }
-                    switch(result.hlsState)
-                    {
-                        case HLS.HlsState.NoHLSStreamExists:
-                            Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS未生成，这里应该降级到FLV开始录制，但是因为FLV录制还没写好，这里跳过，30秒继续重试HLS");
-                            Thread.Sleep(30*1000);
-                            break;
-                    }
-                }
-                while (RoomInfo.GetLiveStatus(e.RoomId) && !e.DownInfo.Unmark);
-                DownloadCompletedReset(ref e);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})录制结束" + (e.DownInfo.Unmark ? "【原因：用户取消】" : ""));
-                e.DownInfo.Unmark = false;
-                e.DownInfo.IsDownload = false;
-
-                if (e.IsRecDanmu)
-                {
-                    if (!liveChatListener._Cancel)
-                    {
-                        liveChatListener.Cancel();
-                    }
-                }
-                if (liveChatListener != null)
-                {
-                    liveChatListener.DanmuMessage = null;
-                    try
-                    {
-                        liveChatListener.Dispose();
-                    }
-                    catch (Exception)
-                    { }
                 }
             }
         }
 
-        /// <summary>
-        /// 下载完成重置房间卡状态
-        /// </summary>
-        /// <param name="roomCard"></param>
-        private static void DownloadCompletedReset(ref RoomCardClass roomCard)
-        {
-            Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
-
-            roomCard.DownInfo.RealTimeDownloadSpe = 0;
-            roomCard.DownInfo.DownloadSize = 0;
-            roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;
-            roomCard.DownInfo.EndTime = DateTime.Now;
-            _Room.SetRoomCardByUid(roomCard.UID, roomCard);
-        }
-
-        private static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
-        {
-            LiveChatListener liveChatListener = (LiveChatListener)sender;
-            //Danmu.SevaDanmu(liveChatListener);
-            if (!liveChatListener._Cancel)
-            {
-                if (liveChatListener._disposed)
-                {
-                    liveChatListener = new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
-                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;                   
-                    liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-                }
-                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接，但直播未结束，触发重连");
-                liveChatListener.Connect();
-            }
-            else
-            {
-                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接");
-                liveChatListener.Cancel();
-                liveChatListener = null;
-            }
-        }
-
+       
 
         /// <summary>
         /// 下播事件
@@ -191,100 +106,10 @@ namespace Core.RuntimeObject
             {
                 Log.Info(nameof(DetectRoom_LiveEnd), $"{e.RoomId}({e.Name})下播");
             }
-
         }
 
 
-        private static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
-        {
-            LiveChatListener liveChatListener = (LiveChatListener)sender;
-            switch (e)
-            {
-                case DanmuMessageEventArgs Danmu:
-                    {
-
-                        liveChatListener.DanmuMessage.Danmu.Add(new Danmu.DanmuInfo
-                        {
-                            color = Danmu.MessageColor,
-                            pool = 0,
-                            size = 25,
-                            timestamp = Danmu.Timestamp,
-                            type = Danmu.MessageType,
-                            time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            uid = Danmu.UserId,
-                            Message = Danmu.Message,
-                            Nickname = Danmu.UserName,
-                            LV = Danmu.GuardLV
-                        });
-                        if (Init.IsDevDebug)
-                        {
-                            //Log.Info(nameof(LiveChatListener_MessageReceived),$"收到弹幕:{Danmu.UserName}[{Danmu.UserId}]:{Danmu.Message}");
-                        }
-                        break;
-                    }
-                case SuperchatEventArg SuperchatEvent:
-                    {
-
-                        liveChatListener.DanmuMessage.SuperChat.Add(new Danmu.SuperChatInfo()
-                        {
-                            Message = SuperchatEvent.Message,
-                            MessageTrans = SuperchatEvent.messageTrans,
-                            Price = SuperchatEvent.Price,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = SuperchatEvent.Timestamp,
-                            UserId = SuperchatEvent.UserId,
-                            UserName = SuperchatEvent.UserName,
-                            TimeLength = SuperchatEvent.TimeLength
-                        });
-                        if (Init.IsDevDebug)
-                        {
-                            //Log.Info(nameof(LiveChatListener_MessageReceived),$"收到SC:{SuperchatEvent.UserName}[{SuperchatEvent.UserId}]:{SuperchatEvent.Message}");
-                        }
-                        break;
-                    }
-                case GuardBuyEventArgs GuardBuyEvent:
-                    {
-
-                        liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
-                        {
-                            GuardLevel = GuardBuyEvent.GuardLevel,
-                            GuradName = GuardBuyEvent.GuardName,
-                            Number = GuardBuyEvent.Number,
-                            Price = GuardBuyEvent.Price,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = GuardBuyEvent.Timestamp,
-                            UserId = GuardBuyEvent.UserId,
-                            UserName = GuardBuyEvent.UserName
-                        });
-                        if (Init.IsDevDebug)
-                        {
-                           // Log.Info(nameof(LiveChatListener_MessageReceived),$"收到大航海:{GuardBuyEvent.UserName}[{GuardBuyEvent.UserId}]:{GuardBuyEvent.GuardName}");
-                        }
-                        break;
-                    }
-                case SendGiftEventArgs sendGiftEventArgs:
-                    {
-                        liveChatListener.DanmuMessage.Gift.Add(new Danmu.GiftInfo()
-                        {
-                            Amount = sendGiftEventArgs.Amount,
-                            GiftName = sendGiftEventArgs.GiftName,
-                            Price = sendGiftEventArgs.GiftPrice,
-                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                            Timestamp = sendGiftEventArgs.Timestamp,
-                            UserId = sendGiftEventArgs.UserId,
-                            UserName = sendGiftEventArgs.UserName
-                        });
-                        if (Init.IsDevDebug)
-                        {
-                           // Log.Info(nameof(LiveChatListener_MessageReceived),$"收到礼物:{sendGiftEventArgs.UserName}[{sendGiftEventArgs.UserId}]:{sendGiftEventArgs.GiftName} x {sendGiftEventArgs.Amount}个");
-                        }
-                        break;
-                    }
-                default:
-                    break;
-            }
-
-        }
+     
         public enum TriggerType
         {
             /// <summary>
