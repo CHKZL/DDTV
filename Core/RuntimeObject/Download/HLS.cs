@@ -32,8 +32,7 @@ namespace Core.RuntimeObject.Download
                 using (FileStream fs = new FileStream(File, FileMode.Append))
                 {
 
-                    HostClass hostClass = new();
-                    GetFlvHost_avc(card);
+                    HostClass hostClass = new();     
                     while (!GetHlsHost_avc(card, ref hostClass))
                     {
                         hlsState = HandleHlsError(card, hostClass);
@@ -199,9 +198,14 @@ namespace Core.RuntimeObject.Download
                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Special;            
                 return DlwnloadTaskState.PaidLiveStream;
             }
+            if (hostClass.Effective)
+            {
+               card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
+                return DlwnloadTaskState.Recording;
+            }
             else
-            {              
-                card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
+            {
+                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                 return DlwnloadTaskState.NoHLSStreamExists;
             }
         }
