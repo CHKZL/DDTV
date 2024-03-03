@@ -38,17 +38,17 @@ namespace CLI.WebAppServices.Api
     [Route("api/config/[controller]")]
     [Login]
     [Tags("config")]
-    public class set_default_file_path_name_format : ControllerBase
+    public class set_recording_path : ControllerBase
     {
         
         /// <summary>
-        /// 设置默认保存路径和格式
+        /// 设置录制文件储存路径（字符串）
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="path">保存的文件以怎样的路径和名称格式保存在录制文件夹中</param>
+        /// <param name="path">录制文件储存路径（字符串）</param>
         /// <param name="check">二次确认key</param>
         /// <returns></returns>
-        [HttpPost(Name = "set_default_file_path_name_format")]
+        [HttpPost(Name = "set_recording_path")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string path, [FromForm] string check="")
         {
             if (string.IsNullOrEmpty(check))
@@ -56,26 +56,46 @@ namespace CLI.WebAppServices.Api
                 path = CreateAll(path);
                 if(string.IsNullOrEmpty(path))
                 {
-                     return Content(MessageBase.Success(nameof(set_default_file_path_name_format), cache.cache_set_default_file_path_name_format, 
+                     return Content(MessageBase.Success(nameof(set_recording_path), cache.set_recording_path, 
                     $"正在将录制路径格式修改为{path}，格式不符合要求，无法创建，请检查"),
                     "application/json");
                 }
-                cache.cache_set_default_file_path_name_format = Guid.NewGuid().ToString();
-                return Content(MessageBase.Success(nameof(set_default_file_path_name_format), cache.cache_set_default_file_path_name_format, 
+                cache.set_recording_path = Guid.NewGuid().ToString();
+                return Content(MessageBase.Success(nameof(set_recording_path), cache.set_recording_path, 
                     $"正在将录制路径格式修改为{path}，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，二次确认提交后“get_file_structure”接口以及返回具体的文件流功能将会失效，直到下一次启动"),
                     "application/json");
             }
-            if (check != cache.cache_set_default_file_path_name_format)
+            if (check != cache.set_recording_path)
             {
-                  return Content(MessageBase.Success(nameof(set_default_file_path_name_format), false, $"二次确认的key不正确"), "application/json");
+                  return Content(MessageBase.Success(nameof(set_recording_path), false, $"二次确认的key不正确"), "application/json");
             }
             else
             {
                 Core.Config.Core._RecFileDirectory = path;
-                return Content(MessageBase.Success(nameof(set_default_file_path_name_format), true, 
+                return Content(MessageBase.Success(nameof(set_recording_path), true, 
                     $"正在将录制路径格式修改为{path}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效，重启后恢复"),
                     "application/json");
             }
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_recording_path : ControllerBase
+    {
+
+        /// <summary>
+        /// 获取录制文件储存路径（字符串）
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpGet(Name = "get_recording_path")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            return Content(MessageBase.Success(nameof(get_recording_path), Core.Config.Core._RecFileDirectory, $"获取录制文件储存路径（字符串）"), "application/json");
         }
     }
 }
