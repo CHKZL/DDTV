@@ -29,14 +29,7 @@ namespace Core.RuntimeObject.Download
                 File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.mp4";
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
-                if (Core.Config.Core._AutomaticRepair)
-                {
-                    card.DownInfo.DownloadFileList.VideoFile.Add(File.Replace("_original.mp4", "_fix.mp4"));
-                }
-                else
-                {
-                    card.DownInfo.DownloadFileList.VideoFile.Add(File);
-                }
+                
                 using (FileStream fs = new FileStream(File, FileMode.Append))
                 {
 
