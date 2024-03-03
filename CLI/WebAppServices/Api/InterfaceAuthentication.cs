@@ -10,15 +10,6 @@ namespace CLI.WebAppServices.Middleware
 {
     public class InterfaceAuthentication
     {
-        [Produces(MediaTypeNames.Application.Json)]
-        [ApiController]
-        [Route("api/[controller]")]
-        [AllowAnonymous]
-        [Login]
-        public class ApiControllerBase : ControllerBase
-        {
-
-        }
         /// <summary>
         /// 用于计算sig的公共参数（Post请求）
         /// </summary>
