@@ -1,6 +1,7 @@
 ﻿using ConsoleTableExt;
 using Core.LiveChat;
 using Core.LogModule;
+using Core.Network.Methods;
 using SQLitePCL;
 using System;
 using System.Collections.Generic;
@@ -41,11 +42,13 @@ namespace Core.RuntimeObject.Download
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
-           var result = await FLV.DlwnloadHls_avc_flv(roomCard);
-
-            //var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+            var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
             Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
-
+            if (result.hlsState == DlwnloadTaskState.NoHLSStreamExists)
+            {
+                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})降级到FLV模式进行录制");
+                result = await FLV.DlwnloadHls_avc_flv(roomCard);
+            }
             if (roomCard.IsRecDanmu)
             {
                 Danmu.SevaDanmu(liveChatListener, ref roomCard);
@@ -59,22 +62,13 @@ namespace Core.RuntimeObject.Download
                 Core.Tools.Transcode transcode = new Core.Tools.Transcode();
                 try
                 {
-                    transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4"), roomCard.RoomId);
-                    roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4"));
+                    transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"), roomCard.RoomId);
+                    roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"));
                 }
                 catch (Exception ex)
                 {
                     Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                 }
-            }
-
-
-            switch (result.hlsState)
-            {
-                case DlwnloadTaskState.NoHLSStreamExists:
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS未生成，这里应该降级到FLV开始录制，但是因为FLV录制还没写好，这里跳过，30秒继续重试HLS");
-                    Thread.Sleep(30 * 1000);
-                    break;
             }
         }
 
@@ -142,15 +136,15 @@ namespace Core.RuntimeObject.Download
         /// 记录下载开始
         /// </summary>
         /// <param name="card">房间卡片信息</param>
-        internal static void LogDownloadStart(RoomCardClass card)
+        internal static void LogDownloadStart(RoomCardClass card,string Type = "Auto")
         {
             var tableData = new List<List<object>>
             {
-                new List<object> { "名称", "房间号", "UID", "直播标题" },
-                new List<object> { card.Name, card.RoomId, card.UID, card.Title.Value }
+                new List<object> { "模式","名称", "房间号", "UID", "直播标题" },
+                new List<object> { Type,card.Name, card.RoomId, card.UID, card.Title.Value }
             };
             ConsoleTableBuilder.From(tableData).WithTitle("开始录制任务").ExportAndWriteLine();
-            string startText = $"[开始录制任务]：" +
+            string startText = $"[开始录制任务]：{Type}|" +
            $"{card.Name}({card.RoomId})|" +
            $"UID：{card.UID}|" +
            $"标题：{card.Title.Value}";
@@ -242,16 +236,6 @@ namespace Core.RuntimeObject.Download
 
 
         /// <summary>
-        /// 获取hevc编码HLS内容
-        /// </summary>
-        /// <param name="RoomId"></param>
-        /// <returns></returns>
-        internal static HostClass GetHlsHost_hevc(RoomCardClass roomCard)
-        {
-            return _GetHost(roomCard.RoomId, "http_hls", "fmp4", "hevc");
-        }
-
-        /// <summary>
         /// 获取avc编码FLV内容
         /// </summary>
         /// <param name="RoomId"></param>
@@ -320,6 +304,8 @@ namespace Core.RuntimeObject.Download
             };
             return hostClass;
         }
+
+    
 
         private static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
         {

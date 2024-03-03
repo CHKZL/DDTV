@@ -42,10 +42,12 @@ namespace Core.RuntimeObject.Download
                 };
                 downloadOpt.RequestConfiguration = new RequestConfiguration()
                 {
-                    Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3",
+                    Accept = "*/*",
                     Headers = new WebHeaderCollection(), // { 你的自定义头 }
+                    ContentType = "application/x-www-form-urlencoded",
                     KeepAlive = true, // 默认值为false
                     ProtocolVersion = HttpVersion.Version11, // 默认值为HTTP 1.1
+                    Referer="https://www.bilibili.com/",
                     UserAgent = Config.Core._HTTP_UA,
                     //Proxy = new WebProxy()
                     //{
@@ -66,13 +68,13 @@ namespace Core.RuntimeObject.Download
                 downloader.DownloadProgressChanged += (s, e) =>
                 {
                     card.DownInfo.RealTimeDownloadSpe = e.AverageBytesPerSecondSpeed;
-                    card.DownInfo.DownloadSize += e.ReceivedBytesSize;
+                    card.DownInfo.DownloadSize += e.ProgressedByteSize;
                 };
 
                 #endregion
                 HostClass hostClass = GetFlvHost_avc(card);
                 string DlwnloadURL = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
-                LogDownloadStart(card);
+                LogDownloadStart(card,"FLV");
                 Task _stopTask = new Task(() =>
                 {
                     while (true)

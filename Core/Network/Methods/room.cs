@@ -55,7 +55,7 @@ namespace Core.Network.Methods
 
         private static PlayInfo_Class _PlayInfo(long RoomId)
         {
-            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Download._DefaultResolution}&platform=2&ptype=2", true, "https://www.bilibili.com/");
+            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Download._DefaultResolution}&platform=web&ptype=8", true);
             PlayInfo_Class hLSHostClass = new();
             try
             {
