@@ -83,7 +83,7 @@ namespace Core.RuntimeObject
                         Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
                     }
 
-                    var result = await HLS.DlwnloadHls_avc_mp4(e,Initialization);
+                    var result = await HLS.DlwnloadHls_avc_mp4(e, Initialization);
                     Log.Info(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(HlsState), result.hlsState)}");
                     Initialization = false;
                     if (e.IsRecDanmu)
@@ -96,11 +96,16 @@ namespace Core.RuntimeObject
                         try
                         {
                             transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4"), e.RoomId);
+                            e.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4"));
                         }
                         catch (Exception ex)
                         {
                             Log.Error(nameof(DetectRoom_LiveStart), $"{e.Name}({e.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                         }
+                    }
+                    else
+                    {
+                        e.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
                     }
                     switch(result.hlsState)
                     {
@@ -133,10 +138,7 @@ namespace Core.RuntimeObject
                     catch (Exception)
                     { }
                 }
-
-
             }
-
         }
 
         /// <summary>
