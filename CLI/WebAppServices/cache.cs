@@ -8,6 +8,6 @@ namespace CLI.WebAppServices
 {
     internal class cache
     {
-        public static string cache_set_default_file_path_name_format = Guid.NewGuid().ToString();
+        public static string set_recording_path = Guid.NewGuid().ToString();
     }
 }
