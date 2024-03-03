@@ -856,7 +856,7 @@ namespace Core.RuntimeObject
                             Name = userInfo.data.name,
                             url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                             roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) },
-                            Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) },
+                            Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
                             face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
                             sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
@@ -872,7 +872,7 @@ namespace Core.RuntimeObject
                         OldCard.Name = userInfo.data.name;
                         OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
                         OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) };
-                        OldCard.Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(10) };
+                        OldCard.Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
                         OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };
                         OldCard.sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue };

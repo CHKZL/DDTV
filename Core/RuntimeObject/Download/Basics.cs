@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Detect;
-using static Core.RuntimeObject.Download.HLS;
 
 namespace Core.RuntimeObject.Download
 {
@@ -42,16 +41,20 @@ namespace Core.RuntimeObject.Download
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
+           var result = await FLV.DlwnloadHls_avc_flv(roomCard);
 
-            var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
-            Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(HlsState), result.hlsState)}");
+            //var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+            Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
 
             if (roomCard.IsRecDanmu)
             {
                 Danmu.SevaDanmu(liveChatListener, ref roomCard);
             }
-
-            if (result.hlsState == HLS.HlsState.Success && Core.Config.Core._AutomaticRepair)
+            if (result.hlsState == DlwnloadTaskState.Success)
+            {
+                roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
+            }
+            else if (result.hlsState == DlwnloadTaskState.Success && Core.Config.Core._AutomaticRepair)
             {
                 Core.Tools.Transcode transcode = new Core.Tools.Transcode();
                 try
@@ -64,14 +67,11 @@ namespace Core.RuntimeObject.Download
                     Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                 }
             }
-            else
-            {
-                roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
-            }
+
 
             switch (result.hlsState)
             {
-                case HLS.HlsState.NoHLSStreamExists:
+                case DlwnloadTaskState.NoHLSStreamExists:
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS未生成，这里应该降级到FLV开始录制，但是因为FLV录制还没写好，这里跳过，30秒继续重试HLS");
                     Thread.Sleep(30 * 1000);
                     break;
@@ -201,7 +201,7 @@ namespace Core.RuntimeObject.Download
                 {
                     return true;
                 }
-                else if (hostClass.eXTM3U.eXTINFs.Count == 0 && RefreshHlsHostClass(roomCard, ref hostClass))
+                else if (hostClass.eXTM3U.eXTINFs.Count == 0 && RefreshHlsHost_avc(roomCard, ref hostClass))
                 {
                     return false;
                 }
@@ -214,7 +214,7 @@ namespace Core.RuntimeObject.Download
         /// <param name="roomCard"></param>
         /// <param name="m3u8"></param>
         /// <returns></returns>
-        internal static bool RefreshHlsHostClass(RoomCardClass roomCard, ref HostClass m3u8)
+        internal static bool RefreshHlsHost_avc(RoomCardClass roomCard, ref HostClass m3u8)
         {
             string fileContent = string.Empty;
             if (!string.IsNullOrEmpty(m3u8.SteramInfo))
@@ -246,9 +246,9 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         /// <param name="RoomId"></param>
         /// <returns></returns>
-        internal static HostClass GetHlsHost_hevc(long RoomId)
+        internal static HostClass GetHlsHost_hevc(RoomCardClass roomCard)
         {
-            return _GetHost(RoomId, "http_hls", "fmp4", "hevc");
+            return _GetHost(roomCard.RoomId, "http_hls", "fmp4", "hevc");
         }
 
         /// <summary>
@@ -256,9 +256,34 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         /// <param name="RoomId"></param>
         /// <returns></returns>
-        internal static HostClass GetFlvHost_avc(long RoomId)
+        internal static HostClass GetFlvHost_avc(RoomCardClass roomCard)
         {
-            return _GetHost(RoomId, "http_stream", "flv", "avc");
+            return _GetHost(roomCard.RoomId, "http_stream", "flv", "avc");
+        }
+
+        /// <summary>
+        /// 检查并处理文件
+        /// </summary>
+        /// <param name="File">文件名</param>
+        /// <returns>是否成功</returns>
+        internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card)
+        {
+            const long FileSizeThreshold = 10 * 1024 * 1024; // 10MB
+            bool fileExists = System.IO.File.Exists(File);
+            if (fileExists)
+            {
+                System.IO.FileInfo fileInfo = new(File);
+                if (fileInfo.Length > FileSizeThreshold)
+                {
+                    return DlwnloadTaskState.Success;
+                }
+                else
+                {
+                    Tools.FileOperations.Delete(File);
+                }
+            }
+            //card.DownInfo.DownloadFileList.VideoFile.RemoveAt(card.DownInfo.DownloadFileList.VideoFile.Count - 1);
+            return DlwnloadTaskState.SuccessfulButNotStream;
         }
 
         #endregion
@@ -390,7 +415,7 @@ namespace Core.RuntimeObject.Download
 
         #endregion
 
-        #region internal Class
+        #region Class
 
         internal class HostClass
         {
@@ -473,8 +498,40 @@ namespace Core.RuntimeObject.Download
                     internal string ExtensionName { get; set; }
                 }
             }
-
-            #endregion
         }
+
+        public enum DlwnloadTaskState
+        {
+            /// <summary>
+            /// 初始状态(该状态不应该被传递出去，使用前必须状态已变化)
+            /// </summary>
+            Recording,
+            /// <summary>
+            /// 成功
+            /// </summary>
+            Success,
+            /// <summary>
+            /// 成功(但该任务未推流，未生成文件)
+            /// </summary>
+            SuccessfulButNotStream,
+            /// <summary>
+            /// 已下播
+            /// </summary>
+            StopLive,
+            /// <summary>
+            /// 不存在HLS流
+            /// </summary>
+            NoHLSStreamExists,
+            /// <summary>
+            /// 用户取消
+            /// </summary>
+            UserCancellation,
+            /// <summary>
+            /// 当前为付费直播
+            /// </summary>
+            PaidLiveStream
+        }
+
+        #endregion
     }
 }
