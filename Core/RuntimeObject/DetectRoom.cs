@@ -67,6 +67,7 @@ namespace Core.RuntimeObject
                 {
                     do
                     {
+                        //核心下载函数
                         await Basics.HandleRecordingAsync(roomCard, triggerTypes, liveChatListener, isFirstTime);
                         isFirstTime = false;
                     }

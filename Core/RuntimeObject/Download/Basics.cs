@@ -42,11 +42,13 @@ namespace Core.RuntimeObject.Download
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
+            //HLS下载逻辑
             var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
             Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
             if (result.hlsState == DlwnloadTaskState.NoHLSStreamExists)
             {
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})降级到FLV模式进行录制");
+                //FLV兜底逻辑
                 result = await FLV.DlwnloadHls_avc_flv(roomCard);
             }
             if (roomCard.IsRecDanmu)

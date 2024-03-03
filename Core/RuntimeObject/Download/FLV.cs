@@ -36,8 +36,7 @@ namespace Core.RuntimeObject.Download
                     ChunkCount = 1, // 下载文件的部分数量，默认值为1
                     ParallelDownload = false, // 是否并行下载文件的各个部分，默认值为false
                     MaxTryAgainOnFailover = 3, //最大失败次数   
-                    Timeout = 1000,
-                    ClearPackageOnCompletionWithFailure = true, // 当下载失败完成时清除包块数据
+                    Timeout = 3000,
 
                 };
                 downloadOpt.RequestConfiguration = new RequestConfiguration()
@@ -88,7 +87,7 @@ namespace Core.RuntimeObject.Download
                                 break;
                             }
                         }
-                        if (downloader == null)
+                        if (downloader.Status == DownloadStatus.Stopped || downloader.Status == DownloadStatus.Completed || downloader.Status == DownloadStatus.Failed)
                         {
                             break;
                         }
