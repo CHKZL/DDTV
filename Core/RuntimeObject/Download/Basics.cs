@@ -116,9 +116,10 @@ namespace Core.RuntimeObject.Download
         /// 初始化下载
         /// </summary>
         /// <param name="card">房间卡片信息</param>
-        internal static void InitializeDownload(RoomCardClass card)
+        internal static void InitializeDownload(RoomCardClass card,RoomCardClass.TaskType taskType)
         {
             card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
+            card.DownInfo.taskType = taskType;
             _Room.SetRoomCardByUid(card.UID, card);
         }
 
