@@ -3,9 +3,21 @@ using Newtonsoft.Json;
 
 namespace CLI
 {
+    /// <summary>
+    /// 整个API核心的核心返参打包类
+    /// </summary>
     public class MessageBase
     {
-        public static string Success<T>(string cmd, T data, string massage = "", code code = code.ok)
+        /// <summary>
+        /// 打包返回数据
+        /// </summary>
+        /// <typeparam name="T">data主体的，泛型入参</typeparam>
+        /// <param name="cmd">命令名称，默认应该操作类的nameof</param>
+        /// <param name="data">返回的数据主体内容</param>
+        /// <param name="message">提示文本消息</param>
+        /// <param name="code">状态码</param>
+        /// <returns></returns>
+        public static string Success<T>(string cmd, T data, string message = "", code code = code.ok)
         {
             //if (!Core.Config.Core._LoginStatus)
             if(!Core.RuntimeObject.Account.AccountInformation.State)
@@ -23,8 +35,9 @@ namespace CLI
                 cmd = cmd,
                 code= code,
                 data = data,
-                massage = massage
+                message = message
             };
+            
             string B = JsonConvert.SerializeObject(pack);
             return B;
         }
@@ -64,7 +77,7 @@ namespace CLI
             /// <summary>
             /// 信息
             /// </summary>
-            public string massage { get; set; }
+            public string message { get; set; }
             /// <summary>
             /// 对应的接口数据
             /// </summary>
