@@ -16,7 +16,9 @@ namespace CLI
     {
         static void Main(string[] args)
         {
-            //注册DDTV主要服务
+            try
+            {
+                //注册DDTV主要服务
             Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
             Thread.Sleep(1000*3);
             WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -71,6 +73,11 @@ namespace CLI
             app.Urls.Add(rurl);
             Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
             app.Run();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"出现无法解决的重大错误，这一般是由于硬件或者系统层面的问题导致的，DDTV被迫停止运行。错误消息：{e.ToString()}");
+            }
         }
 
         public class Service

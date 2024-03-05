@@ -49,6 +49,9 @@
 
 
 	<ItemGroup>
+	  <None Update="plugins\ffmpeg\ffmpeg.exe">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="resource\DDTV.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
