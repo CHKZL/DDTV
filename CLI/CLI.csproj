@@ -50,7 +50,7 @@
 
 	<ItemGroup>
 	  <None Update="plugins\ffmpeg\ffmpeg.exe">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	  <None Update="resource\DDTV.ico">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
