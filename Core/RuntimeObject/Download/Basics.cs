@@ -59,12 +59,12 @@ namespace Core.RuntimeObject.Download
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
             }
-            if (result.hlsState == DlwnloadTaskState.Success && Core.Config.Core._AutomaticRepair)
+            if (result.hlsState == DlwnloadTaskState.Success && Config.Core._AutomaticRepair)
             {
-                Core.Tools.Transcode transcode = new Core.Tools.Transcode();
+                Tools.Transcode transcode = new Tools.Transcode();
                 try
                 {
-                    transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"), roomCard.RoomId);
+                    transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"), roomCard);
                     roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"));
                 }
                 catch (Exception ex)
@@ -81,7 +81,7 @@ namespace Core.RuntimeObject.Download
         internal static void DownloadCompletedReset(ref RoomCardClass roomCard)
         {
             Log.Info(nameof(DownloadCompletedReset), $"[{roomCard.Name}({roomCard.RoomId})]进行录制完成处理");
-
+            roomCard.DownInfo.DownloadFileList = new();
             roomCard.DownInfo.RealTimeDownloadSpe = 0;
             roomCard.DownInfo.DownloadSize = 0;
             roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;

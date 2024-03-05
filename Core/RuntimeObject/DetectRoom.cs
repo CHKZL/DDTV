@@ -45,7 +45,8 @@ namespace Core.RuntimeObject
                 return;
             }
 
-            bool isFirstTime = true;
+            //如果Core的初始化时间小于20秒，则认为该任务是之前就开播了，不当作新开播任务
+            bool isFirstTime = Core.Init.GetRunTime() > 20000 ? true : false;
 
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
@@ -69,10 +70,38 @@ namespace Core.RuntimeObject
                     {
                         //核心下载函数
                         await Basics.HandleRecordingAsync(roomCard, triggerTypes, liveChatListener, isFirstTime);
+                        //她已经不是第一次了
                         isFirstTime = false;
                     }
+                    //如果检测到还在开播，且用户没有取消，那么就再来一次
                     while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark);
 
+                    ////如果自动修复和强制合并都打开，才会触发强制合并为一个文件
+                    //if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)
+                    //{
+                    //    #region 合并本次录制的视频文件为一个文件
+                    //    string[] Files = new string[roomCard.DownInfo.DownloadFileList.VideoFile.Count];
+                    //    for (int i = 0; i < Files.Length; i++)
+                    //    {
+                    //        Files[i] = $"file '{roomCard.DownInfo.DownloadFileList.VideoFile[i]}'";
+                    //    }
+                    //    string MergeFilesListFileName = Guid.NewGuid().ToString();
+                    //    File.WriteAllLines($"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", Files);
+                    //    Tools.Transcode transcode = new Tools.Transcode();
+                    //    try
+                    //    {
+                    //        //transcode.MergeFilesAsync(Files[0], $"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", roomCard);
+                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Clear();
+                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Add(Files[0]);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后合并时出现意外错误:{ex.ToString()}");
+                    //    }
+                    //    #endregion
+                    //}
+
+                    //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                     Basics.DownloadCompletedReset(ref roomCard);
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : ""));
                     roomCard.DownInfo.Unmark = false;

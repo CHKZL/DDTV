@@ -281,6 +281,24 @@ namespace Core
                 }
             }
 
+            private static string ForceMerge = "false";
+            /// <summary>
+            /// 录制完成强制合并为一个视频文件
+            /// 默认值：true
+            /// </summary>
+            public static bool _ForceMerge
+            {
+                get => bool.Parse(ForceMerge);
+                set
+                {
+                    if (value.ToString() != ForceMerge)
+                    {
+                        ForceMerge = value.ToString();
+                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                    }
+                }
+            }
+
 
             private static string ApiPort = "11419";
             /// <summary>

@@ -1168,6 +1168,10 @@ namespace Core.RuntimeObject
 
             public class DownloadFile
             {
+                /// <summary>
+                /// 统计当前任务中正在运行的转码任务有多少
+                /// </summary>
+                public int TranscodingCount { get; set; } = 0;
                 public List<string> VideoFile { get; set; } = new();
                 public List<string> DanmuFile { get; set; } = new();
                 public List<string> SCFile { get; set; } = new();
