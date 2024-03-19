@@ -278,7 +278,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
                                 }
                             }
                            
-                            //BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
+                            BilibiliUserConfig.FansMedal = UserInfo.fansMedal.GetFansMedal(long.Parse(BilibiliUserConfig.account.uid));
                             //string B = JsonConvert.SerializeObject(BilibiliUserConfig.FansMedal);
                             Thread.Sleep(IntervalTime);
                         }
