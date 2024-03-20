@@ -373,7 +373,7 @@ namespace Core.RuntimeObject
             return (State, Message);
         }
 
-        public static (bool State, string Message) Cut(long UID = 0, long RoomId = 0)
+        public static (bool State, string Message) CutTask(long UID = 0, long RoomId = 0)
         {
             RoomCardClass roomCardClass = new();
             bool State = false;
