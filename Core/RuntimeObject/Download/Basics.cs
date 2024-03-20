@@ -59,7 +59,7 @@ namespace Core.RuntimeObject.Download
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
             }
-            if (result.hlsState == DlwnloadTaskState.Success && Config.Core._AutomaticRepair)
+            if ((result.hlsState == DlwnloadTaskState.Success || result.hlsState == DlwnloadTaskState.Cut) && Config.Core._AutomaticRepair)
             {
                 Tools.Transcode transcode = new Tools.Transcode();
                 try

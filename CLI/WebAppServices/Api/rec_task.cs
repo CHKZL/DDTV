@@ -28,8 +28,8 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "cancel_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(cancel_task), addInfo.State, $"{addInfo.Message}"), "application/json");
+            var TaskInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
+            return Content(MessageBase.Success(nameof(cancel_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 
@@ -50,8 +50,8 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "single_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.AddTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(single_task), addInfo.State, $"{addInfo.Message}"), "application/json");
+            var TaskInfo = Core.RuntimeObject._Room.AddTask(uid, room_id);
+            return Content(MessageBase.Success(nameof(single_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 
@@ -72,8 +72,8 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "cut_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.CutTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(cut_task), addInfo.State, $"{addInfo.Message}"), "application/json");
+            var TaskInfo = Core.RuntimeObject._Room.CutTask(uid, room_id);
+            return Content(MessageBase.Success(nameof(cut_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 }
