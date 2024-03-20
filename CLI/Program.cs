@@ -9,6 +9,7 @@ using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Core;
 using Microsoft.AspNetCore.Http.Features;
+using System.Runtime.InteropServices;
 
 namespace CLI
 {
@@ -69,10 +70,15 @@ namespace CLI
                 FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                 RequestPath = Config.Web._RecordingStorageDirectory
             });
-            string rurl = $"http://0.0.0.0:11419";
-            app.Urls.Add(rurl);
-            Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-            app.Run();
+                string rurl = $"http://0.0.0.0:11419";
+                app.Urls.Add(rurl);
+                Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
+                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:11419 ]");
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
+                }
+                app.Run();
             }
             catch (Exception e)
             {
