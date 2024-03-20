@@ -60,7 +60,7 @@ namespace CLI.WebAppServices.Api
     [Route("api/rec_task/[controller]")]
     [Login]
     [Tags("rec_task")]
-    public class cat_task : ControllerBase
+    public class cut_task : ControllerBase
     {
         /// <summary>
         /// 手动切断并重连当前任务(UID和房间号二选一)，网络状态和硬盘太慢的不推荐调用
@@ -69,11 +69,11 @@ namespace CLI.WebAppServices.Api
         /// <param name="uid"></param>
         /// <param name="room_id"></param>
         /// <returns></returns>
-        [HttpPost(Name = "cat_task")]
+        [HttpPost(Name = "cut_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
             var addInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(cat_task), addInfo.State, $"{addInfo.Message}"), "application/json");
+            return Content(MessageBase.Success(nameof(cut_task), addInfo.State, $"{addInfo.Message}"), "application/json");
         }
     }
 }
