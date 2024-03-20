@@ -72,6 +72,7 @@ namespace Core.RuntimeObject.Download
                     Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                 }
             }
+            roomCard.DownInfo.IsCut = false;
         }
 
         /// <summary>
@@ -252,25 +253,35 @@ namespace Core.RuntimeObject.Download
         /// 检查并处理文件
         /// </summary>
         /// <param name="File">文件名</param>
+        /// <param name="card"></param>
         /// <returns>是否成功</returns>
         internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card)
         {
             const long FileSizeThreshold = 10 * 1024 * 1024; // 10MB
-            bool fileExists = System.IO.File.Exists(File);
-            if (fileExists)
+            if (card.DownInfo.IsCut)
             {
-                System.IO.FileInfo fileInfo = new(File);
-                if (fileInfo.Length > FileSizeThreshold)
+                return DlwnloadTaskState.Cut;
+            }
+            else
+            {
+                bool fileExists = System.IO.File.Exists(File);
+                if (fileExists)
                 {
-                    return DlwnloadTaskState.Success;
+                    System.IO.FileInfo fileInfo = new(File);
+                    if (fileInfo.Length > FileSizeThreshold)
+                    {
+                        return DlwnloadTaskState.Success;
+                    }
+                    else
+                    {
+                        Tools.FileOperations.Delete(File);
+                    }
+
                 }
-                else
-                {
-                    Tools.FileOperations.Delete(File);
-                }
+                return DlwnloadTaskState.SuccessfulButNotStream;
             }
             //card.DownInfo.DownloadFileList.VideoFile.RemoveAt(card.DownInfo.DownloadFileList.VideoFile.Count - 1);
-            return DlwnloadTaskState.SuccessfulButNotStream;
+
         }
 
         #endregion
@@ -494,7 +505,7 @@ namespace Core.RuntimeObject.Download
             /// <summary>
             /// 初始状态(该状态不应该被传递出去，使用前必须状态已变化)
             /// </summary>
-            Recording,
+            Default,
             /// <summary>
             /// 成功
             /// </summary>
@@ -518,7 +529,15 @@ namespace Core.RuntimeObject.Download
             /// <summary>
             /// 当前为付费直播
             /// </summary>
-            PaidLiveStream
+            PaidLiveStream,
+            /// <summary>
+            /// 录制中
+            /// </summary>
+            Recording,
+            /// <summary>
+            /// 瞎几把剪状态
+            /// </summary>
+            Cut,
         }
 
         #endregion

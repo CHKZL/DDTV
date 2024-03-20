@@ -373,6 +373,31 @@ namespace Core.RuntimeObject
             return (State, Message);
         }
 
+        public static (bool State, string Message) Cut(long UID = 0, long RoomId = 0)
+        {
+            RoomCardClass roomCardClass = new();
+            bool State = false;
+            string Message = "传入参数有误";
+            if (UID != 0 || RoomId != 0)
+            {
+                if (UID != 0 ? GetCardForUID(UID, ref roomCardClass) : GetCardFoRoomId(RoomId, ref roomCardClass))
+                {
+                    if (roomCardClass.DownInfo.IsDownload)
+                    {
+                        roomCardClass.DownInfo.IsCut = true;
+                        State = true;
+                        Message = "触发切断当前录制内容，切断的文件会根据当前已录制的文件大小生成到录制文件夹中";
+                    }
+                }
+                else
+                {
+                    State = false;
+                    Message = "该直播间不存在";
+                }
+            }
+            return (State, Message);
+        }
+
         /// <summary>
         /// 新增录制任务（UID和房间号二选一即可），如果直播还未开始，则预约下一场开始的直播（如果主播中途下播再上播则不会再次录制）
         /// </summary>
@@ -1133,6 +1158,10 @@ namespace Core.RuntimeObject
             /// 当前是否在下载
             /// </summary>
             public bool IsDownload = false;
+            /// <summary>
+            /// 是否触发瞎几把剪
+            /// </summary>
+            public bool IsCut= false;
             /// <summary>
             /// 任务类型
             /// </summary>

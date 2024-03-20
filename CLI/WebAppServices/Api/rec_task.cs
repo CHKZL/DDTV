@@ -38,7 +38,7 @@ namespace CLI.WebAppServices.Api
     [Route("api/rec_task/[controller]")]
     [Login]
     [Tags("rec_task")]
-    public class single_record : ControllerBase
+    public class single_task : ControllerBase
     {
         /// <summary>
         /// 手动增加一个录制任务(UID和房间号二选一)，如果直播还未开始，则预约下一场开始的直播（如果主播中途下播再上播则不会再次录制）
@@ -47,11 +47,33 @@ namespace CLI.WebAppServices.Api
         /// <param name="uid"></param>
         /// <param name="room_id"></param>
         /// <returns></returns>
-        [HttpPost(Name = "single_record")]
+        [HttpPost(Name = "single_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
             var addInfo = Core.RuntimeObject._Room.AddTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(single_record), addInfo.State, $"{addInfo.Message}"), "application/json");
+            return Content(MessageBase.Success(nameof(single_task), addInfo.State, $"{addInfo.Message}"), "application/json");
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/rec_task/[controller]")]
+    [Login]
+    [Tags("rec_task")]
+    public class cat_task : ControllerBase
+    {
+        /// <summary>
+        /// 手动切断并重连当前任务(UID和房间号二选一)，网络状态和硬盘太慢的不推荐调用
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid"></param>
+        /// <param name="room_id"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "cat_task")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
+        {
+            var addInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
+            return Content(MessageBase.Success(nameof(cat_task), addInfo.State, $"{addInfo.Message}"), "application/json");
         }
     }
 }

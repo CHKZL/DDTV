@@ -19,7 +19,7 @@ namespace Core.RuntimeObject.Download
         /// <returns>[TaskStatus]任务状态；[FileName]下载成功的文件名</returns>
         public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_flv(RoomCardClass card)
         {
-            DlwnloadTaskState hlsState = DlwnloadTaskState.Recording;
+            DlwnloadTaskState hlsState = DlwnloadTaskState.Default;
             string File = string.Empty;
             await Task.Run(async () =>
             {
@@ -80,7 +80,7 @@ namespace Core.RuntimeObject.Download
                     while (true)
                     {
                         Thread.Sleep(200);
-                        if (card.DownInfo.Unmark)
+                        if (card.DownInfo.Unmark || card.DownInfo.IsCut)
                         {
                             if (downloader != null && (downloader.Status == DownloadStatus.Running || downloader.Status == DownloadStatus.Created))
                             {
