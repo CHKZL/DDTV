@@ -18,7 +18,7 @@ namespace Core.RuntimeObject.Download
         /// <returns>[TaskStatus]任务状态；[FileName]下载成功的文件名</returns>
         public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool First=false)
         {
-            DlwnloadTaskState hlsState = DlwnloadTaskState.Recording;
+            DlwnloadTaskState hlsState = DlwnloadTaskState.Default;
             string File = string.Empty;
             await Task.Run(() =>
             {
@@ -66,7 +66,7 @@ namespace Core.RuntimeObject.Download
                         long downloadSizeForThisCycle = 0;
                         try
                         {
-                            if (card.DownInfo.Unmark)
+                            if (card.DownInfo.Unmark || card.DownInfo.IsCut)
                             {
                                 hlsState = CheckAndHandleFile(File, ref card);
                                 return;
@@ -84,7 +84,7 @@ namespace Core.RuntimeObject.Download
                                     case DlwnloadTaskState.UserCancellation:
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
-                                    case DlwnloadTaskState.Recording:
+                                    case DlwnloadTaskState.Default:
                                         break;
                                 }
                             }
@@ -111,7 +111,7 @@ namespace Core.RuntimeObject.Download
                                     {
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         hlsState = DlwnloadTaskState.SuccessfulButNotStream;
-                                        if (!card.DownInfo.Unmark)
+                                        if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                             Thread.Sleep(1000 * 10);
                                         return;
                                     }
@@ -119,7 +119,7 @@ namespace Core.RuntimeObject.Download
                                     {
                                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
                                         hlsState = DlwnloadTaskState.Success;
-                                        if (!card.DownInfo.Unmark)
+                                        if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                             Thread.Sleep(1000 * 10);
                                         return;
                                     }
@@ -128,6 +128,7 @@ namespace Core.RuntimeObject.Download
                                 {
                                     //正式开始下载提示
                                     LogDownloadStart(card,"HLS");
+                                    hlsState = DlwnloadTaskState.Recording;
                                 }
                                 InitialRequest = false;
                             }
@@ -135,11 +136,15 @@ namespace Core.RuntimeObject.Download
                         catch (Exception e)
                         {
                             Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制循环中出现未知错误，写入日志", e, true);
-                            if (!card.DownInfo.Unmark)
+                            if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                 Thread.Sleep(1000);
+                            if (card.DownInfo.IsCut)
+                                return;
                         }
-                        if (!card.DownInfo.Unmark)
+                        if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                             Thread.Sleep(2000);
+                        if (card.DownInfo.IsCut)
+                            return;
                     }
                 }
             });
@@ -169,7 +174,7 @@ namespace Core.RuntimeObject.Download
                 return DlwnloadTaskState.UserCancellation;
             }
             Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]触发Host刷新");
-            return DlwnloadTaskState.Recording;
+            return DlwnloadTaskState.Default;
         }
 
 
@@ -201,7 +206,7 @@ namespace Core.RuntimeObject.Download
             if (hostClass.Effective)
             {
                card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
-                return DlwnloadTaskState.Recording;
+                return DlwnloadTaskState.Default;
             }
             else
             {
