@@ -72,7 +72,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "cut_task")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
+            var addInfo = Core.RuntimeObject._Room.CutTask(uid, room_id);
             return Content(MessageBase.Success(nameof(cut_task), addInfo.State, $"{addInfo.Message}"), "application/json");
         }
     }
