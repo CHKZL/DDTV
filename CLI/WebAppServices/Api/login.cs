@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using static CLI.WebAppServices.MessageCode;
 using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
 
 namespace CLI.WebAppServices.Api
@@ -45,7 +46,7 @@ namespace CLI.WebAppServices.Api
                     waitTime += 1000;
                 }
             }
-            return Content(MessageBase.Success(nameof(get_login_qr), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_login_qr), false, $"登陆二维码不存在，请检查是否调用登陆接口且未过期"), "application/json");
         }
     }
 
@@ -70,7 +71,7 @@ namespace CLI.WebAppServices.Api
                     FileInfo fi = new FileInfo(Core.Config.Core._QrUrl);
                     using (FileStream fs = fi.OpenRead())
                     {
-                        return Content(MessageBase.Success(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串"), "application/json");
+                        return Content(MessageBase.MssagePack(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串"), "application/json");
                     }
                 }
                 else
@@ -79,7 +80,7 @@ namespace CLI.WebAppServices.Api
                     waitTime += 1000;
                 }
             }
-            return Content(MessageBase.Success(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期"), "application/json");
         }
     }
 
@@ -101,12 +102,12 @@ namespace CLI.WebAppServices.Api
             if (check == "y")
             {
                 Core.Config.Core._UseAgree = true;
-                return Content(MessageBase.Success(nameof(use_agree), true, $"用户已同意使用须知"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(use_agree), true, $"用户已同意使用须知"), "application/json");
             }
             else
             {
                 Core.Config.Core._UseAgree = false;
-                return Content(MessageBase.Success(nameof(use_agree), false, $"用户未同意使用须知", MessageBase.code.LoginInfoFailure), "application/json");
+                return Content(MessageBase.MssagePack(nameof(use_agree), false, $"用户未同意使用须知", code.LoginInfoFailure), "application/json");
             }
         }
     }
@@ -125,7 +126,7 @@ namespace CLI.WebAppServices.Api
         public async Task<ActionResult> Post(PostCommonParameters commonParameters)
         {
             await Login.QR();
-            return Content(MessageBase.Success(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", MessageBase.code.LoginInfoFailure), "application/json");
+            return Content(MessageBase.MssagePack(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", code.LoginInfoFailure), "application/json");
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
@@ -142,7 +143,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "use_agree_state")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            return Content(MessageBase.Success(nameof(use_agree_state), Core.Config.Core._UseAgree, $"获取用户初始化授权状态"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(use_agree_state), Core.Config.Core._UseAgree, $"获取用户初始化授权状态"), "application/json");
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
@@ -159,7 +160,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "get_login_status")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            return Content(MessageBase.Success(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus(), $"获取本地登录态AccountInformation的有效状态"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus(), $"获取本地登录态AccountInformation的有效状态"), "application/json");
         }
     }
 }

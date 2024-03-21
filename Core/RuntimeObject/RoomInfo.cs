@@ -259,13 +259,13 @@ namespace Core.RuntimeObject
         /// <param name="IsRemind">是否提醒</param>
         /// <param name="IsRecDanmu">是否录制弹幕</param>
         /// <returns>1：添加成功  2：房间已存在  3：房间不存在  4：参数有误</returns>
-        public static (int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0)
+        public static (long key,int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0)
         {
             int State = 0;
             string Message = string.Empty;
             RoomCardClass roomCard = new();
-            long id = UID != 0 ? UID : RoomId;
-            if (id != 0)
+            long key = UID != 0 ? UID : RoomId;
+            if (key != 0)
             {
                 if ((UID != 0 && GetCardForUID(UID, ref roomCard)) || (RoomId != 0 && GetCardFoRoomId(RoomId, ref roomCard)))
                 {
@@ -295,7 +295,7 @@ namespace Core.RuntimeObject
                 State = 4;
                 Message = "参数有误";
             }
-            return (State, Message);
+            return (key,State, Message);
         }
 
         public static (long key, bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)

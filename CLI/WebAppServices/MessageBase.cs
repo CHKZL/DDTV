@@ -1,7 +1,10 @@
 ﻿using Core.LogModule;
 using Newtonsoft.Json;
+using System.Net.WebSockets;
+using System.Text;
+using static CLI.WebAppServices.MessageCode;
 
-namespace CLI
+namespace CLI.WebAppServices
 {
     /// <summary>
     /// 整个API核心的核心返参打包类
@@ -17,10 +20,9 @@ namespace CLI
         /// <param name="message">提示文本消息</param>
         /// <param name="code">状态码</param>
         /// <returns></returns>
-        public static string Success<T>(string cmd, T data, string message = "", code code = code.ok)
+        public static string MssagePack<T>(string cmd, T data, string message = "", code code = code.ok)
         {
-            //if (!Core.Config.Core._LoginStatus)
-            if(!Core.RuntimeObject.Account.AccountInformation.State)
+            if (!Core.RuntimeObject.Account.AccountInformation.State)
             {
                 code = code.LoginInfoFailure;
             }
@@ -33,37 +35,30 @@ namespace CLI
             pack<T> pack = new pack<T>()
             {
                 cmd = cmd,
-                code= code,
+                code = code,
                 data = data,
                 message = message
             };
-            
-            string B = JsonConvert.SerializeObject(pack);
-            return B;
+
+            string MessagePack = JsonConvert.SerializeObject(pack);
+            WS_Send(MessagePack);
+            return MessagePack;
         }
+
         /// <summary>
-        /// 返回的状态码
+        /// WebSocket数据发送
         /// </summary>
-        public enum code
+        /// <param name="MessagePack">打包好的数据对象，请使用MssagePack类打包</param>
+        public static void WS_Send(string MessagePack)
         {
-            /// <summary>
-            /// 请求成功
-            /// </summary>
-            ok = 0,
-            /// <summary>
-            /// 参数有误
-            /// </summary>
-            ParameterError= 5000,
-            /// <summary>
-            /// 登陆信息失效
-            /// </summary>
-            LoginInfoFailure =6000,
-            /// <summary>
-            /// 操作失败
-            /// </summary>
-            OperationFailed = 7000,
-          
+            ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(MessagePack));
+            foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
+            {
+                item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
         }
+
+     
         public class pack<T>
         {
             /// <summary>
@@ -83,6 +78,6 @@ namespace CLI
             /// </summary>
             public T data { get; set; }
         }
-      
+
     }
 }

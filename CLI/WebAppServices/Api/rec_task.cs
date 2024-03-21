@@ -29,7 +29,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
             var TaskInfo = Core.RuntimeObject._Room.CancelTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(cancel_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(cancel_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 
@@ -51,7 +51,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
             var TaskInfo = Core.RuntimeObject._Room.AddTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(single_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(single_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 
@@ -73,7 +73,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
             var TaskInfo = Core.RuntimeObject._Room.CutTask(uid, room_id);
-            return Content(MessageBase.Success(nameof(cut_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(cut_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 }

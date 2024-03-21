@@ -36,7 +36,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRecordingSettings(uid, state);
-            return Content(MessageBase.Success(nameof(modify_recording_settings), count, $"返回列表中的房间的自动录制修改为{state}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(modify_recording_settings), count, $"返回列表中的房间的自动录制修改为{state}"), "application/json");
         }
     }
 
@@ -61,7 +61,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRoomPromptSettings(uid, state);
-            return Content(MessageBase.Success(nameof(modify_room_prompt_settings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(modify_room_prompt_settings), count, $"返回列表中的房间的开播提示修改为{state}"), "application/json");
         }
     }
 
@@ -86,7 +86,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post([FromForm] List<long> uid, [FromForm] bool state, PostCommonParameters commonParameters)
         {
             List<long> count = Core.RuntimeObject._Room.ModifyRoomDmSettings(uid, state);
-            return Content(MessageBase.Success(nameof(modify_room_dm_settings), count, $"返回列表中房间的弹幕录制修改为{state}"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(modify_room_dm_settings), count, $"返回列表中房间的弹幕录制修改为{state}"), "application/json");
         }
     }
 
@@ -111,12 +111,38 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "add_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id);
-            return Content(MessageBase.Success(nameof(modify_room_prompt_settings), addInfo.State, $"{addInfo.Message}"), "application/json");
+            var TaskInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id);
+            return Content(MessageBase.MssagePack(nameof(modify_room_prompt_settings), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
 
-        [Produces(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/set_rooms/[controller]")]
+    [Login]
+    [Tags("set_rooms")]
+    public class batch_add_room : ControllerBase
+    {
+        /// <summary>
+        /// 批量增加房间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "batch_add_room")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[] uid, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu)
+        {
+            List<(long key, int State, string Message)> list = new();
+            foreach (var item in uid)
+            {
+                (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, item);
+                list.Add(Info);
+            }
+            return Content(MessageBase.MssagePack(nameof(batch_add_room), list), "application/json");
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/set_rooms/[controller]")]
     [Login]
@@ -130,15 +156,15 @@ namespace CLI.WebAppServices.Api
         /// <param name="uid"></param>
         /// <returns></returns>
         [HttpPost(Name = "batch_delete_rooms")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[]uid)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[] uid)
         {
             List<(long key, bool State, string Message)> list = new();
             foreach (var item in uid)
             {
-                (long key ,bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item);
+                (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item);
                 list.Add(Info);
             }
-            return Content(MessageBase.Success(nameof(batch_delete_rooms), list), "application/json");
+            return Content(MessageBase.MssagePack(nameof(batch_delete_rooms), list), "application/json");
         }
     }
 
@@ -160,8 +186,8 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "del_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var addInfo = Core.RuntimeObject._Room.DelRoom(uid, room_id);
-            return Content(MessageBase.Success(nameof(del_room), addInfo.State, $"{addInfo.Message}"), "application/json");
+            var TaskInfo = Core.RuntimeObject._Room.DelRoom(uid, room_id);
+            return Content(MessageBase.MssagePack(nameof(del_room), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
     /// <summary>
@@ -184,8 +210,8 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "modify_room_settings")]
         public ActionResult Post([FromForm] long uid, [FromForm] bool AutoRec, [FromForm] bool Remind, [FromForm] bool RecDanmu, PostCommonParameters commonParameters)
         {
-            bool state = Core.RuntimeObject._Room.ModifyRoomSettings(uid, AutoRec,Remind,RecDanmu);
-            return Content(MessageBase.Success(nameof(modify_room_settings), state, $"修改房间设置" + (state ? "成功" : "失败")), "application/json");
+            bool state = Core.RuntimeObject._Room.ModifyRoomSettings(uid, AutoRec, Remind, RecDanmu);
+            return Content(MessageBase.MssagePack(nameof(modify_room_settings), state, $"修改房间设置" + (state ? "成功" : "失败")), "application/json");
         }
     }
 }

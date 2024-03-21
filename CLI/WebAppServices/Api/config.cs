@@ -28,7 +28,7 @@ namespace CLI.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters)
         {
             Core.Config.ReadConfiguration();
-            return Content(MessageBase.Success(nameof(reload_configuration), true, $"从配置文件重新加载配置\r\n请注意，如果修改了路径相关配置，之后调用路径相关接口获取到的都会是新的配置，可能会造成一场直播写到两个路径中的问题"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(reload_configuration), true, $"从配置文件重新加载配置\r\n请注意，如果修改了路径相关配置，之后调用路径相关接口获取到的都会是新的配置，可能会造成一场直播写到两个路径中的问题"), "application/json");
         }
     }
 
@@ -56,23 +56,23 @@ namespace CLI.WebAppServices.Api
                 path = CreateAll(path);
                 if (string.IsNullOrEmpty(path))
                 {
-                    return Content(MessageBase.Success(nameof(set_recording_path), "错误",
+                    return Content(MessageBase.MssagePack(nameof(set_recording_path), "错误",
                    $"正在将录制路径格式修改为{path}，格式不符合要求，无法创建，请检查"),
                    "application/json");
                 }
                 cache.set_recording_path = Guid.NewGuid().ToString();
-                return Content(MessageBase.Success(nameof(set_recording_path), cache.set_recording_path,
+                return Content(MessageBase.MssagePack(nameof(set_recording_path), cache.set_recording_path,
                     $"正在将录制路径格式修改为{path}，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，二次确认提交后“get_file_structure”接口以及返回具体的文件流功能将会失效，直到下一次启动"),
                     "application/json");
             }
             if (check != cache.set_recording_path)
             {
-                return Content(MessageBase.Success(nameof(set_recording_path), false, $"二次确认的key不正确"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(set_recording_path), false, $"二次确认的key不正确"), "application/json");
             }
             else
             {
                 Core.Config.Core._RecFileDirectory = path;
-                return Content(MessageBase.Success(nameof(set_recording_path), true,
+                return Content(MessageBase.MssagePack(nameof(set_recording_path), true,
                     $"正在将录制路径格式修改为{path}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效，重启后恢复"),
                     "application/json");
             }
@@ -95,7 +95,7 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "get_recording_path")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.Success(nameof(get_recording_path), Core.Config.Core._RecFileDirectory, $"获取录制文件储存路径（字符串）"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_recording_path), Core.Config.Core._RecFileDirectory, $"获取录制文件储存路径（字符串）"), "application/json");
         }
     }
 
@@ -121,18 +121,18 @@ namespace CLI.WebAppServices.Api
             if (string.IsNullOrEmpty(check))
             {
                 cache.set_default_file_path_name_format = Guid.NewGuid().ToString();
-                return Content(MessageBase.Success(nameof(set_default_file_path_name_format), cache.set_default_file_path_name_format,
+                return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), cache.set_default_file_path_name_format,
                     $"正在将录制储存路径中的子路径和格式修改为{path_and_format}，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，如果格式有误将录制失败和错误，二次确认提交后“get_file_structure”接口以及返回具体的文件流功能将会失效或出现异常，直到下一次启动"),
                     "application/json");
             }
             if (check != cache.set_default_file_path_name_format)
             {
-                return Content(MessageBase.Success(nameof(set_default_file_path_name_format), false, $"二次确认的key不正确"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), false, $"二次确认的key不正确"), "application/json");
             }
             else
             {
                 Core.Config.Core._DefaultFilePathNameFormat = path_and_format;
-                return Content(MessageBase.Success(nameof(set_default_file_path_name_format), true,
+                return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), true,
                     $"正在将录制储存路径中的子路径和格式修改为{path_and_format}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效或出现异常，重启后恢复"),
                     "application/json");
             }
@@ -154,7 +154,7 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "get_default_file_path_name_format")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.Success(nameof(get_default_file_path_name_format), Core.Config.Core._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), Core.Config.Core._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
 }
