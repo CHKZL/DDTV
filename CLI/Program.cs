@@ -10,6 +10,9 @@ using Microsoft.Extensions.Logging;
 using Core;
 using Microsoft.AspNetCore.Http.Features;
 using System.Runtime.InteropServices;
+using Microsoft.AspNetCore.WebSockets;
+using CLI.WebAppServices.Middleware;
+using CLI.WebAppServices;
 
 namespace CLI
 {
@@ -20,58 +23,64 @@ namespace CLI
             try
             {
                 //注册DDTV主要服务
-            Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
-            Thread.Sleep(1000*3);
-            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-            builder.Services.Configure<FormOptions>(options =>
-            {
-                options.ValueCountLimit = 1024 * 1024;
-            });
-            builder.Logging.AddFilter((category, level) =>
-            {
-                return level >= LogLevel.Warning;
-            });
-
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo
+                Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
+                Thread.Sleep(1000 * 3);
+                WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+                builder.Services.Configure<FormOptions>(options =>
                 {
-                    Version = "v1",
-                    Title = "DDTV5_API",
-                    License = new OpenApiLicense
-                    {
-                        Name = "[项目地址]",
-                        Url = new Uri("https://github.com/CHKZL/DDTV")
-                    }
+                    options.ValueCountLimit = 1024 * 1024;
                 });
-                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-            });
-            builder.Services.AddMvc();
+                builder.Logging.AddFilter((category, level) =>
+                {
+                    return level >= LogLevel.Warning;
+                });
+                
+                //builder.Services.AddWebSockets(options => { });
+                builder.Services.AddControllers();
+                
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen(options =>
+                {
+                    options.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Version = "v1",
+                        Title = "DDTV5_API",
+                        License = new OpenApiLicense
+                        {
+                            Name = "[项目地址]",
+                            Url = new Uri("https://github.com/CHKZL/DDTV")
+                        }
+                    });
+                    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                });
+                builder.Services.AddMvc();
 
 
-            var app = builder.Build();
-            app.UseSwagger();
-            app.UseSwaggerUI();
-            app.UseMiddleware<WebAppServices.Middleware.AccessControl>();
-            //app.UseHttpsRedirection();
-            app.UseAuthorization();
-            app.MapControllers();
-            app.UseStatusCodePagesWithRedirects("/api/not_found");
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),
-                RequestPath = ""
-            });
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
-                RequestPath = Config.Web._RecordingStorageDirectory
-            });
+                var app = builder.Build();
+                app.UseWebSockets();
+                app.UseMiddleware<WebSocketControl>();
+                app.UseSwagger();
+                app.UseSwaggerUI();
+                app.UseMiddleware<AccessControl>();
+                //app.UseHttpsRedirection();
+                app.UseAuthorization();
+                app.MapControllers();
+                app.UseStatusCodePagesWithRedirects("/api/not_found");
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),
+                    RequestPath = ""
+                });
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
+                    RequestPath = Config.Web._RecordingStorageDirectory
+                });
                 string rurl = $"http://0.0.0.0:11419";
                 app.Urls.Add(rurl);
+                //增加WS处理的中间件
+               
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
                 Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:11419 ]");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -104,7 +113,7 @@ namespace CLI
                         Core.Init.Start();//初始化必须执行的
                         if (!Account.AccountInformation.State)
                         {
-                            Log.Info(nameof(DDTVService),"\r\n当前状态:未登录\r\n" +
+                            Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
                                 "使用前须知：\r\n" +
                                 "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
                                 "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
@@ -153,7 +162,7 @@ namespace CLI
                         }
                         TerminalDisplay.SeKey();
                         Detect detect = new();//启动房间监听并且注册事件
-                        
+
                         //TEST();
 
                         Task.Run(() =>
@@ -171,6 +180,16 @@ namespace CLI
 #else
                                 Thread.Sleep(300 * 1000);
 #endif
+                            }
+                        });
+
+                         Task.Run(() =>
+                        {
+                            while (true)
+                            {
+                                var doki = Core.Tools.DokiDoki.GetDoki();
+                                MessageBase.WS_Send("TEST","test","test");
+                                Thread.Sleep(30 * 1000);
                             }
                         });
 

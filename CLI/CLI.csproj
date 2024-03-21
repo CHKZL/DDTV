@@ -61,4 +61,9 @@
 	</ItemGroup>
 
 
+	<ItemGroup>
+	  <Folder Include="WebAppServices\WS\" />
+	</ItemGroup>
+
+
 </Project>
