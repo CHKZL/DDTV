@@ -188,7 +188,7 @@ namespace CLI
                             while (true)
                             {
                                 var doki = Core.Tools.DokiDoki.GetDoki();
-                                MessageBase.WS_Send("TEST","test","test");
+                                MessageBase.MssagePack("dokidoki",doki,"dokidoki");
                                 Thread.Sleep(30 * 1000);
                             }
                         });
