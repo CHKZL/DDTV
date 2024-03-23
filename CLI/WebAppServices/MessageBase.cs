@@ -26,31 +26,28 @@ namespace CLI.WebAppServices
             {
                 code = code.LoginInfoFailure;
             }
-            string MESS = "";
-            if (typeof(T).Name.ToLower().Equals("string"))
-            {
-                MESS = data as string;
-            }
             Log.Debug(nameof(MessageBase), cmd + " " + code, false);
-            pack<T> pack = new pack<T>()
+            OperationQueue.pack<T> pack = new OperationQueue.pack<T>()
             {
                 cmd = cmd,
-                code = code,
+                code = (int)code,
                 data = data,
                 message = message
             };
+           
 
             string MessagePack = JsonConvert.SerializeObject(pack);
-            WS_Send(MessagePack);
+          
             return MessagePack;
         }
 
         /// <summary>
         /// WebSocket数据发送
         /// </summary>
-        /// <param name="MessagePack">打包好的数据对象，请使用MssagePack类打包</param>
-        public static void WS_Send(string MessagePack)
+        /// <param name="message">要推送的文本内容</param>
+        public static void WS_Send(string message)
         {
+            string MessagePack = JsonConvert.SerializeObject(message);
             ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(MessagePack));
             foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
             {

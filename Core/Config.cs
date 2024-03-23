@@ -97,7 +97,9 @@ namespace Core
                         }
                     }
                 }
-                Log.Info(nameof(ReadConfiguration), $"读取配置文件完成");
+                string msg = $"读取配置文件完成";
+                OperationQueue.Add(Opcode.Code.ReadingConfigurationFile, msg);
+                Log.Info(nameof(ReadConfiguration), msg);
             }
 
         }
@@ -123,6 +125,8 @@ namespace Core
                     {
                         file.Write(newConfig.ToString());
                     }
+                    string msg = $"配置信息发生变化，写入文件";
+                    OperationQueue.Add(Opcode.Code.UpdateToConfigurationFile, msg);
                     Log.Info(nameof(ReadConfiguration), $"配置信息发生变化，写入文件");
                 }
             }
@@ -185,7 +189,9 @@ namespace Core
                             File.WriteAllText($"{Core._RoomConfigFile}", "{}");
                         }
                     }
-                    Log.Info(nameof(LoadRoomConfigurationFile), $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个");
+                    string msg = $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个";
+                    OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                    Log.Info(nameof(LoadRoomConfigurationFile), msg);
                 }
             }
 
@@ -226,7 +232,10 @@ namespace Core
 
                     // 如果文件不存在，或者文件中的内容与即将写入的内容不一致，则进行写入
                     File.WriteAllText(filePath, jsonString, Encoding.UTF8);
-                    Log.Info(nameof(SaveRoomConfigurationFile), $"房间配置发生变化，写入文件");
+
+                    string msg = $"房间配置发生变化，写入文件";
+                    OperationQueue.Add(Opcode.Code.UpdateToRoomFile, msg);
+                    Log.Info(nameof(SaveRoomConfigurationFile), msg);
                 }
             }
 
@@ -258,7 +267,9 @@ namespace Core
                     if (value != DefaultFilePathNameFormat)
                     {
                         DefaultFilePathNameFormat = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -276,7 +287,9 @@ namespace Core
                     if (value.ToString() != AutomaticRepair)
                     {
                         AutomaticRepair = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -294,7 +307,9 @@ namespace Core
                     if (value.ToString() != ForceMerge)
                     {
                         ForceMerge = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -313,7 +328,9 @@ namespace Core
                     if (value.ToString() != ApiPort)
                     {
                         ApiPort = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -331,7 +348,9 @@ namespace Core
                     if (value.ToString() != UseAgree)
                     {
                         UseAgree = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -370,7 +389,9 @@ namespace Core
             //        if (value.ToString() != LoginStatus)
             //        {
             //            LoginStatus = value.ToString();
-            //            Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+            //            string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+            //            OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+            //            Log.Info(nameof(Config), msg);
             //        }
             //    }
             //}
@@ -460,7 +481,9 @@ namespace Core
                     if (value != RecFileDirectory)
                     {
                         RecFileDirectory = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -488,7 +511,9 @@ namespace Core
                     if (value != LiveDomainName)
                     {
                         LiveDomainName = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -506,7 +531,9 @@ namespace Core
                     if (value != MainDomainName)
                     {
                         MainDomainName = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -531,7 +558,9 @@ namespace Core
                     if (value.ToString() != HlsWaitingTime)
                     {
                         HlsWaitingTime = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -549,7 +578,9 @@ namespace Core
                     if (value.ToString() != DetectIntervalTime)
                     {
                         DetectIntervalTime = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -570,7 +601,9 @@ namespace Core
                     if (value.ToString() != DebugMode)
                     {
                         DebugMode = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -590,7 +623,9 @@ namespace Core
                     if (value.ToString() != DefaultResolution)
                     {
                         DefaultResolution = value.ToString();
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -632,7 +667,9 @@ namespace Core
                     if (value != AccessControlAllowCredentials)
                     {
                         AccessControlAllowCredentials = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -650,7 +687,9 @@ namespace Core
                     if (value != AccessControlAllowOrigin)
                     {
                         AccessControlAllowOrigin = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -670,7 +709,9 @@ namespace Core
                     if (value != AccessKeyId)
                     {
                         AccessKeyId = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }
@@ -688,7 +729,9 @@ namespace Core
                     if (value != AccessKeySecret)
                     {
                         AccessKeySecret = value;
-                        Log.Info(nameof(Config), $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]");
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Code.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
                     }
                 }
             }

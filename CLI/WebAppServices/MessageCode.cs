@@ -29,6 +29,10 @@ namespace CLI.WebAppServices
             /// 操作失败
             /// </summary>
             OperationFailed = 7000,
+            /// <summary>
+            /// 读取配置文件完成
+            /// </summary>
+            ReadingConfigurationFileComplet=10101,
 
         }
     }
