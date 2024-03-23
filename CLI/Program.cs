@@ -87,6 +87,8 @@ namespace CLI
                 {
                     Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
                 }
+                WebAppServices.WS.WebSocketQueue.Start();
+                Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
                 app.Run();
             }
             catch (Exception e)
