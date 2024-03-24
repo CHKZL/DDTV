@@ -1,9 +1,11 @@
 ﻿using Core.RuntimeObject;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 
 namespace Core.LogModule
@@ -15,11 +17,11 @@ namespace Core.LogModule
         {
             RoomCardClass Card = new();
             _Room.GetCardForUID(uid, ref Card);
-            pack<string> pack = new pack<string>()
+            pack<RoomCardClass> pack = new pack<RoomCardClass>()
             {
                 cmd = Enum.GetName(typeof(T), code),
                 code =Convert.ToInt32(code),
-                data = Card == null ? null : JsonConvert.SerializeObject(Card),
+                data = Card == null ? null : Card,
                 message = Message
             };
             AddOperationRecord?.Invoke(pack, new EventArgs());

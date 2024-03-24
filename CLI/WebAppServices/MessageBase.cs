@@ -1,7 +1,9 @@
 ﻿using Core.LogModule;
-using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using static CLI.WebAppServices.MessageCode;
 
 namespace CLI.WebAppServices
@@ -36,7 +38,7 @@ namespace CLI.WebAppServices
             };
            
 
-            string MessagePack = JsonConvert.SerializeObject(pack);
+            string MessagePack = JsonSerializer.Serialize(pack, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)});
           
             return MessagePack;
         }
@@ -47,8 +49,7 @@ namespace CLI.WebAppServices
         /// <param name="message">要推送的文本内容</param>
         public static void WS_Send(string message)
         {
-            string MessagePack = JsonConvert.SerializeObject(message);
-            ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(MessagePack));
+            ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
             {
                 item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
