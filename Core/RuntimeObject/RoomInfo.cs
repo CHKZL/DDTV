@@ -60,17 +60,17 @@ namespace Core.RuntimeObject
         /// <param name="Remind">是否打开开播提示</param>
         /// <param name="RecDanmu">是否录制弹幕</param>
         /// <returns></returns>
-        public static bool ModifyRoomSettings(long UID, bool AutoRec, bool Remind, bool RecDanmu,bool IsAdd=false)
+        public static bool ModifyRoomSettings(long UID, bool AutoRec, bool Remind, bool RecDanmu, bool IsAdd = false)
         {
             try
             {
-                ModifyRecordingSettings(new List<long> { UID }, AutoRec,IsAdd);
-                ModifyRoomPromptSettings(new List<long> { UID }, Remind,IsAdd);
-                ModifyRoomDmSettings(new List<long> { UID }, RecDanmu, IsAdd);        
+                ModifyRecordingSettings(new List<long> { UID }, AutoRec, IsAdd);
+                ModifyRoomPromptSettings(new List<long> { UID }, Remind, IsAdd);
+                ModifyRoomDmSettings(new List<long> { UID }, RecDanmu, IsAdd);
                 return true;
             }
             catch (Exception e)
-            { 
+            {
                 return false;
             }
         }
@@ -82,7 +82,7 @@ namespace Core.RuntimeObject
         /// <param name="State">设置为的录制配置</param>
         /// <param name="IsAdd">是否为新增房间</param>
         /// <returns>修改成功的房间列表</returns>
-        public static List<long> ModifyRecordingSettings(List<long> UID, bool State,bool IsAdd = false)
+        public static List<long> ModifyRecordingSettings(List<long> UID, bool State, bool IsAdd = false)
         {
             List<long> _count = new();
             foreach (var item in UID)
@@ -117,6 +117,11 @@ namespace Core.RuntimeObject
         public static List<long> ModifyRoomPromptSettings(List<long> UID, bool State, bool IsAdd = false)
         {
             List<long> _count = new();
+            if (UID.Count > 10)
+            {
+                string msg = $"修改房间提示设置，房间UID列表:[{string.Join(",", UID)}]";
+                Log.Info(nameof(ModifyRoomPromptSettings), msg);
+            }
             foreach (var item in UID)
             {
                 if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
@@ -127,8 +132,12 @@ namespace Core.RuntimeObject
                     {
                         string msg = $"修改房间提示设置，房间UID:{UID}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomPromptConfiguration, msg, roomCard.UID);
-                        Log.Info(nameof(ModifyRoomPromptSettings), msg);
+                        if (UID.Count <= 10)
+                        {
+                            Log.Info(nameof(ModifyRoomPromptSettings), msg);
+                        }
                     }
+
                 }
             }
             return _count;
@@ -145,6 +154,11 @@ namespace Core.RuntimeObject
         public static List<long> ModifyRoomDmSettings(List<long> UID, bool State, bool IsAdd = false)
         {
             List<long> _count = new();
+            if (UID.Count > 10)
+            {
+                string msg = $"修改房间弹幕录制设置，房间UID列表:[{string.Join(",", UID)}]";
+                Log.Info(nameof(ModifyRoomDmSettings), msg);
+            }
             foreach (var item in UID)
             {
                 if (roomInfos.TryGetValue(item, out RoomCardClass roomCard))
@@ -155,7 +169,10 @@ namespace Core.RuntimeObject
                     {
                         string msg = $"修改房间弹幕录制设置，房间UID:{UID}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomBulletScreenConfiguration, msg, roomCard.UID);
-                        Log.Info(nameof(ModifyRoomDmSettings), msg);
+                        if (UID.Count <= 10)
+                        {
+                            Log.Info(nameof(ModifyRoomDmSettings), msg);
+                        }
                     }
                 }
             }
@@ -278,8 +295,9 @@ namespace Core.RuntimeObject
         /// <param name="IsAutoRec">是否自动录制</param>
         /// <param name="IsRemind">是否提醒</param>
         /// <param name="IsRecDanmu">是否录制弹幕</param>
+        /// <param name="Batch">是否为批量任务</param>
         /// <returns>1：添加成功  2：房间已存在  3：房间不存在  4：参数有误</returns>
-        public static (long key,int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0)
+        public static (long key, int State, string Message) AddRoom(bool IsAutoRec, bool IsRemind, bool IsRecDanmu, long UID = 0, long RoomId = 0, bool Batch = false)
         {
             int State = 0;
             string Message = string.Empty;
@@ -292,6 +310,8 @@ namespace Core.RuntimeObject
                     State = 2;
                     Message = $"添加房间失败，房间已存在,UID:{UID}";
                     OperationQueue.Add(Opcode.Room.FailedToAddRoomConfiguration, Message, UID);
+                    if (!Batch)
+                        Log.Info(nameof(AddRoom), Message);
                 }
                 else if (UID != 0 && GetRoomId(UID) != 0)
                 {
@@ -299,6 +319,8 @@ namespace Core.RuntimeObject
                     ModifyRoomSettings(UID, IsAutoRec, IsRemind, IsRecDanmu, true);
                     Message = $"添加房间成功,UID:{UID}[{IsAutoRec},{IsRecDanmu},{IsRemind}]";
                     OperationQueue.Add(Opcode.Room.SuccessfullyAddedRoom, Message, UID);
+                    if (!Batch)
+                        Log.Info(nameof(AddRoom), Message);
                 }
                 else if (RoomId != 0 && GetUid(RoomId) != 0)
                 {
@@ -306,24 +328,37 @@ namespace Core.RuntimeObject
                     ModifyRoomSettings(GetUid(RoomId), IsAutoRec, IsRemind, IsRecDanmu, true);
                     Message = $"添加房间成功,UID:{UID}[{IsAutoRec},{IsRecDanmu},{IsRemind}]";
                     OperationQueue.Add(Opcode.Room.SuccessfullyAddedRoom, Message, UID);
+                    if (!Batch)
+                        Log.Info(nameof(AddRoom), Message);
                 }
                 else
                 {
                     State = 3;
-                    Message = $"添加房间失败，房间不存在,key:{(UID!=0?UID:RoomId)}";
+                    Message = $"添加房间失败，房间不存在,key:{(UID != 0 ? UID : RoomId)}";
                     OperationQueue.Add(Opcode.Room.FailedToAddRoomConfiguration, Message);
+                    if (!Batch)
+                        Log.Info(nameof(AddRoom), Message);
                 }
             }
             else
             {
                 State = 4;
-                Message = $"添加房间失败，参数有误,key:{(UID!=0?UID:RoomId)}";
-                 OperationQueue.Add(Opcode.Room.FailedToAddRoomConfiguration, Message);
+                Message = $"添加房间失败，参数有误,key:{(UID != 0 ? UID : RoomId)}";
+                OperationQueue.Add(Opcode.Room.FailedToAddRoomConfiguration, Message);
+                if (!Batch)
+                    Log.Info(nameof(AddRoom), Message);
             }
-            return (key,State, Message);
+            return (key, State, Message);
         }
 
-        public static (long key, bool State, string Message) DelRoom(long UID = 0, long RoomId = 0)
+        /// <summary>
+        /// 删除房间
+        /// </summary>
+        /// <param name="UID"></param>
+        /// <param name="RoomId"></param>
+        /// <param name="Batch">是否为批量任务</param>
+        /// <returns></returns>
+        public static (long key, bool State, string Message) DelRoom(long UID = 0, long RoomId = 0, bool Batch = false)
         {
             bool State = false;
             string Message = "传入参数有误";
@@ -336,22 +371,25 @@ namespace Core.RuntimeObject
                     RoomCardClass roomCardClass = new();
                     if (roomInfos.TryRemove(roomCard.UID, out roomCardClass))
                     {
-                        Message = $"删除房间成功,UID:[{ roomCard.UID}]";                      
+                        Message = $"删除房间成功,UID:[{roomCard.UID}]";
                         OperationQueue.Add(Opcode.Room.SuccessfullyDeletedRoom, Message, roomCard.UID);
-                        Log.Info(nameof(DelRoom), Message);
+                        if (!Batch)
+                            Log.Info(nameof(DelRoom), Message);
                     }
                     else
                     {
-                        Message = $"删除房间失败，房间不存在1,UID:[{roomCard.UID}]";                    
+                        Message = $"删除房间失败，房间不存在1,UID:[{roomCard.UID}]";
                         OperationQueue.Add(Opcode.Room.FailedToDeleteRoom, Message, roomCard.UID);
-                        Log.Info(nameof(DelRoom), Message);
+                        if (!Batch)
+                            Log.Info(nameof(DelRoom), Message);
                     }
                 }
                 else
                 {
-                    Message = $"删除房间失败，房间不存在2,key:{(UID!=0?UID:RoomId)}";
+                    Message = $"删除房间失败，房间不存在2,key:{(UID != 0 ? UID : RoomId)}";
                     OperationQueue.Add(Opcode.Room.FailedToDeleteRoom, Message);
-                    Log.Info(nameof(DelRoom), Message);
+                    if (!Batch)
+                        Log.Info(nameof(DelRoom), Message);
                 }
             }
             return (key, State, Message);
@@ -404,7 +442,7 @@ namespace Core.RuntimeObject
                 else
                 {
                     State = false;
-                    Message = $"取消录制失败，该直播间不存在,key:{(UID!=0?UID:RoomId)}";
+                    Message = $"取消录制失败，该直播间不存在,key:{(UID != 0 ? UID : RoomId)}";
                     OperationQueue.Add(Opcode.Room.CancelRecordingFail, Message);
                     Log.Info(nameof(CancelTask), Message);
                 }
@@ -439,7 +477,7 @@ namespace Core.RuntimeObject
                 else
                 {
                     State = false;
-                    Message = $"触发切断失败，该直播间不存在,key:{(UID!=0?UID:RoomId)}";
+                    Message = $"触发切断失败，该直播间不存在,key:{(UID != 0 ? UID : RoomId)}";
                     OperationQueue.Add(Opcode.Room.TriggerQuickCutFail, Message);
                     Log.Info(nameof(CutTask), Message);
                 }
@@ -468,14 +506,14 @@ namespace Core.RuntimeObject
                         RuntimeObject.Detect.detectRoom.ManuallyTriggerRecord(roomCardClass.UID);
                         State = true;
                         Message = $"录制请求已触发，如果当前直播间未开播，则默认预约下次单场直播,UID:[{roomCardClass.UID}]";
-                         OperationQueue.Add(Opcode.Room.SuccessfullyAddedRecordingTask, Message, roomCardClass.UID);
+                        OperationQueue.Add(Opcode.Room.SuccessfullyAddedRecordingTask, Message, roomCardClass.UID);
                         Log.Info(nameof(AddTask), Message);
                     }
                     else
                     {
                         State = false;
                         Message = $"新增录制或预约任务失败,该直播间目前已有录制任务进行中,UID:[{roomCardClass.UID}]";
-                         OperationQueue.Add(Opcode.Room.FailedToAddRecordingTask, Message, roomCardClass.UID);
+                        OperationQueue.Add(Opcode.Room.FailedToAddRecordingTask, Message, roomCardClass.UID);
                         Log.Info(nameof(AddTask), Message);
                     }
                 }
@@ -528,16 +566,16 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
-        public static List<(int id,TaskType TaskType, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> GetOverview()
+        public static List<(int id, TaskType TaskType, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> GetOverview()
         {
-            List<(int id, TaskType TaskType,long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
+            List<(int id, TaskType TaskType, long uid, long roomid, string name, string title, long downloadedSize, double downloadRate, string state, DateTime startTime)> values = new();
             int i = 1;
             var roomInfos = _Room.GetCardList();
             foreach (var item in roomInfos)
             {
                 if (item.Value.DownInfo.IsDownload)
                 {
-                    values.Add((id: i,TaskType:item.Value.DownInfo.taskType, uid: item.Value.UID, roomid: item.Value.RoomId, name: item.Value.Name, title: item.Value.Title.Value, downloadedSize: item.Value.DownInfo.DownloadSize, downloadRate: item.Value.DownInfo.RealTimeDownloadSpe, state: item.Value.DownInfo.Status.ToString(), startTime: item.Value.DownInfo.StartTime));
+                    values.Add((id: i, TaskType: item.Value.DownInfo.taskType, uid: item.Value.UID, roomid: item.Value.RoomId, name: item.Value.Name, title: item.Value.Title.Value, downloadedSize: item.Value.DownInfo.DownloadSize, downloadRate: item.Value.DownInfo.RealTimeDownloadSpe, state: item.Value.DownInfo.Status.ToString(), startTime: item.Value.DownInfo.StartTime));
                     i++;
                 }
             }
@@ -926,7 +964,7 @@ namespace Core.RuntimeObject
         {
             try
             {
-                if (userInfo != null && userInfo.data.live_room!=null)
+                if (userInfo != null && userInfo.data.live_room != null)
                 {
                     if (OldCard == null)
                     {
@@ -1216,7 +1254,7 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 是否触发瞎几把剪
             /// </summary>
-            public bool IsCut= false;
+            public bool IsCut = false;
             /// <summary>
             /// 任务类型
             /// </summary>
