@@ -5,8 +5,10 @@ using Masuit.Tools.Hardware;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
 using static Core.RuntimeObject.RoomCardClass;
@@ -878,8 +880,8 @@ namespace Core.RuntimeObject
             }
             catch (Exception ex)
             {
-                string A = data != null ? JsonSerializer.Serialize(data) : "内容为空";
-                string B = OldCard != null ? JsonSerializer.Serialize(OldCard) : "内容为空";
+                string A = data != null ? JsonSerializer.Serialize(data, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
                 Log.Warn(nameof(ToRoomCard), $"在UidsInfo_Class.Data的TRC操作中出现意料外的错误，错误堆栈:[UidsInfo_Class.Data:{A}];[RoomCard:{B}]", ex, true);
                 return null;
             }
@@ -953,8 +955,8 @@ namespace Core.RuntimeObject
             }
             catch (Exception ex)
             {
-                string A = roomInfo != null ? JsonSerializer.Serialize(roomInfo) : "内容为空";
-                string B = OldCard != null ? JsonSerializer.Serialize(OldCard) : "内容为空";
+                string A = roomInfo != null ? JsonSerializer.Serialize(roomInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
                 Log.Warn(nameof(ToRoomCard), $"在RoomInfo_Class的TRC操作中出现意料外的错误，错误堆栈:[RoomInfo_Class:{A}];[RoomCard:{B}]", ex, true);
                 return null;
             }
@@ -1008,8 +1010,8 @@ namespace Core.RuntimeObject
             catch (Exception ex)
             {
 
-                string userInfoContent = userInfo != null ? JsonSerializer.Serialize(userInfo) : "内容为空";
-                string oldCardContent = OldCard != null ? JsonSerializer.Serialize(OldCard) : "内容为空";
+                string userInfoContent = userInfo != null ? JsonSerializer.Serialize(userInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string oldCardContent = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
                 Log.Error(nameof(ToRoomCard), $"在UserInfo的TRC操作中出现意料外的错误，错误原始数据:[userInfo:{userInfoContent}];[RoomCard:{oldCardContent}];堆栈:{ex.ToString}", ex, true);
                 return null;
             }
