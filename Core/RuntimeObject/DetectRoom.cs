@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.RuntimeObject.Download.HLS;
@@ -48,9 +49,13 @@ namespace Core.RuntimeObject
             //如果Core的初始化时间小于20秒，则认为该任务是之前就开播了，不当作新开播任务
             bool isFirstTime = Core.Init.GetRunTime() > 20000 ? true : false;
 
+            OperationQueue.Add(Opcode.Download.StartLiveEvent, $"开播事件，房间UID:{roomCard.UID}", roomCard.UID);
+
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
                 // 这里应该是开播广播事件
+                
+                OperationQueue.Add(Opcode.Download.StartBroadcastingReminder, $"开播提醒，房间UID:{roomCard.UID}", roomCard.UID);
             }
 
             if (roomCard.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || roomCard.AppointmentRecord)
@@ -60,7 +65,7 @@ namespace Core.RuntimeObject
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
                     return;
                 }
-
+                
                 roomCard.DownInfo.IsDownload = true;
 
                 Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
@@ -103,7 +108,9 @@ namespace Core.RuntimeObject
 
                     //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                     Basics.DownloadCompletedReset(ref roomCard);
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : ""));
+                    string msg = $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : "");
+                    OperationQueue.Add(Opcode.Download.RecordingEnd, msg, roomCard.UID);
+                    Log.Info(nameof(DetectRoom_LiveStart), msg);
                     roomCard.DownInfo.Unmark = false;
                     roomCard.DownInfo.IsDownload = false;
                 }
@@ -123,7 +130,7 @@ namespace Core.RuntimeObject
             }
         }
 
-       
+
 
         /// <summary>
         /// 下播事件
@@ -134,12 +141,14 @@ namespace Core.RuntimeObject
         {
             if (e.IsRemind)
             {
-                Log.Info(nameof(DetectRoom_LiveEnd), $"{e.RoomId}({e.Name})下播");
+                string msg = $"{e.RoomId}({e.Name})下播";
+                OperationQueue.Add(Opcode.Download.RecordingEnd, msg, e.UID);
+                Log.Info(nameof(DetectRoom_LiveEnd), msg);
             }
         }
 
 
-     
+
         public enum TriggerType
         {
             /// <summary>
@@ -203,7 +212,11 @@ namespace Core.RuntimeObject
             {
                 if (RoomInfo.GetLiveStatus(Card.RoomId))
                 {
+
                     LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
+                    string msg = $"手动触发一个直播间的录制，房间UID:{UID}";
+                    OperationQueue.Add(Opcode.Room.ManuallyTriggeringRecordingTasks, msg,UID);
+                    Log.Info(nameof(ManuallyTriggerRecord), msg);
                 }
                 return;
             }

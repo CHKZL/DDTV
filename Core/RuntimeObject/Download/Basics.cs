@@ -29,6 +29,7 @@ namespace Core.RuntimeObject.Download
         {
             if (isFirstTime)
             {
+                OperationQueue.Add(Opcode.Download.StartRecording, $"开始录制，房间UID:{roomCard.UID}", roomCard.UID);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
 
                 if (roomCard.IsRecDanmu)
@@ -40,6 +41,7 @@ namespace Core.RuntimeObject.Download
             }
             else
             {
+                OperationQueue.Add(Opcode.Download.Reconnect, $"录制重连，房间UID:{roomCard.UID}", roomCard.UID);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
             //HLS下载逻辑
@@ -155,6 +157,10 @@ namespace Core.RuntimeObject.Download
             Log.Info(nameof(LogDownloadStart), $"{startText}", false);
             card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
             card.DownInfo.StartTime = DateTime.Now;
+            if (Type.ToUpper() == "HLS")
+                OperationQueue.Add(Opcode.Download.HlsTaskStart, $"HLS任务成功开始，房间UID:{card.UID}", card.UID);
+            if (Type.ToUpper() == "FLV")
+                OperationQueue.Add(Opcode.Download.FlvTaskStart, $"FLV任务成功开始，房间UID:{card.UID}", card.UID);
         }
 
         /// <summary>

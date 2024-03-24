@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Core.RuntimeObject;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,16 @@ namespace Core.LogModule
     public class OperationQueue
     {
         public static event EventHandler<EventArgs> AddOperationRecord;
-        public static void Add(Opcode.Code code, string Message, RuntimeObject.RoomCardClass Card = null)
+        public static void Add<T>(T code, string Message, long uid = 0)
         {
+            RoomCardClass Card = new();
+            _Room.GetCardForUID(uid, ref Card);
             pack<string> pack = new pack<string>()
             {
-                cmd = Enum.GetName(typeof(Opcode.Code), code),
-                code=(int)code,
-                data=Card==null?null:JsonConvert.SerializeObject(Card),
-                message=Message
+                cmd = Enum.GetName(typeof(T), code),
+                code =Convert.ToInt32(code),
+                data = Card == null ? null : JsonConvert.SerializeObject(Card),
+                message = Message
             };
             AddOperationRecord?.Invoke(pack, new EventArgs());
         }
