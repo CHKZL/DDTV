@@ -13,6 +13,7 @@ using static Core.Network.Methods.Room;
 using static Core.Network.Methods.User;
 using static Core.RuntimeObject.RoomCardClass;
 using static Core.RuntimeObject.RoomInfo;
+using JsonIgnoreAttribute = Newtonsoft.Json.JsonIgnoreAttribute;
 
 namespace Core.RuntimeObject
 {
@@ -1090,10 +1091,12 @@ namespace Core.RuntimeObject
         /// 主播简介
         /// </summary>
         public ExpansionType<string> description = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 关注数
         /// </summary>
         public ExpansionType<int> attention = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 直播间在线人数
         /// </summary>
@@ -1106,6 +1109,7 @@ namespace Core.RuntimeObject
         /// 直播状态(0:未直播   1:正在直播   2:轮播中)
         /// </summary>
         public ExpansionType<int> live_status = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// live_status_start_event 触发开播事件缓存（表示该房间目前为开播事件触发状态，但是事件还未处理完成）
         /// </summary>
@@ -1118,38 +1122,47 @@ namespace Core.RuntimeObject
         /// 直播间房间号(直播间短房间号，常见于签约主播)
         /// </summary>
         public ExpansionType<int> short_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 直播间分区id
         /// </summary>
         public ExpansionType<int> area = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 直播间分区名
         /// </summary>
         public ExpansionType<string> area_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 直播间新版分区id
         /// </summary>
         public ExpansionType<int> area_v2_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 直播间新版分区名
         /// </summary>
         public ExpansionType<string> area_v2_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 直播间父分区名
         /// </summary>
         public ExpansionType<string> area_v2_parent_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 直播间父分区id
         /// </summary>
         public ExpansionType<int> area_v2_parent_id = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 主播头像url
         /// </summary>
         public ExpansionType<string> face = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 系统tag列表(以逗号分割)
         /// </summary>
         public ExpansionType<string> tag_name = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 用户自定义tag列表(以逗号分割)
         /// </summary>
@@ -1162,79 +1175,97 @@ namespace Core.RuntimeObject
         /// 直播关键帧图
         /// </summary>
         public ExpansionType<string> keyframe = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 直播间锁定时间戳
         /// </summary>
         public ExpansionType<string> lock_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 隐藏时间戳
         /// </summary>
         public ExpansionType<string> hidden_till = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+        [JsonIgnore]
         /// <summary>
         /// 直播类型(0:普通直播，1：手机直播)
         /// </summary>
         public ExpansionType<int> broadcast_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 是否p2p
         /// </summary>
         public ExpansionType<int> need_p2p = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 是否隐藏
         /// </summary>
         public ExpansionType<bool> is_hidden = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        [JsonIgnore]
         /// <summary>
         /// 是否锁定
         /// </summary>
         public ExpansionType<bool> is_locked = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        [JsonIgnore]
         /// <summary>
         /// 是否竖屏
         /// </summary>
         public ExpansionType<bool> is_portrait = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        [JsonIgnore]
         /// <summary>
         /// 是否加密
         /// </summary>
         public ExpansionType<bool> encrypted = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        [JsonIgnore]
         /// <summary>
         /// 加密房间是否通过密码验证(encrypted=true时才有意义)
         /// </summary>
         public ExpansionType<bool> pwd_verified = new() { ExpirationTime = DateTime.UnixEpoch, Value = false };
+        [JsonIgnore]
         /// <summary>
         /// 房间屏蔽列表应用状态
         /// </summary>
         public ExpansionType<int> room_shield = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 是否为特殊直播间(0：普通直播间 1：付费直播间)
         /// </summary>
         public ExpansionType<int> is_sp = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 特殊直播间标志(0：普通直播间 1：付费直播间 2：拜年祭直播间)
         /// </summary>
         public ExpansionType<int> special_type = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 直播间状态(0:无房间 1:有房间)
         /// </summary>
         public ExpansionType<int> roomStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+        [JsonIgnore]
         /// <summary>
         /// 轮播状态(0：未轮播 1：轮播)
         /// </summary>
         public ExpansionType<int> roundStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+         [JsonIgnore]
         /// <summary>
         /// 直播间网页url
         /// </summary>
         public ExpansionType<string> url = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+         [JsonIgnore]
         /// <summary>
         /// 用户等级
         /// </summary>
         public ExpansionType<int> level = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
+         [JsonIgnore]
         /// <summary>
         /// 主播性别
         /// </summary>
         public ExpansionType<string> sex = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
+         [JsonIgnore]
         /// <summary>
         /// 主播简介
         /// </summary>
         public ExpansionType<string> sign = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-
+        [JsonIgnore]
         /// <summary>
         /// 当前Host地址
         /// </summary>
@@ -1281,6 +1312,7 @@ namespace Core.RuntimeObject
             /// 任务结束时间
             /// </summary>
             public DateTime EndTime = DateTime.UnixEpoch;
+            [JsonIgnore]
             /// <summary>
             /// 取消录制标记
             /// </summary>
@@ -1380,6 +1412,7 @@ namespace Core.RuntimeObject
 
         public class ExpansionType<T>
         {
+            [JsonIgnore]
             /// <summary>
             /// 有效时间戳
             /// </summary>
