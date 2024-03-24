@@ -111,7 +111,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "add_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var TaskInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id);
+            var TaskInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id, true);
             return Content(MessageBase.MssagePack(nameof(modify_room_prompt_settings), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
@@ -128,6 +128,9 @@ namespace CLI.WebAppServices.Api
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="uid"></param>
+        /// <param name="auto_rec">是否自动录制</param>
+        /// <param name="remind">是否开播提示</param>
+        /// <param name="rec_danmu">是否录制弹幕</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_add_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[] uid, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu)
@@ -135,7 +138,7 @@ namespace CLI.WebAppServices.Api
             List<(long key, int State, string Message)> list = new();
             foreach (var item in uid)
             {
-                (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, item);
+                (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, item,0,true);
                 list.Add(Info);
             }
             return Content(MessageBase.MssagePack(nameof(batch_add_room), list), "application/json");
@@ -161,7 +164,7 @@ namespace CLI.WebAppServices.Api
             List<(long key, bool State, string Message)> list = new();
             foreach (var item in uid)
             {
-                (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item);
+                (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item, 0, true);
                 list.Add(Info);
             }
             return Content(MessageBase.MssagePack(nameof(batch_delete_rooms), list), "application/json");
@@ -186,7 +189,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "del_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var TaskInfo = Core.RuntimeObject._Room.DelRoom(uid, room_id);
+            var TaskInfo = Core.RuntimeObject._Room.DelRoom(uid, room_id,true);
             return Content(MessageBase.MssagePack(nameof(del_room), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
