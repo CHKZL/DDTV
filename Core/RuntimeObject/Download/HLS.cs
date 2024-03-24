@@ -127,7 +127,9 @@ namespace Core.RuntimeObject.Download
                                 if (InitialRequest)
                                 {
                                     //正式开始下载提示
+
                                     LogDownloadStart(card,"HLS");
+                                    
                                     hlsState = DlwnloadTaskState.Recording;
                                 }
                                 InitialRequest = false;

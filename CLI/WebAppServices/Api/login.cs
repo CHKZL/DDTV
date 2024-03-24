@@ -1,4 +1,6 @@
 ﻿using CLI.WebAppServices.Middleware;
+using Core.LogModule;
+using Core.RuntimeObject;
 using Masuit.Tools;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -99,14 +101,20 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "use_agree")]
         public ActionResult Post([FromForm] string check = "n")
         {
+             string Message = "用户已同意使用须知";
             if (check == "y")
             {
-                Core.Config.Core._UseAgree = true;
+                Core.Config.Core._UseAgree = true;   
+                OperationQueue.Add(Opcode.Account.UserConsentAgreement, Message);
+                Log.Info(nameof(use_agree), Message);
                 return Content(MessageBase.MssagePack(nameof(use_agree), true, $"用户已同意使用须知"), "application/json");
             }
             else
             {
                 Core.Config.Core._UseAgree = false;
+                Message = "用户未同意使用须知";
+                OperationQueue.Add(Opcode.Account.UserDoesNotAgreeToAgreement, Message);
+                Log.Info(nameof(use_agree), Message);
                 return Content(MessageBase.MssagePack(nameof(use_agree), false, $"用户未同意使用须知", code.LoginInfoFailure), "application/json");
             }
         }
@@ -126,6 +134,9 @@ namespace CLI.WebAppServices.Api
         public async Task<ActionResult> Post(PostCommonParameters commonParameters)
         {
             await Login.QR();
+
+         
+
             return Content(MessageBase.MssagePack(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", code.LoginInfoFailure), "application/json");
         }
     }

@@ -1,5 +1,7 @@
-﻿using Core.Account;
+﻿using CLI.WebAppServices.Api;
+using Core.Account;
 using Core.Account.Linq;
+using Core.LogModule;
 using Masuit.Tools;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,9 @@ namespace CLI
     {
         public static async Task QR()
         {
+            string Message = "触发登陆流程";
+            OperationQueue.Add(Opcode.Account.TriggerLoginAgain, Message);
+            Log.Info(nameof(Login), Message);
             await Task.Run(() =>
             {
                 ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
@@ -43,6 +48,10 @@ namespace CLI
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
                 Core.Tools.FileOperations.Delete(Core.Config.Core._QrFileNmae);
                 Core.Tools.FileOperations.Delete(Core.Config.Core._QrUrl);
+
+                string Message = "登陆成功";
+                OperationQueue.Add(Opcode.Account.LoginSuccessful, Message);
+                Log.Info(nameof(Login), Message);
             }
         }
 

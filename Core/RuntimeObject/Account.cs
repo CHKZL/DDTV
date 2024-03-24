@@ -50,7 +50,9 @@ namespace Core.RuntimeObject
             }
             set
             {
-                Log.Info(nameof(AccountInformation), $"更新登录态缓存:[{MethodBase.GetCurrentMethod().Name}]]");
+                string Message = $"更新登录态缓存:[{MethodBase.GetCurrentMethod().Name}]]";
+                OperationQueue.Add(Opcode.Account.UpdateLoginStateCache, Message);
+                Log.Info(nameof(AccountInformation), Message);
                 _accountInformation = value;
                 //Core.Config.Core._LoginStatus = value.State;
                 Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{_accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
@@ -90,8 +92,11 @@ namespace Core.RuntimeObject
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
-                                Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
+
                                 LoginFailureEvent?.Invoke(null, new EventArgs());
+                                string Message = $"触发登陆失效事件";
+                                OperationQueue.Add(Opcode.Account.InvalidLoginStatus, Message);
+                                Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
                             }
                         }
                         catch (Exception e)

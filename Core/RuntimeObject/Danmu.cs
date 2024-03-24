@@ -20,6 +20,11 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
+        /// <summary>
+        /// 保存弹幕相关文件
+        /// </summary>
+        /// <param name="liveChatListener"></param>
+        /// <param name="card"></param>
         public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener, ref RoomCardClass card)
         {
             string File = liveChatListener.File + $"_{liveChatListener.SaveCount}";
@@ -55,6 +60,10 @@ namespace Core.RuntimeObject
             liveChatListener.DanmuMessage = new();
 
             liveChatListener.SaveCount++;
+
+            string Message = "保存弹幕相关文件";
+            OperationQueue.Add(Opcode.Download.SaveBulletScreenFile, Message, card.UID);
+            Log.Info(nameof(SevaDanmu), Message);
         }
         #endregion
 
