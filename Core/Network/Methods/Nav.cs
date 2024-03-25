@@ -1,10 +1,12 @@
 ﻿using Core.Account;
+using Core.LogModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Core.Network.Methods.User;
 
 namespace Core.Network.Methods
 {
@@ -27,14 +29,16 @@ namespace Core.Network.Methods
             const int maxAttempts = 3;
             for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
+                string WebText = "";
                 try
                 {
-                    string WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
+                    WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
                     Nav_Class? Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
                     return Nav_Class;
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Log.Error(nameof(_NAV), $"获取Nva状态出现错误，重试。获取到的状态内容文本:{WebText}",e);
                     if (attempt == maxAttempts - 1)
                     {
                         return null;

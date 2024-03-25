@@ -95,12 +95,12 @@ namespace Core.LiveChat
             { }
             try
             {
-                m_client.Dispose();
+                m_client?.Dispose();
             }
             catch (Exception) { }
             try
             {
-                m_innerRts.Dispose();
+                m_innerRts?.Dispose();
             }
             catch (Exception) { }
             try
