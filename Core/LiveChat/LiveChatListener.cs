@@ -13,9 +13,11 @@ using System.Net;
 using System.Net.WebSockets;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using System.Text.Unicode;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 
@@ -570,7 +572,7 @@ namespace Core.LiveChat
                     return;
                 }
                 //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
-                string jsonBody = JsonSerializer.Serialize(obj);
+                string jsonBody = JsonSerializer.Serialize(obj, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)});
                 //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
                 //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
                 await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
