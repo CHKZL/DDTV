@@ -112,6 +112,7 @@ namespace Core.RuntimeObject
                         UID = item,
                         IsAutoRec = State
                     };
+                    SetRoomCardByUid(item, card);
                 }
             }
             return _count;
@@ -156,6 +157,7 @@ namespace Core.RuntimeObject
                         UID = item,
                         IsRemind = State
                     };
+                    SetRoomCardByUid(item, card);
                 }
             }
             return _count;
@@ -200,6 +202,7 @@ namespace Core.RuntimeObject
                         UID = item,
                         IsRecDanmu = State
                     };
+                    SetRoomCardByUid(item, card);
                 }
             }
             return _count;
