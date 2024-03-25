@@ -15,6 +15,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using static CLI.WebAppServices.MessageCode;
 using static CLI.WebAppServices.Middleware.InterfaceAuthentication;
+using static Core.LogModule.Opcode;
 using static Core.RuntimeObject.RoomCardClass;
 
 namespace CLI.WebAppServices.Api
@@ -134,6 +135,8 @@ namespace CLI.WebAppServices.Api
                     for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity; i++)
                     {
                         Data.CompleteInfo completeInfo = new Data.CompleteInfo();
+                        completeInfo.uid = roomList.ElementAt(i).Value.UID;
+                        completeInfo.roomId = roomList.ElementAt(i).Value.RoomId;
                         completeInfo.userInfo = new()
                         {
                             isAutoRec = roomList.ElementAt(i).Value.IsAutoRec,
