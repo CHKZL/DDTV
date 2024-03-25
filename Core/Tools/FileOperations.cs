@@ -62,9 +62,9 @@ namespace Core.Tools
         }
 
 
-        private static List<string> _DelFileList = new();
+        private static List<(string File,string Message)> _DelFileList = new();
         private static bool DelState = false;
-        public static void Delete(string Path)
+        public static void Delete(string Path,string Message="")
         {
             if (!DelState)
             {
@@ -79,14 +79,16 @@ namespace Core.Tools
                             {
                                 try
                                 {
-                                    File.Delete(_DelFileList[i]);
+                                    File.Delete(_DelFileList[i].File);
+                                    Log.Info(nameof(Delete), $"删除文件:[{_DelFileList[i].Message}]{_DelFileList[i]}");
                                     _DelFileList.RemoveAt(i);
                                     i--;
                                 }
                                 catch (Exception)
                                 {
-                                    if (!File.Exists(_DelFileList[i]))
+                                    if (!File.Exists(_DelFileList[i].File))
                                     {
+                                        Log.Info(nameof(Delete), $"要删除文件不存在[{_DelFileList[i].Message}]:{_DelFileList[i]}");
                                         _DelFileList.RemoveAt(i);
                                         i--;
                                     }
@@ -101,7 +103,7 @@ namespace Core.Tools
                     }
                 });
             }
-            _DelFileList.Add(Path);
+            _DelFileList.Add((Path, Message));
         }
         /// <summary>
         /// 获取目标路径的文件结构和信息
