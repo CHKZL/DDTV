@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.LogModule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -35,11 +36,19 @@ namespace Core.Network.Methods
         {
             if (string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey) || uid == 0)
             {
-                Nav_Class _Class = Nav.GetNav();
-                string pattern = @"([a-z0-9]+)(?=\.png)";
-                imgKey = Regex.Match(_Class.data.wbi_img.img_url, pattern).Value;
-                subKey = Regex.Match(_Class.data.wbi_img.sub_url, pattern).Value;
-                uid = _Class.data.mid;
+                var LoginStatus = GetNav();
+                if (LoginStatus != null && LoginStatus.code == 0)
+                {
+                    string pattern = @"([a-z0-9]+)(?=\.png)";
+                    imgKey = Regex.Match(LoginStatus.data.wbi_img.img_url, pattern).Value;
+                    subKey = Regex.Match(LoginStatus.data.wbi_img.sub_url, pattern).Value;
+                    uid = LoginStatus.data.mid;
+                }
+                else
+                {
+                    Log.Error(nameof(_UserInfo), "获取Nva_Key出现错误");
+                    return null;
+                }
             }
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             string salt = Get_salt(imgKey, subKey);

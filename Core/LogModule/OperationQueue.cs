@@ -1,9 +1,9 @@
 ﻿using Core.RuntimeObject;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Core.LogModule
@@ -19,7 +19,7 @@ namespace Core.LogModule
             {
                 cmd = Enum.GetName(typeof(T), code),
                 code =Convert.ToInt32(code),
-                data = Card == null ? null : JsonConvert.SerializeObject(Card),
+                data = Card == null ? null : JsonSerializer.Serialize(Card),
                 message = Message
             };
             AddOperationRecord?.Invoke(pack, new EventArgs());
