@@ -105,6 +105,14 @@ namespace Core.RuntimeObject
                         Log.Info(nameof(ModifyRecordingSettings), msg);
                     }
                 }
+                else if (IsAdd)
+                {
+                    RoomCardClass card = new RoomCardClass()
+                    {
+                        UID = item,
+                        IsAutoRec = State
+                    };
+                }
             }
             return _count;
         }
@@ -140,7 +148,14 @@ namespace Core.RuntimeObject
                             Log.Info(nameof(ModifyRoomPromptSettings), msg);
                         }
                     }
-
+                }
+                else if (IsAdd)
+                {
+                    RoomCardClass card = new RoomCardClass()
+                    {
+                        UID = item,
+                        IsRemind = State
+                    };
                 }
             }
             return _count;
@@ -177,6 +192,14 @@ namespace Core.RuntimeObject
                             Log.Info(nameof(ModifyRoomDmSettings), msg);
                         }
                     }
+                }
+                else if (IsAdd)
+                {
+                    RoomCardClass card = new RoomCardClass()
+                    {
+                        UID = item,
+                        IsRecDanmu = State
+                    };
                 }
             }
             return _count;

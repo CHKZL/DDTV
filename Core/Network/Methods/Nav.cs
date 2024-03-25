@@ -101,7 +101,6 @@ namespace Core.Network.Methods
                 public long current_level { get; set; }
                 public long current_min { get; set; }
                 public long current_exp { get; set; }
-                public string next_exp { get; set; }
             }
 
             public class Official
