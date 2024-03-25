@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Core.RuntimeObject;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,8 +26,8 @@ namespace CLI.WebAppServices.WS
 
         private static void OperationQueue_AddOperationRecord(object? sender, EventArgs e)
         {
-            Core.LogModule.OperationQueue.pack<string> pack = (Core.LogModule.OperationQueue.pack<string>)sender;
-            string MessagePack = JsonSerializer.Serialize(pack);
+            Core.LogModule.OperationQueue.pack<RoomCardClass> pack = (Core.LogModule.OperationQueue.pack<RoomCardClass>)sender;
+            string MessagePack = JsonConvert.SerializeObject(pack);
             MessageBase.WS_Send(MessagePack);
         }
     }
