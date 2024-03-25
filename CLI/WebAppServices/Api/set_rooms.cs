@@ -111,7 +111,7 @@ namespace CLI.WebAppServices.Api
         [HttpPost(Name = "add_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu, [FromForm] long uid = 0, [FromForm] long room_id = 0)
         {
-            var TaskInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id, true);
+            var TaskInfo = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, uid, room_id, false);
             return Content(MessageBase.MssagePack(nameof(modify_room_prompt_settings), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
