@@ -50,9 +50,11 @@ namespace Core.RuntimeObject.Download
                                 hlsState = CheckAndHandleFile(File, ref card);
                                 return;
                             case DlwnloadTaskState.PaidLiveStream:
+                                 CheckAndHandleFile(File, ref card);
                                 Log.Warn(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，创建任务失败，跳过当前任务");
                                 return;
                             case DlwnloadTaskState.NoHLSStreamExists:
+                                CheckAndHandleFile(File, ref card);
                                 Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但没获取到HLS流，降级到FLV模式");
                                 return;
                         }
@@ -112,7 +114,10 @@ namespace Core.RuntimeObject.Download
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         hlsState = DlwnloadTaskState.SuccessfulButNotStream;
                                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
+                                        {
+                                            CheckAndHandleFile(File, ref card);
                                             Thread.Sleep(1000 * 10);
+                                        }                                        
                                         return;
                                     }
                                     else
@@ -120,7 +125,10 @@ namespace Core.RuntimeObject.Download
                                         Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制任务收到END数据包，进行收尾处理");
                                         hlsState = DlwnloadTaskState.Success;
                                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
+                                        {
+                                            CheckAndHandleFile(File, ref card);
                                             Thread.Sleep(1000 * 10);
+                                        }
                                         return;
                                     }
                                 }

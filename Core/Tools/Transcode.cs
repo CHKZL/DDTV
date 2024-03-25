@@ -188,9 +188,10 @@ namespace Core.Tools
                 if (File.Exists(after))
                 {
                     FileInfo fileInfo = new FileInfo(after);
-                    if (fileInfo.Length > 10 * 1024 * 1024)
+                    int FileSizeThreshold = 8 * 1024 * 1024;
+                    if (fileInfo.Length > 8 * 1024 * 1024)
                     {
-                        Tools.FileOperations.Delete(before);
+                        Tools.FileOperations.Delete(before,$"转码后文件大小小于设置的{(FileSizeThreshold/1024/1024)}MB，自动删除源文件");
                     }
                 }
                 if (process != null)

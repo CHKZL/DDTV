@@ -46,8 +46,8 @@ namespace CLI
                 Console.WriteLine($"Buvid:{account.Buvid}");
                 Console.WriteLine($"Expires_Cookies:{account.Expires_Cookies}");
                 Console.WriteLine($"CsrfToken:{account.CsrfToken}");
-                Core.Tools.FileOperations.Delete(Core.Config.Core._QrFileNmae);
-                Core.Tools.FileOperations.Delete(Core.Config.Core._QrUrl);
+                Core.Tools.FileOperations.Delete(Core.Config.Core._QrFileNmae,"登陆完成，删除登陆用临时文件");
+                Core.Tools.FileOperations.Delete(Core.Config.Core._QrUrl,"登陆完成，删除登陆用临时文件");
 
                 string Message = "登陆成功";
                 OperationQueue.Add(Opcode.Account.LoginSuccessful, Message);

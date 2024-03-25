@@ -263,7 +263,7 @@ namespace Core.RuntimeObject.Download
         /// <returns>是否成功</returns>
         internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card)
         {
-            const long FileSizeThreshold = 10 * 1024 * 1024; // 10MB
+            const long FileSizeThreshold = 8 * 1024 * 1024; // 8MB
             if (card.DownInfo.IsCut)
             {
                 return DlwnloadTaskState.Cut;
@@ -280,7 +280,7 @@ namespace Core.RuntimeObject.Download
                     }
                     else
                     {
-                        Tools.FileOperations.Delete(File);
+                        Tools.FileOperations.Delete(File,$"文件大小小于设置的{(FileSizeThreshold/1024/1024)}MB，自动删除");
                     }
 
                 }
