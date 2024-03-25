@@ -131,8 +131,8 @@ jobs:
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir CLI\\build_output\\plugins\\ffmpeg
-          copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir CLI\\build_output\\plugins\\plugins\\ffmpeg
+          copy CLI\\plugins\\ffmpeg\\ffmpeg.exe CLI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
