@@ -27,7 +27,7 @@ namespace Core
             //try
             //{
             //    transcode.MergeFilesAsync("./Rec/TEST/1.mp4",B);
-                
+
             //}
             //catch (Exception ex)
             //{
@@ -35,9 +35,10 @@ namespace Core
             //}
             //Console.ReadKey();
 
-
+            Console.OutputEncoding = Encoding.UTF8;
+            Console.InputEncoding = Encoding.UTF8;
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-            System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);       
+            System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
             Config.ReadConfiguration();
             ServicePointManager.DnsRefreshTimeout = 0;

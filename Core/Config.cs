@@ -543,7 +543,7 @@ namespace Core
 
             private static string HlsWaitingTime = "50";
             /// <summary>
-            /// 直播间状态更新间隔时间（int，单位秒）
+            /// 一个新任务等待HLS的时间（int，单位秒）
             /// 默认值：50
             /// </summary>
             public static int _HlsWaitingTime

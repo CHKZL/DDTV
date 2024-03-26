@@ -1,4 +1,5 @@
 ﻿using Core.LogModule;
+using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -36,10 +37,7 @@ namespace CLI.WebAppServices
                 data = data,
                 message = message
             };
-           
-
-            string MessagePack = JsonSerializer.Serialize(pack, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)});
-          
+            string MessagePack = JsonConvert.SerializeObject(pack);
             return MessagePack;
         }
 
