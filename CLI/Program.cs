@@ -69,11 +69,13 @@ namespace CLI
                 app.UseStatusCodePagesWithRedirects("/api/not_found");
                 app.UseStaticFiles(new StaticFileOptions
                 {
+                    //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),
                     RequestPath = ""
                 });
                 app.UseStaticFiles(new StaticFileOptions
                 {
+                    //将录制路径映射为一个虚拟路径的静态文件服务，让web去读取用于播放和下载
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                     RequestPath = Config.Web._RecordingStorageDirectory
                 });
