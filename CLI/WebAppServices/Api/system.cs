@@ -16,16 +16,16 @@ namespace CLI.WebAppServices.Api
     [Route("api/system/[controller]")]
     [Login]
     [Tags("config")]
-    public class GetCoreVersion : ControllerBase
+    public class get_core_version : ControllerBase
     {
         /// <summary>
         /// 获取当前Core的版本号
         /// </summary>
         /// <returns></returns>
-        [HttpPost(Name = "GetCoreVersion")]
+        [HttpPost(Name = "get_core_version")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(GetCoreVersion), System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(), "CoreVersion"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_core_version), System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(), "CoreVersion"), "application/json");
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
@@ -33,23 +33,23 @@ namespace CLI.WebAppServices.Api
     [Route("api/system/[controller]")]
     [Login]
     [Tags("config")]
-    public class GetWebUIVersion : ControllerBase
+    public class get_webui_version : ControllerBase
     {
         /// <summary>
         /// 获取当前WEBUI版本信息
         /// </summary>
         /// <returns></returns>
-        [HttpPost(Name = "GetWebUIVersion")]
+        [HttpPost(Name = "get_webui_version")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
             if(System.IO.File.Exists("./static/version.ini"))
             {
                 string info = System.IO.File.ReadAllText("./static/version.ini");
-                return Content(MessageBase.MssagePack(nameof(GetWebUIVersion), info, "WebUIVersion"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(get_webui_version), info, "WebUIVersion"), "application/json");
             }
             else
             {
-                return Content(MessageBase.MssagePack(nameof(GetWebUIVersion), "", "WEBUI版本信息文件不存在"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(get_webui_version), "", "WEBUI版本信息文件不存在"), "application/json");
             }           
         }
     }
