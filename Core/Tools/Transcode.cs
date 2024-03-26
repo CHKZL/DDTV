@@ -179,9 +179,9 @@ namespace Core.Tools
                 {
                     FileInfo fileInfo = new FileInfo(after);
                     int FileSizeThreshold = 8 * 1024 * 1024;
-                    if (fileInfo.Length > 8 * 1024 * 1024)
+                    if (fileInfo.Length > 8 * 1024 * 1024 && Config.Download._DeleteOriginalFileAfterRepair)
                     {
-                        Tools.FileOperations.Delete(before,$"转码后文件大小小于设置的{(FileSizeThreshold/1024/1024)}MB，自动删除源文件");
+                        Tools.FileOperations.Delete(before,$"符合修复条件，自动删除源文件");
                     }
                 }
                 if (process != null)
