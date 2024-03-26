@@ -194,8 +194,8 @@ namespace CLI.WebAppServices.Api
         /// <param name="commonParameters"></param>
         /// <param name="waitingtime">等待时间</param>
         /// <returns></returns>
-        [HttpGet(Name = "set_hls_waiting_time")]
-        public ActionResult Get(GetCommonParameters commonParameters, [FromForm] int waitingtime)
+        [HttpPost(Name = "set_hls_waiting_time")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int waitingtime)
         {
             Core.Config.Core._HlsWaitingTime = waitingtime;
             return Content(MessageBase.MssagePack(nameof(set_hls_waiting_time), "", $"将HLS等待时间修改为{waitingtime}秒"), "application/json");
@@ -236,8 +236,8 @@ namespace CLI.WebAppServices.Api
         /// <param name="commonParameters"></param>
         /// <param name="automatic_repair">文件写入完成的时候是否修复</param>
         /// <returns></returns>
-        [HttpGet(Name = "set_automatic_repair")]
-        public ActionResult Get(GetCommonParameters commonParameters, [FromForm] bool automatic_repair)
+        [HttpPost(Name = "set_automatic_repair")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool automatic_repair)
         {
             Core.Config.Core._AutomaticRepair = automatic_repair;
             return Content(MessageBase.MssagePack(nameof(set_automatic_repair), "", $"将自动修复设置为{automatic_repair}"), "application/json");
