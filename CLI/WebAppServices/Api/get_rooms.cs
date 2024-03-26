@@ -37,7 +37,7 @@ namespace CLI.WebAppServices.Api
         /// <param name="uid">UID</param>
         /// <param name="room_id">房间号</param>
         /// <returns></returns>
-        [HttpPost(Name = "complete_room_information")]
+        [HttpPost(Name = "room_information")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long room_id= 0)
         {
             RoomCardClass roomCardClass = new RoomCardClass();

@@ -115,6 +115,7 @@ namespace Core.Tools
         /// <returns>Task</returns>
         public async Task TranscodeAsync(string before, string after, RoomCardClass Card)
         {
+            List<string> LogText = new List<string>();
             try
             {
                 Card.DownInfo.DownloadFileList.TranscodingCount++;
@@ -123,7 +124,7 @@ namespace Core.Tools
                 {
                     StartInfo = new ProcessStartInfo()
                     {
-                        Arguments = $"-y -i '{before}' -c copy '{after}'",
+                        Arguments = $"-y -i \"{before}\" -c copy \"{after}\"",
                         RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
@@ -132,7 +133,7 @@ namespace Core.Tools
                         StandardOutputEncoding = Encoding.UTF8,
                     }
                 };
-                List<string> LogText = new List<string>();
+                
                 process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                 {
                     try
@@ -173,17 +174,6 @@ namespace Core.Tools
                 };
                 // 等待Process退出
                 await process.WaitForExitAsync();
-                if (Core.Config.Core._DebugMode)
-                {
-                    using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
-                    {
-                        foreach (var item in LogText)
-                        {
-                            fileStream.WriteLine(item);
-                        }
-                    }
-                    Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
-                }
                 // 转码完成后，如果目标文件存在且大小合理，删除源文件
                 if (File.Exists(after))
                 {
@@ -200,7 +190,15 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
-                 Log.Warn(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}");
+                Log.Warn(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}");
+                using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
+                {
+                    foreach (var item in LogText)
+                    {
+                        fileStream.WriteLine(item);
+                    }
+                }
+                Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
             }
             Card.DownInfo.DownloadFileList.TranscodingCount++;
         }

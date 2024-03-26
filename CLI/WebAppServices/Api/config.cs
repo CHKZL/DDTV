@@ -179,4 +179,87 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.MssagePack(nameof(restore_all_settings_to_default), "", $"恢复所有设置为默认值，请重新启动程序，重启后生效"), "application/json");
         }
     }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class set_hls_waiting_time : ControllerBase
+    {
+
+        /// <summary>
+        /// 修改HLS等待时间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="waitingtime">等待时间</param>
+        /// <returns></returns>
+        [HttpGet(Name = "set_hls_waiting_time")]
+        public ActionResult Get(GetCommonParameters commonParameters, [FromForm] int waitingtime)
+        {
+            Core.Config.Core._HlsWaitingTime = waitingtime;
+            return Content(MessageBase.MssagePack(nameof(set_hls_waiting_time), "", $"将HLS等待时间修改为{waitingtime}秒"), "application/json");
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_hls_waiting_time : ControllerBase
+    {
+
+        /// <summary>
+        /// 获取HLS等待时间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpGet(Name = "get_hls_waiting_time")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            return Content(MessageBase.MssagePack(nameof(get_hls_waiting_time), Core.Config.Core._HlsWaitingTime, $""), "application/json");
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class set_automatic_repair : ControllerBase
+    {
+
+        /// <summary>
+        /// 修改HLS等待时间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="automatic_repair">文件写入完成的时候是否修复</param>
+        /// <returns></returns>
+        [HttpGet(Name = "set_automatic_repair")]
+        public ActionResult Get(GetCommonParameters commonParameters, [FromForm] bool automatic_repair)
+        {
+            Core.Config.Core._AutomaticRepair = automatic_repair;
+            return Content(MessageBase.MssagePack(nameof(set_automatic_repair), "", $"将自动修复设置为{automatic_repair}"), "application/json");
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_automatic_repair : ControllerBase
+    {
+
+        /// <summary>
+        /// 修改HLS等待时间
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpGet(Name = "get_automatic_repair")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            return Content(MessageBase.MssagePack(nameof(get_automatic_repair), Core.Config.Core._AutomaticRepair, $""), "application/json");
+        }
+    }
 }
