@@ -22,8 +22,8 @@ namespace CLI.WebAppServices.Api
         /// 获取当前Core的版本号
         /// </summary>
         /// <returns></returns>
-        [HttpPost(Name = "get_core_version")]
-        public ActionResult Post(PostCommonParameters commonParameters)
+        [HttpGet(Name = "get_core_version")]
+        public ActionResult Get(GetCommonParameters commonParameters)
         {
             return Content(MessageBase.MssagePack(nameof(get_core_version), System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(), "CoreVersion"), "application/json");
         }
@@ -39,8 +39,8 @@ namespace CLI.WebAppServices.Api
         /// 获取当前WEBUI版本信息
         /// </summary>
         /// <returns></returns>
-        [HttpPost(Name = "get_webui_version")]
-        public ActionResult Post(PostCommonParameters commonParameters)
+        [HttpGet(Name = "get_webui_version")]
+        public ActionResult Get(GetCommonParameters commonParameters)
         {
             if(System.IO.File.Exists("./static/version.ini"))
             {

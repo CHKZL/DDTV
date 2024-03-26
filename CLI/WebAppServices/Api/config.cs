@@ -231,7 +231,7 @@ namespace CLI.WebAppServices.Api
     {
 
         /// <summary>
-        /// 修改HLS等待时间
+        /// 设置自动修复设置状态
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="automatic_repair">文件写入完成的时候是否修复</param>
@@ -252,7 +252,7 @@ namespace CLI.WebAppServices.Api
     {
 
         /// <summary>
-        /// 修改HLS等待时间
+        /// 获取自动修复设置状态
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <returns></returns>
