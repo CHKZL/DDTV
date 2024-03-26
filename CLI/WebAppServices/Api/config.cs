@@ -157,4 +157,26 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), Core.Config.Core._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class restore_all_settings_to_default : ControllerBase
+    {
+
+        /// <summary>
+        /// 恢复所有设置为默认
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpGet(Name = "restore_all_settings_to_default")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            //直接删掉配置文件，重启后会自动生成的
+            Core.Tools.FileOperations.Delete(Core.Config.Core._ConfigurationFile);
+            return Content(MessageBase.MssagePack(nameof(restore_all_settings_to_default), "", $"恢复所有设置为默认值，请重新启动程序，重启后生效"), "application/json");
+        }
+    }
 }
