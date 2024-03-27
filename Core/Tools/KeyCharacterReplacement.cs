@@ -115,8 +115,8 @@ namespace Core.Tools
         /// <summary>
         /// 随机字符串
         /// </summary>
-        /// <param name="chars"></param>
-        /// <param name="length"></param>
+        /// <param name="chars">可选候选字符</param>
+        /// <param name="length">生成长度</param>
         /// <returns></returns>
         public static string GetRandomStr(string chars, int length)
         {
@@ -125,7 +125,6 @@ namespace Core.Tools
             {
                 chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789";
             }
-            //const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
