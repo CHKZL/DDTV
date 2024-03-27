@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Core.Network
 {
-    internal class Post
+    public class Post
     {
         /// <summary>
         /// POST方法
@@ -24,7 +24,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3)
+        public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3)
         {
             Log.Debug(nameof(PostBody),$"发起Post请求，目标:{url}");
             string result = "";
