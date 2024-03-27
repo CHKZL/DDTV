@@ -46,6 +46,14 @@ namespace CLI
             Log.Info(nameof(SeKey), $"控制台菜单初始化完成");
             Task.Run(() =>
             {
+                try
+                {
+                    Console.ReadKey();
+                }
+                catch (Exception)
+                {
+                    return;
+                }
                 while (true)
                 {
                     if (Console.ReadKey().Key.Equals(ConsoleKey.I))

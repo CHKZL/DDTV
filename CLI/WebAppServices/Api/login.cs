@@ -134,9 +134,6 @@ namespace CLI.WebAppServices.Api
         public async Task<ActionResult> Post(PostCommonParameters commonParameters)
         {
             await Login.QR();
-
-         
-
             return Content(MessageBase.MssagePack(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", code.LoginInfoFailure), "application/json");
         }
     }

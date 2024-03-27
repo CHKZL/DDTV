@@ -15,6 +15,7 @@ namespace Core
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
+        
 #if DEBUG
         public static bool IsDevDebug = true;
 #else
@@ -35,8 +36,13 @@ namespace Core
             //}
             //Console.ReadKey();
 
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.InputEncoding = Encoding.UTF8;
+            //try
+            //{
+            //    Console.OutputEncoding = Encoding.UTF8;
+            //    Console.InputEncoding = Encoding.UTF8;
+            //}
+            //catch (Exception){}
+
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();

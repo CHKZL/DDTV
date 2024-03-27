@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Core.Network
 {
-    internal class Get
+    public class Get
     {
         /// <summary>
         /// Get方法
@@ -23,9 +23,10 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        internal static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
+        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
         {
-            Log.Debug(nameof(GetBody),$"发起Get请求，目标:{url}");
+            if (IsCookie)
+                Log.Debug(nameof(GetBody), $"发起Get请求，目标:{url}");
             string result = "";
             HttpWebRequest req = null;
             HttpWebResponse rep = null;
@@ -58,10 +59,12 @@ namespace Core.Network
                     }
                     catch (WebException ex)
                     {
-                        Log.Warn(nameof(GetBody), $"{ex.Status.ToString()}:{url}", null, false);
+                        if (IsCookie)
+                            Log.Warn(nameof(GetBody), $"{ex.Status.ToString()}:{url}", null, false);
                         if (attempt == maxAttempts - 1) // 如果已经达到最大尝试次数，就将结果设为空字符串
                         {
-                            Log.Warn(nameof(GetBody), $"重试{maxAttempts}次均失败:{url}");
+                            if (IsCookie)
+                                Log.Warn(nameof(GetBody), $"重试{maxAttempts}次均失败:{url}");
                             result = string.Empty;
                         }
                         else
@@ -73,7 +76,8 @@ namespace Core.Network
                     catch (Exception ex)
                     {
                         Thread.Sleep(300);
-                        Log.Error(nameof(GetBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                        if (IsCookie)
+                            Log.Error(nameof(GetBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
                         continue; // 如果没有达到最大尝试次数，就继续尝试
                     }
                 }

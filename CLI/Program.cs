@@ -16,9 +16,10 @@ using CLI.WebAppServices;
 
 namespace CLI
 {
-    internal class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static event EventHandler<EventArgs> StartCompletEvent;//WEBUI启动完成事件
+        public static void Main(string[] args)
         {
             try
             {
@@ -34,8 +35,7 @@ namespace CLI
                 {
                     return level >= LogLevel.Warning;
                 });
-                
-                //builder.Services.AddWebSockets(options => { });
+               
                 builder.Services.AddControllers();
                 
                 builder.Services.AddEndpointsApiExplorer();
@@ -66,7 +66,8 @@ namespace CLI
                 //app.UseHttpsRedirection();
                 app.UseAuthorization();
                 app.MapControllers();
-                app.UseStatusCodePagesWithRedirects("/api/not_found");
+                //app.UseStatusCodePagesWithRedirects("/api/not_found");
+                app.UseStatusCodePagesWithRedirects("/index");
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
@@ -79,7 +80,7 @@ namespace CLI
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                     RequestPath = Config.Web._RecordingStorageDirectory
                 });
-                string rurl = $"http://0.0.0.0:11419";
+                string rurl = $"http://127.0.0.1:11419";
                 app.Urls.Add(rurl);
                 //增加WS处理的中间件
                
@@ -91,7 +92,13 @@ namespace CLI
                 }
                 WebAppServices.WS.WebSocketQueue.Start();
                 Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
+                Task.Run(() =>
+                {
+                    Thread.Sleep(2000);
+                    StartCompletEvent?.Invoke(null, new EventArgs());
+                });
                 app.Run();
+                ;
             }
             catch (Exception e)
             {
@@ -164,7 +171,7 @@ namespace CLI
                         {
                             Thread.Sleep(1000);//等待登陆
                         }
-                        TerminalDisplay.SeKey();
+                        //TerminalDisplay.SeKey();
                         Detect detect = new();//启动房间监听并且注册事件
 
                         //TEST();

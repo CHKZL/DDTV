@@ -38,5 +38,22 @@ namespace CLI.WebAppServices.Api
         {
             return Content(MessageBase.MssagePack(nameof(dokidoki), Core.Tools.DokiDoki.GetDoki()), "application/json");
         }
+
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/[controller]")]
+    [Tags("dokidoki")]
+    public class init_inspect : ControllerBase
+    {
+        /// <summary>
+        /// 用于测试web是否初始化完成
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "init_inspect")]
+        public ActionResult Get()
+        {
+            return Content(MessageBase.MssagePack(nameof(init_inspect), "OK", "OK"), "application/json");
+        }
     }
 }

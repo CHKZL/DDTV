@@ -42,7 +42,9 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "/")]
         public ActionResult Get()
         {
-            return Redirect("/webui");
+             string Html = System.IO.File.ReadAllText(@"./static/index.html");
+            return Content(Html, "text/html");
+            //return Redirect("/webui");
         }
     }
 }
