@@ -311,19 +311,19 @@ namespace Core
             }
 
 
-            private static string ApiPort = "11419";
+            private static string Port = "11419";
             /// <summary>
             /// Api提供的端口地址
             /// 默认值：11419
             /// </summary>
-            public static bool _ApiPort
+            public static bool _Port
             {
-                get => bool.Parse(ApiPort);
+                get => bool.Parse(Port);
                 set
                 {
-                    if (value.ToString() != ApiPort)
+                    if (value.ToString() != Port)
                     {
-                        ApiPort = value.ToString();
+                        Port = value.ToString();
                         string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
                         OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
                         Log.Info(nameof(Config), msg);

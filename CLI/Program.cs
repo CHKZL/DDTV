@@ -80,12 +80,10 @@ namespace CLI
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                     RequestPath = Config.Web._RecordingStorageDirectory
                 });
-                string rurl = $"http://127.0.0.1:11419";
+                string rurl = $"http://0.0.0.0:{Config.Core._Port}";
                 app.Urls.Add(rurl);
-                //增加WS处理的中间件
-               
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:11419 ]");
+                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Core._Port} ]");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
