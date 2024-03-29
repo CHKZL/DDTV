@@ -316,9 +316,9 @@ namespace Core
             /// Api提供的端口地址
             /// 默认值：11419
             /// </summary>
-            public static bool _Port
+            public static int _Port
             {
-                get => bool.Parse(Port);
+                get => int.Parse(Port);
                 set
                 {
                     if (value.ToString() != Port)
