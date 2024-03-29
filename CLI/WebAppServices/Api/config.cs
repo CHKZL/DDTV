@@ -195,10 +195,10 @@ namespace CLI.WebAppServices.Api
         /// <param name="waitingtime">等待时间</param>
         /// <returns></returns>
         [HttpPost(Name = "set_hls_waiting_time")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int waitingtime)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int waiting_time)
         {
-            Core.Config.Core._HlsWaitingTime = waitingtime;
-            return Content(MessageBase.MssagePack(nameof(set_hls_waiting_time), "", $"将HLS等待时间修改为{waitingtime}秒"), "application/json");
+            Core.Config.Core._HlsWaitingTime = waiting_time;
+            return Content(MessageBase.MssagePack(nameof(set_hls_waiting_time), "", $"将HLS等待时间修改为{waiting_time}秒"), "application/json");
         }
     }
 
