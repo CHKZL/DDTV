@@ -50,7 +50,8 @@ namespace CLI.WebAppServices
             ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
             {
-                item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                if (item.State == WebSocketState.Open || item.State == WebSocketState.Connecting)
+                    item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
             }
         }
 
