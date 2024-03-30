@@ -1,5 +1,6 @@
 ﻿using Core.Account;
 using Core.LogModule;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,8 @@ namespace Core.Network.Methods
                 try
                 {
                     WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
-                    Nav_Class? Nav_Class = JsonSerializer.Deserialize<Nav_Class>(WebText);
+                    Nav_Class? Nav_Class = System.Text.Json.JsonSerializer.Deserialize<Nav_Class>(WebText);
+                    RuntimeObject.Account.nav_info = Nav_Class.data;
                     return Nav_Class;
                 }
                 catch (Exception e)
@@ -63,36 +65,64 @@ namespace Core.Network.Methods
             public class Data
             {
                 public bool isLogin { get; set; }
+                [JsonIgnore]
                 public long email_verified { get; set; }
                 public string face { get; set; }
+                [JsonIgnore]
                 public long face_nft { get; set; }
+                [JsonIgnore]
                 public long face_nft_type { get; set; }
+                [JsonIgnore]
                 public Level_Info level_info { get; set; }
                 public long mid { get; set; }
+                [JsonIgnore]
                 public long mobile_verified { get; set; }
+                [JsonIgnore]
                 public double money { get; set; }
+                [JsonIgnore]
                 public long moral { get; set; }
+                [JsonIgnore]
                 public Official official { get; set; }
+                [JsonIgnore]
                 public OfficialVerify officialVerify { get; set; }
+                [JsonIgnore]
                 public Pendant pendant { get; set; }
+                [JsonIgnore]
                 public long scores { get; set; }
                 public string uname { get; set; }
+                [JsonIgnore]
                 public long vipDueDate { get; set; }
+                [JsonIgnore]
                 public long vipStatus { get; set; }
+                [JsonIgnore]
                 public long vipType { get; set; }
+                [JsonIgnore]
                 public long vip_pay_type { get; set; }
+                [JsonIgnore]
                 public long vip_theme_type { get; set; }
+                [JsonIgnore]
                 public Vip_Label vip_label { get; set; }
+                [JsonIgnore]
                 public long vip_avatar_subscript { get; set; }
+                [JsonIgnore]
                 public string vip_nickname_color { get; set; }
+                [JsonIgnore]
                 public Vip vip { get; set; }
+                [JsonIgnore]
                 public Wallet wallet { get; set; }
+                [JsonIgnore]
                 public bool has_shop { get; set; }
+                [JsonIgnore]
                 public string shop_url { get; set; }
+                [JsonIgnore]
                 public long allowance_count { get; set; }
+                [JsonIgnore]
                 public long answer_status { get; set; }
+                [JsonIgnore]
                 public long is_senior_member { get; set; }
+                [JsonIgnore]
                 public Wbi_Img wbi_img { get; set; }
+                [JsonIgnore]
                 public bool is_jury { get; set; }
             }
 

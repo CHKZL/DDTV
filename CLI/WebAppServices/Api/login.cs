@@ -171,4 +171,21 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.MssagePack(nameof(get_login_status), Core.RuntimeObject.Account.GetLoginStatus(), $"获取本地登录态AccountInformation的有效状态"), "application/json");
         }
     }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/login/[controller]")]
+    [Login]
+    [Tags("login")]
+    public class get_nav : ControllerBase
+    {
+        /// <summary>
+        /// 获取登陆用户基本信息
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "get_nav")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            return Content(MessageBase.MssagePack(nameof(get_login_status), Account.nav_info, $""), "application/json");
+        }
+    }
 }
