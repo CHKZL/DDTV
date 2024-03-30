@@ -12,6 +12,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static Core.Account.Kernel.ByQRCode;
+using static Core.Network.Methods.Nav;
 
 namespace Core.RuntimeObject
 {
@@ -19,6 +20,7 @@ namespace Core.RuntimeObject
     {
         public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
         private static AccountInformation _accountInformation = new();
+        public static Nav_Class.Data nav_info = new Nav_Class.Data();
         public static AccountInformation AccountInformation
         {
             get
@@ -69,6 +71,7 @@ namespace Core.RuntimeObject
             if (!_AccountCheckRunningStatus!)
             {
                 _AccountCheckRunningStatus = true;
+                LoginFailureEvent += Account_LoginFailureEvent;
                 Task.Run(() =>
                 {
                     Thread.Sleep(1000 * 10);
@@ -92,11 +95,7 @@ namespace Core.RuntimeObject
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
-
-                                LoginFailureEvent?.Invoke(null, new EventArgs());
-                                string Message = $"触发登陆失效事件";
-                                OperationQueue.Add(Opcode.Account.InvalidLoginStatus, Message);
-                                Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
+                                LoginFailureEvent?.Invoke(null, new EventArgs());                                
                             }
                         }
                         catch (Exception e)
@@ -110,6 +109,13 @@ namespace Core.RuntimeObject
                     }
                 });
             }
+        }
+
+        private static void Account_LoginFailureEvent(object? sender, EventArgs e)
+        {
+            string Message = $"触发登陆失效事件";
+            OperationQueue.Add(Opcode.Account.InvalidLoginStatus, Message);
+            Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
         }
 
 
