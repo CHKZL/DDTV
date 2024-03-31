@@ -169,7 +169,7 @@ namespace CLI
                         {
                             Thread.Sleep(1000);//等待登陆
                         }
-                        //TerminalDisplay.SeKey();
+                        TerminalDisplay.SeKey();
                         Detect detect = new();//启动房间监听并且注册事件
 
                         //TEST();
