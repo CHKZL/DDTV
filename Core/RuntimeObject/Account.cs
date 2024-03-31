@@ -30,8 +30,21 @@ namespace Core.RuntimeObject
                     string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
                     {
-                        Log.Info(nameof(AccountInformation),$"读取User配置文件{files[0]}");
-                        Tools.Encryption.DecryptFile(files[0], out string accountString);
+                        if(Config.Core._ValidAccount=="-1")
+                        {
+                            Config.Core._ValidAccount = files[0].Replace($"{Config.Core._UserInfoCoinfFileExtension}", "");
+                        }
+                        string ACC = files[0];
+                        foreach (var item in files)
+                        {
+                            if (item.Replace($"{Config.Core._UserInfoCoinfFileExtension}", "") == Config.Core._ValidAccount)
+                            {
+                                ACC = item;
+                                break;
+                            }
+                        }
+                        Log.Info(nameof(AccountInformation), $"读取User配置文件{ACC}");
+                        Tools.Encryption.DecryptFile(ACC, out string accountString);
                         var tempAccountInfo = JsonSerializer.Deserialize<AccountInformation>(accountString);
                         if (tempAccountInfo?.State == true)
                         {

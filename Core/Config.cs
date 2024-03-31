@@ -249,6 +249,26 @@ namespace Core
 
         public class Core
         {
+            private static string ValidAccount = "-1";
+            /// <summary>
+            /// 生效的账号配置文件
+            /// 默认值：./Temporary/LoginQr.png
+            /// </summary>
+            public static string _ValidAccount
+            {
+                get => $"{ValidAccount}";
+                set
+                {
+                    if (value != ValidAccount)
+                    {
+                        ValidAccount = value;
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+
             private static string DefaultFilePathNameFormat = "{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}";
             /// <summary>
             /// 保存的文件以怎样的路径和名称格式保存在录制文件夹中

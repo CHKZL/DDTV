@@ -52,6 +52,7 @@ namespace CLI
                 string Message = "登陆成功";
                 OperationQueue.Add(Opcode.Account.LoginSuccessful, Message);
                 Log.Info(nameof(Login), Message);
+                Core.Config.Core._ValidAccount = account.Uid;
             }
         }
 
