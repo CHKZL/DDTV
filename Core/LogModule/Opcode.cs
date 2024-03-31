@@ -117,6 +117,18 @@ namespace Core.LogModule
             /// 登录态失效
             /// </summary>
             InvalidLoginStatus=30106,
+            /// <summary>
+            /// 扫码登陆确认
+            /// </summary>
+            ScanCodeConfirmation=30107,
+            /// <summary>
+            /// 二维码等待扫码
+            /// </summary>
+            QrCodeWaitingForScann=30108,
+            /// <summary>
+            /// 已扫码等待确认
+            /// </summary>
+            ScannedCodeWaitingForConfirmation=30109,
         }
         public enum Download
         {

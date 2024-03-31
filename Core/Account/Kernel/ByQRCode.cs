@@ -1,4 +1,5 @@
-﻿using Core.Network;
+﻿using Core.LogModule;
+using Core.Network;
 using SkiaSharp;
 using SkiaSharp.QrCode;
 using System;
@@ -224,80 +225,67 @@ namespace Core.Account.Kernel
             if (!string.IsNullOrEmpty(str))
             {
                 MonitorCallBack_Templete obj = JsonSerializer.Deserialize<MonitorCallBack_Templete>(str);
-                if (obj.data.code == 0)
+
+                switch (obj.data.code)
                 {
-                    //关闭监视器
-                    Monitor.Dispose();
-                    Refresher.Dispose();
-
-                    AccountInformation account = new AccountInformation();
-
-
-                    CookieBack_Templete cookies = new()
-                    {
-                        refresh_token = obj.data.refresh_token,
-                        timestamp = obj.data.timestamp,
-                        url = obj.data.url
-                    };
-
-                    string Querystring = cookies.url.Split('?')[1];
-
-
-                    string[] KeyValuePair = Regex.Split(Querystring, "&");
-                    account.Cookies = new CookieCollection();
-                    for (int i = 0; i < KeyValuePair.Length - 1; i++)
-                    {
-                        string[] tmp = Regex.Split(KeyValuePair[i], "=");
-                        switch (tmp[0])
+                    //确认登陆
+                    case 0:
+                        //关闭监视器
+                        Monitor.Dispose();
+                        Refresher.Dispose();
+                        AccountInformation account = new AccountInformation();
+                        CookieBack_Templete cookies = new()
                         {
-                            case "bili_jct":
-                                account.CsrfToken = tmp[1];
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
-
-                            case "DedeUserID":
-                                account.Uid = tmp[1];
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
-
-                            case "Expires":
-                                account.Expires_Cookies = DateTime.Now.AddSeconds(double.Parse(tmp[1]));
-                                break;
-
-                            case "gourl":
-
-                                break;
-
-                            default:
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
-                        }
-                    }
-                    account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
-                    account.LoginStatus = AccountInformation.LoginStatusEnum.ByQrCode;
-                    Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
-                }
-                else
-                {
-                    switch (obj.data.code)
-                    {
-
-                        case 86090:
+                            refresh_token = obj.data.refresh_token,
+                            timestamp = obj.data.timestamp,
+                            url = obj.data.url
+                        };
+                        string Querystring = cookies.url.Split('?')[1];
+                        string[] KeyValuePair = Regex.Split(Querystring, "&");
+                        account.Cookies = new CookieCollection();
+                        for (int i = 0; i < KeyValuePair.Length - 1; i++)
+                        {
+                            string[] tmp = Regex.Split(KeyValuePair[i], "=");
+                            switch (tmp[0])
                             {
+                                case "bili_jct":
+                                    account.CsrfToken = tmp[1];
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
+                                case "DedeUserID":
+                                    account.Uid = tmp[1];
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
+                                case "Expires":
+                                    account.Expires_Cookies = DateTime.Now.AddSeconds(double.Parse(tmp[1]));
+                                    break;
+                                case "gourl":
+                                    break;
 
-                                //已扫描
-                                Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
-                                break;
+                                default:
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
                             }
-                        case 86101:
-                            //未扫描
-                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                            break;
-                    }
+                        }
+                        account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
+                        account.LoginStatus = AccountInformation.LoginStatusEnum.ByQrCode;
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
+                        OperationQueue.Add(Opcode.Account.ScanCodeConfirmation,"扫码登陆确认");
+                        return;
 
+                    //已扫描
+                    case 86090:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
+                        OperationQueue.Add(Opcode.Account.ScannedCodeWaitingForConfirmation,"已扫码等待确认登陆");
+                        break;
+                    //未扫描
+                    case 86101:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
+                        OperationQueue.Add(Opcode.Account.QrCodeWaitingForScann,"二维码等待扫码");
+                        break;
                 }
             }
         }
