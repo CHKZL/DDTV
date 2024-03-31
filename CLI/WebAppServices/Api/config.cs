@@ -296,6 +296,15 @@ namespace CLI.WebAppServices.Api
                 Task.Run(() =>
                 {
                     Thread.Sleep(3000);
+                    //删除user文件
+                    string[] files = Directory.GetFiles(Core.Config.Core._ConfigDirectory, $"*{Core.Config.Core._UserInfoCoinfFileExtension}");
+                    foreach (string file in files)
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                    }
                     //删除房间配置文件
                     if (System.IO.File.Exists(Core.Config.Core._RoomConfigFile))
                     {
@@ -306,16 +315,12 @@ namespace CLI.WebAppServices.Api
                     {
                         System.IO.File.Delete(Core.Config.Core._ConfigurationFile);
                     }
-                    //删除user文件
-                    string[] files = Directory.GetFiles(Core.Config.Core._ConfigDirectory, $"*{Core.Config.Core._UserInfoCoinfFileExtension}");
-                    foreach (string file in files)
+
+                    while (System.IO.File.Exists(Core.Config.Core._RoomConfigFile) || System.IO.File.Exists(Core.Config.Core._ConfigurationFile))
                     {
-                        if (System.IO.File.Exists(file))
-                        {
-                            System.IO.File.Delete(file);
-                        }
+                        Thread.Sleep(10);
                     }
-                    Environment.FailFast("核心配置被重置");
+                    Environment.FailFast("核心配置被重置，手动触发异常，停止运行。");
                 });
                 return Content(MessageBase.MssagePack(nameof(reinitialize), true,
                     $"正在进行重新初始化，二次确认完成。所有现有配置文件清空，3秒后程序自动结束运行。请自行重新启动应进程。"),
