@@ -42,6 +42,7 @@ namespace Core
             var _ = Core.RuntimeObject.Account.AccountInformation;
             Core.RuntimeObject.Account.CheckLoginStatus();
             Log.Info(nameof(Init), $"Core初始化完成");
+
             stopwatch.Start();
         }
 
