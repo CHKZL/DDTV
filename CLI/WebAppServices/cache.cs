@@ -10,5 +10,6 @@ namespace CLI.WebAppServices
     {
         public static string set_recording_path = Guid.NewGuid().ToString();
         public static string set_default_file_path_name_format = Guid.NewGuid().ToString();
+         public static string reinitialize = Guid.NewGuid().ToString();
     }
 }

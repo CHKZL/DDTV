@@ -23,26 +23,6 @@ namespace Core
 #endif
         public static void Start()
         {
-            //string[] B = new string[2] { "D:/T1.mp4", "D:/T2.mp4" };
-            //Tools.Transcode transcode = new Tools.Transcode();
-            //try
-            //{
-            //    transcode.MergeFilesAsync("./Rec/TEST/1.mp4",B);
-
-            //}
-            //catch (Exception ex)
-            //{
-            //    Log.Error("", $"完成录制任务后合并时出现意外错误:{ex.ToString()}");
-            //}
-            //Console.ReadKey();
-
-            //try
-            //{
-            //    Console.OutputEncoding = Encoding.UTF8;
-            //    Console.InputEncoding = Encoding.UTF8;
-            //}
-            //catch (Exception){}
-
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
