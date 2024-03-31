@@ -127,7 +127,7 @@ namespace CLI.WebAppServices.Api
     public class re_login : ControllerBase
     {
         /// <summary>
-        /// 重新登陆
+        /// 重新登陆(登陆后覆盖当前登录态，覆盖前，当前登录态依旧有效)
         /// </summary>
         /// <returns></returns>
         [HttpPost(Name = "re_login")]
@@ -185,7 +185,7 @@ namespace CLI.WebAppServices.Api
         [HttpGet(Name = "get_nav")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_login_status), Account.nav_info, $""), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_nav), Account.nav_info, $""), "application/json");
         }
     }
 }

@@ -262,4 +262,68 @@ namespace CLI.WebAppServices.Api
             return Content(MessageBase.MssagePack(nameof(get_automatic_repair), Core.Config.Core._AutomaticRepair, $""), "application/json");
         }
     }
+
+        [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class reinitialize : ControllerBase
+    {
+
+        /// <summary>
+        /// 设置录制储存路径中的子路径和格式
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="check">二次确认key</param>
+        /// <returns></returns>
+        [HttpPost(Name = "reinitialize")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string check = "")
+        {
+            if (string.IsNullOrEmpty(check))
+            {
+                cache.reinitialize = Guid.NewGuid().ToString();
+                return Content(MessageBase.MssagePack(nameof(reinitialize), cache.reinitialize,
+                    $"正在进行重新初始化，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，该操作完成后，将会把所有现有配置文件清空，并且自动结束运行。运行后请自行重新启动应进程。"),
+                    "application/json");
+            }
+            if (check != cache.reinitialize)
+            {
+                return Content(MessageBase.MssagePack(nameof(reinitialize), false, $"二次确认的key不正确"), "application/json");
+            }
+            else
+            {
+                Task.Run(() =>
+                {
+                    Thread.Sleep(3000);
+                    //删除房间配置文件
+                    if (System.IO.File.Exists(Core.Config.Core._RoomConfigFile))
+                    {
+                        System.IO.File.Delete(Core.Config.Core._RoomConfigFile);
+                    }
+                    //删除配置文件
+                    if (System.IO.File.Exists(Core.Config.Core._ConfigurationFile))
+                    {
+                        System.IO.File.Delete(Core.Config.Core._ConfigurationFile);
+                    }
+                    //删除user文件
+                    string[] files = Directory.GetFiles(Core.Config.Core._ConfigDirectory, $"*{Core.Config.Core._UserInfoCoinfFileExtension}");
+                    foreach (string file in files)
+                    {
+                        if (System.IO.File.Exists(file))
+                        {
+                            System.IO.File.Delete(file);
+                        }
+                    }
+                    Environment.FailFast("核心配置被重置");
+                });
+                return Content(MessageBase.MssagePack(nameof(reinitialize), true,
+                    $"正在进行重新初始化，二次确认完成。所有现有配置文件清空，3秒后程序自动结束运行。请自行重新启动应进程。"),
+                    "application/json");
+            }
+        }
+    }
+
+
+
 }
