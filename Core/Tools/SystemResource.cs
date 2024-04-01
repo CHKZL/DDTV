@@ -107,31 +107,44 @@ namespace Core.Tools
             public static MemInfo GetWindows()
             {
                 MemInfo memInfo = new MemInfo();
-                {
-                    long capacity = 0;
-                    ManagementClass cimobject1 = new ManagementClass("Win32_PhysicalMemory");
-                    ManagementObjectCollection moc1 = cimobject1.GetInstances();
-                    foreach (ManagementObject mo1 in moc1)
-                    {
-                        capacity += long.Parse(mo1.Properties["Capacity"].Value.ToString());
-                    }
-                    moc1.Dispose();
-                    cimobject1.Dispose();
-                    memInfo.Total = capacity;
-                }
-                {
-                    long totalCapacity = 0;
-                    ObjectQuery objectQuery = new ObjectQuery("select * from Win32_PerfRawData_PerfOS_Memory");
-                    ManagementObjectSearcher searcher = new ManagementObjectSearcher(objectQuery);
-                    ManagementObjectCollection vals = searcher.Get();
-                    foreach (ManagementObject val in vals)
-                    {
-                        totalCapacity += Convert.ToInt64(val.GetPropertyValue("Availablebytes"));
-                    }
-                    memInfo.Available = totalCapacity;
-                }
+
+                // Get total physical memory capacity
+                long totalCapacity = GetTotalPhysicalMemoryCapacityAsync();
+                memInfo.Total = totalCapacity;
+
+                // Get available memory
+                long availableCapacity = GetAvailableMemoryCapacityAsync();
+                memInfo.Available = availableCapacity;
 
                 return memInfo;
+            }
+            private static long GetTotalPhysicalMemoryCapacityAsync()
+            {
+                long totalCapacity = 0;
+                using (var cimobject1 = new ManagementClass("Win32_PhysicalMemory"))
+                {
+                    var moc1 = cimobject1.GetInstances();
+                    foreach (ManagementObject mo1 in moc1)
+                    {
+                        totalCapacity += long.Parse(mo1.Properties["Capacity"].Value.ToString());
+                    }
+                }
+                return totalCapacity;
+            }
+
+            private static long GetAvailableMemoryCapacityAsync()
+            {
+                long availableCapacity = 0;
+                var objectQuery = new ObjectQuery("select * from Win32_PerfRawData_PerfOS_Memory");
+                using (var searcher = new ManagementObjectSearcher(objectQuery))
+                {
+                    var vals = searcher.Get();
+                    foreach (ManagementObject val in vals)
+                    {
+                        availableCapacity += Convert.ToInt64(val.GetPropertyValue("Availablebytes"));
+                    }
+                }
+                return availableCapacity;
             }
             public static MemInfo GetLiunx()
             {
