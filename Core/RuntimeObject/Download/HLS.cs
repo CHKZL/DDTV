@@ -183,7 +183,7 @@ namespace Core.RuntimeObject.Download
             {
                 return DlwnloadTaskState.UserCancellation;
             }
-            Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]触发Host刷新");
+            Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]直播间未检测到直播流，3秒后重试");
             return DlwnloadTaskState.Default;
         }
 

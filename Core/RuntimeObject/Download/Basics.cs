@@ -549,6 +549,10 @@ namespace Core.RuntimeObject.Download
             /// 瞎几把剪状态
             /// </summary>
             Cut,
+            /// <summary>
+            /// 未检测到直播流(未启用该参数)
+            /// </summary>
+            NoLiveStreamDetect,
         }
 
         #endregion
