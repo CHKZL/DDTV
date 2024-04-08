@@ -199,5 +199,28 @@ namespace Core.Tools
                 public long Available { get; set; }
             }
         }
+
+
+        public class GetProcess
+        {
+            /// <summary>
+            /// 获取父进程状态
+            /// </summary>
+            /// <param name="Id">要查询的子进程ID</param>
+            /// <returns></returns>
+            public static int GetParentProcess(int Id)
+            {
+                var query = new SelectQuery($"SELECT ParentProcessId FROM Win32_Process WHERE ProcessId = {Id}");
+                using (var searcher = new ManagementObjectSearcher(query))
+                {
+                    foreach (ManagementObject mo in searcher.Get())
+                    {
+                        return Convert.ToInt32(mo["ParentProcessId"]);
+                    }
+                }
+                return 0;
+            }
+        }
+
     }
 }

@@ -26,10 +26,12 @@ namespace GUI
         public MainWindow()
         {
             InitializeComponent();
+
             //Task.Run(() =>
             //{
             //    CLI.Program.Main([""]);
             //});
+            Config.ReadConfiguration();
             process = new Process
             {
                 StartInfo = new ProcessStartInfo()
@@ -40,9 +42,10 @@ namespace GUI
                     RedirectStandardOutput = true,
                     RedirectStandardInput = true,
                     StandardOutputEncoding = Encoding.UTF8,
-                    FileName = "./CLI.exe"
+                    FileName = "./CLI.exe",
+                    Arguments = "--GUI",
                 }
-            };  
+            };
             process.Start();
 
             Task.Run(() =>
@@ -71,9 +74,9 @@ namespace GUI
         {
             if (process != null)
             {
-                process.Kill();
-                process.Close();
-                process = null;
+                //process.Kill();
+                //process.Close();
+                //process = null;
             }
         }
     }

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.Config;
 
 namespace Core
 {
@@ -15,14 +16,24 @@ namespace Core
         public static string InitType = "DDTV";
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
+        public static Mode Mode = Mode.Core;
         
 #if DEBUG
         public static bool IsDevDebug = true;
 #else
         public static bool IsDevDebug = false;
 #endif
-        public static void Start()
+        public static void Start(string[] args)
         {
+            ///设置mode
+            foreach (string arg in args)
+            {
+                if (modeMap.TryGetValue(arg, out Mode value))
+                {
+                    Mode = value;
+                    break;
+                }
+            }
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
@@ -45,6 +56,8 @@ namespace Core
 
             stopwatch.Start();
         }
+
+
 
         /// <summary>
         /// 获取Core初始化完成后的运行毫秒数
