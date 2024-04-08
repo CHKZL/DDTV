@@ -53,7 +53,6 @@ namespace GUI
                 while (true)
                 {
                     Thread.Sleep(2000);
-                    Config.ReadConfiguration();
                     string A = Core.Network.Get.GetBody($"http://127.0.0.1:{Config.Core._Port}/api/init_inspect", false);
                     OperationQueue.pack<string>? OJ = JsonSerializer.Deserialize<OperationQueue.pack<string>>(A);
                     if (OJ != null && OJ.message.ToLower() == "ok")
