@@ -13,6 +13,8 @@ using System.Runtime.InteropServices;
 using Microsoft.AspNetCore.WebSockets;
 using CLI.WebAppServices.Middleware;
 using CLI.WebAppServices;
+using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace CLI
 {
@@ -24,8 +26,8 @@ namespace CLI
             try
             {
                 //注册DDTV主要服务
-                Task.Run(() => Service.CreateHostBuilder(new string[] { "" }).Build().Run());
-                Thread.Sleep(1000 * 3);
+                Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
+                Thread.Sleep(1000);
                 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 builder.Services.Configure<FormOptions>(options =>
                 {
@@ -35,9 +37,9 @@ namespace CLI
                 {
                     return level >= LogLevel.Warning;
                 });
-               
+
                 builder.Services.AddControllers();
-                
+
                 builder.Services.AddEndpointsApiExplorer();
                 builder.Services.AddSwaggerGen(options =>
                 {
@@ -66,8 +68,8 @@ namespace CLI
                 //app.UseHttpsRedirection();
                 app.UseAuthorization();
                 app.MapControllers();
-                //app.UseStatusCodePagesWithRedirects("/api/not_found");
-                app.UseStatusCodePagesWithRedirects("/index");
+                app.UseStatusCodePagesWithRedirects("/api/not_found");
+                //app.UseStatusCodePagesWithRedirects("/index");
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
@@ -96,13 +98,15 @@ namespace CLI
                     StartCompletEvent?.Invoke(null, new EventArgs());
                 });
                 app.Run();
-                ;
+               
             }
             catch (Exception e)
             {
                 Console.WriteLine($"出现无法解决的重大错误，这一般是由于硬件或者系统层面的问题导致的，DDTV被迫停止运行。错误消息：{e.ToString()}");
             }
         }
+
+
 
         public class Service
         {
@@ -111,15 +115,23 @@ namespace CLI
                 .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddHostedService<DDTVService>();
+                    services.AddHostedService(serviceProvider => new DDTVService(args));
                 });
             public class DDTVService : BackgroundService
             {
+                private readonly string[] _args;
+
+                public DDTVService(string[] args)
+                {
+                    _args = args;
+                }
                 protected override Task ExecuteAsync(CancellationToken stoppingToken)
                 {
                     return Task.Run(async () =>
                     {
-                        Core.Init.Start();//初始化必须执行的
+                        Core.Init.Start(_args);//初始化必须执行的
+                        _ParentProcessDetection();
+
                         if (!Account.AccountInformation.State)
                         {
                             Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
@@ -129,35 +141,7 @@ namespace CLI
                                 "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
                                 "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
 
-                            Task.Run(() =>
-                            {
-                                while (true)
-                                {
-                                    ConsoleKeyInfo keyInfo = Console.ReadKey();
-                                    if (keyInfo.Key != ConsoleKey.Y)
-                                    {
-                                        if (!Core.Config.Core._UseAgree)
-                                        {
-                                            // 用户按了其他键，退出程序
-                                            Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
-                                            Environment.Exit(0);
-                                        }
-                                        else
-                                        {
-                                            return;
-                                        }
-                                    }
-                                    else if (keyInfo.Key == ConsoleKey.Y && !Core.Config.Core._UseAgree)
-                                    {
-                                        Core.Config.Core._UseAgree = true;
-                                        return;
-                                    }
-                                    else
-                                    {
-                                        return;
-                                    }
-                                }
-                            });
+                            _UseAgree();
 
                             while (!Core.Config.Core._UseAgree)
                             {
@@ -172,36 +156,7 @@ namespace CLI
                         TerminalDisplay.SeKey();
                         Detect detect = new();//启动房间监听并且注册事件
 
-                        //TEST();
-
-                        Task.Run(() =>
-                        {
-                            while (true)
-                            {
-                                var doki = Core.Tools.DokiDoki.GetDoki();
-                                Log.Info("DokiDoki", $"总:{doki.Total}|录制中:{doki.Downloading}|使用内存:{doki.UsingMemoryStr}|{doki.InitType}|{doki.Ver}【{doki.Mode}】(编译时间:{doki.CompiledVersion})");
-                                if (doki.UsingMemory > 4294967296)
-                                {
-                                    Environment.Exit(-114514);
-                                }
-#if DEBUG
-                                Thread.Sleep(60 * 1000);
-#else
-                                Thread.Sleep(300 * 1000);
-#endif
-                            }
-                        });
-
-                         Task.Run(() =>
-                        {
-                            while (true)
-                            {
-                                var doki = Core.Tools.DokiDoki.GetDoki();
-                                MessageBase.MssagePack("dokidoki",doki,"dokidoki");
-                                Thread.Sleep(30 * 1000);
-                            }
-                        });
-
+                        doki();
                     });
                 }
 
@@ -213,6 +168,119 @@ namespace CLI
                     });
                 }
             }
+        }
+
+        /// <summary>
+        /// GUI模式下检测父进程状态，如果GUI关闭则自动停止运行
+        /// </summary>
+        public static void _ParentProcessDetection()
+        {
+            Task.Run(() =>
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) )
+                {
+                    while (true)
+                    {
+                        var parentProcessId = Core.Tools.SystemResource.GetProcess.GetParentProcess(Process.GetCurrentProcess().Id);
+                        if (parentProcessId == 0)
+                        {
+                            Log.Error("ParentProcessDetection", $"GUI模式下父进程被关闭，强制结束CLI进程");
+                            Thread.Sleep(3000);
+                            Environment.Exit(-114514);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                var parentProcess = Process.GetProcessById(parentProcessId);
+                                Log.Info("ParentProcessDetection", $"父进程ID: {parentProcess.Id}, 父进程名: {parentProcess.ProcessName}");
+                            }
+                            catch (ArgumentException)
+                            {
+                                Log.Error("ParentProcessDetection", $"GUI模式下父进程被关闭，强制结束CLI进程");
+                                Thread.Sleep(3000);
+                                Environment.Exit(-114514);
+                            }
+                        }
+                        Thread.Sleep(1000 * 3);
+                    }
+                }
+                return;
+            });
+        }
+
+
+        /// <summary>
+        /// 用于打印控制台心跳信息
+        /// </summary>
+        public static void doki()
+        {
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var doki = Core.Tools.DokiDoki.GetDoki();
+                    Log.Info("DokiDoki", $"总:{doki.Total}|录制中:{doki.Downloading}|使用内存:{doki.UsingMemoryStr}|{doki.InitType}|{doki.Ver}【{doki.Mode}】(编译时间:{doki.CompiledVersion})");
+                    if (doki.UsingMemory > 4294967296)
+                    {
+                        Log.Error("DokiDoki", $"检测到内存泄漏严重，3秒后自动停止运行");
+                        Thread.Sleep(3000);
+                        Environment.Exit(-114514);
+                    }
+#if DEBUG
+                    Thread.Sleep(60 * 1000);
+#else
+                    hread.Sleep(300 * 1000);
+#endif
+                }
+            });
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    var doki = Core.Tools.DokiDoki.GetDoki();
+                    MessageBase.MssagePack("dokidoki", doki, "dokidoki");
+                    Thread.Sleep(30 * 1000);
+                }
+            });
+        }
+
+        /// <summary>
+        /// 用户协议同意操作
+        /// </summary>
+        public static void _UseAgree()
+        {
+            Task.Run(() =>
+            {
+
+                while (true)
+                {
+                    ConsoleKeyInfo keyInfo = Console.ReadKey();
+                    if (keyInfo.Key != ConsoleKey.Y)
+                    {
+                        if (!Core.Config.Core._UseAgree)
+                        {
+                            // 用户按了其他键，退出程序
+                            Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
+                            Environment.Exit(0);
+                        }
+                        else
+                        {
+                            return;
+                        }
+                    }
+                    else if (keyInfo.Key == ConsoleKey.Y && !Core.Config.Core._UseAgree)
+                    {
+                        Core.Config.Core._UseAgree = true;
+                        return;
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
+            });
         }
     }
 }

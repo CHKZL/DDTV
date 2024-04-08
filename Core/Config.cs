@@ -73,6 +73,20 @@ namespace Core
 
         #region public Method
 
+        public static Dictionary<string, Mode> modeMap = new Dictionary<string, Mode>
+        {
+            { "--GUI", Mode.GUI },
+            { "--CLI", Mode.CLI },
+            { "--Docker", Mode.Docker }
+        };
+        public enum Mode
+        {
+            Core,
+            GUI,
+            CLI,
+            Docker
+        }
+
         private static object _ConfigurationLock = new();
 
         /// <summary>

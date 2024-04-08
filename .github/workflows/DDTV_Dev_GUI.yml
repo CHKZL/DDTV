@@ -1,0 +1,103 @@
+name: GUI_Dev
+
+on:
+  push:
+     tags:
+      - "dev*"
+  pull_request:
+    paths:
+      - 'GUI/**'
+      - '.github/workflows/DDTV_Dev_GUI.yml'
+      - '!**/README.md'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x86
+          - os: windows-latest
+            runtime: win-x64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use .NET 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir static
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+      
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content CLI/CLI.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content CLI/CLI.csproj
+          (Get-Content GUI/GUI.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content GUI/GUI.csproj
+          
+        shell: pwsh
+
+      - name: Build
+        run: cd GUI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Copy static folder to build_output
+        run: cp -r static GUI/build_output/static
+
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir GUI\\build_output\\plugins\\plugins\\ffmpeg
+          copy GUI\\plugins\\ffmpeg\\ffmpeg.exe GUI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+
+      - name: Move all files to bin folder and create shortcut (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          Get-ChildItem -Path "GUI/build_output" | Move-Item -Destination "GUI/build_output/bin"
+          echo "Creating shortcut for GUI.exe"
+          $WshShell = New-Object -comObject WScript.Shell
+          $Shortcut = $WshShell.CreateShortcut("GUI\build_output\DDTV_GUI.lnk")
+          $Shortcut.TargetPath = "C:\Windows\explorer.exe"
+          $Shortcut.Arguments="bin\GUI.exe"
+          $Shortcut.Save()
+        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-GUI-${{ matrix.os }}-${{ matrix.runtime }}
+          path: GUI/build_output
