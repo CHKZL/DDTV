@@ -230,7 +230,7 @@ namespace CLI
 #if DEBUG
                     Thread.Sleep(60 * 1000);
 #else
-                    hread.Sleep(300 * 1000);
+                    Thread.Sleep(300 * 1000);
 #endif
                 }
             });
