@@ -436,3 +436,4 @@ healthchecksdb
 /TestProject
 /Core/Account/Config/Parameter.cs
 *.diagsession
+/TESTP
