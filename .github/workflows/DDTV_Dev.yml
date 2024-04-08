@@ -1,4 +1,4 @@
-name: Dev
+name: CLI_Dev
 
 on:
   push:
@@ -8,8 +8,6 @@ on:
     paths:
       - 'CLI/**'
       - '.github/workflows/DDTV_Dev_CLI.yml'
-      - 'GUI/**'
-      - '.github/workflows/DDTV_Dev_GUI.yml'
       - '!**/README.md'
   workflow_dispatch:
 
@@ -186,6 +184,7 @@ jobs:
           - os: windows-latest
             runtime: win-x64
 
+
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -212,7 +211,7 @@ jobs:
           Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
-      
+
       - name: Replace string with current date (Windows)
         if: runner.os == 'Windows'
         run: |  
