@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - 'CLI/**'
+      - 'WebUI/**'
+      - 'Desktop/**'
       - '.github/workflows/DDTV_Dev_CLI.yml'
       - '!**/README.md'
   workflow_dispatch:
@@ -243,7 +245,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           mkdir WebUI\\build_output\\plugins\\plugins\\ffmpeg
-          copy WebUI\\plugins\\ffmpeg\\ffmpeg.exe WeUI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          copy WebUI\\plugins\\ffmpeg\\ffmpeg.exe WebUI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
           
       - name: Move all files to bin folder and create shortcut (Windows)  
@@ -335,7 +337,7 @@ jobs:
         if: matrix.os == 'windows-latest'
         run: |
           mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
-          copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe WeUI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
           
       - name: Move all files to bin folder and create shortcut (Windows)  
