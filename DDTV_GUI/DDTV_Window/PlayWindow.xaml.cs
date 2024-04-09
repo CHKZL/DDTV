@@ -445,8 +445,9 @@ namespace DDTV_GUI.DDTV_Window
                                                 FileInfo fileInfo = new FileInfo(hlsMode.roomInfo.HLS_Player_File);
                                                 if (fileInfo.Length < 100)
                                                 {
-                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
-                                                    return;
+                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络");
+                                                    Thread.Sleep(3000);
+                                                    //return;
                                                 }
                                                 if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
                                                 {
@@ -467,8 +468,9 @@ namespace DDTV_GUI.DDTV_Window
                                                 FileInfo fileInfo = new FileInfo(FileDirectory);
                                                 if (fileInfo.Length < 100)
                                                 {
-                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络，请稍后再试");
-                                                    return;
+                                                    Growl.WarningGlobal($"{name}-直播间缓冲失败，请检查网络");
+                                                    Thread.Sleep(3000);
+                                                    //return;
                                                 }
                                                 if (DDTV_Core.SystemAssembly.ConfigModule.CoreConfig.IsAutoPlayDanmu)
                                                 {
