@@ -107,7 +107,7 @@ namespace CLI.WebAppServices.Api
                 Core.Config.Core._UseAgree = true;   
                 OperationQueue.Add(Opcode.Account.UserConsentAgreement, Message);
                 Log.Info(nameof(use_agree), Message);
-                return Content(MessageBase.MssagePack(nameof(use_agree), true, $"用户已同意使用须知"), "application/json");
+                return Content(MessageBase.MssagePack(nameof(use_agree), true, Message), "application/json");
             }
             else
             {
@@ -115,7 +115,7 @@ namespace CLI.WebAppServices.Api
                 Message = "用户未同意使用须知";
                 OperationQueue.Add(Opcode.Account.UserDoesNotAgreeToAgreement, Message);
                 Log.Info(nameof(use_agree), Message);
-                return Content(MessageBase.MssagePack(nameof(use_agree), false, $"用户未同意使用须知", code.LoginInfoFailure), "application/json");
+                return Content(MessageBase.MssagePack(nameof(use_agree), false, Message, code.LoginInfoFailure), "application/json");
             }
         }
     }

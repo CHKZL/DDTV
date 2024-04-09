@@ -23,6 +23,7 @@ namespace CLI
         public static event EventHandler<EventArgs> StartCompletEvent;//WEBUI启动完成事件
         public static void Main(string[] args)
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
             try
             {
                 //注册DDTV主要服务

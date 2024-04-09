@@ -1,6 +1,7 @@
 ﻿using Core.LogModule;
 using Core.RuntimeObject;
 using Core.Tools;
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -15,7 +16,6 @@ namespace Core
         #region Private Properties
 
         private static Dictionary<string, FieldInfo> varMap = new Dictionary<string, FieldInfo>();
-
         /// <summary>
         /// 构造函数，将这个类下的private参数给生成字典用于配置文件的读写
         /// </summary>
@@ -30,8 +30,10 @@ namespace Core
             lock (varMap)
                 foreach (var fieldInfo in _Config)
                     varMap.Add(fieldInfo.Name, fieldInfo);
-
+            Thread.Sleep(500);
+            ReadConfiguration();
             RoomConfig.LoadRoomConfigurationFile();
+
             bool isFirstRun = true;
 
             if (isFirstRun)
