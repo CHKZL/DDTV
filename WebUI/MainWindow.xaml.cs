@@ -22,7 +22,7 @@ namespace GUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Process process = new();
+        private Process process = null;
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +31,7 @@ namespace GUI
             //{
             //    CLI.Program.Main([""]);
             //});
-            
+
             process = new Process
             {
                 StartInfo = new ProcessStartInfo()
@@ -46,13 +46,17 @@ namespace GUI
                     Arguments = "--WebUI",
                 }
             };
+            process.OutputDataReceived += (sender, args) => Console.WriteLine(args.Data); // 打印标准输出
+            process.ErrorDataReceived += (sender, args) => Console.WriteLine(args.Data); // 打印错误输出
             process.Start();
+            process.BeginOutputReadLine(); // 开始异步读取标准输出
+            process.BeginErrorReadLine(); // 开始异步读取错误输出
 
             Task.Run(() =>
             {
                 while (true)
                 {
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                     string A = Core.Network.Get.GetBody($"http://127.0.0.1:{Config.Core._Port}/api/init_inspect", false);
                     OperationQueue.pack<string>? OJ = JsonSerializer.Deserialize<OperationQueue.pack<string>>(A);
                     if (OJ != null && OJ.message.ToLower() == "ok")
