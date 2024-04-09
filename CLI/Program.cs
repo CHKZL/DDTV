@@ -98,11 +98,16 @@ namespace CLI
                     StartCompletEvent?.Invoke(null, new EventArgs());
                 });
                 app.Run();
-               
+
             }
             catch (Exception e)
             {
                 Console.WriteLine($"出现无法解决的重大错误，这一般是由于硬件或者系统层面的问题导致的，DDTV被迫停止运行。错误消息：{e.ToString()}");
+                if (Init.Mode != Config.Mode.WebUI && Init.Mode != Config.Mode.Desktop)
+                {               
+                    Console.WriteLine($"按任意键退出");
+                    Console.ReadKey();
+                }
             }
         }
 
@@ -171,13 +176,13 @@ namespace CLI
         }
 
         /// <summary>
-        /// GUI模式下检测父进程状态，如果GUI关闭则自动停止运行
+        /// WebUI或者Desktop模式下检测父进程状态，如果UI关闭则自动停止运行
         /// </summary>
         public static void _ParentProcessDetection()
         {
             Task.Run(() =>
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) )
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && (Init.Mode== Config.Mode.WebUI || Init.Mode== Config.Mode.Desktop))
                 {
                     while (true)
                     {
