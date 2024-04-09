@@ -75,16 +75,19 @@ namespace Core
 
         public static Dictionary<string, Mode> modeMap = new Dictionary<string, Mode>
         {
-            { "--GUI", Mode.GUI },
+            { "--Core", Mode.Core },
             { "--CLI", Mode.CLI },
-            { "--Docker", Mode.Docker }
+            { "--Docker", Mode.Docker },
+            { "--WebUI", Mode.WebUI },
+            { "--Desktop", Mode.Desktop }
         };
         public enum Mode
         {
             Core,
-            GUI,
             CLI,
-            Docker
+            Docker,
+            WebUI,
+            Desktop
         }
 
         private static object _ConfigurationLock = new();
@@ -163,6 +166,10 @@ namespace Core
                 lock (_RoomConfigurationLock)
                 {
                     (int Total, int Success, int Fail) Count = new(0, 0, 0);
+                    if(!Directory.Exists(Config.Core._ConfigDirectory))
+                    {
+                        Directory.CreateDirectory(Config.Core._ConfigDirectory);
+                    }
                     if (!File.Exists($"{Core._RoomConfigFile}"))
                     {
                         File.WriteAllText($"{Core._RoomConfigFile}", "{}");
