@@ -252,9 +252,9 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |       
-          Get-ChildItem -Path "CLI/build_output" | Move-Item -Destination "CLI/build_output/bin"
-          $bat_file_path = "CLI/build_output/启动DDTV_WebUI.bat"
-          $command = "start CLI/build_output/bin/WebUI.exe"
+          Get-ChildItem -Path "WebUI/build_output" | Move-Item -Destination "WebUI/build_output/bin"
+          $bat_file_path = "WebUI/build_output/启动DDTV_WebUI.bat"
+          $command = "start WebUI/build_output/bin/WebUI.exe"
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
@@ -344,9 +344,9 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |       
-          Get-ChildItem -Path "CLI/build_output" | Move-Item -Destination "CLI/build_output/bin"
-          $bat_file_path = "CLI/build_output/启动DDTV_Desktop.bat"
-          $command = "start CLI/build_output/bin/Desktop.exe"
+          Get-ChildItem -Path "Desktop/build_output" | Move-Item -Destination "Desktop/build_output/bin"
+          $bat_file_path = "Desktop/build_output/启动DDTV_Desktop.bat"
+          $command = "start Desktop/build_output/bin/Desktop.exe"
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
