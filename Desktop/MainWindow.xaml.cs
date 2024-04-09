@@ -35,7 +35,11 @@ namespace Desktop
                     Arguments = "--Desktop",
                 }
             };
+            process.OutputDataReceived += (sender, args) =>  Debug.WriteLine($"{args.Data}"); // 打印标准输出
+            process.ErrorDataReceived += (sender, args) =>  Debug.WriteLine($"{args.Data}"); // 打印错误输出
             process.Start();
+            process.BeginOutputReadLine(); // 开始异步读取标准输出
+            process.BeginErrorReadLine(); // 开始异步读取错误输出
         }
 
         private void Window_Closed(object sender, EventArgs e)
