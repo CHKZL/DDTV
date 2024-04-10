@@ -1,13 +1,81 @@
-﻿<Window x:Class="Desktop.MainWindow"
+﻿<ui:FluentWindow x:Class="Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Desktop"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pages="clr-namespace:Desktop.Views.Pages" 
+        xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"       
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Closed="Window_Closed">
+        Title="DDTV5-Desktop"
+        Width="1100"
+        Height="650"
+        d:DesignHeight="450"
+        d:DesignWidth="800"
+        ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+        ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        ExtendsContentIntoTitleBar="True"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}" Closed="Window_Closed">
     <Grid>
-        <Label Content="你又急了，你太想进步了，可惜桌面版的UI还没搞好，但是你现在可以访问http://127.0.0.1:11419 来使用WEBUI" HorizontalAlignment="Right" VerticalAlignment="Center" Height="70" Width="616" Margin="0,0,92,0"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
+        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" OpenPaneLength="180" >
+
+            <ui:NavigationView.Header>
+                <ui:BreadcrumbBar
+                Margin="42,32,0,0"
+                FontSize="28"
+                FontWeight="DemiBold" />
+            </ui:NavigationView.Header>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem 
+                    Content="默认页"
+                    NavigationCacheMode="Enabled"
+                    TargetPageType="{x:Type pages:DefaultPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                Content="测试页面"
+                NavigationCacheMode="Enabled"
+                TargetPageType="{x:Type pages:DashboardPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                Content="测试"
+                NavigationCacheMode="Enabled"
+                TargetPageType="{x:Type pages:DataPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DataHistogram24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem
+                Content="设置"
+                NavigationCacheMode="Disabled"
+                TargetPageType="{x:Type pages:SettingsPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
+        </ui:NavigationView>
+
+        <ui:TitleBar Name="UI_TitleBar"
+                     Height="40"
+        Title="DDTV5-Desktop"
+        Grid.Row="0"
+        Icon="pack://application:,,,/Assets/DDTV.ico" />
     </Grid>
-</Window>
+</ui:FluentWindow>

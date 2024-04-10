@@ -25,10 +25,11 @@ namespace Core.Tools
                 Total = Total,
                 UsingMemory = totalBytesOfMemoryUsed,
                 UsingMemoryStr = Core.Tools.Linq.ConversionSize(totalBytesOfMemoryUsed, Core.Tools.Linq.ConversionSizeType.String),
-                Ver = Init.Ver
+                Ver = Init.Ver,
+                StartMode = Core.Init.Mode
             };
 #if DEBUG
-            dokiClass.Mode = "Dev";
+            dokiClass.CompilationMode = "Dev";
 #else
             dokiClass.Mode = "Release";
 #endif
@@ -44,7 +45,8 @@ namespace Core.Tools
             public string InitType { get; set; }
             public string Ver { get; set; }
             public string CompiledVersion { get; set; }
-            public string Mode { set; get; }
+            public string CompilationMode { set; get; }
+            public Core.Config.Mode StartMode { get; set; } = Config.Mode.Core;
         }
     }
 }

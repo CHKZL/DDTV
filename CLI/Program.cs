@@ -15,6 +15,7 @@ using CLI.WebAppServices.Middleware;
 using CLI.WebAppServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using static CLI.WebAppServices.MessageCode;
 
 namespace CLI
 {
@@ -226,7 +227,7 @@ namespace CLI
                 while (true)
                 {
                     var doki = Core.Tools.DokiDoki.GetDoki();
-                    Log.Info("DokiDoki", $"总:{doki.Total}|录制中:{doki.Downloading}|使用内存:{doki.UsingMemoryStr}|{doki.InitType}|{doki.Ver}【{doki.Mode}】(编译时间:{doki.CompiledVersion})");
+                    Log.Info("DokiDoki", $"总:{doki.Total}|录制中:{doki.Downloading}|使用内存:{doki.UsingMemoryStr}|{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})");
                     if (doki.UsingMemory > 4294967296)
                     {
                         Log.Error("DokiDoki", $"检测到内存泄漏严重，3秒后自动停止运行");
