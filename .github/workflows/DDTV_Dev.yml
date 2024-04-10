@@ -254,7 +254,7 @@ jobs:
         run: |       
           Get-ChildItem -Path "WebUI/build_output" | Move-Item -Destination "WebUI/build_output/bin"
           $bat_file_path = "WebUI/build_output/启动DDTV_WebUI.bat"
-          $command = "start WebUI/build_output/bin/WebUI.exe"
+          $command = "start /bin/WebUI.exe"
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
@@ -346,7 +346,7 @@ jobs:
         run: |       
           Get-ChildItem -Path "Desktop/build_output" | Move-Item -Destination "Desktop/build_output/bin"
           $bat_file_path = "Desktop/build_output/启动DDTV_Desktop.bat"
-          $command = "start Desktop/build_output/bin/Desktop.exe"
+          $command = "start /bin/Desktop.exe"
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
