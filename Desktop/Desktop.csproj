@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <PackageIcon>DDTV.ico</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,13 @@
 
   <ItemGroup>
     <Content Include="Assets\DDTV.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\WebUI\DDTV.ico">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
