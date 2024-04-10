@@ -31,7 +31,7 @@ namespace Core.Tools
 #if DEBUG
             dokiClass.CompilationMode = "Dev";
 #else
-            dokiClass.Mode = "Release";
+            dokiClass.CompilationMode = "Release";
 #endif
             return dokiClass;
 
