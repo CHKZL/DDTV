@@ -48,8 +48,8 @@ namespace WebUI
                     Arguments = "--WebUI",
                 }
             };
-            process.OutputDataReceived += (sender, args) =>  Debug.WriteLine($"{args.Data}"); // 打印标准输出
-            process.ErrorDataReceived += (sender, args) =>  Debug.WriteLine($"{args.Data}"); // 打印错误输出
+            process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
+            process.ErrorDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印错误输出
             process.Start();
             process.BeginOutputReadLine(); // 开始异步读取标准输出
             process.BeginErrorReadLine(); // 开始异步读取错误输出
@@ -80,8 +80,12 @@ namespace WebUI
         {
             if (process != null)
             {
-                process.Kill();
-                process.Close();
+                try
+                {
+                    process.Close();
+                    process.Kill();
+                }
+                catch (Exception) { }
                 process = null;
             }
         }
