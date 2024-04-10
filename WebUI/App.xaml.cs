@@ -2,7 +2,7 @@
 using System.Data;
 using System.Windows;
 
-namespace GUI
+namespace WebUI
 {
     /// <summary>
     /// Interaction logic for App.xaml
