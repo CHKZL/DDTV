@@ -25,8 +25,6 @@ namespace Core
 #endif
         public static void Start(string[] args)
         {
-            
-
             ///设置mode
             foreach (string arg in args)
             {
@@ -37,15 +35,15 @@ namespace Core
                 }
             }
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-            System.AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+            AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;
-            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls13 | System.Net.SecurityProtocolType.Tls12 | System.Net.SecurityProtocolType.Tls11 | System.Net.SecurityProtocolType.Tls;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             Thread.Sleep(2000);
-            LogModule.Log.LogInit();
+            Log.LogInit();
 
             Log.Info(nameof(Init), $"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init), $"检查和创建必要的目录");

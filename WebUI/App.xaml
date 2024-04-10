@@ -1,7 +1,7 @@
-﻿<Application x:Class="GUI.App"
+﻿<Application x:Class="WebUI.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:GUI"
+             xmlns:local="clr-namespace:WebUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
          
