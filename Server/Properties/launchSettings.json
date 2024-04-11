@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "CLI": {
+    "Client": {
       "commandName": "Project",
       "remoteDebugEnabled": true,
       "authenticationMode": "None"
