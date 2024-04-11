@@ -63,7 +63,7 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    process.StartInfo.FileName = "./plugins/ffmpeg/ffmpeg.exe";
+                    process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
                 }
                 else
                 {
@@ -156,7 +156,7 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    process.StartInfo.FileName = "./plugins/ffmpeg/ffmpeg.exe";
+                    process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
                 }
                 else
                 {

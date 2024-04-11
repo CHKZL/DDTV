@@ -706,10 +706,10 @@ namespace Core
                 get => RecordingStorageDirectory;
             }
 
-            private static string WebUiDirectory = "./static/";
+            private static string WebUiDirectory = "./Static/";
             /// <summary>
             /// WebUi文件路径（字符串）
-            /// 默认值：./static/
+            /// 默认值：./Static/
             /// </summary>
             public static string _WebUiDirectory
             {

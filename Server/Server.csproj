@@ -19,7 +19,7 @@
 
 	<!--包含ffmpeg.exe -->
 	<ItemGroup Condition="'@(Contain-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
-		<None Update="plugins\ffmpeg\ffmpeg.exe">
+		<None Update="Plugins\ffmpeg\ffmpeg.exe">
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
@@ -30,7 +30,7 @@
 
 	<!-- 不包含ffmpeg.exe -->
 	<ItemGroup Condition="'@(Exclud-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
-		<None Update="plugins\ffmpeg\ffmpeg.exe">
+		<None Update="Plugins\ffmpeg\ffmpeg.exe">
 			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
 		</None>
 	</ItemGroup>
@@ -49,7 +49,7 @@
 
 
 	<ItemGroup>
-	  <None Update="plugins\ffmpeg\ffmpeg.exe">
+	  <None Update="PluginsPlugins\ffmpeg\ffmpeg.exe">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	  <None Update="resource\DDTV.ico">
