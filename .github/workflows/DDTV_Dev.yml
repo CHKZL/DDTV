@@ -173,13 +173,13 @@ jobs:
         with:
           push:       ${{ github.ref_type == 'tag' }}
           repo:       ddtv/cli
-          path:       ${{ github.workspace }}/CLI/build_output
+          path:       ${{ github.workspace }}/Server/build_output
           version:    ${{ github.ref_name }}
           runtime:    ${{ matrix.runtime }}
           image_id:   ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           build-args: REPO=mcr.microsoft.com/dotnet/runtime-deps:${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
 
-  WebGUI:
+  Client:
     strategy:
       matrix:
         include:
@@ -236,42 +236,42 @@ jobs:
           Write-Output $FINAL_VERSION
           (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
           (Get-Content Server/Server.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Server/Server.csproj
-          (Get-Content WebUI/WebUI.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content WebUI/WebUI.csproj
+          (Get-Content Client/Client.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Client/Client.csproj
           
         shell: pwsh
 
       - name: Build
-        run: cd WebUI && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+        run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
       - name: Copy static folder to build_output
-        run: cp -r static WebUI/build_output/static
+        run: cp -r static Client/build_output/static
 
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir WebUI\\build_output\\plugins\\plugins\\ffmpeg
-          copy WebUI\\plugins\\ffmpeg\\ffmpeg.exe WebUI\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
+          copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
         run: |       
-          Get-ChildItem -Path "WebUI/build_output" | Move-Item -Destination "WebUI/build_output/bin"
-          $bat_file_path = "WebUI/build_output/启动DDTV_WebUI.bat"
+          Get-ChildItem -Path "Client/build_output" | Move-Item -Destination "Client/build_output/bin"
+          $bat_file_path = "Client/build_output/启动DDTV_Client.bat"
           $command = @"
           setlocal EnableDelayedExpansion
           set "abs_path=%~dp0"
           cd %abs_path%bin
-          start WebUI.exe
+          start Client.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DDTV-WebUI-${{ matrix.os }}-${{ matrix.runtime }}
-          path: WebUI/build_output
+          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Client/build_output
 
 
 

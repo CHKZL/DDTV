@@ -105,7 +105,7 @@ namespace Server
             catch (Exception e)
             {
                 Console.WriteLine($"出现无法解决的重大错误，这一般是由于硬件或者系统层面的问题导致的，DDTV被迫停止运行。错误消息：{e.ToString()}");
-                if (Init.Mode != Config.Mode.WebUI && Init.Mode != Config.Mode.Desktop)
+                if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
                 {               
                     Console.WriteLine($"按任意键退出");
                     Console.ReadKey();
@@ -184,7 +184,7 @@ namespace Server
         {
             Task.Run(() =>
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && (Init.Mode== Config.Mode.WebUI || Init.Mode== Config.Mode.Desktop))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && (Init.Mode== Config.Mode.Client || Init.Mode== Config.Mode.Desktop))
                 {
                     while (true)
                     {

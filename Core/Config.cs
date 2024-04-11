@@ -80,7 +80,7 @@ namespace Core
             { "--Core", Mode.Core },
             { "--Server", Mode.Server },
             { "--Docker", Mode.Docker },
-            { "--WebUI", Mode.WebUI },
+            { "--Client", Mode.Client },
             { "--Desktop", Mode.Desktop }
         };
         public enum Mode
@@ -88,7 +88,7 @@ namespace Core
             Core,
             Server,
             Docker,
-            WebUI,
+            Client,
             Desktop
         }
 
