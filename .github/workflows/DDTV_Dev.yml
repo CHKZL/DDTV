@@ -55,28 +55,28 @@ jobs:
       - name: Download and extract latest release (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          mkdir -p static
+          mkdir -p Static
           header="authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
           FILE_URL=$(curl -sH "$header" "https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest" \
               | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
               | cut -d : -f 2,3 \
               | tr -d \")
           wget --header="$header" $FILE_URL -O ddtv-gui-react.zip
-          unzip ddtv-gui-react.zip -d static
+          unzip ddtv-gui-react.zip -d Static
           rm ddtv-gui-react.zip
         shell: bash
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir static
+          mkdir Static
           $header = @{
               Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
           }
           $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
           $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
           Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
-          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
@@ -127,8 +127,8 @@ jobs:
       - name: Build
         run: cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
-      - name: Copy static folder to build_output
-        run: cp -r static Server/build_output/static
+      - name: Copy Static folder to build_output
+        run: cp -r Static Server/build_output/Static
 
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
@@ -205,14 +205,14 @@ jobs:
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir static
+          mkdir Static
           $header = @{
               Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
           }
           $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
           $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
           Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
-          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
@@ -243,8 +243,8 @@ jobs:
       - name: Build
         run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
-      - name: Copy static folder to build_output
-        run: cp -r static Client/build_output/static
+      - name: Copy Static folder to build_output
+        run: cp -r Static Client/build_output/Static
 
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
@@ -302,14 +302,14 @@ jobs:
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
         run: |
-          mkdir static
+          mkdir Static
           $header = @{
               Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
           }
           $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
           $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
           Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
-          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath static
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
           Remove-Item -Path ddtv-gui-react.zip
         shell: powershell
 
@@ -340,8 +340,8 @@ jobs:
       - name: Build
         run: cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
-      - name: Copy static folder to build_output
-        run: cp -r static Desktop/build_output/static
+      - name: Copy Static folder to build_output
+        run: cp -r Static Desktop/build_output/Static
 
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
