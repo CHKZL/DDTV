@@ -78,7 +78,7 @@ namespace Core
         public static Dictionary<string, Mode> modeMap = new Dictionary<string, Mode>
         {
             { "--Core", Mode.Core },
-            { "--CLI", Mode.CLI },
+            { "--Server", Mode.Server },
             { "--Docker", Mode.Docker },
             { "--WebUI", Mode.WebUI },
             { "--Desktop", Mode.Desktop }
@@ -86,7 +86,7 @@ namespace Core
         public enum Mode
         {
             Core,
-            CLI,
+            Server,
             Docker,
             WebUI,
             Desktop
