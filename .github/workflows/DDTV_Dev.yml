@@ -153,7 +153,12 @@ jobs:
         run: |       
           Get-ChildItem -Path "CLI/build_output" | Move-Item -Destination "CLI/build_output/bin"
           $bat_file_path = "CLI/build_output/启动DDTV_CLI.bat"
-          $command = "start CLI/build_output/bin/CLI.exe"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start CLI.exe
+          "@
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
@@ -254,7 +259,12 @@ jobs:
         run: |       
           Get-ChildItem -Path "WebUI/build_output" | Move-Item -Destination "WebUI/build_output/bin"
           $bat_file_path = "WebUI/build_output/启动DDTV_WebUI.bat"
-          $command = "start /bin/WebUI.exe"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start WebUI.exe
+          "@
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
@@ -346,7 +356,12 @@ jobs:
         run: |       
           Get-ChildItem -Path "Desktop/build_output" | Move-Item -Destination "Desktop/build_output/bin"
           $bat_file_path = "Desktop/build_output/启动DDTV_Desktop.bat"
-          $command = "start /bin/Desktop.exe"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start Desktop.exe
+          "@
           Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
