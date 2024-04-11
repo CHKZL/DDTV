@@ -6,27 +6,18 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-    <PackageIcon>DDTV.ico</PackageIcon>
+    <ApplicationIcon>DDTV.ico</ApplicationIcon>
+    <Version>5.0.0.0</Version>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\DDTV.ico" />
+    <Content Include="DDTV.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\DDTV.ico" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\Client\DDTV.ico">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2420.47" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.3" />
-    <PackageReference Include="WPF-UI" Version="3.0.3" />
   </ItemGroup>
 
   <ItemGroup>

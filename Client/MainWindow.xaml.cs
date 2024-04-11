@@ -1,6 +1,10 @@
 ﻿using Core;
+using Core.LogModule;
+using System;
 using System.Diagnostics;
+using System.Security.Policy;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -10,20 +14,24 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Wpf.Ui.Controls;
 
-namespace Desktop
+namespace Client
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : FluentWindow
+    public partial class MainWindow : Window
     {
         private Process process = null;
         public MainWindow()
         {
             InitializeComponent();
-#if !DEBUG
+
+            //Task.Run(() =>
+            //{
+            //    Server.Program.Main([""]);
+            //});
+
             process = new Process
             {
                 StartInfo = new ProcessStartInfo()
@@ -34,8 +42,10 @@ namespace Desktop
                     RedirectStandardOutput = true,
                     RedirectStandardInput = true,
                     StandardOutputEncoding = Encoding.UTF8,
+                    StandardErrorEncoding = Encoding.UTF8,
+                    StandardInputEncoding = Encoding.UTF8,
                     FileName = "./Server.exe",
-                    Arguments = "--Desktop",
+                    Arguments = "--WebUI",
                 }
             };
             process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
@@ -43,10 +53,27 @@ namespace Desktop
             process.Start();
             process.BeginOutputReadLine(); // 开始异步读取标准输出
             process.BeginErrorReadLine(); // 开始异步读取错误输出
-#endif
-             var doki = Core.Tools.DokiDoki.GetDoki();
-            this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
-            UI_TitleBar.Title = this.Title;
+
+            Task.Run(() =>
+            {
+                while (true)
+                {
+                    Thread.Sleep(1000);
+                    string A = Core.Network.Get.GetBody($"http://127.0.0.1:{Config.Core._Port}/api/init_inspect", false);
+                    OperationQueue.pack<string>? OJ = JsonSerializer.Deserialize<OperationQueue.pack<string>>(A);
+                    if (OJ != null && OJ.message.ToLower() == "ok")
+                    {
+                        this.Dispatcher.Invoke(() =>
+                        {
+
+                            WV2.Visibility = Visibility.Visible;
+                            starttest.Visibility = Visibility.Collapsed;
+                            this.WV2.Source = new Uri($"http://127.0.0.1:{Config.Core._Port}");
+                        });
+                        return;
+                    }
+                }
+            });
         }
 
         private void Window_Closed(object sender, EventArgs e)
