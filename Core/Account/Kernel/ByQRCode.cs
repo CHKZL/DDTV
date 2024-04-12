@@ -273,18 +273,22 @@ namespace Core.Account.Kernel
                         account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
                         account.LoginStatus = AccountInformation.LoginStatusEnum.ByQrCode;
                         Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
-                        OperationQueue.Add(Opcode.Account.ScanCodeConfirmation,"扫码登陆确认");
+                        OperationQueue.Add(Opcode.Account.ScanCodeConfirmation, "扫码登陆确认");
                         return;
-
                     //已扫描
                     case 86090:
                         Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
-                        OperationQueue.Add(Opcode.Account.ScannedCodeWaitingForConfirmation,"已扫码等待确认登陆");
+                        OperationQueue.Add(Opcode.Account.ScannedCodeWaitingForConfirmation, "已扫码等待确认登陆");
                         break;
                     //未扫描
                     case 86101:
                         Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                        OperationQueue.Add(Opcode.Account.QrCodeWaitingForScann,"二维码等待扫码");
+                        OperationQueue.Add(Opcode.Account.QrCodeWaitingForScann, "二维码等待扫码");
+                        break;
+                    //二维码过期
+                    case 86038:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Overdue);
+                        OperationQueue.Add(Opcode.Account.QrCodeExpir, "二维码已过期");
                         break;
                 }
             }

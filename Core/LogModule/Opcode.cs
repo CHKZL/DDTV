@@ -129,6 +129,10 @@ namespace Core.LogModule
             /// 已扫码等待确认
             /// </summary>
             ScannedCodeWaitingForConfirmation=30109,
+            /// <summary>
+            /// 二维码已过期
+            /// </summary>
+            QrCodeExpir=30110,
         }
         public enum Download
         {
