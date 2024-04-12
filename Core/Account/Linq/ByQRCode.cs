@@ -77,7 +77,12 @@ namespace Core.Account.Linq
             /// <summary>
             /// 登录成功
             /// </summary>
-            Success
+            Success,
+
+            /// <summary>
+            /// 二维码过期
+            /// </summary>
+            Overdue
 
             #endregion Public Fields
         }
