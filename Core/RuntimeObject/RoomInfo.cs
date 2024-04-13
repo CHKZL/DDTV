@@ -651,7 +651,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="UIDList">如果传null则是更新整个roomInfos状态</param>
         /// <returns></returns>
-        internal static async Task BatchUpdateRoomStatusForLiveStream(List<long>? UIDList = null)
+        internal static void BatchUpdateRoomStatusForLiveStream(List<long>? UIDList = null)
         {
             int _PageSize = 1500;
             if (UIDList == null)
@@ -671,14 +671,18 @@ namespace Core.RuntimeObject
             }
             foreach (var item in list)
             {
-                await _BatchUpdateRoomStatusForLiveStream(item);
+                _BatchUpdateRoomStatusForLiveStream(item);
             }
             UIDList = null;
         }
 
-        internal static async Task _BatchUpdateRoomStatusForLiveStream(List<long> UIDList)
+        /// <summary>
+        /// 请求获取房间列表最新状态
+        /// </summary>
+        /// <param name="UIDList"></param>
+        internal static void _BatchUpdateRoomStatusForLiveStream(List<long> UIDList)
         {
-            await Task.Run(() =>
+            Task.Run(() =>
             {
                 UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
                 UIDList = null;
