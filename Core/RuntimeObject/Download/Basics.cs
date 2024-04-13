@@ -60,6 +60,7 @@ namespace Core.RuntimeObject.Download
             }
             if (roomCard.IsRecDanmu)
             {
+                liveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
                 Danmu.SevaDanmu(liveChatListener, result.hlsState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
             if (result.hlsState == DlwnloadTaskState.Success)
