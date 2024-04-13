@@ -190,7 +190,8 @@ namespace Core.RuntimeObject
             if (!Initialization)
             {
                 Log.Info(nameof(DetectRoom), $"房间状态监听已启动");
-                RoomLoopDetection();
+
+                new Timer(callback: RoomLoopDetection, state: null, dueTime: 0, period: Config.Core._DetectIntervalTime);
                 Initialization = true;
             }
             _state = true;
@@ -226,47 +227,40 @@ namespace Core.RuntimeObject
         #region Private Method
 
         /// <summary>
-        /// 房间轮询检查
+        /// 检查直播间直播状态，并触发开关播事件
         /// </summary>
         /// <returns></returns>
-        private async Task RoomLoopDetection()
+        private void RoomLoopDetection(object o)
         {
-            while (true)
+            try
             {
-                try
+                if (!_state) return;
+                BatchUpdateRoomStatusForLiveStream();
+                var List = _Room.GetCardListClone();
+                foreach (var item in List)
                 {
-                    while (_state)
+                    RoomCardClass Card = List.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                    if (Card == null)
                     {
-                        await BatchUpdateRoomStatusForLiveStream();
-                        var List = _Room.GetCardListClone();
-                        foreach (var item in List)
-                        {
-                            RoomCardClass Card = List.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
-                            if (Card == null)
-                            {
-                                continue;
-                            }
-                            if (Card.live_status_start_event && Card.live_status.Value == 1)
-                            {
-                                Card.live_status_start_event = false;
-                                if (LiveStart != null)
-                                    LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
-                            }
-                            if (Card.live_status_end_event && Card.live_status.Value != 1)
-                            {
-                                Card.live_status_end_event = false;
-                                if (LiveEnd != null)
-                                    LiveEnd.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
-                            }
-                        }
-                        await Task.Delay(Config.Core._DetectIntervalTime);
+                        continue;
+                    }
+                    if (Card.live_status_start_event && Card.live_status.Value == 1)
+                    {
+                        Card.live_status_start_event = false;
+                        if (LiveStart != null)
+                            LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
+                    }
+                    if (Card.live_status_end_event && Card.live_status.Value != 1)
+                    {
+                        Card.live_status_end_event = false;
+                        if (LiveEnd != null)
+                            LiveEnd.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
                     }
                 }
-                catch (Exception)
-                {
-                    await Task.Delay(2000);
-                }
-                await Task.Delay(1000);
+            }
+            catch (Exception e)
+            {
+                Log.Warn(nameof(RoomLoopDetection), $"直播间状态轮询发生意外错误，错误信息：{e.ToString()}", e);
             }
         }
         #endregion
@@ -274,7 +268,5 @@ namespace Core.RuntimeObject
         #region Public Class
 
         #endregion
-
-
     }
 }

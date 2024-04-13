@@ -21,15 +21,23 @@ namespace Server
 {
     public class Program
     {
-        public static event EventHandler<EventArgs> StartCompletEvent;//WEBUI启动完成事件
-        public static void Main(string[] args)
+        public static event EventHandler<EventArgs> WebServerStartCompletEvent;//Web服务启动完成事件
+
+        public static async Task Main(string[] args)
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        public static async Task MainAsync(string[] args)
+        {
+
             try
             {
                 //注册DDTV主要服务
                 Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
-                Thread.Sleep(1000);
+                //等待Core启动后再启动WEB服务
+                await Init.CoreStartAwait.Task;
                 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 builder.Services.Configure<FormOptions>(options =>
                 {
@@ -96,8 +104,8 @@ namespace Server
                 Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
                 Task.Run(() =>
                 {
-                    Thread.Sleep(2000);
-                    StartCompletEvent?.Invoke(null, new EventArgs());
+                    Thread.Sleep(1000);
+                    WebServerStartCompletEvent?.Invoke(null, new EventArgs());
                 });
                 app.Run();
 
@@ -106,13 +114,12 @@ namespace Server
             {
                 Console.WriteLine($"出现无法解决的重大错误，这一般是由于硬件或者系统层面的问题导致的，DDTV被迫停止运行。错误消息：{e.ToString()}");
                 if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
-                {               
+                {
                     Console.WriteLine($"按任意键退出");
                     Console.ReadKey();
                 }
             }
         }
-
 
 
         public class Service
@@ -184,7 +191,7 @@ namespace Server
         {
             Task.Run(() =>
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && (Init.Mode== Config.Mode.Client || Init.Mode== Config.Mode.Desktop))
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && (Init.Mode == Config.Mode.Client || Init.Mode == Config.Mode.Desktop))
                 {
                     while (true)
                     {
