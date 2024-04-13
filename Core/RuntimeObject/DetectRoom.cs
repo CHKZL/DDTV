@@ -82,29 +82,29 @@ namespace Core.RuntimeObject
                     while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark);
 
                     //如果自动修复和强制合并都打开，才会触发强制合并为一个文件
-                    if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)
-                    {
-                        #region 合并本次录制的视频文件为一个文件
-                        string[] Files = new string[roomCard.DownInfo.DownloadFileList.VideoFile.Count];
-                        for (int i = 0; i < Files.Length; i++)
-                        {
-                            Files[i] = $"file '{roomCard.DownInfo.DownloadFileList.VideoFile[i]}'";
-                        }
-                        string MergeFilesListFileName = Guid.NewGuid().ToString();
-                        File.WriteAllLines($"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", Files);
-                        Tools.Transcode transcode = new Tools.Transcode();
-                        try
-                        {
-                            //transcode.MergeFilesAsync(Files[0], $"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", roomCard);
-                            roomCard.DownInfo.DownloadFileList.VideoFile.Clear();
-                            roomCard.DownInfo.DownloadFileList.VideoFile.Add(Files[0]);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后合并时出现意外错误:{ex.ToString()}");
-                        }
-                        #endregion
-                    }
+                    //if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)
+                    //{
+                    //    #region 合并本次录制的视频文件为一个文件
+                    //    string[] Files = new string[roomCard.DownInfo.DownloadFileList.VideoFile.Count];
+                    //    for (int i = 0; i < Files.Length; i++)
+                    //    {
+                    //        Files[i] = $"file '{roomCard.DownInfo.DownloadFileList.VideoFile[i]}'";
+                    //    }
+                    //    string MergeFilesListFileName = Guid.NewGuid().ToString();
+                    //    File.WriteAllLines($"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", Files);
+                    //    Tools.Transcode transcode = new Tools.Transcode();
+                    //    try
+                    //    {
+                    //        //transcode.MergeFilesAsync(Files[0], $"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", roomCard);
+                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Clear();
+                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Add(Files[0]);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后合并时出现意外错误:{ex.ToString()}");
+                    //    }
+                    //    #endregion
+                    //}
 
                     //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                     Basics.DownloadCompletedReset(ref roomCard);
