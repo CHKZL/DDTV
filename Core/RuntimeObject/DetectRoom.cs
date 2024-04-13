@@ -19,7 +19,7 @@ namespace Core.RuntimeObject
     public class Detect
     {
         public static DetectRoom detectRoom = new();//实例化房间监听    
-
+        
 
         public Detect()
         {
@@ -171,6 +171,7 @@ namespace Core.RuntimeObject
         #region Private Properties
         private bool _state = false;
         private bool Initialization = false;
+        private static Timer DetectTimer;
         #endregion
 
         #region public Properties
@@ -187,14 +188,14 @@ namespace Core.RuntimeObject
         #region Public Method
         public void start()
         {
+            _state = true;
             if (!Initialization)
             {
                 Log.Info(nameof(DetectRoom), $"房间状态监听已启动");
-
-                new Timer(callback: RoomLoopDetection, state: null, dueTime: 0, period: Config.Core._DetectIntervalTime);
+                DetectTimer = new Timer(RoomLoopDetection, null, 0, Config.Core._DetectIntervalTime);
                 Initialization = true;
             }
-            _state = true;
+
         }
 
         public void stop()
