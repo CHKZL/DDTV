@@ -54,7 +54,7 @@ namespace Core.RuntimeObject
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
                 // 这里应该是开播广播事件
-                
+
                 OperationQueue.Add(Opcode.Download.StartBroadcastingReminder, $"开播提醒，房间UID:{roomCard.UID}", roomCard.UID);
             }
 
@@ -65,7 +65,7 @@ namespace Core.RuntimeObject
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
                     return;
                 }
-                
+
                 roomCard.DownInfo.IsDownload = true;
 
                 Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
@@ -81,30 +81,30 @@ namespace Core.RuntimeObject
                     //如果检测到还在开播，且用户没有取消，那么就再来一次
                     while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark);
 
-                    ////如果自动修复和强制合并都打开，才会触发强制合并为一个文件
-                    //if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)
-                    //{
-                    //    #region 合并本次录制的视频文件为一个文件
-                    //    string[] Files = new string[roomCard.DownInfo.DownloadFileList.VideoFile.Count];
-                    //    for (int i = 0; i < Files.Length; i++)
-                    //    {
-                    //        Files[i] = $"file '{roomCard.DownInfo.DownloadFileList.VideoFile[i]}'";
-                    //    }
-                    //    string MergeFilesListFileName = Guid.NewGuid().ToString();
-                    //    File.WriteAllLines($"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", Files);
-                    //    Tools.Transcode transcode = new Tools.Transcode();
-                    //    try
-                    //    {
-                    //        //transcode.MergeFilesAsync(Files[0], $"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", roomCard);
-                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Clear();
-                    //        roomCard.DownInfo.DownloadFileList.VideoFile.Add(Files[0]);
-                    //    }
-                    //    catch (Exception ex)
-                    //    {
-                    //        Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后合并时出现意外错误:{ex.ToString()}");
-                    //    }
-                    //    #endregion
-                    //}
+                    //如果自动修复和强制合并都打开，才会触发强制合并为一个文件
+                    if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)
+                    {
+                        #region 合并本次录制的视频文件为一个文件
+                        string[] Files = new string[roomCard.DownInfo.DownloadFileList.VideoFile.Count];
+                        for (int i = 0; i < Files.Length; i++)
+                        {
+                            Files[i] = $"file '{roomCard.DownInfo.DownloadFileList.VideoFile[i]}'";
+                        }
+                        string MergeFilesListFileName = Guid.NewGuid().ToString();
+                        File.WriteAllLines($"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", Files);
+                        Tools.Transcode transcode = new Tools.Transcode();
+                        try
+                        {
+                            //transcode.MergeFilesAsync(Files[0], $"{Core.Config.Core._TemporaryFileDirectory}{MergeFilesListFileName}", roomCard);
+                            roomCard.DownInfo.DownloadFileList.VideoFile.Clear();
+                            roomCard.DownInfo.DownloadFileList.VideoFile.Add(Files[0]);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后合并时出现意外错误:{ex.ToString()}");
+                        }
+                        #endregion
+                    }
 
                     //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                     Basics.DownloadCompletedReset(ref roomCard);
@@ -142,7 +142,7 @@ namespace Core.RuntimeObject
             if (e.IsRemind)
             {
                 string msg = $"{e.RoomId}({e.Name})下播";
-                OperationQueue.Add(Opcode.Download.RecordingEnd, msg, e.UID);
+                OperationQueue.Add(Opcode.Download.StopLiveEvent, msg, e.UID);
                 Log.Info(nameof(DetectRoom_LiveEnd), msg);
             }
         }
@@ -215,7 +215,7 @@ namespace Core.RuntimeObject
 
                     LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
                     string msg = $"手动触发一个直播间的录制，房间UID:{UID}";
-                    OperationQueue.Add(Opcode.Room.ManuallyTriggeringRecordingTasks, msg,UID);
+                    OperationQueue.Add(Opcode.Room.ManuallyTriggeringRecordingTasks, msg, UID);
                     Log.Info(nameof(ManuallyTriggerRecord), msg);
                 }
                 return;
