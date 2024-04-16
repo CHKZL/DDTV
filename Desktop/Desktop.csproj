@@ -25,8 +25,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Drawing.Common" Version="8.0.3" />
-    <PackageReference Include="WPF-UI" Version="3.0.3" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <PackageReference Include="WPF-UI" Version="3.0.4" />
   </ItemGroup>
 
   <ItemGroup>
