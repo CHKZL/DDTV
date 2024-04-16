@@ -110,14 +110,14 @@ namespace Core.Tools
         /// </summary>
         public class DirectoryHelper
         {
-            public static DirectoryNode GetDirectoryStructure(string directoryPath,bool getRoot)
+            public static DirectoryNode GetDirectoryStructure(string directoryPath,bool GetSubpath)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
-                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName, directoryPath,getRoot);
+                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName, directoryPath,GetSubpath);
                 return directoryStructure;
             }
 
-            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath,bool getRoot)
+            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath,bool GetSubpath)
             {
                 var directoryNode = new DirectoryNode
                 {
@@ -137,7 +137,7 @@ namespace Core.Tools
                         Extension = file.Extension
                     });
                 }
-                if (!getRoot)
+                if (!GetSubpath)
                 {
                     foreach (var directory in directoryInfo.GetDirectories())
                     {

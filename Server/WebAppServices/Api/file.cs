@@ -23,12 +23,14 @@ namespace Server.WebAppServices.Api
         /// <summary>
         /// 获取录播文件夹下文件的结构以json格式返回
         /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="get_subpath">控制是否递归查询子文件夹结构</param>
         /// <returns></returns>
         [HttpPost(Name = "get_file_structure")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool get_root=true)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool get_subpath=false)
         {
             DirectoryNode Structure = new();
-            if(Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(Config.Core._RecFileDirectory, out Structure,get_root))
+            if(Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(Config.Core._RecFileDirectory, out Structure,get_subpath))
             {
                 return Content(MessageBase.MssagePack(nameof(get_file_structure), Structure, $"获取录制文件路径下的文件结构成功"), "application/json");
             }
