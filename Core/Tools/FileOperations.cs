@@ -117,7 +117,7 @@ namespace Core.Tools
                 return directoryStructure;
             }
 
-            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath, bool GetSubpath)
+            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath, bool GetSubpath,int Hierarchy = 0)
             {
                 var directoryNode = new DirectoryNode
                 {
@@ -137,10 +137,12 @@ namespace Core.Tools
                         Extension = file.Extension
                     });
                 }
-
-                foreach (var directory in directoryInfo.GetDirectories())
+                if (GetSubpath || Hierarchy <1)
                 {
-                    directoryNode.Children.Add(GetDirectoryStructure(directory, rootPath, directoryPath, GetSubpath));
+                    foreach (var directory in directoryInfo.GetDirectories())
+                    {
+                        directoryNode.Children.Add(GetDirectoryStructure(directory, rootPath, directoryPath, GetSubpath, Hierarchy + 1));
+                    }
                 }
 
                 return directoryNode;
