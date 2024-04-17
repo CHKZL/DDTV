@@ -20,11 +20,11 @@ namespace Core.RuntimeObject
         /// <param name="Path">目标路径</param>
         /// <param name="DirectoryStructureJson">out值，返回的json内容</param>
         /// <returns>路径是否存在</returns>
-        public static bool GetDirectoryStructure(string Path, out DirectoryNode DirectoryStructureJson, bool GetRoot)
+        public static bool GetDirectoryStructure(string Path, out DirectoryNode DirectoryStructureJson)
         {
             if (Directory.Exists(Path))
             {
-                DirectoryStructureJson = DirectoryHelper.GetDirectoryStructure(Path,GetRoot);
+                DirectoryStructureJson = DirectoryHelper.GetDirectoryStructure(Path);
                 return true;
             }
             else

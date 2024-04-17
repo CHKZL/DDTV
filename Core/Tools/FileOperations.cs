@@ -62,9 +62,9 @@ namespace Core.Tools
         }
 
 
-        private static List<(string File,string Message)> _DelFileList = new();
+        private static List<(string File, string Message)> _DelFileList = new();
         private static bool DelState = false;
-        public static void Delete(string Path,string Message="")
+        public static void Delete(string Path, string Message = "")
         {
             if (!DelState)
             {
@@ -110,14 +110,14 @@ namespace Core.Tools
         /// </summary>
         public class DirectoryHelper
         {
-            public static DirectoryNode GetDirectoryStructure(string directoryPath,bool getRoot)
+            public static DirectoryNode GetDirectoryStructure(string directoryPath)
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
-                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName, directoryPath,getRoot);
+                var directoryStructure = GetDirectoryStructure(directoryInfo, directoryInfo.FullName, directoryPath);
                 return directoryStructure;
             }
 
-            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath,bool getRoot)
+            private static DirectoryNode GetDirectoryStructure(DirectoryInfo directoryInfo, string rootPath, string directoryPath)
             {
                 var directoryNode = new DirectoryNode
                 {
@@ -137,13 +137,12 @@ namespace Core.Tools
                         Extension = file.Extension
                     });
                 }
-                if (!getRoot)
+
+                foreach (var directory in directoryInfo.GetDirectories())
                 {
-                    foreach (var directory in directoryInfo.GetDirectories())
-                    {
-                        directoryNode.Children.Add(GetDirectoryStructure(directory, rootPath, directoryPath, false));
-                    }
+                    directoryNode.Children.Add(GetDirectoryStructure(directory, rootPath, directoryPath));
                 }
+
                 return directoryNode;
             }
         }
