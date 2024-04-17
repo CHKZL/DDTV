@@ -27,10 +27,10 @@ namespace Server.WebAppServices.Api
         /// <param name="get_subpath">控制是否递归查询子文件夹结构</param>
         /// <returns></returns>
         [HttpPost(Name = "get_file_structure")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool get_subpath=false)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string path = "", [FromForm] bool get_subpath = false)
         {
             DirectoryNode Structure = new();
-            if(Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(Config.Core._RecFileDirectory, out Structure,get_subpath))
+            if (Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(string.IsNullOrEmpty(path) ? Config.Core._RecFileDirectory : path, out Structure, get_subpath))
             {
                 return Content(MessageBase.MssagePack(nameof(get_file_structure), Structure, $"获取录制文件路径下的文件结构成功"), "application/json");
             }
