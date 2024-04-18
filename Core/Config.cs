@@ -8,6 +8,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Unicode;
+using static Core.RuntimeObject.Download.Basics;
 
 namespace Core
 {
@@ -23,9 +24,9 @@ namespace Core
         {
 
             var _Config = new List<FieldInfo>();
-            _Config.AddRange(typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
-            _Config.AddRange(typeof(Config.Download).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
-            _Config.AddRange(typeof(Config.Web).GetFields(BindingFlags.NonPublic | BindingFlags.Static));
+            _Config.AddRange(typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.Download).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.Web).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
 
             lock (varMap)
                 foreach (var fieldInfo in _Config)
@@ -74,15 +75,15 @@ namespace Core
         #endregion
 
         #region public Method
-
-        public static Dictionary<string, Mode> modeMap = new Dictionary<string, Mode>
+        /// <summary>
+        /// 启动参数初始化
+        /// </summary>
+        internal static Dictionary<string, Action<string>> OptionHandlers = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase)
         {
-            { "--Core", Mode.Core },
-            { "--Server", Mode.Server },
-            { "--Docker", Mode.Docker },
-            { "--Client", Mode.Client },
-            { "--Desktop", Mode.Desktop }
+            { "StartMode", ExpandOption.SetStartMode },
+            { "RecordingMode", ExpandOption.SetRecordingMode },
         };
+
         public enum Mode
         {
             Core,
@@ -90,6 +91,54 @@ namespace Core
             Docker,
             Client,
             Desktop
+        }
+
+        internal class ExpandOption
+        {
+            /// <summary>
+            /// 设置核心的启动模式
+            /// </summary>
+            /// <param name="value"></param>
+            internal static void SetStartMode(string value)
+            {
+                switch (value)
+                {
+                    case "Core":
+                        Init.Mode = Mode.Core;
+                        break;
+                    case "Server":
+                        Init.Mode = Mode.Server;
+                        break;
+                    case "Docker":
+                        Init.Mode = Mode.Docker;
+                        break;
+                    case "Client":
+                        Init.Mode = Mode.Client;
+                        break;
+                    case "Desktop":
+                        Init.Mode = Mode.Desktop;
+                        break;
+                }
+            }
+            /// <summary>
+            /// 设置录制模式
+            /// </summary>
+            /// <param name="value"></param>
+            internal static void SetRecordingMode(string value)
+            {
+                switch (value.ToLower())
+                {
+                    case "auto":
+                        Download._RecordingMode = RecordingMode.Auto;
+                        break;
+                    case "flv_only":
+                        Download._RecordingMode = RecordingMode.FLV_Only;
+                        break;
+                    case "hls_only":
+                        Download._RecordingMode = RecordingMode.HLS_Only;
+                        break;
+                }
+            }
         }
 
         private static object _ConfigurationLock = new();
@@ -394,7 +443,7 @@ namespace Core
                 }
             }
 
-            private static string QrUrl = "QrUrlPipeline";
+            internal static string QrUrl = "QrUrlPipeline";
             /// <summary>
             /// 登陆用扫码二维码路径和文件名
             /// 默认值：./Temporary/QrUrlPipeline
@@ -404,7 +453,7 @@ namespace Core
                 get => $"{_TemporaryFileDirectory}{QrUrl}";
             }
 
-            private static string QrFileNmae = "LoginQr.png";
+            internal static string QrFileNmae = "LoginQr.png";
             /// <summary>
             /// 登陆用扫码二维码路径和文件名
             /// 默认值：./Temporary/LoginQr.png
@@ -435,7 +484,7 @@ namespace Core
             //    }
             //}
 
-            private static string RoomConfigFile = "RoomListConfig.json";
+            internal static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>
             /// 房间配置文件路径（字符串）
             /// 默认值：./Config/RoomListConfig.json
@@ -447,7 +496,7 @@ namespace Core
 
 
 
-            private static string ConfigDirectory = "./Config/";
+            internal static string ConfigDirectory = "./Config/";
             /// <summary>
             /// 配置文件路径（字符串）
             /// 默认值：./Config/
@@ -457,7 +506,7 @@ namespace Core
                 get => ConfigDirectory;
             }
 
-            private static string ConfigurationFile = $"DDTV_Config.ini";
+            internal static string ConfigurationFile = $"DDTV_Config.ini";
             /// <summary>
             /// 默认的配置文件路径（字符串）
             /// 默认值：./Config/DDTV_Config.ini
@@ -487,7 +536,7 @@ namespace Core
                 get => IV;
             }
 
-            private static string UserInfoCoinfFileExtension = ".Duser";
+            internal static string UserInfoCoinfFileExtension = ".Duser";
             /// <summary>
             /// 用户配置文件拓展名（字符串）
             /// 默认值：.Duser
@@ -497,7 +546,7 @@ namespace Core
                 get => UserInfoCoinfFileExtension;
             }
 
-            private static string LogFileDirectory = "./Logs/";
+            internal static string LogFileDirectory = "./Logs/";
             /// <summary>
             /// 日志文件路径（字符串）
             /// 默认值：./Logs/
@@ -527,7 +576,7 @@ namespace Core
                 }
             }
 
-            private static string TemporaryFileDirectory = "./Temporary/";
+            internal static string TemporaryFileDirectory = "./Temporary/";
             /// <summary>
             /// 临时文件路径（字符串）
             /// 默认值：./Temporary/
@@ -648,8 +697,38 @@ namespace Core
             }
         }
         public class Download
-        {
-             private static string DeleteOriginalFileAfterRepair = "true";
+        {    
+            internal static string RecordingMode = "1";
+            /// <summary>
+            /// 录制模式，提供：Auto\FLV_Only\HLS_Only 三种模式取值分别是1/2/3,详细说明请查看Core.RuntimeObject.Download.Basics.RecordingMode
+            /// 默认值：Auto
+            /// </summary>
+            public static RecordingMode _RecordingMode
+            {
+                get
+                {
+                    switch (RecordingMode)
+                    {
+                        case "1":
+                            return RuntimeObject.Download.Basics.RecordingMode.Auto;
+                        case "2":
+                            return RuntimeObject.Download.Basics.RecordingMode.FLV_Only;
+                        case "3":
+                            return RuntimeObject.Download.Basics.RecordingMode.HLS_Only;
+                        default:
+                            return RuntimeObject.Download.Basics.RecordingMode.Auto;
+                    }
+                }
+                set
+                {
+                    if ((int)value != int.Parse(RecordingMode))
+                    {
+                        RecordingMode = value.ToString();
+                    }
+                }
+            }
+
+            private static string DeleteOriginalFileAfterRepair = "true";
             /// <summary>
             /// 修复完成后删除源文件（bool）
             /// 默认值：false
@@ -692,11 +771,9 @@ namespace Core
                 }
             }
         }
-
-
         public class Web
         {
-            private static string RecordingStorageDirectory = "/rec_file";
+            internal static string RecordingStorageDirectory = "/rec_file";
             /// <summary>
             /// Web返回录制文件的相对根路径（字符串）
             /// 默认值：/rec_file
@@ -706,7 +783,7 @@ namespace Core
                 get => RecordingStorageDirectory;
             }
 
-            private static string WebUiDirectory = "./Static/";
+            internal static string WebUiDirectory = "./Static/";
             /// <summary>
             /// WebUi文件路径（字符串）
             /// 默认值：./Static/
@@ -798,8 +875,6 @@ namespace Core
                 }
             }
         }
-
-
 
         #endregion
     }

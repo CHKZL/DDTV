@@ -45,7 +45,7 @@ namespace Client
                     StandardErrorEncoding = Encoding.UTF8,
                     StandardInputEncoding = Encoding.UTF8,
                     FileName = "./Server.exe",
-                    Arguments = "--Client",
+                    Arguments = "--StartMode=Client",
                 }
             };
             process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出

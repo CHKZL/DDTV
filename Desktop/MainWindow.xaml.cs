@@ -35,7 +35,7 @@ namespace Desktop
                     RedirectStandardInput = true,
                     StandardOutputEncoding = Encoding.UTF8,
                     FileName = "./Server.exe",
-                    Arguments = "--Desktop",
+                    Arguments = "--StartMode=Desktop",
                 }
             };
             process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
