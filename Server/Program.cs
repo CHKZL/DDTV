@@ -31,7 +31,6 @@ namespace Server
 
         public static async Task MainAsync(string[] args)
         {
-
             try
             {
                 //注册DDTV主要服务

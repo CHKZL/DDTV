@@ -44,20 +44,39 @@ namespace Core.RuntimeObject.Download
                 OperationQueue.Add(Opcode.Download.Reconnect, $"录制重连，房间UID:{roomCard.UID}", roomCard.UID);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
-            //HLS下载逻辑
-            var result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
-            Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
-            if (result.hlsState == DlwnloadTaskState.NoHLSStreamExists)
+
+            (DlwnloadTaskState hlsState, string FileName) result = new();
+            switch (Config.Download._RecordingMode)
             {
-                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})降级到FLV模式进行录制");
-                //FLV兜底逻辑
-                result = await FLV.DlwnloadHls_avc_flv(roomCard);
-                if(result.hlsState==DlwnloadTaskState.SuccessfulButNotStream)
-                {
-                    //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
-                    Thread.Sleep(1000 * 15);
-                }
+                case RecordingMode.HLS_Only:
+                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
+                    break;
+                case RecordingMode.FLV_Only:
+                    result = await FLV.DlwnloadHls_avc_flv(roomCard);
+                    if (result.hlsState == DlwnloadTaskState.SuccessfulButNotStream)
+                    {
+                        //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
+                        Thread.Sleep(1000 * 15);
+                    }
+                    break;
+                case RecordingMode.Auto:
+                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
+                    if (result.hlsState == DlwnloadTaskState.NoHLSStreamExists)
+                    {
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})降级到FLV模式进行录制");
+                        //FLV兜底逻辑
+                        result = await FLV.DlwnloadHls_avc_flv(roomCard);
+                        if (result.hlsState == DlwnloadTaskState.SuccessfulButNotStream)
+                        {
+                            //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
+                            Thread.Sleep(1000 * 15);
+                        }
+                    }
+                    break;
             }
+
             if (roomCard.IsRecDanmu)
             {
                 liveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
@@ -554,6 +573,21 @@ namespace Core.RuntimeObject.Download
             /// 未检测到直播流(未启用该参数)
             /// </summary>
             NoLiveStreamDetect,
+        }
+        public enum RecordingMode
+        {
+            /// <summary>
+            /// (默认值)自动模式，根据连接情况自动选择，优先HLS
+            /// </summary>
+            Auto = 1,
+            /// <summary>
+            /// FLV限定模式，不管有没有都只尝试FLV，哪怕只有HLS没有FLV流
+            /// </summary>
+            FLV_Only =2,
+            /// <summary>
+            /// HLS限定模式，不管有没有都只尝试HLS，哪怕只有FLV没有HLS流
+            /// </summary>
+            HLS_Only =3
         }
 
         #endregion

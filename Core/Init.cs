@@ -12,7 +12,7 @@ namespace Core
 {
     public class Init
     {
-        
+
         //Core服务启动完成事件
         public static event EventHandler<EventArgs> CoreStartCompletEvent;
         public static TaskCompletionSource<bool> CoreStartAwait = new TaskCompletionSource<bool>();
@@ -35,15 +35,9 @@ namespace Core
                 CoreStartAwait.SetResult(true);
             };
 
-            ///设置mode
-            foreach (string arg in args)
-            {
-                if (modeMap.TryGetValue(arg, out Mode value))
-                {
-                    Mode = value;
-                    break;
-                }
-            }
+            //启动参数初始化
+            StartParameterInitialization(args);
+
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             InitDirectoryAndFile();
@@ -63,7 +57,41 @@ namespace Core
             Core.RuntimeObject.Account.CheckLoginStatus();
             Log.Info(nameof(Init), $"Core初始化完成");
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
-            stopwatch.Start();   
+            stopwatch.Start();
+        }
+
+        /// <summary>
+        /// 启动参数初始化
+        /// </summary>
+        private static void StartParameterInitialization(string[] args)
+        {
+            foreach (var arg in args)
+            {
+                if (arg.StartsWith("--"))
+                {
+                    string optionName;
+                    string optionValue = string.Empty;
+
+                    if (arg.Contains('='))
+                    {
+                        optionName = arg.Substring(2, arg.IndexOf('=') - 2); // 获取选项名称
+                        optionValue = arg.Substring(arg.IndexOf('=') + 1); // 获取选项值
+                    }
+                    else
+                    {
+                        optionName = arg.Substring(2); // 获取选项名称
+                    }
+
+                    if (OptionHandlers.ContainsKey(optionName))
+                    {
+                        OptionHandlers[optionName](optionValue);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"未知的option: {optionName}");
+                    }
+                }
+            }
         }
 
 
@@ -74,7 +102,7 @@ namespace Core
         /// <returns></returns>
         public static double GetRunTime()
         {
-            if(stopwatch.IsRunning)
+            if (stopwatch.IsRunning)
             {
                 TimeSpan elapsed = stopwatch.Elapsed;
                 return elapsed.TotalMicroseconds;
