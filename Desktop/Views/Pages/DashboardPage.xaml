@@ -23,7 +23,7 @@
         <ui:Button
             Grid.Column="0"
             Click="OnBaseButtonClick"
-            Content="点击测试"
+            Content="点击刷新列表(不要点多了)"
             Icon="{ui:SymbolIcon Fluent24}" />
         <TextBlock
             x:Name="CounterTextBlock"

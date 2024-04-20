@@ -28,5 +28,6 @@ public partial class DashboardPage
             System.Windows.Controls.TextBlock.TextProperty,
             (++_counter).ToString()
         );
+        DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards();
     }
 }
