@@ -6,29 +6,24 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Desktop.Models;
-using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Pages;
 
 /// <summary>
 /// Interaction logic for DataView.xaml
 /// </summary>
-public partial class DataPage
+public partial class ColorPage
 {
-    public static ObservableCollection<DataCard> CardsCollection { get; private set; } = [];
+    public ObservableCollection<DataCard> Cards { get; private set; } = [];
 
-    public DataPage()
+    public ColorPage()
     {
         InitializeData();
-        InitializeComponent();
-
-        CardsItemsControl.ItemsSource = CardsCollection;
     }
 
     private void InitializeData()
     {
-
+       
     }
 }

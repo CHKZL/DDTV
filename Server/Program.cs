@@ -206,7 +206,7 @@ namespace Server
                             try
                             {
                                 var parentProcess = Process.GetProcessById(parentProcessId);
-                                Log.Info("ParentProcessDetection", $"父进程ID: {parentProcess.Id}, 父进程名: {parentProcess.ProcessName}");
+                                //Log.Info("ParentProcessDetection", $"父进程ID: {parentProcess.Id}, 父进程名: {parentProcess.ProcessName}");
                             }
                             catch (ArgumentException)
                             {

@@ -24,7 +24,7 @@ namespace Core.RuntimeObject
         /// 保存弹幕相关文件
         /// </summary>
         /// <param name="liveChatListener"></param>
-        /// <param name="DeleteCurrentContent">删除当前内容</param>
+        /// <param name="DeleteCurrentContent">只删除当前内容，不保存</param>
         /// <param name="card"></param>
         public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener,bool DeleteCurrentContent, ref RoomCardClass card)
         {

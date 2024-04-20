@@ -1,0 +1,40 @@
+﻿<UserControl x:Class="Desktop.Views.Pages.CardControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Desktop.Views.Pages"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:models="clr-namespace:Desktop.Models"
+             mc:Ignorable="d"
+             d:DesignHeight="180" d:DesignWidth="320">
+
+    <Grid Margin="10,30,10,10">
+        <StackPanel>
+            <Image Width="320" Height="180" Margin="0,0,0,0" Source="{Binding CoverImage}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Image.Clip>
+                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,320,190"/>
+                </Image.Clip>
+            </Image>
+
+            <Border Height="80" CornerRadius="0,0,10,10" Background="#F0F0F0">
+                <Grid>
+                    <Image Width="50" Height="50" Margin="-255,-15,0,0" Source="{Binding FaceImage}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Image.Clip>
+                            <RectangleGeometry RadiusX="25" RadiusY="25" Rect="0,0,50,50"/>
+                        </Image.Clip>
+                    </Image>
+                    <TextBlock Text="{Binding Nickname}" Margin="65,5,0,0" Foreground="#202020" FontWeight="Bold" FontSize="18"/>
+                    <TextBlock Width="180" Text="{Binding Title}" Margin="0,30,0,0" Foreground="#202020"  FontSize="14" TextWrapping="Wrap"/>
+                    <Border Width="60" Height="80" Margin="259,0,0,0"  CornerRadius="0,0,50,0">
+                        <Button Width="55" Height="40" Content="更多" Margin="0,0,0,0" Background="#fb7299"  Foreground="White"/>
+                    </Border>
+                    
+                </Grid>
+            </Border>
+        </StackPanel>
+        <Border Visibility="{Binding Live_Status_IsVisible}" Width="60" Height="20" Margin="250,-230,0,0" BorderBrush="White" BorderThickness="1" CornerRadius="10,10,10,10"  Background="OrangeRed">
+            <TextBlock Text="正在直播" Margin="5,1,0,0" Foreground="White"  FontSize="12" TextWrapping="Wrap"/>
+        </Border>
+    </Grid>
+</UserControl>
