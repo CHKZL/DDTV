@@ -114,13 +114,13 @@ namespace Core.RuntimeObject.Download
             roomCard.DownInfo.DownloadSize = 0;
             roomCard.DownInfo.Status = roomCard.DownInfo.Unmark ? RoomCardClass.DownloadStatus.Cancel : RoomCardClass.DownloadStatus.DownloadComplete;
             roomCard.DownInfo.EndTime = DateTime.Now;
+            roomCard.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
             _Room.SetRoomCardByUid(roomCard.UID, roomCard);
         }
 
         internal static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
-            //Danmu.SevaDanmu(liveChatListener);
             if (!liveChatListener._Cancel)
             {
                 if (liveChatListener._disposed)

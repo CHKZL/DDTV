@@ -40,5 +40,84 @@
             Text="DDTV5 - Desktop   开发中...." />
 
         <TextBlock x:Name="AppVersionTextBlock" Margin="0,12,0,0" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:CardExpander Grid.Column="0" Icon="{ui:SymbolIcon PlaySettings20}">
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                FontSize="16"
+                                FontTypography="Body"
+                                Text="播放器功能（）" />
+                        <ui:TextBlock
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                FontSize="12"
+                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
+                                Text="直接打开新窗口观看直播，该功能会唤起新的窗口和进程，如果只是为了录制，请勿开启。" />
+                        <ui:ToggleSwitch
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="1"
+                                Margin="0,0,16,0"
+                                OffContent="关"
+                                OnContent="开" />
+                    </Grid>
+                </ui:CardExpander.Header>
+                <StackPanel Margin="24,0.5,24,0">
+                    <ui:CardControl Padding="20,10,20,10" Header="双击打开播放器">
+                        <ui:ToggleSwitch
+                                HorizontalContentAlignment="Left"
+                                IsEnabled="True"
+                                OffContent="关"
+                                OnContent="开" />
+                    </ui:CardControl>
+                    <ui:CardControl
+                            Margin="0,0.5,0,0"
+                            Padding="20,10,20,10"
+                            Icon="{ui:SymbolIcon FlashSettings24}">
+                        <ui:CardControl.Header>
+                            <StackPanel>
+                                <ui:TextBlock
+                                        Margin="0"
+                                        FontTypography="BodyStrong"
+                                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                                        Text="选择功能"
+                                        TextWrapping="WrapWithOverflow" />
+                                <ui:TextBlock
+                                        Appearance="Secondary"
+                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                        Text="This is a description text."
+                                        TextWrapping="WrapWithOverflow" />
+                            </StackPanel>
+                        </ui:CardControl.Header>
+                        <ui:DropDownButton Content="Hello" Icon="{ui:SymbolIcon Fluent24}">
+                            <ui:DropDownButton.Flyout>
+                                <ContextMenu>
+                                    <MenuItem Header="Add" />
+                                    <MenuItem Header="Remove" />
+                                    <MenuItem Header="Send" />
+                                    <MenuItem Header="Hello" />
+                                </ContextMenu>
+                            </ui:DropDownButton.Flyout>
+                        </ui:DropDownButton>
+
+                    </ui:CardControl>
+                </StackPanel>
+            </ui:CardExpander>
+        </Grid>
     </StackPanel>
 </Page>

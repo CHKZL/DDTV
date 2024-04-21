@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Dom;
 using Core.LogModule;
 using Core.RuntimeObject;
+using Newtonsoft.Json;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -16,76 +18,37 @@ namespace Desktop.NetWork
 {
     public class Get
     {
-        /// <summary>
-        /// Get方法
-        /// </summary>
-        /// <param name="url">URL</param>
-        /// <param name="IsCookie">cookies集合实例</param>
-        /// <param name="referer">Referer</param>
-        /// <param name="specialheaders">除前面之外的Headers</param>
-        /// <returns>请求返回体</returns>
-        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
+        public static T GetBody<T>(string url, Dictionary<string, string> _dic = null)
         {
-            string result = "";
-            HttpWebRequest req = null;
-            HttpWebResponse rep = null;
-            try
+            Dictionary<string, string> dic = new Dictionary<string, string>
             {
-                req = (HttpWebRequest)WebRequest.Create(url);
-                req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
-                req.ServicePoint.Expect100Continue = false;
-                req.Method = "GET";
-                req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
-                req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
-                if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
-                if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
-                if (specialheaders != null) req.Headers = specialheaders;
-                for (int attempt = 0; attempt < maxAttempts; attempt++)
+                { "access_key_id", NetWork.Basics.access_key_id },
+                { "access_key_secret", NetWork.Basics.access_key_secret },
+                { "time", DateTimeOffset.Now.ToUnixTimeSeconds().ToString()}
+            };
+            if (_dic != null)
+            {
+                foreach (var item in _dic)
                 {
-                    try
-                    {
-                        rep = (HttpWebResponse)req.GetResponse();
-                        using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
-                        {
-                            result = reader.ReadToEnd();
-                        }
-                        if (!string.IsNullOrEmpty(result))
-                        {
-                            break; // 如果成功获取响应，就跳出循环
-                        }
-                    }
-                    catch (WebException ex)
-                    {
-                        if (IsCookie)
-                            Log.Warn(nameof(GetBody), $"{ex.Status.ToString()}:{url}", null, false);
-                        if (attempt == maxAttempts - 1) // 如果已经达到最大尝试次数，就将结果设为空字符串
-                        {
-                            if (IsCookie)
-                                Log.Warn(nameof(GetBody), $"重试{maxAttempts}次均失败:{url}");
-                            result = string.Empty;
-                        }
-                        else
-                        {
-                            Thread.Sleep(300);
-                            continue; // 如果没有达到最大尝试次数，就继续尝试
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Thread.Sleep(300);
-                        if (IsCookie)
-                            Log.Error(nameof(GetBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
-                        continue; // 如果没有达到最大尝试次数，就继续尝试
-                    }
+                    dic.Add(item.Key, item.Value);
                 }
-
             }
-            finally
+            string AuthenticationOriginalStr = string.Join(";", dic.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));
+            string sig = Core.Tools.Encryption.SHA1_Encrypt(AuthenticationOriginalStr);
+            dic.Add("sig", sig);
+            dic.Remove("access_key_secret");
+            string Parameter = string.Empty;
+            foreach (var item in dic)
             {
-                if (rep != null) rep.Close();
-                if (req != null) req.Abort();
+                Parameter += $"{item.Key}={item.Value}&";
             }
-            return result;
+
+            HttpClient client = new HttpClient();
+            HttpResponseMessage response = client.GetAsync($"{url}?{Parameter}").Result;
+            response.EnsureSuccessStatusCode();
+            string responseBody = response.Content.ReadAsStringAsync().Result;
+             OperationQueue.pack<T> A =JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseBody);
+            return A.data;
         }
     }
 }

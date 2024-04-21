@@ -8,6 +8,7 @@ namespace Desktop.Models
     public struct DataCard
     {
         public long Uid { get; set; }
+        public long Room_Id {  get; set; }
         /// <summary>
         /// 封面图
         /// </summary>
@@ -26,10 +27,6 @@ namespace Desktop.Models
         /// 主播昵称
         /// </summary>
         public string Nickname { get; set; }
-        /// <summary>
-        /// 按钮文案
-        /// </summary>
-        public string ButtonContent { get; set; }
         /// <summary>
         /// 直播状态
         /// </summary>

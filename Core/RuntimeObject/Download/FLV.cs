@@ -28,6 +28,7 @@ namespace Core.RuntimeObject.Download
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
                 File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.flv";
+                card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 #region 实例化下载对象
@@ -74,7 +75,11 @@ namespace Core.RuntimeObject.Download
                 #endregion
                 HostClass hostClass = GetFlvHost_avc(card);
                 string DlwnloadURL = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
-                LogDownloadStart(card,"FLV");
+                //把当前写入文件写入记录
+                string F_S = Config.Web._RecordingStorageDirectory + "/" + File.Replace(Config.Core._RecFileDirectory, "").Replace("\\", "/");
+                card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
+                //下载提示
+                LogDownloadStart(card, "FLV");
                 Task _stopTask = new Task(() =>
                 {
                     while (true)

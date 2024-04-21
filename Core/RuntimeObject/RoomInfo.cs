@@ -1358,11 +1358,30 @@ namespace Core.RuntimeObject
                 /// 统计当前任务中正在运行的转码任务有多少
                 /// </summary>
                 public int TranscodingCount { get; set; } = 0;
+                /// <summary>
+                /// 视频文件列表
+                /// </summary>
                 public List<string> VideoFile { get; set; } = new();
+                /// <summary>
+                /// 弹幕文件列表
+                /// </summary>
                 public List<string> DanmuFile { get; set; } = new();
+                /// <summary>
+                /// SC文件列表
+                /// </summary>
                 public List<string> SCFile { get; set; } = new();
+                /// <summary>
+                /// 礼物文件列表
+                /// </summary>
                 public List<string> GiftFile { get; set; } = new();
+                /// <summary>
+                /// 大航海文件列表
+                /// </summary>
                 public List<string> GuardFile { get; set; } = new();
+                /// <summary>
+                /// 当前正在进行文件写入的视频文件
+                /// </summary>
+                public string CurrentOperationVideoFile { get; set; } = string.Empty;
             }
 
             public DownloadInfo Clone()

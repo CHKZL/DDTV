@@ -12,6 +12,8 @@ using static Server.WebAppServices.Middleware.InterfaceAuthentication;
 using static Core.Tools.SystemResource;
 using static Core.Tools.SystemResource.GetHDDInfo;
 using static Core.Tools.SystemResource.GetMemInfo;
+using static FastExpressionCompiler.ImTools.FHashMap;
+using System.Net;
 
 namespace Server.WebAppServices.Api
 {
@@ -107,6 +109,24 @@ namespace Server.WebAppServices.Api
             /// 硬盘信息
             /// </summary>
             public List<HDDInfo> HDDInfo { set; get; }
+        }
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/system/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_c : ControllerBase
+    {
+        /// <summary>
+        /// 用于桌面端播放器配置
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "get_c")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            return Content(MessageBase.MssagePack(nameof(get_c), Core.RuntimeObject.Account.AccountInformation.strCookies, ""), "application/json");
         }
     }
 }

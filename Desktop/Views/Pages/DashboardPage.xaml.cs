@@ -3,7 +3,12 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
+using Wpf.Ui;
+using Wpf.Ui.Controls;
+using Wpf.Ui.Extensions;
 
 namespace Desktop.Views.Pages;
 
@@ -13,6 +18,7 @@ namespace Desktop.Views.Pages;
 public partial class DashboardPage
 {
     private int _counter = 0;
+  
 
     public DashboardPage()
     {
@@ -20,6 +26,7 @@ public partial class DashboardPage
         InitializeComponent();
 
         CounterTextBlock.SetCurrentValue(System.Windows.Controls.TextBlock.TextProperty, _counter.ToString());
+
     }
 
     private void OnBaseButtonClick(object sender, RoutedEventArgs e)

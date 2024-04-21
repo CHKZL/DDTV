@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Desktop.Views.Pages"
+    xmlns:local="clr-namespace:Desktop.Views.Control"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:Desktop.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
@@ -21,7 +21,7 @@
             x:Name="CardsItemsControl"
             Foreground="{DynamicResource TextFillColorSecondaryBrush}"
             VirtualizingPanel.CacheLengthUnit="Item"
-            ItemsSource="{Binding ColorsCollection}">
+            ItemsSource="{Binding CardsCollection}">
             <ui:VirtualizingItemsControl.ItemTemplate>
                 <DataTemplate>
                     <local:CardControl />

@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <PackageIcon>DDTV.ico</PackageIcon>
+    <Platforms>AnyCPU</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
@@ -25,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2420.47" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
   </ItemGroup>
@@ -35,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\Pages\CardControl.xaml.cs">
+    <Compile Update="Views\Control\CardControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
