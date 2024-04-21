@@ -1,6 +1,7 @@
 ﻿using Core.LogModule;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,7 @@ namespace Core.RuntimeObject.Download
             await Task.Run(() =>
             {
                 InitializeDownload(card,RoomCardClass.TaskType.HLS_AVC);
+                card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
                 File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.mp4";
@@ -134,8 +136,11 @@ namespace Core.RuntimeObject.Download
                                 }
                                 if (InitialRequest)
                                 {
-                                    //正式开始下载提示
-
+                                    //把当前写入文件写入记录
+                                    string F_S = Config.Web._RecordingStorageDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core._RecFileDirectory).FullName, "").Replace("\\", "/");
+                                    card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
+                                    Log.Debug("test",card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
+                                     //正式开始下载提示
                                     LogDownloadStart(card,"HLS");
                                     
                                     hlsState = DlwnloadTaskState.Recording;

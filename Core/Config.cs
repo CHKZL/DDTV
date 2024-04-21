@@ -723,7 +723,7 @@ namespace Core
                 {
                     if ((int)value != int.Parse(RecordingMode))
                     {
-                        RecordingMode = value.ToString();
+                        RecordingMode = ((int)value).ToString();
                     }
                 }
             }
