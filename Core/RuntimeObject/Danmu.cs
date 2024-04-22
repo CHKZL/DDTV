@@ -114,7 +114,7 @@ namespace Core.RuntimeObject
                 string Gift = "时间,昵称,Uid,弹幕内容";
                 foreach (var item in DanmaList)
                 {
-                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message}";
+                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",","，")}";
                 }
             
                 File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
