@@ -2,7 +2,6 @@
   "profiles": {
     "Client": {
       "commandName": "Project",
-      "commandLineArgs": "--RecordingMode=flv_only",
       "remoteDebugEnabled": true,
       "authenticationMode": "None"
     }
