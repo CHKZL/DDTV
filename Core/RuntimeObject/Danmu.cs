@@ -88,7 +88,6 @@ namespace Core.RuntimeObject
         private static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId)
         {
             string XML = string.Empty;
-
             XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
             "<i>" +
             "<chatserver>chat.bilibili.com</chatserver>" +
@@ -101,15 +100,26 @@ namespace Core.RuntimeObject
             $"<roomid>{roomId}</roomid>" +
             $"<source>k-v</source>";
             int i = 1;
-            List<DanmuInfo> A = danmuInfo.DeepClone();
-            foreach (var item in A)
+            List<DanmuInfo> DanmaList = danmuInfo.DeepClone();
+            foreach (var item in DanmaList)
             {
                 XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
                 i++;
             }
-            A = null;
+            
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
+            if (true)
+            {
+                string Gift = "时间,昵称,Uid,弹幕内容";
+                foreach (var item in DanmaList)
+                {
+                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message}";
+                }
+            
+                File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
+            }
+            DanmaList = null;
             return new FileInfo(FileName + ".xml");
         }
         /// <summary>
