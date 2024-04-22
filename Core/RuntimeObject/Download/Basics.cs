@@ -144,7 +144,7 @@ namespace Core.RuntimeObject.Download
         /// 初始化下载
         /// </summary>
         /// <param name="card">房间卡片信息</param>
-        internal static void InitializeDownload(RoomCardClass card,RoomCardClass.TaskType taskType)
+        internal static void InitializeDownload(RoomCardClass card, RoomCardClass.TaskType taskType)
         {
             card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
             card.DownInfo.taskType = taskType;
@@ -167,7 +167,7 @@ namespace Core.RuntimeObject.Download
         /// 记录下载开始
         /// </summary>
         /// <param name="card">房间卡片信息</param>
-        internal static void LogDownloadStart(RoomCardClass card,string Type = "Auto")
+        internal static void LogDownloadStart(RoomCardClass card, string Type = "Auto")
         {
             var tableData = new List<List<object>>
             {
@@ -197,8 +197,7 @@ namespace Core.RuntimeObject.Download
         internal static long WriteToFile(FileStream fs, string url)
         {
             long len = 0;
-            if (!Core.Init.IsDevDebug)
-                len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
+            len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
 
             return len;
         }
@@ -221,6 +220,10 @@ namespace Core.RuntimeObject.Download
             {
                 string Inp = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
                 string webref = Network.Download.File.GetFileToString(Inp, true);
+                if (webref.Contains("index.m3u8"))
+                {
+                    webref = Senior_M3U8_Analysis(webref, ref hostClass);
+                }
                 if (string.IsNullOrEmpty(webref))
                 {
                     Log.Debug("test", $"获取网络文件为空，房间号:{roomCard.RoomId}");
@@ -236,6 +239,22 @@ namespace Core.RuntimeObject.Download
                 }
             }
             return false;
+        }
+        internal static string Senior_M3U8_Analysis(string M3U8, ref HostClass hostClass)
+        {
+            string[] _A = M3U8.Split("\n");
+            foreach (var item in _A)
+            {
+                if (item.Contains("index.m3u8?"))
+                {
+                    hostClass.host = item.Split("/index.m3u8?")[0];
+                    hostClass.base_url = "/";
+                    hostClass.extra = item.Split("/index.m3u8?")[1];
+                    M3U8 = Network.Download.File.GetFileToString(item, true);
+                    return M3U8;
+                }
+            }
+            return M3U8;
         }
         /// <summary>
         /// 刷新HlsHost信息
@@ -259,6 +278,10 @@ namespace Core.RuntimeObject.Download
             if (!string.IsNullOrEmpty(fileContent))
             {
                 string webref = Network.Download.File.GetFileToString(fileContent, true);
+                if (webref.Contains("index.m3u8"))
+                {
+                    webref = Senior_M3U8_Analysis(webref, ref m3u8);
+                }
                 if (string.IsNullOrEmpty(webref))
                 {
                     return false;
@@ -305,7 +328,7 @@ namespace Core.RuntimeObject.Download
                     }
                     else
                     {
-                        Tools.FileOperations.Delete(File,$"文件大小小于设置的{(FileSizeThreshold/1024/1024)}MB，自动删除");
+                        Tools.FileOperations.Delete(File, $"文件大小小于设置的{(FileSizeThreshold / 1024 / 1024)}MB，自动删除");
                     }
 
                 }
@@ -337,7 +360,9 @@ namespace Core.RuntimeObject.Download
             PlayInfo_Class.Codec? codec = format.codec.FirstOrDefault(x => x.codec_name == codec_name);
             if (codec == null)
                 return hostClass;
-            var urlInfo = codec.url_info.FirstOrDefault(x => !x.host.Contains("smtcdns.net")) ?? codec.url_info[new Random().Next(0, codec.url_info.Count - 1)];
+            int R = new Random().Next(0, codec.url_info.Count - 1);
+            //Log.Debug("_GetHost",$"骰娘随机到了{R}号CDN");
+            var urlInfo = codec.url_info[R];
 
             hostClass = new()
             {
@@ -350,7 +375,7 @@ namespace Core.RuntimeObject.Download
             return hostClass;
         }
 
-    
+
 
         private static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
         {
@@ -583,11 +608,11 @@ namespace Core.RuntimeObject.Download
             /// <summary>
             /// FLV限定模式，不管有没有都只尝试FLV，哪怕只有HLS没有FLV流
             /// </summary>
-            FLV_Only =2,
+            FLV_Only = 2,
             /// <summary>
             /// HLS限定模式，不管有没有都只尝试HLS，哪怕只有FLV没有HLS流
             /// </summary>
-            HLS_Only =3
+            HLS_Only = 3
         }
 
         #endregion
