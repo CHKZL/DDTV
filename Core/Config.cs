@@ -217,7 +217,7 @@ namespace Core
                 lock (_RoomConfigurationLock)
                 {
                     (int Total, int Success, int Fail) Count = new(0, 0, 0);
-                    if(!Directory.Exists(Config.Core._ConfigDirectory))
+                    if (!Directory.Exists(Config.Core._ConfigDirectory))
                     {
                         Directory.CreateDirectory(Config.Core._ConfigDirectory);
                     }
@@ -403,25 +403,7 @@ namespace Core
             }
 
 
-            private static string Port = "11419";
-            /// <summary>
-            /// Api提供的端口地址
-            /// 默认值：11419
-            /// </summary>
-            public static int _Port
-            {
-                get => int.Parse(Port);
-                set
-                {
-                    if (value.ToString() != Port)
-                    {
-                        Port = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
-                    }
-                }
-            }
+
 
             private static string UseAgree = "false";
             /// <summary>
@@ -697,7 +679,7 @@ namespace Core
             }
         }
         public class Download
-        {    
+        {
             internal static string RecordingMode = "1";
             /// <summary>
             /// 录制模式，提供：Auto\FLV_Only\HLS_Only 三种模式取值分别是1/2/3,详细说明请查看Core.RuntimeObject.Download.Basics.RecordingMode
@@ -773,6 +755,26 @@ namespace Core
         }
         public class Web
         {
+            private static string Port = "11419";
+            /// <summary>
+            /// Api提供的端口地址
+            /// 默认值：11419
+            /// </summary>
+            public static int _Port
+            {
+                get => int.Parse(Port);
+                set
+                {
+                    if (value.ToString() != Port)
+                    {
+                        Port = value.ToString();
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+
             internal static string RecordingStorageDirectory = "/rec_file";
             /// <summary>
             /// Web返回录制文件的相对根路径（字符串）
