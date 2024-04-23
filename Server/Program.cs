@@ -16,6 +16,8 @@ using Server.WebAppServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using static Server.WebAppServices.MessageCode;
+using System.Net.NetworkInformation;
+using System.Net;
 
 namespace Server
 {
@@ -33,10 +35,21 @@ namespace Server
         {
             try
             {
+               
                 //注册DDTV主要服务
                 Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
+
                 //等待Core启动后再启动WEB服务
                 await Init.CoreStartAwait.Task;
+
+                if(PortInspect())
+                {
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
+                    return;
+                }
+
                 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 builder.Services.Configure<FormOptions>(options =>
                 {
@@ -91,10 +104,10 @@ namespace Server
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                     RequestPath = Config.Web._RecordingStorageDirectory
                 });
-                string rurl = $"http://0.0.0.0:{Config.Core._Port}";
+                string rurl = $"http://0.0.0.0:{Config.Web._Port}";
                 app.Urls.Add(rurl);
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Core._Port} ]");
+                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
@@ -118,6 +131,26 @@ namespace Server
                     Console.ReadKey();
                 }
             }
+        }
+
+        /// <summary>
+        /// 检查Web的端口是否被占用
+        /// </summary>
+        /// <returns></returns>
+        public static bool PortInspect()
+        {
+            IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
+            IPEndPoint[] ipEndPoints = ipProperties.GetActiveTcpListeners();
+            IPEndPoint[] ipsUDP = ipProperties.GetActiveUdpListeners();
+            TcpConnectionInformation[] tcpConnInfoArray = ipProperties.GetActiveTcpConnections();
+            foreach (var item in tcpConnInfoArray)
+            {
+                if(item.LocalEndPoint.Port==Core.Config.Web._Port)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
 
