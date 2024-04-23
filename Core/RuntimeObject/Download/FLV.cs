@@ -99,6 +99,7 @@ namespace Core.RuntimeObject.Download
                         }
                     }
                 });
+                _stopTask.Start();
                 await downloader.DownloadFileTaskAsync(DlwnloadURL, File);
                 hlsState = CheckAndHandleFile(File, ref card);
             });

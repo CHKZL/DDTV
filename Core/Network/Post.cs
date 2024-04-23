@@ -26,8 +26,9 @@ namespace Core.Network
         /// <returns>请求返回体</returns>
         public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3)
         {
-            if (IsCookie)
-                Log.Debug(nameof(PostBody), $"发起Post请求，目标:{url}");
+# if DEBUG
+            Log.Debug(nameof(PostBody), $"发起Post请求，目标:{url}");
+# endif
             string result = "";
             HttpWebRequest req = null;
             HttpWebResponse rep = null;

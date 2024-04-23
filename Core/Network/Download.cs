@@ -19,7 +19,9 @@ namespace Core.Network
         {
             public static bool DownloadFile(string URL, string SavePath, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+#if DEBUG
                 Log.Debug(nameof(DownloadFile), $"发起Get请求，目标:{URL}");
+#endif
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -73,7 +75,9 @@ namespace Core.Network
 
             public static HttpWebRequest DownloadFileAsync(string URL, string SavePath, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+#if DEBUG
                 Log.Debug(nameof(DownloadFileAsync), $"发起Get请求，目标:{URL}");
+#endif
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -127,7 +131,9 @@ namespace Core.Network
 
             public static string GetFileToString(string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+#if DEBUG
                 Log.Debug(nameof(GetFileToString), $"发起Get请求，目标:{URL}");
+#endif
                 int retries = 0;
                 while (retries < maxRetries)
                 {
@@ -182,9 +188,11 @@ namespace Core.Network
             /// <param name="referer">默认referer</param>
             /// <param name="maxRetries">重试次数</param>
             /// <returns></returns>
-            public static long GetFileToByte(FileStream fs,string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
+            public static long GetFileToByte(FileStream fs, string URL, bool IsCookie = false, string referer = "", int maxRetries = 3)
             {
+#if DEBUG
                 Log.Debug(nameof(GetFileToByte), $"发起Get请求，目标:{URL}");
+#endif
                 int retries = 0;
                 while (retries < maxRetries)
                 {
