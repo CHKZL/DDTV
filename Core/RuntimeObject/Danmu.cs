@@ -117,7 +117,7 @@ namespace Core.RuntimeObject
                     Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",","，")}";
                 }
             
-                File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
+                File.WriteAllText(FileName + "_弹幕.csv", Gift, Encoding.UTF8);
             }
             DanmaList = null;
             return new FileInfo(FileName + ".xml");
