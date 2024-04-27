@@ -220,14 +220,15 @@ namespace Core.RuntimeObject.Download
             {
                 string Inp = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
                 string webref = Network.Download.File.GetFileToString(Inp, true);
-                if (webref.Contains("index.m3u8"))
+                if (string.IsNullOrEmpty(webref))
+                {
+                    Log.Debug("GetHlsHost_avc", $"获取网络文件为空，房间号:{roomCard.RoomId}");
+                }
+                else if (webref.Contains("index.m3u8"))
                 {
                     webref = Senior_M3U8_Analysis(webref, ref hostClass);
                 }
-                if (string.IsNullOrEmpty(webref))
-                {
-                    Log.Debug("test", $"获取网络文件为空，房间号:{roomCard.RoomId}");
-                }
+                
                 hostClass = Tools.Linq.SerializedM3U8(webref, ref hostClass);
                 if (hostClass.eXTM3U.eXTINFs.Count != 0)
                 {
@@ -242,6 +243,11 @@ namespace Core.RuntimeObject.Download
         }
         internal static string Senior_M3U8_Analysis(string M3U8, ref HostClass hostClass)
         {
+            if (string.IsNullOrEmpty(M3U8))
+            {
+                return "";
+            }
+
             string[] _A = M3U8.Split("\n");
             foreach (var item in _A)
             {
