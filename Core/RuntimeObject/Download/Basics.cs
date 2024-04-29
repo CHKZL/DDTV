@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Detect;
+using static Core.RuntimeObject.Download.Basics;
 
 namespace Core.RuntimeObject.Download
 {
@@ -284,13 +285,13 @@ namespace Core.RuntimeObject.Download
             if (!string.IsNullOrEmpty(fileContent))
             {
                 string webref = Network.Download.File.GetFileToString(fileContent, true);
-                if (webref.Contains("index.m3u8"))
+                 if (string.IsNullOrEmpty(webref))
+                {
+                    Log.Debug("GetHlsHost_avc", $"获取网络文件为空，房间号:{roomCard.RoomId}");
+                }
+                else if (webref.Contains("index.m3u8"))
                 {
                     webref = Senior_M3U8_Analysis(webref, ref m3u8);
-                }
-                if (string.IsNullOrEmpty(webref))
-                {
-                    return false;
                 }
                 Tools.Linq.SerializedM3U8(webref, ref m3u8);
                 return true;
