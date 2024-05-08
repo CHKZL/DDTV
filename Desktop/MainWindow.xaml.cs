@@ -26,27 +26,27 @@ namespace Desktop
         public MainWindow()
         {
             InitializeComponent();
-//#if !DEBUG
-            process = new Process
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardInput = true,
-                    StandardOutputEncoding = Encoding.UTF8,
-                    FileName = "./Server.exe",
-                    Arguments = "--StartMode=Desktop",
-                }
-            };
-            process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
-            process.ErrorDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印错误输出
-            process.Start();
-            process.BeginOutputReadLine(); // 开始异步读取标准输出
-            process.BeginErrorReadLine(); // 开始异步读取错误输出
-//#endif
+            
+            //process = new Process
+            //{
+            //    StartInfo = new ProcessStartInfo()
+            //    {
+            //        RedirectStandardError = true,
+            //        UseShellExecute = false,
+            //        CreateNoWindow = true,
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardInput = true,
+            //        StandardOutputEncoding = Encoding.UTF8,
+            //        FileName = "./Server.exe",
+            //        Arguments = "--StartMode=Desktop",
+            //    }
+            //};
+            //process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
+            //process.ErrorDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印错误输出
+            //process.Start();
+            //process.BeginOutputReadLine(); // 开始异步读取标准输出
+            //process.BeginErrorReadLine(); // 开始异步读取错误输出
+
             var doki = Core.Tools.DokiDoki.GetDoki();
             this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
             UI_TitleBar.Title = this.Title;
@@ -55,16 +55,16 @@ namespace Desktop
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (process != null)
-            {
-                try
-                {
-                    process.Close();
-                    process.Kill();
-                }
-                catch (Exception) { }
-                process = null;
-            }
+            //if (process != null)
+            //{
+            //    try
+            //    {
+            //        process.Close();
+            //        process.Kill();
+            //    }
+            //    catch (Exception) { }
+            //    process = null;
+            //}
         }
     }
 }

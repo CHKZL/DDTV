@@ -32,27 +32,27 @@ namespace Client
             //    Server.Program.Main([""]);
             //});
 
-            process = new Process
-            {
-                StartInfo = new ProcessStartInfo()
-                {
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardOutput = true,
-                    RedirectStandardInput = true,
-                    StandardOutputEncoding = Encoding.UTF8,
-                    StandardErrorEncoding = Encoding.UTF8,
-                    StandardInputEncoding = Encoding.UTF8,
-                    FileName = "./Server.exe",
-                    Arguments = "--StartMode=Client",
-                }
-            };
-            process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
-            process.ErrorDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印错误输出
-            process.Start();
-            process.BeginOutputReadLine(); // 开始异步读取标准输出
-            process.BeginErrorReadLine(); // 开始异步读取错误输出
+            //process = new Process
+            //{
+            //    StartInfo = new ProcessStartInfo()
+            //    {
+            //        RedirectStandardError = true,
+            //        UseShellExecute = false,
+            //        CreateNoWindow = true,
+            //        RedirectStandardOutput = true,
+            //        RedirectStandardInput = true,
+            //        StandardOutputEncoding = Encoding.UTF8,
+            //        StandardErrorEncoding = Encoding.UTF8,
+            //        StandardInputEncoding = Encoding.UTF8,
+            //        FileName = "./Server.exe",
+            //        Arguments = "--StartMode=Client",
+            //    }
+            //};
+            //process.OutputDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印标准输出
+            //process.ErrorDataReceived += (sender, args) => Debug.WriteLine($"{args.Data}"); // 打印错误输出
+            //process.Start();
+            //process.BeginOutputReadLine(); // 开始异步读取标准输出
+            //process.BeginErrorReadLine(); // 开始异步读取错误输出
 
             Task.Run(() =>
             {
@@ -78,16 +78,16 @@ namespace Client
 
         private void Window_Closed(object sender, EventArgs e)
         {
-            if (process != null)
-            {
-                try
-                {
-                    process.Close();
-                    process.Kill();
-                }
-                catch (Exception) { }
-                process = null;
-            }
+            //if (process != null)
+            //{
+            //    try
+            //    {
+            //        process.Close();
+            //        process.Kill();
+            //    }
+            //    catch (Exception) { }
+            //    process = null;
+            //}
         }
     }
 }

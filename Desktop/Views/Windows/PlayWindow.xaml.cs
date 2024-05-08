@@ -1,7 +1,9 @@
-﻿using Core.RuntimeObject;
+﻿using Core.LogModule;
+using Core.RuntimeObject;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Security.Policy;
 using System.Text;
@@ -22,11 +24,10 @@ namespace Desktop.Views.Windows
     /// </summary>
     public partial class PlayWindow : Window
     {
-        string url = "https://www.bilibili.com/blackboard/live/live-activity-player.html?cid=";
         long _room_id = 0;
         public PlayWindow(long room_id)
         {
-            _room_id= room_id;
+            _room_id = room_id;
             InitializeComponent();
         }
 
@@ -39,19 +40,106 @@ namespace Desktop.Views.Windows
             });
         }
 
-        private async  void WV2_Loaded(object sender, RoutedEventArgs e)
+        private async void WV2_Loaded(object sender, RoutedEventArgs e)
         {
             await WV2.EnsureCoreWebView2Async(null);
-            string C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c");
+            string C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c").Replace(" ", "");
             foreach (var item in C.Split(';'))
             {
                 if (item != null && item.Split('=').Length == 2)
                 {
-                    var cookie = WV2.CoreWebView2.CookieManager.CreateCookie(item.Split('=')[0], item.Split('=')[1], url.Substring(12, 12), "/");
+                    string name = item.Split('=')[0];
+                    string value = item.Split('=')[1];
+                    string D = ".bilibili.com";
+
+                    var cookie = WV2.CoreWebView2.CookieManager.CreateCookie(name, value, D, "/");
                     WV2.CoreWebView2.CookieManager.AddOrUpdateCookie(cookie);
                 }
             }
-            WV2.CoreWebView2.Navigate($"url{_room_id}&fullscreen=0&send=1&recommend=0");
+            string B = test.UC;
+            WV2.CoreWebView2.Navigate($"{B}{_room_id}&fullscreen=0&send=1&recommend=0");
+        }
+        internal class test
+        {
+            public static string UC
+            {
+                get
+                {
+                    string t = string.Empty;
+                    t += (char)104;
+                    t += (char)116;
+                    t += (char)116;
+                    t += (char)112;
+                    t += (char)115;
+                    t += (char)58;
+                    t += (char)47;
+                    t += (char)47;
+                    t += (char)119;
+                    t += (char)119;
+                    t += (char)119;
+                    t += (char)46;
+                    t += (char)98;
+                    t += (char)105;
+                    t += (char)108;
+                    t += (char)105;
+                    t += (char)98;
+                    t += (char)105;
+                    t += (char)108;
+                    t += (char)105;
+                    t += (char)46;
+                    t += (char)99;
+                    t += (char)111;
+                    t += (char)109;
+                    t += (char)47;
+                    t += (char)98;
+                    t += (char)108;
+                    t += (char)97;
+                    t += (char)99;
+                    t += (char)107;
+                    t += (char)98;
+                    t += (char)111;
+                    t += (char)97;
+                    t += (char)114;
+                    t += (char)100;
+                    t += (char)47;
+                    t += (char)108;
+                    t += (char)105;
+                    t += (char)118;
+                    t += (char)101;
+                    t += (char)47;
+                    t += (char)108;
+                    t += (char)105;
+                    t += (char)118;
+                    t += (char)101;
+                    t += (char)45;
+                    t += (char)97;
+                    t += (char)99;
+                    t += (char)116;
+                    t += (char)105;
+                    t += (char)118;
+                    t += (char)105;
+                    t += (char)116;
+                    t += (char)121;
+                    t += (char)45;
+                    t += (char)112;
+                    t += (char)108;
+                    t += (char)97;
+                    t += (char)121;
+                    t += (char)101;
+                    t += (char)114;
+                    t += (char)46;
+                    t += (char)104;
+                    t += (char)116;
+                    t += (char)109;
+                    t += (char)108;
+                    t += (char)63;
+                    t += (char)99;
+                    t += (char)105;
+                    t += (char)100;
+                    t += (char)61;
+                    return t;
+                }
+            }
         }
     }
 }

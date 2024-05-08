@@ -31,6 +31,7 @@ namespace Server.WebAppServices.Api
     /// <summary>
     /// 根路径跳转到webui
     /// </summary>
+    /// 
     [Route("/")]
     [ApiController]
     [Tags("index")]

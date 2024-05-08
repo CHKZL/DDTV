@@ -27,7 +27,11 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
-            Console.OutputEncoding = System.Text.Encoding.UTF8;
+            if(!args.Contains("Desktop") && !args.Contains("Client"))
+            {
+                Console.OutputEncoding = System.Text.Encoding.UTF8;
+            }
+            
             MainAsync(args).GetAwaiter().GetResult();
         }
 
@@ -82,6 +86,7 @@ namespace Server
 
 
                 var app = builder.Build();
+                
                 app.UseWebSockets();
                 app.UseMiddleware<WebSocketControl>();
                 app.UseSwagger();
@@ -90,7 +95,7 @@ namespace Server
                 //app.UseHttpsRedirection();
                 app.UseAuthorization();
                 app.MapControllers();
-                app.UseStatusCodePagesWithRedirects("/api/not_found");
+                //app.UseStatusCodePagesWithRedirects("/api/not_found");
                 //app.UseStatusCodePagesWithRedirects("/index");
                 app.UseStaticFiles(new StaticFileOptions
                 {
@@ -128,6 +133,7 @@ namespace Server
                 if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
                 {
                     Console.WriteLine($"按任意键退出");
+                     if(!args.Contains("Desktop") && !args.Contains("Client"))
                     Console.ReadKey();
                 }
             }
@@ -180,14 +186,17 @@ namespace Server
 
                         if (!Account.AccountInformation.State)
                         {
-                            Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
-                                "使用前须知：\r\n" +
-                                "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
-                                "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
-                                "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
-                                "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
+                            if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                            {
+                                Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
+                                    "使用前须知：\r\n" +
+                                    "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
+                                    "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
+                                    "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
+                                    "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
 
-                            _UseAgree();
+                                _UseAgree();
+                            }
 
                             while (!Core.Config.Core._UseAgree)
                             {
@@ -199,7 +208,11 @@ namespace Server
                         {
                             Thread.Sleep(1000);//等待登陆
                         }
-                        TerminalDisplay.SeKey();
+                        if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                        {
+                            TerminalDisplay.SeKey();
+                        }
+
                         Detect detect = new();//启动房间监听并且注册事件
 
                         doki();
@@ -302,6 +315,7 @@ namespace Server
 
                 while (true)
                 {
+
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
                     if (keyInfo.Key != ConsoleKey.Y)
                     {
