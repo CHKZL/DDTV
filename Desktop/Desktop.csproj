@@ -42,4 +42,8 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resource\" />
+  </ItemGroup>
+
 </Project>

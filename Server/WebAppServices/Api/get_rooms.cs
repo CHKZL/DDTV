@@ -17,6 +17,7 @@ using static Server.WebAppServices.MessageCode;
 using static Server.WebAppServices.Middleware.InterfaceAuthentication;
 using static Core.LogModule.Opcode;
 using static Core.RuntimeObject.RoomCardClass;
+using System.Drawing;
 
 namespace Server.WebAppServices.Api
 {
@@ -118,6 +119,7 @@ namespace Server.WebAppServices.Api
                             url = $"https://live.bilibili.com/{room.Value.RoomId}",
                             specialType = room.Value.special_type.Value,
                         };
+                        
                         completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
                         {
                             downloadSize = room.Value.DownInfo.DownloadSize,

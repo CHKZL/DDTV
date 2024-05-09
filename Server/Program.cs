@@ -182,7 +182,7 @@ namespace Server
                     return Task.Run(async () =>
                     {
                         Core.Init.Start(_args);//初始化必须执行的
-                        _ParentProcessDetection();
+                        //_ParentProcessDetection();
 
                         if (!Account.AccountInformation.State)
                         {

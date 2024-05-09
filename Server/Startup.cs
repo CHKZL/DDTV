@@ -34,21 +34,15 @@ namespace Server
         // 这个方法用于配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
             app.UseWebSockets();
             app.UseMiddleware<WebSocketControl>();
-
             app.UseMiddleware<AccessControl>();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
-
             app.UseStatusCodePagesWithRedirects("/api/not_found");
             app.UseStaticFiles(new StaticFileOptions
             {
