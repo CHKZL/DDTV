@@ -56,8 +56,8 @@ namespace Desktop.Views.Windows
                     WV2.CoreWebView2.CookieManager.AddOrUpdateCookie(cookie);
                 }
             }
-            string B = test.UC;
-            WV2.CoreWebView2.Navigate($"{B}{_room_id}&fullscreen=0&send=1&recommend=0");
+            string uc = test.UC;
+            WV2.CoreWebView2.Navigate($"{uc}{_room_id}&fullscreen=0&send=0&recommend=0");
         }
         internal class test
         {
