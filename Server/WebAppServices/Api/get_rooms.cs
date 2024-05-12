@@ -128,6 +128,7 @@ namespace Server.WebAppServices.Api
                             startTime = room.Value.DownInfo.StartTime,
                             title = room.Value.Title.Value,
                             status = room.Value.DownInfo.Status,
+                            downloadRate=room.Value.DownInfo.RealTimeDownloadSpe
                         };
                         completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
@@ -174,6 +175,7 @@ namespace Server.WebAppServices.Api
                             startTime = roomList.ElementAt(i).Value.DownInfo.StartTime,
                             title = roomList.ElementAt(i).Value.Title.Value,
                             status = roomList.ElementAt(i).Value.DownInfo.Status,
+                            downloadRate= roomList.ElementAt(i).Value.DownInfo.RealTimeDownloadSpe
                         };
                         completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
@@ -231,6 +233,7 @@ namespace Server.WebAppServices.Api
                 {
                     public bool isDownload { get; set; }
                     public long downloadSize { get; set; }
+                    public double downloadRate {  get; set; }
                     public DownloadStatus status { get; set; }
                     public DateTime startTime { get; set; }
                     public DateTime endTime { get; set; }
