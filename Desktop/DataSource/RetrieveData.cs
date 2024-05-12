@@ -28,12 +28,10 @@ namespace Desktop.DataSource
             }
             public static void RefreshRoomCards()
             {
-                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>("http://127.0.0.1:11419/api/get_rooms/batch_complete_room_information");
+                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information");
 
                 foreach (var item in Cards.completeInfoList)
-                {
-
-                 
+                {     
                         if (CardImagePairs.TryGetValue(item.uid, out CardImage cardImage))
                         {
                             if (cardImage.CoverImageUrl != item.roomInfo.coverFromUser + "@300w_300h.webp")

@@ -18,9 +18,21 @@ namespace Server
         internal static void DisplayRecordingStatus()
         {
             var OvarviewCardList = RoomInfo.GetOverview();
-            int i = 0;
-            //ConsoleTable tables = new ConsoleTable("序号", "UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间", "是否录制弹幕信息");
-            var tableData = new List<List<object>> { new List<object> { "序号", "任务类型","UID", "房间号", "昵称", "直播标题", "已下载大小", "下载速率", "状态", "开始时间" } };
+            var tableData = new List<List<object>> { 
+                new List<object> 
+                { 
+                    "序号",
+                    "任务类型",
+                    "UID",
+                    "房间号",
+                    "昵称",
+                    "直播标题",
+                    "已下载大小",
+                    "下载速率",
+                    "状态",
+                    "开始时间" 
+                } 
+            };
             foreach (var row in OvarviewCardList)
             {
                 tableData.Add(
