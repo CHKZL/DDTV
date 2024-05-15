@@ -79,7 +79,7 @@ namespace Core.RuntimeObject
                         isFirstTime = false;
                     }
                     //如果检测到还在开播，且用户没有取消，那么就再来一次
-                    while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark);
+                    while (RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark && roomCard.DownInfo.Status!= RoomCardClass.DownloadStatus.Special);
 
                     //如果自动修复和强制合并都打开，才会触发强制合并为一个文件
                     //if (Config.Core._AutomaticRepair && Config.Core._ForceMerge && roomCard.DownInfo.DownloadFileList.VideoFile.Count > 0)

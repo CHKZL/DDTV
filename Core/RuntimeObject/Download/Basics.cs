@@ -83,6 +83,12 @@ namespace Core.RuntimeObject.Download
                 liveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
                 Danmu.SevaDanmu(liveChatListener, result.hlsState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
+            //如果是付费直播，结束当前录制任务
+            if(result.hlsState == DlwnloadTaskState.PaidLiveStream)
+            {
+                roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.Special;
+            }
+            //如果完成，加入视频文件列表
             if (result.hlsState == DlwnloadTaskState.Success)
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
