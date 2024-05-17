@@ -315,13 +315,18 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         /// <param name="File">文件名</param>
         /// <param name="card"></param>
+        /// <param name="AnchorReStream">主播重新推流</param>
         /// <returns>是否成功</returns>
-        internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card)
+        internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card,bool AnchorReStream = false)
         {
             const long FileSizeThreshold = 8 * 1024 * 1024; // 8MB
             if (card.DownInfo.IsCut)
             {
                 return DlwnloadTaskState.Cut;
+            }
+            if(AnchorReStream)
+            {
+                return DlwnloadTaskState.AnchorReStream;
             }
             else
             {
@@ -605,6 +610,10 @@ namespace Core.RuntimeObject.Download
             /// 未检测到直播流(未启用该参数)
             /// </summary>
             NoLiveStreamDetect,
+            /// <summary>
+            /// 主播重新推流了，以防万一主播修改推流参数，需要执行重连
+            /// </summary>
+            AnchorReStream,
         }
         public enum RecordingMode
         {
