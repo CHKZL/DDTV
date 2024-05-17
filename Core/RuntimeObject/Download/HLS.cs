@@ -65,14 +65,15 @@ namespace Core.RuntimeObject.Download
                     List<(long size, DateTime time)> values = new();
                     bool InitialRequest = true;
                     long currentLocation = 0;
+                    long StartLiveTime = card.live_time.Value;
                     while (true)
                     {
                         long downloadSizeForThisCycle = 0;
                         try
                         {
-                            if (card.DownInfo.Unmark || card.DownInfo.IsCut)
+                            if (card.DownInfo.Unmark || card.DownInfo.IsCut || card.live_time.Value!=StartLiveTime)
                             {
-                                hlsState = CheckAndHandleFile(File, ref card);
+                                hlsState = CheckAndHandleFile(File, ref card,card.live_time.Value!=StartLiveTime?true:false);
                                 return;
                             }
                             //刷新Host信息，获取最新的直播流片段

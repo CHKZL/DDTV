@@ -610,31 +610,71 @@ namespace Core.RuntimeObject
             }
             return values;
         }
+
+        /// <summary>
+        /// 从缓存获取开播时间
+        /// </summary>
+        /// <param name="Uid"></param>
+        /// <returns></returns>
+        public static long GetLiveTime(long Uid)
+        {
+            return _GetLiveTime(Uid);
+        }
+
+        /// <summary>
+        /// 从缓存获取开播状态
+        /// </summary>
+        /// <param name="RoomId"></param>
+        /// <returns></returns>
         public static bool GetLiveStatus(long RoomId)
         {
             return _GetLiveStatus(RoomId);
         }
 
+        /// <summary>
+        /// 从缓存获取昵称
+        /// </summary>
+        /// <param name="Uid"></param>
+        /// <returns></returns>
         public static string GetNickname(long Uid)
         {
             return _GetNickname(Uid);
         }
 
+        /// <summary>
+        /// 从缓存获取UID
+        /// </summary>
+        /// <param name="RoomId"></param>
+        /// <returns></returns>
         public static long GetUid(long RoomId)
         {
             return _GetUid(RoomId);
         }
 
+        /// <summary>
+        /// 从缓存获取房间号
+        /// </summary>
+        /// <param name="Uid"></param>
+        /// <returns></returns>
         public static long GetRoomId(long Uid)
         {
             return _GetRoomId(Uid);
         }
 
+        /// <summary>
+        /// 从缓存获取标题
+        /// </summary>
+        /// <param name="Uid"></param>
+        /// <returns></returns>
         public static string GetTitle(long Uid)
         {
             return _GetTitle(Uid);
         }
 
+        /// <summary>
+        /// 获取当前正在下载的房间任务列表
+        /// </summary>
+        /// <returns></returns>
         public static (int Total, int Download) GetTasksInDownloadCount()
         {
             var roomInfos = _Room.GetCardListClone();
@@ -710,6 +750,28 @@ namespace Core.RuntimeObject
 
 
         #region private Method
+
+        private static long _GetLiveTime(long Uid)
+        {
+           RoomCardClass roomCard = new();
+            if (!_Room.GetCardForUID(Uid, ref roomCard))
+            {
+                roomCard = ToRoomCard(GetRoomInfo(GetRoomId(Uid)), roomCard);
+                if (roomCard == null)
+                    return 0;
+                _Room.SetRoomCardByUid(Uid, roomCard);
+            }
+            else if (roomCard.live_time.ExpirationTime < DateTime.Now)
+            {
+                RoomCardClass card = ToRoomCard(GetRoomInfo(roomCard.RoomId), roomCard);
+                if (card != null)
+                {
+                    _Room.SetRoomCardByUid(card.UID, card);
+                    roomCard = card;
+                }
+            }
+            return roomCard.live_time.Value;
+        }
 
         private static bool _GetLiveStatus(long RoomId)
         {
@@ -840,7 +902,7 @@ namespace Core.RuntimeObject
                             UID = data.uid,
                             Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
-                            live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                            live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
                             short_id = new() { Value = data.short_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area = new() { Value = data.area, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -871,7 +933,7 @@ namespace Core.RuntimeObject
                         OldCard.UID = data.uid;
                         OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.RoomId = data.room_id;
-                        OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                        OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) };
 
                         if (OldCard.live_status.Value != 1 && data.live_status == 1)
                         {
@@ -938,7 +1000,7 @@ namespace Core.RuntimeObject
                             live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
                             encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) },
-                            live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) },
+                            live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) },
                             is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             special_type = new() { Value = roomInfo.data.special_type, ExpirationTime = DateTime.Now.AddSeconds(30) }
@@ -972,7 +1034,7 @@ namespace Core.RuntimeObject
                         OldCard.live_status = new() { Value = roomInfo.data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) };
                         OldCard.encrypted = new() { Value = roomInfo.data.encrypted, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.pwd_verified = new() { Value = roomInfo.data.pwd_verified, ExpirationTime = DateTime.Now.AddSeconds(30) };
-                        OldCard.live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddMinutes(1) };
+                        OldCard.live_time = new() { Value = roomInfo.data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.room_shield = new() { Value = roomInfo.data.room_shield, ExpirationTime = DateTime.Now.AddMinutes(30) };
                         OldCard.is_sp = new() { Value = roomInfo.data.is_sp, ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.special_type = new() { Value = roomInfo.data.special_type, ExpirationTime = DateTime.Now.AddSeconds(30) };

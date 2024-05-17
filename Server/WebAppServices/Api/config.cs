@@ -263,7 +263,7 @@ namespace Server.WebAppServices.Api
         }
     }
 
-        [Produces(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/config/[controller]")]
     [Login]
