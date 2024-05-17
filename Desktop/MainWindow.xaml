@@ -36,7 +36,7 @@
             </ui:NavigationView.Header>
             <ui:NavigationView.MenuItems>
                 <ui:NavigationViewItem 
-                    Content="默认页"
+                    Content="首页"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:DefaultPage}">
                     <ui:NavigationViewItem.Icon>
@@ -44,21 +44,22 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
                 <ui:NavigationViewItem
-                Content="测试页面"
-                NavigationCacheMode="Enabled"
-                TargetPageType="{x:Type pages:DashboardPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Home24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem
-                Content="测试"
+                Content="房间列表页"
                 NavigationCacheMode="Enabled"
                 TargetPageType="{x:Type pages:DataPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="DataHistogram24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
+                <ui:NavigationViewItem
+                Content="功能测试页"
+                NavigationCacheMode="Enabled"
+                TargetPageType="{x:Type pages:DashboardPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
             </ui:NavigationView.MenuItems>
             <ui:NavigationView.FooterMenuItems>
                 <ui:NavigationViewItem
