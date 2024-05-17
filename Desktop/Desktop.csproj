@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <PackageIcon>DDTV.ico</PackageIcon>
     <Platforms>AnyCPU</Platforms>
+    <ApplicationIcon>Assets\DDTV.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

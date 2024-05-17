@@ -16,19 +16,25 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Windows
 {
     /// <summary>
     /// PlayWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class PlayWindow : Window
+    public partial class PlayWindow : FluentWindow
     {
         long _room_id = 0;
+        //RoomCardClass _roomCard;
         public PlayWindow(long room_id)
         {
             _room_id = room_id;
+            //Core.RuntimeObject._Room.GetCardFoRoomId(_room_id, ref _roomCard);
+              
             InitializeComponent();
+            this.Title=RoomInfo.GetTitle(RoomInfo.GetUid(_room_id));  
+            UI_TitleBar.Title = this.Title;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -57,7 +63,7 @@ namespace Desktop.Views.Windows
                 }
             }
             string uc = test.UC;
-            WV2.CoreWebView2.Navigate($"{uc}{_room_id}&fullscreen=0&send=0&recommend=0");
+            WV2.CoreWebView2.Navigate($"{uc}{_room_id}&send=0&recommend=0&fullscreen=0");
         }
         internal class test
         {

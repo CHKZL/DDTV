@@ -31,8 +31,8 @@ namespace Desktop
             var doki = Core.Tools.DokiDoki.GetDoki();
             this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
             UI_TitleBar.Title = this.Title;
-            Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
-            DataPage.T_R = new Timer(DataPage.Refresher, null, 1000, 10000);
+            Loaded += (_, _) => RootNavigation.Navigate(typeof(DataPage));
+            DataPage.T_R = new Timer(DataPage.Refresher, null, 1000, 1000);
         }
 
         private void Window_Closed(object sender, EventArgs e)

@@ -27,13 +27,13 @@ namespace Desktop.Views.Control
             InitializeComponent();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = (System.Windows.Controls.MenuItem)sender;
-            var contextMenu = (ContextMenu)menuItem.Parent;
-            var grid = (Grid)contextMenu.PlacementTarget;
-            Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
+            Models.DataCard dataCard = GetDataCard(sender);
+            Windows.PlayWindow playWindow = new Windows.PlayWindow(dataCard.Room_Id);
+            playWindow.Show();
         }
+
 
         private void Border_DoubleClickToOpenPlaybackWindow(object sender, MouseButtonEventArgs e)
         {
@@ -45,6 +45,14 @@ namespace Desktop.Views.Control
                 Windows.PlayWindow playWindow = new Windows.PlayWindow(dataContext.Room_Id);
                 playWindow.Show();
             }
+        }
+        private Models.DataCard GetDataCard(object sender)
+        {
+            var menuItem = (System.Windows.Controls.MenuItem)sender;
+            var contextMenu = (ContextMenu)menuItem.Parent;
+            var grid = (Grid)contextMenu.PlacementTarget;
+            Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
+            return dataContext;
         }
     }
 }

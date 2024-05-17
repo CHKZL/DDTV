@@ -6,41 +6,40 @@
              xmlns:local="clr-namespace:Desktop.Views.Control"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
              xmlns:models="clr-namespace:Desktop.Models"
-             mc:Ignorable="d"
-             d:DesignHeight="180" d:DesignWidth="320">
+             mc:Ignorable="d">
     <UserControl.Resources>
         <ContextMenu x:Key="CardContextMenu">
-            <MenuItem Header="Option 1" Click="MenuItem_Click"/>
-            <MenuItem Header="Option 2" Click="MenuItem_Click"/>
+            <MenuItem Header="打开窗口观看" Click="MenuItem_PlayWindow_Click"/>
+            <Separator />
+            <MenuItem Header="切换录制设置"/>
+            <MenuItem Header="切换弹幕设置"/>
+            <MenuItem Header="切换提醒开关"/>
         </ContextMenu>
     </UserControl.Resources>
-    <Grid Margin="10,30,10,10"  ContextMenu="{StaticResource CardContextMenu}" >
+    <Grid Margin="5,5,5,5"  ContextMenu="{StaticResource CardContextMenu}" >
         <StackPanel>
-            <Image Width="320" Height="180" Margin="0,0,0,0" Source="{Binding CoverImage}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center">
-                <Image.Clip>
-                    <RectangleGeometry RadiusX="10" RadiusY="10" Rect="0,0,320,190"/>
-                </Image.Clip>
-            </Image>
-
-            <Border Height="80" CornerRadius="0,0,10,10" Background="#F0F0F0">
+            <Border Width="323" Height="150" CornerRadius="10,10,10,10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                 <Grid>
-                    <Image Width="50" Height="50" Margin="-255,-15,0,0" Source="{Binding FaceImage}" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Image.Clip>
-                            <RectangleGeometry RadiusX="25" RadiusY="25" Rect="0,0,50,50"/>
-                        </Image.Clip>
-                    </Image>
-                    <TextBlock Text="{Binding Nickname}" Margin="65,5,0,0" Foreground="#202020" FontWeight="Bold" FontSize="18"/>
-                    <TextBlock Width="180" Text="{Binding Title}" Margin="0,30,0,0" Foreground="#202020"  FontSize="14" TextWrapping="Wrap"/>
-                    <Border Width="60" Height="80" Margin="259,0,0,0"  CornerRadius="0,0,50,0">
-                        <Button Width="55" Height="40" Content="更多" Margin="0,0,0,0" Background="#fb7299"  Foreground="White"/>
-                    </Border>
-                    
+                    <TextBlock Text="{Binding Nickname}" Margin="20,10,0,0" Foreground="#dddddd" FontWeight="Bold" FontSize="20" />
+                    <TextBlock Text="{Binding Title}" Margin="20,40,0,0" Foreground="#EEEEEE"  FontSize="16" />
                 </Grid>
             </Border>
         </StackPanel>
-        <Border Visibility="{Binding Live_Status_IsVisible}" Width="60" Height="20" Margin="250,-230,0,0" BorderBrush="White" BorderThickness="1" CornerRadius="10,10,10,10"  Background="OrangeRed">
-            <TextBlock Text="正在直播" Margin="5,1,0,0" Foreground="White"  FontSize="12" TextWrapping="Wrap"/>
+        <Border Visibility="{Binding Rest_Status_IsVisible}" Width="70" Height="25" Margin="-210,20,0,0" BorderBrush="#999999" BorderThickness="1" CornerRadius="4,4,4,4"  Background="#33999999" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="未开播" Margin="0,0,0,0" Foreground="#999999"  FontSize="14" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         </Border>
+        <Border Visibility="{Binding Live_Status_IsVisible}" Width="70" Height="25" Margin="-210,20,0,0" BorderBrush="#00aeec" BorderThickness="1" CornerRadius="4,4,4,4"  Background="#3300aeec" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="正在直播" Margin="0,0,0,0" Foreground="#00aeec"  FontSize="14" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+        <Border Visibility="{Binding Rec_Status_IsVisible}" Width="70" Height="25" Margin="-210,20,0,0" BorderBrush="#fb7299" BorderThickness="1" CornerRadius="4,4,4,4"  Background="#33fb7299" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="正在录制" Margin="0,0,0,0" Foreground="#fb7299"  FontSize="14" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+
+        <TextBlock Text="{Binding LiveTime_str}" Margin="95,75,0,0" Foreground="#dddddd"  FontSize="15" />
+        <TextBlock Text="{Binding DownloadSpe_str}" Margin="195,75,0,0" Foreground="#dddddd"  FontSize="15" />
+        <ui:Button Foreground="{Binding RecSign}" FontSize="20" Margin="20,100,0,0"  Icon="{ui:SymbolIcon Video32}">录制</ui:Button>
+        <ui:Button Foreground="{Binding DanmuSign}" FontSize="20" Margin="120,100,0,0"  Icon="{ui:SymbolIcon ChartPerson28}">弹幕</ui:Button>
+        <ui:Button Foreground="{Binding RemindSign}" FontSize="20" Margin="220,100,0,0"  Icon="{ui:SymbolIcon AlertOn24}">提醒</ui:Button>
         <Border Background="Transparent" MouseLeftButtonDown="Border_DoubleClickToOpenPlaybackWindow"></Border>
     </Grid>
 </UserControl>

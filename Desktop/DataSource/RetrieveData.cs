@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 using static Core.Network.Methods.Room;
@@ -18,79 +19,9 @@ namespace Desktop.DataSource
     {
         public class UI_RoomCards
         {
-            private static Dictionary<long, CardImage> CardImagePairs = new Dictionary<long, CardImage>();
-            public class CardImage
-            {
-                public string CoverImageUrl { get; set; }
-                public BitmapImage CoverImageBitmap { get; set; }
-                public string FaceImageUrl { get; set; }
-                public BitmapImage FaceImageBitmap { get; set; }
-            }
             public static void RefreshRoomCards()
             {
                 Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information");
-
-                foreach (var item in Cards.completeInfoList)
-                {     
-                        if (CardImagePairs.TryGetValue(item.uid, out CardImage cardImage))
-                        {
-                            if (cardImage.CoverImageUrl != item.roomInfo.coverFromUser + "@300w_300h.webp")
-                            {
-                                BitmapImage CoverImageBitmap = new BitmapImage();
-                                if (!string.IsNullOrEmpty(item.roomInfo.coverFromUser))
-                                {
-                                    CoverImageBitmap.BeginInit();
-                                    CoverImageBitmap.UriSource = new Uri(item.roomInfo.coverFromUser + "@300w_300h.webp", UriKind.RelativeOrAbsolute);
-                                    CoverImageBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                    CoverImageBitmap.EndInit();
-                                    cardImage.CoverImageBitmap = CoverImageBitmap;
-                                    cardImage.CoverImageUrl = item.roomInfo.coverFromUser + "@300w_300h.webp";
-                                }
-                            }
-                            if (cardImage.FaceImageUrl != item.roomInfo.face + "@50w_50h.webp")
-                            {
-                                BitmapImage FaceImageBitmap = new BitmapImage();
-                                if (!string.IsNullOrEmpty(item.roomInfo.face))
-                                {
-
-                                    FaceImageBitmap.BeginInit();
-                                    FaceImageBitmap.UriSource = new Uri(item.roomInfo.face + "@50w_50h.webp", UriKind.RelativeOrAbsolute);
-                                    FaceImageBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                    FaceImageBitmap.EndInit();
-                                    CardImagePairs[item.uid].FaceImageBitmap = FaceImageBitmap;
-                                    cardImage.FaceImageUrl = item.roomInfo.face + "@50w_50h.webp";
-                                }
-                            }
-
-                        }
-                        else
-                        {
-                            CardImage CI = new CardImage();
-                            if (!string.IsNullOrEmpty(item.roomInfo.coverFromUser))
-                            {
-                                BitmapImage CoverImageBitmap = new BitmapImage();
-                                CoverImageBitmap.BeginInit();
-                                CoverImageBitmap.UriSource = new Uri(item.roomInfo.coverFromUser + "@300w_300h.webp", UriKind.RelativeOrAbsolute);
-                                CoverImageBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                CoverImageBitmap.EndInit();
-                                CI.CoverImageBitmap = CoverImageBitmap;
-                                CI.CoverImageUrl = item.roomInfo.coverFromUser + "@300w_300h.webp";
-                            }
-
-                            if (!string.IsNullOrEmpty(item.roomInfo.face))
-                            {
-                                BitmapImage FaceImageBitmap = new BitmapImage();
-                                FaceImageBitmap.BeginInit();
-                                FaceImageBitmap.UriSource = new Uri(item.roomInfo.face + "@50w_50h.webp", UriKind.RelativeOrAbsolute);
-                                FaceImageBitmap.CacheOption = BitmapCacheOption.OnLoad;
-                                FaceImageBitmap.EndInit();
-                                CI.FaceImageBitmap = FaceImageBitmap;
-                                CI.FaceImageUrl = item.roomInfo.face + "@50w_50h.webp";
-                            }
-                            CardImagePairs.Add(item.uid, CI);
-                        }
-                }
-
 
                 foreach (var item in Cards.completeInfoList)
                 {
@@ -98,22 +29,21 @@ namespace Desktop.DataSource
                     if (card.Uid != 0)
                     {
                         if (
-                            //card.CoverImageUrl != item.roomInfo.coverFromUser + "@300w_300h.webp"
-                            //|| card.FaceImageUrl != item.roomInfo.face + "@50w_50h.webp"
-                            card.CoverImageUrl != (CardImagePairs.ContainsKey(card.Uid) ? CardImagePairs[card.Uid].CoverImageUrl : "")
-                            || card.FaceImageUrl != (CardImagePairs.ContainsKey(card.Uid) ? CardImagePairs[card.Uid].FaceImageUrl : "")
-                            || card.Title != item.roomInfo.title
+                            card.Title != item.roomInfo.title
                             || card.Live_Status != item.roomInfo.liveStatus
                             || card.Nickname != item.userInfo.name
                             || card.Room_Id != item.roomId
+                            || card.IsRec != item.userInfo.isAutoRec
+                            || card.IsDanmu != item.userInfo.isRecDanmu
+                            || card.IsRemind != item.userInfo.isRemind
+                            || card.IsDownload != item.taskStatus.isDownload
+                            || card.DownloadSpe !=item.taskStatus.downloadRate
+                            || card.LiveTime != TimeSpan.FromSeconds(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() - item.roomInfo.liveTime).Seconds
                             )
                         {
                             DataCard dataCard = CreateDataCard(item);
                             int index = Views.Pages.DataPage.CardsCollection.IndexOf(card);
-
                             Views.Pages.DataPage.CardsCollection[index] = dataCard;
-
-
                         }
                     }
                     else
@@ -130,14 +60,27 @@ namespace Desktop.DataSource
                 {
                     Uid = item.uid,
                     Room_Id = item.roomId,
-                    CoverImageUrl = item.roomInfo.coverFromUser,
-                    CoverImage = CardImagePairs.ContainsKey(item.uid) ? CardImagePairs[item.uid].CoverImageBitmap : new BitmapImage(),
-                    FaceImageUrl = item.roomInfo.face,
-                    FaceImage = CardImagePairs.ContainsKey(item.uid) ? CardImagePairs[item.uid].FaceImageBitmap : new BitmapImage(),
                     Title = item.roomInfo.title,
                     Nickname = item.userInfo.name,
-                    Live_Status = item.roomInfo.liveStatus,
-                    Live_Status_IsVisible = item.roomInfo.liveStatus ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed
+                    //Live_Status = item.roomInfo.liveStatus,
+                    //Live_Status_IsVisible = item.roomInfo.liveStatus ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed,
+                    IsRec=item.userInfo.isAutoRec,
+                    RecSign=item.userInfo.isAutoRec?new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")):new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    IsDanmu=item.userInfo.isRecDanmu,
+                    DanmuSign=item.userInfo.isRecDanmu?new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")):new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    IsRemind=item.userInfo.isRemind,
+                    RemindSign=item.userInfo.isRemind?new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")):new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    Rec_Status=item.taskStatus.isDownload,
+                    Rec_Status_IsVisible=item.taskStatus.isDownload?Visibility.Visible:Visibility.Collapsed,
+                    Live_Status=!item.taskStatus.isDownload&&item.roomInfo.liveStatus?true:false,
+                    Live_Status_IsVisible=!item.taskStatus.isDownload&&item.roomInfo.liveStatus?Visibility.Visible:Visibility.Collapsed,
+                    Rest_Status =!item.roomInfo.liveStatus?true:false,
+                    Rest_Status_IsVisible=!item.roomInfo.liveStatus?Visibility.Visible:Visibility.Collapsed,
+                    IsDownload=item.taskStatus.isDownload,
+                    DownloadSpe=item.taskStatus.downloadRate,
+                    DownloadSpe_str=item.taskStatus.isDownload?Core.Tools.Linq.ConversionSize(item.taskStatus.downloadRate, Core.Tools.Linq.ConversionSizeType.BitRate):"",
+                    LiveTime=TimeSpan.FromSeconds(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() - item.roomInfo.liveTime).Seconds,
+                    LiveTime_str=item.roomInfo.liveStatus?("已直播 "+TimeSpan.FromSeconds(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() - item.roomInfo.liveTime).ToString(@"hh\:mm\:ss")):""
                 };
 
                 return dataCard;
