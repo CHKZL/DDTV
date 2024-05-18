@@ -14,8 +14,8 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
 
-    <StackPanel Margin="42">
-        <TextBlock
+    <StackPanel Margin="42,0,42,42">
+        <!--<TextBlock
             FontSize="20"
             FontWeight="Medium"
             Text="个性化设置" />
@@ -31,7 +31,7 @@
             Margin="0,8,0,0"
             Checked="OnDarkThemeRadioButtonChecked"
             Content="夜间主题"
-            GroupName="themeSelect" />
+            GroupName="themeSelect" />-->
 
         <TextBlock
             Margin="0,24,0,0"
@@ -45,6 +45,10 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
             <ui:CardExpander Grid.Column="0" Icon="{ui:SymbolIcon PlaySettings20}">
                 <ui:CardExpander.Header>
                     <Grid>
@@ -61,7 +65,7 @@
                                 Grid.Column="0"
                                 FontSize="16"
                                 FontTypography="Body"
-                                Text="播放器功能（）" />
+                                Text="播放器设置(开发中)" />
                         <ui:TextBlock
                                 Grid.Row="1"
                                 Grid.Column="0"
@@ -115,6 +119,27 @@
                             </ui:DropDownButton.Flyout>
                         </ui:DropDownButton>
 
+                    </ui:CardControl>
+                </StackPanel>
+            </ui:CardExpander>
+            <ui:CardExpander Grid.Row="1" Grid.Column="0" Icon="{ui:SymbolIcon Folder16}">
+                <ui:CardExpander.Header>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="文件和路径设置" />
+                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="关于DDTV工作相关的路径设置内容。" />
+                    </Grid>
+                </ui:CardExpander.Header>
+                <StackPanel Margin="24,0.5,24,0">
+                    <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
+                        <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
                     </ui:CardControl>
                 </StackPanel>
             </ui:CardExpander>

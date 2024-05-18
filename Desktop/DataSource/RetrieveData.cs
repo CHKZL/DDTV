@@ -89,14 +89,17 @@ namespace Desktop.DataSource
 
         public class RoomInfo
         {
-            public static RoomCardClass GetRoomInfo(long uid)
+            public static void ModifyRoomSettings(long uid,bool IsAutoRec,bool IsRecDanmu,bool IsRemind)
             {
-                Dictionary<string, string> dic = new Dictionary<string, string>
+                Dictionary<string, object> dic = new Dictionary<string, object>
                 {
-                    { "uid", uid.ToString() }
+                    { "uid", uid.ToString() },
+                    {"AutoRec",IsAutoRec },
+                    {"Remind",IsRemind },
+                    {"RecDanmu",IsRecDanmu },
                 };
-                RoomCardClass Card = NetWork.Post.PostBody<RoomCardClass>("http://127.0.0.1:11419/api/get_rooms/room_information", dic);
-                return Card;
+                bool A = NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/set_rooms/modify_room_settings", dic);
+                
             }
         }
     }

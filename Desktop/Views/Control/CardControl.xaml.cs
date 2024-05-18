@@ -26,6 +26,14 @@ namespace Desktop.Views.Control
         {
             InitializeComponent();
         }
+        private Models.DataCard GetDataCard(object sender)
+        {
+            var menuItem = (System.Windows.Controls.MenuItem)sender;
+            var contextMenu = (ContextMenu)menuItem.Parent;
+            var grid = (Grid)contextMenu.PlacementTarget;
+            Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
+            return dataContext;
+        }
 
         private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
         {
@@ -46,13 +54,26 @@ namespace Desktop.Views.Control
                 playWindow.Show();
             }
         }
-        private Models.DataCard GetDataCard(object sender)
+
+
+        private void MenuItem_ModifyRoom_AutoRec_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = (System.Windows.Controls.MenuItem)sender;
-            var contextMenu = (ContextMenu)menuItem.Parent;
-            var grid = (Grid)contextMenu.PlacementTarget;
-            Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
-            return dataContext;
+            Models.DataCard dataCard = GetDataCard(sender);
+            DataSource.RetrieveData.RoomInfo.ModifyRoomSettings(dataCard.Uid, !dataCard.IsRec, dataCard.IsDanmu, dataCard.IsRemind);
         }
+
+        private void MenuItem_ModifyRoom_Danmu_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            DataSource.RetrieveData.RoomInfo.ModifyRoomSettings(dataCard.Uid, dataCard.IsRec, !dataCard.IsDanmu, dataCard.IsRemind);
+        }
+
+        private void MenuItem_ModifyRoom_Remind_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            DataSource.RetrieveData.RoomInfo.ModifyRoomSettings(dataCard.Uid, dataCard.IsRec, dataCard.IsDanmu, !dataCard.IsRemind);
+        }
+
+        
     }
 }

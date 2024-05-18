@@ -54,7 +54,7 @@ namespace Desktop.NetWork
         /// <param name="url">URL</param>
         /// <param name="dic">POST要发送的键值对</param>
         /// <returns>请求返回体</returns>
-        public static T PostBody<T>(string url, Dictionary<string, string> _dic =null)
+        public static T PostBody<T>(string url, Dictionary<string, object> _dic =null)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>
             {
@@ -66,7 +66,7 @@ namespace Desktop.NetWork
             {
                 foreach (var item in _dic)
                 {
-                    dic.Add(item.Key, item.Value);
+                    dic.Add(item.Key, item.Value.ToString());
                 }
             }        
             string AuthenticationOriginalStr = string.Join(";", dic.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));

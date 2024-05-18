@@ -26,15 +26,18 @@ namespace Desktop.Views.Windows
     public partial class PlayWindow : FluentWindow
     {
         long _room_id = 0;
+        long _uid = 0;
+        string _nickname = string.Empty;
         //RoomCardClass _roomCard;
         public PlayWindow(long room_id)
         {
             _room_id = room_id;
-            //Core.RuntimeObject._Room.GetCardFoRoomId(_room_id, ref _roomCard);
-              
+            //Core.RuntimeObject._Room.GetCardFoRoomId(_room_id, ref _roomCard);      
             InitializeComponent();
-            this.Title=RoomInfo.GetTitle(RoomInfo.GetUid(_room_id));  
-            UI_TitleBar.Title = this.Title;
+            _uid = RoomInfo.GetUid(_room_id);
+            this.Title=RoomInfo.GetTitle(_uid);  
+            _nickname = RoomInfo.GetNickname(_uid);
+            UI_TitleBar.Title = $"{_nickname}({_room_id}) - {this.Title}";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
