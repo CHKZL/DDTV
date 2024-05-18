@@ -3,7 +3,10 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
+using Core;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using Wpf.Ui.Appearance;
 
@@ -20,14 +23,14 @@ public partial class SettingsPage
 
         //AppVersionTextBlock.Text = $"WPF UI - Simple Demo - {GetAssemblyVersion()}";
 
-        if (ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)
-        {
-            DarkThemeRadioButton.IsChecked = true;
-        }
-        else
-        {
-            LightThemeRadioButton.IsChecked = true;
-        }
+        //if (ApplicationThemeManager.GetAppTheme() == ApplicationTheme.Dark)
+        //{
+        //    DarkThemeRadioButton.IsChecked = true;
+        //}
+        //else
+        //{
+        //    LightThemeRadioButton.IsChecked = true;
+        //}
     }
 
     private void OnLightThemeRadioButtonChecked(object sender, RoutedEventArgs e)
@@ -44,5 +47,15 @@ public partial class SettingsPage
     {
         return System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString()
             ?? String.Empty;
+    }
+
+    /// <summary>
+    /// openRecordingFolderInExplorer
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void OpenRecordingFolderInExplorer_Click(object sender, RoutedEventArgs e)
+    {
+        Process.Start("explorer.exe", Path.GetFullPath(Config.Core._RecFileDirectory));
     }
 }

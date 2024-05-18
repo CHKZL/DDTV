@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:Desktop.Views.Windows"       
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         mc:Ignorable="d"
-        Title="PlayWindow" Height="510" Width="840" Closing="Window_Closing">
+        Title="PlayWindow" Height="505" Width="840" Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <wv2:WebView2  Grid.Row="1" Name="WV2" Source="" Loaded="WV2_Loaded"/>
         <ui:TitleBar Name="UI_TitleBar"
-                     Height="40"
+                     Height="30"
                      Title="DDTV5-Desktop"
                      Grid.Row="0"
                      Icon="pack://application:,,,/Assets/DDTV.ico" />
