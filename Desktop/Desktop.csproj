@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2420.47" />
+    <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
     <PackageReference Include="WPF-UI" Version="3.0.4" />
   </ItemGroup>

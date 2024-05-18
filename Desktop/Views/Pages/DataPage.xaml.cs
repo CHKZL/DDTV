@@ -20,9 +20,9 @@ namespace Desktop.Views.Pages;
 /// </summary>
 public partial class DataPage
 {
-     public static SortableObservableCollection<DataCard> CardsCollection { get; private set; }
+    public static SortableObservableCollection<DataCard> CardsCollection { get; private set; }
 
-    public static Timer T_R;
+    public static Timer Timer_DataPage;
     public DataPage()
     {
         InitializeData();

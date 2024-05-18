@@ -13,12 +13,16 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <wv2:WebView2  Grid.Row="1" Name="WV2" Source="" Loaded="WV2_Loaded"/>
+        <wv2:WebView2 Grid.Row="1" Grid.Column="0" Name="WV2" Source="" Loaded="WV2_Loaded"/>
+
         <ui:TitleBar Name="UI_TitleBar"
                      Height="30"
                      Title="DDTV5-Desktop"
                      Grid.Row="0"
-                     Icon="pack://application:,,,/Assets/DDTV.ico" />
+                     Grid.Column="0" 
+                     Icon="pack://application:,,,/Assets/DDTV.ico">
+            
+        </ui:TitleBar>
     </Grid>
 
 </ui:FluentWindow>
