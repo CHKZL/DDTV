@@ -11,9 +11,9 @@
         <ContextMenu x:Key="CardContextMenu">
             <MenuItem Header="打开窗口观看" Click="MenuItem_PlayWindow_Click"/>
             <Separator />
-            <MenuItem Header="切换录制设置"/>
-            <MenuItem Header="切换弹幕设置"/>
-            <MenuItem Header="切换提醒开关"/>
+            <MenuItem Header="切换录制设置(未开发)"/>
+            <MenuItem Header="切换弹幕设置(未开发)"/>
+            <MenuItem Header="切换提醒开关(未开发)"/>
         </ContextMenu>
     </UserControl.Resources>
     <Grid Margin="5,5,5,5"  ContextMenu="{StaticResource CardContextMenu}" >
