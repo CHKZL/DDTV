@@ -7,10 +7,14 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.Metrics;
+using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Desktop.Models;
+using Desktop.Views.Windows;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Pages;
@@ -64,5 +68,21 @@ public partial class DataPage
                 if (enumerator.MoveNext())
                     Move(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
         }
+    }
+
+    private void AddRoomCardForRoomId_Click(object sender, RoutedEventArgs e)
+    {
+        AddRoom_roomid addRoom_Roomid = new();
+        addRoom_Roomid.Show();
+    }
+
+    private void AddRoomCardForUid_Click(object sender, RoutedEventArgs e)
+    {
+        System.Windows.MessageBox.Show("该功能还未接入完成");
+    }
+
+    private void BatchAddRoomCardForUid_Click(object sender, RoutedEventArgs e)
+    {
+        System.Windows.MessageBox.Show("该功能还未接入完成");
     }
 }
