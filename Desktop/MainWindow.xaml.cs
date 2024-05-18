@@ -39,7 +39,7 @@ namespace Desktop
             DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
 
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);      
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Desktop
         {
             DataPage.Timer_DataPage?.Dispose();
             DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-            
+            Environment.Exit(-114514);
         }
     }
 }
