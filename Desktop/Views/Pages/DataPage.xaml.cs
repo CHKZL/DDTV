@@ -6,6 +6,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics.Metrics;
 using System.Threading;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Desktop.Models;
 using Desktop.Views.Windows;
+using Masuit.Tools;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -25,12 +27,19 @@ namespace Desktop.Views.Pages;
 public partial class DataPage
 {
     public static SortableObservableCollection<DataCard> CardsCollection { get; private set; }
+    public static ObservableCollection<string> PageComboBoxItems { get; private set; }
 
     public static Timer Timer_DataPage;
+    public static int CardType = 0;
+    public static int PageCount = 0;
+    public static int PageIndex = 1;
+    public static string screen_name = string.Empty;
+
     public DataPage()
     {
         InitializeComponent();
         Init();
+        
     }
 
     public void Init()
@@ -46,7 +55,23 @@ public partial class DataPage
             }
         };
         CardsItemsControl.ItemsSource = CardsCollection;
+        PageComboBoxItems = new ObservableCollection<string>();
+        PageComboBox.ItemsSource = PageComboBoxItems;
     }
+
+    public static void UpdatePageCount(int PageCount)
+    {
+        if (PageComboBoxItems != null)
+        {
+            PageComboBoxItems.Clear();
+            for (int i = 1; i <= PageCount; i++)
+            {
+                PageComboBoxItems.Add($"第{i}页");
+            }
+            PageIndex = 1;
+        }
+    }
+
     public static void Refresher(object state)
     {
         Application.Current.Dispatcher.Invoke(() => DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards());
@@ -78,5 +103,38 @@ public partial class DataPage
     {
         AddRoom addRoom = new(AddRoom.Mode.UidNumberMode);
         addRoom.Show();
+    }
+
+
+    private void CardTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        CardType = CardTypeComboBox.SelectedIndex;
+        if(PageComboBox!=null && string.IsNullOrEmpty(PageComboBox.Text) && PageComboBox.Items.Count>0)
+        {
+            PageComboBox.SelectedIndex = 0;
+            PageComboBox.Text = "第1页";
+        }
+    }
+
+    private void PageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        PageIndex = PageComboBox.SelectedIndex + 1;
+        // 获取ScrollViewer的引用
+        ScrollViewer scrollViewer = VisualTreeHelper.GetChild(CardsItemsControl, 0) as ScrollViewer;
+
+        // 滚动到顶部
+        scrollViewer.ScrollToTop();
+    }
+
+    private void ScreenName_Click(object sender, RoutedEventArgs e)
+    {
+        if(!string.IsNullOrEmpty(ScreenNameBox.Text))
+        {
+            screen_name = ScreenNameBox.Text;
+        }
+        else
+        {
+            screen_name = string.Empty;
+        }
     }
 }
