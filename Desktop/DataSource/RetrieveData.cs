@@ -1,9 +1,11 @@
 ﻿using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
+using Desktop.Views.Pages;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 using static Core.Network.Methods.Room;
+using static Desktop.Views.Pages.DataPage;
 
 namespace Desktop.DataSource
 {
@@ -21,15 +24,56 @@ namespace Desktop.DataSource
         {
             public static void RefreshRoomCards()
             {
-                if (Views.Pages.DataPage.CardsCollection == null)
+                if (DataPage.CardsCollection == null)
                 {
                     return;
                 }
-                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information");
+                Dictionary<string, string> dir = new Dictionary<string, string>();
+                if(!string.IsNullOrEmpty(DataPage.screen_name))
+                {
+                    dir = new Dictionary<string, string>()
+                    {
+                        {"screen_name",DataPage.screen_name }
+                    };
+                }
+                else
+                {
+                    dir = new Dictionary<string, string>()
+                    {
+                        {"quantity","102" },
+                        {"page",DataPage.PageIndex.ToString() },
+                        {"type",DataPage.CardType.ToString() },
+                        {"screen_name","" }
+                    };
+                }
+                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information", dir);
+
+                int pg = (Cards.total / 102) + (Cards.total % 102 > 0 ? 1 : 0);
+                if(DataPage.PageCount!=pg)
+                {
+                    DataPage.PageCount = pg;
+                    DataPage.UpdatePageCount(DataPage.PageCount);
+                }
+
                 List<long> _uid_Web = new List<long>();
                 foreach (var item in Cards.completeInfoList)
                 {
                     _uid_Web.Add(item.uid);
+                }
+                List<long> _uid_local = new List<long>();
+                foreach (var item in Views.Pages.DataPage.CardsCollection)
+                {
+                    _uid_local.Add(item.Uid);
+                }
+                List<long> result = _uid_local.Except(_uid_Web).ToList();
+                foreach (var item in result)
+                {
+                    Views.Pages.DataPage.CardsCollection.Remove(Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item));
+                }
+
+
+                foreach (var item in Cards.completeInfoList)
+                {
                     var card = Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item.uid);
                     if (card.Uid != 0)
                     {
@@ -58,16 +102,7 @@ namespace Desktop.DataSource
 
                     }
                 }
-                List<long> _uid_local = new List<long>();
-                foreach (var item in Views.Pages.DataPage.CardsCollection)
-                {
-                    _uid_local.Add(item.Uid);
-                }
-                List<long> result = _uid_local.Except(_uid_Web).ToList();
-                foreach (var item in result)
-                {
-                    Views.Pages.DataPage.CardsCollection.Remove(Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item));
-                }
+               
             }
 
             private static DataCard CreateDataCard(Server.WebAppServices.Api.batch_complete_room_information.Data.CompleteInfo item)
