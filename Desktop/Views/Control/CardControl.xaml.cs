@@ -74,6 +74,15 @@ namespace Desktop.Views.Control
             DataSource.RetrieveData.RoomInfo.ModifyRoomSettings(dataCard.Uid, dataCard.IsRec, dataCard.IsDanmu, !dataCard.IsRemind);
         }
 
-        
+        private void DelRoom_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            Dictionary<string, string> dic = new Dictionary<string, string>
+            {
+                {"uids", dataCard.Uid.ToString() }
+            };
+            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>("http://127.0.0.1:11419/api/set_rooms/batch_delete_rooms", dic);
+          
+        }
     }
 }

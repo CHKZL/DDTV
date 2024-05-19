@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -52,9 +53,10 @@ namespace Desktop.NetWork
         /// 同步POST方法
         /// </summary>
         /// <param name="url">URL</param>
-        /// <param name="dic">POST要发送的键值对</param>
+        /// <param name="_dic">POST要发送的键值对</param>
+        /// <param name="ExpandList">需要额外携带的LongList</param>
         /// <returns>请求返回体</returns>
-        public static T PostBody<T>(string url, Dictionary<string, object> _dic =null)
+        public static T PostBody<T>(string url, Dictionary<string, string> _dic =null)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>
             {
@@ -68,7 +70,7 @@ namespace Desktop.NetWork
                 {
                     dic.Add(item.Key, item.Value.ToString());
                 }
-            }        
+            }
             string AuthenticationOriginalStr = string.Join(";", dic.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));
             string sig = Core.Tools.Encryption.SHA1_Encrypt(AuthenticationOriginalStr);
             dic.Add("sig", sig);
@@ -77,7 +79,7 @@ namespace Desktop.NetWork
             var content = new FormUrlEncodedContent(dic);
             var response = client.PostAsync(url, content).Result;
             var responseString = response.Content.ReadAsStringAsync().Result;
-            OperationQueue.pack<T> A =JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
+            OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
             return A.data;
         }
     }

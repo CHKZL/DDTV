@@ -26,9 +26,10 @@ namespace Desktop.DataSource
                     return;
                 }
                 Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information");
-
+                List<long> _uid_Web = new List<long>();
                 foreach (var item in Cards.completeInfoList)
                 {
+                    _uid_Web.Add(item.uid);
                     var card = Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item.uid);
                     if (card.Uid != 0)
                     {
@@ -54,7 +55,18 @@ namespace Desktop.DataSource
                     {
                         DataCard dataCard = CreateDataCard(item);
                         Views.Pages.DataPage.CardsCollection.Add(dataCard);
+
                     }
+                }
+                List<long> _uid_local = new List<long>();
+                foreach (var item in Views.Pages.DataPage.CardsCollection)
+                {
+                    _uid_local.Add(item.Uid);
+                }
+                List<long> result = _uid_local.Except(_uid_Web).ToList();
+                foreach (var item in result)
+                {
+                    Views.Pages.DataPage.CardsCollection.Remove(Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item));
                 }
             }
 
@@ -95,12 +107,12 @@ namespace Desktop.DataSource
         {
             public static void ModifyRoomSettings(long uid, bool IsAutoRec, bool IsRecDanmu, bool IsRemind)
             {
-                Dictionary<string, object> dic = new Dictionary<string, object>
+                Dictionary<string, string> dic = new Dictionary<string, string>
                 {
                     {"uid", uid.ToString() },
-                    {"AutoRec",IsAutoRec },
-                    {"Remind",IsRemind },
-                    {"RecDanmu",IsRecDanmu },
+                    {"AutoRec",IsAutoRec.ToString() },
+                    {"Remind",IsRemind.ToString() },
+                    {"RecDanmu",IsRecDanmu.ToString() },
                 };
                 bool A = NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/set_rooms/modify_room_settings", dic);
 

@@ -52,7 +52,7 @@ namespace Core
                         {
                             Log.Error(nameof(RoomConfig.SaveRoomConfigurationFile), $"将房间配置写入配置文件时出错", e, false);
                         }
-                        Thread.Sleep(1000 * 30);
+                        Thread.Sleep(1000 * 5);
                     }
                 });
                 Task.Run(() =>
@@ -67,7 +67,7 @@ namespace Core
                         {
                             Log.Error(nameof(WriteConfiguration), $"将本地配置写入配置文件时出错", e, false);
                         }
-                        Thread.Sleep(1000 * 30);
+                        Thread.Sleep(1000 * 5);
                     }
                 });
             }

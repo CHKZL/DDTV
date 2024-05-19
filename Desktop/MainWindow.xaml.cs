@@ -32,14 +32,28 @@ namespace Desktop
             InitializeComponent();
 
             Thread.Sleep(1000);
-            var doki = Core.Tools.DokiDoki.GetDoki();
+            //设置标题
+             var doki = Core.Tools.DokiDoki.GetDoki();
             this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
             UI_TitleBar.Title = this.Title;
+            //设置默认显示页
             Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
-            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
 
+            //初始化各种page
+            PageInit();
+        }
+
+        /// <summary>
+        /// 初始化各种页面内容
+        /// </summary>
+        public void PageInit()
+        {
+            //设置房间卡片列表页定时任务
+            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
+            //设置登录失效事件（失效后弹出扫码框）
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);      
+            //设置登录态检测定时任务
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);
         }
 
         /// <summary>
