@@ -780,14 +780,14 @@ namespace Core
             /// WEB服务监听的IP地址
             /// 默认值：127.0.0.1
             /// </summary>
-            public static int _IP
+            public static string _IP
             {
-                get => int.Parse(IP);
+                get => IP;
                 set
                 {
-                    if (value.ToString() != IP)
+                    if (value != IP)
                     {
-                        IP = value.ToString();
+                        IP = value;
                         string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
                         OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
                         Log.Info(nameof(Config), msg);
