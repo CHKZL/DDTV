@@ -127,19 +127,24 @@ namespace Server.WebAppServices.Api
         /// 批量增加房间
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="uid"></param>
+        /// <param name="uids">使用半角逗号分割的uid字符串</param>
         /// <param name="auto_rec">是否自动录制</param>
         /// <param name="remind">是否开播提示</param>
         /// <param name="rec_danmu">是否录制弹幕</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_add_room")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[] uid, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string uids, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu)
         {
             List<(long key, int State, string Message)> list = new();
+            string[] uid = uids.Split(',');
+
             foreach (var item in uid)
             {
-                (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, item,0,true);
-                list.Add(Info);
+                if (long.TryParse(item, out long u))
+                {
+                    (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, u, 0, true);
+                    list.Add(Info); 
+                }
             }
             return Content(MessageBase.MssagePack(nameof(batch_add_room), list), "application/json");
         }
@@ -156,16 +161,21 @@ namespace Server.WebAppServices.Api
         /// 批量删除房间
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="uid"></param>
+        /// <param name="uids">使用半角逗号分割的uid字符串</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_delete_rooms")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long[] uid)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string uids)
         {
             List<(long key, bool State, string Message)> list = new();
+            string[] uid = uids.Split(',');
             foreach (var item in uid)
             {
-                (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(item, 0, true);
-                list.Add(Info);
+                if (long.TryParse(item, out long u))
+                {
+                    (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(u, 0, true);
+                    list.Add(Info);
+                }
+
             }
             return Content(MessageBase.MssagePack(nameof(batch_delete_rooms), list), "application/json");
         }
@@ -206,9 +216,11 @@ namespace Server.WebAppServices.Api
         /// <summary>
         /// 修改单个房间配置
         /// </summary>
-        /// <param name="uid">要修改开播提示提示状态的房间UID列表</param>
-        /// <param name="state">将房间的开播提示状态设置为什么状态</param>
+        /// <param name="uid">要修改开播提示提示状态的房间UID</param>
         /// <param name="commonParameters"></param>
+        /// <param name="AutoRec">是否开播录像</param>
+        /// <param name="RecDanmu">是否录制弹幕(打开录像才生效)</param>
+        /// <param name="Remind">是否开播提醒</param>
         /// <returns></returns>
         [HttpPost(Name = "modify_room_settings")]
         public ActionResult Post([FromForm] long uid, [FromForm] bool AutoRec, [FromForm] bool Remind, [FromForm] bool RecDanmu, PostCommonParameters commonParameters)

@@ -25,9 +25,8 @@
             <ui:DropDownButton Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" FontSize="20">
                 <ui:DropDownButton.Flyout>
                     <ContextMenu>
-                        <MenuItem Header="用房间号添加" Click="AddRoomCardForRoomId_Click"/>
-                        <MenuItem Header="用UID添加" Click="AddRoomCardForUid_Click"/>
-                        <MenuItem Header="用UID批量添加" Click="BatchAddRoomCardForUid_Click"/>
+                        <MenuItem Header="用房间号添加一个房间" Click="AddRoomCardForRoomId_Click"/>
+                        <MenuItem Header="用UID添加（可批量）" Click="AddRoomCardForUid_Click"/>
                     </ContextMenu>
                 </ui:DropDownButton.Flyout>
             </ui:DropDownButton>

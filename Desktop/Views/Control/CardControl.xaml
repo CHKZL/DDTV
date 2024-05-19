@@ -14,6 +14,8 @@
             <MenuItem Header="切换录制设置" Click="MenuItem_ModifyRoom_AutoRec_Click"/>
             <MenuItem Header="切换弹幕设置" Click="MenuItem_ModifyRoom_Danmu_Click"/>
             <MenuItem Header="切换提醒开关" Click="MenuItem_ModifyRoom_Remind_Click"/>
+            <Separator />
+            <MenuItem Header="删除房间" Click="DelRoom_Click"/>
         </ContextMenu>
     </UserControl.Resources>
     <Grid Margin="5,5,5,5"  ContextMenu="{StaticResource CardContextMenu}" >

@@ -29,9 +29,12 @@ public partial class DataPage
     public static Timer Timer_DataPage;
     public DataPage()
     {
-        InitializeData();
         InitializeComponent();
+        Init();
+    }
 
+    public void Init()
+    {
         CardsCollection = new SortableObservableCollection<DataCard>()
         {
             SortingSelector = card =>
@@ -43,11 +46,6 @@ public partial class DataPage
             }
         };
         CardsItemsControl.ItemsSource = CardsCollection;
-    }
-
-    private void InitializeData()
-    {
-        //DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards();
     }
     public static void Refresher(object state)
     {
@@ -72,17 +70,13 @@ public partial class DataPage
 
     private void AddRoomCardForRoomId_Click(object sender, RoutedEventArgs e)
     {
-        AddRoom_roomid addRoom_Roomid = new();
-        addRoom_Roomid.Show();
+        AddRoom addRoom = new(AddRoom.Mode.RoomNumberMode);
+        addRoom.Show();
     }
 
     private void AddRoomCardForUid_Click(object sender, RoutedEventArgs e)
     {
-        System.Windows.MessageBox.Show("该功能还未接入完成");
-    }
-
-    private void BatchAddRoomCardForUid_Click(object sender, RoutedEventArgs e)
-    {
-        System.Windows.MessageBox.Show("该功能还未接入完成");
+        AddRoom addRoom = new(AddRoom.Mode.UidNumberMode);
+        addRoom.Show();
     }
 }

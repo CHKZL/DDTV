@@ -42,7 +42,7 @@
     <Compile Update="Views\Control\CardControl.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Update="Views\Windows\AddRoom_roomid.xaml.cs">
+    <Compile Update="Views\Windows\AddRoom.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
