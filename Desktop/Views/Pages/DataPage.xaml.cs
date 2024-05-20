@@ -119,11 +119,17 @@ public partial class DataPage
     private void PageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         PageIndex = PageComboBox.SelectedIndex + 1;
-        // 获取ScrollViewer的引用
-        ScrollViewer scrollViewer = VisualTreeHelper.GetChild(CardsItemsControl, 0) as ScrollViewer;
+        try
+        {
+            // 获取ScrollViewer的引用
+            ScrollViewer? scrollViewer = VisualTreeHelper.GetChild(CardsItemsControl, 0) as ScrollViewer;
 
-        // 滚动到顶部
-        scrollViewer.ScrollToTop();
+            // 滚动到顶部
+            scrollViewer?.ScrollToTop();
+        }
+        catch (Exception)
+        {
+        }
     }
 
     private void ScreenName_Click(object sender, RoutedEventArgs e)

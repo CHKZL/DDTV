@@ -13,136 +13,147 @@
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     mc:Ignorable="d">
+    <Grid>
+        <StackPanel Margin="42,0,42,42">
 
-    <StackPanel Margin="42,0,42,42">
-        <!--<TextBlock
-            FontSize="20"
-            FontWeight="Medium"
-            Text="个性化设置" />
-        <TextBlock Margin="0,12,0,0" Text="设置主题" />
-        <RadioButton
-            x:Name="LightThemeRadioButton"
-            Margin="0,12,0,0"
-            Checked="OnLightThemeRadioButtonChecked"
-            Content="白色主题"
-            GroupName="themeSelect" />
-        <RadioButton
-            x:Name="DarkThemeRadioButton"
-            Margin="0,8,0,0"
-            Checked="OnDarkThemeRadioButtonChecked"
-            Content="夜间主题"
-            GroupName="themeSelect" />-->
+            <ui:Button Margin="0,0,0,10" Content="保存配置" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Save20}" Click="Button_Click"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
 
-        <TextBlock
-            Margin="0,24,0,0"
-            FontSize="20"
-            FontWeight="Medium"
-            Text="DDTV5 - Desktop   开发中...." />
+                <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon AppFolder20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="DDTV基础设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="DDTV运行基础配置内容，修改此选项下的内容保存后重启生效。" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon DatabaseArrowRight24}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="连接远程DDTV5 Server" />
+                                    <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="不是用本Destop自带的服务端，而使用远程服务器" />
+                                    <ui:ToggleSwitch Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
 
-        <TextBlock x:Name="AppVersionTextBlock" Margin="0,12,0,0" />
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <ui:CardExpander Grid.Column="0" Icon="{ui:SymbolIcon PlaySettings20}">
-                <ui:CardExpander.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ui:TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                FontSize="16"
-                                FontTypography="Body"
-                                Text="播放器设置(开发中)" />
-                        <ui:TextBlock
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                FontSize="12"
-                                Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}"
-                                Text="直接打开新窗口观看直播，该功能会唤起新的窗口和进程，如果只是为了录制，请勿开启。" />
-                        <ui:ToggleSwitch
-                                Grid.Row="0"
-                                Grid.RowSpan="2"
-                                Grid.Column="1"
-                                Margin="0,0,16,0"
-                                OffContent="关"
-                                OnContent="开" />
-                    </Grid>
-                </ui:CardExpander.Header>
-                <StackPanel Margin="24,0.5,24,0">
-                    <ui:CardControl Padding="20,10,20,10" Header="双击打开播放器">
-                        <ui:ToggleSwitch
-                                HorizontalContentAlignment="Left"
-                                IsEnabled="True"
-                                OffContent="关"
-                                OnContent="开" />
-                    </ui:CardControl>
-                    <ui:CardControl
-                            Margin="0,0.5,0,0"
-                            Padding="20,10,20,10"
-                            Icon="{ui:SymbolIcon FlashSettings24}">
-                        <ui:CardControl.Header>
-                            <StackPanel>
-                                <ui:TextBlock
-                                        Margin="0"
-                                        FontTypography="BodyStrong"
-                                        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                                        Text="选择功能"
-                                        TextWrapping="WrapWithOverflow" />
-                                <ui:TextBlock
-                                        Appearance="Secondary"
-                                        Foreground="{DynamicResource TextFillColorSecondaryBrush}"
-                                        Text="This is a description text."
-                                        TextWrapping="WrapWithOverflow" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Margin="0,0,20,0" Content="远程服务器地址(IP)" />
+                                    <ui:TextBox Grid.Row="1" Grid.Column="0" Margin="0,0,20,0" PlaceholderText="127.0.0.1"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Margin="20,0,0,0" Content="远程服务器端口(Port)" />
+                                    <ui:TextBox Grid.Row="1" Grid.Column="1" Margin="20,0,0,0" PlaceholderText="11419"/>
+                                </Grid>
                             </StackPanel>
-                        </ui:CardControl.Header>
-                        <ui:DropDownButton Content="Hello" Icon="{ui:SymbolIcon Fluent24}">
-                            <ui:DropDownButton.Flyout>
-                                <ContextMenu>
-                                    <MenuItem Header="Add" />
-                                    <MenuItem Header="Remove" />
-                                    <MenuItem Header="Send" />
-                                    <MenuItem Header="Hello" />
-                                </ContextMenu>
-                            </ui:DropDownButton.Flyout>
-                        </ui:DropDownButton>
+                        </ui:CardExpander>
+                    </StackPanel>
+                </ui:CardExpander>
 
-                    </ui:CardControl>
-                </StackPanel>
-            </ui:CardExpander>
-            <ui:CardExpander Grid.Row="1" Grid.Column="0" Icon="{ui:SymbolIcon Folder16}">
-                <ui:CardExpander.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="文件和路径设置" />
-                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="关于DDTV工作相关的路径设置内容。" />
-                    </Grid>
-                </ui:CardExpander.Header>
-                <StackPanel Margin="24,0.5,24,0">
-                    <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
-                        <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
-                    </ui:CardControl>
-                </StackPanel>
-            </ui:CardExpander>
+                <ui:CardExpander Grid.Row="1" Icon="{ui:SymbolIcon Folder16}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="文件和路径设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="关于DDTV工作相关的路径设置内容。" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
+                            <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
+                        </ui:CardControl>
+                    </StackPanel>
+                </ui:CardExpander>
+
+
+
+                <ui:CardExpander Grid.Row="2" Icon="{ui:SymbolIcon PlaySettings20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放器设置(开发中)" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="直接打开新窗口观看直播，该功能会唤起新的窗口和进程，如果只是为了录制，请勿开启。" />
+                            <ui:ToggleSwitch Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardControl Padding="20,10,20,10" Header="双击打开播放器">
+                            <ui:ToggleSwitch HorizontalContentAlignment="Left" IsEnabled="True" OffContent="关" OnContent="开" />
+                        </ui:CardControl>
+                        <ui:CardControl Margin="0,0.5,0,0" Padding="20,10,20,10" Icon="{ui:SymbolIcon FlashSettings24}">
+                            <ui:CardControl.Header>
+                                <StackPanel>
+                                    <ui:TextBlock Margin="0" FontTypography="BodyStrong" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="选择功能" TextWrapping="WrapWithOverflow" />
+                                    <ui:TextBlock Appearance="Secondary" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="This is a description text." TextWrapping="WrapWithOverflow" />
+                                </StackPanel>
+                            </ui:CardControl.Header>
+                            <ui:DropDownButton Content="Hello" Icon="{ui:SymbolIcon Fluent24}">
+                                <ui:DropDownButton.Flyout>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add" />
+                                        <MenuItem Header="Remove" />
+                                        <MenuItem Header="Send" />
+                                        <MenuItem Header="Hello" />
+                                    </ContextMenu>
+                                </ui:DropDownButton.Flyout>
+                            </ui:DropDownButton>
+
+                        </ui:CardControl>
+                    </StackPanel>
+                </ui:CardExpander>
+                <Grid>
+
+                </Grid>
+            </Grid>
+            <TextBlock Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="DDTV5 - Desktop   开发中...." />
+            
+        </StackPanel>
+        <Grid Name="SnackbarGrid">
+            
         </Grid>
-    </StackPanel>
+    </Grid>
 </Page>

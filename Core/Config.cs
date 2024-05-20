@@ -898,6 +898,111 @@ namespace Core
             }
         }
 
+        public class Desktop
+        {
+            private static string DesktopRemoteServer = "false";
+            /// <summary>
+            /// 桌面版是否连接远程服务器（bool）
+            /// 默认值：false
+            /// </summary>
+            public static bool _DesktopRemoteServer
+            {
+                get
+                {
+                    return bool.Parse(DesktopRemoteServer);
+                }
+                set
+                {
+                    if (value.ToString() != DesktopRemoteServer)
+                    {
+                        DesktopRemoteServer = value.ToString();
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+            private static string DesktopPort = "11419";
+            /// <summary>
+            /// 桌面版连接远程服务器的端口地址（当DesktopRemoteServer为True时生效）
+            /// 默认值：11419
+            /// </summary>
+            public static int _DesktopPort
+            {
+                get => int.Parse(DesktopPort);
+                set
+                {
+                    if (value.ToString() != DesktopPort)
+                    {
+                        DesktopPort = value.ToString();
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+
+            private static string DesktopIP = "127.0.0.1";
+            /// <summary>
+            /// 桌面版连接远程服务器的IP地址（当DesktopRemoteServer为True时生效）
+            /// 默认值：127.0.0.1
+            /// </summary>
+            public static string _DesktopIP
+            {
+                get => DesktopIP;
+                set
+                {
+                    if (value != DesktopIP)
+                    {
+                        DesktopIP = value;
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+
+             private static string DesktopAccessKeyId = "ddtv";
+            /// <summary>
+            /// 桌面版连接远程服务器时使用的AccessKeyId（当DesktopRemoteServer为True时生效）
+            /// 默认值：ddtv
+            /// </summary>
+            public static string _DesktopAccessKeyId
+            {
+                get => DesktopAccessKeyId;
+                set
+                {
+                    if (value != DesktopAccessKeyId)
+                    {
+                        DesktopAccessKeyId = value;
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+
+            private static string DesktopAccessKeySecret = "ddtv";
+            /// <summary>
+            /// 桌面版连接远程服务器时使用的AccessKeySecret（当DesktopRemoteServer为True时生效）
+            /// 默认值：ddtv
+            /// </summary>
+            public static string _DesktopAccessKeySecret
+            {
+                get => DesktopAccessKeySecret;
+                set
+                {
+                    if (value != DesktopAccessKeySecret)
+                    {
+                        DesktopAccessKeySecret = value;
+                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
+                        OperationQueue.Add(Opcode.Config.ReadingRoomFiles, msg);
+                        Log.Info(nameof(Config), msg);
+                    }
+                }
+            }
+        }
+
         #endregion
     }
 }

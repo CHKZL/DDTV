@@ -19,55 +19,62 @@
         ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
         ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         ExtendsContentIntoTitleBar="True"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}" Closed="Window_Closed">
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}" Closed="Window_Closed" MinWidth="1255" MinHeight="650">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-        <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" OpenPaneLength="180" >
+            <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" OpenPaneLength="180" >
 
-            <ui:NavigationView.Header>
-                <ui:BreadcrumbBar
+                <ui:NavigationView.Header>
+                    <ui:BreadcrumbBar
                 Margin="42,32,0,0"
                 FontSize="28"
                 FontWeight="DemiBold" />
-            </ui:NavigationView.Header>
-            <ui:NavigationView.MenuItems>
-                <ui:NavigationViewItem 
+                </ui:NavigationView.Header>
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem 
                     Content="首页"
                     NavigationCacheMode="Enabled"
                     TargetPageType="{x:Type pages:DefaultPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Home24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-                <ui:NavigationViewItem
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Home24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem
                 Content="房间列表页"
                 NavigationCacheMode="Enabled"
                 TargetPageType="{x:Type pages:DataPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="DataHistogram24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-            </ui:NavigationView.MenuItems>
-            <ui:NavigationView.FooterMenuItems>
-                <ui:NavigationViewItem
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="DataHistogram24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.MenuItems>
+                <ui:NavigationView.FooterMenuItems>
+                    <ui:NavigationViewItem
                 Content="设置"
                 NavigationCacheMode="Disabled"
                 TargetPageType="{x:Type pages:SettingsPage}">
-                    <ui:NavigationViewItem.Icon>
-                        <ui:SymbolIcon Symbol="Settings24" />
-                    </ui:NavigationViewItem.Icon>
-                </ui:NavigationViewItem>
-            </ui:NavigationView.FooterMenuItems>
-        </ui:NavigationView>
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Settings24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.FooterMenuItems>
+            </ui:NavigationView>
 
-        <ui:TitleBar Name="UI_TitleBar"
+            <ui:TitleBar Name="UI_TitleBar"
                      Height="40"
         Title="DDTV5-Desktop"
         Grid.Row="0"
         Icon="pack://application:,,,/Assets/DDTV.ico" />
+        </Grid>
+        <Grid>
+            <ui:SnackbarPresenter Height="150" Name="ConfigSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>
+        </Grid>
     </Grid>
+   
+    
 </ui:FluentWindow>

@@ -3,6 +3,7 @@ using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
 using Masuit.Tools.Win32;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -26,7 +27,8 @@ namespace Desktop
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
-        private Process process = null;
+        //底部提示框
+        public static ISnackbarService SnackbarService;
         public MainWindow()
         {
             InitializeComponent();
@@ -38,6 +40,10 @@ namespace Desktop
             UI_TitleBar.Title = this.Title;
             //设置默认显示页
             Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
+
+            //初始化底部提示框
+            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
+            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
 
             //初始化各种page
             PageInit();
