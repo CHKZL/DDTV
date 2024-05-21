@@ -4,6 +4,7 @@
 // All Rights Reserved.
 
 using Core;
+using Desktop.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics;
@@ -22,10 +23,11 @@ namespace Desktop.Views.Pages;
 /// </summary>
 public partial class SettingsPage
 {
-    
+    public static Core.Config.DesktopClass configViewModel { get; set; } = new();
     public SettingsPage()
     {
         InitializeComponent();
+        this.DataContext = configViewModel;
     }
 
     /// <summary>
@@ -40,6 +42,15 @@ public partial class SettingsPage
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        MainWindow.SnackbarService.Show("保存设置", "保存设置成功（其实没有，现在只是把这个效果写了）", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
+        if (configViewModel._DesktopRemoteServer)
+        {
+            MainWindow.SnackbarService.Show("1", "淇濆瓨璁剧疆鎴愬姛锛堝叾瀹炴病鏈夛紝鐜板湪鍙槸鎶婅繖涓晥鏋滃啓浜嗭級", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
+        }
+        else
+        {
+            MainWindow.SnackbarService.Show("2", "淇濆瓨璁剧疆鎴愬姛锛堝叾瀹炴病鏈夛紝鐜板湪鍙槸鎶婅繖涓晥鏋滃啓浜嗭級", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
+        }
+        configViewModel._DesktopRemoteServer = !configViewModel._DesktopRemoteServer;
+        //MainWindow.SnackbarService.Show("淇濆瓨璁剧疆", "淇濆瓨璁剧疆鎴愬姛锛堝叾瀹炴病鏈夛紝鐜板湪鍙槸鎶婅繖涓晥鏋滃啓浜嗭級", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
     }
 }
