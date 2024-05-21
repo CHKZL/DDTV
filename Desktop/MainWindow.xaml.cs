@@ -73,8 +73,12 @@ namespace Desktop
             if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
             {
                 DataSource.LoginStatus.LoginWindowDisplayStatus = true;
-                QrLogin qrLogin = new QrLogin();
-                qrLogin.ShowDialog();
+                Dispatcher.Invoke(() =>
+                {
+                    QrLogin qrLogin = new QrLogin();
+                    qrLogin.ShowDialog();
+                });
+
             }
         }
 
