@@ -66,7 +66,7 @@ public partial class DataPage
             PageComboBoxItems.Clear();
             for (int i = 1; i <= PageCount; i++)
             {
-                PageComboBoxItems.Add($"µÚ{i}Ò³");
+                PageComboBoxItems.Add($"ç¬¬{i}é¡µ");
             }
             PageIndex = 1;
         }
@@ -112,7 +112,7 @@ public partial class DataPage
         if(PageComboBox!=null && string.IsNullOrEmpty(PageComboBox.Text) && PageComboBox.Items.Count>0)
         {
             PageComboBox.SelectedIndex = 0;
-            PageComboBox.Text = "µÚ1Ò³";
+            PageComboBox.Text = "ç¬¬1é¡µ";
         }
     }
 
@@ -121,10 +121,10 @@ public partial class DataPage
         PageIndex = PageComboBox.SelectedIndex + 1;
         try
         {
-            // »ñÈ¡ScrollViewerµÄÒıÓÃ
+            // è·å–ScrollViewerçš„å¼•ç”¨
             ScrollViewer? scrollViewer = VisualTreeHelper.GetChild(CardsItemsControl, 0) as ScrollViewer;
 
-            // ¹ö¶¯µ½¶¥²¿
+            // æ»šåŠ¨åˆ°é¡¶éƒ¨
             scrollViewer?.ScrollToTop();
         }
         catch (Exception)
