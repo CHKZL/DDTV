@@ -24,21 +24,29 @@ namespace Desktop
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-            var services = new ServiceCollection();
-            services.AddSingleton<ISnackbarService, SnackbarService>();
-            _ServiceProvider = services.BuildServiceProvider();
-            Host.CreateDefaultBuilder()
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
-                    webBuilder.UseStartup<Server.Startup>();
-                    string rurl = $"http://{Config.Web._IP}:{Config.Web._Port}";
-                    webBuilder.UseUrls(rurl);
-                    Log.Info(nameof(Application), $"WebApplication开始运行，开始监听[{rurl}]");
-                    Log.Info(nameof(Application), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
-                }).Build().RunAsync();
-           
+            try
+            {
+                base.OnStartup(e);
+                var services = new ServiceCollection();
+                services.AddSingleton<ISnackbarService, SnackbarService>();
+                _ServiceProvider = services.BuildServiceProvider();
+                Host.CreateDefaultBuilder()
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
+                        webBuilder.UseStartup<Server.Startup>();
+                        string rurl = $"http://{Config.Web._IP}:{Config.Web._Port}";
+                        webBuilder.UseUrls(rurl);
+                        Log.Info(nameof(Application), $"WebApplication开始运行，开始监听[{rurl}]");
+                        Log.Info(nameof(Application), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
+                    }).Build().RunAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Core发生重大错误，错误堆栈:\n{ex.ToString()}");
+            }
+
+
         }
     }
 

@@ -33,20 +33,27 @@ namespace Desktop
         {
             InitializeComponent();
 
-            Thread.Sleep(1000);
-            //设置标题
-             var doki = Core.Tools.DokiDoki.GetDoki();
-            this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
-            UI_TitleBar.Title = this.Title;
-            //设置默认显示页
-            Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
+            try
+            {
+                Thread.Sleep(1000);
+                //设置标题
+                var doki = Core.Tools.DokiDoki.GetDoki();
+                this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
+                UI_TitleBar.Title = this.Title;
+                //设置默认显示页
+                Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
 
-            //初始化底部提示框
-            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
-            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
+                //初始化底部提示框
+                SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
+                SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
 
-            //初始化各种page
-            PageInit();
+                //初始化各种page
+                PageInit();
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
+            }
         }
 
         /// <summary>
@@ -70,16 +77,16 @@ namespace Desktop
         /// <exception cref="NotImplementedException"></exception>
         private void LoginStatus_LoginFailureEvent(object? sender, EventArgs e)
         {
-            if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
-            {
-                DataSource.LoginStatus.LoginWindowDisplayStatus = true;
-                Dispatcher.Invoke(() =>
-                {
-                    QrLogin qrLogin = new QrLogin();
-                    qrLogin.ShowDialog();
-                });
+            //if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
+            //{
+            //    DataSource.LoginStatus.LoginWindowDisplayStatus = true;
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        QrLogin qrLogin = new QrLogin();
+            //        qrLogin.ShowDialog();
+            //    });
 
-            }
+            //}
         }
 
         private void Window_Closed(object sender, EventArgs e)

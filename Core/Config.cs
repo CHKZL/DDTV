@@ -1,6 +1,7 @@
 ﻿using Core.LogModule;
 using Core.RuntimeObject;
 using Core.Tools;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -24,9 +25,10 @@ namespace Core
         {
 
             var _Config = new List<FieldInfo>();
-            _Config.AddRange(typeof(Config.Core).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
-            _Config.AddRange(typeof(Config.Download).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
-            _Config.AddRange(typeof(Config.Web).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.CoreClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.DownloadClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.WebClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.DesktopClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
 
             lock (varMap)
                 foreach (var fieldInfo in _Config)
@@ -72,6 +74,12 @@ namespace Core
                 });
             }
         }
+        public static void ModifyConfig(object value, [System.Runtime.CompilerServices.CallerMemberName] string name = null)
+        {
+            string msg = $"修改配置:[{name}]-[{value}]";
+            OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
+            Log.Info(nameof(Config), msg);
+        }
         #endregion
 
         #region public Method
@@ -83,6 +91,14 @@ namespace Core
             { "StartMode", ExpandOption.SetStartMode },
             { "RecordingMode", ExpandOption.SetRecordingMode },
         };
+
+        public static CoreClass Core { get; set; } = new();
+
+        public static DownloadClass Download { get; set; } = new();
+
+        public static WebClass Web { get; set; } = new();
+
+        public static DesktopClass Desktop { get; set; } = new();
 
         public enum Mode
         {
@@ -199,6 +215,7 @@ namespace Core
                 }
             }
         }
+
 
         #endregion
 
@@ -318,15 +335,20 @@ namespace Core
 
         }
 
-
-        public class Core
+        public class CoreClass : INotifyPropertyChanged
         {
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
             private static string ValidAccount = "-1";
             /// <summary>
             /// 生效的账号配置文件
             /// 默认值：./Temporary/LoginQr.png
             /// </summary>
-            public static string _ValidAccount
+            public string _ValidAccount
             {
                 get => $"{ValidAccount}";
                 set
@@ -334,9 +356,8 @@ namespace Core
                     if (value != ValidAccount)
                     {
                         ValidAccount = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -347,7 +368,7 @@ namespace Core
             /// 默认值：{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}    (默认值例：2233_哔哩哔哩弹幕网/标题名称_2024_01_27_19_46_58_122)；文件名会固定以[_original.mp4]或[_fix.mp4]结尾，具体是哪个取决于[AutomaticRepair]配置状态
             /// 支持的配置项：房间号{ROOMID}、昵称{NAME}、日期(年_月_日){DATE}、时间(时_分_秒){TIME}、标题{TITLE})、年(2012和12){yyyy和yy}、时{HH}、分{mm}、秒{ss}、毫秒{fff}
             /// </summary>
-            public static string _DefaultFilePathNameFormat
+            public string _DefaultFilePathNameFormat
             {
                 get => DefaultFilePathNameFormat;
                 set
@@ -355,9 +376,8 @@ namespace Core
                     if (value != DefaultFilePathNameFormat)
                     {
                         DefaultFilePathNameFormat = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -367,7 +387,7 @@ namespace Core
             /// 录制完成自动修复和转码设置
             /// 默认值：true
             /// </summary>
-            public static bool _AutomaticRepair
+            public bool _AutomaticRepair
             {
                 get => bool.Parse(AutomaticRepair);
                 set
@@ -375,9 +395,8 @@ namespace Core
                     if (value.ToString() != AutomaticRepair)
                     {
                         AutomaticRepair = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -387,7 +406,7 @@ namespace Core
             /// 录制完成强制合并为一个视频文件
             /// 默认值：true
             /// </summary>
-            public static bool _ForceMerge
+            public bool _ForceMerge
             {
                 get => bool.Parse(ForceMerge);
                 set
@@ -395,9 +414,8 @@ namespace Core
                     if (value.ToString() != ForceMerge)
                     {
                         ForceMerge = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -410,7 +428,7 @@ namespace Core
             /// 用户协议同意状态
             /// 默认值：false
             /// </summary>
-            public static bool _UseAgree
+            public bool _UseAgree
             {
                 get => bool.Parse(UseAgree);
                 set
@@ -418,9 +436,8 @@ namespace Core
                     if (value.ToString() != UseAgree)
                     {
                         UseAgree = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -430,7 +447,7 @@ namespace Core
             /// 登陆用扫码二维码路径和文件名
             /// 默认值：./Temporary/QrUrlPipeline
             /// </summary>
-            public static string _QrUrl
+            public string _QrUrl
             {
                 get => $"{_TemporaryFileDirectory}{QrUrl}";
             }
@@ -440,7 +457,7 @@ namespace Core
             /// 登陆用扫码二维码路径和文件名
             /// 默认值：./Temporary/LoginQr.png
             /// </summary>
-            public static string _QrFileNmae
+            public string _QrFileNmae
             {
                 get => $"{_TemporaryFileDirectory}{QrFileNmae}";
 
@@ -451,7 +468,7 @@ namespace Core
             ///// 配置文件登陆状态缓存
             ///// 默认值：false
             ///// </summary>
-            //public static bool _LoginStatus
+            //public bool _LoginStatus
             //{
             //    get => bool.Parse(LoginStatus);
             //    set
@@ -471,7 +488,7 @@ namespace Core
             /// 房间配置文件路径（字符串）
             /// 默认值：./Config/RoomListConfig.json
             /// </summary>
-            public static string _RoomConfigFile
+            public string _RoomConfigFile
             {
                 get => $"{_ConfigDirectory}{RoomConfigFile}";
             }
@@ -483,7 +500,7 @@ namespace Core
             /// 配置文件路径（字符串）
             /// 默认值：./Config/
             /// </summary>
-            public static string _ConfigDirectory
+            public string _ConfigDirectory
             {
                 get => ConfigDirectory;
             }
@@ -493,7 +510,7 @@ namespace Core
             /// 默认的配置文件路径（字符串）
             /// 默认值：./Config/DDTV_Config.ini
             /// </summary>
-            public static string _ConfigurationFile
+            public string _ConfigurationFile
             {
                 get => $"{_ConfigDirectory}{ConfigurationFile}";
             }
@@ -503,7 +520,7 @@ namespace Core
             /// 默认的AES加密秘钥（字符串）
             /// 默认值：34D3D9‭9D34894461‭91AB9B8‭582454669
             /// </summary>
-            public static string _Key
+            public string _Key
             {
                 get => Key;
             }
@@ -513,7 +530,7 @@ namespace Core
             /// 默认的AES加密初始化向量（字符串）
             /// 默认值：B3FF‭40627013‭F53F
             /// </summary>
-            public static string _IV
+            public string _IV
             {
                 get => IV;
             }
@@ -523,7 +540,7 @@ namespace Core
             /// 用户配置文件拓展名（字符串）
             /// 默认值：.Duser
             /// </summary>
-            public static string _UserInfoCoinfFileExtension
+            public string _UserInfoCoinfFileExtension
             {
                 get => UserInfoCoinfFileExtension;
             }
@@ -533,7 +550,7 @@ namespace Core
             /// 日志文件路径（字符串）
             /// 默认值：./Logs/
             /// </summary>
-            public static string _LogFileDirectory
+            public string _LogFileDirectory
             {
                 get => LogFileDirectory;
             }
@@ -543,7 +560,7 @@ namespace Core
             /// 录制文件储存路径（字符串）
             /// 默认值：./Rec/
             /// </summary>
-            public static string _RecFileDirectory
+            public string _RecFileDirectory
             {
                 get => RecFileDirectory;
                 set
@@ -551,9 +568,8 @@ namespace Core
                     if (value != RecFileDirectory)
                     {
                         RecFileDirectory = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -563,7 +579,7 @@ namespace Core
             /// 临时文件路径（字符串）
             /// 默认值：./Temporary/
             /// </summary>
-            public static string _TemporaryFileDirectory
+            public string _TemporaryFileDirectory
             {
                 get => TemporaryFileDirectory;
             }
@@ -573,7 +589,7 @@ namespace Core
             /// 默认使用的直播API域名（字符串）
             /// 默认值：https://api.live.bilibili.com
             /// </summary>
-            public static string _LiveDomainName
+            public string _LiveDomainName
             {
                 get => LiveDomainName;
                 set
@@ -581,9 +597,8 @@ namespace Core
                     if (value != LiveDomainName)
                     {
                         LiveDomainName = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -593,7 +608,7 @@ namespace Core
             /// 默认使用的主站API域名（字符串）
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static string _MainDomainName
+            public string _MainDomainName
             {
                 get => MainDomainName;
                 set
@@ -601,9 +616,8 @@ namespace Core
                     if (value != MainDomainName)
                     {
                         MainDomainName = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -613,14 +627,14 @@ namespace Core
             /// 请求是默认使用的UA（字符串）
             /// 默认值：$"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36 Edg/119.0.0.0"
             /// </summary>
-            public static string _HTTP_UA { get { return HTTP_UA; } }
+            public string _HTTP_UA { get { return HTTP_UA; } }
 
             private static string HlsWaitingTime = "50";
             /// <summary>
             /// 一个新任务等待HLS的时间（int，单位秒）
             /// 默认值：50
             /// </summary>
-            public static int _HlsWaitingTime
+            public int _HlsWaitingTime
             {
                 get => int.Parse(HlsWaitingTime);
                 set
@@ -628,9 +642,8 @@ namespace Core
                     if (value.ToString() != HlsWaitingTime)
                     {
                         HlsWaitingTime = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -640,7 +653,7 @@ namespace Core
             /// 直播间状态更新间隔时间（int，单位毫秒）
             /// 默认值：10000
             /// </summary>
-            public static int _DetectIntervalTime
+            public int _DetectIntervalTime
             {
                 get => int.Parse(DetectIntervalTime);
                 set
@@ -648,9 +661,8 @@ namespace Core
                     if (value.ToString() != DetectIntervalTime)
                     {
                         DetectIntervalTime = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -660,7 +672,7 @@ namespace Core
             /// 调试模式开关（bool）
             /// 默认值：false
             /// </summary>
-            public static bool _DebugMode
+            public bool _DebugMode
             {
                 get
                 {
@@ -671,21 +683,27 @@ namespace Core
                     if (value.ToString() != DebugMode)
                     {
                         DebugMode = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
         }
-        public class Download
+
+        public class DownloadClass : INotifyPropertyChanged
         {
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
             internal static string RecordingMode = "1";
             /// <summary>
             /// 录制模式，提供：Auto\FLV_Only\HLS_Only 三种模式取值分别是1/2/3,详细说明请查看Core.RuntimeObject.Download.Basics.RecordingMode
             /// 默认值：Auto
             /// </summary>
-            public static RecordingMode _RecordingMode
+            public RecordingMode _RecordingMode
             {
                 get
                 {
@@ -715,7 +733,7 @@ namespace Core
             /// 修复完成后删除源文件（bool）
             /// 默认值：false
             /// </summary>
-            public static bool _DeleteOriginalFileAfterRepair
+            public bool _DeleteOriginalFileAfterRepair
             {
                 get
                 {
@@ -726,9 +744,8 @@ namespace Core
                     if (value.ToString() != DeleteOriginalFileAfterRepair)
                     {
                         DeleteOriginalFileAfterRepair = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -738,7 +755,7 @@ namespace Core
             /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
             /// 默认值：https://api.bilibili.com
             /// </summary>
-            public static int _DefaultResolution
+            public int _DefaultResolution
             {
                 get => int.Parse(DefaultResolution);
                 set
@@ -746,21 +763,27 @@ namespace Core
                     if (value.ToString() != DefaultResolution)
                     {
                         DefaultResolution = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
         }
-        public class Web
+
+        public class WebClass : INotifyPropertyChanged
         {
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
             private static string Port = "11419";
             /// <summary>
             /// Api提供的端口地址
             /// 默认值：11419
             /// </summary>
-            public static int _Port
+            public int _Port
             {
                 get => int.Parse(Port);
                 set
@@ -768,9 +791,8 @@ namespace Core
                     if (value.ToString() != Port)
                     {
                         Port = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -780,7 +802,7 @@ namespace Core
             /// WEB服务监听的IP地址
             /// 默认值：127.0.0.1
             /// </summary>
-            public static string _IP
+            public string _IP
             {
                 get => IP;
                 set
@@ -788,9 +810,8 @@ namespace Core
                     if (value != IP)
                     {
                         IP = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -800,7 +821,7 @@ namespace Core
             /// Web返回录制文件的相对根路径（字符串）
             /// 默认值：/rec_file
             /// </summary>
-            public static string _RecordingStorageDirectory
+            public string _RecordingStorageDirectory
             {
                 get => RecordingStorageDirectory;
             }
@@ -810,7 +831,7 @@ namespace Core
             /// WebUi文件路径（字符串）
             /// 默认值：./Static/
             /// </summary>
-            public static string _WebUiDirectory
+            public string _WebUiDirectory
             {
                 get => WebUiDirectory;
             }
@@ -820,7 +841,7 @@ namespace Core
             /// WEB的Credentials设置 (布尔值)
             /// 默认值：true
             /// </summary>
-            public static string _AccessControlAllowCredentials
+            public string _AccessControlAllowCredentials
             {
                 get => AccessControlAllowCredentials;
                 set
@@ -828,9 +849,8 @@ namespace Core
                     if (value != AccessControlAllowCredentials)
                     {
                         AccessControlAllowCredentials = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -840,7 +860,7 @@ namespace Core
             /// WEB跨域设置路径 （字符串:为*或者完整URL）（完整URL应为前端网址，必须带协议和端口号，如：http://127.0.0.1:11419）
             /// 默认值：*
             /// </summary>
-            public static string _AccessControlAllowOrigin
+            public string _AccessControlAllowOrigin
             {
                 get => AccessControlAllowOrigin;
                 set
@@ -848,9 +868,8 @@ namespace Core
                     if (value != AccessControlAllowOrigin)
                     {
                         AccessControlAllowOrigin = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -862,7 +881,7 @@ namespace Core
             /// API鉴权所使用的AccessKeyId 为字符串，默认"ddtv"
             /// 默认值：ddtv
             /// </summary>
-            public static string _AccessKeyId
+            public string _AccessKeyId
             {
                 get => AccessKeyId;
                 set
@@ -870,9 +889,8 @@ namespace Core
                     if (value != AccessKeyId)
                     {
                         AccessKeyId = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -882,7 +900,7 @@ namespace Core
             /// API鉴权所使用的AccessKeySecret 为字符串，默认"ddtv"
             /// 默认值：ddtv
             /// </summary>
-            public static string _AccessKeySecret
+            public string _AccessKeySecret
             {
                 get => AccessKeySecret;
                 set
@@ -890,22 +908,27 @@ namespace Core
                     if (value != AccessKeySecret)
                     {
                         AccessKeySecret = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ReadingRoomFiles, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
         }
 
-        public class Desktop
+        public class DesktopClass : INotifyPropertyChanged
         {
+            public event PropertyChangedEventHandler PropertyChanged;
+            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
             private static string DesktopRemoteServer = "false";
             /// <summary>
             /// 桌面版是否连接远程服务器（bool）
             /// 默认值：false
             /// </summary>
-            public static bool _DesktopRemoteServer
+            public bool _DesktopRemoteServer
             {
                 get
                 {
@@ -916,9 +939,8 @@ namespace Core
                     if (value.ToString() != DesktopRemoteServer)
                     {
                         DesktopRemoteServer = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -927,7 +949,7 @@ namespace Core
             /// 桌面版连接远程服务器的端口地址（当DesktopRemoteServer为True时生效）
             /// 默认值：11419
             /// </summary>
-            public static int _DesktopPort
+            public int _DesktopPort
             {
                 get => int.Parse(DesktopPort);
                 set
@@ -935,9 +957,8 @@ namespace Core
                     if (value.ToString() != DesktopPort)
                     {
                         DesktopPort = value.ToString();
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -947,7 +968,7 @@ namespace Core
             /// 桌面版连接远程服务器的IP地址（当DesktopRemoteServer为True时生效）
             /// 默认值：127.0.0.1
             /// </summary>
-            public static string _DesktopIP
+            public string _DesktopIP
             {
                 get => DesktopIP;
                 set
@@ -955,19 +976,18 @@ namespace Core
                     if (value != DesktopIP)
                     {
                         DesktopIP = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
 
-             private static string DesktopAccessKeyId = "ddtv";
+            private static string DesktopAccessKeyId = "ddtv";
             /// <summary>
             /// 桌面版连接远程服务器时使用的AccessKeyId（当DesktopRemoteServer为True时生效）
             /// 默认值：ddtv
             /// </summary>
-            public static string _DesktopAccessKeyId
+            public string _DesktopAccessKeyId
             {
                 get => DesktopAccessKeyId;
                 set
@@ -975,9 +995,8 @@ namespace Core
                     if (value != DesktopAccessKeyId)
                     {
                         DesktopAccessKeyId = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ModifyConfiguration, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
@@ -987,7 +1006,7 @@ namespace Core
             /// 桌面版连接远程服务器时使用的AccessKeySecret（当DesktopRemoteServer为True时生效）
             /// 默认值：ddtv
             /// </summary>
-            public static string _DesktopAccessKeySecret
+            public string _DesktopAccessKeySecret
             {
                 get => DesktopAccessKeySecret;
                 set
@@ -995,9 +1014,8 @@ namespace Core
                     if (value != DesktopAccessKeySecret)
                     {
                         DesktopAccessKeySecret = value;
-                        string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-                        OperationQueue.Add(Opcode.Config.ReadingRoomFiles, msg);
-                        Log.Info(nameof(Config), msg);
+                        OnPropertyChanged();
+                        ModifyConfig(value);
                     }
                 }
             }
