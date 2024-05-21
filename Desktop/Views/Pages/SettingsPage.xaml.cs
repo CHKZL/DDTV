@@ -40,6 +40,6 @@ public partial class SettingsPage
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-        MainWindow.SnackbarService.Show("保存设置", "保存设置成功", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
+        MainWindow.SnackbarService.Show("保存设置", "保存设置成功（其实没有，现在只是把这个效果写了）", ControlAppearance.Success, null, TimeSpan.FromSeconds(2));
     }
 }
