@@ -22,8 +22,8 @@ namespace Desktop.NetWork
         {
             Dictionary<string, string> dic = new Dictionary<string, string>
             {
-                { "access_key_id", NetWork.Basics.access_key_id },
-                { "access_key_secret", NetWork.Basics.access_key_secret },
+                { "access_key_id", Core.Config.Desktop._DesktopAccessKeyId },
+                { "access_key_secret", Core.Config.Desktop._DesktopAccessKeySecret },
                 { "time", DateTimeOffset.Now.ToUnixTimeSeconds().ToString()}
             };
             if (_dic != null)

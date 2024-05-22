@@ -54,7 +54,7 @@ namespace Core
                         {
                             Log.Error(nameof(RoomConfig.SaveRoomConfigurationFile), $"将房间配置写入配置文件时出错", e, false);
                         }
-                        Thread.Sleep(1000 * 5);
+                        Thread.Sleep(1000 * 3);
                     }
                 });
                 Task.Run(() =>
@@ -69,7 +69,7 @@ namespace Core
                         {
                             Log.Error(nameof(WriteConfiguration), $"将本地配置写入配置文件时出错", e, false);
                         }
-                        Thread.Sleep(1000 * 5);
+                        Thread.Sleep(1000 * 3);
                     }
                 });
             }
@@ -797,10 +797,10 @@ namespace Core
                 }
             }
 
-            private static string IP = "127.0.0.1";
+            private static string IP = "http://127.0.0.1";
             /// <summary>
             /// WEB服务监听的IP地址
-            /// 默认值：127.0.0.1
+            /// 默认值：http://127.0.0.1
             /// </summary>
             public string _IP
             {
@@ -951,7 +951,13 @@ namespace Core
             /// </summary>
             public int _DesktopPort
             {
-                get => int.Parse(DesktopPort);
+                get
+                {
+                    if (_DesktopRemoteServer)
+                        return int.Parse(DesktopPort);
+                    else
+                        return Web._Port;
+                }
                 set
                 {
                     if (value.ToString() != DesktopPort)
@@ -963,14 +969,20 @@ namespace Core
                 }
             }
 
-            private static string DesktopIP = "127.0.0.1";
+            private static string DesktopIP = "http://127.0.0.1";
             /// <summary>
             /// 桌面版连接远程服务器的IP地址（当DesktopRemoteServer为True时生效）
-            /// 默认值：127.0.0.1
+            /// 默认值：http://127.0.0.1
             /// </summary>
             public string _DesktopIP
             {
-                get => DesktopIP;
+                get
+                {
+                    if (_DesktopRemoteServer)
+                        return DesktopIP;
+                    else
+                        return Web._IP;
+                }
                 set
                 {
                     if (value != DesktopIP)
@@ -989,7 +1001,13 @@ namespace Core
             /// </summary>
             public string _DesktopAccessKeyId
             {
-                get => DesktopAccessKeyId;
+                 get
+                {
+                    if (_DesktopRemoteServer)
+                        return DesktopAccessKeyId;
+                    else
+                        return Web._AccessKeyId;
+                }
                 set
                 {
                     if (value != DesktopAccessKeyId)
@@ -1008,7 +1026,13 @@ namespace Core
             /// </summary>
             public string _DesktopAccessKeySecret
             {
-                get => DesktopAccessKeySecret;
+                 get
+                {
+                    if (_DesktopRemoteServer)
+                        return DesktopAccessKeySecret;
+                    else
+                        return Web._AccessKeySecret;
+                }
                 set
                 {
                     if (value != DesktopAccessKeySecret)

@@ -1,4 +1,5 @@
-﻿using Desktop.Models;
+﻿using Core;
+using Desktop.Models;
 using Net.Codecrete.QrCodeGenerator;
 using System;
 using System.Collections.Generic;
@@ -32,11 +33,11 @@ namespace Desktop.Views.Windows
         public QrLogin()
         {
             InitializeComponent();
-            if (NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/login/re_login"))
+            if (NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/re_login"))
             {
                 try
                 {
-                    string URL = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/login/get_login_url");
+                    string URL = NetWork.Get.GetBody<string>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_url");
                     var qr = QrCode.EncodeText(URL, QrCode.Ecc.Quartile);
                     byte[] bmpBytes = qr.ToBmpBitmap(5, 10);
                     using (var ms = new MemoryStream(bmpBytes))
@@ -66,7 +67,7 @@ namespace Desktop.Views.Windows
                                 break;
                             }
                             Thread.Sleep(100);
-                        } while (!NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/login/get_login_status"));
+                        } while (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"));
                         Dispatcher.Invoke(() =>
                         {
                             DataSource.LoginStatus.LoginWindowDisplayStatus = false;
