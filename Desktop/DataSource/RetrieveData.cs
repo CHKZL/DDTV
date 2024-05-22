@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using Core;
+using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Pages;
@@ -15,6 +16,10 @@ using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
 using static Core.Network.Methods.Room;
 using static Desktop.Views.Pages.DataPage;
+
+
+
+
 
 namespace Desktop.DataSource
 {
@@ -46,7 +51,13 @@ namespace Desktop.DataSource
                         {"screen_name","" }
                     };
                 }
-                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"http://127.0.0.1:{Core.Config.Web._Port}/api/get_rooms/batch_complete_room_information", dir);
+                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/get_rooms/batch_complete_room_information", dir);
+
+                if (Cards == null)
+                {
+                    Log.Warn(nameof(RefreshRoomCards), "调用Core的API[batch_complete_room_information]获取房间信息失败，获取到的信息为Null", null, true);
+                    return;
+                };
 
                 int pg = (Cards.total / 102) + (Cards.total % 102 > 0 ? 1 : 0);
                 if(DataPage.PageCount!=pg)
@@ -149,8 +160,14 @@ namespace Desktop.DataSource
                     {"Remind",IsRemind.ToString() },
                     {"RecDanmu",IsRecDanmu.ToString() },
                 };
-                bool A = NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/set_rooms/modify_room_settings", dic);
-
+                if (NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/set_rooms/modify_room_settings", dic))
+                {
+                    Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
+                }
+                else
+                {
+                    Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
+                }
             }
         }
     }

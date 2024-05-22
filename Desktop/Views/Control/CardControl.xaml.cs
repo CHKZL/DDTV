@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Core;
+using Core.LogModule;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,8 +83,12 @@ namespace Desktop.Views.Control
             {
                 {"uids", dataCard.Uid.ToString() }
             };
-            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>("http://127.0.0.1:11419/api/set_rooms/batch_delete_rooms", dic);
-          
+            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/set_rooms/batch_delete_rooms", dic);
+            if (State == null)
+            {
+                Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
+                return;
+            }
         }
     }
 }

@@ -9,7 +9,6 @@ namespace Desktop.NetWork
 {
     public class Basics
     {
-        public static string access_key_id { get; set; } = "ddtv";
-        public static string access_key_secret { get; set; } = "ddtv";
+     
     }
 }

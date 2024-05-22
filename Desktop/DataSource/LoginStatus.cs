@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using Core;
+using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
 using Newtonsoft.Json;
@@ -28,7 +29,7 @@ namespace Desktop.DataSource
         public static Timer Timer_LoginStatus;
         public static void RefreshLoginStatus(object state)
         {
-            if (!NetWork.Post.PostBody<bool>("http://127.0.0.1:11419/api/login/get_login_status"))
+            if (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"))
             {
                 LoginFailureEvent?.Invoke(null, new EventArgs());
             }

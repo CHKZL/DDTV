@@ -183,7 +183,10 @@ namespace Server
                     {
                         Core.Init.Start(_args);//初始化必须执行的
                         //_ParentProcessDetection();
-
+                        if(_args.Contains("Desktop") && Config.Desktop._DesktopRemoteServer)
+                        {
+                            return;
+                        }
                         if (!Account.AccountInformation.State)
                         {
                             if (!_args.Contains("Desktop") && !_args.Contains("Client"))
