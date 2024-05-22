@@ -95,8 +95,8 @@ public partial class SettingsPage
         {
             var cd = new ContentDialog
             {
-                Title = "保存文件",
-                Content = "你确定要保存这个文件吗？\n\r确认保存后DDTV将在5秒后自动重新启动",
+                Title = "保存配置",
+                Content = "修改了关键配置，需要重启生效，确认要保存配置文件么？\n\r确认保存后DDTV将在5秒后自动重新启动。",
                 PrimaryButtonText = "确认保存",
                 CloseButtonText = "取消",
                 DefaultButton = ContentDialogButton.Close
