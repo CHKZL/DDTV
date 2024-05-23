@@ -199,18 +199,21 @@ namespace Server
                                     "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
 
                                 _UseAgree();
+
+                                while (!Core.Config.Core._UseAgree)
+                                {
+                                    Thread.Sleep(500);
+                                }
+                                await Login.QR();//如果没有登录态，需要执行扫码
+                                while (!Account.AccountInformation.State)
+                                {
+                                    Thread.Sleep(1000);//等待登陆
+                                }
                             }
 
-                            while (!Core.Config.Core._UseAgree)
-                            {
-                                Thread.Sleep(500);
-                            }
-                            await Login.QR();//如果没有登录态，需要执行扫码
+
                         }
-                        while (!Account.AccountInformation.State)
-                        {
-                            Thread.Sleep(1000);//等待登陆
-                        }
+
                         if (!_args.Contains("Desktop") && !_args.Contains("Client"))
                         {
                             TerminalDisplay.SeKey();

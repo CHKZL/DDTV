@@ -111,6 +111,7 @@ namespace Core.Account.Kernel
         /// <returns>二维码位图</returns>
         public static QR_Object GetQrcode(Color Foreground, Color Background, bool IsBorderVisable)
         {
+            Log.Info(nameof(GetQrcode), $"开始获取Qrcode");
             QR_Object qrCodeImage = new QR_Object();
         re:
             string str = GetQrcodeUrl();
