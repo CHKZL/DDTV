@@ -23,7 +23,7 @@ namespace Server
 {
     public class Program
     {
-        public static event EventHandler<EventArgs> WebServerStartCompletEvent;//Web服务启动完成事件
+        //public static event EventHandler<EventArgs> WebServerStartCompletEvent;//Web服务启动完成事件
 
         public static async Task Main(string[] args)
         {
@@ -119,11 +119,11 @@ namespace Server
                 }
                 WebAppServices.WS.WebSocketQueue.Start();
                 Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
-                Task.Run(() =>
-                {
-                    Thread.Sleep(1000);
-                    WebServerStartCompletEvent?.Invoke(null, new EventArgs());
-                });
+                //Task.Run(() =>
+                //{
+                //    Thread.Sleep(1000);
+                //    WebServerStartCompletEvent?.Invoke(null, new EventArgs());
+                //});
                 app.Run();
 
             }
