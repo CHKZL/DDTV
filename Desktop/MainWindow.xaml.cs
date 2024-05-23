@@ -77,16 +77,16 @@ namespace Desktop
         /// <exception cref="NotImplementedException"></exception>
         private void LoginStatus_LoginFailureEvent(object? sender, EventArgs e)
         {
-            //if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
-            //{
-            //    DataSource.LoginStatus.LoginWindowDisplayStatus = true;
-            //    Dispatcher.Invoke(() =>
-            //    {
-            //        QrLogin qrLogin = new QrLogin();
-            //        qrLogin.ShowDialog();
-            //    });
+            if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
+            {
+                DataSource.LoginStatus.LoginWindowDisplayStatus = true;
+                Dispatcher.Invoke(() =>
+                {
+                    QrLogin qrLogin = new QrLogin();
+                    qrLogin.ShowDialog();
+                });
 
-            //}
+            }
         }
 
         private void Window_Closed(object sender, EventArgs e)
