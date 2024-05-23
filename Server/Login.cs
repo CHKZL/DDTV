@@ -26,10 +26,12 @@ namespace Server
                 ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;
                 using (var stream = File.OpenWrite($"./{Core.Config.Core._QrFileNmae}"))
                 {
+                    Log.Info(nameof(Login), $"保存登陆二维码为本地QR文件为：[{Core.Config.Core._QrFileNmae}]");
                     QR.SKData.SaveTo(stream);
                 }
                 using (var stream = File.OpenWrite($"./{Core.Config.Core._QrUrl}"))
                 {
+                    Log.Info(nameof(Login), $"保存登陆二维码的原始Url字符串文件为:[{Core.Config.Core._QrFileNmae}]");
                     stream.WriteAllText(QR.OriginalString, Encoding.UTF8);
                 }
                 Core.Tools.QRConsole.Output(QR.OriginalString);
