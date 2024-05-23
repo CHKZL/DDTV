@@ -109,7 +109,7 @@ namespace Server
                     FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
                     RequestPath = Config.Web._RecordingStorageDirectory
                 });
-                string rurl = $"http://{Config.Web._IP}:{Config.Web._Port}";
+                string rurl = $"{Config.Web._IP}:{Config.Web._Port}";
                 app.Urls.Add(rurl);
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
                 Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
