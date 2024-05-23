@@ -37,47 +37,65 @@ namespace Desktop.Views.Windows
             {
                 try
                 {
-                    string URL = NetWork.Get.GetBody<string>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_url");
-                    var qr = QrCode.EncodeText(URL, QrCode.Ecc.Quartile);
-                    byte[] bmpBytes = qr.ToBmpBitmap(5, 10);
-                    using (var ms = new MemoryStream(bmpBytes))
-                    {
-                        var bitmapImage = new BitmapImage();
-                        bitmapImage.BeginInit();
-                        bitmapImage.StreamSource = ms;
-                        bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-                        bitmapImage.EndInit();
-                        Loading.Visibility = Visibility.Collapsed;
-                        QR.Source = bitmapImage;
-                    }
-                    CancellationTokenSource cts = new CancellationTokenSource();
                     Task.Run(() =>
                     {
+                        string URL = string.Empty;
                         do
                         {
+                            URL = NetWork.Get.GetBody<string>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_url");
+                            if (string.IsNullOrEmpty(URL))
+                                Thread.Sleep(500);
+                        } while (string.IsNullOrEmpty(URL));
+
+                        var qr = QrCode.EncodeText(URL, QrCode.Ecc.Quartile);
+                        byte[] bmpBytes = qr.ToBmpBitmap(5, 10);
+                        using (var ms = new MemoryStream(bmpBytes))
+                        {
+                            Dispatcher.Invoke(() =>
+                           {
+                               var bitmapImage = new BitmapImage();
+                               bitmapImage.BeginInit();
+                               bitmapImage.StreamSource = ms;
+                               bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                               bitmapImage.EndInit();
+                               Loading.Visibility = Visibility.Collapsed;
+                               QR.Source = bitmapImage;
+                           });
+
+                        }
+                        CancellationTokenSource cts = new CancellationTokenSource();
+                        Task.Run(() =>
+                        {
+                            do
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    if (!this.IsLoaded)
+                                    {
+                                        cts.Cancel();
+                                    }
+                                });
+                                if (cts.Token.IsCancellationRequested)
+                                {
+                                    break;
+                                }
+                                Thread.Sleep(100);
+                            } while (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"));
                             Dispatcher.Invoke(() =>
                             {
-                                if (!this.IsLoaded)
-                                {
-                                    cts.Cancel();
-                                }
+                                DataSource.LoginStatus.LoginWindowDisplayStatus = false;
+                                this.Close();
                             });
-                            if (cts.Token.IsCancellationRequested)
-                            {
-                                break;
-                            }
-                            Thread.Sleep(100);
-                        } while (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"));
-                        Dispatcher.Invoke(() =>
-                        {
-                            DataSource.LoginStatus.LoginWindowDisplayStatus = false;
-                            this.Close();
-                        });
-                    }, cts.Token);
+                        }, cts.Token);
+                    });
                 }
                 catch (Exception)
                 {
                 }
+            }
+            else
+            {
+
             }
         }
 
