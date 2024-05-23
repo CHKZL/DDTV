@@ -53,6 +53,10 @@ namespace Desktop.Views.Windows
         {
             await WV2.EnsureCoreWebView2Async(null);
             string C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c").Replace(" ", "");
+            if(string.IsNullOrEmpty(C))
+            {
+                C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c").Replace(" ", "");
+            }
             foreach (var item in C.Split(';'))
             {
                 if (item != null && item.Split('=').Length == 2)
