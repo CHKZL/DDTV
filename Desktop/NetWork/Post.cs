@@ -56,8 +56,9 @@ namespace Desktop.NetWork
                 OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
                 return A.data;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Log.Warn(nameof(PostBody),$"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}",ex);
                 return default;
             }
         }
