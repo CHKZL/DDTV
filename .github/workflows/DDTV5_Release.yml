@@ -1,15 +1,14 @@
-name: DDTV5_Dev
+name: DDTV5_Release
 
 on:
   push:
     tags:
-      - "dev*"
+      - "releases*"
   pull_request:
     paths:
       - 'Server/**'
-      - 'Client/**'
       - 'Desktop/**'
-      - '.github/workflows/DDTV_Dev_CLI.yml'
+      - '.github/workflows/DDTV5_Release.yml'
       - '!**/README.md'
   workflow_dispatch:
 
@@ -104,7 +103,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^dev([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
+          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^releases([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
           echo ${FINAL_VERSION}
@@ -179,7 +178,6 @@ jobs:
           runtime:    ${{ matrix.runtime }}
           image_id:   ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           build-args: REPO=mcr.microsoft.com/dotnet/runtime-deps:${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
-
   Desktop:
     strategy:
       matrix:
@@ -188,7 +186,6 @@ jobs:
             runtime: win-x86
           - os: windows-latest
             runtime: win-x64
-
 
     runs-on: ${{ matrix.os }}
 
@@ -253,7 +250,6 @@ jobs:
           mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
           copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
-          
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
