@@ -2,12 +2,15 @@
 using Masuit.Tools.Logging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Formats.Asn1;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.LogModule.LogClass;
+using static System.Net.Mime.MediaTypeNames;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Core.LogModule
@@ -26,13 +29,20 @@ namespace Core.LogModule
         /// 新增日志事件
         /// </summary>
         public static event EventHandler<EventArgs> LogAddEvent;
-        /// <summary>
-        /// 是否启用外部日志事件调用
-        /// </summary>
-        public static bool IsEvent = false;
-        private static ConsoleWriter console = new ConsoleWriter();
-        
 
+        public static List<LogClass> LogList = new List<LogClass>();
+
+        private static ConsoleWriter console = new ConsoleWriter();
+
+
+        private static void Log_LogAddEvent(object? sender, EventArgs e)
+        {
+            LogList.Insert(0, (LogClass)sender);
+            while(LogList.Count>100)
+            {
+                LogList.RemoveAt(LogList.Count - 1);
+            }
+        }
         /// <summary>
         /// Log系统初始化
         /// </summary>
@@ -43,7 +53,7 @@ namespace Core.LogModule
             LogLevel = log;
             Tools.Time.Config.Init();
             LogDB.Config.SQLiteInit(false);
-
+             Log.LogAddEvent += Log_LogAddEvent;
 #if DEBUG
             Info(nameof(Log), $"{Init.InitType}|{Init.Ver}【Dev】(编译时间:{Init.CompiledVersion})");
             Info(nameof(Log), "Log系统初始化完成（Dev模式）");
@@ -208,10 +218,9 @@ namespace Core.LogModule
                             }
                             console.Write($"[{logClass.Source}]", ConsoleColor.DarkGray);
                             console.WriteLine($"{logClass.Message}", ConsoleColor.White);
-                            if (IsEvent)
-                            {
-                                LogAddEvent.Invoke(_, EventArgs.Empty);
-                            }
+
+                            LogAddEvent?.Invoke(logClass, EventArgs.Empty);
+
                         }
                         if (logClass.Type < LogClass.LogType.Trace)
                         {

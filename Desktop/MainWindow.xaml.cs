@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.LogModule;
 using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
@@ -67,6 +68,7 @@ namespace Desktop
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
             DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);
+
         }
 
         /// <summary>

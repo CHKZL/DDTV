@@ -90,5 +90,20 @@ namespace Desktop.Views.Control
                 return;
             }
         }
+
+        private void Cancel_Task_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            Dictionary<string, string> dic = new Dictionary<string, string>
+            {
+                {"uid", dataCard.Uid.ToString() }
+            };
+            bool State = NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/rec_task/cancel_task", dic);
+            if (State == false)
+            {
+                Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);
+                return;
+            }
+        }
     }
 }

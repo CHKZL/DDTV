@@ -15,6 +15,8 @@
             <MenuItem Header="切换弹幕设置" Click="MenuItem_ModifyRoom_Danmu_Click"/>
             <MenuItem Header="切换提醒开关" Click="MenuItem_ModifyRoom_Remind_Click"/>
             <Separator />
+            <MenuItem Visibility="{Binding Rec_Status_IsVisible}" Header="取消录制" Click="Cancel_Task_Click"/>
+            <Separator />
             <MenuItem Header="删除房间" Click="DelRoom_Click"/>
         </ContextMenu>
     </UserControl.Resources>

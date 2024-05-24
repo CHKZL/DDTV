@@ -80,7 +80,7 @@ namespace Core.RuntimeObject
                         isFirstTime = false;
                     }
                     //如果检测到还在开播，且用户没有取消，那么就再来一次
-                    while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) || (RoomInfo.GetLiveStatus(roomCard.RoomId) && roomCard.DownInfo.Status!= RoomCardClass.DownloadStatus.Special));
+                    while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status!= RoomCardClass.DownloadStatus.Special);
  
 
                     //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
