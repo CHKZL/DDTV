@@ -1,0 +1,372 @@
+name: DDTV5_Dev
+
+on:
+  push:
+     tags:
+      - "dev*"
+  pull_request:
+    paths:
+      - 'Server/**'
+      - 'Client/**'
+      - 'Desktop/**'
+      - '.github/workflows/DDTV_Dev_CLI.yml'
+      - '!**/README.md'
+  workflow_dispatch:
+
+jobs:
+  Server:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x86
+          - os: windows-latest
+            runtime: win-x64
+          - os: macOS-latest
+            runtime: osx-x64
+          - os: macOS-latest
+            runtime: osx-arm64
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: ubuntu-latest
+            runtime: linux-arm
+          - os: ubuntu-latest
+            runtime: linux-arm64
+          - os: ubuntu-latest
+            runtime: linux-musl-x64
+          - os: ubuntu-latest
+            runtime: linux-musl-arm
+          - os: ubuntu-latest
+            runtime: linux-musl-arm64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use .NET 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and extract latest release (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p Static
+          header="authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
+          FILE_URL=$(curl -sH "$header" "https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest" \
+              | grep "browser_download_url.*ddtv-gui-react_v.*\.zip" \
+              | cut -d : -f 2,3 \
+              | tr -d \")
+          wget --header="$header" $FILE_URL -O ddtv-gui-react.zip
+          unzip ddtv-gui-react.zip -d Static
+          rm ddtv-gui-react.zip
+        shell: bash
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir Static
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+
+      - name: Replace string with current date (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          export TZ='Asia/Shanghai'
+          current_date=$(date +%Y-%m-%d)
+          current_time=$(date +%H:%M:%S)
+          combined_date_time="${current_date} ${current_time}"
+          echo ${combined_date_time}
+          sed -i.bak "s/CompilationTime/${combined_date_time}/g" Core/Init.cs
+      
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Replace VerString (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^dev([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
+          echo ${FINAL_VERSION}
+          sed -i.bak "s/5.0.0.0/${FINAL_VERSION}/g" Core/Core.csproj
+          sed -i.bak "s/5.0.0.0/${FINAL_VERSION}/g" Server/Server.csproj
+
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content Server/Server.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Server/Server.csproj
+          
+        shell: pwsh
+
+      - name: Build
+        run: cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Copy Static folder to build_output
+        run: cp -r Static Server/build_output/Static
+
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Server\\build_output\\plugins\\plugins\\ffmpeg
+          copy Server\\plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+
+      - name: Move all files to bin folder and create shortcut (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |       
+          mkdir -p Server/build_output/bin
+          find Server/build_output -mindepth 1 -maxdepth 1 ! -name bin -exec mv {} Server/build_output/bin \;
+          echo "Creating shortcut for Server"
+          echo "#!/bin/bash" > Server/build_output/DDTV_Server.sh
+          echo "dir=\$(cd \"\$(dirname \"\$0\")\"; pwd)" >> Server/build_output/DDTV_Server.sh
+          echo "\$dir/bin/Server" >> Server/build_output/DDTV_Server.sh
+          chmod +x Server/build_output/DDTV_Server.sh
+
+      - name: Move all files to bin folder and create shortcut (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          Get-ChildItem -Path "Server/build_output" | Move-Item -Destination "Server/build_output/bin"
+          $bat_file_path = "Server/build_output/启动DDTV_Server.bat"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start Server.exe
+          "@
+          Set-Content -Path $bat_file_path -Value $command
+        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Server/build_output
+
+      - name: Docker Release
+        uses: moomiji/docker-ddtv@v5
+        if: false
+#       if: ${{ contains(matrix.runtime, 'linux') }}
+        with:
+          push:       ${{ github.ref_type == 'tag' }}
+          repo:       ddtv/cli
+          path:       ${{ github.workspace }}/Server/build_output
+          version:    ${{ github.ref_name }}
+          runtime:    ${{ matrix.runtime }}
+          image_id:   ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
+          build-args: REPO=mcr.microsoft.com/dotnet/runtime-deps:${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
+
+  Client:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x86
+          - os: windows-latest
+            runtime: win-x64
+
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use .NET 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir Static
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content Server/Server.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Server/Server.csproj
+          (Get-Content Client/Client.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Client/Client.csproj
+          
+        shell: pwsh
+
+      - name: Build
+        run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Copy Static folder to build_output
+        run: cp -r Static Client/build_output/Static
+
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
+          copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+
+          
+      - name: Move all files to bin folder and create shortcut (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          Get-ChildItem -Path "Client/build_output" | Move-Item -Destination "Client/build_output/bin"
+          $bat_file_path = "Client/build_output/启动DDTV_Client.bat"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start Client.exe
+          "@
+          Set-Content -Path $bat_file_path -Value $command
+        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Client/build_output
+
+
+
+
+  Desktop:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x86
+          - os: windows-latest
+            runtime: win-x64
+
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use .NET 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir Static
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content Server/Server.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Server/Server.csproj
+          (Get-Content Desktop/Desktop.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Desktop/Desktop.csproj
+          
+        shell: pwsh
+
+      - name: Build
+        run: cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Copy Static folder to build_output
+        run: cp -r Static Desktop/build_output/Static
+
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
+          copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+
+          
+      - name: Move all files to bin folder and create shortcut (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          Get-ChildItem -Path "Desktop/build_output" | Move-Item -Destination "Desktop/build_output/bin"
+          $bat_file_path = "Desktop/build_output/启动DDTV_Desktop.bat"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start Desktop.exe
+          "@
+          Set-Content -Path $bat_file_path -Value $command
+        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Desktop/build_output

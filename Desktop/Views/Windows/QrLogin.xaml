@@ -1,0 +1,23 @@
+﻿<ui:FluentWindow x:Class="Desktop.Views.Windows.QrLogin"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop.Views.Windows"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="QrLogin" Height="550" Width="550" Closing="FluentWindow_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:ProgressRing Name="Loading" Grid.Row="1"  IsIndeterminate="True" />
+        <Image Name="QR" Grid.Row="1" Stretch="UniformToFill" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <ui:TitleBar Name="UI_TitleBar"
+                 Height="30"
+                 Title="使用哔哩哔哩客户端进行扫码，确认后未自动关闭请手动关闭本弹窗"
+                 Grid.Row="0"
+                 Icon="pack://application:,,,/Assets/DDTV.ico" />
+    </Grid>
+</ui:FluentWindow>

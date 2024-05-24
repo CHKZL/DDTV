@@ -1,0 +1,57 @@
+﻿<ui:FluentWindow x:Class="Desktop.Views.Windows.AddRoom"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop.Views.Windows"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="AddRoom" Height="300" Width="460" MinWidth="460" MaxWidth="460" MinHeight="300" MaxHeight="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TextBox Name="RoomId_TextBox" Grid.Row="1" Margin="0,-150,0,0" Width="300" Height="50" PlaceholderText="请输入房间号" />
+        <CheckBox  
+            Grid.Row="1"
+            Name="AutoRecChechBox"
+            Margin="-220,0,0,0"
+            Content="直播录制"
+            IsChecked="False"
+            HorizontalAlignment="Center"
+            Click="AutoRecChechBox_Click"/>
+        <CheckBox  
+            Grid.Row="1"
+            Name="RecDanmuChechBox"
+            Margin="0,0,0,0"
+            Content="弹幕录制"
+            IsChecked="False"
+            HorizontalAlignment="Center"
+            Click="RecDanmuChechBox_Click"/>
+        <CheckBox  
+            Grid.Row="1"
+            Name="RemindChechBox"
+            Margin="220,0,0,0"
+            Content="开播提醒"
+            IsChecked="False"
+            HorizontalAlignment="Center"
+            Click="RemindChechBox_Click"/>
+        <ui:Button 
+            Grid.Row="1" 
+            Margin="0,150,0,0"  
+            Width="100" 
+            Height="50" 
+            HorizontalAlignment="Center"
+            Content="保存"
+            Click="AddRoomSave_Click"/>
+        <Label Name="Save_Message" Grid.Row="1" Margin="0,0,0,5" Content="" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+        <ui:TitleBar 
+            Name="UI_TitleBar"         
+            Height="30"
+            Title="添加房间"
+            Grid.Row="0"
+            Icon="pack://application:,,,/Assets/DDTV.ico">
+        </ui:TitleBar>
+    </Grid>
+</ui:FluentWindow>
