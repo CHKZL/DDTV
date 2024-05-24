@@ -300,6 +300,8 @@ jobs:
 
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
+        with:
+          path: ./
       
       - name: Print all downloaded files
         run: |
