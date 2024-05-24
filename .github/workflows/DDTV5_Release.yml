@@ -312,6 +312,11 @@ jobs:
           draft: false
           prerelease: true
 
+      - name: Print all files in the working directory
+        run: |
+          echo "Printing all files in the working directory:"
+          find "$(pwd)" -type f
+
       - name: Upload Release Assets
         id: upload-release-assets
         uses: actions/github-script@v5
@@ -321,20 +326,22 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const upload_url = "${{ steps.create_release.outputs.upload_url }}";
-            const artifacts_dir = './artifacts';
+            const artifacts_dir = './';
             fs.readdirSync(artifacts_dir).forEach(dir => {
-              fs.readdirSync(path.join(artifacts_dir, dir)).forEach(file => {
-                if (path.extname(file) === '.zip') {
-                  const file_path = path.join(artifacts_dir, dir, file);
-                  github.repos.uploadReleaseAsset({
-                    url: upload_url,
-                    headers: {
-                      'content-length': fs.statSync(file_path).size,
-                      'content-type': 'application/zip',
-                    },
-                    name: path.basename(file),
-                    file: fs.createReadStream(file_path)
-                  });
-                }
-              });
+              if (dir.startsWith('DDTV-')) {
+                fs.readdirSync(path.join(artifacts_dir, dir)).forEach(file => {
+                  if (path.extname(file) === '.zip') {
+                    const file_path = path.join(artifacts_dir, dir, file);
+                    github.repos.uploadReleaseAsset({
+                      url: upload_url,
+                      headers: {
+                        'content-length': fs.statSync(file_path).size,
+                        'content-type': 'application/zip',
+                      },
+                      name: path.basename(file),
+                      file: fs.createReadStream(file_path)
+                    });
+                  }
+                });
+              }
             });
