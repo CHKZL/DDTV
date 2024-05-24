@@ -3,12 +3,13 @@ name: DDTV5_Release
 on:
   push:
     tags:
-      - "release*"
+      - "releases*"
   pull_request:
     paths:
       - 'Server/**'
+      - 'Client/**'
       - 'Desktop/**'
-      - '.github/workflows/DDTV5_Release.yml'
+      - '.github/workflows/DDTV_Dev_CLI.yml'
       - '!**/README.md'
   workflow_dispatch:
 
@@ -159,25 +160,29 @@ jobs:
           start Server.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
-        
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
-          path: Server/build_output
 
-      - name: Docker Release
-        uses: moomiji/docker-ddtv@v5
-        if: false
-#       if: ${{ contains(matrix.runtime, 'linux') }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          push:       ${{ github.ref_type == 'tag' }}
-          repo:       ddtv/cli
-          path:       ${{ github.workspace }}/Server/build_output
-          version:    ${{ github.ref_name }}
-          runtime:    ${{ matrix.runtime }}
-          image_id:   ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
-          build-args: REPO=mcr.microsoft.com/dotnet/runtime-deps:${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./Server/build_output/your_build_file.zip # TODO: Replace this with the path to your build file
+          asset_name: your_build_file.zip # TODO: Replace this with the name you want to give to your build file
+          asset_content_type: application/zip
+
   Desktop:
     strategy:
       matrix:
@@ -263,9 +268,25 @@ jobs:
           start Desktop.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
-        
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
-          path: Desktop/build_output
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./Desktop/build_output/your_build_file.zip # TODO: Replace this with the path to your build file
+          asset_name: your_build_file.zip # TODO: Replace this with the name you want to give to your build file
+          asset_content_type: application/zip
