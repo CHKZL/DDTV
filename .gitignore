@@ -437,3 +437,4 @@ healthchecksdb
 /Core/Account/Config/Parameter.cs
 *.diagsession
 /TESTP
+/PushUpdate
