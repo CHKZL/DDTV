@@ -1,0 +1,164 @@
+﻿<Page
+    x:Class="Desktop.Views.Pages.SettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Desktop.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="SettingsPage"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel Margin="42,0,42,42">
+
+            <ui:Button Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon AppFolder20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="DDTV基础设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="DDTV运行基础配置内容，修改此选项下的内容保存后重启生效。" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon DatabaseArrowRight24}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="连接远程DDTV5 Server" />
+                                    <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="不是用本Destop自带的服务端，而使用远程服务器" />
+                                    <ui:ToggleSwitch Name="DesktopRemoteServer_SwitchControl" IsChecked="{Binding _DesktopRemoteServer, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Content="远程服务器地址" />
+                                    <ui:TextBox Name="DesktopIP_InputControl" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" PlaceholderText="http://127.0.0.1" Text="{Binding _DesktopIP, Mode=OneWay}"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="远程服务器端口(Port)" />
+                                    <ui:NumberBox Name="DesktopPort_InputControl" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="11419" Minimum="1" Maximum="65535" Text="{Binding _DesktopPort, Mode=OneWay}"/>
+
+                                    <Label Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" Content="远程服务器AccessKeyId" />
+                                    <ui:TextBox Name="DesktopAccessKeyId_InputControl" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" PlaceholderText="ddtv" Text="{Binding _DesktopAccessKeyId, Mode=OneWay}"/>
+                                    <Label Grid.Row="2" Grid.Column="1" Margin="10,10,0,0" Content="远程服务器AccessKeySecret" />
+                                    <ui:TextBox Name="DesktopAccessKeySecret_InputControl" Grid.Row="3" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="ddtv" Text="{Binding _DesktopAccessKeySecret, Mode=OneWay}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
+                    </StackPanel>
+                </ui:CardExpander>
+
+                <ui:CardExpander Grid.Row="1" Icon="{ui:SymbolIcon Folder16}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="文件和路径设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="关于DDTV工作相关的路径设置内容。" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
+                            <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
+                        </ui:CardControl>
+                    </StackPanel>
+                </ui:CardExpander>
+
+
+
+                <!--<ui:CardExpander Grid.Row="2" Icon="{ui:SymbolIcon PlaySettings20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放器设置(开发中)" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="直接打开新窗口观看直播，该功能会唤起新的窗口和进程，如果只是为了录制，请勿开启。" />
+                            <ui:ToggleSwitch Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0.5,24,0">
+                        <ui:CardControl Padding="20,10,20,10" Header="双击打开播放器">
+                            <ui:ToggleSwitch HorizontalContentAlignment="Left" IsEnabled="True" OffContent="关" OnContent="开" />
+                        </ui:CardControl>
+                        <ui:CardControl Margin="0,0.5,0,0" Padding="20,10,20,10" Icon="{ui:SymbolIcon FlashSettings24}">
+                            <ui:CardControl.Header>
+                                <StackPanel>
+                                    <ui:TextBlock Margin="0" FontTypography="BodyStrong" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="选择功能" TextWrapping="WrapWithOverflow" />
+                                    <ui:TextBlock Appearance="Secondary" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="This is a description text." TextWrapping="WrapWithOverflow" />
+                                </StackPanel>
+                            </ui:CardControl.Header>
+                            <ui:DropDownButton Content="Hello" Icon="{ui:SymbolIcon Fluent24}">
+                                <ui:DropDownButton.Flyout>
+                                    <ContextMenu>
+                                        <MenuItem Header="Add" />
+                                        <MenuItem Header="Remove" />
+                                        <MenuItem Header="Send" />
+                                        <MenuItem Header="Hello" />
+                                    </ContextMenu>
+                                </ui:DropDownButton.Flyout>
+                            </ui:DropDownButton>
+
+                        </ui:CardControl>
+                    </StackPanel>
+                </ui:CardExpander>-->
+            </Grid>
+            <TextBlock Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="DDTV5 - Desktop   开发中...." />
+        </StackPanel>
+        <ContentPresenter x:Name="RootContentDialogPresenter" />
+        <Grid Name="SnackbarGrid">
+            
+        </Grid>
+    </Grid>
+</Page>

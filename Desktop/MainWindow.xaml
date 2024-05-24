@@ -1,0 +1,69 @@
+﻿<ui:FluentWindow x:Class="Desktop.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Desktop"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:pages="clr-namespace:Desktop.Views.Pages" 
+        xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"       
+        WindowBackdropType="Mica"
+        WindowCornerPreference="Round"
+        WindowStartupLocation="CenterScreen"
+        mc:Ignorable="d"
+        Title="DDTV5-Desktop"
+        Width="1255"
+        Height="650"
+        d:DesignHeight="650"
+        d:DesignWidth="1255"
+        ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+        ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+        ExtendsContentIntoTitleBar="True"
+        Foreground="{DynamicResource TextFillColorPrimaryBrush}" Closed="Window_Closed" MinWidth="1255" MinHeight="650">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" OpenPaneLength="180" >
+
+                <ui:NavigationView.Header>
+                    <ui:BreadcrumbBar Margin="42,32,0,0" FontSize="28" FontWeight="DemiBold" />
+                </ui:NavigationView.Header>
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem  Content="首页" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:DefaultPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Home24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="房间列表页" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:DataPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="DataHistogram24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="日志" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:LogPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Receipt20" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.MenuItems>
+                <ui:NavigationView.FooterMenuItems>
+                    <ui:NavigationViewItem Content="设置" NavigationCacheMode="Disabled" TargetPageType="{x:Type pages:SettingsPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="Settings24" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
+                </ui:NavigationView.FooterMenuItems>
+            </ui:NavigationView>
+
+            <ui:TitleBar Name="UI_TitleBar" Height="40" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/Assets/DDTV.ico" />
+        </Grid>
+        <Grid>
+            <ui:SnackbarPresenter Height="150" Name="ConfigSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>
+        </Grid>
+    </Grid>
+   
+    
+</ui:FluentWindow>
