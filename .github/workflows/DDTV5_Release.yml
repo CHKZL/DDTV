@@ -3,12 +3,11 @@ name: DDTV5_Release
 on:
   push:
     tags:
-      - "releases*"
+      - "release*"
   pull_request:
     paths:
       - 'Server/**'
       - 'Desktop/**'
-      - '.github/workflows/DDTV5_Release.yml'
       - '!**/README.md'
   workflow_dispatch:
 
@@ -103,7 +102,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           TAG_NAME=${GITHUB_REF#refs/tags/}
-          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^releases([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
+          VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^release([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
           echo ${FINAL_VERSION}
@@ -159,6 +158,25 @@ jobs:
           start Server.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
+      
+      - name: List all files (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "Absolute paths:"
+          find "$(pwd)/Server/build_output" -type f
+          echo "Relative paths:"
+          find Server/build_output -type f
+        shell: bash
+
+      - name: List all files (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "Absolute paths:"
+          Get-ChildItem -Path "$(Resolve-Path Server/build_output)" -File -Recurse | ForEach-Object FullName
+          echo "Relative paths:"
+          Get-ChildItem -Path "Server/build_output" -File -Recurse | ForEach-Object Name
+        shell: powershell
+
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
@@ -178,6 +196,7 @@ jobs:
           runtime:    ${{ matrix.runtime }}
           image_id:   ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           build-args: REPO=mcr.microsoft.com/dotnet/runtime-deps:${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
+
   Desktop:
     strategy:
       matrix:
@@ -186,6 +205,7 @@ jobs:
             runtime: win-x86
           - os: windows-latest
             runtime: win-x64
+
 
     runs-on: ${{ matrix.os }}
 
@@ -250,6 +270,7 @@ jobs:
           mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
           copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
+          
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
@@ -269,3 +290,65 @@ jobs:
         with:
           name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
           path: Desktop/build_output
+
+  release:
+    needs: [Server, Desktop]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all workflow run artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: /home/runner/work/DDTV/DDTV/
+      
+      - name: Print all downloaded files
+        run: |
+          echo "Printing all downloaded files:"
+          find "$(pwd)" -type f
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+
+      - name: Print all files in the working directory
+        run: |
+          echo "Printing all files in the working directory:"
+          find "$(pwd)" -type f
+
+      - name: Upload Release Assets
+        id: upload-release-assets
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const upload_url = "${{ steps.create_release.outputs.upload_url }}";
+            const artifacts_dir = './';
+            fs.readdirSync(artifacts_dir).forEach(dir => {
+              if (dir.startsWith('DDTV-')) {
+                fs.readdirSync(path.join(artifacts_dir, dir)).forEach(file => {
+                  if (path.extname(file) === '.zip') {
+                    const file_path = path.join(artifacts_dir, dir, file);
+                    github.repos.uploadReleaseAsset({
+                      url: upload_url,
+                      headers: {
+                        'content-length': fs.statSync(file_path).size,
+                        'content-type': 'application/zip',
+                      },
+                      name: path.basename(file),
+                      file: fs.createReadStream(file_path)
+                    });
+                  }
+                });
+              }
+            });
