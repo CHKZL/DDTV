@@ -158,6 +158,25 @@ jobs:
           start Server.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
+      
+      - name: List all files (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "Absolute paths:"
+          find "$(pwd)/Server/build_output" -type f
+          echo "Relative paths:"
+          find Server/build_output -type f
+        shell: bash
+
+      - name: List all files (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          echo "Absolute paths:"
+          Get-ChildItem -Path "$(Resolve-Path Server/build_output)" -File -Recurse | ForEach-Object FullName
+          echo "Relative paths:"
+          Get-ChildItem -Path "Server/build_output" -File -Recurse | ForEach-Object Name
+        shell: powershell
+
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
@@ -302,7 +321,7 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const upload_url = "${{ steps.create_release.outputs.upload_url }}";
-            const artifacts_dirs = ['./Server/build_output', './Desktop/build_output'];
+            const artifacts_dirs = ['Server/build_output', 'Desktop/build_output'];
             artifacts_dirs.forEach(artifacts_dir => {
               fs.readdirSync(artifacts_dir).forEach(file => {
                 if (path.extname(file) === '.zip') {
