@@ -272,7 +272,7 @@ jobs:
           name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
           path: Desktop/build_output
 
-    release:
+  release:
     needs: [Server, Desktop]
     runs-on: ubuntu-latest
     steps:
@@ -284,7 +284,7 @@ jobs:
 
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v2
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
