@@ -3,7 +3,7 @@ name: DDTV5_Release
 on:
   push:
     tags:
-      - "releases*"
+      - "release*"
   pull_request:
     paths:
       - 'Server/**'
