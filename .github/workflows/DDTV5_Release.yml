@@ -300,6 +300,11 @@ jobs:
 
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
+      
+      - name: Print all downloaded files
+        run: |
+          echo "Printing all downloaded files:"
+          find "$(pwd)/artifacts" -type f
 
       - name: Create Release
         id: create_release
