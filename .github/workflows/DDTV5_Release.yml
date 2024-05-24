@@ -321,20 +321,18 @@ jobs:
             const fs = require('fs');
             const path = require('path');
             const upload_url = "${{ steps.create_release.outputs.upload_url }}";
-            const artifacts_dirs = ['Server/build_output', 'Desktop/build_output'];
-            artifacts_dirs.forEach(artifacts_dir => {
-              fs.readdirSync(artifacts_dir).forEach(file => {
-                if (path.extname(file) === '.zip') {
-                  const file_path = path.join(artifacts_dir, file);
-                  github.repos.uploadReleaseAsset({
-                    url: upload_url,
-                    headers: {
-                      'content-length': fs.statSync(file_path).size,
-                      'content-type': 'application/zip',
-                    },
-                    name: path.basename(file),
-                    file: fs.createReadStream(file_path)
-                  });
-                }
-              });
+            const artifacts_dir = '.';
+            fs.readdirSync(artifacts_dir).forEach(file => {
+              if (path.extname(file) === '.zip') {
+                const file_path = path.join(artifacts_dir, file);
+                github.repos.uploadReleaseAsset({
+                  url: upload_url,
+                  headers: {
+                    'content-length': fs.statSync(file_path).size,
+                    'content-type': 'application/zip',
+                  },
+                  name: path.basename(file),
+                  file: fs.createReadStream(file_path)
+                });
+              }
             });
