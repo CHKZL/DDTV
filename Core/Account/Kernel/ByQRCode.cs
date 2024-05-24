@@ -75,7 +75,7 @@ namespace Core.Account.Kernel
         /// <returns>二维码要包含的登录url</returns>
         public static string GetQrcodeUrl()
         {
-            return Http.GetBody("https://passport.bilibili.com/x/passport-login/web/qrcode/generate", null, "https://passport.bilibili.com/login"); 
+            return Core.Network.Get.GetBody("https://passport.bilibili.com/x/passport-login/web/qrcode/generate", false, "https://passport.bilibili.com");
         }
 
         /// <summary>
@@ -88,23 +88,17 @@ namespace Core.Account.Kernel
             string str = GetQrcodeUrl();
             while (string.IsNullOrEmpty(str))
             {
-#if NETSTANDARD2_0 || NETCORE3_0
-                GetQrcode_DataTemplete obj = JsonConvert.DeserializeObject<GetQrcode_DataTemplete>(str);
-#else
-                GetQrcode_DataTemplete obj = (new JavaScriptSerializer()).Deserialize<GetQrcode_DataTemplete>(str);
-#endif
-
-                if (obj.code == 0)
-                {
-                    CancelLogin();
-                    MonitorCallCount = 0;
-                    Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
-                    Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
-
-                }
+                str = GetQrcodeUrl();
+                Thread.Sleep(50);
             }
-            else goto re;
-
+            GetQrcode_DataTemplete obj = JsonSerializer.Deserialize<GetQrcode_DataTemplete>(str);
+            if (obj.code == 0)
+            {
+                CancelLogin();
+                MonitorCallCount = 0;
+                Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
+                Refresher = new Timer(RefresherCallback, null, 180000, Timeout.Infinite);
+            }
             return str;
         }
 
@@ -198,7 +192,7 @@ namespace Core.Account.Kernel
                     CancelLogin();
                     MonitorCallCount = 0;
                     Monitor = new Timer(MonitorCallback, obj.data.qrcode_key, 1000, 1000);
-                    Refresher = new Timer(RefresherCallback, new List<object>{ Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
+                    Refresher = new Timer(RefresherCallback, new List<object> { Foreground, Background, IsBorderVisable }, 180000, Timeout.Infinite);
                 }
             }
             else goto re;
@@ -227,74 +221,76 @@ namespace Core.Account.Kernel
                 Monitor.Change(1000, 5000);
                 MonitorCallCount = 120;
             }
-
             string qrcode_key = o.ToString();
-
-            string str = Http.GetBody($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}");
+            string str = Get.GetBody($"https://passport.bilibili.com/x/passport-login/web/qrcode/poll?qrcode_key={qrcode_key}");
             if (!string.IsNullOrEmpty(str))
             {
                 MonitorCallBack_Templete obj = JsonSerializer.Deserialize<MonitorCallBack_Templete>(str);
 
-                if (obj.data.code == 0)
+                switch (obj.data.code)
                 {
-                    //关闭监视器
-                    Monitor.Dispose();
-                    Refresher.Dispose();
-
-                    Account account = new Account();
-
-                    string Querystring = obj.data.url.Split('?')[1];
-
-                    string[] KeyValuePair = Regex.Split(Querystring, "&");
-                    account.Cookies = new CookieCollection();
-                    for (int i = 0; i < KeyValuePair.Length - 1; i++)
-                    {
-                        string[] tmp = Regex.Split(KeyValuePair[i], "=");
-                        switch (tmp[0])
+                    //确认登陆
+                    case 0:
+                        //关闭监视器
+                        Monitor.Dispose();
+                        Refresher.Dispose();
+                        AccountInformation account = new AccountInformation();
+                        CookieBack_Templete cookies = new()
                         {
-                            case "bili_jct":
-                                account.CsrfToken = tmp[1];
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
+                            refresh_token = obj.data.refresh_token,
+                            timestamp = obj.data.timestamp,
+                            url = obj.data.url
+                        };
+                        string Querystring = cookies.url.Split('?')[1];
+                        string[] KeyValuePair = Regex.Split(Querystring, "&");
+                        account.Cookies = new CookieCollection();
+                        for (int i = 0; i < KeyValuePair.Length - 1; i++)
+                        {
+                            string[] tmp = Regex.Split(KeyValuePair[i], "=");
+                            switch (tmp[0])
+                            {
+                                case "bili_jct":
+                                    account.CsrfToken = tmp[1];
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
+                                case "DedeUserID":
+                                    account.Uid = tmp[1];
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
+                                case "Expires":
+                                    account.Expires_Cookies = DateTime.Now.AddSeconds(double.Parse(tmp[1]));
+                                    break;
+                                case "gourl":
+                                    break;
 
-                            case "DedeUserID":
-                                account.Uid = tmp[1];
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
-
-                            case "Expires":
-                                account.Expires_Cookies = DateTime.Now.AddSeconds(double.Parse(tmp[1]));
-                                break;
-
-                            case "gourl":
-
-                                break;
-
-                            default:
-                                account.strCookies += KeyValuePair[i] + "; ";
-                                account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                break;
+                                default:
+                                    account.strCookies += KeyValuePair[i] + "; ";
+                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                    break;
+                            }
                         }
-                    }
-                    account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
-                    account.LoginStatus = Account.LoginStatusEnum.ByQrCode;
-                    Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
-                }
-                else
-                {
-                    switch (obj.data.code)
-                    {
-                        case 86090:
-                            //已扫描
-                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
-                            break;
-                        case 86101:
-                            //未扫描
-                            Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
-                            break;
-                    }
+                        account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
+                        account.LoginStatus = AccountInformation.LoginStatusEnum.ByQrCode;
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
+                        OperationQueue.Add(Opcode.Account.ScanCodeConfirmation, "扫码登陆确认");
+                        return;
+                    //已扫描
+                    case 86090:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Scaned);
+                        OperationQueue.Add(Opcode.Account.ScannedCodeWaitingForConfirmation, "已扫码等待确认登陆");
+                        break;
+                    //未扫描
+                    case 86101:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Wating);
+                        OperationQueue.Add(Opcode.Account.QrCodeWaitingForScann, "二维码等待扫码");
+                        break;
+                    //二维码过期
+                    case 86038:
+                        Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Overdue);
+                        OperationQueue.Add(Opcode.Account.QrCodeExpir, "二维码已过期");
+                        break;
                 }
             }
         }
@@ -339,12 +335,8 @@ namespace Core.Account.Kernel
             public Data_Templete data { set; get; }
             public class Data_Templete
             {
-                #region Public Fields
-
-                public string qrcode_key;
-                public string url;
-
-                #endregion Public Fields
+                public string qrcode_key { set; get; }
+                public string url { set; get; }
             }
         }
 
@@ -357,15 +349,6 @@ namespace Core.Account.Kernel
 
             public Data data { set; get; }
             public int code { set; get; }
-
-            public class Data
-            {
-                public string url { set; get; }
-                public string refresh_token { set; get; }
-                public long timestamp { set; get; }
-                public int code { set; get; }
-                public string message { set; get; }
-            }
 
             public class Data
             {
