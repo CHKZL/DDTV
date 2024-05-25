@@ -285,13 +285,33 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download all workflow run artifacts
-        uses: actions/download-artifact@v4
+      - name: Download artifact zip
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const { owner, repo } = context.repo
+            const run_id = github.context.runId  // use the ID of the current run
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+              owner,
+              repo,
+              run_id,
+            })
+            for (const artifact of artifacts.data.artifacts) {
+              console.log(`Downloading ${artifact.name}...`)
+              const zip = await github.rest.actions.downloadArtifact({
+                owner,
+                repo,
+                artifact_id: artifact.id,
+                archive_format: 'zip',
+              })
+              require('fs').writeFileSync(`${artifact.name}.zip`, Buffer.from(zip.data))
+            }
       
-      - name: Print all downloaded files
+      
+      - name: List zip files
         run: |
-          echo "Printing all downloaded files:"
-          find . -type f
+          echo "Listing all .zip files in /home/runner/work/DDTV/:"
+          find . -type f -name "*.zip"
 
       - name: Create Release
         id: create_release
@@ -304,10 +324,7 @@ jobs:
           draft: false
           prerelease: true
 
-      - name: List zip files
-        run: |
-          echo "Listing all .zip files in /home/runner/work/DDTV/:"
-          find /home/runner/work/ -type f -name "*.zip"
+
 
       - name: Upload Release Assets
         id: upload-release-assets
