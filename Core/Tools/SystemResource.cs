@@ -185,6 +185,10 @@ namespace Core.Tools
                     }
                     if (count >= 2) break;
                 }
+                if (memInfo.Total > 0)
+                    memInfo.Total = memInfo.Total * 1024;
+                if (memInfo.Available > 0)
+                    memInfo.Available = memInfo.Available * 1024;
                 return memInfo;
             }
             public class MemInfo
