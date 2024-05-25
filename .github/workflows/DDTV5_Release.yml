@@ -277,33 +277,40 @@ jobs:
         with:
           name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
           path: Desktop/build_output
-
-  upload-artifacts:
-    needs: [Server, Desktop] # 这里的job1和job2需要替换为你的两个job的名称
+  Release:
+    needs: [Server, Desktop]
     runs-on: ubuntu-latest
     steps:
       - name: Download all workflow run artifacts
         uses: actions/github-script@v5
         with:
           script: |
-            var fs = require('fs');
-            var path = require('path');
-            var artifacts = await github.rest.actions.listWorkflowRunArtifacts({
-              owner: context.repo.owner, 
-              repo: context.repo.repo, 
-              run_id: context.runId
-              });
-            for (const artifact of artifacts.data.artifacts) {
-            var download = await github.rest.actions.downloadArtifact({
+            const fs = require('fs');
+            const path = require('path');
+            const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              artifact_id: artifact.id,
-              archive_format: 'zip'
+              run_id: context.runId
             });
-            var artifactPath = path.join(process.env['RUNNER_TEMP'], `${artifact.name}.zip`);
-            fs.writeFileSync(artifactPath, Buffer.from(download.data));
-            console.log(`Downloaded ${artifact.name} to ${artifactPath}`);
+            for (const artifact of artifacts.data.artifacts) {
+              const download = await github.rest.actions.downloadArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id,
+                  archive_format: 'zip'
+              });
+              const artifactPath = path.join(process.env['RUNNER_TEMP'], `${artifact.name}.zip`);
+              fs.writeFileSync(artifactPath, Buffer.from(download.data));
+              console.log(`Downloaded ${artifact.name} to ${artifactPath}`);
             }
+      - name: Install zip
+        run: sudo apt-get install zip
+      - name: Package each artifact
+        run: |
+          for file in *.zip
+          do
+            zip -r "${file%.*}.zip" "$file"
+          done
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
