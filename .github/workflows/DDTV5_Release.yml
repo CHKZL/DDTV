@@ -300,13 +300,11 @@ jobs:
 
       - name: Download all workflow run artifacts
         uses: actions/download-artifact@v4
-        with:
-          path: /home/runner/work/DDTV/DDTV/
       
       - name: Print all downloaded files
         run: |
           echo "Printing all downloaded files:"
-          find "$(pwd)" -type f
+          find . -type f
 
       - name: Create Release
         id: create_release
