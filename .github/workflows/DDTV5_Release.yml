@@ -290,7 +290,7 @@ jobs:
         with:
           script: |
             const { owner, repo } = context.repo
-            const run_id = github.context.runId  // use the ID of the current run
+            const run_id = process.env.GITHUB_RUN_ID  
             const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
               owner,
               repo,
@@ -306,7 +306,6 @@ jobs:
               })
               require('fs').writeFileSync(`${artifact.name}.zip`, Buffer.from(zip.data))
             }
-      
       
       - name: List zip files
         run: |
