@@ -289,11 +289,10 @@ jobs:
           cd assets
           rm -rf *linux-musl*
           for f in *; do
-            (cd $f && zip -r ../$f-${{ github.ref }}.zip .)
+            (cd $f && zip -r ../$f-${{ github.ref_name }}.zip .)
           done
 
       - uses: softprops/action-gh-release@v2
         with:
           files: assets/*.zip
-          name: Release ${{ github.ref }}
           prerelease: true
