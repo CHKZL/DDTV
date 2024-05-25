@@ -277,9 +277,104 @@ jobs:
         with:
           name: DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
           path: Desktop/build_output
+
+  Client:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x86
+          - os: windows-latest
+            runtime: win-x64
+
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Use .NET 8.x
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Download and extract latest release (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir Static
+          $header = @{
+              Authorization = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+          }
+          $url = Invoke-RestMethod -Uri https://api.github.com/repos/moehuhu/DDTV_GUI_React/releases/latest -Headers $header
+          $fileUrl = $url.assets | Where-Object { $_.name -match "ddtv-gui-react_v.*\.zip" } | Select-Object -ExpandProperty browser_download_url
+          Invoke-WebRequest -Uri $fileUrl -OutFile ddtv-gui-react.zip -Headers $header
+          Expand-Archive -Path ddtv-gui-react.zip -DestinationPath Static
+          Remove-Item -Path ddtv-gui-react.zip
+        shell: powershell
+
+      - name: Replace string with current date (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Replace VerString (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
+          $COMMIT_COUNT = git rev-list --count HEAD
+          $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
+          Write-Output $FINAL_VERSION
+          (Get-Content Core/Core.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Core/Core.csproj
+          (Get-Content Server/Server.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Server/Server.csproj
+          (Get-Content Client/Client.csproj) | Foreach-Object { $_ -replace "5.0.0.0", $FINAL_VERSION } | Set-Content Client/Client.csproj
           
+        shell: pwsh
+
+      - name: Build
+        run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Copy Static folder to build_output
+        run: cp -r Static Client/build_output/Static
+
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
+          copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+
+          
+      - name: Move all files to bin folder and create shortcut (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          Get-ChildItem -Path "Client/build_output" | Move-Item -Destination "Client/build_output/bin"
+          $bat_file_path = "Client/build_output/启动DDTV_Client.bat"
+          $command = @"
+          setlocal EnableDelayedExpansion
+          set "abs_path=%~dp0"
+          cd %abs_path%bin
+          start Client.exe
+          "@
+          Set-Content -Path $bat_file_path -Value $command
+        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Client/build_output
+
+
   Release:
-    needs: [Server, Desktop]
+    needs: [Server, Client, Desktop]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
