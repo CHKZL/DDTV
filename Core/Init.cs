@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.Linq;
 using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Config;
@@ -21,14 +23,21 @@ namespace Core
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
+        public static bool IsDev = true;
 
-#if DEBUG
-        public static bool IsDevDebug = true;
-#else
-        public static bool IsDevDebug = false;
-#endif
         public static void Start(string[] args)
         {
+            if (File.Exists("./ver.ini"))
+            {
+                string[] Ver = File.ReadAllLines("./ver.ini");
+                foreach (string VerItem in Ver)
+                {
+                    if (VerItem.StartsWith("ver=") && VerItem.Split('=')[1].TrimEnd().ToLower().StartsWith("release"))
+                    {
+                        IsDev = false;
+                    }           
+                }
+            }
             CoreStartCompletEvent += (sender, e) =>
             {
                 //注册Core启动完成触发事件
