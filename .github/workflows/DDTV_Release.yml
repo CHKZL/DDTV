@@ -163,7 +163,8 @@ jobs:
       - name: Add VersionFile (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          echo "DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}" > Server/build_output/bin/ver.ini
+          echo "type=DDTV-Server-\${{ matrix.os }}-\${{ matrix.runtime }}" > Server/build_output/bin/ver.ini
+          echo "ver=\${{ github.ref_name }}" >> Server/build_output/bin/ver.ini
           
       - name: Add VersionFile (Windows)  
         if: runner.os == 'Windows'
@@ -171,7 +172,8 @@ jobs:
         run: |       
           $bat_file_path = "Server/build_output/bin/ver.ini"
           $command = @"
-          DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
+          type=DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
+          ver=${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
       
@@ -294,7 +296,8 @@ jobs:
         run: |       
           $bat_file_path = "Desktop/build_output/bin/ver.ini"
           $command = @"
-          DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
+          type=DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
+          ver=${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
         
@@ -398,7 +401,8 @@ jobs:
         run: |       
           $bat_file_path = "Client/build_output/bin/ver.ini"
           $command = @"
-          DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
+          type=DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
+          ver=${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
         
