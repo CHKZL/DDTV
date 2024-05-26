@@ -123,8 +123,33 @@ jobs:
           
         shell: pwsh
 
-      - name: Build
+      - name: Build Server
         run: cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Move Update (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p Server/build_output/Update
+          rsync -a Update/build_output/ Server/build_output/Update
+
+      - name: Move Update (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $source = "Update/build_output"
+          $destination = "Server/build_output/Update"
+
+          Get-ChildItem -Path $source -Recurse | ForEach-Object {
+            $dest = $destination + $_.FullName.Substring($source.length)
+            $destDir = [System.IO.Path]::GetDirectoryName($dest)
+            if (!(Test-Path -Path $destDir)) {
+                New-Item -ItemType Directory -Force -Path $destDir
+            }
+            Move-Item -Path $_.FullName -Destination $dest -Force
+          }
 
       - name: Copy Static folder to build_output
         run: cp -r Static Server/build_output/Static
@@ -266,6 +291,25 @@ jobs:
       - name: Build
         run: cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Move Update (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $source = "Update/build_output"
+          $destination = "Desktop/build_output/Update"
+
+          Get-ChildItem -Path $source -Recurse | ForEach-Object {
+            $dest = $destination + $_.FullName.Substring($source.length)
+            $destDir = [System.IO.Path]::GetDirectoryName($dest)
+            if (!(Test-Path -Path $destDir)) {
+                New-Item -ItemType Directory -Force -Path $destDir
+            }
+            Move-Item -Path $_.FullName -Destination $dest -Force
+          }
+
       - name: Copy Static folder to build_output
         run: cp -r Static Desktop/build_output/Static
 
@@ -274,7 +318,6 @@ jobs:
         run: |
           mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
           copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
-
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
@@ -300,7 +343,7 @@ jobs:
           ver=${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
-        
+    
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -371,6 +414,25 @@ jobs:
       - name: Build
         run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+
+      - name: Move Update (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $source = "Update/build_output"
+          $destination = "Client/build_output/Update"
+
+          Get-ChildItem -Path $source -Recurse | ForEach-Object {
+            $dest = $destination + $_.FullName.Substring($source.length)
+            $destDir = [System.IO.Path]::GetDirectoryName($dest)
+            if (!(Test-Path -Path $destDir)) {
+                New-Item -ItemType Directory -Force -Path $destDir
+            }
+            Move-Item -Path $_.FullName -Destination $dest -Force
+          }
+
       - name: Copy Static folder to build_output
         run: cp -r Static Client/build_output/Static
 
@@ -379,7 +441,6 @@ jobs:
         run: |
           mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
           copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
-
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
