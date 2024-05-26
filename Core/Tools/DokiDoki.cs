@@ -28,11 +28,8 @@ namespace Core.Tools
                 Ver = Init.Ver,
                 StartMode = Core.Init.Mode
             };
-#if DEBUG
-            dokiClass.CompilationMode = "Dev";
-#else
-            dokiClass.CompilationMode = "Release";
-#endif
+            dokiClass.CompilationMode = Core.Init.IsDev ? "Dev" : "Release";
+
             return dokiClass;
 
         }
