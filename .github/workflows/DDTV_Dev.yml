@@ -138,14 +138,14 @@ jobs:
       - name: Create Update Directory (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Server\\build_output\\Update
+          mkdir \\home\\runner\\work\\DDTV\\DDTV\\Server\\build_output\\Update
       
       - name: Create Update Directory (Linux/MacOS)
         if: runner.os != 'Windows'
-        run: mkdir -p Server\\build_output\\Update
+        run: mkdir -p \\home\\runner\\work\\DDTV\\DDTV\\Server\\build_output\\Update
         
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Server\\build_output\\Update
+        run: cd \\home\\runner\\work\\DDTV\\DDTV\\Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output \\home\\runner\\work\\DDTV\\DDTV\\Server\\build_output\\Update
 
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
@@ -290,10 +290,10 @@ jobs:
       - name: Create Update Directory (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Desktop\\build_output\\Update
+          mkdir \\home\\runner\\work\\DDTV\\DDTV\\Desktop\\build_output\\Update
         
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Desktop\\build_output\\Update
+        run: cd \\home\\runner\\work\\DDTV\\DDTV\\Desktop\\build_output\\Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output \\home\\runner\\work\\DDTV\\DDTV\\Desktop\\build_output\\Update
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
@@ -404,10 +404,10 @@ jobs:
       - name: Create Update Directory (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Client\\build_output\\Update
+          mkdir \\home\\runner\\work\\DDTV\\DDTV\\Client\\build_output\\Update
         
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Client\\build_output\\Update
+        run: cd \\home\\runner\\work\\DDTV\\DDTV\\Client\\build_output\\Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output \\home\\runner\\work\\DDTV\\DDTV\\Client\\build_output\\Update
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
