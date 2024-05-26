@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - 'Server/**'
+      - 'Client/**'
       - 'Desktop/**'
       - '!**/README.md'
   workflow_dispatch:
@@ -158,6 +159,21 @@ jobs:
           start Server.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
+
+      - name: Add VersionFile (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          echo "DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}" > Server/build_output/bin/ver.ini
+          
+      - name: Add VersionFile (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          $bat_file_path = "Server/build_output/bin/ver.ini"
+          $command = @"
+          DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
+          "@
+          Set-Content -Path $bat_file_path -Value $command
       
       - name: List all files (Linux or macOS)
         if: runner.os != 'Windows'
@@ -278,7 +294,7 @@ jobs:
         run: |       
           $bat_file_path = "Desktop/build_output/bin/ver.ini"
           $command = @"
-          ${{ github.ref_name }}
+          DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
         
@@ -375,11 +391,21 @@ jobs:
           start Client.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
+
+      - name: Add VersionFile (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          $bat_file_path = "Client/build_output/bin/ver.ini"
+          $command = @"
+          DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}-${{ github.ref_name }}
+          "@
+          Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}-
+          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
           path: Client/build_output
 
 
@@ -400,4 +426,3 @@ jobs:
       - uses: softprops/action-gh-release@v2
         with:
           files: assets/*.zip
-          prerelease: true
