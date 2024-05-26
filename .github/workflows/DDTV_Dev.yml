@@ -135,6 +135,18 @@ jobs:
           mkdir Server\\build_output\\plugins\\plugins\\ffmpeg
           copy Server\\plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
+      - name: Create Update Directory (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Server\\build_output\\Update
+      
+      - name: Create Update Directory (Linux/MacOS)
+        if: runner.os != 'Windows'
+        run: mkdir -p Server\\build_output\\Update
+        
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Server\\build_output\\Update
+
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
         run: |       
@@ -275,6 +287,13 @@ jobs:
           mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
           copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
+      - name: Create Update Directory (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Desktop\\build_output\\Update
+        
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Desktop\\build_output\\Update
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
@@ -297,9 +316,11 @@ jobs:
           $bat_file_path = "Desktop/build_output/bin/ver.ini"
           $command = @"
           type=DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
-          ver=${{ github.ref_name }}       
+          ver=${{ github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
+
+
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
@@ -380,6 +401,13 @@ jobs:
           mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
           copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
 
+      - name: Create Update Directory (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          mkdir Client\\build_output\\Update
+        
+      - name: Build Update
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output Client\\build_output\\Update
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
