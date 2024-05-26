@@ -271,6 +271,16 @@ jobs:
           start Desktop.exe
           "@
           Set-Content -Path $bat_file_path -Value $command
+
+      - name: Add VersionFile (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |       
+          $bat_file_path = "Desktop/build_output/bin/ver.ini"
+          $command = @"
+          ${{ github.ref_name }}
+          "@
+          Set-Content -Path $bat_file_path -Value $command
         
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
@@ -369,7 +379,7 @@ jobs:
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
+          name: DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}-
           path: Client/build_output
 
 
