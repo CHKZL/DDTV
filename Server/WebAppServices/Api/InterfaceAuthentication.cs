@@ -61,7 +61,7 @@ namespace Server.WebAppServices.Middleware
             if (parameters.ContainsKey("access_key_secret") ||
                !parameters.ContainsKey("sig") ||
                !parameters.ContainsKey("access_key_id") ||
-                parameters["access_key_id"] != Core.Config.Web._AccessKeyId ||
+                parameters["access_key_id"] != Core.Config.Core_RunConfig._AccessKeyId ||
                !parameters.ContainsKey("time"))
             {
                 Unauthorized(context);
@@ -87,7 +87,7 @@ namespace Server.WebAppServices.Middleware
 
 
             // 将"accesskeysecret"添加到参数字典中
-            parameters.Add("access_key_secret", Core.Config.Web._AccessKeySecret);
+            parameters.Add("access_key_secret", Core.Config.Core_RunConfig._AccessKeySecret);
 
             // 创建签名字符串，排除"sig"，并按键排序（字母顺序）
             string AuthenticationOriginalStr = string.Join(";", parameters.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));
