@@ -27,17 +27,17 @@ namespace Core.RuntimeObject
             {
                 if (_accountInformation == null || !_accountInformation.State)
                 {
-                    string[] files = Directory.GetFiles(Config.Core._ConfigDirectory, $"*{Config.Core._UserInfoCoinfFileExtension}");
+                    string[] files = Directory.GetFiles(Config.Core_RunConfig._ConfigDirectory, $"*{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
                     {
-                        if(Config.Core._ValidAccount=="-1")
+                        if(Config.Core_RunConfig._ValidAccount=="-1")
                         {
-                            Config.Core._ValidAccount = files[0].Replace($"{Config.Core._UserInfoCoinfFileExtension}", "");
+                            Config.Core_RunConfig._ValidAccount = files[0].Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "");
                         }
                         string ACC = files[0];
                         foreach (var item in files)
                         {
-                            if (item.Replace($"{Config.Core._UserInfoCoinfFileExtension}", "") == Config.Core._ValidAccount)
+                            if (item.Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "") == Config.Core_RunConfig._ValidAccount)
                             {
                                 ACC = item;
                                 break;
@@ -70,7 +70,7 @@ namespace Core.RuntimeObject
                 Log.Info(nameof(AccountInformation), Message);
                 _accountInformation = value;
                 //Core.Config.Core._LoginStatus = value.State;
-                Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core._ConfigDirectory}{_accountInformation.Uid}{Config.Core._UserInfoCoinfFileExtension}");
+                Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core_RunConfig._ConfigDirectory}{_accountInformation.Uid}{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
             }
         }
 

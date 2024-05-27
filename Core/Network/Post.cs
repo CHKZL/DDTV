@@ -38,7 +38,7 @@ namespace Core.Network
                 req.ServicePoint.Expect100Continue = false;
                 req.Method = "POST";
                 if (string.IsNullOrEmpty(contenttype)) req.ContentType = contenttype;
-                req.UserAgent = Config.Core._HTTP_UA;
+                req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 if (specialheaders != null) req.Headers = specialheaders;
 
                 if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);

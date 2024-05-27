@@ -129,21 +129,21 @@ namespace Core
         /// </summary>
         private static void InitDirectoryAndFile()
         {
-            if (!Directory.Exists(Config.Core._ConfigDirectory))
+            if (!Directory.Exists(Config.Core_RunConfig._ConfigDirectory))
             {
-                Directory.CreateDirectory(Config.Core._ConfigDirectory);
+                Directory.CreateDirectory(Config.Core_RunConfig._ConfigDirectory);
             }
-            if (!Directory.Exists(Config.Core._LogFileDirectory))
+            if (!Directory.Exists(Config.Core_RunConfig._LogFileDirectory))
             {
-                Directory.CreateDirectory(Config.Core._LogFileDirectory);
+                Directory.CreateDirectory(Config.Core_RunConfig._LogFileDirectory);
             }
-            if (!Directory.Exists(Config.Core._TemporaryFileDirectory))
+            if (!Directory.Exists(Config.Core_RunConfig._TemporaryFileDirectory))
             {
-                Directory.CreateDirectory(Config.Core._TemporaryFileDirectory);
+                Directory.CreateDirectory(Config.Core_RunConfig._TemporaryFileDirectory);
             }
-            if (!Directory.Exists(Config.Core._RecFileDirectory))
+            if (!Directory.Exists(Config.Core_RunConfig._RecFileDirectory))
             {
-                Directory.CreateDirectory(Config.Core._RecFileDirectory);
+                Directory.CreateDirectory(Config.Core_RunConfig._RecFileDirectory);
             }
         }
     }

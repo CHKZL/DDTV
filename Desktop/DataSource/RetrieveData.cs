@@ -51,7 +51,7 @@ namespace Desktop.DataSource
                         {"screen_name","" }
                     };
                 }
-                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/get_rooms/batch_complete_room_information", dir);
+                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/batch_complete_room_information", dir);
 
                 if (Cards == null)
                 {
@@ -160,7 +160,7 @@ namespace Desktop.DataSource
                     {"Remind",IsRemind.ToString() },
                     {"RecDanmu",IsRecDanmu.ToString() },
                 };
-                if (NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/set_rooms/modify_room_settings", dic))
+                if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/modify_room_settings", dic))
                 {
                     Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
                 }

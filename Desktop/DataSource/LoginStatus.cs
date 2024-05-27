@@ -29,7 +29,7 @@ namespace Desktop.DataSource
         public static Timer Timer_LoginStatus;
         public static void RefreshLoginStatus(object state)
         {
-            if (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"))
+            if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status"))
             {
                 LoginFailureEvent?.Invoke(null, new EventArgs());
             }

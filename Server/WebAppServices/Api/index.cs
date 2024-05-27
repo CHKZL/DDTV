@@ -44,7 +44,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "/")]
         public ActionResult Get()
         {
-            string Html = System.IO.File.ReadAllText(@$"{Config.Web._WebUiDirectory}index.html");
+            string Html = System.IO.File.ReadAllText(@$"{Config.Core_RunConfig._WebUiDirectory}index.html");
             return Content(Html, "text/html");
             //return Redirect("/webui");
         }

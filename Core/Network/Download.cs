@@ -31,7 +31,7 @@ namespace Core.Network
 
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
-                        request.UserAgent = Config.Core._HTTP_UA;
+                        request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
                         if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
@@ -87,7 +87,7 @@ namespace Core.Network
 
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
-                        request.UserAgent = Config.Core._HTTP_UA;
+                        request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
                         if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
@@ -143,7 +143,7 @@ namespace Core.Network
 
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
-                        request.UserAgent = Config.Core._HTTP_UA;
+                        request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
                         if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
@@ -202,7 +202,7 @@ namespace Core.Network
                         request = (HttpWebRequest)WebRequest.Create(URL);
                         request.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                         request.ServicePoint.Expect100Continue = false;
-                        request.UserAgent = Config.Core._HTTP_UA;
+                        request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.ContentType = "application/x-www-form-urlencoded";
                         request.Accept = "*/*";
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;

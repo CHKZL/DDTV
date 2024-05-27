@@ -34,7 +34,7 @@ namespace Desktop.Views.Windows
         public QrLogin()
         {
             InitializeComponent();
-            if (NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/re_login"))
+            if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/re_login"))
             {
                 Log.Info(nameof(QrLogin),"调用Core的API[re_login]成功");
                 try
@@ -44,7 +44,7 @@ namespace Desktop.Views.Windows
                         string URL = string.Empty;
                         do
                         {
-                            URL = NetWork.Get.GetBody<string>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_url");
+                            URL = NetWork.Get.GetBody<string>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_url");
                             if (string.IsNullOrEmpty(URL))
                             {
                                 Log.Warn(nameof(QrLogin),"调用Core的API[get_login_url]失败，获取到的信息为空，请检查Core日志");
@@ -88,7 +88,7 @@ namespace Desktop.Views.Windows
                                     break;
                                 }
                                 Thread.Sleep(500);
-                            } while (!NetWork.Post.PostBody<bool>($"{Config.Desktop._DesktopIP}:{Config.Desktop._DesktopPort}/api/login/get_login_status"));
+                            } while (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status"));
                             Dispatcher.Invoke(() =>
                             {
                                 Log.Info(nameof(QrLogin),"登陆完成，关闭QR扫码窗口");

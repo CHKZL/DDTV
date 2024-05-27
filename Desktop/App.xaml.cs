@@ -37,10 +37,10 @@ namespace Desktop
                     {
                         Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
                         webBuilder.UseStartup<Server.Startup>();
-                        string rurl = $"{Config.Web._IP}:{Config.Web._Port}";
+                        string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                         webBuilder.UseUrls(rurl);
                         Log.Info(nameof(Application), $"WebApplication开始运行，开始监听[{rurl}]");
-                        Log.Info(nameof(Application), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
+                        Log.Info(nameof(Application), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Core_RunConfig._Port} ]");
                     }).Build().RunAsync();
             }
             catch (Exception ex)

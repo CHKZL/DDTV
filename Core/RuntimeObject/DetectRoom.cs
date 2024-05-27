@@ -169,7 +169,7 @@ namespace Core.RuntimeObject
             if (!Initialization)
             {
                 Log.Info(nameof(DetectRoom), $"房间状态监听已启动");
-                DetectTimer = new Timer(RoomLoopDetection, null, 0, Config.Core._DetectIntervalTime);
+                DetectTimer = new Timer(RoomLoopDetection, null, 0, Config.Core_RunConfig._DetectIntervalTime);
                 Initialization = true;
             }
 

@@ -23,11 +23,11 @@ namespace Server.WebAppServices.Middleware
         {
             if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Credentials"))
             {
-                context.Response.Headers.Add("Access-Control-Allow-Credentials", Config.Web._AccessControlAllowCredentials);
+                context.Response.Headers.Add("Access-Control-Allow-Credentials", Config.Core_RunConfig._AccessControlAllowCredentials);
             }
             if (!context.Response.Headers.ContainsKey("Access-Control-Allow-Origin"))
             {
-                context.Response.Headers.Add("Access-Control-Allow-Origin", Config.Web._AccessControlAllowOrigin);
+                context.Response.Headers.Add("Access-Control-Allow-Origin", Config.Core_RunConfig._AccessControlAllowOrigin);
             }
             await _next(context);
         }

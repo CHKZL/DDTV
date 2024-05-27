@@ -71,7 +71,7 @@ namespace Server.WebAppServices.Api
             }
             else
             {
-                Core.Config.Core._RecFileDirectory = path;
+                Core.Config.Core_RunConfig._RecFileDirectory = path;
                 return Content(MessageBase.MssagePack(nameof(set_recording_path), true,
                     $"正在将录制路径格式修改为{path}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效，重启后恢复"),
                     "application/json");
@@ -95,7 +95,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_recording_path")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_recording_path), Core.Config.Core._RecFileDirectory, $"获取录制文件储存路径（字符串）"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_recording_path), Core.Config.Core_RunConfig._RecFileDirectory, $"获取录制文件储存路径（字符串）"), "application/json");
         }
     }
 
@@ -131,7 +131,7 @@ namespace Server.WebAppServices.Api
             }
             else
             {
-                Core.Config.Core._DefaultFilePathNameFormat = path_and_format;
+                Core.Config.Core_RunConfig._DefaultFilePathNameFormat = path_and_format;
                 return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), true,
                     $"正在将录制储存路径中的子路径和格式修改为{path_and_format}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效或出现异常，重启后恢复"),
                     "application/json");
@@ -154,7 +154,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_default_file_path_name_format")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), Core.Config.Core._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), Core.Config.Core_RunConfig._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
 
@@ -175,7 +175,7 @@ namespace Server.WebAppServices.Api
         public ActionResult Get(GetCommonParameters commonParameters)
         {
             //直接删掉配置文件，重启后会自动生成的
-            Core.Tools.FileOperations.Delete(Core.Config.Core._ConfigurationFile);
+            Core.Tools.FileOperations.Delete(Core.Config.Core_RunConfig._ConfigurationFile);
             return Content(MessageBase.MssagePack(nameof(restore_all_settings_to_default), "", $"恢复所有设置为默认值，请重新启动程序，重启后生效"), "application/json");
         }
     }
@@ -197,7 +197,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "set_hls_waiting_time")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int waiting_time)
         {
-            Core.Config.Core._HlsWaitingTime = waiting_time;
+            Core.Config.Core_RunConfig._HlsWaitingTime = waiting_time;
             return Content(MessageBase.MssagePack(nameof(set_hls_waiting_time), "", $"将HLS等待时间修改为{waiting_time}秒"), "application/json");
         }
     }
@@ -218,7 +218,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_hls_waiting_time")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_hls_waiting_time), Core.Config.Core._HlsWaitingTime, $""), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_hls_waiting_time), Core.Config.Core_RunConfig._HlsWaitingTime, $""), "application/json");
         }
     }
 
@@ -239,7 +239,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "set_automatic_repair")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] bool automatic_repair)
         {
-            Core.Config.Core._AutomaticRepair = automatic_repair;
+            Core.Config.Core_RunConfig._AutomaticRepair = automatic_repair;
             return Content(MessageBase.MssagePack(nameof(set_automatic_repair), "", $"将自动修复设置为{automatic_repair}"), "application/json");
         }
     }
@@ -259,7 +259,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_automatic_repair")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_automatic_repair), Core.Config.Core._AutomaticRepair, $""), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_automatic_repair), Core.Config.Core_RunConfig._AutomaticRepair, $""), "application/json");
         }
     }
 
@@ -297,7 +297,7 @@ namespace Server.WebAppServices.Api
                 {
                     Thread.Sleep(3000);
                     //删除user文件
-                    string[] files = Directory.GetFiles(Core.Config.Core._ConfigDirectory, $"*{Core.Config.Core._UserInfoCoinfFileExtension}");
+                    string[] files = Directory.GetFiles(Core.Config.Core_RunConfig._ConfigDirectory, $"*{Core.Config.Core_RunConfig._UserInfoCoinfFileExtension}");
                     foreach (string file in files)
                     {
                         if (System.IO.File.Exists(file))
@@ -306,17 +306,17 @@ namespace Server.WebAppServices.Api
                         }
                     }
                     //删除房间配置文件
-                    if (System.IO.File.Exists(Core.Config.Core._RoomConfigFile))
+                    if (System.IO.File.Exists(Core.Config.Core_RunConfig._RoomConfigFile))
                     {
-                        System.IO.File.Delete(Core.Config.Core._RoomConfigFile);
+                        System.IO.File.Delete(Core.Config.Core_RunConfig._RoomConfigFile);
                     }
                     //删除配置文件
-                    if (System.IO.File.Exists(Core.Config.Core._ConfigurationFile))
+                    if (System.IO.File.Exists(Core.Config.Core_RunConfig._ConfigurationFile))
                     {
-                        System.IO.File.Delete(Core.Config.Core._ConfigurationFile);
+                        System.IO.File.Delete(Core.Config.Core_RunConfig._ConfigurationFile);
                     }
 
-                    while (System.IO.File.Exists(Core.Config.Core._RoomConfigFile) || System.IO.File.Exists(Core.Config.Core._ConfigurationFile))
+                    while (System.IO.File.Exists(Core.Config.Core_RunConfig._RoomConfigFile) || System.IO.File.Exists(Core.Config.Core_RunConfig._ConfigurationFile))
                     {
                         Thread.Sleep(10);
                     }

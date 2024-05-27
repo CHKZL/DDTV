@@ -31,9 +31,9 @@ namespace Server.WebAppServices.Api
             int waitTime = 0;
             while (waitTime <= 3000)
             {
-                if (System.IO.File.Exists(Core.Config.Core._QrFileNmae))
+                if (System.IO.File.Exists(Core.Config.Core_RunConfig._QrFileNmae))
                 {
-                    FileInfo fi = new FileInfo(Core.Config.Core._QrFileNmae);
+                    FileInfo fi = new FileInfo(Core.Config.Core_RunConfig._QrFileNmae);
                     using (FileStream fs = fi.OpenRead())
                     {
                         byte[] buffer = new byte[fi.Length];
@@ -68,9 +68,9 @@ namespace Server.WebAppServices.Api
             int waitTime = 0;
             while (waitTime <= 3000)
             {
-                if (System.IO.File.Exists(Core.Config.Core._QrUrl))
+                if (System.IO.File.Exists(Core.Config.Core_RunConfig._QrUrl))
                 {
-                    FileInfo fi = new FileInfo(Core.Config.Core._QrUrl);
+                    FileInfo fi = new FileInfo(Core.Config.Core_RunConfig._QrUrl);
                     using (FileStream fs = fi.OpenRead())
                     {
                         return Content(MessageBase.MssagePack(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串"), "application/json");
@@ -104,14 +104,14 @@ namespace Server.WebAppServices.Api
              string Message = "用户已同意使用须知";
             if (check == "y")
             {
-                Core.Config.Core._UseAgree = true;   
+                Core.Config.Core_RunConfig._UseAgree = true;   
                 OperationQueue.Add(Opcode.Account.UserConsentAgreement, Message);
                 Log.Info(nameof(use_agree), Message);
                 return Content(MessageBase.MssagePack(nameof(use_agree), true, Message), "application/json");
             }
             else
             {
-                Core.Config.Core._UseAgree = false;
+                Core.Config.Core_RunConfig._UseAgree = false;
                 Message = "用户未同意使用须知";
                 OperationQueue.Add(Opcode.Account.UserDoesNotAgreeToAgreement, Message);
                 Log.Info(nameof(use_agree), Message);
@@ -151,7 +151,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "use_agree_state")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(use_agree_state), Core.Config.Core._UseAgree, $"获取用户初始化授权状态"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(use_agree_state), Core.Config.Core_RunConfig._UseAgree, $"获取用户初始化授权状态"), "application/json");
         }
     }
     [Produces(MediaTypeNames.Application.Json)]

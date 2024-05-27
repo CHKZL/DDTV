@@ -52,7 +52,7 @@ namespace Core.LiveChat
             RoomId = roomId;
             Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
-            File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(RoomInfo.GetUid(roomId), Core.Config.Core._DefaultFilePathNameFormat)}";
+            File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(RoomInfo.GetUid(roomId), Core.Config.Core_RunConfig._DefaultFilePathNameFormat)}";
           
         }
 
@@ -138,7 +138,7 @@ namespace Core.LiveChat
 
         private DanMuWssInfo GetWssInfo()
         {
-            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id=" + RoomId, true);
             DanMuWssInfo roomInfo = new();
             try
             {
