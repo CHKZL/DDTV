@@ -90,7 +90,7 @@ namespace Server.WebAppServices.Api
                     Memory = GetMemInfo.GetWindows(),
                     Platform = "Windows"
                 };
-                string DriveLetter = Path.GetFullPath(Core.Config.Core._RecFileDirectory)[..1];
+                string DriveLetter = Path.GetFullPath(Core.Config.Core_RunConfig._RecFileDirectory)[..1];
                 systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
             }
             return Content(MessageBase.MssagePack(nameof(get_system_resources), systemResourceClass, "SystemResource"), "application/json");

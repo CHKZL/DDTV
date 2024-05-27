@@ -123,7 +123,7 @@ namespace Core.Tools
                 {
                     Name = directoryInfo.Name,
                     Type = "folder",
-                    RelativePath = Config.Web._RecordingStorageDirectory + "/" + directoryInfo.FullName.Replace(rootPath, "").Replace("\\", "/"),
+                    RelativePath = Config.Core_RunConfig._RecordingStorageDirectory + "/" + directoryInfo.FullName.Replace(rootPath, "").Replace("\\", "/"),
                 };
 
                 foreach (var file in directoryInfo.GetFiles())
@@ -133,7 +133,7 @@ namespace Core.Tools
                         Name = file.Name,
                         Type = "file",
                         Size = file.Length,
-                        RelativePath = Config.Web._RecordingStorageDirectory + "/" + file.FullName.Replace(rootPath, "").Replace("\\", "/"),
+                        RelativePath = Config.Core_RunConfig._RecordingStorageDirectory + "/" + file.FullName.Replace(rootPath, "").Replace("\\", "/"),
                         Extension = file.Extension
                     });
                 }

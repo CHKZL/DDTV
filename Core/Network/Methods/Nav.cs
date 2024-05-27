@@ -33,7 +33,7 @@ namespace Core.Network.Methods
                 string WebText = "";
                 try
                 {
-                    WebText = Get.GetBody($"{Config.Core._MainDomainName}/x/web-interface/nav", true);
+                    WebText = Get.GetBody($"{Config.Core_RunConfig._MainDomainName}/x/web-interface/nav", true);
                     Nav_Class? Nav_Class = System.Text.Json.JsonSerializer.Deserialize<Nav_Class>(WebText);
                     RuntimeObject.Account.nav_info = Nav_Class.data;
                     return Nav_Class;

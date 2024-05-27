@@ -27,7 +27,7 @@ namespace Core.RuntimeObject.Download
                 InitializeDownload(card,RoomCardClass.TaskType.FLV_AVC);
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
-                File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.flv";
+                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core_RunConfig._DefaultFilePathNameFormat)}_original.flv";
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
@@ -49,7 +49,7 @@ namespace Core.RuntimeObject.Download
                     KeepAlive = true, // 默认值为false
                     ProtocolVersion = HttpVersion.Version11, // 默认值为HTTP 1.1
                     Referer="https://www.bilibili.com/",
-                    UserAgent = Config.Core._HTTP_UA,
+                    UserAgent = Config.Core_RunConfig._HTTP_UA,
                     //Proxy = new WebProxy()
                     //{
                     //    Address = new Uri("http://YourProxyServer/proxy.pac"),
@@ -76,7 +76,7 @@ namespace Core.RuntimeObject.Download
                 HostClass hostClass = GetFlvHost_avc(card);
                 string DlwnloadURL = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
                 //把当前写入文件写入记录
-                string F_S = Config.Web._RecordingStorageDirectory + "/" + File.Replace(Config.Core._RecFileDirectory, "").Replace("\\", "/");
+                string F_S = Config.Core_RunConfig._RecordingStorageDirectory + "/" + File.Replace(Config.Core_RunConfig._RecFileDirectory, "").Replace("\\", "/");
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
                 //下载提示
                 LogDownloadStart(card, "FLV");

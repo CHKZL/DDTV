@@ -28,7 +28,7 @@ namespace Server.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters)
         {
             DirectoryNode Structure = new();
-            if(Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(Config.Core._RecFileDirectory, out Structure))
+            if(Core.RuntimeObject.RecordingFiles.GetDirectoryStructure(Config.Core_RunConfig._RecFileDirectory, out Structure))
             {
                 return Content(MessageBase.MssagePack(nameof(get_file_structure), Structure, $"获取录制文件路径下的文件结构成功"), "application/json");
             }

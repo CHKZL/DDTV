@@ -48,9 +48,9 @@ namespace Server
 
                 if(PortInspect())
                 {
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Web._Port}]被占用，请检查端口或更换端口！！！");
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
+                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                     return;
                 }
 
@@ -100,19 +100,19 @@ namespace Server
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
-                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Web._WebUiDirectory))),
+                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._WebUiDirectory))),
                     RequestPath = ""
                 });
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     //将录制路径映射为一个虚拟路径的静态文件服务，让web去读取用于播放和下载
-                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core._RecFileDirectory))),
-                    RequestPath = Config.Web._RecordingStorageDirectory
+                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._RecFileDirectory))),
+                    RequestPath = Config.Core_RunConfig._RecordingStorageDirectory
                 });
-                string rurl = $"{Config.Web._IP}:{Config.Web._Port}";
+                string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                 app.Urls.Add(rurl);
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Web._Port} ]");
+                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Core_RunConfig._Port} ]");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
@@ -151,7 +151,7 @@ namespace Server
             TcpConnectionInformation[] tcpConnInfoArray = ipProperties.GetActiveTcpConnections();
             foreach (var item in tcpConnInfoArray)
             {
-                if(item.LocalEndPoint.Port==Core.Config.Web._Port)
+                if(item.LocalEndPoint.Port==Core.Config.Core_RunConfig._Port)
                 {
                     return true;
                 }
@@ -183,7 +183,7 @@ namespace Server
                     {
                         Core.Init.Start(_args);//初始化必须执行的
                         //_ParentProcessDetection();
-                        if(_args.Contains("Desktop") && Config.Desktop._DesktopRemoteServer)
+                        if(_args.Contains("Desktop") && Config.Core_RunConfig._DesktopRemoteServer)
                         {
                             return;
                         }
@@ -200,7 +200,7 @@ namespace Server
 
                                 _UseAgree();
 
-                                while (!Core.Config.Core._UseAgree)
+                                while (!Core.Config.Core_RunConfig._UseAgree)
                                 {
                                     Thread.Sleep(500);
                                 }
@@ -325,7 +325,7 @@ namespace Server
                     ConsoleKeyInfo keyInfo = Console.ReadKey();
                     if (keyInfo.Key != ConsoleKey.Y)
                     {
-                        if (!Core.Config.Core._UseAgree)
+                        if (!Core.Config.Core_RunConfig._UseAgree)
                         {
                             // 用户按了其他键，退出程序
                             Console.WriteLine("\n哔哩哔哩 (゜-゜)つロ 干杯~");
@@ -336,9 +336,9 @@ namespace Server
                             return;
                         }
                     }
-                    else if (keyInfo.Key == ConsoleKey.Y && !Core.Config.Core._UseAgree)
+                    else if (keyInfo.Key == ConsoleKey.Y && !Core.Config.Core_RunConfig._UseAgree)
                     {
-                        Core.Config.Core._UseAgree = true;
+                        Core.Config.Core_RunConfig._UseAgree = true;
                         return;
                     }
                     else

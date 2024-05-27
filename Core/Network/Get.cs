@@ -38,7 +38,7 @@ namespace Core.Network
                 req.ServicePoint.Expect100Continue = false;
                 req.Method = "GET";
                 req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
-                req.UserAgent = Config.Core._HTTP_UA;
+                req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;

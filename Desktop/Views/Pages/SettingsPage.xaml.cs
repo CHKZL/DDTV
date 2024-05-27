@@ -26,7 +26,8 @@ namespace Desktop.Views.Pages;
 /// </summary>
 public partial class SettingsPage
 {
-    public static Core.Config.DesktopClass configViewModel { get; set; } = new();
+    public static Config.RunConfig configViewModel { get; set; } = new();
+
     private IContentDialogService _contentDialogService = new ContentDialogService();
     public SettingsPage()
     {
@@ -42,7 +43,7 @@ public partial class SettingsPage
     /// <param name="e"></param>
     private void OpenRecordingFolderInExplorer_Click(object sender, RoutedEventArgs e)
     {
-        Process.Start("explorer.exe", Path.GetFullPath(Config.Core._RecFileDirectory));
+        Process.Start("explorer.exe", Path.GetFullPath(Config.Core_RunConfig._RecFileDirectory));
     }
 
     private async void Config_Save_Button_Click(object sender, RoutedEventArgs e)
@@ -50,8 +51,10 @@ public partial class SettingsPage
         SaveDesktopRemoteServer();
     }
 
+
+
     #region SaveOperation
-    public bool CheckConfiguration(ref bool Reboot)
+    public bool CheckDesktopRemoteServer(ref bool Reboot)
     {
         #region 远程连接相关设置检查
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
@@ -72,12 +75,39 @@ public partial class SettingsPage
         }
         #endregion
 
+        #region 文件路径相关设置检查
+        if (string.IsNullOrEmpty(RecPathInputBox.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return false;
+        }
+        try
+        {
+            string RecPath = RecPathInputBox.Text;
+            // 尝试获取完整路径，如果路径无效，将抛出异常
+            string fullPath = Path.GetFullPath(RecPath);
+            // 检查路径中是否包含无效字符
+            bool containsInvalidChars = RecPath.IndexOfAny(Path.GetInvalidPathChars()) >= 0;
+            if (containsInvalidChars)
+            {
+                MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+                return false;
+            }
+        }
+        catch (Exception)
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return false;
+        }
+        #endregion
+
         #region 需要重启的关键参数修改检查
-        Reboot = Config.Desktop._DesktopRemoteServer != (bool)DesktopRemoteServer_SwitchControl.IsChecked
-            || Config.Desktop._DesktopIP != DesktopIP_InputControl.Text
-            || Config.Desktop._DesktopPort != int.Parse(DesktopPort_InputControl.Text)
-            || Config.Desktop._DesktopAccessKeyId != DesktopAccessKeyId_InputControl.Text
-            || Config.Desktop._DesktopAccessKeySecret != DesktopAccessKeySecret_InputControl.Text;
+        Reboot = Config.Core_RunConfig._DesktopRemoteServer != (bool)DesktopRemoteServer_SwitchControl.IsChecked
+            || Config.Core_RunConfig._DesktopIP != DesktopIP_InputControl.Text
+            || Config.Core_RunConfig._DesktopPort != int.Parse(DesktopPort_InputControl.Text)
+            || Config.Core_RunConfig._DesktopAccessKeyId != DesktopAccessKeyId_InputControl.Text
+            || Config.Core_RunConfig._DesktopAccessKeySecret != DesktopAccessKeySecret_InputControl.Text
+            || Config.Core_RunConfig._RecFileDirectory != RecPathInputBox.Text;
         #endregion
 
 
@@ -86,7 +116,7 @@ public partial class SettingsPage
     public async void SaveDesktopRemoteServer()
     {
         bool IsReboot = false;
-        if (!CheckConfiguration(ref IsReboot))
+        if (!CheckDesktopRemoteServer(ref IsReboot))
         {
             return;
         }
@@ -108,14 +138,22 @@ public partial class SettingsPage
                 return;
             }
         }
-        Config.Desktop._DesktopRemoteServer = (bool)DesktopRemoteServer_SwitchControl.IsChecked;
+
+        #region 保存远程连接相关设置 
+        Config.Core_RunConfig._DesktopRemoteServer = (bool)DesktopRemoteServer_SwitchControl.IsChecked;
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
         {
-            Config.Desktop._DesktopIP = DesktopIP_InputControl.Text;
-            Config.Desktop._DesktopPort = int.Parse(DesktopPort_InputControl.Text);
-            Config.Desktop._DesktopAccessKeyId = DesktopAccessKeyId_InputControl.Text;
-            Config.Desktop._DesktopAccessKeySecret = DesktopAccessKeySecret_InputControl.Text;
+            Config.Core_RunConfig._DesktopIP = DesktopIP_InputControl.Text;
+            Config.Core_RunConfig._DesktopPort = int.Parse(DesktopPort_InputControl.Text);
+            Config.Core_RunConfig._DesktopAccessKeyId = DesktopAccessKeyId_InputControl.Text;
+            Config.Core_RunConfig._DesktopAccessKeySecret = DesktopAccessKeySecret_InputControl.Text;
         }
+        #endregion
+
+        #region 保存录制路径相关设置
+        Config.Core_RunConfig._RecFileDirectory = RecPathInputBox.Text;
+        #endregion
+
         if (IsReboot)
         {
             MainWindow.SnackbarService.Show("保存成功", "多项配置需要重启后生效，5秒后自动重启DDTV", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.SaveSync20), TimeSpan.FromSeconds(30));

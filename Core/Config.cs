@@ -18,6 +18,7 @@ namespace Core
         #region Private Properties
 
         private static Dictionary<string, FieldInfo> varMap = new Dictionary<string, FieldInfo>();
+
         /// <summary>
         /// 构造函数，将这个类下的private参数给生成字典用于配置文件的读写
         /// </summary>
@@ -25,10 +26,7 @@ namespace Core
         {
 
             var _Config = new List<FieldInfo>();
-            _Config.AddRange(typeof(Config.CoreClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
-            _Config.AddRange(typeof(Config.DownloadClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
-            _Config.AddRange(typeof(Config.WebClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
-            _Config.AddRange(typeof(Config.DesktopClass).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
+            _Config.AddRange(typeof(Config.RunConfig).GetFields(BindingFlags.NonPublic | BindingFlags.Static).Where(field => !field.IsAssembly));
 
             lock (varMap)
                 foreach (var fieldInfo in _Config)
@@ -92,13 +90,7 @@ namespace Core
             { "RecordingMode", ExpandOption.SetRecordingMode },
         };
 
-        public static CoreClass Core { get; set; } = new();
-
-        public static DownloadClass Download { get; set; } = new();
-
-        public static WebClass Web { get; set; } = new();
-
-        public static DesktopClass Desktop { get; set; } = new();
+        public static RunConfig Core_RunConfig { get; set; } = new();
 
         public enum Mode
         {
@@ -145,13 +137,13 @@ namespace Core
                 switch (value.ToLower())
                 {
                     case "auto":
-                        Download._RecordingMode = RecordingMode.Auto;
+                        Core_RunConfig._RecordingMode = RecordingMode.Auto;
                         break;
                     case "flv_only":
-                        Download._RecordingMode = RecordingMode.FLV_Only;
+                        Core_RunConfig._RecordingMode = RecordingMode.FLV_Only;
                         break;
                     case "hls_only":
-                        Download._RecordingMode = RecordingMode.HLS_Only;
+                        Core_RunConfig._RecordingMode = RecordingMode.HLS_Only;
                         break;
                 }
             }
@@ -166,7 +158,7 @@ namespace Core
         {
             lock (_ConfigurationLock)
             {
-                string[] A = File.Exists(Core._ConfigurationFile) ? File.ReadAllLines(Core._ConfigurationFile) : [];
+                string[] A = File.Exists(Core_RunConfig._ConfigurationFile) ? File.ReadAllLines(Core_RunConfig._ConfigurationFile) : [];
                 lock (varMap)
                 {
                     foreach (var item in A)
@@ -202,10 +194,10 @@ namespace Core
                         newConfig.AppendLine($"{item.Key}={item.Value.GetValue(null)}");
                     }
                 }
-                string existingConfig = File.Exists(Core._ConfigurationFile) ? File.ReadAllText(Core._ConfigurationFile) : string.Empty;
+                string existingConfig = File.Exists(Core_RunConfig._ConfigurationFile) ? File.ReadAllText(Core_RunConfig._ConfigurationFile) : string.Empty;
                 if (existingConfig != newConfig.ToString())
                 {
-                    using (StreamWriter file = new StreamWriter(Core._ConfigurationFile))
+                    using (StreamWriter file = new StreamWriter(Core_RunConfig._ConfigurationFile))
                     {
                         file.Write(newConfig.ToString());
                     }
@@ -234,17 +226,17 @@ namespace Core
                 lock (_RoomConfigurationLock)
                 {
                     (int Total, int Success, int Fail) Count = new(0, 0, 0);
-                    if (!Directory.Exists(Config.Core._ConfigDirectory))
+                    if (!Directory.Exists(Config.Core_RunConfig._ConfigDirectory))
                     {
-                        Directory.CreateDirectory(Config.Core._ConfigDirectory);
+                        Directory.CreateDirectory(Config.Core_RunConfig._ConfigDirectory);
                     }
-                    if (!File.Exists($"{Core._RoomConfigFile}"))
+                    if (!File.Exists($"{Core_RunConfig._RoomConfigFile}"))
                     {
-                        File.WriteAllText($"{Core._RoomConfigFile}", "{}");
+                        File.WriteAllText($"{Core_RunConfig._RoomConfigFile}", "{}");
                     }
                     else
                     {
-                        string TEXT = File.ReadAllText($@"{Core._RoomConfigFile}");
+                        string TEXT = File.ReadAllText($@"{Core_RunConfig._RoomConfigFile}");
                         RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
                         if (roomListDiscard != null)
                         {
@@ -275,7 +267,7 @@ namespace Core
                         }
                         else
                         {
-                            File.WriteAllText($"{Core._RoomConfigFile}", "{}");
+                            File.WriteAllText($"{Core_RunConfig._RoomConfigFile}", "{}");
                         }
                     }
                     string msg = $"加载房间列表，一共{Count.Total}个/成功{Count.Success}个/失败{Count.Fail}个";
@@ -302,7 +294,7 @@ namespace Core
                     // 支持基本拉丁语和中文字符
                     string jsonString = JsonSerializer.Serialize(roomListDiscard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
 
-                    string filePath = $"{Core._RoomConfigFile}";
+                    string filePath = $"{Core_RunConfig._RoomConfigFile}";
                     if (File.Exists(filePath))
                     {
                         string existingContent = File.ReadAllText(filePath, Encoding.UTF8);
@@ -335,7 +327,7 @@ namespace Core
 
         }
 
-        public class CoreClass : INotifyPropertyChanged
+        public class RunConfig : INotifyPropertyChanged
         {
             public event PropertyChangedEventHandler PropertyChanged;
             protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
@@ -463,25 +455,6 @@ namespace Core
 
             }
 
-            //private static string LoginStatus = "false";
-            ///// <summary>
-            ///// 配置文件登陆状态缓存
-            ///// 默认值：false
-            ///// </summary>
-            //public bool _LoginStatus
-            //{
-            //    get => bool.Parse(LoginStatus);
-            //    set
-            //    {
-            //        if (value.ToString() != LoginStatus)
-            //        {
-            //            LoginStatus = value.ToString();
-            //            string msg = $"修改配置:[{MethodBase.GetCurrentMethod().Name}]-[{value}]";
-            //            OperationQueue.Add(Opcode.Code.ModifyConfiguration, msg);
-            //            Log.Info(nameof(Config), msg);
-            //        }
-            //    }
-            //}
 
             internal static string RoomConfigFile = "RoomListConfig.json";
             /// <summary>
@@ -688,15 +661,6 @@ namespace Core
                     }
                 }
             }
-        }
-
-        public class DownloadClass : INotifyPropertyChanged
-        {
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
 
             internal static string RecordingMode = "1";
             /// <summary>
@@ -768,15 +732,7 @@ namespace Core
                     }
                 }
             }
-        }
-
-        public class WebClass : INotifyPropertyChanged
-        {
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
+        
 
             private static string Port = "11419";
             /// <summary>
@@ -913,15 +869,7 @@ namespace Core
                     }
                 }
             }
-        }
-
-        public class DesktopClass : INotifyPropertyChanged
-        {
-            public event PropertyChangedEventHandler PropertyChanged;
-            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
+        
 
             private static string DesktopRemoteServer = "false";
             /// <summary>
@@ -956,7 +904,7 @@ namespace Core
                     if (_DesktopRemoteServer)
                         return int.Parse(DesktopPort);
                     else
-                        return Web._Port;
+                        return Core_RunConfig._Port;
                 }
                 set
                 {
@@ -981,7 +929,7 @@ namespace Core
                     if (_DesktopRemoteServer)
                         return DesktopIP;
                     else
-                        return Web._IP;
+                        return Core_RunConfig._IP;
                 }
                 set
                 {
@@ -1006,7 +954,7 @@ namespace Core
                     if (_DesktopRemoteServer)
                         return DesktopAccessKeyId;
                     else
-                        return Web._AccessKeyId;
+                        return Core_RunConfig._AccessKeyId;
                 }
                 set
                 {
@@ -1031,7 +979,7 @@ namespace Core
                     if (_DesktopRemoteServer)
                         return DesktopAccessKeySecret;
                     else
-                        return Web._AccessKeySecret;
+                        return Core_RunConfig._AccessKeySecret;
                 }
                 set
                 {

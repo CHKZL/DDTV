@@ -47,7 +47,7 @@ namespace Core.RuntimeObject.Download
             }
 
             (DlwnloadTaskState hlsState, string FileName) result = new();
-            switch (Config.Download._RecordingMode)
+            switch (Config.Core_RunConfig._RecordingMode)
             {
                 case RecordingMode.HLS_Only:
                     result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
@@ -93,7 +93,7 @@ namespace Core.RuntimeObject.Download
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
             }
-            if ((result.hlsState == DlwnloadTaskState.Success || result.hlsState == DlwnloadTaskState.Cut) && Config.Core._AutomaticRepair)
+            if ((result.hlsState == DlwnloadTaskState.Success || result.hlsState == DlwnloadTaskState.Cut) && Config.Core_RunConfig._AutomaticRepair)
             {
                 Tools.Transcode transcode = new Tools.Transcode();
                 try

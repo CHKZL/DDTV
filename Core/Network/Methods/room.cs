@@ -55,7 +55,7 @@ namespace Core.Network.Methods
 
         private static PlayInfo_Class _PlayInfo(long RoomId)
         {
-            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Download._DefaultResolution}&platform=web&ptype=8", true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Core_RunConfig._DefaultResolution}&platform=web&ptype=8", true);
             PlayInfo_Class hLSHostClass = new();
             try
             {
@@ -81,7 +81,7 @@ namespace Core.Network.Methods
                 return null;
             }
             string LT = "{\"uids\":[" + string.Join(",", UIDList.Where(uid => uid != 0)) + "]}";
-            string WebText = Post.PostBody($"{Config.Core._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
+            string WebText = Post.PostBody($"{Config.Core_RunConfig._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
             UidsInfo_Class UserInfo_Class = new();
             try
             {
@@ -97,7 +97,7 @@ namespace Core.Network.Methods
 
         private static RoomInfo_Class room_init(long RoomId)
         {
-            string WebText = Get.GetBody($"{Config.Core._LiveDomainName}/room/v1/Room/room_init?id=" + RoomId, true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/room/v1/Room/room_init?id=" + RoomId, true);
             RoomInfo_Class roomInfo = new();
             try
             {

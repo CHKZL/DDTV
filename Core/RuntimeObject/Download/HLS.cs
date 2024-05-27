@@ -27,7 +27,7 @@ namespace Core.RuntimeObject.Download
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
-                File = $"{Config.Core._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core._DefaultFilePathNameFormat)}_original.mp4";
+                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core_RunConfig._DefaultFilePathNameFormat)}_original.mp4";
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 
@@ -40,7 +40,7 @@ namespace Core.RuntimeObject.Download
                         hlsState = HandleHlsError(card, hostClass);
                         if (First && hlsState == DlwnloadTaskState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
                         {
-                            Thread.Sleep(Config.Core._HlsWaitingTime * 1000);
+                            Thread.Sleep(Config.Core_RunConfig._HlsWaitingTime * 1000);
                         }
                         hlsState = HandleHlsError(card, hostClass);
                         switch (hlsState)
@@ -138,7 +138,7 @@ namespace Core.RuntimeObject.Download
                                 if (InitialRequest)
                                 {
                                     //把当前写入文件写入记录
-                                    string F_S = Config.Web._RecordingStorageDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core._RecFileDirectory).FullName, "").Replace("\\", "/");
+                                    string F_S = Config.Core_RunConfig._RecordingStorageDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
                                     card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
                                     Log.Debug("test",card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
                                      //正式开始下载提示

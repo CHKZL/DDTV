@@ -79,9 +79,9 @@
                                     <ui:NumberBox Name="DesktopPort_InputControl" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="11419" Minimum="1" Maximum="65535" Text="{Binding _DesktopPort, Mode=OneWay}"/>
 
                                     <Label Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" Content="远程服务器AccessKeyId" />
-                                    <ui:TextBox Name="DesktopAccessKeyId_InputControl" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" PlaceholderText="ddtv" Text="{Binding _DesktopAccessKeyId, Mode=OneWay}"/>
+                                    <ui:TextBox Name="DesktopAccessKeyId_InputControl" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" Text="{Binding _DesktopAccessKeyId, Mode=OneWay}"/>
                                     <Label Grid.Row="2" Grid.Column="1" Margin="10,10,0,0" Content="远程服务器AccessKeySecret" />
-                                    <ui:TextBox Name="DesktopAccessKeySecret_InputControl" Grid.Row="3" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="ddtv" Text="{Binding _DesktopAccessKeySecret, Mode=OneWay}"/>
+                                    <ui:TextBox Name="DesktopAccessKeySecret_InputControl" Grid.Row="3" Grid.Column="1" Margin="10,0,0,0" Text="{Binding _DesktopAccessKeySecret, Mode=OneWay}"/>
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>
@@ -107,52 +107,11 @@
                         <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
                             <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
                         </ui:CardControl>
+                        <Label  Margin="10,10,0,0" Content="录制文件保存路径" />
+                        <ui:TextBox Name="RecPathInputBox" Margin="10,0,0,0"  Text="{Binding _RecFileDirectory, Mode=OneWay}"/>
                     </StackPanel>
+                    
                 </ui:CardExpander>
-
-
-
-                <!--<ui:CardExpander Grid.Row="2" Icon="{ui:SymbolIcon PlaySettings20}">
-                    <ui:CardExpander.Header>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放器设置(开发中)" />
-                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="直接打开新窗口观看直播，该功能会唤起新的窗口和进程，如果只是为了录制，请勿开启。" />
-                            <ui:ToggleSwitch Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
-                        </Grid>
-                    </ui:CardExpander.Header>
-                    <StackPanel Margin="24,0.5,24,0">
-                        <ui:CardControl Padding="20,10,20,10" Header="双击打开播放器">
-                            <ui:ToggleSwitch HorizontalContentAlignment="Left" IsEnabled="True" OffContent="关" OnContent="开" />
-                        </ui:CardControl>
-                        <ui:CardControl Margin="0,0.5,0,0" Padding="20,10,20,10" Icon="{ui:SymbolIcon FlashSettings24}">
-                            <ui:CardControl.Header>
-                                <StackPanel>
-                                    <ui:TextBlock Margin="0" FontTypography="BodyStrong" Foreground="{DynamicResource TextFillColorPrimaryBrush}" Text="选择功能" TextWrapping="WrapWithOverflow" />
-                                    <ui:TextBlock Appearance="Secondary" Foreground="{DynamicResource TextFillColorSecondaryBrush}" Text="This is a description text." TextWrapping="WrapWithOverflow" />
-                                </StackPanel>
-                            </ui:CardControl.Header>
-                            <ui:DropDownButton Content="Hello" Icon="{ui:SymbolIcon Fluent24}">
-                                <ui:DropDownButton.Flyout>
-                                    <ContextMenu>
-                                        <MenuItem Header="Add" />
-                                        <MenuItem Header="Remove" />
-                                        <MenuItem Header="Send" />
-                                        <MenuItem Header="Hello" />
-                                    </ContextMenu>
-                                </ui:DropDownButton.Flyout>
-                            </ui:DropDownButton>
-
-                        </ui:CardControl>
-                    </StackPanel>
-                </ui:CardExpander>-->
             </Grid>
             <TextBlock Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="DDTV5 - Desktop   开发中...." />
         </StackPanel>

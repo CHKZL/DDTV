@@ -28,8 +28,8 @@ namespace Desktop.NetWork
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>
                 {
-                    { "access_key_id", Core.Config.Desktop._DesktopAccessKeyId },
-                    { "access_key_secret", Core.Config.Desktop._DesktopAccessKeySecret },
+                    { "access_key_id", Core.Config.Core_RunConfig._DesktopAccessKeyId },
+                    { "access_key_secret", Core.Config.Core_RunConfig._DesktopAccessKeySecret },
                     { "time", DateTimeOffset.Now.ToUnixTimeSeconds().ToString()}
                 };
                 if (_dic != null)
