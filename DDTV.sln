@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TESTP", "TESTP\TESTP.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PushUpdate", "PushUpdate\PushUpdate.csproj", "{B6815AFB-6541-463D-8A33-70E8EB7F19F9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Update", "Update\Update.csproj", "{928C4353-5FA1-4B77-BB3A-657633E1539A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Update", "Update\Update.csproj", "{928C4353-5FA1-4B77-BB3A-657633E1539A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
