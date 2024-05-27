@@ -182,7 +182,7 @@ namespace Core.LogModule
 #if DEBUG
                         if (true)
 #else
-                        if (logClass.Type <= LogLevel && logClass.Type != LogClass.LogType.Info_Transcod && logClass.IsDisplay && ( Config.Core._DebugMode || logClass.Type< LogType.Debug))
+                        if (logClass.Type <= LogLevel && logClass.Type != LogClass.LogType.Info_Transcod && logClass.IsDisplay && ( Config.Core_RunConfig._DebugMode || logClass.Type< LogType.Debug))
 #endif
                         {
                             //LogList.Add(logClass);
