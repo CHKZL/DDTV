@@ -59,7 +59,7 @@ namespace Client
                 while (true)
                 {
                     Thread.Sleep(1000);
-                    string A = Core.Network.Get.GetBody($"http://127.0.0.1:{Config.Web._Port}/api/init_inspect", false);
+                    string A = Core.Network.Get.GetBody($"http://127.0.0.1:{Config.Core_RunConfig._Port}/api/init_inspect", false);
                     OperationQueue.pack<string>? OJ = JsonSerializer.Deserialize<OperationQueue.pack<string>>(A);
                     if (OJ != null && OJ.message.ToLower() == "ok")
                     {
@@ -68,7 +68,7 @@ namespace Client
 
                             WV2.Visibility = Visibility.Visible;
                             starttest.Visibility = Visibility.Collapsed;
-                            this.WV2.Source = new Uri($"http://127.0.0.1:{Config.Web._Port}");
+                            this.WV2.Source = new Uri($"http://127.0.0.1:{Config.Core_RunConfig._Port}");
                         });
                         return;
                     }
