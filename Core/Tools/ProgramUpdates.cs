@@ -24,7 +24,12 @@ namespace Core.Tools
         private static string ver = string.Empty;
         public static string R_ver = string.Empty;
         public static bool Isdev = false;
+        public static event EventHandler<EventArgs> NewVersionAvailableEvent;//检测到新版本
 
+        public static async void RegularInspection(object state)
+        {
+            await CheckForNewVersions();
+        }
 
         internal static bool GetCurrentVersion()
         {
@@ -54,25 +59,30 @@ namespace Core.Tools
         /// </summary>
         /// <param name="AutoUpdate">是否唤起自动更新</param>
         /// <returns></returns>
-        public static bool CheckForNewVersions(bool AutoUpdate)
+        public static async Task<bool> CheckForNewVersions(bool AutoUpdate=false,bool Manual=false)
         {
-            if (!GetCurrentVersion())
+            return await Task.Run(() =>
             {
-                return false;
-            }
-            string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
-            string R_Ver = Get(DL_VerFileUrl).TrimEnd();
-            R_ver = R_Ver;
-            if (R_Ver != ver)
-            {
-                if (AutoUpdate)
-                    CallUpUpdateProgram();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                if (!GetCurrentVersion())
+                {
+                    return false;
+                }
+                string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
+                string R_Ver = Get(DL_VerFileUrl).TrimEnd();
+                R_ver = R_Ver;
+                if (R_Ver != ver)
+                {
+                    if (!Manual)
+                        NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
+                    if (AutoUpdate)
+                        CallUpUpdateProgram();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
         internal static void CallUpUpdateProgram()
         {

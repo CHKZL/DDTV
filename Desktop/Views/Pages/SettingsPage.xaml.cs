@@ -176,8 +176,8 @@ public partial class SettingsPage
 
     #endregion
 
-    private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+    private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
     {
-        Core.Tools.ProgramUpdates.CheckForNewVersions(true);
+        await Core.Tools.ProgramUpdates.CheckForNewVersions(true,true);
     }
 }
