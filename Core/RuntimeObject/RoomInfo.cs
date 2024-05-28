@@ -100,7 +100,7 @@ namespace Core.RuntimeObject
                     }
                     if (!IsAdd)
                     {
-                        string msg = $"修改房间的录制配置，房间UID:{UID}[{State}]";
+                        string msg = $"修改房间的录制配置，房间UID:{item}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomRecordingConfiguration, msg, roomCard.UID);
                         Log.Info(nameof(ModifyRecordingSettings), msg);
                     }
@@ -142,7 +142,7 @@ namespace Core.RuntimeObject
                     roomCard.IsRemind = State;
                     if (!IsAdd)
                     {
-                        string msg = $"修改房间提示设置，房间UID:{UID}[{State}]";
+                        string msg = $"修改房间提示设置，房间UID:{item}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomPromptConfiguration, msg, roomCard.UID);
                         if (UID.Count <= 10)
                         {
@@ -187,7 +187,7 @@ namespace Core.RuntimeObject
                     roomCard.IsRecDanmu = State;
                     if (!IsAdd)
                     {
-                        string msg = $"修改房间弹幕录制设置，房间UID:{UID}[{State}]";
+                        string msg = $"修改房间弹幕录制设置，房间UID:{item}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomBulletScreenConfiguration, msg, roomCard.UID);
                         if (UID.Count <= 10)
                         {
