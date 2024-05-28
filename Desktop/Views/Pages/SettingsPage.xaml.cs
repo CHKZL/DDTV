@@ -173,7 +173,11 @@ public partial class SettingsPage
             MainWindow.SnackbarService.Show("保存成功", "5秒后写入配置文件持久化保存", ControlAppearance.Success, new SymbolIcon(SymbolRegular.DocumentSave20), TimeSpan.FromSeconds(3));
         }
     }
+
     #endregion
 
-
+    private void CheckForUpdates_Click(object sender, RoutedEventArgs e)
+    {
+        Core.Tools.ProgramUpdates.CheckForNewVersions(true);
+    }
 }
