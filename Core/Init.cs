@@ -24,6 +24,7 @@ namespace Core
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
         public static bool IsDev = true;
+        private static Timer Update_Timer;
 
         public static void Start(string[] args)
         {
@@ -67,6 +68,7 @@ namespace Core
             Log.Info(nameof(Init), $"Core初始化完成");
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
             stopwatch.Start();
+            Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
         }
 
         /// <summary>

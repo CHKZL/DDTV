@@ -23,7 +23,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button Grid.Column="0" Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Left" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
-                <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Save20}" Click="CheckForUpdates_Click"/>
+                <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
             </Grid>
 
             <Grid>

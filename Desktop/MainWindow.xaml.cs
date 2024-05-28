@@ -28,6 +28,13 @@ namespace Desktop
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
+        /// <summary>
+        /// 本次不再提醒更新版本
+        /// </summary>
+        public static bool NoMoreRemindersForUpdates = false;
+
+
+
         //底部提示框
         public static ISnackbarService SnackbarService;
         public MainWindow()
@@ -68,7 +75,17 @@ namespace Desktop
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
             DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);
+            //版本更新检测
+            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
 
+        }
+
+        private void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+               {
+                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，请到设置页面点击更新按钮进行更新", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
+               });
         }
 
         /// <summary>

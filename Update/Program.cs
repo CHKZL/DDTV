@@ -17,7 +17,10 @@ namespace Update
         public static HttpClient _httpClient = new HttpClient();
         static void Main(string[] args)
         {
+            Console.WriteLine("开始更新DDTV");
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
+            Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
+            Console.WriteLine(Environment.CurrentDirectory);
             Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
             _httpClient.Timeout = new TimeSpan(0, 0, 8);
             if (checkVersion())
@@ -47,7 +50,7 @@ namespace Update
                     int i = 1;
                     foreach (var item in map)
                     {
-                        Console.WriteLine($"进度：{i}/{map.Count}  |  文件大小{item.Value.Size}字节，开始更新文件【{item.Value.Name}】");
+                        Console.Write($"进度：{i}/{map.Count}  |  文件大小{item.Value.Size}字节，开始更新文件【{item.Value.Name}】.......");
                         string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
                         if (!Directory.Exists(directoryPath))
                         {
@@ -58,10 +61,10 @@ namespace Update
                         {
                             dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
                         } while (!dl_ok);
-                        Console.WriteLine($"进度：{i}/{map.Count}  |  更新文件【{item.Value.Name}】成功");
+                        Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
                         i++;
                     }
-                    Console.WriteLine($"更新完成：更新DDTV到{type}-{R_ver}成功");
+                    Console.WriteLine($"更新完成：更新DDTV到{type}-{R_ver}成功，请手动启动DDTV");
                 }
                 else
                 {
@@ -97,14 +100,21 @@ namespace Update
             {
                 Isdev = true;
             }
-
+            Console.WriteLine($"当前本地版本{type}-{ver}[{(Isdev ? "dev" : "release")}]");
+            Console.WriteLine("开始获取最新版本号....");
             string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
             string R_Ver = Get(DL_VerFileUrl).TrimEnd();
+            Console.WriteLine($"获取到当前服务端版本:{R_Ver}");
             R_ver = R_Ver;
             if (R_Ver != ver)
+            {
+                Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
                 return true;
+            }
             else
+            {
                 return false;
+            }
         }
 
         public static string Get(string URL)
