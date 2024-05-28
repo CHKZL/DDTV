@@ -100,7 +100,7 @@ namespace Core.RuntimeObject
                     }
                     if (!IsAdd)
                     {
-                        string msg = $"修改房间的录制配置，房间UID:{UID}[{State}]";
+                        string msg = $"修改房间的录制配置，房间UID:{item}[{State}]";
                         OperationQueue.Add(Opcode.Room.ModifyRoomRecordingConfiguration, msg, roomCard.UID);
                         Log.Info(nameof(ModifyRecordingSettings), msg);
                     }
