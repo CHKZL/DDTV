@@ -69,7 +69,10 @@ namespace Core
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
             stopwatch.Start();
             Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
+            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
         }
+
+    
 
         /// <summary>
         /// 启动参数初始化
@@ -146,6 +149,20 @@ namespace Core
             if (!Directory.Exists(Config.Core_RunConfig._RecFileDirectory))
             {
                 Directory.CreateDirectory(Config.Core_RunConfig._RecFileDirectory);
+            }
+        }
+
+        private static void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
+        {
+            switch(Mode)
+            {
+                case Mode.Client:
+                    break;
+                case Mode.Desktop:
+                    break;
+                default:
+                    Log.Warn("ProgramUpdates",$"\r\n=====检测到新版本=====\r\n检测到DDTV新版本：【{sender}】，请关闭DDTV后，执行Update文件夹中的Update程序进行升级\r\n=====检测到新版本=====\r\n");
+                    break;
             }
         }
     }

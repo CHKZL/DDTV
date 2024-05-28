@@ -218,11 +218,17 @@ namespace Server
                         {
                             TerminalDisplay.SeKey();
                         }
-
+                        
                         Detect detect = new();//启动房间监听并且注册事件
 
                         doki();
+                        Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
                     });
+                }
+
+                private void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
+                {
+                    OperationQueue.Add(Opcode.Config.UpdateDetect, $"检测到DDTV新版本：【{sender}】");
                 }
 
                 public override Task StopAsync(CancellationToken stoppingToken)
