@@ -31,6 +31,10 @@ namespace Core.LogModule
             /// 修改配置
             /// </summary>
             ModifyConfiguration=10105,
+            /// <summary>
+            /// 检测到更新
+            /// </summary>
+            UpdateDetect=10106,
         }
         public enum Room
         {
