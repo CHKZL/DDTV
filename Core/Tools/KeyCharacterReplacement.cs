@@ -30,85 +30,44 @@ namespace Core.Tools
         /// </summary>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public static string ReplaceKeyword(long uid, string Text)
+        public static string ReplaceKeyword(string Text, DateTime dateTime = default,long uid=-1)
         {
-            _Room.GetCardList().TryGetValue(uid, out RoomCardClass roomInfo);
-
-
-            if (roomInfo.DownInfo.DownloadFileList.VideoFile.Count > 0)
+            RoomCardClass roomCardClass = new RoomCardClass();
+            if (uid != -1)
             {
-                string FileList = string.Empty;
-                foreach (var item in roomInfo.DownInfo.DownloadFileList.VideoFile)
-                {
-                    FileList += item + ";";
-                }
-                Text = Text.Replace("{VideoFiles}", FileList);
+                _Room.GetCardForUID(uid, ref roomCardClass);
             }
-
-            if (roomInfo.DownInfo.DownloadFileList.DanmuFile.Count > 0)
+            else
             {
-                string FileList = string.Empty;
-                foreach (var item in roomInfo.DownInfo.DownloadFileList.DanmuFile)
+                roomCardClass = new()
                 {
-                    FileList += item + ";";
-                }
-                Text = Text.Replace("{DanMuFile}", FileList);
-            }
-
-            if (roomInfo.DownInfo.DownloadFileList.SCFile.Count > 0)
-            {
-                string FileList = string.Empty;
-                foreach (var item in roomInfo.DownInfo.DownloadFileList.SCFile)
-                {
-                    FileList += item + ";";
-                }
-                Text = Text.Replace("{SCFile}", FileList);
-            }
-
-            if (roomInfo.DownInfo.DownloadFileList.GuardFile.Count > 0)
-            {
-                string FileList = string.Empty;
-                foreach (var item in roomInfo.DownInfo.DownloadFileList.GuardFile)
-                {
-                    FileList += item + ";";
-                }
-                Text = Text.Replace("{GuardFile}", FileList);
-            }
-
-            if (roomInfo.DownInfo.DownloadFileList.GiftFile.Count > 0)
-            {
-                string FileList = string.Empty;
-                foreach (var item in roomInfo.DownInfo.DownloadFileList.GiftFile)
-                {
-                    FileList += item + ";";
-                }
-                Text = Text.Replace("{GiftFile}", FileList);
+                    RoomId = 1473830,
+                    Name="AIChannel",
+                    Title = new() { Value = "【自我介绍】大家好！我叫绊(kizuna)爱(ai)" },
+                };
             }
             Text = Text
-                .Replace("{ROOMID}", RoomInfo.GetRoomId(uid).ToString())
-                .Replace("{YYYY}", DateTime.Now.ToString("yyyy"))
-                .Replace("{YY}", DateTime.Now.ToString("yy"))
-                .Replace("{MM}", DateTime.Now.ToString("MM"))
-                .Replace("{DD}", DateTime.Now.ToString("dd"))
-                .Replace("{HH}", DateTime.Now.ToString("HH"))
-                .Replace("{mm}", DateTime.Now.ToString("mm"))
-                .Replace("{SS}", DateTime.Now.ToString("ss"))
-                .Replace("{FFFF}", DateTime.Now.ToString("fff"))
-                .Replace("{yyyy}", DateTime.Now.ToString("yyyy"))
-                .Replace("{yy}", DateTime.Now.ToString("yy"))
-                .Replace("{MM}", DateTime.Now.ToString("MM"))
-                .Replace("{dd}", DateTime.Now.ToString("dd"))
-                .Replace("{HH}", DateTime.Now.ToString("HH"))
-                .Replace("{mm}", DateTime.Now.ToString("mm"))
-                .Replace("{ss}", DateTime.Now.ToString("ss"))
-                .Replace("{fff}", DateTime.Now.ToString("fff"))
-                .Replace("{NAME}", CheckFilenames(RoomInfo.GetNickname(uid)))
-                .Replace("{DATE}", DateTime.Now.ToString("yyyy_MM_dd"))
-                .Replace("{TIME}", DateTime.Now.ToString("HH_mm_ss"))
-                .Replace("{TITLE}", CheckFilenames(RoomInfo.GetTitle(uid)))
-                .Replace("{R}", GetRandomStr(string.Empty, 5))
-                .Replace("\\", "/");
-
+                .Replace("{ROOMID}", roomCardClass.RoomId.ToString())
+                .Replace("{YYYY}", dateTime.ToString("yyyy"))
+                .Replace("{YY}", dateTime.ToString("yy"))
+                .Replace("{MM}", dateTime.ToString("MM"))
+                .Replace("{DD}", dateTime.ToString("dd"))
+                .Replace("{HH}", dateTime.ToString("HH"))
+                .Replace("{mm}", dateTime.ToString("mm"))
+                .Replace("{SS}", dateTime.ToString("ss"))
+                .Replace("{FFF}", dateTime.ToString("fff"))
+                .Replace("{yyyy}", dateTime.ToString("yyyy"))
+                .Replace("{yy}", dateTime.ToString("yy"))
+                .Replace("{MM}", dateTime.ToString("MM"))
+                .Replace("{dd}", dateTime.ToString("dd"))
+                .Replace("{HH}", dateTime.ToString("HH"))
+                .Replace("{mm}", dateTime.ToString("mm"))
+                .Replace("{ss}", dateTime.ToString("ss"))
+                .Replace("{fff}", dateTime.ToString("fff"))
+                .Replace("{NAME}", roomCardClass.Name)
+                .Replace("{DATE}", dateTime.ToString("yyyy_MM_dd"))
+                .Replace("{TIME}", dateTime.ToString("HH_mm_ss"))
+                .Replace("{TITLE}", roomCardClass.Title.Value);
             return Text;
         }
 
