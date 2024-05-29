@@ -102,6 +102,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                                 <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -115,8 +116,64 @@
                         <ui:CardControl Padding="20,10,20,10" Header="在资源管理器中打开录制文件夹">
                             <ui:Button Content="打开" Click="OpenRecordingFolderInExplorer_Click"/>
                         </ui:CardControl>
-                        <Label  Margin="10,10,0,0" Content="录制文件保存路径" />
-                        <ui:TextBox Name="RecPathInputBox" Margin="10,0,0,0"  Text="{Binding _RecFileDirectory, Mode=OneWay}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Margin="0,10,10,0" FontSize="14" FontWeight="Medium" Text="当前录制文件示例：" />
+                            <TextBlock Grid.Column="1" Margin="0,10,0,0" FontSize="14" FontWeight="Medium" Text="{Binding PathExample, Mode=OneWay}" TextWrapping="Wrap"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0"  Margin="10,10,0,0" Content="录制文件保存路径" />
+                            <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="RecPathInputBox" Margin="0,0,30,0"  Text="{Binding _RecFileDirectory, Mode=OneWay}"/>
+                            <ui:Button Grid.Row="1" Grid.Column="1" Margin="0,0,20,0" Content="选择文件夹" Click="SelectRecordingFolder_Click"/>
+                        </Grid>
+                        <ui:Button Margin="0,10,10,0"  Content="查看可用格式" Click="ViewFileFormatExamples_Click"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0"  Margin="10,10,0,0" Content="默认一级主播文件夹名称格式" />
+                            <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="DefaultLiverFolderNameInputBox" Margin="0,0,30,0"  Text="{Binding _DefaultLiverFolderName, Mode=OneWay}"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0"  Margin="10,10,0,0" Content="默认二级日期文件夹名称格式" />
+                            <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="DefaulFolderNameFormatInputBox" Margin="0,0,30,0"  Text="{Binding _DefaultDataFolderName, Mode=OneWay}"/>
+                        </Grid>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Row="0"  Margin="10,10,0,0" Content="默认文件名称格式" />
+                            <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="DefaulFileNameFormatInputBox" Margin="0,0,30,0"  Text="{Binding _DefaultFileName, Mode=OneWay}"/>
+                        </Grid>
                     </StackPanel>
                     
                 </ui:CardExpander>

@@ -354,25 +354,6 @@ namespace Core
                 }
             }
 
-            private static string DefaultFilePathNameFormat = "{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}";
-            /// <summary>
-            /// 保存的文件以怎样的路径和名称格式保存在录制文件夹中
-            /// 默认值：{ROOMID}_{NAME}/{TITLE}_{DATE}_{TIME}    (默认值例：2233_哔哩哔哩弹幕网/标题名称_2024_01_27_19_46_58_122)；文件名会固定以[_original.mp4]或[_fix.mp4]结尾，具体是哪个取决于[AutomaticRepair]配置状态
-            /// 支持的配置项：房间号{ROOMID}、昵称{NAME}、日期(年_月_日){DATE}、时间(时_分_秒){TIME}、标题{TITLE})、年(2012和12){yyyy和yy}、时{HH}、分{mm}、秒{ss}、毫秒{fff}
-            /// </summary>
-            public string _DefaultFilePathNameFormat
-            {
-                get => DefaultFilePathNameFormat;
-                set
-                {
-                    if (value != DefaultFilePathNameFormat)
-                    {
-                        DefaultFilePathNameFormat = value;
-                        OnPropertyChanged();
-                        ModifyConfig(value);
-                    }
-                }
-            }
 
             private static string AutomaticRepair = "true";
             /// <summary>
@@ -528,6 +509,20 @@ namespace Core
                 get => LogFileDirectory;
             }
 
+            public string PathExample
+            {
+                get
+                {
+                    string F = $"{RecFileDirectory}{DefaultLiverFolderName}/{DefaultDataFolderName}/{DefaultFileName}.mp4";
+                    F = Core.Tools.FileOperations.ReplaceKeyword(F, DateTime.Parse("2016-12-01 22:33"), -1);
+                    return F;
+                }
+                set
+                {
+                    OnPropertyChanged();
+                }
+            }
+
             private static string RecFileDirectory = "./Rec/";
             /// <summary>
             /// 录制文件储存路径（字符串）
@@ -539,13 +534,75 @@ namespace Core
                 set
                 {
                     if (value != RecFileDirectory)
-                    {
+                    { 
                         RecFileDirectory = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                        PathExample = PathExample;
+                    }
+                }
+            }
+
+
+            private static string DefaultLiverFolderName = "{ROOMID}_{NAME}";
+            /// <summary>
+            /// 默认一级主播名文件夹格式 (应该为关键字组合，如:{KEY}_{KEY}) 可选值：ROOMID|NAME|DATE|TIME|TITLE
+            /// 默认值：{ROOMID}_{NAME}
+            /// </summary>
+            public string _DefaultLiverFolderName
+            {
+                get => DefaultLiverFolderName;
+                set
+                {
+                    if (value != DefaultLiverFolderName)
+                    {
+                        DefaultLiverFolderName = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                        PathExample = PathExample;
+                    }
+                }
+            }
+
+            private static string  DefaultDataFolderName= "{YYYY}_{MM}_{DD}";
+            /// <summary>
+            /// 默认二级主播名下日期分类文件夹格式 (应该为关键字组合，如:{KEY}_{KEY}) 可选值：(年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})
+            /// 默认值：{ROOMID}_{NAME}
+            /// </summary>
+            public string _DefaultDataFolderName
+            {
+                get => DefaultDataFolderName;
+                set
+                {
+                    if (value != DefaultDataFolderName)
+                    {
+                        DefaultDataFolderName = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                        PathExample = PathExample;
+                    }
+                }
+            }
+
+            private static string DefaultFileName = "{DATE}_{TIME}_{TITLE}";
+            /// <summary>
+            /// 默认下载文件名格式,文件名会固定以[_original.mp4]或[_fix.mp4]结尾，具体是哪个取决于[AutomaticRepair]配置状态 (应该为关键字组合，如:{KEY}_{KEY}) 可选值：ROOMID|NAME|DATE|TIME|TITLE
+            /// 默认值：{DATE}_{TIME}_{TITLE}
+            /// </summary>
+            public string _DefaultFileName
+            {
+                get => DefaultFileName;
+                set
+                {
+                    if (value != DefaultFileName)
+                    {
+                        DefaultFileName = value;
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }
                 }
             }
+
 
             internal static string TemporaryFileDirectory = "./Temporary/";
             /// <summary>
@@ -556,6 +613,7 @@ namespace Core
             {
                 get => TemporaryFileDirectory;
             }
+
 
             private static string LiveDomainName = "https://api.live.bilibili.com";
             /// <summary>

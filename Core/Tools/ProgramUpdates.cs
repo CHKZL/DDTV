@@ -12,6 +12,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static Core.LogModule.OperationQueue;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Core.Tools
@@ -22,7 +23,6 @@ namespace Core.Tools
         private static string verFile = "./ver.ini";
         private static string type = string.Empty;
         private static string ver = string.Empty;
-        public static string R_ver = string.Empty;
         public static bool Isdev = false;
         public static event EventHandler<EventArgs> NewVersionAvailableEvent;//检测到新版本
 
@@ -46,6 +46,11 @@ namespace Core.Tools
                 if (ver.ToLower().StartsWith("dev"))
                 {
                     Isdev = true;
+                    ver = ver.ToLower().Replace("dev","");
+                }
+                else
+                {
+                    ver = ver.ToLower().Replace("release","");
                 }
                 if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(ver))
                 {
@@ -59,7 +64,7 @@ namespace Core.Tools
         /// </summary>
         /// <param name="AutoUpdate">是否唤起自动更新</param>
         /// <returns></returns>
-        public static async Task<bool> CheckForNewVersions(bool AutoUpdate=false,bool Manual=false)
+        public static async Task<bool> CheckForNewVersions(bool AutoUpdate = false, bool Manual = false)
         {
             return await Task.Run(() =>
             {
@@ -68,18 +73,29 @@ namespace Core.Tools
                     return false;
                 }
                 string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
-                string R_Ver = Get(DL_VerFileUrl).TrimEnd();
-                R_ver = R_Ver;
-                if (R_Ver != ver)
+                string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev","").Replace("release","");
+                if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
                 {
-                    if (!Manual)
-                        NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
-                    if (AutoUpdate)
-                        CallUpUpdateProgram();
-                    return true;
+                    //老版本
+                    Version Before = new Version(ver);
+                    //新版本
+                    Version After = new Version(R_Ver);
+                    if (After > Before)
+                    {
+                        if (!Manual)
+                            NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
+                        if (AutoUpdate)
+                            CallUpUpdateProgram();
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
+                    Log.Info(nameof(ProgramUpdates), $"获取新版本失败，请检查网络和代理状况");
                     return false;
                 }
             });
