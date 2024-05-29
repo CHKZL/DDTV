@@ -27,7 +27,7 @@ namespace Core.RuntimeObject.Download
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
-                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, Core.Config.Core_RunConfig._DefaultFilePathNameFormat)}_original.mp4";
+                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(card.UID, $"{Config.Core_RunConfig._DefaultLiverFolderName}/{Config.Core_RunConfig._DefaultDataFolderName}/{Config.Core_RunConfig._DefaultFileName}")}_original.mp4";
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 

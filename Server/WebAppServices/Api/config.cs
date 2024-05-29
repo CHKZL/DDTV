@@ -109,31 +109,43 @@ namespace Server.WebAppServices.Api
     {
 
         /// <summary>
-        /// 设置录制储存路径中的子路径和格式
+        /// 设置录制储存路径中的子路径和格式(default_liver_folder_name/default_data_folder_name/default_file_name.* 就是最终在录制文件夹里面的格式
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="path_and_format">保存的文件以怎样的路径和名称格式保存在录制文件夹中</param>
+        /// <param name="default_liver_folder_name">默认一级主播名文件夹格式</param>
+        /// <param name="default_data_folder_name">默认二级主播名下日期分类文件夹格式</param>
+        /// <param name="default_file_name">默认下载文件名格式</param>
         /// <param name="check">二次确认key</param>
         /// <returns></returns>
         [HttpPost(Name = "set_default_file_path_name_format")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string path_and_format, [FromForm] string check = "")
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string default_liver_folder_name,[FromForm] string default_data_folder_name,[FromForm] string default_file_name, [FromForm] string check = "")
         {
             if (string.IsNullOrEmpty(check))
             {
-                cache.set_default_file_path_name_format = Guid.NewGuid().ToString();
-                return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), cache.set_default_file_path_name_format,
-                    $"正在将录制储存路径中的子路径和格式修改为{path_and_format}，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，如果格式有误将录制失败和错误，二次确认提交后“get_file_structure”接口以及返回具体的文件流功能将会失效或出现异常，直到下一次启动"),
+                string A = $"{default_liver_folder_name}/{default_data_folder_name}/{default_file_name}";
+                cache.set_default_all_name = A;
+                cache.set_default_liver_folder_name = default_liver_folder_name;
+                cache.set_default_data_folder_name = default_data_folder_name;
+                cache.set_default_file_name = default_file_name;
+                return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), A,
+                    $"正在将录制储存路径中的子路径和格式修改为[{A}]，请二次确认，将返回的data数据中的key，加到到接口中再次提交。请注意，如果格式有误将录制失败和错误，二次确认提交后“get_file_structure”接口以及返回具体的文件流功能将会失效或出现异常，直到下一次启动"),
                     "application/json");
             }
-            if (check != cache.set_default_file_path_name_format)
+            if (check != cache.set_default_all_name)
             {
                 return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), false, $"二次确认的key不正确"), "application/json");
             }
             else
             {
-                Core.Config.Core_RunConfig._DefaultFilePathNameFormat = path_and_format;
+                Core.Config.Core_RunConfig._DefaultLiverFolderName = cache.set_default_liver_folder_name;
+                Core.Config.Core_RunConfig._DefaultDataFolderName = cache.set_default_data_folder_name;
+                Core.Config.Core_RunConfig._DefaultFileName = cache.set_default_file_name;
+                cache.set_default_all_name = Guid.NewGuid().ToString();
+                cache.set_default_liver_folder_name = Guid.NewGuid().ToString();
+                cache.set_default_data_folder_name = Guid.NewGuid().ToString();
+                cache.set_default_file_name = Guid.NewGuid().ToString();
                 return Content(MessageBase.MssagePack(nameof(set_default_file_path_name_format), true,
-                    $"正在将录制储存路径中的子路径和格式修改为{path_and_format}，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效或出现异常，重启后恢复"),
+                    $"正在将录制储存路径中的子路径和格式修改为[{default_liver_folder_name}/{default_data_folder_name}/{default_file_name}]，二次确认完成，“get_file_structure”接口以及返回具体的文件流功能将已失效或出现异常，重启后恢复"),
                     "application/json");
             }
         }
@@ -154,7 +166,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_default_file_path_name_format")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), Core.Config.Core_RunConfig._DefaultFilePathNameFormat, $"录制储存路径中的子路径和格式"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), $"{Core.Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}/{Core.Config.Core_RunConfig._DefaultFileName}", $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
 

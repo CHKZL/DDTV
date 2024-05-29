@@ -105,14 +105,27 @@ namespace Update
             string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
             string R_Ver = Get(DL_VerFileUrl).TrimEnd();
             Console.WriteLine($"获取到当前服务端版本:{R_Ver}");
-            R_ver = R_Ver;
-            if (R_Ver != ver)
+
+            if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
             {
-                Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
-                return true;
+                //老版本
+                Version Before = new Version(ver);
+                //新版本
+                Version After = new Version(R_Ver);
+                if (After > Before)
+                {
+                    Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"当前已是最新版本....");
+                    return false;
+                }
             }
             else
             {
+                Console.WriteLine($"获取新版本失败，请检查网络和代理状况.......");
                 return false;
             }
         }

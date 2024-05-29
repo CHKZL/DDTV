@@ -48,13 +48,13 @@ public partial class SettingsPage
 
     private async void Config_Save_Button_Click(object sender, RoutedEventArgs e)
     {
-        SaveDesktopRemoteServer();
+        SaveConfiguration();
     }
 
 
 
     #region SaveOperation
-    public bool CheckDesktopRemoteServer(ref bool Reboot)
+    public bool CheckConfiguration(ref bool Reboot)
     {
         #region 远程连接相关设置检查
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
@@ -76,14 +76,14 @@ public partial class SettingsPage
         #endregion
 
         #region 文件路径相关设置检查
-        if (string.IsNullOrEmpty(RecPathInputBox.Text))
+        if (string.IsNullOrEmpty(RecPathInputBox.Text) || string.IsNullOrEmpty(DefaultLiverFolderNameInputBox.Text) || string.IsNullOrEmpty(DefaulFolderNameFormatInputBox.Text) || string.IsNullOrEmpty(DefaulFileNameFormatInputBox.Text))
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
             return false;
         }
         try
         {
-            string RecPath = RecPathInputBox.Text;
+            string RecPath = $"{RecPathInputBox.Text}{DefaultLiverFolderNameInputBox.Text}/{DefaulFolderNameFormatInputBox.Text}/{DefaulFileNameFormatInputBox.Text}";
             // 尝试获取完整路径，如果路径无效，将抛出异常
             string fullPath = Path.GetFullPath(RecPath);
             // 检查路径中是否包含无效字符
@@ -107,16 +107,19 @@ public partial class SettingsPage
             || Config.Core_RunConfig._DesktopPort != int.Parse(DesktopPort_InputControl.Text)
             || Config.Core_RunConfig._DesktopAccessKeyId != DesktopAccessKeyId_InputControl.Text
             || Config.Core_RunConfig._DesktopAccessKeySecret != DesktopAccessKeySecret_InputControl.Text
-            || Config.Core_RunConfig._RecFileDirectory != RecPathInputBox.Text;
+            || Config.Core_RunConfig._RecFileDirectory != RecPathInputBox.Text
+            || Config.Core_RunConfig._DefaultLiverFolderName != DefaultLiverFolderNameInputBox.Text
+            || Config.Core_RunConfig._DefaultDataFolderName != DefaulFolderNameFormatInputBox.Text
+            || Config.Core_RunConfig._DefaultFileName != DefaulFileNameFormatInputBox.Text;
         #endregion
 
 
         return true;
     }
-    public async void SaveDesktopRemoteServer()
+    public async void SaveConfiguration()
     {
         bool IsReboot = false;
-        if (!CheckDesktopRemoteServer(ref IsReboot))
+        if (!CheckConfiguration(ref IsReboot))
         {
             return;
         }
@@ -152,6 +155,9 @@ public partial class SettingsPage
 
         #region 保存录制路径相关设置
         Config.Core_RunConfig._RecFileDirectory = RecPathInputBox.Text;
+        Config.Core_RunConfig._DefaultLiverFolderName = DefaultLiverFolderNameInputBox.Text;
+        Config.Core_RunConfig._DefaultDataFolderName = DefaulFolderNameFormatInputBox.Text;
+        Config.Core_RunConfig._DefaultFileName = DefaulFileNameFormatInputBox.Text;
         #endregion
 
         if (IsReboot)
@@ -179,5 +185,27 @@ public partial class SettingsPage
     private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
     {
         await Core.Tools.ProgramUpdates.CheckForNewVersions(true,true);
+    }
+
+    private void SelectRecordingFolder_Click(object sender, RoutedEventArgs e)
+    {
+        // 创建一个FolderBrowserDialog对象
+        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+        // 显示对话框
+        DialogResult result = folderBrowserDialog.ShowDialog();
+
+        // 检查用户是否点击了“确定”按钮
+        if (result == DialogResult.OK)
+        {
+            // 用户选择的文件夹的绝对路径
+            string selectedPath = folderBrowserDialog.SelectedPath;
+            RecPathInputBox.Text= selectedPath.Replace("\\","/")+"/";
+        }
+    }
+
+    private void ViewFileFormatExamples_Click(object sender, RoutedEventArgs e)
+    {
+         MainWindow.SnackbarService.Show("可用关键字", "{ROOMID}|{NAME}|{TITLE}|{DATE}|{TIME}　　　 说明:房间号|昵称|标题|日期(2016_12_01)|时间(11:22:33)\n{YYYY}|{YY}|{MM}|{DD}|{HH}|{mm}|{SS}|{FFF}　　说明:年(2016)|年(16)|月|日|时|分|秒|毫秒", ControlAppearance.Success, new SymbolIcon(SymbolRegular.ClipboardTextEdit20), TimeSpan.FromSeconds(30));
     }
 }

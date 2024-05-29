@@ -52,7 +52,7 @@ namespace Core.LiveChat
             RoomId = roomId;
             Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
-            File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(RoomInfo.GetUid(roomId), Core.Config.Core_RunConfig._DefaultFilePathNameFormat)}";
+            File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword(RoomInfo.GetUid(roomId), $"{Config.Core_RunConfig._DefaultLiverFolderName}/{Config.Core_RunConfig._DefaultDataFolderName}/{Config.Core_RunConfig._DefaultFileName}")}";
           
         }
 
