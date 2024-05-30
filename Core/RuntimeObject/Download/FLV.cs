@@ -27,7 +27,7 @@ namespace Core.RuntimeObject.Download
                 InitializeDownload(card,RoomCardClass.TaskType.FLV_AVC);
                 string title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(card.UID));
                 long roomId = card.RoomId;
-                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Config.Core_RunConfig._DefaultDataFolderName}/{Config.Core_RunConfig._DefaultFileName}",DateTime.Now,card.UID)}_original.flv";
+                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Config.Core_RunConfig._DefaultFileName}",DateTime.Now,card.UID)}_original.flv";
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);

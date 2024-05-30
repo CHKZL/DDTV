@@ -76,14 +76,14 @@ public partial class SettingsPage
         #endregion
 
         #region 文件路径相关设置检查
-        if (string.IsNullOrEmpty(RecPathInputBox.Text) || string.IsNullOrEmpty(DefaultLiverFolderNameInputBox.Text) || string.IsNullOrEmpty(DefaulFolderNameFormatInputBox.Text) || string.IsNullOrEmpty(DefaulFileNameFormatInputBox.Text))
+        if (string.IsNullOrEmpty(RecPathInputBox.Text) || string.IsNullOrEmpty(DefaultLiverFolderNameInputBox.Text) || string.IsNullOrEmpty(DefaulFileNameFormatInputBox.Text))
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
             return false;
         }
         try
         {
-            string RecPath = $"{RecPathInputBox.Text}{DefaultLiverFolderNameInputBox.Text}/{DefaulFolderNameFormatInputBox.Text}/{DefaulFileNameFormatInputBox.Text}";
+            string RecPath = $"{RecPathInputBox.Text}{DefaultLiverFolderNameInputBox.Text}/{DefaulFolderNameFormatInputBox.Text}{(string.IsNullOrEmpty(DefaulFolderNameFormatInputBox.Text)?"":"/")}{DefaulFileNameFormatInputBox.Text}";
             // 尝试获取完整路径，如果路径无效，将抛出异常
             string fullPath = Path.GetFullPath(RecPath);
             // 检查路径中是否包含无效字符
