@@ -513,8 +513,8 @@ namespace Core
             {
                 get
                 {
-                    string F = $"{RecFileDirectory}{DefaultLiverFolderName}/{DefaultDataFolderName}/{DefaultFileName}.mp4";
-                    F = Core.Tools.KeyCharacterReplacement.ReplaceKeyword(F, DateTime.Parse("2016-12-01 22:33"), -1);
+                    string F = $"{RecFileDirectory}{DefaultLiverFolderName}/{DefaultDataFolderName}{(string.IsNullOrEmpty(DefaultDataFolderName)?"":"/")}{DefaultFileName}.mp4";
+                    F = KeyCharacterReplacement.ReplaceKeyword(F, DateTime.Parse("2016-12-01 22:33"), -1);
                     return F;
                 }
                 set

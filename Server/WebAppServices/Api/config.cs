@@ -122,7 +122,7 @@ namespace Server.WebAppServices.Api
         {
             if (string.IsNullOrEmpty(check))
             {
-                string A = $"{default_liver_folder_name}/{default_data_folder_name}/{default_file_name}";
+                string A = $"{default_liver_folder_name}/{default_data_folder_name}{(string.IsNullOrEmpty(default_data_folder_name)?"":"/")}{default_file_name}";
                 cache.set_default_all_name = A;
                 cache.set_default_liver_folder_name = default_liver_folder_name;
                 cache.set_default_data_folder_name = default_data_folder_name;
@@ -166,7 +166,7 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_default_file_path_name_format")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), $"{Core.Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}/{Core.Config.Core_RunConfig._DefaultFileName}", $"录制储存路径中的子路径和格式"), "application/json");
+            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), $"{Core.Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Core.Config.Core_RunConfig._DefaultFileName}", $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
 
