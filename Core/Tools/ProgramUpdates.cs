@@ -46,11 +46,11 @@ namespace Core.Tools
                 if (ver.ToLower().StartsWith("dev"))
                 {
                     Isdev = true;
-                    ver = ver.ToLower().Replace("dev","");
+                    ver = ver.ToLower().Replace("dev", "");
                 }
                 else
                 {
-                    ver = ver.ToLower().Replace("release","");
+                    ver = ver.ToLower().Replace("release", "");
                 }
                 if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(ver))
                 {
@@ -68,34 +68,42 @@ namespace Core.Tools
         {
             return await Task.Run(() =>
             {
-                if (!GetCurrentVersion())
+                try
                 {
-                    return false;
-                }
-                string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
-                string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev","").Replace("release","");
-                if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
-                {
-                    //老版本
-                    Version Before = new Version(ver);
-                    //新版本
-                    Version After = new Version(R_Ver);
-                    if (After > Before)
-                    {
-                        if (!Manual)
-                            NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
-                        if (AutoUpdate)
-                            CallUpUpdateProgram();
-                        return true;
-                    }
-                    else
+                    if (!GetCurrentVersion())
                     {
                         return false;
                     }
+                    string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
+                    string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev", "").Replace("release", "");
+                    if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
+                    {
+                        //老版本
+                        Version Before = new Version(ver);
+                        //新版本
+                        Version After = new Version(R_Ver);
+                        if (After > Before)
+                        {
+                            if (!Manual)
+                                NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
+                            if (AutoUpdate)
+                                CallUpUpdateProgram();
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        Log.Info(nameof(ProgramUpdates), $"获取新版本失败，请检查网络和代理状况");
+                        return false;
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Log.Info(nameof(ProgramUpdates), $"获取新版本失败，请检查网络和代理状况");
+                    Log.Error(nameof(ProgramUpdates), $"获取新版本出现错误，错误堆栈:{ex.ToString()}", ex);
                     return false;
                 }
             });
