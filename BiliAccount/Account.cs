@@ -110,10 +110,9 @@ namespace BiliAccount
         /// </summary>
         public Account()
         {
-
-            Buvid = Http.GetBody("http://data.bilibili.com/gv/");//$"{Guid.NewGuid().ToString("D").ToUpper()}{Guid.NewGuid().ToString("D").Substring(0,4).ToUpper()}infoc";
-            DeviceId = $"{Guid.NewGuid().ToString("N")}{DateTime.Now.ToString("yyyyMMddHHmmssffff")}{Guid.NewGuid().ToString("N").Substring(0, 16)}";
-            DeviceGuid = Guid.NewGuid().ToString("D");
+            //Buvid = Http.GetBody("http://data.bilibili.com/gv/");//$"{Guid.NewGuid().ToString("D").ToUpper()}{Guid.NewGuid().ToString("D").Substring(0,4).ToUpper()}infoc";
+            //DeviceId = $"{Guid.NewGuid().ToString("N")}{DateTime.Now.ToString("yyyyMMddHHmmssffff")}{Guid.NewGuid().ToString("N").Substring(0, 16)}";
+            //DeviceGuid = Guid.NewGuid().ToString("D");
         }
 
         #endregion Public Constructors

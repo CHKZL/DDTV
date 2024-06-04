@@ -18,7 +18,7 @@ namespace DDTV_Core.SystemAssembly.ConfigModule
 {
     public class BilibiliUserConfig
     {
-        private static string UserConfigFile = "BiliUser.ini";
+        public static string UserConfigFile = "BiliUser.ini";
         public static Account AccClass = new();
         public static CookieInfo account = new CookieInfo();
         public static List<_FansMedal> FansMedal = new List<_FansMedal>();

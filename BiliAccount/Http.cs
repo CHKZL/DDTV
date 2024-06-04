@@ -248,57 +248,67 @@ namespace BiliAccount
             string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", string user_agent = "",
             WebHeaderCollection specialheaders = null)
         {
-            string result = "";
-            out_cookies = new CookieCollection();
-            HttpWebRequest req = null;
-            HttpWebResponse rep = null;
+             out_cookies = new CookieCollection();
             try
             {
-                req = (HttpWebRequest)WebRequest.Create(url);
 
-                if (specialheaders != null) req.Headers = specialheaders;
 
-                req.Method = "POST";
-
-                if (cookie != null)
+                string result = "";
+               
+                HttpWebRequest req = null;
+                HttpWebResponse rep = null;
+                try
                 {
-                    req.CookieContainer = new CookieContainer(cookie.Count)
+                    req = (HttpWebRequest)WebRequest.Create(url);
+
+                    if (specialheaders != null) req.Headers = specialheaders;
+
+                    req.Method = "POST";
+
+                    if (cookie != null)
                     {
-                        PerDomainCapacity = cookie.Count
-                    };
-                    req.CookieContainer.Add(cookie);
-                }
+                        req.CookieContainer = new CookieContainer(cookie.Count)
+                        {
+                            PerDomainCapacity = cookie.Count
+                        };
+                        req.CookieContainer.Add(cookie);
+                    }
 
-                req.ContentType = contenttype;
+                    req.ContentType = contenttype;
 
-                byte[] bdata = Encoding.UTF8.GetBytes(data);
-                Stream sdata = req.GetRequestStream();
-                sdata.Write(bdata, 0, bdata.Length);
-                sdata.Close();
+                    byte[] bdata = Encoding.UTF8.GetBytes(data);
+                    Stream sdata = req.GetRequestStream();
+                    sdata.Write(bdata, 0, bdata.Length);
+                    sdata.Close();
 
-                if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
-                if (!string.IsNullOrEmpty(user_agent)) req.UserAgent = user_agent;
+                    if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
+                    if (!string.IsNullOrEmpty(user_agent)) req.UserAgent = user_agent;
 
-                rep = (HttpWebResponse)req.GetResponse();
-                using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
-                {
-                    result = reader.ReadToEnd();
-                }
-
-                if (rep.Headers.GetValues("Set-Cookie") != null && rep.Headers.GetValues("Set-Cookie").Length > 0)
-                {
-                    foreach (string i in rep.Headers.GetValues("Set-Cookie"))
+                    rep = (HttpWebResponse)req.GetResponse();
+                    using (StreamReader reader = new StreamReader(rep.GetResponseStream()))
                     {
-                        out_cookies.Add(new Cookie(new Regex("^(?<=).*?(?==)").Match(i).Value, new Regex("(?<==).*?(?=; )").Match(i).Value) { Expires = DateTime.Parse(new Regex("(?<=Expires=).*?(?=;)").Match(i).Value), Domain = new Regex("(?<=Domain=).*?(?=;)").Match(i).Value, Path = new Regex("(?<=Path=).*?(?=;)").Match(i).Value });
+                        result = reader.ReadToEnd();
+                    }
+
+                    if (rep.Headers.GetValues("Set-Cookie") != null && rep.Headers.GetValues("Set-Cookie").Length > 0)
+                    {
+                        foreach (string i in rep.Headers.GetValues("Set-Cookie"))
+                        {
+                            out_cookies.Add(new Cookie(new Regex("^(?<=).*?(?==)").Match(i).Value, new Regex("(?<==).*?(?=; )").Match(i).Value) { Expires = DateTime.Parse(new Regex("(?<=Expires=).*?(?=;)").Match(i).Value), Domain = new Regex("(?<=Domain=).*?(?=;)").Match(i).Value, Path = new Regex("(?<=Path=).*?(?=;)").Match(i).Value });
+                        }
                     }
                 }
+                finally
+                {
+                    if (rep != null) rep.Close();
+                    if (req != null) req.Abort();
+                }
+                return result;
             }
-            finally
+            catch (Exception ex)
             {
-                if (rep != null) rep.Close();
-                if (req != null) req.Abort();
+                return "";
             }
-            return result;
         }
 
         #endregion Public Methods
