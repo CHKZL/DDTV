@@ -26,6 +26,10 @@ namespace BiliAccount
         public static string GetBody(string url, CookieCollection cookie = null,
             string referer = "", string user_agent = "", WebHeaderCollection specialheaders = null)
         {
+            try
+            {
+
+           
             string result = "";
             HttpWebRequest req = null;
             HttpWebResponse rep = null;
@@ -59,6 +63,11 @@ namespace BiliAccount
                 if (req != null) req.Abort();
             }
             return result;
+                 }
+            catch (Exception)
+            {
+                return "";
+            }
         }
 
         /// <summary>
