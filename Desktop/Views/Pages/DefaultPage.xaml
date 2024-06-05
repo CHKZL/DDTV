@@ -7,25 +7,140 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DashboardPage"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="650"
+    d:DesignWidth="1255"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    mc:Ignorable="d">
+    mc:Ignorable="d" Margin="0,0,0,0">
 
-    <Grid Margin="42" VerticalAlignment="Top">
+    <Grid Margin="42,0,42,20">
+
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="5*" />
+            <ColumnDefinition Width="5*" />
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <Grid Margin="0,0,0,0" Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Border Grid.Row="0" Grid.Column="0" Margin="3"  CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前监控列表共有房间" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="114" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="1" Grid.Column="0" Margin="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Grid.Column="0" Margin="3" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="开播中" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="514" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                </Border>
+                <Border Grid.Column="1" Margin="3" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="正在录制" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="19" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="硬盘占用率" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="50" Margin="20,0,15,0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="3" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="内存使用率" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="50" Margin="20,0,15,0"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="4" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前登录态UID" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="1145141919810" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="5" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="已运行时长" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="11天4小时5分钟14秒" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+                </Border>
+            </Grid>
+            <Grid Grid.Row="6" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前运行状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="正常" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                        <ui:Anchor Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="查看DDTV源码" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" />
+                    </Grid>
+                    
+                </Border>
+            </Grid>
+        </Grid>
 
-            <TextBlock Grid.Row="0" Margin="0,0,0,0" FontSize="20" FontWeight="Medium" Text=" 你看你，又急了，你太想进步了，可惜桌面版的UI还不是很完善 &#x0A; 但是基础功能没问题，而且也可以访问http://127.0.0.1:11419 来使用WEBUI" 
-            />
-        <ProgressBar Grid.Row="1" Height="10" Minimum="0" Maximum="100" Value="50" Margin="24" IsIndeterminate="True" />
+        <Grid Grid.Column="1">
+            <Grid Grid.Row="1" Grid.Column="0" Margin="3">
+
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <TextBlock  Margin="15,20,15,20" FontSize="20" FontWeight="Medium" TextWrapping="Wrap"  Text="这里是公告栏：&#x0A; &#x0A; &#x0A; UI开发中，目前首页是静态内容"/>
+                </Border>
+            </Grid>
+
+        </Grid>
     </Grid>
 </Page>
