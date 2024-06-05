@@ -28,6 +28,8 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
+
+                <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
@@ -92,19 +94,7 @@
                     </Grid>
                 </Border>
             </Grid>
-            <Grid Grid.Row="4" Grid.Column="0" Margin="3">
-                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
-                    <Grid Margin="25,0,25,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前登录态UID" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="1145141919810" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
-                    </Grid>
-                </Border>
-            </Grid>
-            <Grid Grid.Row="5" Grid.Column="0" Margin="3">
+            <Grid Grid.Row="6" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
@@ -116,7 +106,7 @@
                     </Grid>
                 </Border>
             </Grid>
-            <Grid Grid.Row="6" Grid.Column="0" Margin="3">
+            <Grid Grid.Row="7" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid>
                         <Grid.ColumnDefinitions>
