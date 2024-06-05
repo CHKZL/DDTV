@@ -50,13 +50,14 @@ namespace Core
 
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
+            //初始化文件和目录
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
-            //给文件系统一点时间创建各种路径，按道理应该是同步操作，不知道为啥有些环境执行到这里还没有来得及创建路径
+            //给文件系统一点时间创建各种路径
             Thread.Sleep(50);
             Log.LogInit();
             Log.Info(nameof(Init), $"初始化工作路径为:{Environment.CurrentDirectory}");

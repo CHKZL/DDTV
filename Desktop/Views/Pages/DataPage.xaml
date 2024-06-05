@@ -8,8 +8,8 @@
     xmlns:models="clr-namespace:Desktop.Models"
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Title="DataPage"
-    d:DesignHeight="450"
-    d:DesignWidth="800"
+    d:DesignHeight="650"
+    d:DesignWidth="1255"
     ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
     ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
@@ -28,7 +28,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
-                
+
             </Grid.ColumnDefinitions>
 
             <ComboBox Name="CardTypeComboBox" SelectedIndex="0" Grid.Column="0" Margin="0,0,5,0" SelectionChanged="CardTypeComboBox_SelectionChanged">
@@ -53,7 +53,7 @@
             </ui:DropDownButton>
             <ContentPresenter x:Name="RootContentDialogPresenter"/>
         </Grid>
-       
+
         <ui:VirtualizingItemsControl
             Grid.Row="1"
             x:Name="CardsItemsControl"

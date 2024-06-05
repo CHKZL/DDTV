@@ -45,12 +45,12 @@ namespace Core.Account
         /// <summary>
         /// 设备标识
         /// </summary>
-        public string DeviceGuid { set; get; }
+        //public string DeviceGuid { set; get; }
 
         /// <summary>
         /// device_id/bili_local_id
         /// </summary>
-        public string DeviceId { set; get; }
+        //public string DeviceId { set; get; }
 
         /// <summary>
         /// 加密过的密码（使用二维码登录时此项为空）
@@ -116,10 +116,7 @@ namespace Core.Account
         /// </summary>
         public AccountInformation()
         {
-
-            Buvid = Get.GetBody("http://data.bilibili.com/gv/");//$"{Guid.NewGuid().ToString("D").ToUpper()}{Guid.NewGuid().ToString("D").Substring(0,4).ToUpper()}infoc";
-            DeviceId = $"{Guid.NewGuid().ToString("N")}{DateTime.Now.ToString("yyyyMMddHHmmssffff")}{Guid.NewGuid().ToString("N").Substring(0, 16)}";
-            DeviceGuid = Guid.NewGuid().ToString("D");
+            Buvid = $"{Guid.NewGuid().ToString("D").ToUpper()}{Guid.NewGuid().ToString("D").Substring(0,4).ToUpper()}infoc";
         }
 
         #endregion Public Constructors
