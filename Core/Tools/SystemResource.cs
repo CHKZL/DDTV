@@ -82,7 +82,7 @@ namespace Core.Tools
                 public string Size { get; set; }
 
                 /// <summary>
-                /// 已使用大小
+                /// 使用率
                 /// </summary>
                 public string Used { get; set; }
 
@@ -92,7 +92,7 @@ namespace Core.Tools
                 public string Avail { get; set; }
 
                 /// <summary>
-                /// 使用率
+                /// 已使用大小
                 /// </summary>
                 public string Usage { get; set; }
                 /// <summary>
