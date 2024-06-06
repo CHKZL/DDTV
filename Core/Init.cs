@@ -120,7 +120,7 @@ namespace Core
             if (stopwatch.IsRunning)
             {
                 TimeSpan elapsed = stopwatch.Elapsed;
-                return elapsed.TotalMicroseconds;
+                return elapsed.TotalMicroseconds/1000;
             }
             else
             {

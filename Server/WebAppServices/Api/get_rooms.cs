@@ -22,6 +22,34 @@ using System.Drawing;
 namespace Server.WebAppServices.Api
 {
     /// <summary>
+    /// 获取当前房间监控列表的统计
+    /// </summary>
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/get_rooms/[controller]")]
+    [Login]
+    [Tags("get_rooms")]
+    public class room_statistics : ControllerBase
+    {
+        /// <summary>
+        /// 获取当前房间监控列表的统计
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "room_statistics")]
+        public ActionResult Post(PostCommonParameters commonParameters)
+        {
+            var roomList = _Room.GetCardListClone(_Room.SearchType.All);
+            (int MonitoringCount, int LiveCount, int RecCount) count = new();
+            count.MonitoringCount = roomList.Count;
+            count.LiveCount = roomList.Where(x => x.Value.live_status.Value == 1).Count();
+            count.RecCount = roomList.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby).Count();
+            return Content(MessageBase.MssagePack(nameof(room_information), count), "application/json");
+        }
+    }
+
+
+    /// <summary>
     /// 查询单个房间信息
     /// </summary>
     [Produces(MediaTypeNames.Application.Json)]

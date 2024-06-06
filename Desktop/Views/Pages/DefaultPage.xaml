@@ -40,7 +40,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前监控列表共有房间" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="114" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding MonitoringCount,Mode=OneWay}" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </Border>
             </Grid>
@@ -56,7 +56,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="开播中" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="514" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="{Binding LiveCount,Mode=OneWay}" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </Border>
                 <Border Grid.Column="1" Margin="3" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
@@ -66,7 +66,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Text="正在录制" FontSize="25" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Text="19" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Text="{Binding RecCount,Mode=OneWay}" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </Border>
             </Grid>
@@ -78,7 +78,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="硬盘占用率" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="50" Margin="20,0,15,0"/>
+                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="{Binding HardDiskUsageRate,Mode=OneWay}" Margin="20,0,15,0"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -90,7 +90,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="内存使用率" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="50" Margin="20,0,15,0"/>
+                        <ProgressBar Grid.Column="1" Height="15" Minimum="0" Maximum="100" Value="{Binding MemoryUsageRate,Mode=OneWay}" Margin="20,0,15,0"/>
                     </Grid>
                 </Border>
             </Grid>
@@ -102,7 +102,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="已运行时长" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="11天4小时5分钟14秒" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding RunTime,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </Border>
             </Grid>
@@ -115,7 +115,7 @@
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前运行状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="正常" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding runningState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
                         <ui:Anchor Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="查看DDTV源码" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" />
                     </Grid>
                     
