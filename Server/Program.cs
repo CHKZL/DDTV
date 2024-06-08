@@ -183,6 +183,14 @@ namespace Server
                     {
                         Core.Init.Start(_args);//初始化必须执行的
                         //_ParentProcessDetection();
+
+                        //启动房间监听并且注册事件
+                        Detect detect = new();
+                        //控制台打印心跳日志
+                        doki();
+                        //终端和ws更新事件
+                        Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+
                         if(_args.Contains("Desktop") && Config.Core_RunConfig._DesktopRemoteServer)
                         {
                             return;
@@ -217,12 +225,10 @@ namespace Server
                         if (!_args.Contains("Desktop") && !_args.Contains("Client"))
                         {
                             TerminalDisplay.SeKey();
+                            
                         }
                         
-                        Detect detect = new();//启动房间监听并且注册事件
-
-                        doki();
-                        Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+                        
                     });
                 }
 

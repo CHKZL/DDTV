@@ -19,13 +19,13 @@ namespace Core.RuntimeObject
     public class Account
     {
         public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
-        private static AccountInformation _accountInformation = new();
+        private static AccountInformation _accountInformation = null;
         public static Nav_Class.Data nav_info = new Nav_Class.Data();
         public static AccountInformation AccountInformation
         {
             get
             {
-                if (_accountInformation == null || !_accountInformation.State)
+                if (_accountInformation == null)
                 {
                     string[] files = Directory.GetFiles(Config.Core_RunConfig._ConfigDirectory, $"*{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)

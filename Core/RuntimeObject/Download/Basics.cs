@@ -98,7 +98,10 @@ namespace Core.RuntimeObject.Download
                 Tools.Transcode transcode = new Tools.Transcode();
                 try
                 {
-                    transcode.TranscodeAsync(result.FileName, result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"), roomCard);
+                    ////$"-y -i \"{before}\" -c copy \"{after}\""
+                    string before = result.FileName;
+                    string after = result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4");
+                    transcode.TranscodeAsync(before, after, roomCard);
                     roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"));
                 }
                 catch (Exception ex)

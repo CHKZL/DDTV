@@ -260,7 +260,7 @@ namespace Core.Account.Kernel
                                     account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
                                     break;
                                 case "Expires":
-                                    account.Expires_Cookies = DateTime.Now.AddSeconds(double.Parse(tmp[1]));
+                                    account.Expires_Cookies = DateTime.Parse("1970-01-01 08:00:00").AddSeconds(double.Parse(tmp[1]));
                                     break;
                                 case "gourl":
                                     break;

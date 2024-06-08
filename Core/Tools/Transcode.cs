@@ -122,9 +122,10 @@ namespace Core.Tools
                 // 创建ProcessStartInfo对象，设置ffmpeg的路径和参数
                 var process = new Process
                 {
+
                     StartInfo = new ProcessStartInfo()
                     {
-                        Arguments = $"-y -i \"{before}\" -c copy \"{after}\"",
+                        Arguments = Config.Core_RunConfig._AutomaticRepair_Arguments.Replace("{before}",before).Replace("{after}",after),
                         RedirectStandardError = true,
                         UseShellExecute = false,
                         CreateNoWindow = true,
