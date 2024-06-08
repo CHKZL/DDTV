@@ -189,8 +189,8 @@ jobs:
       - name: Add VersionFile (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          echo "type=DDTV-Server-\${{ matrix.os }}-\${{ matrix.runtime }}" > Server/build_output/bin/ver.ini
-          echo "ver=\${{ github.ref_name }}" >> Server/build_output/bin/ver.ini
+          echo "type=DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}" > Server/build_output/bin/ver.ini
+          echo "ver=${{ github.ref_name }}" >> Server/build_output/bin/ver.ini
           
       - name: Add VersionFile (Windows)  
         if: runner.os == 'Windows'

@@ -56,6 +56,11 @@ namespace Core.RuntimeObject
                             LoginFailureEvent?.Invoke(null, new EventArgs());
                         }
                     }
+                    else
+                    {
+                        LoginFailureEvent?.Invoke(null, new EventArgs());
+                        _accountInformation = new();
+                    }
                 }
                 //if (_accountInformation.State && !Core.Config.Core._LoginStatus)
                 //{
