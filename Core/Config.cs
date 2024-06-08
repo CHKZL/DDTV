@@ -209,6 +209,7 @@ namespace Core
         }
 
 
+
         #endregion
 
         #region public Properties Method
@@ -368,6 +369,26 @@ namespace Core
                     if (value.ToString() != AutomaticRepair)
                     {
                         AutomaticRepair = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            
+            private static string AutomaticRepair_Arguments = "-y -i \"{before}\" -c copy \"{after}\"";
+            /// <summary>
+            /// 修复和转码的执行参数
+            /// 默认值：-y -i "{before}" -c copy "{after}"
+            /// </summary>
+            public string _AutomaticRepair_Arguments
+            {
+                get => AutomaticRepair_Arguments;
+                set
+                {
+                    if (value.ToString() != AutomaticRepair_Arguments)
+                    {
+                        AutomaticRepair_Arguments = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }
@@ -660,10 +681,10 @@ namespace Core
             /// </summary>
             public string _HTTP_UA { get { return HTTP_UA; } }
 
-            private static string HlsWaitingTime = "50";
+            private static string HlsWaitingTime = "30";
             /// <summary>
             /// 一个新任务等待HLS的时间（int，单位秒）
-            /// 默认值：50
+            /// 默认值：30
             /// </summary>
             public int _HlsWaitingTime
             {
@@ -749,6 +770,13 @@ namespace Core
                     }
                 }
             }
+            public int RecordingMode_For_ComboBox
+            {
+                get
+                {
+                    return (int)_RecordingMode - 1;
+                }
+            }
 
             private static string DeleteOriginalFileAfterRepair = "true";
             /// <summary>
@@ -775,7 +803,7 @@ namespace Core
             private static string DefaultResolution = "10000";
             /// <summary>
             /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
-            /// 默认值：https://api.bilibili.com
+            /// 默认值：10000
             /// </summary>
             public int _DefaultResolution
             {
@@ -950,6 +978,7 @@ namespace Core
                     }
                 }
             }
+
             private static string DesktopPort = "11419";
             /// <summary>
             /// 桌面版连接远程服务器的端口地址（当DesktopRemoteServer为True时生效）
@@ -1049,8 +1078,66 @@ namespace Core
                     }
                 }
             }
-        }
 
+            /// <summary>
+            /// 当前登录态
+            /// 默认值：不会写到配置文件中，也不提供修改
+            /// </summary>
+            public string _CurrentLoginStatus
+            {
+                get
+                {
+                    return $"{Core.RuntimeObject.Account.AccountInformation.Uid}　　　(登陆有效期到:{Core.RuntimeObject.Account.AccountInformation.Expires_Cookies.ToString("yyyy-MM-dd HH:mm:ss")})";
+                }
+                set
+                {
+                    OnPropertyChanged();
+                }
+            }
+
+         
+            private static string ZoomOutMode = "0";
+            /// <summary>
+            /// 缩小操作默认行为  0:缩小到任务栏   1:缩小到托盘后台
+            /// 默认值：0
+            /// </summary>
+            public int _ZoomOutMode
+            {
+                get => int.Parse(ZoomOutMode);
+                set
+                {
+                    if (value.ToString() != ZoomOutMode)
+                    {
+                        ZoomOutMode = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string SystemCardReminder = "true";
+            /// <summary>
+            /// 开播后Desktop版是否触发系统卡片提醒
+            /// 默认值：true
+            /// </summary>
+            public bool _SystemCardReminder
+            {
+                get
+                {
+                    return bool.Parse(SystemCardReminder);
+                }
+                set
+                {
+                    if (value.ToString() != SystemCardReminder)
+                    {
+                        SystemCardReminder = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+        }
         #endregion
     }
 }

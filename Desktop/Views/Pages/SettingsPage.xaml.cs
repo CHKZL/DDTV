@@ -5,6 +5,7 @@
 
 using Core;
 using Desktop.Models;
+using Desktop.Views.Windows;
 using Masuit.Tools;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -18,6 +19,7 @@ using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using Wpf.Ui.Extensions;
+using static Core.RuntimeObject.Download.Basics;
 
 namespace Desktop.Views.Pages;
 
@@ -28,11 +30,9 @@ public partial class SettingsPage
 {
     public static Config.RunConfig configViewModel { get; set; } = new();
 
-    private IContentDialogService _contentDialogService = new ContentDialogService();
     public SettingsPage()
     {
         InitializeComponent();
-        _contentDialogService.SetDialogHost(RootContentDialogPresenter);
         this.DataContext = configViewModel;
     }
 
@@ -56,7 +56,8 @@ public partial class SettingsPage
     #region SaveOperation
     public bool CheckConfiguration(ref bool Reboot)
     {
-        #region 远程连接相关设置检查
+        #region 基础设置
+        //远程连接相关设置检查
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
         {
             if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || string.IsNullOrEmpty(DesktopPort_InputControl.Text) || string.IsNullOrEmpty(DesktopAccessKeyId_InputControl.Text) || string.IsNullOrEmpty(DesktopAccessKeySecret_InputControl.Text))
@@ -72,6 +73,12 @@ public partial class SettingsPage
                 MainWindow.SnackbarService.Show("保存失败", "请检查填写的远端服务地址是否符合Url格式，例如：“http://example.com”或者“http://127.0.0.1”，Url字符串请勿携带端口", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
                 return false;
             }
+        }
+        //API地址检测
+        if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || string.IsNullOrEmpty(DesktopPort_InputControl.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "API地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
         }
         #endregion
 
@@ -97,6 +104,15 @@ public partial class SettingsPage
         catch (Exception)
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return false;
+        }
+        #endregion
+
+        #region 录制功能设置
+        //自动转码参数检查
+        if (string.IsNullOrEmpty(AutomaticRepair_Arguments_InputBox.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "亲检查修复和转码的执行参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
         }
         #endregion
@@ -135,7 +151,7 @@ public partial class SettingsPage
                 DefaultButton = ContentDialogButton.Close
             };
             var cancellationToken = new CancellationToken();
-            var result = await _contentDialogService.ShowAsync(cd, cancellationToken);
+            var result = await MainWindow._contentDialogService.ShowAsync(cd, cancellationToken);
             if (result != ContentDialogResult.Primary)
             {
                 return;
@@ -143,6 +159,7 @@ public partial class SettingsPage
         }
 
         #region 保存远程连接相关设置 
+        //远程连接配置保存
         Config.Core_RunConfig._DesktopRemoteServer = (bool)DesktopRemoteServer_SwitchControl.IsChecked;
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
         {
@@ -151,18 +168,48 @@ public partial class SettingsPage
             Config.Core_RunConfig._DesktopAccessKeyId = DesktopAccessKeyId_InputControl.Text;
             Config.Core_RunConfig._DesktopAccessKeySecret = DesktopAccessKeySecret_InputControl.Text;
         }
+        //缩小行为配置保存
+        if (Config.Core_RunConfig._ZoomOutMode!=ZoomOutMode_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig._ZoomOutMode = ZoomOutMode_ComboBox.SelectedIndex;
+        }
+        //开播卡片配置保存
+        if (Config.Core_RunConfig._SystemCardReminder != SystemCardReminder_ToggleSwitch.IsChecked)
+        {
+            Config.Core_RunConfig._SystemCardReminder = (bool)SystemCardReminder_ToggleSwitch.IsChecked;
+        }
+        //API配置保存
+        Config.Core_RunConfig._MainDomainName = MainDomainName_TextBox.Text;
+        Config.Core_RunConfig._LiveDomainName = LiveDomainName_TextBox.Text;
         #endregion
 
-        #region 保存录制路径相关设置
+        #region 文件路径相关设置保存
         Config.Core_RunConfig._RecFileDirectory = RecPathInputBox.Text;
         Config.Core_RunConfig._DefaultLiverFolderName = DefaultLiverFolderNameInputBox.Text;
         Config.Core_RunConfig._DefaultDataFolderName = DefaulFolderNameFormatInputBox.Text;
         Config.Core_RunConfig._DefaultFileName = DefaulFileNameFormatInputBox.Text;
         #endregion
 
+        #region 录制功能设置保存
+        //录制模式
+        if ((int)Config.Core_RunConfig._RecordingMode-1!=RecordingMode_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig._RecordingMode = (RecordingMode)ZoomOutMode_ComboBox.SelectedIndex-1;
+        }
+        Config.Core_RunConfig._HlsWaitingTime = int.Parse(HlsWaitingTime_InputControl.Text);
+
+        //自动转码
+        if (Config.Core_RunConfig._AutomaticRepair != AutomaticRepair_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._AutomaticRepair = (bool)AutomaticRepair_SwitchControl.IsChecked;
+        }
+         Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
+        #endregion
+
         if (IsReboot)
         {
             MainWindow.SnackbarService.Show("保存成功", "多项配置需要重启后生效，5秒后自动重启DDTV", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.SaveSync20), TimeSpan.FromSeconds(30));
+            MainWindow.IsProgrammaticClose = true;
             Task.Run(() =>
                {
                    Thread.Sleep(6000);
@@ -182,9 +229,34 @@ public partial class SettingsPage
 
     #endregion
 
+
+
     private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
     {
-        await Core.Tools.ProgramUpdates.CheckForNewVersions(true,true);
+        if (await Core.Tools.ProgramUpdates.CheckForNewVersions(true, false))
+        {
+            var cd = new ContentDialog
+            {
+                Title = "检测到更新，是否更新？",
+                Content = "确认更新将会关闭DDTV，然后进行更新。",
+                PrimaryButtonText = "确认更新",
+                CloseButtonText = "取消",
+                DefaultButton = ContentDialogButton.Close
+            };
+            var cancellationToken = new CancellationToken();
+            var result = await MainWindow._contentDialogService.ShowAsync(cd, cancellationToken);
+            if (result != ContentDialogResult.Primary)
+            {
+                return;
+            }
+            Core.Tools.ProgramUpdates.CallUpUpdateProgram();
+        }
+        else
+        {
+            MainWindow.SnackbarService.Show("检查更新", "当前已是最新版本", ControlAppearance.Success, new SymbolIcon(SymbolRegular.ArrowSync20), TimeSpan.FromSeconds(3));
+        }
+
+
     }
 
     private void SelectRecordingFolder_Click(object sender, RoutedEventArgs e)
@@ -206,6 +278,34 @@ public partial class SettingsPage
 
     private void ViewFileFormatExamples_Click(object sender, RoutedEventArgs e)
     {
-         MainWindow.SnackbarService.Show("可用关键字", "{ROOMID}|{NAME}|{TITLE}|{DATE}|{TIME}　　　 说明:房间号|昵称|标题|日期(2016_12_01)|时间(11:22:33)\n{YYYY}|{YY}|{MM}|{DD}|{HH}|{mm}|{SS}|{FFF}　　说明:年(2016)|年(16)|月|日|时|分|秒|毫秒", ControlAppearance.Success, new SymbolIcon(SymbolRegular.ClipboardTextEdit20), TimeSpan.FromSeconds(30));
+        MainWindow.SnackbarService.Show("可用关键字", "{ROOMID}|{NAME}|{TITLE}|{DATE}|{TIME}　　　 说明:房间号|昵称|标题|日期(2016_12_01)|时间(11:22:33)\n{YYYY}|{YY}|{MM}|{DD}|{HH}|{mm}|{SS}|{FFF}　　说明:年(2016)|年(16)|月|日|时|分|秒|毫秒", ControlAppearance.Success, new SymbolIcon(SymbolRegular.ClipboardTextEdit20), TimeSpan.FromSeconds(30));
+    }
+
+    private async void ReLogin_Button_ClickAsync(object sender, RoutedEventArgs e)
+    {
+        var cd = new ContentDialog
+        {
+            Title = "重新登陆",
+            Content = "确认要触发重新登陆么？\n\r【警告】请注意确认后将会清空当前登录态。",
+            PrimaryButtonText = "确认",
+            CloseButtonText = "取消",
+            DefaultButton = ContentDialogButton.Close
+        };
+        var cancellationToken = new CancellationToken();
+        var result = await MainWindow._contentDialogService.ShowAsync(cd, cancellationToken);
+        if (result != ContentDialogResult.Primary)
+        {
+            return;
+        }
+
+        if (!DataSource.LoginStatus.LoginWindowDisplayStatus)
+        {
+            DataSource.LoginStatus.LoginWindowDisplayStatus = true;
+            Dispatcher.Invoke(() =>
+            {
+                QrLogin qrLogin = new QrLogin();
+                qrLogin.ShowDialog();
+            });
+        }
     }
 }

@@ -19,8 +19,12 @@ namespace Server
             string Message = "触发登陆流程";
             OperationQueue.Add(Opcode.Account.TriggerLoginAgain, Message);
             Log.Info(nameof(Login), Message);
+            AccountInformation tmp_a = Core.RuntimeObject.Account.AccountInformation;
+            tmp_a.State = false;
+            Core.RuntimeObject.Account.AccountInformation = tmp_a;
             await Task.Run(() =>
             {
+               
                 ByQRCode.QrCodeRefresh += ByQRCode_QrCodeRefresh;
                 QR_Object QR = ByQRCode.LoginByQrCode("#FF000000", "#FFFFFFFF", true);
                 ByQRCode.QrCodeStatus_Changed += ByQRCode_QrCodeStatus_Changed;

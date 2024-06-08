@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -20,6 +21,8 @@ using System.Windows.Shapes;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using static Core.Tools.DokiDoki;
+using static Server.WebAppServices.Api.get_system_resources;
 
 namespace Desktop
 {
@@ -29,14 +32,25 @@ namespace Desktop
     public partial class MainWindow : FluentWindow
     {
         /// <summary>
-        /// 本次不再提醒更新版本
+        /// 后台托盘
         /// </summary>
-        public static bool NoMoreRemindersForUpdates = false;
-
-
-
-        //底部提示框
+        private NotifyIcon notifyIcon = null;
+        /// <summary>
+        /// 确认窗口
+        /// </summary>
+        public static IContentDialogService _contentDialogService = new ContentDialogService();
+        /// <summary>
+        /// 程序关闭标志
+        /// </summary>
+        public static bool IsProgrammaticClose = false;
+        /// <summary>
+        /// 底部提示框
+        /// </summary>
         public static ISnackbarService SnackbarService;
+        /// <summary>
+        /// 是否连接远程服务器
+        /// </summary>
+        public static bool ToConnectToRemoteServer = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -44,19 +58,13 @@ namespace Desktop
             try
             {
                 Thread.Sleep(1000);
-                //设置标题
-                var doki = Core.Tools.DokiDoki.GetDoki();
-                this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion})";
-                UI_TitleBar.Title = this.Title;
-                //设置默认显示页
-                Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
+                
 
-                //初始化底部提示框
-                SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
-                SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
 
                 //初始化各种page
-                PageInit();
+                Init();
+
+                
             }
             catch (Exception ex)
             {
@@ -64,27 +72,118 @@ namespace Desktop
             }
         }
 
+        private void InitializeTitleMode()
+        {
+            Task.Run(() =>
+            {
+                if(!Config.Core_RunConfig._DesktopIP.Contains("//127.") && !Config.Core_RunConfig._DesktopIP.Contains("//0."))
+                {
+                    ToConnectToRemoteServer = true;
+                }
+
+                bool F = false;
+                DokiClass doki = null;
+                do
+                {
+                    if (!F)
+                    {
+                        F = true;
+                    }
+                    else
+                    {
+                        Thread.Sleep(3000);
+                    }
+                    doki = NetWork.Get.GetBody<DokiClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/dokidoki");
+                    Dispatcher.Invoke(() =>
+                    {
+
+                        if (Core.Init.Ver != doki.Ver)
+                        {
+                            MainWindow.SnackbarService.Show("远程版本不一致", $"检测到远程模式下远程版本与本地Desktop版本不一致！这可能会造成未知的问题，请尽快更新双端到最新版本！\n本地Desktop版本号:【{Core.Init.Ver}】|远程版本号:【{doki.Ver}】", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle24), TimeSpan.FromSeconds(5));
+                            this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                        }
+                        else
+                        {
+                            this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                        }
+                        UI_TitleBar.Title = this.Title;
+                    });
+
+                } while (doki == null);
+            });
+        }
+
+        private void notify()
+        {
+            notifyIcon = new System.Windows.Forms.NotifyIcon();
+            notifyIcon.Text = "DDTV";
+            notifyIcon.Icon = new System.Drawing.Icon("Assets/DDTV.ico"); // 你的图标路径
+            notifyIcon.Visible = true;
+            notifyIcon.DoubleClick += NotifyIcon_Click;
+            StateChanged += MainWindow_StateChanged; ;
+        }
+
+        /// <summary>
+        /// 窗口缩小事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.Hide();
+            }
+        }
+        /// <summary>
+        /// 双击托盘ICON事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+
+        private void NotifyIcon_Click(object? sender, EventArgs e)
+        {
+            this.Show();  // 显示窗口
+            this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
+        }
+
         /// <summary>
         /// 初始化各种页面内容
         /// </summary>
-        public void PageInit()
+        public void Init()
         {
             //设置房间卡片列表页定时任务
             DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
             //设置登录失效事件（失效后弹出扫码框）
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 5000);
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 1000 * 60);
             //版本更新检测
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
-
+            //设置默认显示页
+            Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
+            //初始化底部提示框
+            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
+            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
+            //初始化托盘
+            notify();
+            //初始化确认窗口
+            _contentDialogService.SetDialogHost(RootContentDialogPresenter);
+            //初始化标题和远程模式标志以及检查远程和本地版本号一致性
+            InitializeTitleMode();
         }
 
+        /// <summary>
+        /// 新版本检测事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
                {
-                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，请到设置页面点击更新按钮进行更新", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
+                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，{(ToConnectToRemoteServer?"请更新远程服务端后，再到设置页面点击更新按钮进行更新":"请到设置页面点击更新按钮进行更新")}", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
                });
         }
 
@@ -108,11 +207,33 @@ namespace Desktop
             }
         }
 
+        /// <summary>
+        /// 关闭后事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_Closed(object sender, EventArgs e)
         {
             DataPage.Timer_DataPage?.Dispose();
             DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
             Environment.Exit(-114514);
+        }
+
+        /// <summary>
+        /// 关闭前确认关闭
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void FluentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!IsProgrammaticClose)
+            {
+                System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show("确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。", "关闭确认", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result == System.Windows.MessageBoxResult.No)
+                {
+                    e.Cancel = true;
+                }
+            }
         }
     }
 }

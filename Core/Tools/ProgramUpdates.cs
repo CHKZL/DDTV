@@ -63,6 +63,7 @@ namespace Core.Tools
         /// 检查有没有新版本
         /// </summary>
         /// <param name="AutoUpdate">是否唤起自动更新</param>
+        /// <param name="Manual">是否为手动检查更新</param>
         /// <returns></returns>
         public static async Task<bool> CheckForNewVersions(bool AutoUpdate = false, bool Manual = false)
         {
@@ -108,7 +109,7 @@ namespace Core.Tools
                 }
             });
         }
-        internal static void CallUpUpdateProgram()
+        public static void CallUpUpdateProgram()
         {
             if (File.Exists("./Update/Update.exe"))
             {
