@@ -34,7 +34,7 @@ namespace Core.Network
                         request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                        if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                         request.Method = "GET";
                         request.Timeout = 10000; // 10 seconds
 
@@ -90,7 +90,7 @@ namespace Core.Network
                         request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                        if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                         request.Method = "GET";
                         request.Timeout = 10000; // 10 seconds
 
@@ -146,7 +146,7 @@ namespace Core.Network
                         request.UserAgent = Config.Core_RunConfig._HTTP_UA;
                         request.Headers.Add("Accept-Language", "en-US,en;q=0.5");
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                        if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                         request.Method = "GET";
                         request.Timeout = 10000;
 
@@ -206,7 +206,7 @@ namespace Core.Network
                         request.ContentType = "application/x-www-form-urlencoded";
                         request.Accept = "*/*";
                         if (!string.IsNullOrEmpty(referer)) request.Referer = referer;
-                        if (IsCookie && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) request.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                         request.Method = "GET";
                         request.Timeout = 10000; // 10 seconds
 

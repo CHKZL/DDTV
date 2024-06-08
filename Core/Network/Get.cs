@@ -43,7 +43,7 @@ namespace Core.Network
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
                 if (specialheaders != null) req.Headers = specialheaders;
-                if (IsCookie && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                 for (int attempt = 0; attempt < maxAttempts; attempt++)
                 {
                     try

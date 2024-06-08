@@ -41,7 +41,7 @@ namespace Core.Network
                 req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 if (specialheaders != null) req.Headers = specialheaders;
 
-                if (IsCookie) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
 
                 byte[] bdata = Encoding.UTF8.GetBytes(jsondate);
                 Stream sdata = req.GetRequestStream();
