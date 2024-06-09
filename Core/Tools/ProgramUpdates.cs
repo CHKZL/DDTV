@@ -248,9 +248,7 @@ namespace Core.Tools
                         }
                         int i = 1;
                         foreach (var item in map)
-                        {
-                            if (item.Value.Name == "Update.exe")
-                                ;
+                        {                   
                             Log.Info(nameof(Update_UpdateProgram),$"进度：{i}/{map.Count}  |  文件大小{item.Value.Size}字节，开始更新文件【{item.Value.Name}】.......");
                             string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
                             if (!Directory.Exists(directoryPath))
