@@ -65,9 +65,9 @@ namespace Update
                                 FileUpdateStatus = false;
                             }
                         }
-                        if (Update_For_UpdateProgram)
+                        //if (Update_For_UpdateProgram)
                         {
-                            if (!item.FilePath.Contains("bin/Update"))
+                            if (item.FilePath.Contains("bin/Update"))
                             {
                                 FileUpdateStatus = false;
                             }
