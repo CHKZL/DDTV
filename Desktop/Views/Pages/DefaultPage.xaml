@@ -116,7 +116,7 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前运行状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                         <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding runningState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-                        <ui:Anchor Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="查看DDTV源码" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" />
+                        <!--<ui:Anchor Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="查看DDTV源码" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" />-->
                     </Grid>
                     
                 </Border>

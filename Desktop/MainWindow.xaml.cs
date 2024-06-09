@@ -1,10 +1,12 @@
 ﻿using Core;
 using Core.LogModule;
+using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
 using Masuit.Tools.Win32;
 using Microsoft.Extensions.DependencyInjection;
+using Notifications.Wpf;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -21,6 +23,7 @@ using System.Windows.Shapes;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
+using static Core.RuntimeObject.Detect;
 using static Core.Tools.DokiDoki;
 using static Server.WebAppServices.Api.get_system_resources;
 
@@ -35,6 +38,10 @@ namespace Desktop
         /// 后台托盘
         /// </summary>
         private NotifyIcon notifyIcon = null;
+        /// <summary>
+        /// 系统托盘通知
+        /// </summary>
+        public NotificationManager notificationManager = new NotificationManager();
         /// <summary>
         /// 确认窗口
         /// </summary>
@@ -58,25 +65,50 @@ namespace Desktop
             try
             {
                 Thread.Sleep(1000);
-                
-
-
                 //初始化各种page
                 Init();
-
-                
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
             }
+
+        }
+
+        /// <summary>
+        /// 初始化各种页面内容
+        /// </summary>
+        public void Init()
+        {
+            //设置房间卡片列表页定时任务
+            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
+            //设置登录失效事件（失效后弹出扫码框）
+            DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
+            //设置登录态检测定时任务
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 1000 * 60);
+            //版本更新检测
+            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+            //设置默认显示页
+            Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
+            //初始化底部提示框
+            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
+            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
+            //初始化托盘
+            notify();
+            //初始化确认窗口
+            _contentDialogService.SetDialogHost(RootContentDialogPresenter);
+            //初始化标题和远程模式标志以及检查远程和本地版本号一致性
+            InitializeTitleMode();
+            //监听开播事件，用于开播提醒
+            Detect.detectRoom.LiveStart += DetectRoom_LiveStart;
+
         }
 
         private void InitializeTitleMode()
         {
             Task.Run(() =>
             {
-                if(!Config.Core_RunConfig._DesktopIP.Contains("//127.") && !Config.Core_RunConfig._DesktopIP.Contains("//0."))
+                if (!Config.Core_RunConfig._DesktopIP.Contains("//127.") && !Config.Core_RunConfig._DesktopIP.Contains("//0."))
                 {
                     ToConnectToRemoteServer = true;
                 }
@@ -117,7 +149,7 @@ namespace Desktop
         {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
             notifyIcon.Text = "DDTV";
-            notifyIcon.Icon = new System.Drawing.Icon("DDTV.ico"); 
+            notifyIcon.Icon = new System.Drawing.Icon("DDTV.ico");
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += NotifyIcon_Click;
             StateChanged += MainWindow_StateChanged; ;
@@ -148,30 +180,26 @@ namespace Desktop
             this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
         }
 
+
+
         /// <summary>
-        /// 初始化各种页面内容
+        /// 开播事件，触发开播提醒
         /// </summary>
-        public void Init()
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        private void DetectRoom_LiveStart(object? sender, RoomCardClass roomCard)
         {
-            //设置房间卡片列表页定时任务
-            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
-            //设置登录失效事件（失效后弹出扫码框）
-            DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
-            //设置登录态检测定时任务
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 1000 * 60);
-            //版本更新检测
-            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
-            //设置默认显示页
-            Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
-            //初始化底部提示框
-            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
-            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
-            //初始化托盘
-            notify();
-            //初始化确认窗口
-            _contentDialogService.SetDialogHost(RootContentDialogPresenter);
-            //初始化标题和远程模式标志以及检查远程和本地版本号一致性
-            InitializeTitleMode();
+            List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
+            if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
+            {
+                notificationManager.Show(new NotificationContent
+                {
+                    Title = "DDTV-开播提醒",
+                    Message = $"【{roomCard.Name}】的直播开始啦",
+                    Type = NotificationType.Information
+                });
+            }
         }
 
         /// <summary>
@@ -183,7 +211,7 @@ namespace Desktop
         {
             Dispatcher.Invoke(() =>
                {
-                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，{(ToConnectToRemoteServer?"请更新远程服务端后，再到设置页面点击更新按钮进行更新":"请到设置页面点击更新按钮进行更新")}", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
+                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，{(ToConnectToRemoteServer ? "请更新远程服务端后，再到设置页面点击更新按钮进行更新" : "请到设置页面点击更新按钮进行更新")}", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
                });
         }
 

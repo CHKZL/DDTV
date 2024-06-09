@@ -27,11 +27,11 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
-            if(!args.Contains("Desktop") && !args.Contains("Client"))
+            if (!args.Contains("Desktop") && !args.Contains("Client"))
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
             }
-            
+
             MainAsync(args).GetAwaiter().GetResult();
         }
 
@@ -39,14 +39,14 @@ namespace Server
         {
             try
             {
-               
+
                 //注册DDTV主要服务
                 Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
 
                 //等待Core启动后再启动WEB服务
                 await Init.CoreStartAwait.Task;
 
-                if(PortInspect())
+                if (PortInspect())
                 {
                     Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                     Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
@@ -86,7 +86,7 @@ namespace Server
 
 
                 var app = builder.Build();
-                
+
                 app.UseWebSockets();
                 app.UseMiddleware<WebSocketControl>();
                 app.UseSwagger();
@@ -133,8 +133,8 @@ namespace Server
                 if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
                 {
                     Console.WriteLine($"按任意键退出");
-                     if(!args.Contains("Desktop") && !args.Contains("Client"))
-                    Console.ReadKey();
+                    if (!args.Contains("Desktop") && !args.Contains("Client"))
+                        Console.ReadKey();
                 }
             }
         }
@@ -151,7 +151,7 @@ namespace Server
             TcpConnectionInformation[] tcpConnInfoArray = ipProperties.GetActiveTcpConnections();
             foreach (var item in tcpConnInfoArray)
             {
-                if(item.LocalEndPoint.Port==Core.Config.Core_RunConfig._Port)
+                if (item.LocalEndPoint.Port == Core.Config.Core_RunConfig._Port)
                 {
                     return true;
                 }
@@ -181,54 +181,61 @@ namespace Server
                 {
                     return Task.Run(async () =>
                     {
-                        Core.Init.Start(_args);//初始化必须执行的
-                        //_ParentProcessDetection();
-
-                        //启动房间监听并且注册事件
-                        Detect detect = new();
-                        //控制台打印心跳日志
-                        doki();
-                        //终端和ws更新事件
-                        Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
-
-                        if(_args.Contains("Desktop") && Config.Core_RunConfig._DesktopRemoteServer)
+                        try
                         {
-                            return;
-                        }
-                        if (!Account.AccountInformation.State)
-                        {
-                            if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                            Core.Init.Start(_args);//初始化必须执行的
+                                                   //_ParentProcessDetection();
+
+                            //启动房间监听并且注册事件
+                            Detect detect = new();
+                            //控制台打印心跳日志
+                            doki();
+                            //终端和ws更新事件
+                            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+
+                            if (_args.Contains("Desktop") && Config.Core_RunConfig._DesktopRemoteServer)
                             {
-                                Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
-                                    "使用前须知：\r\n" +
-                                    "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
-                                    "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
-                                    "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
-                                    "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
-
-                                _UseAgree();
-
-                                while (!Core.Config.Core_RunConfig._UseAgree)
+                                return;
+                            }
+                            if (!Account.AccountInformation.State)
+                            {
+                                if (!_args.Contains("Desktop") && !_args.Contains("Client"))
                                 {
-                                    Thread.Sleep(500);
+                                    Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
+                                        "使用前须知：\r\n" +
+                                        "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
+                                        "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
+                                        "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
+                                        "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
+
+                                    _UseAgree();
+
+                                    while (!Core.Config.Core_RunConfig._UseAgree)
+                                    {
+                                        Thread.Sleep(500);
+                                    }
+                                    await Login.QR();//如果没有登录态，需要执行扫码
+                                    while (!Account.AccountInformation.State)
+                                    {
+                                        Thread.Sleep(1000);//等待登陆
+                                    }
                                 }
-                                await Login.QR();//如果没有登录态，需要执行扫码
-                                while (!Account.AccountInformation.State)
-                                {
-                                    Thread.Sleep(1000);//等待登陆
-                                }
+
+
                             }
 
+                            if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                            {
+                                TerminalDisplay.SeKey();
 
+                            }
                         }
-
-                        if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                        catch (Exception EX)
                         {
-                            TerminalDisplay.SeKey();
-                            
+                            File.WriteAllText("./ERROR.TXT", EX.ToString());
                         }
-                        
-                        
+
+
                     });
                 }
 
