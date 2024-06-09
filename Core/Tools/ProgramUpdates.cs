@@ -193,7 +193,6 @@ namespace Core.Tools
             public static HttpClient _httpClient = new HttpClient();
             public static void Main(string[] args)
             {
-                args = ["CheckForUpdatedPrograms"];
                 if (args.Length != 0)
                 {
                     if (args.Contains("CheckForUpdatedPrograms"))
