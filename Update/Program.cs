@@ -18,7 +18,6 @@ namespace Update
         public static bool Isdev = false;
 
         public static bool Update_For_UpdateProgram = false;
-        public static HttpClient _httpClient = new HttpClient();
         public static void Main(string[] args)
         {
             if (args.Length != 0)
@@ -42,6 +41,7 @@ namespace Update
             Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
             Console.WriteLine(Environment.CurrentDirectory);
             Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
+            HttpClient _httpClient = new HttpClient();
             _httpClient.Timeout = new TimeSpan(0, 0, 10);
             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
             if (checkVersion())
@@ -198,6 +198,9 @@ namespace Update
                     {
                         FileDownloadAddress = MainDomainName + URL;
                     }
+                    HttpClient _httpClient = new HttpClient();
+                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
                     error_count++;
                 }
@@ -247,6 +250,9 @@ namespace Update
                 }
                 try
                 {
+                    HttpClient _httpClient = new HttpClient();
+                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
                     response.EnsureSuccessStatusCode();
                     using var output = new FileStream(outputPath, FileMode.Create);

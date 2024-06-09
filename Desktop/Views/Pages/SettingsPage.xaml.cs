@@ -239,7 +239,7 @@ public partial class SettingsPage
     private async void CheckForUpdates_Click(object sender, RoutedEventArgs e)
     {
         MainWindow.SnackbarService.Show("检查更新", "正在检测更新，请稍候...", ControlAppearance.Info, new SymbolIcon(SymbolRegular.ArrowSync20), TimeSpan.FromSeconds(5));
-        if (await Core.Tools.ProgramUpdates.CheckForNewVersions(true, false))
+        if (await Core.Tools.ProgramUpdates.CheckForNewVersions(false, true))
         {
             var cd = new ContentDialog
             {
