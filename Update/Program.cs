@@ -21,7 +21,6 @@ namespace Update
         public static HttpClient _httpClient = new HttpClient();
         public static void Main(string[] args)
         {
-            args = ["CheckForUpdatedPrograms"];
             if (args.Length != 0)
             {
                 if (args.Contains("CheckForUpdatedPrograms"))
@@ -66,9 +65,9 @@ namespace Update
                                 FileUpdateStatus = false;
                             }
                         }
-                        if(Update_For_UpdateProgram)
+                        if (Update_For_UpdateProgram)
                         {
-                            if(!item.FilePath.Contains("bin/Update"))
+                            if (!item.FilePath.Contains("bin/Update"))
                             {
                                 FileUpdateStatus = false;
                             }
@@ -102,6 +101,10 @@ namespace Update
                     Console.WriteLine($"更新失败：获取更新列表失败，请检查网络状态");
                 }
             }
+            else
+            {
+                Console.WriteLine($"未检测到新版本");
+            }
             if (!Update_For_UpdateProgram)
             {
                 while (true)
@@ -112,12 +115,13 @@ namespace Update
         }
         public static bool checkVersion()
         {
-            if (!File.Exists(Update_For_UpdateProgram?"./ver.ini":verFile))
+            string VerFile = Update_For_UpdateProgram ? "./ver.ini" : verFile;
+            if (!File.Exists(VerFile))
             {
                 Console.WriteLine("更新失败，没找到版本标识文件");
-                return true;
+                return false;
             }
-            string[] Ver = File.ReadAllLines(Update_For_UpdateProgram?"./ver.ini":verFile);
+            string[] Ver = File.ReadAllLines(Update_For_UpdateProgram ? "./ver.ini" : verFile);
             foreach (string VerItem in Ver)
             {
                 if (VerItem.StartsWith("type="))
@@ -128,7 +132,7 @@ namespace Update
             if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(ver))
             {
                 Console.WriteLine("更新失败，版本标识文件内容错数");
-                return true;
+                return false;
             }
             if (ver.ToLower().StartsWith("dev"))
             {
@@ -143,9 +147,9 @@ namespace Update
             if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
             {
                 //老版本
-                Version Before = new Version(ver.Replace("dev","").Replace("release",""));
+                Version Before = new Version(ver.Replace("dev", "").Replace("release", ""));
                 //新版本
-                Version After = new Version(R_Ver.Replace("dev","").Replace("release",""));
+                Version After = new Version(R_Ver.Replace("dev", "").Replace("release", ""));
                 if (After > Before)
                 {
                     Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
@@ -169,7 +173,7 @@ namespace Update
             bool A = false;
             string str = string.Empty;
             int error_count = 0;
-            string FileDownloadAddress=string.Empty;
+            string FileDownloadAddress = string.Empty;
             do
             {
                 try
@@ -178,7 +182,7 @@ namespace Update
                         Thread.Sleep(1000);
                     if (!A)
                         A = true;
-                    
+
                     if (error_count > 1)
                     {
                         if (error_count > 3)
@@ -197,7 +201,7 @@ namespace Update
                     str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
                     error_count++;
                 }
-                 catch (WebException webex)
+                catch (WebException webex)
                 {
                     error_count++;
                     switch (webex.Status)
@@ -215,7 +219,7 @@ namespace Update
                 {
                     error_count++;
                     Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
-                    
+
                 }
             } while (string.IsNullOrEmpty(str));
             Console.WriteLine($"下载成功...");
@@ -228,9 +232,9 @@ namespace Update
             while (true)
             {
                 string FileDownloadAddress;
-                if(error_count>2)
+                if (error_count > 2)
                 {
-                    if(error_count>5)
+                    if (error_count > 5)
                     {
                         break;
                     }
@@ -268,9 +272,9 @@ namespace Update
                 {
                     error_count++;
                     Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
-                    
+
                 }
-                Thread.Sleep(1000);            
+                Thread.Sleep(1000);
             }
             return false;
         }
