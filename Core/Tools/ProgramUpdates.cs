@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Formats.Tar;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.ConstrainedExecution;
 using System.Text;
@@ -19,7 +20,8 @@ namespace Core.Tools
 {
     public class ProgramUpdates
     {
-        public static string Url = "https://ddtv-update.top";
+        public static string MainDomainName = "https://ddtv-update.top";
+        public static string AlternativeDomainName = "https://update5.ddtv.pro";
         private static string verFile = "./ver.ini";
         private static string type = string.Empty;
         private static string ver = string.Empty;
@@ -75,7 +77,7 @@ namespace Core.Tools
                     {
                         return false;
                     }
-                    string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
+                    string DL_VerFileUrl = $"/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
                     string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev", "").Replace("release", "");
                     if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
                     {
@@ -85,6 +87,8 @@ namespace Core.Tools
                         Version After = new Version(R_Ver);
                         if (After > Before)
                         {
+                            Update.Program.Main(["CheckForUpdatedPrograms"]);
+
                             if (!Manual)
                                 NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
                             if (AutoUpdate)
@@ -128,17 +132,59 @@ namespace Core.Tools
             HttpClient _httpClient = new HttpClient();
             bool A = false;
             string str = string.Empty;
+            int error_count = 0;
+            string FileDownloadAddress = string.Empty;
             do
             {
-                if (A)
-                    Thread.Sleep(1000);
-                if (!A)
-                    A = true;
+                try
+                {
+                    if (A)
+                        Thread.Sleep(1000);
+                    if (!A)
+                        A = true;
+                    if (error_count > 1)
+                    {
+                        if (error_count > 3)
+                        {
+                            Log.Info(nameof(ProgramUpdates), $"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
+                            return "";
+                        }
+                        Log.Info(nameof(ProgramUpdates), $"使用备用服务器进行重试.....");
+                        FileDownloadAddress = AlternativeDomainName + URL;
+                        Log.Info(nameof(ProgramUpdates), $"从主服务器获取更新失败，尝试从备用服务器获取....");
+                    }
+                    else
+                    {
+                        FileDownloadAddress = MainDomainName + URL;
+                    }
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+                }
+                catch (WebException webex)
+                {
+                    error_count++;
+                    switch (webex.Status)
+                    {
+                        case WebExceptionStatus.Timeout:
+                            Log.Info(nameof(ProgramUpdates), $"下载文件超时:{FileDownloadAddress}");
+                            break;
 
-                _httpClient.DefaultRequestHeaders.Referrer = new Uri("http://ddtv-update");
-                str = _httpClient.GetStringAsync(URL).Result;
+                        default:
+                            Log.Info(nameof(ProgramUpdates), $"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    error_count++;
+                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+
+
+                }
             } while (string.IsNullOrEmpty(str));
+
             return str;
         }
+
     }
 }
