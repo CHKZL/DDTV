@@ -38,8 +38,16 @@ public partial class DataPage
     public DataPage()
     {
         InitializeComponent();
-        Init();
-        
+        try
+        {
+            //初始化各种page
+            Init();
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
+        }
+
     }
 
     public void Init()

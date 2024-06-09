@@ -116,6 +116,19 @@
                                 </Grid>
                             </Grid>
                         </ui:CardControl>
+
+                        <ui:CardControl Padding="20,10,20,10" Header="接收开发版更新　（新功能功能优先推送）" Icon="{ui:SymbolIcon DeveloperBoardLightningToolbox20}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="DevelopmentVersion_ToggleSwitch" Height="35" IsChecked="{Binding _DevelopmentVersion, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                         <ui:CardControl Padding="20,10,20,10" Header="开播系统卡片提醒" Icon="{ui:SymbolIcon MegaphoneLoud28}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -174,17 +187,7 @@
                                 </ui:CardControl>
                             </Grid>
                         </Grid>
-                        <ui:CardControl Padding="20,10,20,10" Header="接收开发版更新　（新功能功能优先推送）" Icon="{ui:SymbolIcon DeveloperBoardLightningToolbox20}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
-                                    <ui:ToggleSwitch Name="DevelopmentVersion_ToggleSwitch" Height="35" IsChecked="{Binding _DevelopmentVersion, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
-                                </Grid>
-                            </Grid>
-                        </ui:CardControl>
+                        
 
 
                     </StackPanel>
