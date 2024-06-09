@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -8,7 +9,8 @@ namespace Update
 {
     internal class Program
     {
-        public static string Url = "https://ddtv-update.top";
+        public static string MainDomainName = "https://ddtv-update.top";
+        public static string AlternativeDomainName = "https://update5.ddtv.pro";
         public static string verFile = "../ver.ini";
         public static string type = string.Empty;
         public static string ver = string.Empty;
@@ -22,29 +24,32 @@ namespace Update
             Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
             Console.WriteLine(Environment.CurrentDirectory);
             Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
-            _httpClient.Timeout = new TimeSpan(0, 0, 8);
+            _httpClient.Timeout = new TimeSpan(0, 0, 10);
+            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
             if (checkVersion())
             {
-                string DL_FileListUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
+                string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
                 string web = Get(DL_FileListUrl);
                 var B = JsonConvert.DeserializeObject<FileInfoClass>(web);
                 if (B != null)
                 {
                     foreach (var item in B.files)
                     {
-                        bool IsD = true;
+                        //文件更新状态（是否需要更新）
+                        bool FileUpdateStatus = true;
+
                         string FilePath = $"../../{item.FilePath}";
                         if (File.Exists(FilePath))
                         {
                             string Md5 = MD5Hash.GetMD5HashFromFile(FilePath);
                             if (Md5 == item.FileMd5)
                             {
-                                IsD = false;
+                                FileUpdateStatus = false;
                             }
                         }
-                        if (IsD)
+                        if (FileUpdateStatus)
                         {
-                            map.Add($"{Url}/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
+                            map.Add($"/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
                         }
                     }
                     int i = 1;
@@ -102,16 +107,16 @@ namespace Update
             }
             Console.WriteLine($"当前本地版本{type}-{ver}[{(Isdev ? "dev" : "release")}]");
             Console.WriteLine("开始获取最新版本号....");
-            string DL_VerFileUrl = $"{Url}/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
+            string DL_VerFileUrl = $"/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
             string R_Ver = Get(DL_VerFileUrl).TrimEnd();
             Console.WriteLine($"获取到当前服务端版本:{R_Ver}");
 
             if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
             {
                 //老版本
-                Version Before = new Version(ver);
+                Version Before = new Version(ver.Replace("dev","").Replace("release",""));
                 //新版本
-                Version After = new Version(R_Ver);
+                Version After = new Version(R_Ver.Replace("dev","").Replace("release",""));
                 if (After > Before)
                 {
                     Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
@@ -134,49 +139,111 @@ namespace Update
         {
             bool A = false;
             string str = string.Empty;
+            int error_count = 0;
+            string FileDownloadAddress=string.Empty;
             do
             {
-                if (A)
-                    Thread.Sleep(1000);
-                if (!A)
-                    A = true;
+                try
+                {
+                    if (A)
+                        Thread.Sleep(1000);
+                    if (!A)
+                        A = true;
+                    
+                    if (error_count > 1)
+                    {
+                        if (error_count > 3)
+                        {
+                            Console.WriteLine($"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
+                            return "";
+                        }
+                        Console.WriteLine($"使用备用服务器进行重试.....");
+                        FileDownloadAddress = AlternativeDomainName + URL;
+                        Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
+                    }
+                    else
+                    {
+                        FileDownloadAddress = MainDomainName + URL;
+                    }
+                    str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+                    error_count++;
+                }
+                 catch (WebException webex)
+                {
+                    error_count++;
+                    switch (webex.Status)
+                    {
+                        case WebExceptionStatus.Timeout:
+                            Console.WriteLine($"下载文件超时:{FileDownloadAddress}");
+                            break;
 
-                _httpClient.DefaultRequestHeaders.Referrer = new Uri("http://ddtv-update");
-                str = _httpClient.GetStringAsync(URL).Result;
+                        default:
+                            Console.WriteLine($"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    error_count++;
+                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+                    
+                }
             } while (string.IsNullOrEmpty(str));
+            Console.WriteLine($"下载成功...");
             return str;
         }
 
         public static bool DownloadFileAsync(string url, string outputPath)
         {
-            try
+            int error_count = 0;
+            while (true)
             {
-                using var response = _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead).Result;
-                response.EnsureSuccessStatusCode();
-                using var output = new FileStream(outputPath, FileMode.Create);
-                using var contentStream = response.Content.ReadAsStreamAsync().Result;
-                contentStream.CopyTo(output);
-                return true;
-            }
-            catch (WebException webex)
-            {
-                switch (webex.Status)
+                string FileDownloadAddress;
+                if(error_count>2)
                 {
-                    case WebExceptionStatus.Timeout:
-                        Console.WriteLine($"下载文件超时:{url}");
+                    if(error_count>5)
+                    {
                         break;
-
-                    default:
-                        Console.WriteLine($"网络错误，请检查网络状况或者代理设置...开始重试.....");
-                        break;
+                    }
+                    FileDownloadAddress = AlternativeDomainName + url;
+                    Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
                 }
-                return false;
+                else
+                {
+                    FileDownloadAddress = MainDomainName + url;
+                }
+                try
+                {
+                    using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
+                    response.EnsureSuccessStatusCode();
+                    using var output = new FileStream(outputPath, FileMode.Create);
+                    using var contentStream = response.Content.ReadAsStreamAsync().Result;
+                    contentStream.CopyTo(output);
+                    return true;
+                }
+                catch (WebException webex)
+                {
+                    error_count++;
+                    switch (webex.Status)
+                    {
+                        case WebExceptionStatus.Timeout:
+                            Console.WriteLine($"下载文件超时:{FileDownloadAddress}");
+                            break;
+
+                        default:
+                            Console.WriteLine($"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    error_count++;
+                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+                    
+                }
+                Thread.Sleep(1000);            
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
-                return false;
-            }
+            return false;
         }
     }
 }
