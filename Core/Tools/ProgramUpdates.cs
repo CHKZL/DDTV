@@ -80,7 +80,7 @@ namespace Core.Tools
                         if (After > Before)
                         {
                             Update_UpdateProgram update_UpdateProgram = new();
-                            update_UpdateProgram.Main(["CheckForUpdatedPrograms", (Core.Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")]);
+                            update_UpdateProgram.Main([(Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")]);
 
                             if (!Manual)
                                 NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
@@ -224,7 +224,7 @@ namespace Core.Tools
                             //文件更新状态（是否需要更新）
                             bool FileUpdateStatus = true;
 
-                            string FilePath = $"../../{item.FilePath}";
+                            string FilePath = $"../{item.FilePath}";
 
                             if (File.Exists(FilePath))
                             {
@@ -249,6 +249,8 @@ namespace Core.Tools
                         int i = 1;
                         foreach (var item in map)
                         {
+                            if (item.Value.Name == "Update.exe")
+                                ;
                             Log.Info(nameof(Update_UpdateProgram),$"进度：{i}/{map.Count}  |  文件大小{item.Value.Size}字节，开始更新文件【{item.Value.Name}】.......");
                             string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
                             if (!Directory.Exists(directoryPath))
