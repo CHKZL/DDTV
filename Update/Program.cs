@@ -57,21 +57,24 @@ namespace Update
                         bool FileUpdateStatus = true;
 
                         string FilePath = $"../../{item.FilePath}";
-                        if (File.Exists(FilePath))
+
+
+                        if (item.FilePath.Contains("bin/Update"))
                         {
-                            string Md5 = MD5Hash.GetMD5HashFromFile(FilePath);
-                            if (Md5 == item.FileMd5)
+                            FileUpdateStatus = false;
+                        }
+                        else
+                        {
+                            if (File.Exists(FilePath))
                             {
-                                FileUpdateStatus = false;
+                                string Md5 = MD5Hash.GetMD5HashFromFile(FilePath);
+                                if (Md5 == item.FileMd5)
+                                {
+                                    FileUpdateStatus = false;
+                                }
                             }
                         }
-                        //if (Update_For_UpdateProgram)
-                        {
-                            if (item.FilePath.Contains("bin/Update"))
-                            {
-                                FileUpdateStatus = false;
-                            }
-                        }
+
                         if (FileUpdateStatus)
                         {
                             map.Add($"/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
