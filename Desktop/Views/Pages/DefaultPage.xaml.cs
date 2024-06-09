@@ -5,6 +5,7 @@
 
 using Core;
 using Desktop.Models;
+using SixLabors.ImageSharp.Drawing;
 using System.Collections.ObjectModel;
 using System.Windows;
 using static Server.WebAppServices.Api.get_system_resources;
@@ -20,6 +21,7 @@ public partial class DefaultPage
     private Timer RoomStatisticsTimer;
     private Timer UpdateHardwareResourceUtilizationRateTimer;
     private Timer UpdateRuntimeStatisticsTimer;
+    private Timer UpdateAnnouncementTimer;
 
     public DefaultPage()
     {
@@ -33,6 +35,9 @@ public partial class DefaultPage
         UpdateHardwareResourceUtilizationRateTimer = new Timer(UpdateHardwareResourceUtilizationRate, null, 1000, 60 * 1000);
         //更新运行时长
         UpdateRuntimeStatisticsTimer = new Timer(UpdateRuntimeStatistics, null, 1000, 1000);
+
+        //更新公告
+        UpdateAnnouncementTimer = new Timer(UpdateAnnouncement, null, 1, 1000 * 60 * 60);
 
     }
 
@@ -70,6 +75,17 @@ public partial class DefaultPage
     {
         PageComboBoxItems.runningState = str;
         PageComboBoxItems.OnPropertyChanged("runningState");
+    }
+
+    /// <summary>
+    /// 更新公告
+    /// </summary>
+    /// <param name="state"></param>
+    public static void UpdateAnnouncement(object state)
+    {
+        string announcement = Core.Tools.ProgramUpdates.Get("/announcement.txt");
+        PageComboBoxItems.announcement = announcement;
+        PageComboBoxItems.OnPropertyChanged("announcement");
     }
 
     /// <summary>

@@ -121,7 +121,7 @@ namespace Core.Tools
                 Log.Error(nameof(ProgramUpdates), $"找不到自动更新脚本程序DDTV_Update.exe");
             }
         }
-        internal static string Get(string URL)
+        public static string Get(string URL)
         {
             HttpClient _httpClient = new HttpClient();
             bool A = false;

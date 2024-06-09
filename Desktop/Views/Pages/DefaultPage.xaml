@@ -127,7 +127,7 @@
             <Grid Grid.Row="1" Grid.Column="0" Margin="3">
 
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
-                    <TextBlock  Margin="15,20,15,20" FontSize="20" FontWeight="Medium" TextWrapping="Wrap"  Text="这里是公告栏：&#x0A; &#x0A; &#x0A; UI开发中，目前首页是静态内容"/>
+                    <TextBlock  Margin="15,20,15,20" FontSize="20" FontWeight="Medium" TextWrapping="Wrap"  Text="{Binding announcement,Mode=OneWay}"/>
                 </Border>
             </Grid>
 
