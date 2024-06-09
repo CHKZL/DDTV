@@ -7,7 +7,7 @@ using static Update.GetFileSchemaJSON;
 
 namespace Update
 {
-    internal class Program
+    public class Program
     {
         public static string MainDomainName = "https://ddtv-update.top";
         public static string AlternativeDomainName = "https://update5.ddtv.pro";
@@ -16,9 +16,20 @@ namespace Update
         public static string ver = string.Empty;
         public static string R_ver = string.Empty;
         public static bool Isdev = false;
+
+        public static bool Update_For_UpdateProgram = false;
         public static HttpClient _httpClient = new HttpClient();
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            args =["CheckForUpdatedPrograms"];
+            if (args.Length != 0)
+            { 
+                if(args.Contains("CheckForUpdatedPrograms"))
+                {
+                    Update_For_UpdateProgram = true;
+                }
+            }
+
             Console.WriteLine("开始更新DDTV");
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
@@ -43,6 +54,13 @@ namespace Update
                         {
                             string Md5 = MD5Hash.GetMD5HashFromFile(FilePath);
                             if (Md5 == item.FileMd5)
+                            {
+                                FileUpdateStatus = false;
+                            }
+                        }
+                        if(Update_For_UpdateProgram)
+                        {
+                            if(!item.FilePath.Contains("bin/Update"))
                             {
                                 FileUpdateStatus = false;
                             }
@@ -76,19 +94,22 @@ namespace Update
                     Console.WriteLine($"更新失败：获取更新列表失败，请检查网络状态");
                 }
             }
-            while (true)
+            if (!Update_For_UpdateProgram)
             {
-                Console.ReadKey();
+                while (true)
+                {
+                    Console.ReadKey();
+                }
             }
         }
         public static bool checkVersion()
         {
-            if (!File.Exists(verFile))
+            if (!File.Exists(Update_For_UpdateProgram?"./ver.ini":verFile))
             {
                 Console.WriteLine("更新失败，没找到版本标识文件");
                 return true;
             }
-            string[] Ver = File.ReadAllLines(verFile);
+            string[] Ver = File.ReadAllLines(Update_For_UpdateProgram?"./ver.ini":verFile);
             foreach (string VerItem in Ver)
             {
                 if (VerItem.StartsWith("type="))
