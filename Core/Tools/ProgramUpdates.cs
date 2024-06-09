@@ -190,16 +190,11 @@ namespace Core.Tools
             public static string R_ver = string.Empty;
             public static bool Isdev = false;
 
-            public static bool Update_For_UpdateProgram = false;
             
             public void Main(string[] args)
             {
                 if (args.Length != 0)
                 {
-                    if (args.Contains("CheckForUpdatedPrograms"))
-                    {
-                        Update_For_UpdateProgram = true;
-                    }
                     if (args.Contains("dev"))
                     {
                         Isdev = true;
@@ -230,6 +225,7 @@ namespace Core.Tools
                             bool FileUpdateStatus = true;
 
                             string FilePath = $"../../{item.FilePath}";
+
                             if (File.Exists(FilePath))
                             {
                                 string Md5 = GetMD5HashFromFile(FilePath);
@@ -238,13 +234,13 @@ namespace Core.Tools
                                     FileUpdateStatus = false;
                                 }
                             }
-                            if (Update_For_UpdateProgram)
+
+                            if (!item.FilePath.Contains("bin/Update"))
                             {
-                                if (!item.FilePath.Contains("bin/Update"))
-                                {
-                                    FileUpdateStatus = false;
-                                }
+
+                                FileUpdateStatus = false;
                             }
+
                             if (FileUpdateStatus)
                             {
                                 map.Add($"/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
@@ -262,7 +258,14 @@ namespace Core.Tools
                             bool dl_ok = false;
                             do
                             {
-                                dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                try
+                                {
+                                    dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                }
+                                catch (Exception)
+                                {
+
+                                }
                             } while (!dl_ok);
                             Log.Info(nameof(Update_UpdateProgram),$" | 更新文件【{item.Value.Name}】成功");
                             i++;
@@ -274,22 +277,24 @@ namespace Core.Tools
                         Log.Info(nameof(Update_UpdateProgram),$"更新Update程序失败：获取更新列表失败，请检查网络状态");
                     }
                 }
-                if (!Update_For_UpdateProgram)
-                {
-                    while (true)
-                    {
-                        Console.ReadKey();
-                    }
-                }
             }
             public static bool checkVersion()
             {
-                if (!File.Exists(Update_For_UpdateProgram ? "./ver.ini" : verFile))
+                string FI = "";
+                if (File.Exists("./ver.ini"))
+                { 
+                    FI = "./ver.ini";
+                }
+                else if (File.Exists(verFile))
+                {
+                    FI = verFile;
+                }
+                else
                 {
                     Log.Info(nameof(Update_UpdateProgram),"更新失败，没找到版本标识文件");
                     return true;
                 }
-                string[] Ver = File.ReadAllLines(Update_For_UpdateProgram ? "./ver.ini" : verFile);
+                string[] Ver = File.ReadAllLines(FI);
                 foreach (string VerItem in Ver)
                 {
                     if (VerItem.StartsWith("type="))
@@ -506,7 +511,7 @@ namespace Core.Tools
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
+                    return "";
                 }
             }
 
