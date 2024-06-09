@@ -473,16 +473,18 @@ jobs:
         with:
           files: assets/*.zip
           body: | 
+            DDTV
+
+            -------------
+
             DDTV5.x分为三个版本：【Server】、【Client】、【Desktop】
             　
             【Server】：为控制台应用，自带WEBUI服务，跨平台适配win、linux、mac
             【Client】：为Server的Windows平台下的窗口程序封装，在Server的基础上提供了WEBUI的桌面窗口，只适配Windows，适合win下的轻量化用户
             【Desktop】：Windows下的完全体，提供Server和Client的所有功能，以及特有的观看和桌面端控制UI，支持连接远程Server，为只适配Windows的WPF应用
             　
-            --------------
-            　
             请根据使用环境选择下载的包体
             包体的命名规则为：DDTV-[版本]-[系统环境]-latest-[适配硬件架构]-release[版本号].zip
-            例如使用微软Windows操作系统的AMD or 英特尔CPU的就该选择[DDTV-Desktop-windows-latest-win-x64-release]
+            例如使用微软Windows操作系统的AMD or 英特尔CPU想使用桌面版本的就该选择:[DDTV-Desktop-windows-latest-win-x64-release]
             
             如有问题欢迎加群：338182356
