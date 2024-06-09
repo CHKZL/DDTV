@@ -18,6 +18,6 @@
                  Height="30"
                  Title="使用哔哩哔哩客户端进行扫码，确认后未自动关闭请手动关闭本弹窗"
                  Grid.Row="0"
-                 Icon="pack://application:,,,/Assets/DDTV.ico" />
+                 Icon="pack://application:,,,/DDTV.ico" />
     </Grid>
 </ui:FluentWindow>

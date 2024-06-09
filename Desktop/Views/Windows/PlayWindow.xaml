@@ -20,7 +20,7 @@
                      Title="DDTV5-Desktop"
                      Grid.Row="0"
                      Grid.Column="0" 
-                     Icon="pack://application:,,,/Assets/DDTV.ico">
+                     Icon="pack://application:,,,/DDTV.ico">
             
         </ui:TitleBar>
     </Grid>

@@ -17,16 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\DDTV.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="..\Client\DDTV.ico">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
+	  <Resource Include="Assets\DDTV.ico">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
   </ItemGroup>
 
   <ItemGroup>
@@ -53,6 +48,12 @@
 
   <ItemGroup>
     <Folder Include="Resource\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DDTV.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

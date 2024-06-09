@@ -117,7 +117,7 @@ namespace Desktop
         {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
             notifyIcon.Text = "DDTV";
-            notifyIcon.Icon = new System.Drawing.Icon("Assets/DDTV.ico"); // 你的图标路径
+            notifyIcon.Icon = new System.Drawing.Icon("DDTV.ico"); 
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += NotifyIcon_Click;
             StateChanged += MainWindow_StateChanged; ;

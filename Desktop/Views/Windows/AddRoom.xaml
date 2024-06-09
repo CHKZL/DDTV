@@ -51,7 +51,7 @@
             Height="30"
             Title="添加房间"
             Grid.Row="0"
-            Icon="pack://application:,,,/Assets/DDTV.ico">
+            Icon="pack://application:,,,/DDTV.ico">
         </ui:TitleBar>
     </Grid>
 </ui:FluentWindow>
