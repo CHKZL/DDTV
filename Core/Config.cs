@@ -1137,6 +1137,28 @@ namespace Core
                 }
             }
 
+            private static string DevelopmentVersion = "false";
+            /// <summary>
+            /// 是否接受开发版更新
+            /// 默认值：false
+            /// </summary>
+            public bool _DevelopmentVersion
+            {
+                get
+                {
+                    return bool.Parse(DevelopmentVersion);
+                }
+                set
+                {
+                    if (value.ToString() != DevelopmentVersion)
+                    {
+                        DevelopmentVersion = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

@@ -21,12 +21,20 @@ namespace Update
         public static HttpClient _httpClient = new HttpClient();
         public static void Main(string[] args)
         {
-            args =["CheckForUpdatedPrograms"];
+            args = ["CheckForUpdatedPrograms"];
             if (args.Length != 0)
-            { 
-                if(args.Contains("CheckForUpdatedPrograms"))
+            {
+                if (args.Contains("CheckForUpdatedPrograms"))
                 {
                     Update_For_UpdateProgram = true;
+                }
+                if (args.Contains("dev"))
+                {
+                    Isdev = true;
+                }
+                if (args.Contains("release"))
+                {
+                    Isdev = false;
                 }
             }
 

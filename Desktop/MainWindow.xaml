@@ -58,7 +58,7 @@
                 </ui:NavigationView.FooterMenuItems>
             </ui:NavigationView>
 
-            <ui:TitleBar Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/Assets/DDTV.ico" />
+            <ui:TitleBar Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/DDTV.ico" />
         </Grid>
         <Grid>
             <ui:SnackbarPresenter Height="150" Name="ConfigSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>

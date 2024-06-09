@@ -122,10 +122,6 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
                                 <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
                                     <ui:ToggleSwitch Name="SystemCardReminder_ToggleSwitch" Height="35" IsChecked="{Binding _SystemCardReminder, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
                                 </Grid>
@@ -177,11 +173,20 @@
                                     </Grid>
                                 </ui:CardControl>
                             </Grid>
-
                         </Grid>
+                        <ui:CardControl Padding="20,10,20,10" Header="接收开发版更新　（新功能功能优先推送）" Icon="{ui:SymbolIcon DeveloperBoardLightningToolbox20}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="DevelopmentVersion_ToggleSwitch" Height="35" IsChecked="{Binding _DevelopmentVersion, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
 
 
-                        
                     </StackPanel>
                 </ui:CardExpander>
                 <!--文件和路径设置-->
@@ -416,7 +421,7 @@
                     <TextBlock Grid.Row="0" Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="关于" />
                     <ui:CardExpander Grid.Row="1" VerticalAlignment="Bottom">
                         <ui:CardExpander.Icon>
-                            <ui:ImageIcon Source="/Assets/DDTV.ico" Width="50"/>
+                            <ui:ImageIcon Source="pack://application:,,,/Assets/DDTV.ico" Width="50"/>
                         </ui:CardExpander.Icon>
                         <ui:CardExpander.Header>
                             <Grid>

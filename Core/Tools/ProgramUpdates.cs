@@ -25,7 +25,6 @@ namespace Core.Tools
         private static string verFile = "./ver.ini";
         private static string type = string.Empty;
         private static string ver = string.Empty;
-        public static bool Isdev = false;
         public static event EventHandler<EventArgs> NewVersionAvailableEvent;//检测到新版本
 
         public static async void RegularInspection(object state)
@@ -45,15 +44,8 @@ namespace Core.Tools
                     if (VerItem.StartsWith("ver="))
                         ver = VerItem.Split('=')[1].TrimEnd();
                 }
-                if (ver.ToLower().StartsWith("dev"))
-                {
-                    Isdev = true;
-                    ver = ver.ToLower().Replace("dev", "");
-                }
-                else
-                {
-                    ver = ver.ToLower().Replace("release", "");
-                }
+                ver = ver.ToLower().Replace("dev", "");
+                ver = ver.ToLower().Replace("release", "");
                 if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(ver))
                 {
                     return true;
@@ -77,7 +69,7 @@ namespace Core.Tools
                     {
                         return false;
                     }
-                    string DL_VerFileUrl = $"/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
+                    string DL_VerFileUrl = $"/{type}/{(Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")}/ver.ini";
                     string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev", "").Replace("release", "");
                     if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
                     {
@@ -87,7 +79,7 @@ namespace Core.Tools
                         Version After = new Version(R_Ver);
                         if (After > Before)
                         {
-                            Update_UpdateProgram.Main(["CheckForUpdatedPrograms"]);
+                            Update_UpdateProgram.Main(["CheckForUpdatedPrograms", (Core.Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")]);
 
                             if (!Manual)
                                 NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
@@ -119,6 +111,7 @@ namespace Core.Tools
             {
                 Process process = new Process();
                 process.StartInfo.FileName = "./Update/Update.exe";
+                process.StartInfo.Arguments = $"{(Core.Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")}";
                 process.Start();
                 Environment.Exit(-114514);
             }
@@ -206,6 +199,14 @@ namespace Core.Tools
                     if (args.Contains("CheckForUpdatedPrograms"))
                     {
                         Update_For_UpdateProgram = true;
+                    }
+                    if (args.Contains("dev"))
+                    {
+                        Isdev = true;
+                    }
+                    if (args.Contains("release"))
+                    {
+                        Isdev = false;
                     }
                 }
 
