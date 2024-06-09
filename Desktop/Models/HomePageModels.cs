@@ -21,5 +21,6 @@ namespace Desktop.Models
         public int MemoryUsageRate { get; set; } = 0;
         public string RunTime { get; set; } = "";
         public string runningState { get; set; } = "正常";
+        public string announcement { get; set; } = "";
     }
 }
