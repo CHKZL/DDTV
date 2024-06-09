@@ -108,13 +108,7 @@ namespace Update
             {
                 Console.WriteLine($"未检测到新版本");
             }
-            if (!Update_For_UpdateProgram)
-            {
-                while (true)
-                {
-                    Console.ReadKey();
-                }
-            }
+            Console.ReadKey();
         }
         public static bool checkVersion()
         {
