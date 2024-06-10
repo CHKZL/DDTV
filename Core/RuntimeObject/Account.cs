@@ -75,7 +75,11 @@ namespace Core.RuntimeObject
                 Log.Info(nameof(AccountInformation), Message);
                 _accountInformation = value;
                 //Core.Config.Core._LoginStatus = value.State;
-                Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core_RunConfig._ConfigDirectory}{_accountInformation.Uid}{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
+                if (!string.IsNullOrEmpty(_accountInformation.Uid) && _accountInformation.State)
+                {
+                    Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core_RunConfig._ConfigDirectory}{_accountInformation.Uid}{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
+                }
+
             }
         }
 
