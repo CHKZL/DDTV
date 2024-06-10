@@ -25,9 +25,9 @@ namespace Core.Network
         /// <returns>请求返回体</returns>
         public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
         {
-#if DEBUG
-            Log.Debug(nameof(GetBody), $"发起Get请求，目标:{url}");
-#endif
+//#if DEBUG
+//            Log.Debug(nameof(GetBody), $"发起Get请求，目标:{url}");
+//#endif
             string result = "";
             HttpWebRequest req = null;
             HttpWebResponse rep = null;

@@ -29,7 +29,7 @@ namespace Core
 
         public static void Start(string[] args)
         {
-           
+
             CoreStartCompletEvent += (sender, e) =>
             {
                 //注册Core启动完成触发事件
@@ -113,7 +113,7 @@ namespace Core
             if (stopwatch.IsRunning)
             {
                 TimeSpan elapsed = stopwatch.Elapsed;
-                return elapsed.TotalMicroseconds/1000;
+                return elapsed.TotalMicroseconds / 1000;
             }
             else
             {
@@ -155,22 +155,22 @@ namespace Core
         /// </summary>
         private static void DeleteUnexpectedFiles()
         {
-            if(File.Exists($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}"))
+            if (File.Exists($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}"))
             {
-                Tools.FileOperations.Delete($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}","发现空白登录态文件可能导致错误，已清理");
+                Tools.FileOperations.Delete($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}", "发现空白登录态文件可能导致错误，已清理");
             }
         }
 
         private static void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
         {
-            switch(Mode)
+            switch (Mode)
             {
                 case Mode.Client:
                     break;
                 case Mode.Desktop:
                     break;
                 default:
-                    Log.Warn("ProgramUpdates",$"\r\n=====检测到新版本=====\r\n检测到DDTV新版本：【{sender}】，请关闭DDTV后，执行Update文件夹中的Update程序进行升级\r\n=====检测到新版本=====\r\n");
+                    Log.Warn("ProgramUpdates", $"\r\n=====检测到新版本=====\r\n检测到DDTV新版本：【{sender}】，请关闭DDTV后，执行Update文件夹中的Update程序进行升级\r\n=====检测到新版本=====\r\n");
                     break;
             }
         }
@@ -184,6 +184,14 @@ namespace Core
                 HttpClient _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                 string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
+                if(A=="1")
+                {
+                    Log.Info(nameof(StartStatistics), "启动统计正常");
+                }
+                else
+                {
+                    Log.Info(nameof(StartStatistics), "启动统计异常");
+                }
             }
             catch (Exception) { }
         }
@@ -195,6 +203,14 @@ namespace Core
                 HttpClient _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                 string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
+                if (A == "1")
+                {
+                    Log.Info(nameof(HeartbeatStatistics), "心跳正常");
+                }
+                else
+                {
+                    Log.Warn(nameof(HeartbeatStatistics), "心跳异常");
+                }
             }
             catch (Exception) { }
         }

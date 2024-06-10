@@ -29,9 +29,9 @@ namespace Server.WebAppServices
             {
                 code = code.LoginInfoFailure;
             }
-# if DEBUG
-            Log.Debug(nameof(MessageBase), cmd + " " + code, false);
-#endif
+//# if DEBUG
+//            Log.Debug(nameof(MessageBase), cmd + " " + code, false);
+//#endif
             OperationQueue.pack<T> pack = new OperationQueue.pack<T>()
             {
                 cmd = cmd,
