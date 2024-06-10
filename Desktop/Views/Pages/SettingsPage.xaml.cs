@@ -199,7 +199,7 @@ public partial class SettingsPage
         //录制模式
         if ((int)Config.Core_RunConfig._RecordingMode-1!=RecordingMode_ComboBox.SelectedIndex)
         {
-            Config.Core_RunConfig._RecordingMode = (RecordingMode)ZoomOutMode_ComboBox.SelectedIndex-1;
+            Config.Core_RunConfig._RecordingMode = (RecordingMode)RecordingMode_ComboBox.SelectedIndex+1;
         }
         Config.Core_RunConfig._HlsWaitingTime = int.Parse(HlsWaitingTime_InputControl.Text);
 
@@ -209,6 +209,12 @@ public partial class SettingsPage
             Config.Core_RunConfig._AutomaticRepair = (bool)AutomaticRepair_SwitchControl.IsChecked;
         }
          Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
+
+        //文件分割
+        if (Config.Core_RunConfig.CutAccordingToSize_For_ComboBox != CutAccordingToSize_For_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig.CutAccordingToSize_For_ComboBox = CutAccordingToSize_For_ComboBox.SelectedIndex;
+        }
         #endregion
 
         if (IsReboot)

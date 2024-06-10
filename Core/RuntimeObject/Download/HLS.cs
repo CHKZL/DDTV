@@ -30,7 +30,8 @@ namespace Core.RuntimeObject.Download
                 File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword( $"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Config.Core_RunConfig._DefaultFileName}",DateTime.Now,card.UID)}_original.mp4";
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
-                
+                //本地Task下载的文件大小
+                long DownloadFileSizeForThisTask = 0;
                 using (FileStream fs = new FileStream(File, FileMode.Append))
                 {
 
@@ -66,8 +67,19 @@ namespace Core.RuntimeObject.Download
                     bool InitialRequest = true;
                     long currentLocation = 0;
                     long StartLiveTime = card.live_time.Value;
+                   
                     while (true)
                     {
+                        //处理大小限制分割
+                        if(Config.Core_RunConfig._CutAccordingToSize>0)
+                        {
+                            if(DownloadFileSizeForThisTask>Config.Core_RunConfig._CutAccordingToSize)
+                            {
+                                hlsState = DlwnloadTaskState.Success;
+                                return;
+                            }
+                        }
+                        //本次循环下载的单体文件切片大小
                         long downloadSizeForThisCycle = 0;
                         try
                         {
@@ -109,6 +121,9 @@ namespace Core.RuntimeObject.Download
                                 }
                                 hostClass.eXTM3U.eXTINFs = new();
                                 values.Add((downloadSizeForThisCycle, DateTime.Now));
+                                //计算这个Task下载的文件大小
+                                DownloadFileSizeForThisTask += downloadSizeForThisCycle;
+                                //计算下载速度和任务大小
                                 values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle);
                                 if (hostClass.eXTM3U.IsEND)
                                 {

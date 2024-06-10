@@ -317,8 +317,62 @@ namespace Core
                 }
             }
 
+            /// <summary>
+            /// 从文件导入房间配置
+            /// </summary>
+            /// <param name="FilePath"></param>
+            /// <param name="Count"></param>
+            /// <returns></returns>
+            public static bool ImportRoomConfiguration(string FilePath, out (int Total, int Success, int Fail,int Repeat,int NotPresent) Count)
+            {
+                Count = new(0, 0, 0, 0, 0);
+                try
+                {
+                    if (File.Exists(FilePath))
+                    {
+                        string TEXT = File.ReadAllText(FilePath);
+                        RoomListDiscard roomListDiscard = JsonSerializer.Deserialize<RoomListDiscard>(TEXT);
+                        Count.Total = roomListDiscard.data.Count;
+                        foreach (var item in roomListDiscard.data)
+                        {
+                            RoomCardClass? roomCard = new();
+                            if (_Room.GetCardForUID(item.UID, ref roomCard))
+                            {
+                                Count.Repeat++;
+                            }
+                            else
+                            {
+                                if (item.UID > 0)
+                                {
+                                   
+                                    if(_Room.SetRoomCardByUid(item.UID, item))
+                                    {
+                                         Count.Success++;
+                                    }
+                                    else
+                                    {
+                                        Count.Fail++;
+                                    }
+                                }
+                                else
+                                {
+                                    Count.NotPresent++;
+                                }
 
-
+                            }
+                        }
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
 
             internal class RoomListDiscard
             {
@@ -1156,6 +1210,78 @@ namespace Core
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }
+                }
+            }
+
+
+            private static string CutAccordingToSize = "0";
+            /// <summary>
+            /// 根据文件大小切割视频文件(字节)
+            /// 默认值：0
+            /// </summary>
+            public long _CutAccordingToSize
+            {
+                get => long.Parse(CutAccordingToSize);
+                set
+                {
+                    if (value.ToString() != CutAccordingToSize)
+                    {
+                        CutAccordingToSize = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 根据文件大小切割视频文件下拉框选项
+            /// </summary>
+            public int CutAccordingToSize_For_ComboBox
+            {
+                get
+                {
+                    long one = 1024 * 1024 * 1024;
+                    if (_CutAccordingToSize < 1)
+                        return 0;
+                    double index = (double)_CutAccordingToSize / (double)one;
+                    if (index < 2)
+                        return 1;
+                    if (index < 3)
+                        return 2;
+                    if (index < 5)
+                        return 3;
+                    if (index < 9)
+                        return 4;
+                    if (index < 17)
+                        return 5;
+
+                    return 0;
+                }
+                set
+                {
+                    long one = 1024 * 1024 * 1024;
+                    switch (value)
+                    {
+                        case 0:
+                            _CutAccordingToSize = 0;
+                            break;
+                        case 1:
+                            _CutAccordingToSize = 1 * one;
+                            break;
+                        case 2:
+                            _CutAccordingToSize = 2 * one;
+                            break;
+                        case 3:
+                            _CutAccordingToSize = 4 * one;
+                            break;
+                        case 4:
+                            _CutAccordingToSize = 8 * one;
+                            break;
+                        case 5:
+                            _CutAccordingToSize = 16 * one;
+                            break;
+                    }
+                    OnPropertyChanged();
                 }
             }
 

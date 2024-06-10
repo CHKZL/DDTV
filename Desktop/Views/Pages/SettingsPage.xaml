@@ -413,6 +413,28 @@
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>
+                        <ui:CardControl Padding="20,10,20,10" Header="达到设置大小自动分割文件" Icon="{ui:SymbolIcon cUT20}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ComboBox Name="CutAccordingToSize_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding CutAccordingToSize_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
+                                        <ComboBoxItem Content="不分割"/>
+                                        <ComboBoxItem Content="1GB" />
+                                        <ComboBoxItem Content="2GB" />
+                                        <ComboBoxItem Content="4GB" />
+                                        <ComboBoxItem Content="8GB" />
+                                        <ComboBoxItem Content="16GB" />
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
                     </StackPanel>
                 </ui:CardExpander>
                 <!--关于-->
