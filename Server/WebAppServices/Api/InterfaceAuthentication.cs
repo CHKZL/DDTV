@@ -44,7 +44,7 @@ namespace Server.WebAppServices.Middleware
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             ;
-#if !DEBUG
+
             // 检查请求方法是否为POST或GET，如果不是，则返回未授权
             if (context.HttpContext.Request.Method != "POST" && context.HttpContext.Request.Method != "GET")
             {
@@ -100,7 +100,6 @@ namespace Server.WebAppServices.Middleware
                 Unauthorized(context);
                 return;
             }
-#endif
         }
 
 

@@ -4,6 +4,7 @@
 // All Rights Reserved.
 
 using Core;
+using Core.LogModule;
 using Desktop.Models;
 using SixLabors.ImageSharp.Drawing;
 using System.Collections.ObjectModel;
@@ -83,9 +84,17 @@ public partial class DefaultPage
     /// <param name="state"></param>
     public static void UpdateAnnouncement(object state)
     {
-        string announcement = Core.Tools.ProgramUpdates.Get("/announcement.txt");
-        PageComboBoxItems.announcement = announcement;
-        PageComboBoxItems.OnPropertyChanged("announcement");
+
+        try
+        {
+            string announcement = Core.Tools.ProgramUpdates.Get("/announcement.txt");
+            PageComboBoxItems.announcement = announcement;
+            PageComboBoxItems.OnPropertyChanged("announcement");
+        }
+        catch (Exception ex)
+        {
+            Log.Warn(nameof(UpdateAnnouncement), "更新公告出现错误，错误堆栈已写文本记录文件", ex, false);
+        }
     }
 
     /// <summary>
@@ -94,10 +103,18 @@ public partial class DefaultPage
     /// <param name="state"></param>
     public static void UpdateRoomStatistics(object state)
     {
-        (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics");
-        SetMonitoringCount(count.MonitoringCount);
-        SetLiveCount(count.LiveCount);
-        SetRecCount(count.RecCount);
+
+        try
+        {
+            (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics");
+            SetMonitoringCount(count.MonitoringCount);
+            SetLiveCount(count.LiveCount);
+            SetRecCount(count.RecCount);
+        }
+        catch (Exception ex)
+        {
+            Log.Warn(nameof(UpdateRoomStatistics), "更新房间统计出现错误，错误堆栈已写文本记录文件", ex, false);
+        }
     }
 
     /// <summary>
@@ -106,12 +123,19 @@ public partial class DefaultPage
     /// <param name="state"></param>
     public static void UpdateHardwareResourceUtilizationRate(object state)
     {
-        SystemResourceClass systemResourceClass = NetWork.Get.GetBody<SystemResourceClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_system_resources");
-        int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);
-        SetMemoryUsageRate(memory);
-        if (int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
+        try
         {
-            SetHardDiskUsageRate(hdd);
+            SystemResourceClass systemResourceClass = NetWork.Get.GetBody<SystemResourceClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_system_resources");
+            int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);
+            SetMemoryUsageRate(memory);
+            if (int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
+            {
+                SetHardDiskUsageRate(hdd);
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Warn(nameof(UpdateHardwareResourceUtilizationRate), "更新硬件资源使用率出现错误，错误堆栈已写文本记录文件", ex, false);
         }
     }
 
@@ -121,13 +145,19 @@ public partial class DefaultPage
     /// <param name="state"></param>
     public static void UpdateRuntimeStatistics(object state)
     {
-        
-        TimeSpan t = TimeSpan.FromMilliseconds(Core.Init.GetRunTime());
-         string answer = string.Format("{0:D2}天{1:D2}小时{2:D2}分钟{3:D2}秒",
-                    t.Days,
-                    t.Hours,
-                    t.Minutes,
-                    t.Seconds);
-        SetRunTime(answer.Replace("00天", "").Replace("00小时", "").Replace("00分钟", ""));
+        try
+        {
+            TimeSpan t = TimeSpan.FromMilliseconds(Core.Init.GetRunTime());
+            string answer = string.Format("{0:D2}天{1:D2}小时{2:D2}分钟{3:D2}秒",
+                       t.Days,
+                       t.Hours,
+                       t.Minutes,
+                       t.Seconds);
+            SetRunTime(answer.Replace("00天", "").Replace("00小时", "").Replace("00分钟", ""));
+        }
+        catch (Exception ex)
+        {
+            Log.Warn(nameof(UpdateRuntimeStatistics), "更新公告出现错误，错误堆栈已写文本记录文件", ex, false);
+        }
     }
 }
