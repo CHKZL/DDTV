@@ -1,4 +1,5 @@
 ﻿using Core.LogModule;
+using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +10,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Config;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Core
 {
@@ -23,22 +25,11 @@ namespace Core
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
-        public static bool IsDev = true;
         private static Timer Update_Timer;
 
         public static void Start(string[] args)
         {
-            if (File.Exists("./ver.ini"))
-            {
-                string[] Ver = File.ReadAllLines("./ver.ini");
-                foreach (string VerItem in Ver)
-                {
-                    if (VerItem.StartsWith("ver=") && VerItem.Split('=')[1].TrimEnd().ToLower().StartsWith("release"))
-                    {
-                        IsDev = false;
-                    }           
-                }
-            }
+           
             CoreStartCompletEvent += (sender, e) =>
             {
                 //注册Core启动完成触发事件
@@ -71,9 +62,11 @@ namespace Core
             stopwatch.Start();
             Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+            StartStatistics();
+            Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
         }
 
-    
+
 
         /// <summary>
         /// 启动参数初始化
@@ -181,5 +174,30 @@ namespace Core
                     break;
             }
         }
+
+        public static Timer Timer_Heartbeat;
+
+        private static void StartStatistics()
+        {
+            try
+            {
+                HttpClient _httpClient = new HttpClient();
+                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
+            }
+            catch (Exception) { }
+        }
+
+        public static void HeartbeatStatistics(object state)
+        {
+            try
+            {
+                HttpClient _httpClient = new HttpClient();
+                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
+            }
+            catch (Exception) { }
+        }
+
     }
 }
