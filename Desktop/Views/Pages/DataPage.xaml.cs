@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics.Metrics;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ using System.Windows.Media.Imaging;
 using Desktop.Models;
 using Desktop.Views.Windows;
 using Masuit.Tools;
+using Newtonsoft.Json;
 using Wpf.Ui;
 using Wpf.Ui.Controls;
 
@@ -150,5 +152,59 @@ public partial class DataPage
         {
             screen_name = string.Empty;
         }
+    }
+
+    /// <summary>
+    /// 导入其他DDTV房间配置
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void ImportHistoricalRoomConfiguration_Click(object sender, RoutedEventArgs e)
+    {
+         // 创建一个FolderBrowserDialog对象
+        FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+        // 显示对话框
+        DialogResult result = folderBrowserDialog.ShowDialog();
+
+        // 检查用户是否点击了“确定”按钮
+        if (result == DialogResult.OK)
+        {
+            //用户选择的文件夹的绝对路径DirectoryInfo
+            string DirectoryPath = folderBrowserDialog.SelectedPath;
+            if (FindRoomListConfigFile(DirectoryPath, out string JsonPath))
+            {
+                if (Core.Config.RoomConfig.ImportRoomConfiguration(JsonPath, out (int Total, int Success, int Fail, int Repeat, int NotPresent) count))
+                {
+                    MainWindow.SnackbarService.Show("导入房间配置", $"导入完成，所选导入文件成功导入{count.Success}个"+(result>0?"(有{count.Repeat}已存在，跳过导入)":""), ControlAppearance.Secondary, new SymbolIcon(SymbolRegular.ArrowImport20), TimeSpan.FromSeconds(10));
+                    return;
+                }
+            }
+            MainWindow.SnackbarService.Show("导入房间配置", $"导入失败，请确保选择的路径为DDTV的文件夹", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.ArrowImport20), TimeSpan.FromSeconds(5));
+        }
+    }
+
+    /// <summary>
+    /// 查找对应路径有没有房间配置文件
+    /// </summary>
+    /// <param name="DirectoryPath">其他版本的DDTV路径</param>
+    /// <param name="configFile">如果存在，out string为Josn文件的绝对路径</param>
+    /// <returns>是否存在配置文件</returns>
+    private bool FindRoomListConfigFile(string DirectoryPath,out string configFile)
+    {
+        string[] searchPaths = { DirectoryPath, $"{DirectoryPath}/bin/Config", $"{DirectoryPath}/Config" };
+        configFile = null;
+
+        foreach (string path in searchPaths)
+        {
+            string filePath = Path.Combine(path, "RoomListConfig.json");
+            if (File.Exists(filePath))
+            {
+                configFile = filePath;
+                return true;
+            }
+        }
+
+        return false;
     }
 }

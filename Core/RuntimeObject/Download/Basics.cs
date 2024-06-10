@@ -46,16 +46,16 @@ namespace Core.RuntimeObject.Download
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
             }
 
-            (DlwnloadTaskState hlsState, string FileName) result = new();
+            (DlwnloadTaskState TaskState, string FileName) result = new();
             switch (Config.Core_RunConfig._RecordingMode)
             {
                 case RecordingMode.HLS_Only:
                     result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.TaskState)}");
                     break;
                 case RecordingMode.FLV_Only:
                     result = await FLV.DlwnloadHls_avc_flv(roomCard);
-                    if (result.hlsState == DlwnloadTaskState.SuccessfulButNotStream)
+                    if (result.TaskState == DlwnloadTaskState.SuccessfulButNotStream)
                     {
                         //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
                         Thread.Sleep(1000 * 15);
@@ -63,13 +63,13 @@ namespace Core.RuntimeObject.Download
                     break;
                 case RecordingMode.Auto:
                     result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.hlsState)}");
-                    if (result.hlsState == DlwnloadTaskState.NoHLSStreamExists)
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.TaskState)}");
+                    if (result.TaskState == DlwnloadTaskState.NoHLSStreamExists)
                     {
                         Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})降级到FLV模式进行录制");
                         //FLV兜底逻辑
                         result = await FLV.DlwnloadHls_avc_flv(roomCard);
-                        if (result.hlsState == DlwnloadTaskState.SuccessfulButNotStream)
+                        if (result.TaskState == DlwnloadTaskState.SuccessfulButNotStream)
                         {
                             //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
                             Thread.Sleep(1000 * 15);
@@ -81,19 +81,19 @@ namespace Core.RuntimeObject.Download
             if (roomCard.IsRecDanmu)
             {
                 liveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
-                Danmu.SevaDanmu(liveChatListener, result.hlsState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
+                Danmu.SevaDanmu(liveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
             //如果是付费直播，结束当前录制任务
-            if(result.hlsState == DlwnloadTaskState.PaidLiveStream)
+            if(result.TaskState == DlwnloadTaskState.PaidLiveStream)
             {
                 roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.Special;
             }
             //如果完成，加入视频文件列表
-            if (result.hlsState == DlwnloadTaskState.Success)
+            if (result.TaskState == DlwnloadTaskState.Success)
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
             }
-            if ((result.hlsState == DlwnloadTaskState.Success || result.hlsState == DlwnloadTaskState.Cut) && Config.Core_RunConfig._AutomaticRepair)
+            if ((result.TaskState == DlwnloadTaskState.Success || result.TaskState == DlwnloadTaskState.Cut) && Config.Core_RunConfig._AutomaticRepair)
             {
                 Tools.Transcode transcode = new Tools.Transcode();
                 try
@@ -601,6 +601,7 @@ namespace Core.RuntimeObject.Download
             /// 主播重新推流了，以防万一主播修改推流参数，需要执行重连
             /// </summary>
             AnchorReStream,
+
         }
         public enum RecordingMode
         {

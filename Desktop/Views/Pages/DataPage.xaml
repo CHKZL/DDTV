@@ -48,6 +48,8 @@
                     <ContextMenu>
                         <MenuItem Header="用房间号添加一个房间" Click="AddRoomCardForRoomId_Click"/>
                         <MenuItem Header="用UID添加（可批量）" Click="AddRoomCardForUid_Click"/>
+                        <Separator />
+                        <MenuItem Header="从其他DDTV(包括3.x)导入房间配置文件" Click="ImportHistoricalRoomConfiguration_Click"/>
                     </ContextMenu>
                 </ui:DropDownButton.Flyout>
             </ui:DropDownButton>

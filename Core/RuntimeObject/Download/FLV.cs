@@ -32,7 +32,9 @@ namespace Core.RuntimeObject.Download
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 #region 实例化下载对象
-
+                
+                //本地Task下载的文件大小
+                long DownloadFileSizeForThisTask = 0;
                 var downloadOpt = new DownloadConfiguration()
                 {
                     ChunkCount = 1, // 下载文件的部分数量，默认值为1
@@ -70,6 +72,16 @@ namespace Core.RuntimeObject.Download
                 {
                     card.DownInfo.RealTimeDownloadSpe = e.AverageBytesPerSecondSpeed;
                     card.DownInfo.DownloadSize += e.ProgressedByteSize;
+                    DownloadFileSizeForThisTask += e.ProgressedByteSize;
+                    //处理大小限制分割
+                    if (Config.Core_RunConfig._CutAccordingToSize > 0)
+                    {
+                        if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize)
+                        {
+                            hlsState = DlwnloadTaskState.Success;
+                            downloader.CancelAsync();
+                        }
+                    }
                 };
 
                 #endregion
