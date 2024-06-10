@@ -151,6 +151,21 @@ namespace Core
             {
                 Directory.CreateDirectory(Config.Core_RunConfig._RecFileDirectory);
             }
+
+            DeleteUnexpectedFiles();
+
+
+        }
+
+        /// <summary>
+        /// 清理以外存在的文件
+        /// </summary>
+        private static void DeleteUnexpectedFiles()
+        {
+            if(File.Exists($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}"))
+            {
+                Tools.FileOperations.Delete($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}","发现空白登录态文件可能导致错误，已清理");
+            }
         }
 
         private static void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
