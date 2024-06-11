@@ -90,7 +90,7 @@ public partial class SettingsPage
         }
         try
         {
-            string RecPath = $"{RecPathInputBox.Text}{DefaultLiverFolderNameInputBox.Text}/{DefaulFolderNameFormatInputBox.Text}{(string.IsNullOrEmpty(DefaulFolderNameFormatInputBox.Text)?"":"/")}{DefaulFileNameFormatInputBox.Text}";
+            string RecPath = $"{RecPathInputBox.Text}{DefaultLiverFolderNameInputBox.Text}/{DefaulFolderNameFormatInputBox.Text}{(string.IsNullOrEmpty(DefaulFolderNameFormatInputBox.Text) ? "" : "/")}{DefaulFileNameFormatInputBox.Text}";
             // 尝试获取完整路径，如果路径无效，将抛出异常
             string fullPath = Path.GetFullPath(RecPath);
             // 检查路径中是否包含无效字符
@@ -132,6 +132,10 @@ public partial class SettingsPage
 
         return true;
     }
+
+    /// <summary>
+    /// 保存当前设置页内容
+    /// </summary>
     public async void SaveConfiguration()
     {
         bool IsReboot = false;
@@ -169,7 +173,7 @@ public partial class SettingsPage
             Config.Core_RunConfig._DesktopAccessKeySecret = DesktopAccessKeySecret_InputControl.Text;
         }
         //缩小行为配置保存
-        if (Config.Core_RunConfig._ZoomOutMode!=ZoomOutMode_ComboBox.SelectedIndex)
+        if (Config.Core_RunConfig._ZoomOutMode != ZoomOutMode_ComboBox.SelectedIndex)
         {
             Config.Core_RunConfig._ZoomOutMode = ZoomOutMode_ComboBox.SelectedIndex;
         }
@@ -189,17 +193,21 @@ public partial class SettingsPage
         #endregion
 
         #region 文件路径相关设置保存
-        Config.Core_RunConfig._RecFileDirectory = RecPathInputBox.Text;
-        Config.Core_RunConfig._DefaultLiverFolderName = DefaultLiverFolderNameInputBox.Text;
-        Config.Core_RunConfig._DefaultDataFolderName = DefaulFolderNameFormatInputBox.Text;
-        Config.Core_RunConfig._DefaultFileName = DefaulFileNameFormatInputBox.Text;
+        if (Config.Core_RunConfig._RecFileDirectory != RecPathInputBox.Text)
+            Config.Core_RunConfig._RecFileDirectory = RecPathInputBox.Text;
+        if (Config.Core_RunConfig._DefaultLiverFolderName != DefaultLiverFolderNameInputBox.Text)
+            Config.Core_RunConfig._DefaultLiverFolderName = DefaultLiverFolderNameInputBox.Text;
+        if (Config.Core_RunConfig._DefaultDataFolderName != DefaulFolderNameFormatInputBox.Text)
+            Config.Core_RunConfig._DefaultDataFolderName = DefaulFolderNameFormatInputBox.Text;
+        if (Config.Core_RunConfig._DefaultFileName != DefaulFileNameFormatInputBox.Text)
+            Config.Core_RunConfig._DefaultFileName = DefaulFileNameFormatInputBox.Text;
         #endregion
 
         #region 录制功能设置保存
         //录制模式
-        if ((int)Config.Core_RunConfig._RecordingMode-1!=RecordingMode_ComboBox.SelectedIndex)
+        if ((int)Config.Core_RunConfig._RecordingMode - 1 != RecordingMode_ComboBox.SelectedIndex)
         {
-            Config.Core_RunConfig._RecordingMode = (RecordingMode)RecordingMode_ComboBox.SelectedIndex+1;
+            Config.Core_RunConfig._RecordingMode = (RecordingMode)RecordingMode_ComboBox.SelectedIndex + 1;
         }
         Config.Core_RunConfig._HlsWaitingTime = int.Parse(HlsWaitingTime_InputControl.Text);
 
@@ -208,12 +216,17 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._AutomaticRepair = (bool)AutomaticRepair_SwitchControl.IsChecked;
         }
-         Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
+        Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
 
-        //文件分割
+        //文件按大小分割
         if (Config.Core_RunConfig.CutAccordingToSize_For_ComboBox != CutAccordingToSize_For_ComboBox.SelectedIndex)
         {
             Config.Core_RunConfig.CutAccordingToSize_For_ComboBox = CutAccordingToSize_For_ComboBox.SelectedIndex;
+        }
+        //文件按时间分割
+        if (Config.Core_RunConfig.CutAccordingToTime_For_ComboBox != CutAccordingToTime_For_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig.CutAccordingToTime_For_ComboBox = CutAccordingToTime_For_ComboBox.SelectedIndex;
         }
         #endregion
 
@@ -284,7 +297,7 @@ public partial class SettingsPage
         {
             // 用户选择的文件夹的绝对路径
             string selectedPath = folderBrowserDialog.SelectedPath;
-            RecPathInputBox.Text= selectedPath.Replace("\\","/")+"/";
+            RecPathInputBox.Text = selectedPath.Replace("\\", "/") + "/";
         }
     }
 

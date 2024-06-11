@@ -1,6 +1,7 @@
 ﻿using Core.LogModule;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace Core.RuntimeObject.Download
         {
             DlwnloadTaskState hlsState = DlwnloadTaskState.Default;
             string File = string.Empty;
+            Stopwatch stopWatch = new Stopwatch();
             await Task.Run(() =>
             {
                 InitializeDownload(card,RoomCardClass.TaskType.HLS_AVC);
@@ -67,14 +69,26 @@ namespace Core.RuntimeObject.Download
                     bool InitialRequest = true;
                     long currentLocation = 0;
                     long StartLiveTime = card.live_time.Value;
-                   
+                    
+                    stopWatch.Start();
                     while (true)
                     {
                         //处理大小限制分割
-                        if(Config.Core_RunConfig._CutAccordingToSize>0)
+                        if (Config.Core_RunConfig._CutAccordingToSize > 0)
                         {
-                            if(DownloadFileSizeForThisTask>Config.Core_RunConfig._CutAccordingToSize)
+                            if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize)
                             {
+                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发时间分割");
+                                hlsState = DlwnloadTaskState.Success;
+                                return;
+                            }
+                        }
+                        //处理时间限制分割
+                        if (Config.Core_RunConfig._CutAccordingToTime > 0)
+                        {
+                            if (stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime)
+                            {
+                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发文件大小分割");
                                 hlsState = DlwnloadTaskState.Success;
                                 return;
                             }
@@ -180,6 +194,7 @@ namespace Core.RuntimeObject.Download
                 }
             });
             card.DownInfo.DownloadSize = 0;
+            stopWatch.Stop();
             return (hlsState, File);
         }
 

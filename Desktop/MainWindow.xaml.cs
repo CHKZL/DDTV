@@ -81,11 +81,11 @@ namespace Desktop
         public void Init()
         {
             //设置房间卡片列表页定时任务
-            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1000, 1000);
+            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 1000);
             //设置登录失效事件（失效后弹出扫码框）
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000, 1000 * 60);
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1, 1000 * 60);
             //版本更新检测
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
             //设置默认显示页

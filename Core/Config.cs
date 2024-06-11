@@ -1285,6 +1285,75 @@ namespace Core
                 }
             }
 
+            private static string CutAccordingToTime = "0";
+            /// <summary>
+            /// 根据录制时长切割视频文件(秒)
+            /// 默认值：0
+            /// </summary>
+            public long _CutAccordingToTime
+            {
+                get => long.Parse(CutAccordingToTime);
+                set
+                {
+                    if (value.ToString() != CutAccordingToTime)
+                    {
+                        CutAccordingToTime = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// 根据录制时长切割视频文件下拉框选项
+            /// </summary>
+            public int CutAccordingToTime_For_ComboBox
+            {
+                get
+                {
+                    if (_CutAccordingToTime < 1)
+                        return 0;
+                    double index = (double)_CutAccordingToTime / 60;
+                    if (index <= 10)
+                        return 1;
+                    if (index <= 20)
+                        return 2;
+                    if (index <= 30)
+                        return 3;
+                    if (index <= 60)
+                        return 4;
+                    if (index <= 120)
+                        return 5;
+
+                    return 0;
+                }
+                set
+                {
+                    switch (value)
+                    {
+                        case 0:
+                            _CutAccordingToTime = 0;
+                            break;
+                        case 1:
+                            _CutAccordingToTime = 10 * 60;
+                            break;
+                        case 2:
+                            _CutAccordingToTime = 20 * 60;
+                            break;
+                        case 3:
+                            _CutAccordingToTime = 30 * 60;
+                            break;
+                        case 4:
+                            _CutAccordingToTime = 60 * 60;
+                            break;
+                        case 5:
+                            _CutAccordingToTime = 120 * 60;
+                            break;
+                    }
+                    OnPropertyChanged();
+                }
+            }
+
         }
         #endregion
     }

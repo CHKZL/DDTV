@@ -15,15 +15,16 @@
     mc:Ignorable="d">
     <Grid>
         <StackPanel Margin="42,0,42,42">
-            <TextBlock Margin="0,0,0,20" FontSize="20" FontWeight="Medium" Text="设置" />
+            <TextBlock Margin="0,0,0,20" FontSize="22" FontWeight="Medium" Text="设置" />
             <!--顶部按钮-->
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button Grid.Column="0" Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Left" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
+                <ui:TextBlock Grid.Column="1" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Left"  Text="请注意：未保存退出当前页面将丢失已修改内容" />
                 <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
             </Grid>
 
@@ -413,28 +414,82 @@
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>
-                        <ui:CardControl Padding="20,10,20,10" Header="达到设置大小自动分割文件" Icon="{ui:SymbolIcon cUT20}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
-                                    <ComboBox Name="CutAccordingToSize_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding CutAccordingToSize_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
-                                        <ComboBoxItem Content="不分割"/>
-                                        <ComboBoxItem Content="1GB" />
-                                        <ComboBoxItem Content="2GB" />
-                                        <ComboBoxItem Content="4GB" />
-                                        <ComboBoxItem Content="8GB" />
-                                        <ComboBoxItem Content="16GB" />
-                                    </ComboBox>
+                        <ui:CardExpander Icon="{ui:SymbolIcon Cut20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="自动裁切" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="达到单个文件大小或者单个文件录制时长后自动分割文件" />
+                                    </Grid>
+                                
                                 </Grid>
-                            </Grid>
-                        </ui:CardControl>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ui:CardControl Grid.Row="0" Padding="20,10,20,10" Header="达到设置大小自动分割文件" Icon="{ui:SymbolIcon ScreenCut20}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                                <ComboBox Name="CutAccordingToSize_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding CutAccordingToSize_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
+                                                    <ComboBoxItem Content="不分割"/>
+                                                    <ComboBoxItem Content="1GB" />
+                                                    <ComboBoxItem Content="2GB" />
+                                                    <ComboBoxItem Content="4GB" />
+                                                    <ComboBoxItem Content="8GB" />
+                                                    <ComboBoxItem Content="16GB" />
+                                                </ComboBox>
+                                            </Grid>
+                                        </Grid>
+                                    </ui:CardControl>
+                                    <ui:CardControl Grid.Row="1" Padding="20,10,20,10" Header="达到设置时间自动分割文件" Icon="{ui:SymbolIcon TimePicker24}">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                                <ComboBox Name="CutAccordingToTime_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding CutAccordingToTime_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
+                                                    <ComboBoxItem Content="不分割"/>
+                                                    <ComboBoxItem Content="10分钟" />
+                                                    <ComboBoxItem Content="20分钟" />
+                                                    <ComboBoxItem Content="30分钟" />
+                                                    <ComboBoxItem Content="1个小时" />
+                                                    <ComboBoxItem Content="2个小时" />
+                                                </ComboBox>
+                                            </Grid>
+                                        </Grid>
+                                    </ui:CardControl>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
+                        
                     </StackPanel>
                 </ui:CardExpander>
                 <!--关于-->
