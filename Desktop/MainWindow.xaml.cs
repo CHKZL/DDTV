@@ -58,10 +58,15 @@ namespace Desktop
         /// 是否连接远程服务器
         /// </summary>
         public static bool ToConnectToRemoteServer = false;
+
+        public static Config.RunConfig configViewModel { get; set; } = new();
+
+
         public MainWindow()
         {
             InitializeComponent();
 
+            this.DataContext = configViewModel;
             try
             {
                 Thread.Sleep(1000);

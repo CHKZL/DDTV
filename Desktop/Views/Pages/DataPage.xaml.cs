@@ -36,6 +36,7 @@ public partial class DataPage
     public static int PageCount = 0;
     public static int PageIndex = 1;
     public static string screen_name = string.Empty;
+    public static int Width = 0;
 
     public DataPage()
     {
@@ -49,7 +50,7 @@ public partial class DataPage
         {
             System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
         }
-
+        Width = (int)CardsItemsControl.ActualWidth;
     }
 
     public void Init()
@@ -206,5 +207,10 @@ public partial class DataPage
         }
 
         return false;
+    }
+
+    private void CardDataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+    {
+        Width = (int)CardsItemsControl.ActualWidth;
     }
 }

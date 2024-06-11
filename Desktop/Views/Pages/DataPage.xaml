@@ -16,7 +16,7 @@
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
 
-    <Grid Margin="20,0,20,20">
+    <Grid Margin="20,0,20,20" SizeChanged="CardDataGrid_SizeChanged">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
