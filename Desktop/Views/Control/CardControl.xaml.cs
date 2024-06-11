@@ -23,7 +23,6 @@ namespace Desktop.Views.Control
     /// </summary>
     public partial class CardControl : UserControl
     {
-        public Models.DataCard DataCard { get; set; }
         public CardControl()
         {
             InitializeComponent();

@@ -323,7 +323,7 @@ namespace Core
             /// <param name="FilePath"></param>
             /// <param name="Count"></param>
             /// <returns></returns>
-            public static bool ImportRoomConfiguration(string FilePath, out (int Total, int Success, int Fail,int Repeat,int NotPresent) Count)
+            public static bool ImportRoomConfiguration(string FilePath, out (int Total, int Success, int Fail, int Repeat, int NotPresent) Count)
             {
                 Count = new(0, 0, 0, 0, 0);
                 try
@@ -344,10 +344,10 @@ namespace Core
                             {
                                 if (item.UID > 0)
                                 {
-                                   
-                                    if(_Room.SetRoomCardByUid(item.UID, item))
+
+                                    if (_Room.SetRoomCardByUid(item.UID, item))
                                     {
-                                         Count.Success++;
+                                        Count.Success++;
                                     }
                                     else
                                     {
@@ -429,7 +429,7 @@ namespace Core
                 }
             }
 
-            
+
             private static string AutomaticRepair_Arguments = "-y -i \"{before}\" -c copy \"{after}\"";
             /// <summary>
             /// 修复和转码的执行参数
@@ -588,7 +588,7 @@ namespace Core
             {
                 get
                 {
-                    string F = $"{RecFileDirectory}{DefaultLiverFolderName}/{DefaultDataFolderName}{(string.IsNullOrEmpty(DefaultDataFolderName)?"":"/")}{DefaultFileName}.mp4";
+                    string F = $"{RecFileDirectory}{DefaultLiverFolderName}/{DefaultDataFolderName}{(string.IsNullOrEmpty(DefaultDataFolderName) ? "" : "/")}{DefaultFileName}.mp4";
                     F = KeyCharacterReplacement.ReplaceKeyword(F, DateTime.Parse("2016-12-01 22:33"), -1);
                     return F;
                 }
@@ -609,7 +609,7 @@ namespace Core
                 set
                 {
                     if (value != RecFileDirectory)
-                    { 
+                    {
                         RecFileDirectory = value;
                         OnPropertyChanged();
                         ModifyConfig(value);
@@ -639,7 +639,7 @@ namespace Core
                 }
             }
 
-            private static string  DefaultDataFolderName= "{YYYY}_{MM}_{DD}";
+            private static string DefaultDataFolderName = "{YYYY}_{MM}_{DD}";
             /// <summary>
             /// 默认二级主播名下日期分类文件夹格式 (应该为关键字组合，如:{KEY}_{KEY}) 可选值：(年(1949){YYYY}、年(49){YY}、月{MM}、日{DD})
             /// 默认值：{ROOMID}_{NAME}
@@ -872,7 +872,7 @@ namespace Core
                     }
                 }
             }
-        
+
 
             private static string Port = "11419";
             /// <summary>
@@ -1009,7 +1009,7 @@ namespace Core
                     }
                 }
             }
-        
+
 
             private static string DesktopRemoteServer = "false";
             /// <summary>
@@ -1090,7 +1090,7 @@ namespace Core
             /// </summary>
             public string _DesktopAccessKeyId
             {
-                 get
+                get
                 {
                     if (_DesktopRemoteServer)
                         return DesktopAccessKeyId;
@@ -1115,7 +1115,7 @@ namespace Core
             /// </summary>
             public string _DesktopAccessKeySecret
             {
-                 get
+                get
                 {
                     if (_DesktopRemoteServer)
                         return DesktopAccessKeySecret;
@@ -1149,7 +1149,7 @@ namespace Core
                 }
             }
 
-         
+
             private static string ZoomOutMode = "0";
             /// <summary>
             /// 缩小操作默认行为  0:缩小到任务栏   1:缩小到托盘后台
@@ -1351,6 +1351,50 @@ namespace Core
                             break;
                     }
                     OnPropertyChanged();
+                }
+            }
+
+            private static string DesktopWidth = "1250";
+            /// <summary>
+            /// 桌面版最后的宽度
+            /// 默认值：1250
+            /// </summary>
+            public int _DesktopWidth
+            {
+                get
+                {
+                    return int.Parse(DesktopWidth);
+                }
+                set
+                {
+                    if (value.ToString() != DesktopWidth)
+                    {
+                        DesktopWidth = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string DesktopHeight = "650";
+            /// <summary>
+            /// 桌面版最后的高度
+            /// 默认值：650
+            /// </summary>
+            public int _DesktopHeight
+            {
+                get
+                {
+                    return int.Parse(DesktopHeight);
+                }
+                set
+                {
+                    if (value.ToString() != DesktopHeight)
+                    {
+                        DesktopHeight = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
                 }
             }
 

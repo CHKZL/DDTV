@@ -20,7 +20,7 @@
             <MenuItem Header="删除房间" Click="DelRoom_Click"/>
         </ContextMenu>
     </UserControl.Resources>
-    <Grid Margin="5,5,5,5"  ContextMenu="{StaticResource CardContextMenu}" >
+    <Grid Margin="5" ContextMenu="{StaticResource CardContextMenu}" >
         <StackPanel>
             <Border Width="323" Height="150" CornerRadius="10,10,10,10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                 <Grid>
