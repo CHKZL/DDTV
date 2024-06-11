@@ -31,7 +31,7 @@ public partial class DefaultPage
         this.DataContext = PageComboBoxItems;
 
         //更新房间统计
-        RoomStatisticsTimer = new Timer(UpdateRoomStatistics, null, 5000, 3000);
+        RoomStatisticsTimer = new Timer(UpdateRoomStatistics, null, 1, 3000);
         //更新硬件使用率
         UpdateHardwareResourceUtilizationRateTimer = new Timer(UpdateHardwareResourceUtilizationRate, null, 1000, 60 * 1000);
         //更新运行时长

@@ -1,6 +1,8 @@
-﻿using Downloader;
+﻿using Core.LogModule;
+using Downloader;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -32,7 +34,8 @@ namespace Core.RuntimeObject.Download
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 #region 实例化下载对象
-                
+                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Start();
                 //本地Task下载的文件大小
                 long DownloadFileSizeForThisTask = 0;
                 var downloadOpt = new DownloadConfiguration()
@@ -78,6 +81,17 @@ namespace Core.RuntimeObject.Download
                     {
                         if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize)
                         {
+                            Log.Info(nameof(DlwnloadHls_avc_flv), $"{card.Name}({card.RoomId})触发时间分割");
+                            hlsState = DlwnloadTaskState.Success;
+                            downloader.CancelAsync();
+                        }
+                    }
+                    //处理时间限制分割
+                    if (Config.Core_RunConfig._CutAccordingToTime > 0)
+                    {
+                        if (stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime)
+                        {
+                            Log.Info(nameof(DlwnloadHls_avc_flv), $"{card.Name}({card.RoomId})触发文件大小分割");
                             hlsState = DlwnloadTaskState.Success;
                             downloader.CancelAsync();
                         }
@@ -114,6 +128,12 @@ namespace Core.RuntimeObject.Download
                 _stopTask.Start();
                 await downloader.DownloadFileTaskAsync(DlwnloadURL, File);
                 hlsState = CheckAndHandleFile(File, ref card);
+                try
+                {
+                    stopWatch.Stop();
+                }
+                catch (Exception)
+                {}
             });
             return (hlsState, File);
         }
