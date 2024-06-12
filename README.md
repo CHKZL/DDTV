@@ -1,3 +1,5 @@
+# 目前DDTV升级到5.x版本，完全重构的全新版本
+
 # 走过路过留个star吧
 
 [![Stargazers over time](https://starchart.cc/CHKZL/DDTV.svg)](https://starchart.cc/CHKZL/DDTV)
