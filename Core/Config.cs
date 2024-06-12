@@ -1254,8 +1254,7 @@ namespace Core
                         return 4;
                     if (index < 17)
                         return 5;
-
-                    return 0;
+                    return 5;
                 }
                 set
                 {
