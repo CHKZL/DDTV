@@ -215,9 +215,9 @@ namespace Desktop
         private void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
-               {
-                   MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，{(ToConnectToRemoteServer ? "请更新远程服务端后，再到设置页面点击更新按钮进行更新" : "请到设置页面点击更新按钮进行更新")}", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
-               });
+            {
+                MainWindow.SnackbarService.Show("检测到更新", $"检测到DDTV新版本：【{sender}】，{(ToConnectToRemoteServer ? "请更新远程服务端后，再到设置页面点击更新按钮进行更新" : "请到设置页面点击更新按钮进行更新")}", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.DocumentHeaderArrowDown20), TimeSpan.FromSeconds(5));
+            });
         }
 
         /// <summary>
