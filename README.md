@@ -34,3 +34,7 @@ Q群	522865400(新)	聊天吹水的地方
 |名称|说明|主页|
 |---|---|---|
 |DDTV_GUI_React|为DDTV提供WEBUI|[moehuhu/DDTV_GUI_React](https://github.com/moehuhu/DDTV_GUI_React)|
+
+## Q&A
+Q：Desktop无法打开播放窗，或者打开播放窗就闪退怎么办？
+A：尝试安装一下[webview2 runtime](https://developer.microsoft.com/zh-cn/microsoft-edge/webview2/consumer)
