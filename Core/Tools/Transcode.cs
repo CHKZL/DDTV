@@ -157,7 +157,14 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
+                    if(File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
+                    {
+                        process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
+                    }
+                    else if(File.Exists("./Plugins/Plugins/ffmpeg/ffmpeg.exe"))
+                    {
+                        process.StartInfo.FileName = "./Plugins/Plugins/ffmpeg/ffmpeg.exe";
+                    }
                 }
                 else
                 {
@@ -191,7 +198,7 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
-                Log.Warn(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}");
+                Log.Warn(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}",e,true);
                 using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
                 {
                     foreach (var item in LogText)
