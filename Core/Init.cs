@@ -187,7 +187,7 @@ namespace Core
                 HttpClient _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                 string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
-                if(A=="1")
+                if(A=="1" || A=="1\r\n")
                 {
                     Log.Info(nameof(StartStatistics), "启动统计正常");
                 }
@@ -206,7 +206,7 @@ namespace Core
                 HttpClient _httpClient = new HttpClient();
                 _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                 string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
-                if (A == "1")
+                if(A=="1" || A=="1\r\n")
                 {
                     Log.Info(nameof(HeartbeatStatistics), "心跳正常");
                 }
