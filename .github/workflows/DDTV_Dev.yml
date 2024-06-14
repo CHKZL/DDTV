@@ -152,8 +152,8 @@ jobs:
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Server\\build_output\\plugins\\plugins\\ffmpeg
-          copy Server\\plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir Server\\build_output\\Plugins\\ffmpeg
+          copy Server\\Plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
 
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
@@ -303,8 +303,8 @@ jobs:
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Desktop\\build_output\\plugins\\plugins\\ffmpeg
-          copy Desktop\\plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir Desktop\\build_output\\Plugins\\ffmpeg
+          copy Desktop\\Plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
@@ -420,8 +420,8 @@ jobs:
       - name: Copy ffmpeg.exe (Windows)
         if: matrix.os == 'windows-latest'
         run: |
-          mkdir Client\\build_output\\plugins\\plugins\\ffmpeg
-          copy Client\\plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\plugins\\plugins\\ffmpeg\\ffmpeg.exe
+          mkdir Client\\build_output\\Plugins\\ffmpeg
+          copy Client\\Plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
