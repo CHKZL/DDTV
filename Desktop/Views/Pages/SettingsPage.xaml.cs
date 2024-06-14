@@ -190,6 +190,16 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._DevelopmentVersion = (bool)DevelopmentVersion_ToggleSwitch.IsChecked;
         }
+        //WebHook配置保存
+        if (Config.Core_RunConfig._WebHookSwitch != WebHook_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._WebHookSwitch = (bool)WebHook_SwitchControl.IsChecked;
+        }
+        if (Config.Core_RunConfig._WebHookAddress != WebHookUrl_InputControl.Text)
+        {
+            Config.Core_RunConfig._WebHookAddress = WebHookUrl_InputControl.Text;
+        }
+
         #endregion
 
         #region 文件路径相关设置保存

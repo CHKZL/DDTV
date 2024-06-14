@@ -122,7 +122,7 @@ namespace Core.RuntimeObject
                         }
                         catch (Exception e)
                         {
-                            Log.Warn(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆", e);
+                            Log.Error(nameof(CheckLoginStatus), $"登陆状态过期,请重新登陆", e);
                         }
                         if (!_AccountStatus)
                             Thread.Sleep(1000 * 60 * 10);

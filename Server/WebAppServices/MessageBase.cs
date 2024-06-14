@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using AngleSharp.Dom;
+using Core.LogModule;
 using Newtonsoft.Json;
 using System.Net.WebSockets;
 using System.Text;
@@ -49,6 +50,7 @@ namespace Server.WebAppServices
         /// <param name="message">要推送的文本内容</param>
         public static void WS_Send(string message)
         {
+            WebHookSendAsync(message);
             ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
             {
@@ -57,7 +59,34 @@ namespace Server.WebAppServices
             }
         }
 
-     
+        /// <summary>
+        /// WebHook数据推送
+        /// </summary>
+        /// <param name="message">要推送的文本内容</param>
+        public static async Task WebHookSendAsync(string message)
+        {
+            await Task.Run(async () =>
+            {
+                if (Core.Config.Core_RunConfig._WebHookSwitch && !string.IsNullOrEmpty(Core.Config.Core_RunConfig._WebHookAddress))
+                {
+                    try
+                    {
+                        using (HttpClient client = new HttpClient())
+                        {
+                            var data = new StringContent(message, Encoding.UTF8, "application/json");
+                            var response = await client.PostAsync(Core.Config.Core_RunConfig._WebHookAddress, data);
+                            string result = await response.Content.ReadAsStringAsync();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(nameof(WebHookSendAsync), "WebHook信息推送失败", ex, false);
+                    }
+                }
+            });
+        }
+
+
         public class pack<T>
         {
             /// <summary>

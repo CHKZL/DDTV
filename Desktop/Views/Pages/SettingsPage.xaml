@@ -141,6 +141,45 @@
                                 </Grid>
                             </Grid>
                         </ui:CardControl>
+
+                        <ui:CardExpander Icon="{ui:SymbolIcon Send20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="WebHook" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="将DDTV产生的关键事件通过Post请求推送到目标URL地址" />
+                                        <ui:ToggleSwitch Name="WebHook_SwitchControl" IsChecked="{Binding _WebHookSwitch, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                    </Grid>
+                                    
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Margin="10,0,0,0" Content="需要推送到的目标WebHook地址" />
+                                    <ui:TextBox Name="WebHookUrl_InputControl" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" Text="{Binding _WebHookAddress, Mode=OneWay}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="请使用完整Url地址，例如:【http://127.0.0.1:11419】"/>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
