@@ -66,7 +66,6 @@ namespace Core
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
 
 
-            Network.Methods.Follow.GetFollowLists(RuntimeObject.Account.AccountInformation.Uid,0,1);
         }
 
 

@@ -103,7 +103,7 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
-                 Log.Warn(nameof(TranscodeAsync), $"合并任务出现未知错误:{e.ToString()}");
+                 Log.Error(nameof(TranscodeAsync), $"合并任务出现未知错误:{e.ToString()}");
             }
         }
 
@@ -198,7 +198,7 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
-                Log.Warn(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}",e,true);
+                Log.Error(nameof(TranscodeAsync), $"修复/转码任务出现未知错误:{e.ToString()}",e,true);
                 using (StreamWriter fileStream = new StreamWriter(before + "_fix日志.log", true, Encoding.UTF8))
                 {
                     foreach (var item in LogText)

@@ -63,7 +63,7 @@ namespace Core.Tools
                         }
                         catch (Exception e)
                         {
-                            Log.Warn(nameof(GetHDDInfo), "GetLinux硬盘信息出现错误", e, false);
+                            Log.Error(nameof(GetHDDInfo), "GetLinux硬盘信息出现错误", e, false);
                         }
                     }
 

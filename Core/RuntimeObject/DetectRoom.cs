@@ -42,7 +42,7 @@ namespace Core.RuntimeObject
 
             if (roomCard.live_status.Value != 1)
             {
-                Log.Warn(nameof(DetectRoom_LiveStart), $"{roomCard.RoomId}({roomCard.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
+                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.RoomId}({roomCard.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
                 return;
             }
 
@@ -238,7 +238,7 @@ namespace Core.RuntimeObject
             }
             catch (Exception e)
             {
-                Log.Warn(nameof(RoomLoopDetection), $"直播间状态轮询发生意外错误，错误信息：{e.ToString()}", e);
+                Log.Error(nameof(RoomLoopDetection), $"直播间状态轮询发生意外错误，错误信息：{e.ToString()}", e);
             }
         }
         #endregion

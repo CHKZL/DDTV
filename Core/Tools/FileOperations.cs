@@ -97,7 +97,7 @@ namespace Core.Tools
                         }
                         catch (Exception e)
                         {
-                            Log.Warn(nameof(Delete), "清理文件出现意外的错误，稍后重试，错误堆栈已写日志", e, true);
+                            Log.Error(nameof(Delete), "清理文件出现意外的错误，稍后重试，错误堆栈已写日志", e, true);
                         }
                         Thread.Sleep(1000);
                     }

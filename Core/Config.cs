@@ -1397,6 +1397,50 @@ namespace Core
                 }
             }
 
+
+             private static string WebHookSwitch = "false";
+            /// <summary>
+            /// WebHook功能开关标志
+            /// 默认值：false
+            /// </summary>
+            public bool _WebHookSwitch
+            {
+                get
+                {
+                    return bool.Parse(WebHookSwitch);
+                }
+                set
+                {
+                    if (value.ToString() != WebHookSwitch)
+                    {
+                        WebHookSwitch = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+            private static string WebHookAddress = string.Empty;
+            /// <summary>
+            /// WebHook功能的推送目标地址
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _WebHookAddress
+            {
+                get
+                {
+                    return WebHookAddress;
+                }
+                set
+                {
+                    if (value != WebHookAddress)
+                    {
+                        WebHookAddress = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

@@ -14,8 +14,6 @@
     <PackageIcon>DDTV.ico</PackageIcon>
     <Platforms>AnyCPU</Platforms>
     <ApplicationIcon>Assets\DDTV.ico</ApplicationIcon>
-	<SelfContained>true</SelfContained>
-	<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
