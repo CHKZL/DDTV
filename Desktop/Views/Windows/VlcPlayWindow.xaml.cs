@@ -57,7 +57,7 @@ namespace Desktop.Views.Windows
             public int Time { get; set; } = 0;
         }
 
-        private RoomCardClass roomCard=new();
+        private RoomCardClass roomCard = new();
         public VlcPlayWindow(long uid)
         {
             InitializeComponent();
@@ -71,14 +71,14 @@ namespace Desktop.Views.Windows
 
             if (roomCard == null || roomCard.live_status.Value != 1)
             {
-                Log.Info(nameof(VlcPlayWindow),$"打开播放器失败，入参uid:{uid},因为{(roomCard==null?"roomCard为空":"已下播")}");
+                Log.Info(nameof(VlcPlayWindow), $"打开播放器失败，入参uid:{uid},因为{(roomCard == null ? "roomCard为空" : "已下播")}");
                 vlcPlayModels.MessageVisibility = Visibility.Visible;
                 vlcPlayModels.OnPropertyChanged("MessageVisibility");
                 vlcPlayModels.MessageText = "该直播间未开播，播放失败";
                 vlcPlayModels.OnPropertyChanged("MessageText");
                 return;
             }
-            Log.Info(nameof(VlcPlayWindow),$"房间号:[{roomCard.RoomId}],打开播放器");
+            Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
 
             _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)}"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
@@ -148,7 +148,7 @@ namespace Desktop.Views.Windows
         /// <param name="Url"></param>
         public async void PlaySteam(string Url = null)
         {
-            Log.Info(nameof(PlaySteam),$"房间号:[{roomCard.RoomId}],播放网络路径直播流");
+            Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],播放网络路径直播流");
             await Task.Run(() =>
             {
                 if (_mediaPlayer.IsPlaying)
@@ -164,9 +164,41 @@ namespace Desktop.Views.Windows
                 {
                     Url = GeUrl();
                 }
-                var media = new LibVLCSharp.Shared.Media(_libVLC, Url, LibVLCSharp.Shared.FromType.FromLocation);
-                _mediaPlayer.Media = media;
-                _mediaPlayer.Play();
+                try
+                {
+                    bool completedInTime = false;
+
+                    while (!completedInTime)
+                    {
+                        CancellationTokenSource cts = new CancellationTokenSource();
+                        Task task = Task.Run(() =>
+                        {
+                            var media = new LibVLCSharp.Shared.Media(_libVLC, Url, LibVLCSharp.Shared.FromType.FromLocation);
+                            _mediaPlayer.Media = media;
+                            _mediaPlayer.Play();
+                        }, cts.Token);
+
+                        if (!task.Wait(TimeSpan.FromSeconds(10)))
+                        {
+                            cts.Cancel();
+                            Log.Warn(nameof(GeUrl), $"房间号:[{roomCard.RoomId}]，VLC连接源超时，进行重试，源地址[{Url}]");
+                            vlcPlayModels.MessageVisibility = Visibility.Visible;
+                            vlcPlayModels.OnPropertyChanged("MessageVisibility");
+                            vlcPlayModels.MessageText = "连接直播间失败，开始重试";
+                            vlcPlayModels.OnPropertyChanged("MessageText");
+                        }
+                        else
+                        {
+                            completedInTime = true;
+                            vlcPlayModels.MessageVisibility = Visibility.Collapsed;
+                            vlcPlayModels.OnPropertyChanged("MessageVisibility");
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+
+                }
             });
 
         }
@@ -181,7 +213,7 @@ namespace Desktop.Views.Windows
             string url = "";
             if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url) || Core.RuntimeObject.Download.FLV.GetFlvAvcUrl(roomCard, out url)))
             {
-                Log.Info(nameof(GeUrl),$"房间号:[{roomCard.RoomId}]，获取到直播流地址:[{url}]");
+                Log.Info(nameof(GeUrl), $"房间号:[{roomCard.RoomId}]，获取到直播流地址:[{url}]");
                 return url;
             }
             return "";
@@ -200,7 +232,7 @@ namespace Desktop.Views.Windows
                     _mediaPlayer.Media.ClearSlaves();
                     _mediaPlayer.Media = null;
                 }
-                Log.Info(nameof(PlaySteam),$"房间号:[{roomCard.RoomId}],关闭播放器");
+                Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],关闭播放器");
             }
             if (roomCard.DownInfo.LiveChatListener.Register.Count > 0)
             {
