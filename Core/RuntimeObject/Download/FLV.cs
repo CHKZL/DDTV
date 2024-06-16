@@ -55,13 +55,6 @@ namespace Core.RuntimeObject.Download
                     ProtocolVersion = HttpVersion.Version11, // 默认值为HTTP 1.1
                     Referer="https://www.bilibili.com/",
                     UserAgent = Config.Core_RunConfig._HTTP_UA,
-                    //Proxy = new WebProxy()
-                    //{
-                    //    Address = new Uri("http://YourProxyServer/proxy.pac"),
-                    //    UseDefaultCredentials = false,
-                    //    Credentials = System.Net.CredentialCache.DefaultNetworkCredentials,
-                    //    BypassProxyOnLocal = true
-                    //}
                 };
                 if (RuntimeObject.Account.AccountInformation.State)
                 {
@@ -140,7 +133,7 @@ namespace Core.RuntimeObject.Download
 
 
         /// <summary>
-        /// 获取avc编码FLV的M3U8文件URL
+        /// 获取avc编码FLV的文件URL
         /// </summary>
         /// <param name="roomCard"></param>
         /// <param name="Url"></param>

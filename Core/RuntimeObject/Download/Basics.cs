@@ -39,8 +39,8 @@ namespace Core.RuntimeObject.Download
             }
             else
             {
-                OperationQueue.Add(Opcode.Download.Reconnect, $"录制重连，房间UID:{roomCard.UID}", roomCard.UID);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到录制任务重连，同步录制状态，尝试重连...");
+                OperationQueue.Add(Opcode.Download.Reconnect, $"录制连接，房间UID:{roomCard.UID}", roomCard.UID);
+                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到任务，录制连接，房间UID:{roomCard.UID}");
             }
 
             (DlwnloadTaskState TaskState, string FileName) result = new();

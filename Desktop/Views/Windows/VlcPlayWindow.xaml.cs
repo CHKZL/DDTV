@@ -11,6 +11,7 @@ using SharpCompress.Common;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -80,12 +81,18 @@ namespace Desktop.Views.Windows
             }
             Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
 
-            _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)}"]);
+            _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)} --no-cert-verification"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
             videoView.MediaPlayer = _mediaPlayer;
             videoView.MediaPlayer.Playing += MediaPlayer_Playing;
             videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
-            videoView.MediaPlayer.Stopped += MediaPlayer_EndReached;
+            //var writer = new StreamWriter("./vlc_log.txt", append: true);
+            //_libVLC.Log += (sender, e) =>
+            //{
+            //    writer.WriteLine($"[{e.Level}] {e.Module}: {e.Message}");
+            //    writer.Flush();  // 确保日志消息立即写入文件
+            //};
+            //videoView.MediaPlayer.Stopped += MediaPlayer_EndReached;
             videoView.MediaPlayer.Volume = 30;
             PlaySteam();
             barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
@@ -179,7 +186,18 @@ namespace Desktop.Views.Windows
                         CancellationTokenSource cts = new CancellationTokenSource();
                         Task task = Task.Run(() =>
                         {
-                            var media = new LibVLCSharp.Shared.Media(_libVLC, Url, LibVLCSharp.Shared.FromType.FromLocation);
+                            var media = new Media(_libVLC, Url, FromType.FromLocation);
+                            ////// 添加Accept
+                            //media.AddOption(":http-accept=\"*/*\"");
+                            ////// 添加ContentType
+                            //media.AddOption(":http-content-type=\"application/x-www-form-urlencoded\"");
+                            ////// 添加Referer
+                            //media.AddOption(":http-referer=\"https://www.bilibili.com/\"");
+                            ////// 如果账户信息状态为true，添加Cookie
+                            //if (Account.AccountInformation.State)
+                            //{
+                            //    media.AddOption($":http-cookie=\"{Account.AccountInformation.strCookies}\"");
+                            //}
                             _mediaPlayer.Media = media;
                             _mediaPlayer.Play();
                         }, cts.Token);
@@ -217,7 +235,7 @@ namespace Desktop.Views.Windows
         public string GeUrl()
         {
             string url = "";
-            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url) || Core.RuntimeObject.Download.FLV.GetFlvAvcUrl(roomCard, out url)))
+            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url)))
             {
                 Log.Info(nameof(GeUrl), $"房间号:[{roomCard.RoomId}]，获取到直播流地址:[{url}]");
                 return url;
