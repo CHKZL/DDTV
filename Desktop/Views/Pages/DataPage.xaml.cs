@@ -181,20 +181,23 @@ public partial class DataPage
 
     public static void UpdatePageCount(int PageCount)
     {
-        if (PageComboBoxItems != null)
+        Application.Current.Dispatcher.Invoke(() =>
         {
-            PageComboBoxItems.Clear();
-            for (int i = 1; i <= PageCount; i++)
+            if (PageComboBoxItems != null)
             {
-                PageComboBoxItems.Add($"第{i}页");
+                PageComboBoxItems.Clear();
+                for (int i = 1; i <= PageCount; i++)
+                {
+                    PageComboBoxItems.Add($"第{i}页");
+                }
+                PageIndex = 1;
             }
-            PageIndex = 1;
-        }
+        });
     }
 
     public static void Refresher(object state)
     {
-        Application.Current.Dispatcher.Invoke(() => DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards());
+         DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards();
     }
     public class SortableObservableCollection<T> : ObservableCollection<T>
     {
@@ -202,14 +205,17 @@ public partial class DataPage
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            base.OnCollectionChanged(e);
-            if (SortingSelector == null || e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset) return;
-            var query = this.Select((item, index) => (Item: item, Index: index));
-            query = query.OrderBy(tuple => SortingSelector(tuple.Item));
-            var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index)).Where(o => o.OldIndex != o.NewIndex);
-            using (var enumerator = map.GetEnumerator())
-                if (enumerator.MoveNext())
-                    Move(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                base.OnCollectionChanged(e);
+                if (SortingSelector == null || e.Action == NotifyCollectionChangedAction.Remove || e.Action == NotifyCollectionChangedAction.Reset) return;
+                var query = this.Select((item, index) => (Item: item, Index: index));
+                query = query.OrderBy(tuple => SortingSelector(tuple.Item));
+                var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index)).Where(o => o.OldIndex != o.NewIndex);
+                using (var enumerator = map.GetEnumerator())
+                    if (enumerator.MoveNext())
+                        Move(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
+            });
         }
     }
 

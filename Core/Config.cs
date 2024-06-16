@@ -1398,7 +1398,7 @@ namespace Core
             }
 
 
-             private static string WebHookSwitch = "false";
+            private static string WebHookSwitch = "false";
             /// <summary>
             /// WebHook功能开关标志
             /// 默认值：false
@@ -1441,6 +1441,137 @@ namespace Core
                 }
             }
 
+            private static string PlayWindowSubtitleColor = "0xFF,0xFF,0xFF";
+            /// <summary>
+            /// 播放窗口字幕颜色
+            /// 默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            public string _PlayWindowSubtitleColor
+            {
+                get
+                {
+                    return PlayWindowSubtitleColor;
+                }
+                set
+                {
+                    if (value != PlayWindowSubtitleColor)
+                    {
+                        PlayWindowSubtitleColor = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowDanmaColor = "0xFF,0xFF,0xFF";
+            /// <summary>
+            /// 播放窗口弹幕颜色
+            /// 默认值：0xFF,0xFF,0xFF
+            /// </summary>
+            public string _PlayWindowDanmaColor
+            {
+                get
+                {
+                    return PlayWindowDanmaColor;
+                }
+                set
+                {
+                    if (value != PlayWindowDanmaColor)
+                    {
+                        PlayWindowDanmaColor = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowSubtitleFontSize = "26";
+            /// <summary>
+            /// 播放窗口字幕字号
+            /// 默认值：1250
+            /// </summary>
+            public int _PlayWindowSubtitleFontSize
+            {
+                get
+                {
+                    return int.Parse(PlayWindowSubtitleFontSize);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowSubtitleFontSize)
+                    {
+                        PlayWindowSubtitleFontSize = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowDanmaFontSize = "26";
+            /// <summary>
+            /// 播放窗口弹幕字号
+            /// 默认值：1250
+            /// </summary>
+            public int _PlayWindowDanmaFontSize
+            {
+                get
+                {
+                    return int.Parse(PlayWindowDanmaFontSize);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowDanmaFontSize)
+                    {
+                        PlayWindowDanmaFontSize = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowDanMuFontOpacity = "0.8";
+            /// <summary>
+            /// 播放窗口弹幕透明度（浮点）
+            /// 默认值：0.8
+            /// </summary>
+            public double _PlayWindowDanMuFontOpacity
+            {
+                get
+                {
+                    return double.Parse(PlayWindowDanMuFontOpacity);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowDanMuFontOpacity)
+                    {
+                        PlayWindowDanMuFontOpacity = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowDanmaSpeed = "15";
+            /// <summary>
+            /// 播放窗口弹幕速度
+            /// 默认值：15
+            /// </summary>
+            public int _PlayWindowDanmaSpeed
+            {
+                get
+                {
+                    return int.Parse(PlayWindowDanmaSpeed);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowDanmaSpeed)
+                    {
+                        PlayWindowDanmaSpeed = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
         }
         #endregion
     }

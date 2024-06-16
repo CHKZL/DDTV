@@ -24,9 +24,8 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         /// <param name="roomCard"></param>
         /// <param name="triggerTypes"></param>
-        /// <param name="liveChatListener"></param>
         /// <param name="isFirstTime"></param>
-        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, Core.LiveChat.LiveChatListener liveChatListener, bool isFirstTime)
+        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, bool isFirstTime)
         {
             if (isFirstTime)
             {
@@ -35,9 +34,7 @@ namespace Core.RuntimeObject.Download
 
                 if (roomCard.IsRecDanmu)
                 {
-                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                    liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-                    liveChatListener.Connect();
+                    roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;        
                 }
             }
             else
@@ -80,8 +77,8 @@ namespace Core.RuntimeObject.Download
 
             if (roomCard.IsRecDanmu)
             {
-                liveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
-                Danmu.SevaDanmu(liveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
+                roomCard.DownInfo.LiveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
+                Danmu.SevaDanmu(roomCard.DownInfo.LiveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
             //如果是付费直播，结束当前录制任务
             if(result.TaskState == DlwnloadTaskState.PaidLiveStream)
@@ -126,28 +123,6 @@ namespace Core.RuntimeObject.Download
             roomCard.DownInfo.EndTime = DateTime.Now;
             roomCard.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
             _Room.SetRoomCardByUid(roomCard.UID, roomCard);
-        }
-
-        internal static void LiveChatListener_DisposeSent(object? sender, EventArgs e)
-        {
-            LiveChatListener liveChatListener = (LiveChatListener)sender;
-            if (!liveChatListener._Cancel)
-            {
-                if (liveChatListener._disposed)
-                {
-                    liveChatListener = new Core.LiveChat.LiveChatListener(liveChatListener.RoomId);
-                    liveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                    liveChatListener.DisposeSent += LiveChatListener_DisposeSent;
-                }
-                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接，但直播未结束，触发重连");
-                liveChatListener.Connect();
-            }
-            else
-            {
-                Log.Info(nameof(LiveChatListener_DisposeSent), $"{liveChatListener.RoomId}({liveChatListener.Name})弹幕断开连接");
-                liveChatListener.Cancel();
-                liveChatListener = null;
-            }
         }
 
         /// <summary>
@@ -214,9 +189,10 @@ namespace Core.RuntimeObject.Download
 
 
         /// <summary>
-        /// 获取avc编码HLS内容
+        /// 获取avc编码HLS内容Host信息用于下载
         /// </summary>
-        /// <param name="RoomId"></param>
+        /// <param name="roomCard"></param>
+        /// <param name="hostClass"></param>
         /// <returns></returns>
 
         internal static bool GetHlsHost_avc(RoomCardClass roomCard, ref HostClass hostClass)
@@ -248,6 +224,9 @@ namespace Core.RuntimeObject.Download
             }
             return false;
         }
+
+
+
         internal static string Senior_M3U8_Analysis(string M3U8, ref HostClass hostClass)
         {
             if (string.IsNullOrEmpty(M3U8) || !M3U8.Contains("index.m3u8"))
@@ -359,7 +338,7 @@ namespace Core.RuntimeObject.Download
 
 
 
-        private static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name)
+        public static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name)
         {
             HostClass hostClass = new();
             PlayInfo_Class playInfo = GetPlayInfo(RoomId);
@@ -472,85 +451,85 @@ namespace Core.RuntimeObject.Download
 
         #region Class
 
-        internal class HostClass
+        public class HostClass
         {
             /// <summary>
             /// 是否有有效Host信息
             /// </summary>
-            internal bool Effective { get; set; } = false;
+            public bool Effective { get; set; } = false;
             /// <summary>
             /// host地址
             /// </summary>
-            internal string host { get; set; }
+            public string host { get; set; }
             /// <summary>
             /// 路由信息
             /// </summary>
-            internal string base_url { get; set; }
+            public string base_url { get; set; }
             /// <summary>
             /// 目录文件名
             /// </summary>
-            internal string uri_name { get; set; }
+            public string uri_name { get; set; }
             /// <summary>
             /// 参数
             /// </summary>
-            internal string extra { get; set; }
+            public string extra { get; set; }
             /// <summary>
             /// M3U8头
             /// </summary>
-            internal string SteramInfo { get; set; }
+            public string SteramInfo { get; set; }
             /// <summary>
             /// 房间付费类型
             /// </summary>
-            internal List<long> all_special_types { get; set; } = new List<long>();
-            internal EXTM3U eXTM3U { get; set; } = new();
-            internal class EXTM3U
+            public List<long> all_special_types { get; set; } = new List<long>();
+            public EXTM3U eXTM3U { get; set; } = new();
+            public class EXTM3U
             {
                 /// <summary>
                 /// 版本号
                 /// </summary>
-                internal int Version { get; set; }
+                public int Version { get; set; }
                 /// <summary>
                 /// 起始时间标记
                 /// </summary>
-                internal long TimeOffSet { get; set; }
+                public long TimeOffSet { get; set; }
                 /// <summary>
                 /// 初始标签
                 /// </summary>
-                internal long MediaSequence { get; set; }
+                public long MediaSequence { get; set; }
                 /// <summary>
                 /// 最大时长标记
                 /// </summary>
-                internal double Targetduration { get; set; }
+                public double Targetduration { get; set; }
                 /// <summary>
                 /// 初始化片段（I帧）
                 /// </summary>
-                internal string Map_URI { get; set; }
+                public string Map_URI { get; set; }
                 /// <summary>
                 /// 结束标记
                 /// </summary>
-                internal bool IsEND { get; set; }
+                public bool IsEND { get; set; }
                 /// <summary>
                 /// 具体的分片信息列表
                 /// </summary>
-                internal List<EXTINF> eXTINFs { get; set; } = new();
-                internal class EXTINF
+                public List<EXTINF> eXTINFs { get; set; } = new();
+                public class EXTINF
                 {
                     /// <summary>
                     /// 自定义标签
                     /// </summary>
-                    internal string Aux { get; set; }
+                    public string Aux { get; set; }
                     /// <summary>
                     /// 时长
                     /// </summary>
-                    internal double Duration { get; set; }
+                    public double Duration { get; set; }
                     /// <summary>
                     /// 文件名
                     /// </summary>
-                    internal string FileName { get; set; }
+                    public string FileName { get; set; }
                     /// <summary>
                     /// 拓展名
                     /// </summary>
-                    internal string ExtensionName { get; set; }
+                    public string ExtensionName { get; set; }
                 }
             }
         }

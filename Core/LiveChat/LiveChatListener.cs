@@ -30,9 +30,10 @@ namespace Core.LiveChat
         private byte[] m_ReceiveBuffer;
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
+        private bool _disposed = false;
+        private bool _Cancel=false;
 
-        public bool _disposed = false;
-        public bool _Cancel=false;
+
         public long RoomId = 0;
         public string Title = string.Empty;
         public string Name=string.Empty;
@@ -40,6 +41,7 @@ namespace Core.LiveChat
         public event EventHandler<MessageEventArgs> MessageReceived;
         public event EventHandler<EventArgs> DisposeSent;
         public bool State = false;
+        public List<string> Register = new();
         public RuntimeObject.Danmu.DanmuMessage DanmuMessage = new();
         public Stopwatch TimeStopwatch;
         public int SaveCount = 1;
@@ -70,16 +72,14 @@ namespace Core.LiveChat
                 Dispose();
             }
         }
-        public void Cancel()
-        {
-            if (!_Cancel)
-            {
-                _Cancel = true;
-                Dispose();
-            }
-        }
         public void Close()
         {
+            if(Register.Count!=0)
+            {
+                Connect();
+                return;
+            }
+
             m_ReceiveBuffer = null;
             if(TimeStopwatch!=null)
             {
@@ -123,6 +123,11 @@ namespace Core.LiveChat
                 State = false;
                 if (DisposeSent != null)
                     DisposeSent.Invoke(this, EventArgs.Empty);
+
+                if(Register.Count!=0)
+                {
+                   
+                }
             }
             catch (Exception E)
             {
@@ -458,7 +463,10 @@ namespace Core.LiveChat
                     jsonBody = jsonBody.Replace("\"{}\",", "");
                     jsonBody = jsonBody.Replace("}\",\"", "},\"");
                 }
-
+                if(!jsonBody.Contains("DANMU_MSG") && !jsonBody.Contains("SUPER_CHAT_MESSAGE") && !jsonBody.Contains("SEND_GIFT") && !jsonBody.Contains("GUARD_BUY") && !jsonBody.Contains("DANMU_MSG"))
+                {
+                    return;
+                }
 
                 obj = JsonNode.Parse(jsonBody).AsObject();
             }
