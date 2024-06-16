@@ -83,7 +83,9 @@ namespace Update
                     int i = 1;
                     foreach (var item in map)
                     {
-                        Console.Write($"进度：{i}/{map.Count}  |  文件大小{item.Value.Size}字节，开始更新文件【{item.Value.Name}】.......");
+                        long bytes = item.Value.Size;
+                        string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
+                        Console.Write($"进度：{i}/{map.Count}  |  文件大小{size}，开始更新文件【{item.Value.Name}】.......");
                         string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
                         if (!Directory.Exists(directoryPath))
                         {

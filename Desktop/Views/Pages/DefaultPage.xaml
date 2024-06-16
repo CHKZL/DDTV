@@ -94,7 +94,7 @@
                     </Grid>
                 </Border>
             </Grid>
-            <Grid Grid.Row="6" Grid.Column="0" Margin="3">
+            <Grid Grid.Row="5" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
@@ -106,17 +106,28 @@
                     </Grid>
                 </Border>
             </Grid>
+            <Grid Grid.Row="6" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前通信协议" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,15,0" Text="{Binding IpvState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                    </Grid>
+
+                </Border>
+            </Grid>
             <Grid Grid.Row="7" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前运行状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding runningState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBlock>
-                        <!--<ui:Anchor Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0" Content="查看DDTV源码" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" />-->
+                        <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前代理状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,15,0" Text="{Binding ProxyState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="{Binding ProxyUrl}"></TextBlock>
                     </Grid>
                     
                 </Border>
