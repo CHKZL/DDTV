@@ -20,7 +20,9 @@ namespace Desktop.Models
         public int HardDiskUsageRate { get; set; } = 0;
         public int MemoryUsageRate { get; set; } = 0;
         public string RunTime { get; set; } = "";
-        public string runningState { get; set; } = "正常";
+        public string IpvState { get; set; } = "正常，目前使用的IPv4";
+        public string ProxyState { get; set; } = "正常，未检测到代理";
+        public string ProxyUrl { get; set; } = "";
         public string announcement { get; set; } = "";
     }
 }
