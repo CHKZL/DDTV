@@ -305,6 +305,18 @@ jobs:
         run: |
           mkdir Desktop\\build_output\\Plugins\\ffmpeg
           copy Desktop\\Plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
+
+      - name: Copy VLC (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          mkdir Desktop/build_output/Plugins/vlc
+          
+          $source = "Desktop/Plugins/vlc/*"
+          $destination = "Desktop/build_output/Plugins/vlc"
+    
+          New-Item -ItemType Directory -Force -Path $destination
+          Move-Item -Path $source -Destination $destination
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
