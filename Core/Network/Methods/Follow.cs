@@ -35,7 +35,7 @@ namespace Core.Network.Methods
                         SumCount += item.count;
                         list.Add((item.name,item.tagid, item.count));
                     }
-                    Log.Info(nameof(GetFollowGroups), $"获取关注分组统计概览成功，一共获取到{list}个关注分组，一共{SumCount}人");
+                    Log.Info(nameof(GetFollowGroups), $"获取关注分组统计概览成功，一共获取到{list.Count}个关注分组，一共{SumCount}人");
                     return list;
                 }
                 else
