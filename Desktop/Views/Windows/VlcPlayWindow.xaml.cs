@@ -85,6 +85,7 @@ namespace Desktop.Views.Windows
             videoView.MediaPlayer = _mediaPlayer;
             videoView.MediaPlayer.Playing += MediaPlayer_Playing;
             videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
+            videoView.MediaPlayer.Stopped += MediaPlayer_EndReached;
             videoView.MediaPlayer.Volume = 30;
             PlaySteam();
             barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
@@ -160,6 +161,11 @@ namespace Desktop.Views.Windows
                     _mediaPlayer.Media.ClearSlaves();
                     _mediaPlayer.Media = null;
                 }
+                if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
+                {
+                    Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}]，主播已下播，停止获取流地址");
+                    return;
+                }
                 if (string.IsNullOrEmpty(Url))
                 {
                     Url = GeUrl();
@@ -181,7 +187,7 @@ namespace Desktop.Views.Windows
                         if (!task.Wait(TimeSpan.FromSeconds(10)))
                         {
                             cts.Cancel();
-                            Log.Warn(nameof(GeUrl), $"房间号:[{roomCard.RoomId}]，VLC连接源超时，进行重试，源地址[{Url}]");
+                            Log.Warn(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}]，VLC连接源超时，进行重试，源地址[{Url}]");
                             vlcPlayModels.MessageVisibility = Visibility.Visible;
                             vlcPlayModels.OnPropertyChanged("MessageVisibility");
                             vlcPlayModels.MessageText = "连接直播间失败，开始重试";
@@ -195,9 +201,9 @@ namespace Desktop.Views.Windows
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    Log.Error(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}]，VLC连接源出现意外错误，进行重试，源地址[{Url}]", ex);
                 }
             });
 
