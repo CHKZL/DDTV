@@ -1404,6 +1404,11 @@ namespace Core.RuntimeObject
             /// 任务结束时间
             /// </summary>
             public DateTime EndTime = DateTime.UnixEpoch;
+            /// <summary>
+            /// 弹幕对象
+            /// </summary>
+            public LiveChat.LiveChatListener LiveChatListener;
+
             [JsonIgnore]
             /// <summary>
             /// 取消录制标记

@@ -67,15 +67,26 @@ namespace Core.RuntimeObject
                 }
 
                 roomCard.DownInfo.IsDownload = true;
-
-                Core.LiveChat.LiveChatListener liveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
-                try
+                if (roomCard.IsRecDanmu)
                 {
                     
+                    if (roomCard.DownInfo.LiveChatListener == null)
+                    {
+                        roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                    }
+                    else if (!roomCard.DownInfo.LiveChatListener.State)
+                    {
+                        roomCard.DownInfo.LiveChatListener.Connect();
+                    }
+                    roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
+                }
+                try
+                {
+
                     do
                     {
                         //核心下载函数
-                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, liveChatListener, isFirstTime);
+                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, isFirstTime);
                         //她已经不是第一次了
                         isFirstTime = false;
                     }
@@ -93,16 +104,22 @@ namespace Core.RuntimeObject
                 }
                 finally
                 {
-                    if (liveChatListener != null)
+                    roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
+                    if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
                     {
-                        liveChatListener.DanmuMessage = null;
-                        try
+                        if (roomCard.DownInfo.LiveChatListener != null)
                         {
-                            liveChatListener.Dispose();
+                            roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
+                            try
+                            {
+                                roomCard.DownInfo.LiveChatListener.Dispose();
+                            }
+                            catch (Exception)
+                            { }
                         }
-                        catch (Exception)
-                        { }
                     }
+
+
                 }
             }
         }

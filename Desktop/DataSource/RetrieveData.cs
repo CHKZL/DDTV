@@ -34,7 +34,7 @@ namespace Desktop.DataSource
                     return;
                 }
                 Dictionary<string, string> dir = new Dictionary<string, string>();
-                if(!string.IsNullOrEmpty(DataPage.screen_name))
+                if (!string.IsNullOrEmpty(DataPage.screen_name))
                 {
                     dir = new Dictionary<string, string>()
                     {
@@ -58,62 +58,64 @@ namespace Desktop.DataSource
                     Log.Warn(nameof(RefreshRoomCards), "调用Core的API[batch_complete_room_information]获取房间信息失败，获取到的信息为Null", null, true);
                     return;
                 };
+                Application.Current.Dispatcher.Invoke(() =>
+                {
 
-                int pg = (Cards.total / 102) + (Cards.total % 102 > 0 ? 1 : 0);
-                if(DataPage.PageCount!=pg)
-                {
-                    DataPage.PageCount = pg;
-                    DataPage.UpdatePageCount(DataPage.PageCount);
-                }
-
-                List<long> _uid_Web = new List<long>();
-                foreach (var item in Cards.completeInfoList)
-                {
-                    _uid_Web.Add(item.uid);
-                }
-                List<long> _uid_local = new List<long>();
-                foreach (var item in Views.Pages.DataPage.CardsCollection)
-                {
-                    _uid_local.Add(item.Uid);
-                }
-                List<long> result = _uid_local.Except(_uid_Web).ToList();
-                foreach (var item in result)
-                {
-                    Views.Pages.DataPage.CardsCollection.Remove(Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item));
-                }
-
-
-                foreach (var item in Cards.completeInfoList)
-                {
-                    var card = Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item.uid);
-                    if (card.Uid != 0)
+                    int pg = (Cards.total / 102) + (Cards.total % 102 > 0 ? 1 : 0);
+                    if (DataPage.PageCount != pg)
                     {
-                        if (
-                            card.Title != item.roomInfo.title
-                            || card.Live_Status != item.roomInfo.liveStatus
-                            || card.Nickname != item.userInfo.name
-                            || card.Room_Id != item.roomId
-                            || card.IsRec != item.userInfo.isAutoRec
-                            || card.IsDanmu != item.userInfo.isRecDanmu
-                            || card.IsRemind != item.userInfo.isRemind
-                            || card.IsDownload != item.taskStatus.isDownload
-                            || card.DownloadSpe != item.taskStatus.downloadRate
-                            || card.LiveTime != TimeSpan.FromSeconds(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() - item.roomInfo.liveTime).Seconds
-                            )
+                        DataPage.PageCount = pg;
+                        DataPage.UpdatePageCount(DataPage.PageCount);
+                    }
+
+                    List<long> _uid_Web = new List<long>();
+                    foreach (var item in Cards.completeInfoList)
+                    {
+                        _uid_Web.Add(item.uid);
+                    }
+                    List<long> _uid_local = new List<long>();
+                    foreach (var item in Views.Pages.DataPage.CardsCollection)
+                    {
+                        _uid_local.Add(item.Uid);
+                    }
+                    List<long> result = _uid_local.Except(_uid_Web).ToList();
+                    foreach (var item in result)
+                    {
+                        Views.Pages.DataPage.CardsCollection.Remove(Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item));
+                    }
+
+
+                    foreach (var item in Cards.completeInfoList)
+                    {
+                        var card = Views.Pages.DataPage.CardsCollection.FirstOrDefault(i => i.Uid == item.uid);
+                        if (card.Uid != 0)
+                        {
+                            if (
+                                card.Title != item.roomInfo.title
+                                || card.Live_Status != item.roomInfo.liveStatus
+                                || card.Nickname != item.userInfo.name
+                                || card.Room_Id != item.roomId
+                                || card.IsRec != item.userInfo.isAutoRec
+                                || card.IsDanmu != item.userInfo.isRecDanmu
+                                || card.IsRemind != item.userInfo.isRemind
+                                || card.IsDownload != item.taskStatus.isDownload
+                                || card.DownloadSpe != item.taskStatus.downloadRate
+                                || card.LiveTime != TimeSpan.FromSeconds(new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds() - item.roomInfo.liveTime).Seconds
+                                )
+                            {
+                                DataCard dataCard = CreateDataCard(item);
+                                int index = Views.Pages.DataPage.CardsCollection.IndexOf(card);
+                                Views.Pages.DataPage.CardsCollection[index] = dataCard;
+                            }
+                        }
+                        else
                         {
                             DataCard dataCard = CreateDataCard(item);
-                            int index = Views.Pages.DataPage.CardsCollection.IndexOf(card);
-                            Views.Pages.DataPage.CardsCollection[index] = dataCard;
+                            Views.Pages.DataPage.CardsCollection.Add(dataCard);
+
                         }
                     }
-                    else
-                    {
-                        DataCard dataCard = CreateDataCard(item);
-                        Views.Pages.DataPage.CardsCollection.Add(dataCard);
-
-                    }
-                }
-               
+                });
             }
 
             private static DataCard CreateDataCard(Server.WebAppServices.Api.batch_complete_room_information.Data.CompleteInfo item)

@@ -279,6 +279,28 @@ namespace Core.RuntimeObject.Download
             return values;
         }
 
+        /// <summary>
+        /// 获取avc编码HLS的M3U8文件URL
+        /// </summary>
+        /// <param name="roomCard"></param>
+        /// <param name="Url"></param>
+        /// <returns></returns>
+
+        public static bool GetHlsAvcUrl(RoomCardClass roomCard, out string Url)
+        {
+            Url = "";
+            if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
+            {
+                return false;
+            }
+            HostClass hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc");
+            if (hostClass.Effective)
+            {
+                Url = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
+                return true;
+            }
+            return false;
+        }
 
     }
 }

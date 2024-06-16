@@ -139,5 +139,27 @@ namespace Core.RuntimeObject.Download
         }
 
 
+        /// <summary>
+        /// 获取avc编码FLV的M3U8文件URL
+        /// </summary>
+        /// <param name="roomCard"></param>
+        /// <param name="Url"></param>
+        /// <returns></returns>
+        public static bool GetFlvAvcUrl(RoomCardClass roomCard, out string Url)
+        {
+            Url = "";
+            if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
+            {
+                return false;
+            }
+            HostClass hostClass = _GetHost(roomCard.RoomId, "http_stream", "flv", "avc");
+            if (hostClass.Effective)
+            {
+                Url = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
+                return true;
+            }
+            return false;
+        }
+
     }
 }

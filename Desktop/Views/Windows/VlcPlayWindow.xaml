@@ -1,0 +1,41 @@
+﻿<ui:FluentWindow x:Class="Desktop.Views.Windows.VlcPlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"       
+        xmlns:local="clr-namespace:Desktop.Views.Windows"      
+        xmlns:vlc="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
+        mc:Ignorable="d"
+        WindowStyle="None"
+        Background="{x:Null}"
+        Title="VlcPlayWindow" Height="450" Width="800" 
+        Closing="FluentWindow_Closing" KeyDown="FluentWindow_KeyDown"
+        >
+    <vlc:VideoView Margin="1" x:Name="videoView">
+        <Grid Background="#01FFFFFF" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel">
+            <Grid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="切换全屏状态" Click="FullScreenSwitch_MenuItem_Click"  Icon="{ui:SymbolIcon FullScreenMaximize20}"/>
+                    <Separator/>
+                    <MenuItem Header="关闭本窗口" Click="ExitWindow_MenuItem_Click" Icon="{ui:SymbolIcon ArrowExit20}"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
+
+            <ui:Button Visibility="{Binding VolumeVisibility,Mode=OneWay}"  FontSize="50" Icon="{ui:SymbolIcon Speaker248}" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <ui:Button.Content>
+                    <TextBlock FontSize="30" Text="{Binding Volume,Mode=OneWay}" Foreground="White" Opacity="0.8"/>
+                </ui:Button.Content>
+            </ui:Button>
+            <Canvas Name="DanmaCanvas" Opacity="1"/>
+            <ui:ProgressRing Visibility="{Binding LoadingVisibility,Mode=OneWay}" Width="200" Height="200" HorizontalAlignment="Center" VerticalAlignment="Center" IsIndeterminate="True" Background="{x:Null}" Foreground="#00a1d6" />
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#7F5B5B5B">
+                <TextBlock Grid.Column="1" Visibility="{Binding LoadingVisibility,Mode=OneWay}" Text="缓冲中" Foreground="White" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            </Grid>
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#7F5B5B5B">
+                <TextBlock Grid.Column="1" Visibility="{Binding MessageVisibility,Mode=OneWay}" Text="{Binding MessageText}" Foreground="White" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            </Grid>
+
+        </Grid>
+    </vlc:VideoView>
+</ui:FluentWindow>

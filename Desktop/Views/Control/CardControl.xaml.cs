@@ -39,8 +39,8 @@ namespace Desktop.Views.Control
         private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
         {
             Models.DataCard dataCard = GetDataCard(sender);
-            Windows.PlayWindow playWindow = new Windows.PlayWindow(dataCard.Room_Id);
-            playWindow.Show();
+            Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
+            vlcPlayWindow.Show();
         }
 
 
@@ -51,8 +51,10 @@ namespace Desktop.Views.Control
                 var border = (Border)sender;
                 var grid = (Grid)border.Parent;
                 Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
-                Windows.PlayWindow playWindow = new Windows.PlayWindow(dataContext.Room_Id);
-                playWindow.Show();
+
+                Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataContext.Uid);
+                vlcPlayWindow.Show();
+
             }
         }
 

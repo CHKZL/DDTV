@@ -106,6 +106,8 @@ namespace Desktop
             InitializeTitleMode();
             //监听开播事件，用于开播提醒
             Detect.detectRoom.LiveStart += DetectRoom_LiveStart;
+            //初始化VLC播放器组件
+            LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
 
         }
 
