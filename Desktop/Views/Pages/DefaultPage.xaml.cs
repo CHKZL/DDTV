@@ -127,6 +127,11 @@ public partial class DefaultPage
             if (defaultProxy != null)
             {
                 var proxyUri = defaultProxy.GetProxy(new Uri(Config.Core_RunConfig._LiveDomainName));
+                if(proxyUri==null)
+                {
+                    SetProxyState("正常，未检测到代理");
+                    return;
+                }
                 if (proxyUri?.AbsoluteUri != Config.Core_RunConfig._LiveDomainName)
                 {
                     Log.Info(nameof(ProxyDetection), $"系统代理已启用，代理地址：{proxyUri.AbsoluteUri}", false);
