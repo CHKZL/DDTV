@@ -1,5 +1,7 @@
 ﻿using Core;
 using Core.LogModule;
+using Core.RuntimeObject;
+using Desktop.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,8 +41,37 @@ namespace Desktop.Views.Control
         private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
         {
             Models.DataCard dataCard = GetDataCard(sender);
-            Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
-            vlcPlayWindow.Show();
+
+            if (IsThereHLVPresent(dataCard.Uid))
+            {
+                Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
+                vlcPlayWindow.Show();
+            }
+            else
+            {
+                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                WebPlayWindow.Show();
+            }
+
+        }
+
+        /// <summary>
+        /// 是否有HLS流
+        /// </summary>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        public bool IsThereHLVPresent(long uid)
+        {
+            RoomCardClass roomCard = new();
+            _Room.GetCardForUID(uid, ref roomCard);
+            string url = "";
+            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url)) && !string.IsNullOrEmpty(url))
+            {
+
+                return true;
+
+            }
+            return false;
         }
 
 
@@ -50,10 +81,18 @@ namespace Desktop.Views.Control
             {
                 var border = (Border)sender;
                 var grid = (Grid)border.Parent;
-                Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
 
-                Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataContext.Uid);
-                vlcPlayWindow.Show();
+                Models.DataCard dataCard =(Models.DataCard)grid.DataContext;
+                if (IsThereHLVPresent(dataCard.Uid))
+                {
+                    Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
+                    vlcPlayWindow.Show();
+                }
+                else
+                {
+                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                    WebPlayWindow.Show();
+                }
 
             }
         }

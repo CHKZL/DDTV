@@ -13,7 +13,7 @@
         Closing="FluentWindow_Closing" KeyDown="FluentWindow_KeyDown"
         >
     <vlc:VideoView Margin="1" x:Name="videoView">
-        <Grid Background="#01FFFFFF" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel">
+        <Grid Background="#01000000" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel">
             <Grid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="切换全屏状态" Click="FullScreenSwitch_MenuItem_Click"  Icon="{ui:SymbolIcon FullScreenMaximize20}"/>
