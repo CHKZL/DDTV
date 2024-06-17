@@ -217,11 +217,14 @@ public partial class DefaultPage
         try
         {
             SystemResourceClass systemResourceClass = NetWork.Get.GetBody<SystemResourceClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_system_resources");
-            int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);
-            SetMemoryUsageRate(memory);
-            if (int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
+            if (systemResourceClass != null)
             {
-                SetHardDiskUsageRate(hdd);
+                int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);
+                SetMemoryUsageRate(memory);
+                if (int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
+                {
+                    SetHardDiskUsageRate(hdd);
+                }
             }
         }
         catch (Exception ex)

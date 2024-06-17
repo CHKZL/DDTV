@@ -11,6 +11,7 @@ using static Core.Network.Methods.User.UserInfo;
 using Wpf.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using Microsoft.AspNetCore.Http.Features;
 
 
 
@@ -36,6 +37,13 @@ namespace Desktop
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
+                        webBuilder.ConfigureServices(services =>
+                        {
+                            services.Configure<FormOptions>(options =>
+                            {
+                                options.ValueCountLimit = 1024 * 1024;
+                            });
+                        });
                         webBuilder.UseStartup<Server.Startup>();
                         string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                         webBuilder.UseUrls(rurl);
@@ -47,9 +55,8 @@ namespace Desktop
             {
                 MessageBox.Show($"Core发生重大错误，错误堆栈:\n{ex.ToString()}");
             }
-
-
         }
+
     }
 
 }

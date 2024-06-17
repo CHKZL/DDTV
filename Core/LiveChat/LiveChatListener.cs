@@ -277,6 +277,10 @@ namespace Core.LiveChat
                     {
                         try
                         {
+                            if (_disposed)
+                            {
+                                return;
+                            }
                             result = await m_client.ReceiveAsync(
                           new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length),
                           m_innerRts.Token);
@@ -289,7 +293,7 @@ namespace Core.LiveChat
                             return;
                         }
                     }
-                    while (!result.EndOfMessage );
+                    while (!result.EndOfMessage);
                     DepackDanmakuData(m_ReceiveBuffer);
                 }
                 catch (OperationCanceledException ex)
