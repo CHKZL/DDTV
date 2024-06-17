@@ -26,7 +26,7 @@ namespace Desktop.NetWork
         /// <returns>请求返回体</returns>
         public static T PostBody<T>(string url, Dictionary<string, string> _dic = null)
         {
-            if(!string.IsNullOrEmpty(url)&& url.Substring(0,4)!="http")
+            if (!string.IsNullOrEmpty(url) && url.Length > 5 && url.Substring(0, 4) != "http")
             {
                 url = "http://" + url;
             }

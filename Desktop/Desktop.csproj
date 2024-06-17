@@ -70,4 +70,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Page Update="Views\Pages\ToolsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

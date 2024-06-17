@@ -1,0 +1,71 @@
+<Page
+    x:Class="Desktop.Views.Pages.ToolsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Desktop.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="ToolsPage"
+    d:DesignHeight="650"
+    d:DesignWidth="1255"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Margin="42,0,42,42">
+            <TextBlock Margin="0,0,0,20" FontSize="22" FontWeight="Medium" Text="更多手动工具" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+         
+              
+                <!--登录态相关设置-->
+                <ui:CardExpander Grid.Row="2" Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="手动执行修复/转码" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="可以修复\重新封装FLV文件或者DDTV录制的'_original'后缀文件" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0,24,0">
+                        <Grid VerticalAlignment="Center"  HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:Button Grid.Column="0" Content="选择需要fix的文件"  VerticalAlignment="Center" Click="ManualFix_Button_Click"/>
+                            <ui:TextBlock Margin="24,0,0,0"  Grid.Column="1" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="选择文件后，修复将在后台进行，请稍候查看原路径'_fix'后缀文件即可"/>
+                            <ui:TextBlock Margin="50,0,0,0"  Grid.Column="2" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="{Binding FixMessage}" Foreground="White"/>
+                        </Grid>
+                    </StackPanel>
+
+                </ui:CardExpander>
+               
+            </Grid>
+
+        </StackPanel>
+        <ContentPresenter x:Name="RootContentDialogPresenter" />
+    </Grid>
+</Page>
