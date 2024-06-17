@@ -178,18 +178,18 @@ namespace Update
                 try
                 {
                     if (A)
-                        Thread.Sleep(1000);
+                        Thread.Sleep(10);
                     if (!A)
                         A = true;
 
-                    if (error_count > 1)
+                    if (error_count > 0)
                     {
                         if (error_count > 3)
                         {
                             Console.WriteLine($"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
                             return "";
                         }
-                        Console.WriteLine($"使用备用服务器进行重试.....");
+                        //Console.WriteLine($"使用备用服务器进行重试.....");
                         FileDownloadAddress = AlternativeDomainName + URL;
                         Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
                     }
@@ -198,7 +198,7 @@ namespace Update
                         FileDownloadAddress = MainDomainName + URL;
                     }
                     HttpClient _httpClient = new HttpClient();
-                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 5);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
                     error_count++;
@@ -220,7 +220,7 @@ namespace Update
                 catch (Exception ex)
                 {
                     error_count++;
-                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+                    Console.WriteLine($"=下载文件超时:{FileDownloadAddress}\r\n");
 
                 }
             } while (string.IsNullOrEmpty(str));
