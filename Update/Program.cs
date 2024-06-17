@@ -178,7 +178,7 @@ namespace Update
                 try
                 {
                     if (A)
-                        Thread.Sleep(10);
+                        Thread.Sleep(100);
                     if (!A)
                         A = true;
 
