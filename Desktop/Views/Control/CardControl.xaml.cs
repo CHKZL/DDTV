@@ -2,6 +2,7 @@
 using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
+using Desktop.Views.Windows;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,17 +42,29 @@ namespace Desktop.Views.Control
         private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
         {
             Models.DataCard dataCard = GetDataCard(sender);
+            Task.Run(() =>
+            {
+                if (IsThereHLVPresent(dataCard.Uid))
+                {
+                    Dispatcher.Invoke(() =>
+                                {
+                                    Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
+                                    vlcPlayWindow.Show();
+                                });
 
-            if (IsThereHLVPresent(dataCard.Uid))
-            {
-                Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
-                vlcPlayWindow.Show();
-            }
-            else
-            {
-                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
-                WebPlayWindow.Show();
-            }
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                                {
+                                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                                    WebPlayWindow.Show();
+                                });
+
+                }
+
+            });
+
 
         }
 
@@ -82,7 +95,7 @@ namespace Desktop.Views.Control
                 var border = (Border)sender;
                 var grid = (Grid)border.Parent;
 
-                Models.DataCard dataCard =(Models.DataCard)grid.DataContext;
+                Models.DataCard dataCard = (Models.DataCard)grid.DataContext;
                 if (IsThereHLVPresent(dataCard.Uid))
                 {
                     Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);

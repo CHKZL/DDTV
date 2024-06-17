@@ -17,7 +17,7 @@ using static Core.Network.Methods.Room;
 namespace Desktop.DataSource
 {
     internal class LoginStatus
-    { 
+    {
         /// <summary>
         /// 登陆失效事件
         /// </summary>
@@ -29,10 +29,13 @@ namespace Desktop.DataSource
         public static Timer Timer_LoginStatus;
         public static void RefreshLoginStatus(object state)
         {
-            if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
+            Task.Run(() =>
             {
-                LoginFailureEvent?.Invoke(null, new EventArgs());
-            }
+                if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
+                {
+                    LoginFailureEvent?.Invoke(null, new EventArgs());
+                }
+            });
         }
     }
 }
