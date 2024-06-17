@@ -79,7 +79,7 @@ namespace Core.LiveChat
                 Connect();
                 return;
             }
-
+            _Cancel = true;
             m_ReceiveBuffer = null;
             if(TimeStopwatch!=null)
             {
@@ -277,7 +277,7 @@ namespace Core.LiveChat
                     {
                         try
                         {
-                            if (_disposed)
+                            if (_Cancel)
                             {
                                 return;
                             }
