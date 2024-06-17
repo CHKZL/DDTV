@@ -51,7 +51,7 @@ namespace Desktop.NetWork
                 dic.Remove("access_key_secret");
                 using (HttpClient client = new HttpClient())
                 {
-                    client.Timeout = new TimeSpan(0,0,3);
+                    client.Timeout = new TimeSpan(0,0,8);
                     var content = new FormUrlEncodedContent(dic);
                     var response = await client.PostAsync(url, content);
                     var responseString = response.Content.ReadAsStringAsync().Result;

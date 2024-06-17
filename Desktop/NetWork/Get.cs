@@ -51,7 +51,7 @@ namespace Desktop.NetWork
 
                 using (HttpClient _httpClient = new HttpClient())
                 {
-                    _httpClient.Timeout = new TimeSpan(0,0,3);
+                    _httpClient.Timeout = new TimeSpan(0,0,8);
                     HttpResponseMessage response = _httpClient.GetAsync($"{url}?{Parameter}").Result;
                     response.EnsureSuccessStatusCode();
                     string responseBody = response.Content.ReadAsStringAsync().Result;
