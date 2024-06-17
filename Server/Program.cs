@@ -42,7 +42,7 @@ namespace Server
 
                 //注册DDTV主要服务
                 Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
-
+                ServicePointManager.DefaultConnectionLimit = 4096 * 16;
                 //等待Core启动后再启动WEB服务
                 await Init.CoreStartAwait.Task;
 
@@ -53,12 +53,12 @@ namespace Server
                     Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                     return;
                 }
-
                 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
                 builder.Services.Configure<FormOptions>(options =>
                 {
                     options.ValueCountLimit = 1024 * 1024;
                 });
+
                 builder.Logging.AddFilter((category, level) =>
                 {
                     return level >= LogLevel.Warning;
