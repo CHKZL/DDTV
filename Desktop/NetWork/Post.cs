@@ -24,7 +24,7 @@ namespace Desktop.NetWork
         /// <param name="_dic">POST要发送的键值对</param>
         /// <param name="ExpandList">需要额外携带的LongList</param>
         /// <returns>请求返回体</returns>
-        public static T PostBody<T>(string url, Dictionary<string, string> _dic = null)
+        public static async Task<T> PostBody<T>(string url, Dictionary<string, string> _dic = null)
         {
             if (!string.IsNullOrEmpty(url) && url.Length > 5 && url.Substring(0, 4) != "http")
             {
@@ -49,12 +49,14 @@ namespace Desktop.NetWork
                 string sig = Core.Tools.Encryption.SHA1_Encrypt(AuthenticationOriginalStr);
                 dic.Add("sig", sig);
                 dic.Remove("access_key_secret");
-                HttpClient client = new HttpClient();
-                var content = new FormUrlEncodedContent(dic);
-                var response = client.PostAsync(url, content).Result;
-                var responseString = response.Content.ReadAsStringAsync().Result;
-                OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
-                return A.data;
+                using (HttpClient client = new HttpClient())
+                {
+                    var content = new FormUrlEncodedContent(dic);
+                    var response = await client.PostAsync(url, content);
+                    var responseString = response.Content.ReadAsStringAsync().Result;
+                    OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
+                    return A.data;
+                }
             }
             catch (Exception ex)
             {

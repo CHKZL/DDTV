@@ -183,16 +183,18 @@ namespace Core
         {
             try
             {
-                HttpClient _httpClient = new HttpClient();
-                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
-                if(A=="1" || A=="1\r\n")
+                using (HttpClient _httpClient = new HttpClient())
                 {
-                    Log.Info(nameof(StartStatistics), "启动统计正常");
-                }
-                else
-                {
-                    Log.Info(nameof(StartStatistics), "启动统计异常");
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
+                    if (A == "1" || A == "1\r\n")
+                    {
+                        Log.Info(nameof(StartStatistics), "启动统计正常");
+                    }
+                    else
+                    {
+                        Log.Info(nameof(StartStatistics), "启动统计异常");
+                    }
                 }
             }
             catch (Exception) { }
@@ -202,16 +204,18 @@ namespace Core
         {
             try
             {
-                HttpClient _httpClient = new HttpClient();
-                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
-                if(A=="1" || A=="1\r\n")
+                using (HttpClient _httpClient = new HttpClient())
                 {
-                    Log.Info(nameof(HeartbeatStatistics), "心跳正常");
-                }
-                else
-                {
-                    Log.Warn(nameof(HeartbeatStatistics), "心跳异常");
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
+                    if (A == "1" || A == "1\r\n")
+                    {
+                        Log.Info(nameof(HeartbeatStatistics), "心跳正常");
+                    }
+                    else
+                    {
+                        Log.Warn(nameof(HeartbeatStatistics), "心跳异常");
+                    }
                 }
             }
             catch (Exception) { }
