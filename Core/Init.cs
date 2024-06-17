@@ -185,6 +185,7 @@ namespace Core
             {
                 using (HttpClient _httpClient = new HttpClient())
                 {
+                    _httpClient.Timeout = new TimeSpan(0,0,3);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
                     if (A == "1" || A == "1\r\n")
@@ -206,6 +207,7 @@ namespace Core
             {
                 using (HttpClient _httpClient = new HttpClient())
                 {
+                    _httpClient.Timeout = new TimeSpan(0,0,3);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
                     if (A == "1" || A == "1\r\n")
