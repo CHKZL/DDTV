@@ -62,6 +62,12 @@ namespace Desktop.Views.Windows
         public VlcPlayWindow(long uid)
         {
             InitializeComponent();
+
+            Task.Run(() => InitVlcPlay(uid));
+
+        }
+        public void InitVlcPlay(long uid)
+        {
             vlcPlayModels = new();
             this.DataContext = vlcPlayModels;
             _Room.GetCardForUID(uid, ref roomCard);
@@ -83,24 +89,19 @@ namespace Desktop.Views.Windows
 
             _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)} --no-cert-verification"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
-            videoView.MediaPlayer = _mediaPlayer;
-            videoView.MediaPlayer.Playing += MediaPlayer_Playing;
-            videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
-            //var writer = new StreamWriter("./vlc_log.txt", append: true);
-            //_libVLC.Log += (sender, e) =>
-            //{
-            //    writer.WriteLine($"[{e.Level}] {e.Module}: {e.Message}");
-            //    writer.Flush();  // 确保日志消息立即写入文件
-            //};
-            //videoView.MediaPlayer.Stopped += MediaPlayer_EndReached;
-            videoView.MediaPlayer.Volume = 30;
+            Dispatcher.Invoke(() =>
+            {
+                videoView.MediaPlayer = _mediaPlayer;
+                videoView.MediaPlayer.Playing += MediaPlayer_Playing;
+                videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
+                videoView.MediaPlayer.Volume = 30;
+            });
+
             PlaySteam();
             barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
             SetDanma();
 
             DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
-
-
         }
 
         private void MediaPlayer_Playing(object? sender, EventArgs e)
@@ -159,6 +160,7 @@ namespace Desktop.Views.Windows
             Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],播放网络路径直播流");
             await Task.Run(() =>
             {
+
                 if (_mediaPlayer.IsPlaying)
                 {
                     _mediaPlayer.Stop();
@@ -168,6 +170,8 @@ namespace Desktop.Views.Windows
                     _mediaPlayer.Media.ClearSlaves();
                     _mediaPlayer.Media = null;
                 }
+
+
                 if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
                 {
                     Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}]，主播已下播，停止获取流地址");
@@ -187,17 +191,7 @@ namespace Desktop.Views.Windows
                         Task task = Task.Run(() =>
                         {
                             var media = new Media(_libVLC, Url, FromType.FromLocation);
-                            ////// 添加Accept
-                            //media.AddOption(":http-accept=\"*/*\"");
-                            ////// 添加ContentType
-                            //media.AddOption(":http-content-type=\"application/x-www-form-urlencoded\"");
-                            ////// 添加Referer
-                            //media.AddOption(":http-referer=\"https://www.bilibili.com/\"");
-                            ////// 如果账户信息状态为true，添加Cookie
-                            //if (Account.AccountInformation.State)
-                            //{
-                            //    media.AddOption($":http-cookie=\"{Account.AccountInformation.strCookies}\"");
-                            //}
+                            
                             _mediaPlayer.Media = media;
                             _mediaPlayer.Play();
                         }, cts.Token);

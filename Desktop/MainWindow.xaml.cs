@@ -132,21 +132,31 @@ namespace Desktop
                     {
                         Thread.Sleep(3000);
                     }
-                    doki = NetWork.Get.GetBody<DokiClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/dokidoki");
-                    Dispatcher.Invoke(() =>
+                    try
                     {
+                        doki = NetWork.Get.GetBody<DokiClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/dokidoki");
+                        if (doki != null)
+                        {
+                            Dispatcher.Invoke(() =>
+                            {
 
-                        if (Core.Init.Ver != doki.Ver)
-                        {
-                            MainWindow.SnackbarService.Show("远程版本不一致", $"检测到远程模式下远程版本与本地Desktop版本不一致！这可能会造成未知的问题，请尽快更新双端到最新版本！\n本地Desktop版本号:【{Core.Init.Ver}】|远程版本号:【{doki.Ver}】", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle24), TimeSpan.FromSeconds(5));
-                            this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                if (Core.Init.Ver != doki.Ver)
+                                {
+                                    MainWindow.SnackbarService.Show("远程版本不一致", $"检测到远程模式下远程版本与本地Desktop版本不一致！这可能会造成未知的问题，请尽快更新双端到最新版本！\n本地Desktop版本号:【{Core.Init.Ver}】|远程版本号:【{doki.Ver}】", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle24), TimeSpan.FromSeconds(5));
+                                    this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                }
+                                else
+                                {
+                                    this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                }
+                                UI_TitleBar.Title = this.Title;
+                            });
                         }
-                        else
-                        {
-                            this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
-                        }
-                        UI_TitleBar.Title = this.Title;
-                    });
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(nameof(InitializeTitleMode), "初始化标题失败", ex, false);
+                    }
 
                 } while (doki == null);
             });
