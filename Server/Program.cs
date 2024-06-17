@@ -133,7 +133,7 @@ namespace Server
                 if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
                 {
                     Console.WriteLine($"按任意键退出");
-                    if (!args.Contains("Desktop") && !args.Contains("Client"))
+                    if (Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client)
                         Console.ReadKey();
                 }
             }
@@ -193,13 +193,14 @@ namespace Server
                             //终端和ws更新事件
                             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
 
-                            if (_args.Contains("Desktop") && Config.Core_RunConfig._DesktopRemoteServer)
+
+                            if (Init.Mode!= Config.Mode.Desktop && Config.Core_RunConfig._DesktopRemoteServer)
                             {
                                 return;
                             }
                             if (!Account.AccountInformation.State)
                             {
-                                if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                                if(Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client && Init.Mode!= Config.Mode.Docker)
                                 {
                                     Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
                                         "使用前须知：\r\n" +
@@ -224,10 +225,9 @@ namespace Server
 
                             }
 
-                            if (!_args.Contains("Desktop") && !_args.Contains("Client"))
+                            if(Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client && Init.Mode!= Config.Mode.Docker)
                             {
                                 TerminalDisplay.SeKey();
-
                             }
                         }
                         catch (Exception EX)

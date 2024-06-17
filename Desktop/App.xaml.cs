@@ -36,7 +36,7 @@ namespace Desktop
                 Host.CreateDefaultBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
+                        Task.Run(() => Service.CreateHostBuilder(new string[] { "--StartMode=Desktop" }).Build().Run());
                         webBuilder.UseStartup<Server.Startup>();
                         string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                         webBuilder.UseUrls(rurl);

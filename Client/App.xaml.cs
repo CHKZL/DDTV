@@ -20,7 +20,7 @@ namespace Client
             Host.CreateDefaultBuilder()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
+                    Task.Run(() => Service.CreateHostBuilder(new string[] { "--StartMode=Desktop" }).Build().Run());
                     webBuilder.UseStartup<Server.Startup>();
                     string rurl = $"http://0.0.0.0:{Config.Core_RunConfig._Port}";
                     webBuilder.UseUrls(rurl);

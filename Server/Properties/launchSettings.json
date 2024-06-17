@@ -2,6 +2,7 @@
   "profiles": {
     "Client": {
       "commandName": "Project",
+      "commandLineArgs": "--StartMode=Server",
       "remoteDebugEnabled": true,
       "authenticationMode": "None"
     }
