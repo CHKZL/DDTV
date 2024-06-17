@@ -33,7 +33,11 @@ namespace Desktop.DataSource
             {
                 if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
                 {
-                    LoginFailureEvent?.Invoke(null, new EventArgs());
+                    Thread.Sleep(1000);
+                    if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
+                    {
+                        LoginFailureEvent?.Invoke(null, new EventArgs());
+                    }
                 }
             });
         }
