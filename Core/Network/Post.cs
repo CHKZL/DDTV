@@ -40,7 +40,7 @@ namespace Core.Network
                 if (string.IsNullOrEmpty(contenttype)) req.ContentType = contenttype;
                 req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 if (specialheaders != null) req.Headers = specialheaders;
-
+                req.Timeout=3000;
                 if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
 
                 byte[] bdata = Encoding.UTF8.GetBytes(jsondate);
