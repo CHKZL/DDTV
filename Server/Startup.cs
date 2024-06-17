@@ -13,6 +13,7 @@ using Microsoft.Extensions.FileProviders;
 using Server.WebAppServices.Middleware;
 using System.Runtime.InteropServices;
 using Core;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Server
 {
@@ -29,6 +30,11 @@ namespace Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = 1024 * 1024;
+            });
+           
         }
 
         // 这个方法用于配置HTTP请求管道

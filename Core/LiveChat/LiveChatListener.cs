@@ -31,12 +31,12 @@ namespace Core.LiveChat
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
         private bool _disposed = false;
-        private bool _Cancel=false;
+        private bool _Cancel = false;
 
 
         public long RoomId = 0;
         public string Title = string.Empty;
-        public string Name=string.Empty;
+        public string Name = string.Empty;
         public string File = string.Empty;
         public event EventHandler<MessageEventArgs> MessageReceived;
         public event EventHandler<EventArgs> DisposeSent;
@@ -54,8 +54,8 @@ namespace Core.LiveChat
             RoomId = roomId;
             Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
-            File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Config.Core_RunConfig._DefaultFileName}",DateTime.Now,RoomInfo.GetUid(roomId))}";
-          
+            File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, RoomInfo.GetUid(roomId))}";
+
         }
 
         public async void Connect()
@@ -74,14 +74,14 @@ namespace Core.LiveChat
         }
         public void Close()
         {
-            if(Register.Count!=0)
+            if (Register.Count != 0)
             {
                 Connect();
                 return;
             }
             _Cancel = true;
             m_ReceiveBuffer = null;
-            if(TimeStopwatch!=null)
+            if (TimeStopwatch != null)
             {
                 TimeStopwatch.Stop();
                 TimeStopwatch = null;
@@ -124,9 +124,9 @@ namespace Core.LiveChat
                 if (DisposeSent != null)
                     DisposeSent.Invoke(this, EventArgs.Empty);
 
-                if(Register.Count!=0)
+                if (Register.Count != 0)
                 {
-                   
+
                 }
             }
             catch (Exception E)
@@ -309,7 +309,7 @@ namespace Core.LiveChat
                 catch (WebSocketException we)
                 {
                     Log.Warn(nameof(_innerLoop) + "_WebSocketException", $"_sendObject:{we.ToString()}", we, false);
-                  
+
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
@@ -320,7 +320,7 @@ namespace Core.LiveChat
                 {
                     Log.Warn(nameof(_innerLoop) + "_Exception", $"_sendObject:{e.ToString()}", e, false);
                     //UnityEngine.Debug.LogException(e);
-                    
+
                 }
             }
         }
@@ -467,7 +467,7 @@ namespace Core.LiveChat
                     jsonBody = jsonBody.Replace("\"{}\",", "");
                     jsonBody = jsonBody.Replace("}\",\"", "},\"");
                 }
-                if(!jsonBody.Contains("DANMU_MSG") && !jsonBody.Contains("SUPER_CHAT_MESSAGE") && !jsonBody.Contains("SEND_GIFT") && !jsonBody.Contains("GUARD_BUY") && !jsonBody.Contains("DANMU_MSG"))
+                if (!jsonBody.Contains("DANMU_MSG") && !jsonBody.Contains("SUPER_CHAT_MESSAGE") && !jsonBody.Contains("SEND_GIFT") && !jsonBody.Contains("GUARD_BUY") && !jsonBody.Contains("DANMU_MSG"))
                 {
                     return;
                 }
@@ -584,7 +584,7 @@ namespace Core.LiveChat
                     return;
                 }
                 //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
-                string jsonBody = JsonSerializer.Serialize(obj, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)});
+                string jsonBody = JsonSerializer.Serialize(obj, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
                 //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
                 //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
                 await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));

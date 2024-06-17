@@ -37,13 +37,6 @@ namespace Desktop
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
                         Task.Run(() => Service.CreateHostBuilder(new string[] { "Desktop" }).Build().Run());
-                        webBuilder.ConfigureServices(services =>
-                        {
-                            services.Configure<FormOptions>(options =>
-                            {
-                                options.ValueCountLimit = 1024 * 1024;
-                            });
-                        });
                         webBuilder.UseStartup<Server.Startup>();
                         string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                         webBuilder.UseUrls(rurl);
