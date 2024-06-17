@@ -69,7 +69,11 @@ namespace Desktop.Views.Windows
         public void InitVlcPlay(long uid)
         {
             vlcPlayModels = new();
-            this.DataContext = vlcPlayModels;
+            Dispatcher.Invoke(() =>
+            {
+                this.DataContext = vlcPlayModels;
+            });
+
             _Room.GetCardForUID(uid, ref roomCard);
 
             vlcPlayModels.VolumeVisibility = Visibility.Collapsed;
@@ -98,10 +102,15 @@ namespace Desktop.Views.Windows
             });
 
             PlaySteam();
-            barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
+            Dispatcher.Invoke(() =>
+            {
+                barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
+            });
             SetDanma();
-
-            DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
+            Dispatcher.Invoke(() =>
+            {
+                DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
+            });
         }
 
         private void MediaPlayer_Playing(object? sender, EventArgs e)
@@ -191,7 +200,7 @@ namespace Desktop.Views.Windows
                         Task task = Task.Run(() =>
                         {
                             var media = new Media(_libVLC, Url, FromType.FromLocation);
-                            
+
                             _mediaPlayer.Media = media;
                             _mediaPlayer.Play();
                         }, cts.Token);

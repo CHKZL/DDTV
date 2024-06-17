@@ -277,18 +277,12 @@ namespace Core.LiveChat
                     {
                         try
                         {
-                            if (_Cancel)
-                            {
-                                return;
-                            }
-                            result = await m_client.ReceiveAsync(
-                          new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length),
-                          m_innerRts.Token);
+                            result = await m_client.ReceiveAsync(new ArraySegment<byte>(m_ReceiveBuffer, length, m_ReceiveBuffer.Length - length), m_innerRts.Token);
                             length += result.Count;
                         }
                         catch (Exception e)
                         {
-                            Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
+                            //Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
                             Dispose();
                             return;
                         }
