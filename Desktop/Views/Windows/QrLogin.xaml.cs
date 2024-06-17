@@ -34,7 +34,7 @@ namespace Desktop.Views.Windows
         public QrLogin()
         {
             InitializeComponent();
-            if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/re_login"))
+            if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/re_login").Result)
             {
                 Log.Info(nameof(QrLogin),"调用Core的API[re_login]成功");
                 try
@@ -88,7 +88,7 @@ namespace Desktop.Views.Windows
                                     break;
                                 }
                                 Thread.Sleep(500);
-                            } while (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status"));
+                            } while (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result);
                             Dispatcher.Invoke(() =>
                             {
                                 Log.Info(nameof(QrLogin),"登陆完成，关闭QR扫码窗口");

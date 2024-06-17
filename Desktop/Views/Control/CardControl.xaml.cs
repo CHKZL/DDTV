@@ -123,7 +123,7 @@ namespace Desktop.Views.Control
             {
                 {"uids", dataCard.Uid.ToString() }
             };
-            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic);
+            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic).Result;
             if (State == null)
             {
                 Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
@@ -138,7 +138,7 @@ namespace Desktop.Views.Control
             {
                 {"uid", dataCard.Uid.ToString() }
             };
-            bool State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic);
+            bool State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic).Result;
             if (State == false)
             {
                 Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);

@@ -49,12 +49,14 @@ namespace Desktop.NetWork
                     Parameter += $"{item.Key}={item.Value}&";
                 }
 
-                HttpClient client = new HttpClient();
-                HttpResponseMessage response = client.GetAsync($"{url}?{Parameter}").Result;
-                response.EnsureSuccessStatusCode();
-                string responseBody = response.Content.ReadAsStringAsync().Result;
-                OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseBody);
-                return A.data;
+                using (HttpClient _httpClient = new HttpClient())
+                {
+                    HttpResponseMessage response = _httpClient.GetAsync($"{url}?{Parameter}").Result;
+                    response.EnsureSuccessStatusCode();
+                    string responseBody = response.Content.ReadAsStringAsync().Result;
+                    OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseBody);
+                    return A.data;
+                }
             }
             catch (Exception)
             {

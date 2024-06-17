@@ -123,61 +123,63 @@ namespace Core.Tools
         }
         public static string Get(string URL)
         {
-            HttpClient _httpClient = new HttpClient();
-            bool A = false;
-            string str = string.Empty;
-            int error_count = 0;
-            string FileDownloadAddress = string.Empty;
-            do
+            using (HttpClient _httpClient = new HttpClient())
             {
-                try
+                bool A = false;
+                string str = string.Empty;
+                int error_count = 0;
+                string FileDownloadAddress = string.Empty;
+                do
                 {
-                    if (A)
-                        Thread.Sleep(1000);
-                    if (!A)
-                        A = true;
-                    if (error_count > 1)
+                    try
                     {
-                        if (error_count > 3)
+                        if (A)
+                            Thread.Sleep(1000);
+                        if (!A)
+                            A = true;
+                        if (error_count > 1)
                         {
-                            Log.Info(nameof(ProgramUpdates), $"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
-                            return "";
+                            if (error_count > 3)
+                            {
+                                Log.Info(nameof(ProgramUpdates), $"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
+                                return "";
+                            }
+                            Log.Info(nameof(ProgramUpdates), $"使用备用服务器进行重试.....");
+                            FileDownloadAddress = AlternativeDomainName + URL;
+                            Log.Info(nameof(ProgramUpdates), $"从主服务器获取更新失败，尝试从备用服务器获取....");
                         }
-                        Log.Info(nameof(ProgramUpdates), $"使用备用服务器进行重试.....");
-                        FileDownloadAddress = AlternativeDomainName + URL;
-                        Log.Info(nameof(ProgramUpdates), $"从主服务器获取更新失败，尝试从备用服务器获取....");
+                        else
+                        {
+                            FileDownloadAddress = MainDomainName + URL;
+                        }
+                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                        str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
                     }
-                    else
+                    catch (WebException webex)
                     {
-                        FileDownloadAddress = MainDomainName + URL;
+                        error_count++;
+                        switch (webex.Status)
+                        {
+                            case WebExceptionStatus.Timeout:
+                                Log.Info(nameof(ProgramUpdates), $"下载文件超时:{FileDownloadAddress}");
+                                break;
+
+                            default:
+                                Log.Info(nameof(ProgramUpdates), $"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                                break;
+                        }
                     }
-                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                    str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
-                }
-                catch (WebException webex)
-                {
-                    error_count++;
-                    switch (webex.Status)
+                    catch (Exception ex)
                     {
-                        case WebExceptionStatus.Timeout:
-                            Log.Info(nameof(ProgramUpdates), $"下载文件超时:{FileDownloadAddress}");
-                            break;
+                        error_count++;
+                        Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
 
-                        default:
-                            Log.Info(nameof(ProgramUpdates), $"网络错误，请检查网络状况或者代理设置...开始重试.....");
-                            break;
+
                     }
-                }
-                catch (Exception ex)
-                {
-                    error_count++;
-                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+                } while (string.IsNullOrEmpty(str));
 
-
-                }
-            } while (string.IsNullOrEmpty(str));
-
-            return str;
+                return str;
+            }
         }
 
         public class Update_UpdateProgram
@@ -209,74 +211,76 @@ namespace Core.Tools
                 Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
                 Log.Info(nameof(Update_UpdateProgram),$"当前工作路径:{Environment.CurrentDirectory}");
                 Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
-                HttpClient _httpClient = new HttpClient();
-                _httpClient.Timeout = new TimeSpan(0, 0, 10);
-                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                if (checkVersion())
+                using (HttpClient _httpClient = new HttpClient())
                 {
-                    string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
-                    string web = Get(DL_FileListUrl);
-                    var B = JsonConvert.DeserializeObject<FileInfoClass>(web);
-                    if (B != null)
+                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    if (checkVersion())
                     {
-                        foreach (var item in B.files)
+                        string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
+                        string web = Get(DL_FileListUrl);
+                        var B = JsonConvert.DeserializeObject<FileInfoClass>(web);
+                        if (B != null)
                         {
-                            //文件更新状态（是否需要更新）
-                            bool FileUpdateStatus = true;
-
-                            string FilePath = $"../{item.FilePath}";
-
-                            if (File.Exists(FilePath))
+                            foreach (var item in B.files)
                             {
-                                string Md5 = GetMD5HashFromFile(FilePath);
-                                if (Md5 == item.FileMd5)
+                                //文件更新状态（是否需要更新）
+                                bool FileUpdateStatus = true;
+
+                                string FilePath = $"../{item.FilePath}";
+
+                                if (File.Exists(FilePath))
                                 {
+                                    string Md5 = GetMD5HashFromFile(FilePath);
+                                    if (Md5 == item.FileMd5)
+                                    {
+                                        FileUpdateStatus = false;
+                                    }
+                                }
+
+                                if (!item.FilePath.Contains("bin/Update"))
+                                {
+
                                     FileUpdateStatus = false;
                                 }
-                            }
 
-                            if (!item.FilePath.Contains("bin/Update"))
+                                if (FileUpdateStatus)
+                                {
+                                    map.Add($"/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
+                                }
+                            }
+                            int i = 1;
+                            foreach (var item in map)
                             {
+                                long bytes = item.Value.Size;
+                                string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
+                                Log.Info(nameof(Update_UpdateProgram), $"进度：{i}/{map.Count}  |  文件大小{size}字节，开始更新文件【{item.Value.Name}】.......");
+                                string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
+                                if (!Directory.Exists(directoryPath))
+                                {
+                                    Directory.CreateDirectory(directoryPath);
+                                }
+                                bool dl_ok = false;
+                                do
+                                {
+                                    try
+                                    {
+                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                    }
+                                    catch (Exception)
+                                    {
 
-                                FileUpdateStatus = false;
+                                    }
+                                } while (!dl_ok);
+                                Log.Info(nameof(Update_UpdateProgram), $" | 更新文件【{item.Value.Name}】成功");
+                                i++;
                             }
-
-                            if (FileUpdateStatus)
-                            {
-                                map.Add($"/{type}/{(Isdev ? "dev" : "release")}/{item.FilePath}", (item.FileName, FilePath, item.Size));
-                            }
+                            Log.Info(nameof(Update_UpdateProgram), $"更新完成：更新Update程序完成");
                         }
-                        int i = 1;
-                        foreach (var item in map)
+                        else
                         {
-                            long bytes = item.Value.Size;
-                            string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
-                            Log.Info(nameof(Update_UpdateProgram),$"进度：{i}/{map.Count}  |  文件大小{size}字节，开始更新文件【{item.Value.Name}】.......");
-                            string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
-                            if (!Directory.Exists(directoryPath))
-                            {
-                                Directory.CreateDirectory(directoryPath);
-                            }
-                            bool dl_ok = false;
-                            do
-                            {
-                                try
-                                {
-                                    dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
-                                }
-                                catch (Exception)
-                                {
-
-                                }
-                            } while (!dl_ok);
-                            Log.Info(nameof(Update_UpdateProgram),$" | 更新文件【{item.Value.Name}】成功");
-                            i++;
+                            Log.Info(nameof(Update_UpdateProgram), $"更新Update程序失败：获取更新列表失败，请检查网络状态");
                         }
-                        Log.Info(nameof(Update_UpdateProgram),$"更新完成：更新Update程序完成");
-                    }
-                    else
-                    {
-                        Log.Info(nameof(Update_UpdateProgram),$"更新Update程序失败：获取更新列表失败，请检查网络状态");
                     }
                 }
             }
@@ -373,11 +377,13 @@ namespace Core.Tools
                         {
                             FileDownloadAddress = MainDomainName + URL;
                         }
-                        HttpClient _httpClient = new HttpClient();
-                        _httpClient.Timeout = new TimeSpan(0, 0, 10);
-                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                        str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
-                        error_count++;
+                        using (HttpClient _httpClient = new HttpClient())
+                        {
+                            _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                            str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+                            error_count++;
+                        }
                     }
                     catch (WebException webex)
                     {
@@ -424,15 +430,17 @@ namespace Core.Tools
                     }
                     try
                     {
-                        HttpClient _httpClient = new HttpClient();
-                        _httpClient.Timeout = new TimeSpan(0, 0, 10);
-                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                        using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
-                        response.EnsureSuccessStatusCode();
-                        using var output = new FileStream(outputPath, FileMode.Create);
-                        using var contentStream = response.Content.ReadAsStreamAsync().Result;
-                        contentStream.CopyTo(output);
-                        return true;
+                        using (HttpClient _httpClient = new HttpClient())
+                        {
+                            _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                            using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
+                            response.EnsureSuccessStatusCode();
+                            using var output = new FileStream(outputPath, FileMode.Create);
+                            using var contentStream = response.Content.ReadAsStreamAsync().Result;
+                            contentStream.CopyTo(output);
+                            return true;
+                        }
                     }
                     catch (WebException webex)
                     {

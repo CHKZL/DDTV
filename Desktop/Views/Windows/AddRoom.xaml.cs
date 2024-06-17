@@ -118,7 +118,7 @@ namespace Desktop.Views.Windows
                                 {"remind",_IsDanmu.ToString() },
                                 {"rec_danmu",_IsRemind.ToString() },
                             };
-                            int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic);
+                            int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
                             switch (State)
                             {
                                 case 1:
@@ -174,7 +174,7 @@ namespace Desktop.Views.Windows
                                 {"remind",_IsDanmu.ToString() },
                                 {"rec_danmu",_IsRemind.ToString() },
                             };
-                            List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic);
+                            List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
                             if (State == null)
                             {
                                 Core.LogModule.Log.Warn(nameof(AddRoomSave_Click), "调用Core的API[batch_add_room]批量添加房间失败，返回的对象为Null，详情请查看Core日志", null, true);
