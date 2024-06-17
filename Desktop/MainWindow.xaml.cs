@@ -130,7 +130,7 @@ namespace Desktop
                     }
                     else
                     {
-                        Thread.Sleep(3000);
+                        Thread.Sleep(8000);
                     }
                     try
                     {

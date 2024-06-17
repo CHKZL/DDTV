@@ -73,7 +73,7 @@ namespace Server.WebAppServices
                     {
                         using (HttpClient client = new HttpClient())
                         {
-                            client.Timeout = new TimeSpan(0,0,3);
+                            client.Timeout = new TimeSpan(0, 0, 8);
                             var data = new StringContent(message, Encoding.UTF8, "application/json");
                             var response = await client.PostAsync(Core.Config.Core_RunConfig._WebHookAddress, data);
                             string result = await response.Content.ReadAsStringAsync();
