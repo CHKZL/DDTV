@@ -162,14 +162,17 @@ namespace Desktop.DataSource
                     {"Remind",IsRemind.ToString() },
                     {"RecDanmu",IsRecDanmu.ToString() },
                 };
-                if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/modify_room_settings", dic).Result)
+                Task.Run(() =>
                 {
-                    Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
-                }
-                else
-                {
-                    Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
-                }
+                    if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/modify_room_settings", dic).Result)
+                    {
+                        Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
+                    }
+                    else
+                    {
+                        Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
+                    }
+                });
             }
         }
     }

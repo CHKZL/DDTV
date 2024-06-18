@@ -111,36 +111,42 @@ namespace Desktop.Views.Windows
                         }
                         else
                         {
-                            Dictionary<string, string> dic = new Dictionary<string, string>
+                            Task.Run(() =>
                             {
-                                {"room_id", RoomId_TextBox.Text },
-                                {"auto_rec",_IsAutoRec.ToString() },
-                                {"remind",_IsDanmu.ToString() },
-                                {"rec_danmu",_IsRemind.ToString() },
-                            };
-                            int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
-                            switch (State)
-                            {
-                                case 1:
-                                    Save_Message.Content = $"房间({RoomId_TextBox.Text})添加成功";
-                                    //添加成功
-                                    break;
-                                case 2:
-                                    Save_Message.Content = $"房间({RoomId_TextBox.Text})已在列表中，添加失败";
-                                    //房间已存在
-                                    break;
-                                case 3:
-                                    Save_Message.Content = $"房间({RoomId_TextBox.Text})不存在，添加失败";
-                                    //房间不存在
-                                    break;
-                                case 4:
-                                    Save_Message.Content = $"添加房间({RoomId_TextBox.Text})由于参数错误失败";
-                                    //参数有误
-                                    break;
-                                default:
-                                    Core.LogModule.Log.Warn(nameof(AddRoomSave_Click), "调用Core的API[add_room]增加房间失败，返回的对象为Null，详情请查看Core日志", null, true);
-                                    return;
-                            }
+                                Dictionary<string, string> dic = new Dictionary<string, string>
+                                {
+                                    {"room_id", RoomId_TextBox.Text },
+                                    {"auto_rec",_IsAutoRec.ToString() },
+                                    {"remind",_IsDanmu.ToString() },
+                                    {"rec_danmu",_IsRemind.ToString() },
+                                };
+                                int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
+                                Dispatcher.Invoke(() =>
+                                {
+                                    switch (State)
+                                    {
+                                        case 1:
+                                            Save_Message.Content = $"房间({RoomId_TextBox.Text})添加成功";
+                                            //添加成功
+                                            break;
+                                        case 2:
+                                            Save_Message.Content = $"房间({RoomId_TextBox.Text})已在列表中，添加失败";
+                                            //房间已存在
+                                            break;
+                                        case 3:
+                                            Save_Message.Content = $"房间({RoomId_TextBox.Text})不存在，添加失败";
+                                            //房间不存在
+                                            break;
+                                        case 4:
+                                            Save_Message.Content = $"添加房间({RoomId_TextBox.Text})由于参数错误失败";
+                                            //参数有误
+                                            break;
+                                        default:
+                                            Core.LogModule.Log.Warn(nameof(AddRoomSave_Click), "调用Core的API[add_room]增加房间失败，返回的对象为Null，详情请查看Core日志", null, true);
+                                            return;
+                                    }
+                                });
+                            });
                         }
                         break;
                     }
@@ -162,34 +168,40 @@ namespace Desktop.Views.Windows
                         }
                         if (UidList.Count > 0)
                         {
-                            long[] _uidl = new long[UidList.Count];
-                            for (int i = 0; i < UidList.Count; i++)
+                            Task.Run(() =>
                             {
-                                _uidl[i] = UidList[i];
-                            }
-                            Dictionary<string, string> dic = new Dictionary<string, string>
-                            {
-                                {"uids", string.Join(",",_uidl) },
-                                {"auto_rec",_IsAutoRec.ToString() },
-                                {"remind",_IsDanmu.ToString() },
-                                {"rec_danmu",_IsRemind.ToString() },
-                            };
-                            List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
-                            if (State == null)
-                            {
-                                Core.LogModule.Log.Warn(nameof(AddRoomSave_Click), "调用Core的API[batch_add_room]批量添加房间失败，返回的对象为Null，详情请查看Core日志", null, true);
-                                Save_Message.Content = $"增加房间失败，如果一直提示该错误，请联系开发者";
-                                return;
-                            }
-                            else
-                            {
-                                int Count = UidList.Count;
-                                int Ok = State.Count(item => item.State == 1);
-                                int Repeat = State.Count(item => item.State == 2);
-                                int NotPresent = State.Count(item => item.State == 3);
-                                Save_Message.Content = $"输入有效UID {Count} 个，{Repeat} 个已存在，{NotPresent} 个房间不存在，成功添加 {Ok} 个";
-                            }
 
+                                long[] _uidl = new long[UidList.Count];
+                                for (int i = 0; i < UidList.Count; i++)
+                                {
+                                    _uidl[i] = UidList[i];
+                                }
+                                Dictionary<string, string> dic = new Dictionary<string, string>
+                                {
+                                    {"uids", string.Join(",",_uidl) },
+                                    {"auto_rec",_IsAutoRec.ToString() },
+                                    {"remind",_IsDanmu.ToString() },
+                                    {"rec_danmu",_IsRemind.ToString() },
+                                };
+                                List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+                                Dispatcher.Invoke(() =>
+                                {
+                                    if (State == null)
+                                    {
+                                        Core.LogModule.Log.Warn(nameof(AddRoomSave_Click), "调用Core的API[batch_add_room]批量添加房间失败，返回的对象为Null，详情请查看Core日志", null, true);
+                                        Save_Message.Content = $"增加房间失败，如果一直提示该错误，请联系开发者";
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        int Count = UidList.Count;
+                                        int Ok = State.Count(item => item.State == 1);
+                                        int Repeat = State.Count(item => item.State == 2);
+                                        int NotPresent = State.Count(item => item.State == 3);
+                                        Save_Message.Content = $"输入有效UID {Count} 个，{Repeat} 个已存在，{NotPresent} 个房间不存在，成功添加 {Ok} 个";
+                                    }
+                                });
+                            });
                         }
                         break;
                     }
