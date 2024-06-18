@@ -104,10 +104,10 @@ namespace Core.RuntimeObject
                 }
                 finally
                 {
-                    roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
-                    if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
+                    if (roomCard.DownInfo.LiveChatListener != null)
                     {
-                        if (roomCard.DownInfo.LiveChatListener != null)
+                        roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
+                        if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
                         {
                             roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
                             try
@@ -116,9 +116,9 @@ namespace Core.RuntimeObject
                             }
                             catch (Exception)
                             { }
+
                         }
                     }
-
 
                 }
             }
