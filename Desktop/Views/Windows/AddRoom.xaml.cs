@@ -113,13 +113,16 @@ namespace Desktop.Views.Windows
                         {
                             Task.Run(() =>
                             {
-                                Dictionary<string, string> dic = new Dictionary<string, string>
+                                Dispatcher.Invoke(() =>
                                 {
-                                    {"room_id", RoomId_TextBox.Text },
-                                    {"auto_rec",_IsAutoRec.ToString() },
-                                    {"remind",_IsDanmu.ToString() },
-                                    {"rec_danmu",_IsRemind.ToString() },
-                                };
+                                    Dictionary<string, string> dic = new Dictionary<string, string>
+                                    {
+                                        {"room_id", RoomId_TextBox.Text },
+                                        {"auto_rec",_IsAutoRec.ToString() },
+                                        {"remind",_IsDanmu.ToString() },
+                                        {"rec_danmu",_IsRemind.ToString() },
+                                    };
+                                });
                                 int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
                                 Dispatcher.Invoke(() =>
                                 {
