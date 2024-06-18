@@ -113,9 +113,10 @@ namespace Desktop.Views.Windows
                         {
                             Task.Run(() =>
                             {
+                                Dictionary<string, string> dic = new Dictionary<string, string>();
                                 Dispatcher.Invoke(() =>
                                 {
-                                    Dictionary<string, string> dic = new Dictionary<string, string>
+                                    dic = new Dictionary<string, string>
                                     {
                                         {"room_id", RoomId_TextBox.Text },
                                         {"auto_rec",_IsAutoRec.ToString() },
