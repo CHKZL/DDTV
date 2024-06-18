@@ -47,19 +47,19 @@ namespace Desktop.Views.Control
                 if (IsThereHLVPresent(dataCard.Uid))
                 {
                     Dispatcher.Invoke(() =>
-                                {
-                                    Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
-                                    vlcPlayWindow.Show();
-                                });
+                    {
+                        Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
+                        vlcPlayWindow.Show();
+                    });
 
                 }
                 else
                 {
                     Dispatcher.Invoke(() =>
-                                {
-                                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
-                                    WebPlayWindow.Show();
-                                });
+                    {
+                        Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                        WebPlayWindow.Show();
+                    });
 
                 }
 
@@ -136,12 +136,15 @@ namespace Desktop.Views.Control
             {
                 {"uids", dataCard.Uid.ToString() }
             };
-            List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic).Result;
-            if (State == null)
+            Task.Run(() =>
             {
-                Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
-                return;
-            }
+                List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic).Result;
+                if (State == null)
+                {
+                    Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
+                }
+            });
+
         }
 
         private void Cancel_Task_Click(object sender, RoutedEventArgs e)
@@ -151,12 +154,14 @@ namespace Desktop.Views.Control
             {
                 {"uid", dataCard.Uid.ToString() }
             };
-            bool State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic).Result;
-            if (State == false)
+            Task.Run(() =>
             {
-                Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);
-                return;
-            }
+                bool State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic).Result;
+                if (State == false)
+                {
+                    Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);
+                }
+            });
         }
     }
 }
