@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.LogModule;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,18 @@ namespace Server.WebAppServices.Middleware
                 {
                     WebSocket webSocket = await context.WebSockets.AcceptWebSocketAsync();
                     webSockets.Add(webSocket);
-                    await Echo(context, webSocket);
+                    try
+                    {
+                        await Echo(context, webSocket);
+                    }
+                    catch (Exception)
+                    {
+                        Log.Info(nameof(WebSocketControl),"WS握手/连接出现错误",false);
+                        if (webSockets.Contains(webSocket))
+                        {
+                            _ = webSockets.Remove(webSocket);
+                        }
+                    }
                     
                 }
                 else
