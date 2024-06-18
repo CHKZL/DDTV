@@ -261,16 +261,15 @@ namespace Desktop.Views.Windows
                 }
                 Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],关闭播放器");
             }
-            if (roomCard.DownInfo.LiveChatListener.Register.Count > 0)
+            if (roomCard.DownInfo.LiveChatListener != null && roomCard.DownInfo.LiveChatListener.Register.Count > 0)
             {
                 roomCard.DownInfo.LiveChatListener.Register.Remove("VlcPlayWindow");
                 if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
                 {
-                    if (roomCard.DownInfo.LiveChatListener != null)
-                    {
-                        roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
-                        roomCard.DownInfo.LiveChatListener.Dispose();
-                    }
+
+                    roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
+                    roomCard.DownInfo.LiveChatListener.Dispose();
+
                 }
             }
         }

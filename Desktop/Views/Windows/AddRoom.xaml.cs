@@ -120,8 +120,8 @@ namespace Desktop.Views.Windows
                                     {
                                         {"room_id", RoomId_TextBox.Text },
                                         {"auto_rec",_IsAutoRec.ToString() },
-                                        {"remind",_IsDanmu.ToString() },
-                                        {"rec_danmu",_IsRemind.ToString() },
+                                        {"remind",_IsRemind.ToString() },
+                                        {"rec_danmu",_IsDanmu.ToString() },
                                     };
                                 });
                                 int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
@@ -184,8 +184,8 @@ namespace Desktop.Views.Windows
                                 {
                                     {"uids", string.Join(",",_uidl) },
                                     {"auto_rec",_IsAutoRec.ToString() },
-                                    {"remind",_IsDanmu.ToString() },
-                                    {"rec_danmu",_IsRemind.ToString() },
+                                    {"remind",_IsRemind.ToString() },
+                                    {"rec_danmu",_IsDanmu.ToString() },
                                 };
                                 List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
                                 Dispatcher.Invoke(() =>
