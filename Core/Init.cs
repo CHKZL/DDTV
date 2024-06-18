@@ -75,6 +75,14 @@ namespace Core
         /// </summary>
         private static void StartParameterInitialization(string[] args)
         {
+            string? DockerEnvironment = Environment.GetEnvironmentVariable("DDTV_Docker_Project");
+            if (!string.IsNullOrEmpty(DockerEnvironment))
+            {
+                if (DockerEnvironment =="DDTV_Server")
+                {
+                    Init.Mode = Mode.Docker;
+                }
+            }
             foreach (var arg in args)
             {
                 if (arg.StartsWith("--"))

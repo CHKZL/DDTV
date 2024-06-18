@@ -27,6 +27,15 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
+            if (!Array.Exists(args, element => element.Contains("--StartMode")))
+            {
+                string[] N_args = new string[args.Length + 1];
+                for (int i = 0; i < args.Length; i++)
+                {
+                    N_args[i] = args[i];
+                }
+                N_args[N_args.Length - 1] = "--StartMode=Server";
+            }
             if (!args.Contains("Desktop") && !args.Contains("Client"))
             {
                 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -183,6 +192,7 @@ namespace Server
                     {
                         try
                         {
+                       
                             Core.Init.Start(_args);//初始化必须执行的
                                                    //_ParentProcessDetection();
 
