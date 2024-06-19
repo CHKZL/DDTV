@@ -64,6 +64,11 @@ namespace Desktop
 
         public MainWindow()
         {
+            if(Application_Startup())
+            {
+                Environment.Exit(-114514);
+                return;
+            }
             InitializeComponent();
 
             this.DataContext = configViewModel;
@@ -90,7 +95,7 @@ namespace Desktop
             //设置登录失效事件（失效后弹出扫码框）
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
-            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000*10, 1000 * 60 * 30);
+            DataSource.LoginStatus.Timer_LoginStatus = new Timer(DataSource.LoginStatus.RefreshLoginStatus, null, 1000 * 10, 1000 * 60 * 30);
             //版本更新检测
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
             //设置默认显示页
@@ -162,6 +167,54 @@ namespace Desktop
             });
         }
 
+        public bool Application_Startup()
+        {
+            Process process = RuningInstance();
+            if (process != null)
+            {
+                System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show(
+                    "已经有DDTV的Desktop实例正在运行中" +
+                   "\r点击‘是’强制启动一个新DDTV" +
+                   "\r点击‘否’阻止打开新窗口和新DDTV" +
+                   $"\r======参考信息======" +
+                   $"\rId:{process.Id}" +
+                   $"\rProcessName:{process.ProcessName}"
+                   , "已有DDTV实例正在运行", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
+                if (result != System.Windows.MessageBoxResult.Yes)
+                {
+                    this.Show();  // 显示窗口
+                    this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
+                    System.Threading.Thread.Sleep(500);
+                    return true;
+                    
+                }
+            }
+            return false;
+        }
+        public static Process RuningInstance(bool IsStart = true)
+        {
+            try
+            {
+                Process currentProcess = Process.GetCurrentProcess();
+                Process[] Processes = Process.GetProcessesByName(currentProcess.ProcessName);
+                foreach (Process process in Processes)
+                {
+                    if (!IsStart || process.Id != currentProcess.Id)
+                    {
+                        string PA = Assembly.GetExecutingAssembly().Location.Replace("/", "\\");
+                        string PB = currentProcess.MainModule.FileName;
+                        string PAA = PA.Replace(PA.Split('.')[PA.Split('.').Length - 1], "");
+                        string PBA = PB.Replace(PB.Split('.')[PB.Split('.').Length - 1], "");
+                        if (PAA == PBA)
+                        {
+                            return process;
+                        }
+                    }
+                }
+            }
+            catch (Exception) { }
+            return null;
+        }
         private void notify()
         {
             notifyIcon = new System.Windows.Forms.NotifyIcon();
