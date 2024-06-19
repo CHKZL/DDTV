@@ -62,18 +62,9 @@ namespace Desktop.Views.Windows
         public VlcPlayWindow(long uid)
         {
             InitializeComponent();
-
-            Task.Run(() => InitVlcPlay(uid));
-
-        }
-        public void InitVlcPlay(long uid)
-        {
             vlcPlayModels = new();
-            Dispatcher.Invoke(() =>
-            {
-                this.DataContext = vlcPlayModels;
-            });
 
+            this.DataContext = vlcPlayModels;
             _Room.GetCardForUID(uid, ref roomCard);
 
             vlcPlayModels.VolumeVisibility = Visibility.Collapsed;
@@ -93,14 +84,17 @@ namespace Desktop.Views.Windows
 
             _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)} --no-cert-verification"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
-            Dispatcher.Invoke(() =>
-            {
-                videoView.MediaPlayer = _mediaPlayer;
-                videoView.MediaPlayer.Playing += MediaPlayer_Playing;
-                videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
-                videoView.MediaPlayer.Volume = 30;
-            });
 
+            videoView.MediaPlayer = _mediaPlayer;
+            videoView.MediaPlayer.Playing += MediaPlayer_Playing;
+            videoView.MediaPlayer.EndReached += MediaPlayer_EndReached;
+            videoView.MediaPlayer.Volume = 30;
+
+            Task.Run(() => InitVlcPlay(uid));
+
+        }
+        public void InitVlcPlay(long uid)
+        {
             PlaySteam();
             Dispatcher.Invoke(() =>
             {

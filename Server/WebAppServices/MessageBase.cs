@@ -30,9 +30,6 @@ namespace Server.WebAppServices
             {
                 code = code.LoginInfoFailure;
             }
-//# if DEBUG
-//            Log.Debug(nameof(MessageBase), cmd + " " + code, false);
-//#endif
             OperationQueue.pack<T> pack = new OperationQueue.pack<T>()
             {
                 cmd = cmd,
@@ -54,8 +51,15 @@ namespace Server.WebAppServices
             ArraySegment<byte> buffer = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
             foreach (WebSocket item in Middleware.WebSocketControl.webSockets)
             {
-                if (item.State == WebSocketState.Open || item.State == WebSocketState.Connecting)
-                    item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                try
+                {
+                    if (item.State == WebSocketState.Open || item.State == WebSocketState.Connecting)
+                        item.SendAsync(buffer, WebSocketMessageType.Text, true, CancellationToken.None);
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Warn(nameof(WS_Send), "WebSocket信息推送失败", ex, false);
+                }
             }
         }
 
