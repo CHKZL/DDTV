@@ -16,6 +16,7 @@ namespace Update
         public static string ver = string.Empty;
         public static string R_ver = string.Empty;
         public static bool Isdev = false;
+        public static bool Isdocker = false;
 
         public static bool Update_For_UpdateProgram = false;
         public static void Main(string[] args)
@@ -34,6 +35,14 @@ namespace Update
                 {
                     Isdev = false;
                 }
+                if (args.Contains("docker"))
+                {
+                    Isdocker = true;
+                }
+            }
+            if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DDTV_Docker_Project")))
+            {
+                Isdocker = true;
             }
 
             Console.WriteLine("开始更新DDTV");
@@ -57,7 +66,10 @@ namespace Update
                         bool FileUpdateStatus = true;
 
                         string FilePath = $"../../{item.FilePath}";
-
+                        if (Isdocker)
+                        {
+                            FilePath = FilePath.Replace("bin/", "DDTV/");
+                        }
 
                         if (item.FilePath.Contains("bin/Update"))
                         {
@@ -110,6 +122,8 @@ namespace Update
             {
                 Console.WriteLine($"未检测到新版本");
             }
+            if (Isdocker)
+                return;
             Console.ReadKey();
         }
         public static bool checkVersion()

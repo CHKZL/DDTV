@@ -142,7 +142,7 @@ namespace Server
                 if (Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Desktop)
                 {
                     Console.WriteLine($"按任意键退出");
-                    if (Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client)
+                    if (Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client && Init.Mode!= Config.Mode.Docker)
                         Console.ReadKey();
                 }
             }

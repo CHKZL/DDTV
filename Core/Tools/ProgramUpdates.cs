@@ -80,7 +80,7 @@ namespace Core.Tools
                         if (After > Before)
                         {
                             Update_UpdateProgram update_UpdateProgram = new();
-                            update_UpdateProgram.Main([(Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")]);
+                            update_UpdateProgram.Main([(Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release"), (Init.Mode == Config.Mode.Docker ? "docker" : string.Empty)]);
 
                             if (!Manual)
                                 NewVersionAvailableEvent?.Invoke(R_Ver, new EventArgs());
@@ -191,6 +191,7 @@ namespace Core.Tools
             public static string ver = string.Empty;
             public static string R_ver = string.Empty;
             public static bool Isdev = false;
+            public static bool Isdocker = false;
 
             
             public void Main(string[] args)
@@ -205,6 +206,14 @@ namespace Core.Tools
                     {
                         Isdev = false;
                     }
+                    if (args.Contains("docker"))
+                    {
+                        Isdocker = true;
+                    }
+                }
+                if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("DDTV_Docker_Project")))
+                {
+                    Isdocker = true;
                 }
 
                 Log.Info(nameof(Update_UpdateProgram),"开始更新DDTV_Update");
@@ -228,6 +237,10 @@ namespace Core.Tools
                                 bool FileUpdateStatus = true;
 
                                 string FilePath = $"../{item.FilePath}";
+                                if (Isdocker)
+                                {
+                                    FilePath = FilePath.Replace("bin/", "DDTV/");
+                                }
 
                                 if (File.Exists(FilePath))
                                 {
