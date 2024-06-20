@@ -795,7 +795,7 @@ namespace Core
                 }
             }
 
-            internal static string RecordingMode = "1";
+            private static string RecordingMode = "1";
             /// <summary>
             /// 录制模式，提供：Auto\FLV_Only\HLS_Only 三种模式取值分别是1/2/3,详细说明请查看Core.RuntimeObject.Download.Basics.RecordingMode
             /// 默认值：Auto
