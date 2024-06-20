@@ -722,8 +722,7 @@ namespace Core.RuntimeObject
         /// <param name="UIDList"></param>
         internal static void _BatchUpdateRoomStatusForLiveStream(List<long> UIDList)
         {
-            Task.Run(() =>
-            {
+          
                 UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
                 UIDList = null;
                 if (uidsInfo_Class != null && uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
@@ -743,7 +742,8 @@ namespace Core.RuntimeObject
                     }
                 }
                 uidsInfo_Class = null;
-            });
+                
+           
         }
 
         #endregion

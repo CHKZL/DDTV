@@ -36,8 +36,9 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="roomCard"></param>
-        internal static async void DetectRoom_LiveStart(Object? sender, RoomCardClass roomCard)
+        internal static async void DetectRoom_LiveStart(Object? sender, (RoomCardClass Card, bool IsFirst) LiveInvoke)
         {
+            RoomCardClass roomCard = LiveInvoke.Card;
             List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
 
             if (roomCard.live_status.Value != 1)
@@ -46,9 +47,10 @@ namespace Core.RuntimeObject
                 return;
             }
 
-            //如果Core的初始化时间小于20秒，则认为该任务是之前就开播了，不当作新开播任务
-            bool isFirstTime = Core.Init.GetRunTime() > 20000 ? true : false;
+           
 
+            ////如果Core的初始化时间小于20秒，则认为该任务是之前就开播了，不当作新开播任务
+            //bool  = Core.Init.GetRunTime() > 20 ? true : false;
             OperationQueue.Add(Opcode.Download.StartLiveEvent, $"开播事件，房间UID:{roomCard.UID}", roomCard.UID);
 
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
@@ -65,14 +67,13 @@ namespace Core.RuntimeObject
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
                     return;
                 }
-
                 roomCard.DownInfo.IsDownload = true;
                 if (roomCard.IsRecDanmu)
-                {
-                    
+                {              
                     if (roomCard.DownInfo.LiveChatListener == null)
                     {
                         roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                        roomCard.DownInfo.LiveChatListener.Connect();
                     }
                     else if (!roomCard.DownInfo.LiveChatListener.State)
                     {
@@ -82,13 +83,21 @@ namespace Core.RuntimeObject
                 }
                 try
                 {
-
+                    if (roomCard.IsRecDanmu)
+                    {
+                        roomCard.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
+                    }
+                    bool Reconnection = false;
                     do
                     {
+                        if(LiveInvoke.IsFirst)
+                        {
+                            Reconnection = true;
+                        }
                         //核心下载函数
-                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, isFirstTime);
-                        //她已经不是第一次了
-                        isFirstTime = false;
+                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, Reconnection,LiveInvoke.IsFirst);
+                        //设置为重连模式
+                        Reconnection = true;
                     }
                     //如果检测到还在开播，且用户没有取消，那么就再来一次
                     while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status!= RoomCardClass.DownloadStatus.Special);
@@ -113,6 +122,7 @@ namespace Core.RuntimeObject
                             try
                             {
                                 roomCard.DownInfo.LiveChatListener.Dispose();
+                                roomCard.DownInfo.LiveChatListener = null;
                             }
                             catch (Exception)
                             { }
@@ -169,7 +179,7 @@ namespace Core.RuntimeObject
         #endregion
 
         #region public Properties
-        public event EventHandler<RoomCardClass> LiveStart;
+        public event EventHandler<(RoomCardClass Card, bool IsFirst)> LiveStart;
         public event EventHandler<RoomCardClass> LiveEnd;
         public bool State { get { return _state; } }
         #endregion
@@ -208,8 +218,10 @@ namespace Core.RuntimeObject
             {
                 if (RoomInfo.GetLiveStatus(Card.RoomId))
                 {
-
-                    LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, Card);
+                    (RoomCardClass Card, bool IsFirst) LiveInvoke = new();
+                    LiveInvoke.Card = Card;
+                    LiveInvoke.IsFirst = true;
+                    LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.ManuallyTriggeringTasks }, LiveInvoke);
                     string msg = $"手动触发一个直播间的录制，房间UID:{UID}";
                     OperationQueue.Add(Opcode.Room.ManuallyTriggeringRecordingTasks, msg, UID);
                     Log.Info(nameof(ManuallyTriggerRecord), msg);
@@ -221,6 +233,11 @@ namespace Core.RuntimeObject
 
         #region Private Method
 
+
+        /// <summary>
+        /// 是否为第一次房间状态检测
+        /// </summary>
+        public static bool IsFirst = true;
         /// <summary>
         /// 检查直播间直播状态，并触发开关播事件
         /// </summary>
@@ -234,22 +251,23 @@ namespace Core.RuntimeObject
                 var List = _Room.GetCardListClone();
                 foreach (var item in List)
                 {
-                    RoomCardClass Card = List.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
-                    if (Card == null)
+
+                    (RoomCardClass Card, bool IsFirst) LiveInvoke = new();
+                    LiveInvoke.Card = List.FirstOrDefault(x => x.Value.UID == item.Value.UID).Value;
+                    LiveInvoke.IsFirst = IsFirst;
+                    if (LiveInvoke.Card == null)
                     {
                         continue;
                     }
-                    if (Card.live_status_start_event && Card.live_status.Value == 1)
+                    if (LiveInvoke.Card.live_status_start_event && LiveInvoke.Card.live_status.Value == 1)
                     {
-                        Card.live_status_start_event = false;
-                        if (LiveStart != null)
-                            LiveStart.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
+                        LiveInvoke.Card.live_status_start_event = false;
+                        LiveStart?.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, LiveInvoke);
                     }
-                    if (Card.live_status_end_event && Card.live_status.Value != 1)
+                    if (LiveInvoke.Card.live_status_end_event && LiveInvoke.Card.live_status.Value != 1)
                     {
-                        Card.live_status_end_event = false;
-                        if (LiveEnd != null)
-                            LiveEnd.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, Card);
+                        LiveInvoke.Card.live_status_end_event = false;
+                        LiveEnd?.Invoke(new List<Detect.TriggerType>() { Detect.TriggerType.RegularTasks }, LiveInvoke.Card);
                     }
                 }
             }
@@ -257,6 +275,7 @@ namespace Core.RuntimeObject
             {
                 Log.Error(nameof(RoomLoopDetection), $"直播间状态轮询发生意外错误，错误信息：{e.ToString()}", e);
             }
+            DetectRoom.IsFirst = false;
         }
         #endregion
 
