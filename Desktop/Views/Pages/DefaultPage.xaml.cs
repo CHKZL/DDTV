@@ -241,7 +241,7 @@ public partial class DefaultPage
     {
         try
         {
-            TimeSpan t = TimeSpan.FromMilliseconds(Core.Init.GetRunTime());
+            TimeSpan t = TimeSpan.FromSeconds(Core.Init.GetRunTime());
             string answer = string.Format("{0:D2}天{1:D2}小时{2:D2}分钟{3:D2}秒",
                        t.Days,
                        t.Hours,

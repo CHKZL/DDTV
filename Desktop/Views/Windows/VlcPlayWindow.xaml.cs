@@ -131,6 +131,7 @@ namespace Desktop.Views.Windows
                 if (roomCard.DownInfo.LiveChatListener == null)
                 {
                     roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                    roomCard.DownInfo.LiveChatListener.Connect();
                 }
                 if (!roomCard.DownInfo.LiveChatListener.State)
                 {
@@ -261,9 +262,8 @@ namespace Desktop.Views.Windows
                 if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
                 {
 
-                    roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
                     roomCard.DownInfo.LiveChatListener.Dispose();
-
+                    roomCard.DownInfo.LiveChatListener = null;
                 }
             }
         }
@@ -349,14 +349,14 @@ namespace Desktop.Views.Windows
                     {
                         danMuOrbitInfos[i] = new();
                     }
-                    if (danMuOrbitInfos[i].Time < Init.GetRunTime() / 1000)
+                    if (danMuOrbitInfos[i].Time < Init.GetRunTime())
                     {
                         Index = i;
                         break;
                     }
                 }
 
-                danMuOrbitInfos[Index].Time = ((int)(Init.GetRunTime() / 1000) + 5);
+                danMuOrbitInfos[Index].Time = (int)(Init.GetRunTime() + 5);
                 //非UI线程调用UI组件
                 System.Windows.Application.Current.Dispatcher.Invoke(async () =>
                 {

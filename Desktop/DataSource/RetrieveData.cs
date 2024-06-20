@@ -134,12 +134,16 @@ namespace Desktop.DataSource
                     DanmuSign = item.userInfo.isRecDanmu ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
                     IsRemind = item.userInfo.isRemind,
                     RemindSign = item.userInfo.isRemind ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+
                     Rec_Status = item.taskStatus.isDownload,
                     Rec_Status_IsVisible = item.taskStatus.isDownload ? Visibility.Visible : Visibility.Collapsed,
+
                     Live_Status = !item.taskStatus.isDownload && item.roomInfo.liveStatus ? true : false,
                     Live_Status_IsVisible = !item.taskStatus.isDownload && item.roomInfo.liveStatus ? Visibility.Visible : Visibility.Collapsed,
+
                     Rest_Status = !item.roomInfo.liveStatus ? true : false,
-                    Rest_Status_IsVisible = !item.roomInfo.liveStatus ? Visibility.Visible : Visibility.Collapsed,
+                    Rest_Status_IsVisible = (!item.roomInfo.liveStatus && !item.taskStatus.isDownload) ? Visibility.Visible : Visibility.Collapsed,
+
                     IsDownload = item.taskStatus.isDownload,
                     DownloadSpe = item.taskStatus.downloadRate,
                     DownloadSpe_str = item.taskStatus.isDownload ? Core.Tools.Linq.ConversionSize(item.taskStatus.downloadRate, Core.Tools.Linq.ConversionSizeType.BitRate) : "",

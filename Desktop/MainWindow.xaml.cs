@@ -258,8 +258,9 @@ namespace Desktop
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="NotImplementedException"></exception>
-        private void DetectRoom_LiveStart(object? sender, RoomCardClass roomCard)
+        private void DetectRoom_LiveStart(object? sender, (RoomCardClass Card, bool Danma_MessageReceived) LiveInvoke)
         {
+            RoomCardClass roomCard = LiveInvoke.Card;
             List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {

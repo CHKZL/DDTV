@@ -24,30 +24,27 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         /// <param name="roomCard"></param>
         /// <param name="triggerTypes"></param>
-        /// <param name="isFirstTime"></param>
-        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, bool isFirstTime)
+        /// <param name="Reconnection"></param>
+        /// <param name="IsFirst">是否为本次直播第一次触发</param>
+        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, bool Reconnection,bool IsFirst)
         {
-            if (isFirstTime)
+            if (!Reconnection || IsFirst)
             {
                 OperationQueue.Add(Opcode.Download.StartRecording, $"开始录制，房间UID:{roomCard.UID}", roomCard.UID);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
-
-                if (roomCard.IsRecDanmu)
-                {
-                    roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;        
-                }
+                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");          
             }
             else
             {
                 OperationQueue.Add(Opcode.Download.Reconnect, $"录制连接，房间UID:{roomCard.UID}", roomCard.UID);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到任务，录制连接，房间UID:{roomCard.UID}");
             }
+         
 
             (DlwnloadTaskState TaskState, string FileName) result = new();
             switch (Config.Core_RunConfig._RecordingMode)
             {
                 case RecordingMode.HLS_Only:
-                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, Reconnection);
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.TaskState)}");
                     break;
                 case RecordingMode.FLV_Only:
@@ -59,7 +56,7 @@ namespace Core.RuntimeObject.Download
                     }
                     break;
                 case RecordingMode.Auto:
-                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, isFirstTime);
+                    result = await HLS.DlwnloadHls_avc_mp4(roomCard, Reconnection);
                     Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})HLS录制进程中断，状态:{Enum.GetName(typeof(DlwnloadTaskState), result.TaskState)}");
                     if (result.TaskState == DlwnloadTaskState.NoHLSStreamExists)
                     {
@@ -371,7 +368,7 @@ namespace Core.RuntimeObject.Download
 
 
 
-        private static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
+        public static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
         {
             LiveChatListener liveChatListener = (LiveChatListener)sender;
             switch (e)

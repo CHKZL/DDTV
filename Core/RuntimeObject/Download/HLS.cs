@@ -16,9 +16,9 @@ namespace Core.RuntimeObject.Download
         /// 录制HLS_avc制式的MP4文件
         /// </summary>
         /// <param name="card">房间卡片信息</param>
-        /// <param name="First">是否为初次任务</param>
+        /// <param name="Reconnection">是否为重连</param>
         /// <returns>[TaskStatus]任务状态；[FileName]下载成功的文件名</returns>
-        public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool First=false)
+        public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool Reconnection)
         {
             DlwnloadTaskState hlsState = DlwnloadTaskState.Default;
             string File = string.Empty;
@@ -41,7 +41,7 @@ namespace Core.RuntimeObject.Download
                     while (!GetHlsHost_avc(card, ref hostClass))
                     {
                         hlsState = HandleHlsError(card, hostClass);
-                        if (First && hlsState == DlwnloadTaskState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
+                        if (!Reconnection && hlsState == DlwnloadTaskState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
                         {
                             Thread.Sleep(Config.Core_RunConfig._HlsWaitingTime * 1000);
                         }

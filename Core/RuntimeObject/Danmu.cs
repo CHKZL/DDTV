@@ -31,33 +31,40 @@ namespace Core.RuntimeObject
             string Message = "保存弹幕相关文件";
             if (!DeleteCurrentContent)
             {
-                string File = liveChatListener.File + $"_{liveChatListener.SaveCount}";
-                if (liveChatListener.DanmuMessage.Danmu != null && liveChatListener.DanmuMessage.Danmu.Count > 0)
+                if (liveChatListener != null && liveChatListener.DanmuMessage != null)
                 {
-                    FileInfo fileInfo = SevaDanmu(liveChatListener.DanmuMessage.Danmu, File, liveChatListener.Name, liveChatListener.RoomId);
 
-                    Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{File}");
-                    card.DownInfo.DownloadFileList.DanmuFile.Add(fileInfo.FullName);
-                }
-                if (liveChatListener.DanmuMessage.Gift != null && liveChatListener.DanmuMessage.Gift.Count > 0)
-                {
-                    FileInfo fileInfo = SevaGift(liveChatListener.DanmuMessage.Gift, File);
-                    Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存送礼记录相关文件为{File}");
-                    card.DownInfo.DownloadFileList.GiftFile.Add(fileInfo.FullName);
-                }
-                if (liveChatListener.DanmuMessage.GuardBuy != null && liveChatListener.DanmuMessage.GuardBuy.Count > 0)
-                {
-                    FileInfo fileInfo = SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, File);
-                    Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存上舰记录相关文件为{File}");
-                    card.DownInfo.DownloadFileList.GuardFile.Add(fileInfo.FullName);
-                }
-                if (liveChatListener.DanmuMessage.SuperChat != null && liveChatListener.DanmuMessage.SuperChat.Count > 0)
-                {
-                    FileInfo fileInfo = SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, File);
-                    Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存SC记录相关文件为{File}");
-                    card.DownInfo.DownloadFileList.SCFile.Add(fileInfo.FullName);
-                }
+                    string File = liveChatListener.File + $"_{liveChatListener.SaveCount}";
+                    if (liveChatListener.DanmuMessage.Danmu != null && liveChatListener.DanmuMessage.Danmu.Count > 0)
+                    {
+                        FileInfo fileInfo = SevaDanmu(liveChatListener.DanmuMessage.Danmu, File, liveChatListener.Name, liveChatListener.RoomId);
 
+                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{File}");
+                        card.DownInfo.DownloadFileList.DanmuFile.Add(fileInfo.FullName);
+                    }
+                    if (liveChatListener.DanmuMessage.Gift != null && liveChatListener.DanmuMessage.Gift.Count > 0)
+                    {
+                        FileInfo fileInfo = SevaGift(liveChatListener.DanmuMessage.Gift, File);
+                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存送礼记录相关文件为{File}");
+                        card.DownInfo.DownloadFileList.GiftFile.Add(fileInfo.FullName);
+                    }
+                    if (liveChatListener.DanmuMessage.GuardBuy != null && liveChatListener.DanmuMessage.GuardBuy.Count > 0)
+                    {
+                        FileInfo fileInfo = SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, File);
+                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存上舰记录相关文件为{File}");
+                        card.DownInfo.DownloadFileList.GuardFile.Add(fileInfo.FullName);
+                    }
+                    if (liveChatListener.DanmuMessage.SuperChat != null && liveChatListener.DanmuMessage.SuperChat.Count > 0)
+                    {
+                        FileInfo fileInfo = SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, File);
+                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存SC记录相关文件为{File}");
+                        card.DownInfo.DownloadFileList.SCFile.Add(fileInfo.FullName);
+                    }
+                }
+                else
+                {
+                    Log.Warn(nameof(SevaDanmu), "liveChatListener或DanmuMessage为Null");
+                }
             }
             else
             {
