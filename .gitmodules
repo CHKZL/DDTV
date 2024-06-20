@@ -1,4 +1,0 @@
-[submodule "Docker"]
-	path = Docker
-	url = https://github.com/moomiji/docker-ddtv
-	branch = docker
