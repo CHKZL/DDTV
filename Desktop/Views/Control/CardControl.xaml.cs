@@ -163,5 +163,14 @@ namespace Desktop.Views.Control
                 }
             });
         }
+
+        private void MenuItem_DanmaOnly_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            RoomCardClass roomCardClass = new();
+            _Room.GetCardForUID(dataCard.Uid, ref roomCardClass);
+            Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
+            danmaOnlyWindow.Show();
+        }
     }
 }
