@@ -217,14 +217,14 @@ jobs:
 
         
       - uses: moomiji/docker-ddtv@v5
-        if: runner.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         env:
           DOCKERHUB_USERNAME: ddtv
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         with:
           push:    true
           repo:    ddtv/server
-          path:    Server/build_output
+          path:    ${{ github.workspace }}/Server/build_output
           version: ${{ github.ref_name }}
           runtime: ${{ matrix.runtime }}
           os_id:                ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
