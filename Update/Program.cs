@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
@@ -17,16 +18,10 @@ namespace Update
         public static string R_ver = string.Empty;
         public static bool Isdev = false;
         public static bool Isdocker = false;
-
-        public static bool Update_For_UpdateProgram = false;
         public static void Main(string[] args)
         {
             if (args.Length != 0)
             {
-                if (args.Contains("CheckForUpdatedPrograms"))
-                {
-                    Update_For_UpdateProgram = true;
-                }
                 if (args.Contains("dev"))
                 {
                     Isdev = true;
@@ -46,6 +41,7 @@ namespace Update
             }
 
             Console.WriteLine("开始更新DDTV");
+            DisableConsoleQuickEdit.Go();
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
             Console.WriteLine(Environment.CurrentDirectory);
@@ -111,11 +107,32 @@ namespace Update
                         Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
                         i++;
                     }
-                    Console.WriteLine($"更新完成：更新DDTV到{type}-{R_ver}成功，请手动启动DDTV");
+                    Console.WriteLine($"更新完成");
+                    if (OperatingSystem.IsWindows())
+                    {
+                        if (type.Contains("DDTV-Server"))
+                        {
+                            Process.Start("./Server.exe");
+                            return;
+                        }
+                        else if (type.Contains("DDTV-Client"))
+                        {
+                            Process.Start("./Client.exe");
+                            return;
+                        }
+                        else if (type.Contains("DDTV-Desktop"))
+                        {
+                            Process.Start("./Desktop.exe");
+                            return;
+                        }
+                    }
+                    Console.Write($"更新DDTV到{type}-{R_ver}完成，请手动启动DDTV");
+                    if (Isdocker)
+                        Console.WriteLine($"，按任意键继续");
                 }
                 else
                 {
-                    Console.WriteLine($"更新失败：获取更新列表失败，请检查网络状态");
+                    Console.WriteLine($"更新失败：获取更新列表失败，请检查网络状态，按任意键继续");
                 }
             }
             else
@@ -124,17 +141,17 @@ namespace Update
             }
             if (Isdocker)
                 return;
+
             Console.ReadKey();
         }
         public static bool checkVersion()
         {
-            string VerFile = Update_For_UpdateProgram ? "./ver.ini" : verFile;
-            if (!File.Exists(VerFile))
+            if (!File.Exists(verFile))
             {
                 Console.WriteLine("更新失败，没找到版本标识文件");
                 return false;
             }
-            string[] Ver = File.ReadAllLines(Update_For_UpdateProgram ? "./ver.ini" : verFile);
+            string[] Ver = File.ReadAllLines( verFile);
             foreach (string VerItem in Ver)
             {
                 if (VerItem.StartsWith("type="))
