@@ -500,7 +500,7 @@ jobs:
           version:    ${{ github.ref_name }}
 
   Release:
-    needs: [Server, Client, Desktop]
+    needs: [Server, Client, Desktop, Docker]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v4
