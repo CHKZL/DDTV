@@ -234,6 +234,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
+          pattern: DDTV-*
           path: Server/build_output
 
   Desktop:
@@ -509,6 +510,7 @@ jobs:
           path: assets
       - run: |
           cd assets
+          rm -rf *linux-musl*
           for f in *; do
             (cd $f && zip -r ../$f-${{ github.ref_name }}.zip .)
           done
