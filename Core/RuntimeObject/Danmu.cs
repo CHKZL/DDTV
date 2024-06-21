@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Danmu;
 using Core.Network;
+using AngleSharp.Dom;
 
 namespace Core.RuntimeObject
 {
@@ -36,7 +37,19 @@ namespace Core.RuntimeObject
             {
                 try
                 {
-                    Dictionary<string, string> Params = new Dictionary<string, string>
+                    CookieContainer CK = new CookieContainer { MaxCookieSize = 4096, PerDomainCapacity = 50 };
+
+                    string[] cook = Account.AccountInformation.strCookies.Replace(" ", "").Split(';');
+                    for (int i = 0; i < cook.Length; i++)
+                    {
+                        if (!string.IsNullOrEmpty(cook[i]))
+                        {
+                            CK.Add(new Cookie(cook[i].Split('=')[0], cook[i].Split('=')[1].Replace(",", "%2C")) { Domain = "live.bilibili.com" });
+                        }
+                    }
+
+
+                    Dictionary<string, string> dic = new Dictionary<string, string>
                     {
                         { "color", "16777215" },
                         { "fontsize", "25" },
@@ -48,9 +61,71 @@ namespace Core.RuntimeObject
                         { "csrf", Account.AccountInformation.CsrfToken }
                     };
 
-                    string A = Post.PostBody($"{Config.Core_RunConfig._LiveDomainName}/msg/send", Params, true);
 
+                    {
+                        string result = "";
+                        HttpWebRequest req = (HttpWebRequest)WebRequest.Create($"{Config.Core_RunConfig._LiveDomainName}/msg/send");
+                        req.ServicePoint.Expect100Continue = false;
+                        req.Method = "POST";
+                        req.ContentType = "application/x-www-form-urlencoded";
+                        req.UserAgent = Config.Core_RunConfig._HTTP_UA;
 
+                        if (RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
+                            req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        #region 添加Post 参数  
+                        StringBuilder builder = new StringBuilder();
+                        int i = 0;
+                        foreach (var item in dic)
+                        {
+                            if (item.Key.Length > 20)
+                            {
+                                if (i > 0)
+                                    builder.Append("&");
+                                builder.AppendFormat("{0}", item.Key);
+                                i++;
+                            }
+                            else
+                            {
+                                if (i > 0)
+                                    builder.Append("&");
+                                builder.AppendFormat("{0}={1}", item.Key, item.Value);
+                                i++;
+                            }
+                        }
+                        byte[] data = Encoding.UTF8.GetBytes(builder.ToString());
+                        req.ContentLength = data.Length;
+                        req.CookieContainer = CK;
+                        using (Stream reqStream = req.GetRequestStream())
+                        {
+                            reqStream.Write(data, 0, data.Length);
+                            reqStream.Close();
+                        }
+                        #endregion
+                        using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+                        {
+                            using (Stream stream = resp.GetResponseStream())
+                            {
+                                //获取响应内容  
+                                using (StreamReader reader = new StreamReader(stream, Encoding.UTF8))
+                                {
+                                    result = reader.ReadToEnd();
+                                }
+                                if (resp != null)
+                                {
+                                    resp.Dispose();
+                                }
+                                try
+                                {
+                                    if (req != null) req.Abort();
+                                }
+                                catch (Exception) { }
+                            }
+                        }
+                        if(result.Contains("\"code\":0"))
+                        {
+                            //发送成功
+                        }
+                    }
                 }
                 catch (Exception e)
                 {
@@ -65,7 +140,7 @@ namespace Core.RuntimeObject
         /// <param name="liveChatListener"></param>
         /// <param name="DeleteCurrentContent">只删除当前内容，不保存</param>
         /// <param name="card"></param>
-        public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener,bool DeleteCurrentContent, ref RoomCardClass card)
+        public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener, bool DeleteCurrentContent, ref RoomCardClass card)
         {
             string Message = "保存弹幕相关文件";
             if (!DeleteCurrentContent)
@@ -117,7 +192,7 @@ namespace Core.RuntimeObject
 
             liveChatListener.SaveCount++;
 
-            
+
             OperationQueue.Add(Opcode.Download.SaveBulletScreenFile, Message, card.UID);
             Log.Info(nameof(SevaDanmu), Message);
         }
@@ -152,7 +227,7 @@ namespace Core.RuntimeObject
                 XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
                 i++;
             }
-            
+
             XML += "</i>";
             File.WriteAllText(FileName + ".xml", XML);
             if (true)
@@ -160,9 +235,9 @@ namespace Core.RuntimeObject
                 string Gift = "时间,昵称,Uid,弹幕内容";
                 foreach (var item in DanmaList)
                 {
-                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",","，")}";
+                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",", "，")}";
                 }
-            
+
                 File.WriteAllText(FileName + "_弹幕.csv", Gift, Encoding.UTF8);
             }
             DanmaList = null;

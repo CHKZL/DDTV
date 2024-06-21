@@ -435,5 +435,46 @@ namespace Desktop.Views.Windows
                 PlaySteam();
             }
         }
+
+        private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
+        {
+            string T = DanmaOnly_DanmaInput.Text;
+            if (string.IsNullOrEmpty(T) && T.Length > 20)
+            {
+                return;
+            }
+            Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
+            DanmaOnly_DanmaInput.Clear();
+        }
+
+        private void DanmaOnly_DanmaInput_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            System.Windows.Controls.TextBox? textBox = sender as System.Windows.Controls.TextBox;
+            if (textBox != null && textBox.Text.Length > 20)
+            {
+                int selectionStart = textBox.SelectionStart;
+                textBox.Text = textBox.Text.Substring(0, 20);
+                textBox.SelectionStart = selectionStart > 20 ? 20 : selectionStart;
+            }
+        }
+
+        private void F5_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            vlcPlayModels.LoadingVisibility = Visibility.Visible;
+            vlcPlayModels.OnPropertyChanged("LoadingVisibility");
+            PlaySteam();
+        }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if(DanmaBox.Visibility== Visibility.Collapsed)
+            {
+                DanmaBox.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                DanmaBox.Visibility = Visibility.Collapsed;
+            }
+        }
     }
 }

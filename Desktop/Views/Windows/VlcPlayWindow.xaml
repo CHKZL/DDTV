@@ -16,7 +16,10 @@
         <Grid Background="#01000000" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel">
             <Grid.ContextMenu>
                 <ContextMenu>
+                    <MenuItem Header="刷新" Icon="{ui:SymbolIcon ArrowClockwise20}" Click="F5_MenuItem_Click"/>
+                    <Separator/>
                     <MenuItem Header="切换全屏状态" Click="FullScreenSwitch_MenuItem_Click"  Icon="{ui:SymbolIcon FullScreenMaximize20}"/>
+                    <MenuItem Header="展示弹幕发送框" Icon="{ui:SymbolIcon News20}" Click="MenuItem_Click"/>
                     <Separator/>
                     <MenuItem Header="关闭本窗口" Click="ExitWindow_MenuItem_Click" Icon="{ui:SymbolIcon ArrowExit20}"/>
                 </ContextMenu>
@@ -35,7 +38,22 @@
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#7F5B5B5B">
                 <TextBlock Grid.Column="1" Visibility="{Binding MessageVisibility,Mode=OneWay}" Text="{Binding MessageText}" Foreground="White" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
             </Grid>
-
+            <Grid x:Name="DanmaBox" Visibility="Collapsed">
+                <Grid Background="Black" Opacity="0.8" Height="45" VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                </Grid>
+                <Grid VerticalAlignment="Bottom">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ui:TextBox Name="DanmaOnly_DanmaInput" Grid.Column="0" Margin="10,10,10,4" PlaceholderText="输入弹幕内容" Text="" TextChanged="DanmaOnly_DanmaInput_TextChanged"/>
+                    <ui:Button Grid.Column="1"  Margin="0,10,10,4" Content="发送" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Send20}" Click="Send_Danma_Button_Click"/>
+                </Grid>
+            </Grid>
         </Grid>
     </vlc:VideoView>
 </ui:FluentWindow>

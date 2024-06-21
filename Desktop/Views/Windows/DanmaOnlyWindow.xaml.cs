@@ -150,6 +150,7 @@ namespace Desktop.Views.Windows
                 return;
             }
             Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
+            DanmaOnly_DanmaInput.Clear();
         }
 
         private void DanmaOnly_DanmaInput_TextChanged(object sender, TextChangedEventArgs e)
