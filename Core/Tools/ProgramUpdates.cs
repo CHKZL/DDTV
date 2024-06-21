@@ -228,6 +228,10 @@ namespace Core.Tools
                                 bool FileUpdateStatus = true;
 
                                 string FilePath = $"../{item.FilePath}";
+                                if (Core.Init.Mode == Config.Mode.Docker)
+                                {
+                                    FilePath = FilePath.Replace("bin/", "DDTV/");
+                                }
 
                                 if (File.Exists(FilePath))
                                 {

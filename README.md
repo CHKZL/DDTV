@@ -36,6 +36,7 @@ Q群	522865400(新)	聊天吹水的地方
 |名称|说明|主页|
 |---|---|---|
 |DDTV_GUI_React|为DDTV提供WEBUI|[moehuhu/DDTV_GUI_React](https://github.com/moehuhu/DDTV_GUI_React)|
+|docker-ddtv|为DDTV提供Docker|[moomiji/docker-ddtv](https://github.com/moomiji/docker-ddtv)|
 
 ## Q&A
 Q：Desktop无法打开播放窗，或者打开播放窗就闪退怎么办？  
