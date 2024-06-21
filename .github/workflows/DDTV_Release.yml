@@ -217,11 +217,14 @@ jobs:
 
         
       - uses: moomiji/docker-ddtv@v5
+        env:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         with:
           push:    true
           repo:    ddtv/server
-          path:    ${{ steps.build.outputs.path }}
-          version: ${{ steps.build.outputs.version }}
+          path:    Server/build_output
+          version: ${{ github.ref_name }}
           runtime: ${{ matrix.runtime }}
           os_id:                ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           dotnet-image-version: ${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
@@ -479,6 +482,9 @@ jobs:
   Docker:
     needs: [Server]
     runs-on: ubuntu-latest
+    env:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - uses: moomiji/docker-ddtv@v5
         with:
