@@ -24,7 +24,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3)
+        public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3,CookieContainer cookieContainer =null)
         {
 //# if DEBUG
 //            Log.Debug(nameof(PostBody), $"发起Post请求，目标:{url}");
@@ -74,6 +74,11 @@ namespace Core.Network
                     }
                     byte[] data = Encoding.UTF8.GetBytes(builder.ToString());
                     req.ContentLength = data.Length;
+                    if (cookieContainer != null)
+                    {
+                        req.CookieContainer = cookieContainer;
+                    }
+
                     using (Stream reqStream = req.GetRequestStream())
                     {
                         reqStream.Write(data, 0, data.Length);

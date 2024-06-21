@@ -1,0 +1,42 @@
+﻿<ui:FluentWindow x:Class="Desktop.Views.Windows.DanmaOnlyWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Desktop.Views.Windows"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        mc:Ignorable="d"
+        Title="DanmaOnlyWindow" Height="500" Width="450" MinWidth="450" Closing="FluentWindow_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Grid.Column="0" Icon="pack://application:,,,/DDTV.ico"/>
+
+
+
+        <ui:ListView Grid.Row="1" Margin="0,0,0,0" Name="DanmaView" ItemsSource="{Binding DanmaCollection}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}" ContextMenuOpening="DanmaView_ContextMenuOpening">
+            <ui:ListView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="复制" Click="CopyMenuItem_Click"/>
+                </ContextMenu>
+            </ui:ListView.ContextMenu>
+            <ui:ListView.View>
+                <ui:GridView>
+                    <ui:GridViewColumn MinWidth="390" Width="auto" DisplayMemberBinding="{Binding Message}" Header="消息"/>
+                </ui:GridView>
+            </ui:ListView.View>
+        </ui:ListView>
+        <Grid Grid.Row="2" Height="40">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ui:TextBox Name="DanmaOnly_DanmaInput" Grid.Column="0" Margin="10,0,10,4" PlaceholderText="输入弹幕内容" Text="" TextChanged="DanmaOnly_DanmaInput_TextChanged"/>
+            <ui:Button Grid.Column="1"  Margin="0,0,10,4" Content="发送" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Send20}" Click="Send_Danma_Button_Click"/>
+        </Grid>
+    </Grid>
+    </ui:FluentWindow>

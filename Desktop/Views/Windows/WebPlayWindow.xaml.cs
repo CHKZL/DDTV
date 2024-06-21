@@ -36,10 +36,11 @@ namespace Desktop.Views.Windows
             Task.Run(() =>
             {
                 _uid = RoomInfo.GetUid(_room_id);
-                this.Title = RoomInfo.GetTitle(_uid);
+               
                 _nickname = RoomInfo.GetNickname(_uid);
                 Dispatcher.Invoke(() =>
                 {
+                     this.Title = RoomInfo.GetTitle(_uid);
                     UI_TitleBar.Title = $"{_nickname}({_room_id}) - {this.Title}(该直播间只有FLV流，使用WEB兼容模式播放)";
                 });
             });

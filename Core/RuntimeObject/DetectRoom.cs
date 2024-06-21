@@ -126,7 +126,6 @@ namespace Core.RuntimeObject
                             }
                             catch (Exception)
                             { }
-
                         }
                     }
 

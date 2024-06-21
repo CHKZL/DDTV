@@ -2,14 +2,18 @@
 using Masuit.Tools;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Danmu;
+using Core.Network;
 
 namespace Core.RuntimeObject
 {
@@ -20,6 +24,41 @@ namespace Core.RuntimeObject
         #endregion
 
         #region Public Method
+
+        /// <summary>
+        /// 发送直播间弹幕
+        /// </summary>
+        /// <param name="roomId">房间号(长房间号)</param>
+        /// <param name="Message">发送信息(不能超过20个字符)</param>
+        public static void SendDanmu(string roomId, string Message)
+        {
+            Task.Run(() =>
+            {
+                try
+                {
+                    Dictionary<string, string> Params = new Dictionary<string, string>
+                    {
+                        { "color", "16777215" },
+                        { "fontsize", "25" },
+                        { "mode", "1" },
+                        { "msg", Message },
+                        { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
+                        { "roomid", roomId },
+                        { "csrf_token", Account.AccountInformation.CsrfToken },
+                        { "csrf", Account.AccountInformation.CsrfToken }
+                    };
+
+                    string A = Post.PostBody($"{Config.Core_RunConfig._LiveDomainName}/msg/send", Params, true);
+
+
+                }
+                catch (Exception e)
+                {
+                    Log.Error(nameof(Danmu), $"弹幕发送出现错误", e, true);
+                }
+            });
+        }
+
         /// <summary>
         /// 保存弹幕相关文件
         /// </summary>

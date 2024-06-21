@@ -10,6 +10,7 @@
     <UserControl.Resources>
         <ContextMenu x:Key="CardContextMenu">
             <MenuItem Header="打开窗口观看" Click="MenuItem_PlayWindow_Click"/>
+            <MenuItem Header="单独打开弹幕查看器" Click="MenuItem_DanmaOnly_Click"/>
             <Separator />
             <MenuItem Header="切换录制设置" Click="MenuItem_ModifyRoom_AutoRec_Click"/>
             <MenuItem Header="切换弹幕设置" Click="MenuItem_ModifyRoom_Danmu_Click"/>

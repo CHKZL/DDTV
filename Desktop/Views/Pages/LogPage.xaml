@@ -23,13 +23,13 @@
         </Grid.RowDefinitions>
 
 
-        <ui:ListView Margin="0,0,0,0" Name="LogView" d:ItemsSource="{d:SampleData ItemCount=10}" ItemsSource="{Binding LogCollection}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}">
+        <ui:ListView Margin="0,0,0,0" Name="LogView"  ItemsSource="{Binding LogCollection}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}">
             <ui:ListView.View>
                 <ui:GridView>
                     <ui:GridViewColumn MinWidth="70"  DisplayMemberBinding="{Binding Type}" Header="类型"/>
                     <ui:GridViewColumn MinWidth="120"  DisplayMemberBinding="{Binding Time}" Header="时间"/>
                     <ui:GridViewColumn MinWidth="150"  DisplayMemberBinding="{Binding Source}" Header="来源"/>
-                    <ui:GridViewColumn MinWidth="500" DisplayMemberBinding="{Binding Message}" Header="消息"/>
+                    <ui:GridViewColumn MinWidth="500" Width="Auto" DisplayMemberBinding="{Binding Message}" Header="消息"/>
                 </ui:GridView>
             </ui:ListView.View>
         </ui:ListView>
