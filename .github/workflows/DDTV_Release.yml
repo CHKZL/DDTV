@@ -217,6 +217,7 @@ jobs:
 
         
       - uses: moomiji/docker-ddtv@v5
+        if: runner.os == 'ubuntu-latest'
         env:
           DOCKERHUB_USERNAME: ddtv
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
