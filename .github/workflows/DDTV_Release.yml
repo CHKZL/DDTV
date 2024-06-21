@@ -215,7 +215,12 @@ jobs:
           Get-ChildItem -Path "Server/build_output" -File -Recurse | ForEach-Object Name
         shell: powershell
 
-        
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
+          path: Server/build_output
+
       - uses: moomiji/docker-ddtv@v5
         if: runner.os == 'Linux'
         env:
@@ -229,13 +234,6 @@ jobs:
           runtime: ${{ matrix.runtime }}
           os_id:                ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           dotnet-image-version: ${{ contains(matrix.runtime, 'musl') && '8.0-alpine' || '8.0' }}
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
-          pattern: DDTV-*
-          path: Server/build_output
 
   Desktop:
     strategy:
