@@ -509,6 +509,7 @@ jobs:
       - run: |
           cd assets
           rm -rf *linux-musl*
+          rm -rf digests*
           for f in *; do
             (cd $f && zip -r ../$f-${{ github.ref_name }}.zip .)
           done
