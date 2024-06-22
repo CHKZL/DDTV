@@ -233,7 +233,7 @@ namespace Desktop
         /// <exception cref="NotImplementedException"></exception>
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
-            if (this.WindowState == WindowState.Minimized)
+            if (Config.Core_RunConfig._ZoomOutMode!=0 && this.WindowState == WindowState.Minimized)
             {
                 this.Hide();
             }
