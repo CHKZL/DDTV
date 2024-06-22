@@ -166,7 +166,15 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_default_file_path_name_format")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), $"{Core.Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Core.Config.Core_RunConfig._DefaultFileName}", $"录制储存路径中的子路径和格式"), "application/json");
+            string Full = $"{Core.Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Core.Config.Core_RunConfig._DefaultFileName}";
+            (string Full, string default_liver_folder_name, string default_data_folder_name, string default_file_name) data = new()
+            {
+                Full = Full,
+                default_liver_folder_name = Core.Config.Core_RunConfig._DefaultLiverFolderName,
+                default_data_folder_name = Core.Config.Core_RunConfig._DefaultDataFolderName,
+                default_file_name = Core.Config.Core_RunConfig._DefaultFileName
+            };
+            return Content(MessageBase.MssagePack(nameof(get_default_file_path_name_format), data, $"录制储存路径中的子路径和格式"), "application/json");
         }
     }
 
