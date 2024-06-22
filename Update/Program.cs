@@ -112,17 +112,17 @@ namespace Update
                     {
                         if (type.Contains("DDTV-Server"))
                         {
-                            Process.Start("./Server.exe");
+                            Process.Start("../Server.exe");
                             return;
                         }
                         else if (type.Contains("DDTV-Client"))
                         {
-                            Process.Start("./Client.exe");
+                            Process.Start("../Client.exe");
                             return;
                         }
                         else if (type.Contains("DDTV-Desktop"))
                         {
-                            Process.Start("./Desktop.exe");
+                            Process.Start("../Desktop.exe");
                             return;
                         }
                     }
