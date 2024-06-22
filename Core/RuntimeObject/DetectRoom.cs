@@ -90,6 +90,7 @@ namespace Core.RuntimeObject
                     bool Reconnection = false;
                     do
                     {
+                        //如果是启动后第一次房间状态查询就触发下载，那就当作重连处理
                         if(LiveInvoke.IsFirst)
                         {
                             Reconnection = true;
@@ -100,8 +101,14 @@ namespace Core.RuntimeObject
                         Reconnection = true;
                     }
                     //如果检测到还在开播，且用户没有取消，那么就再来一次
-                    while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status!= RoomCardClass.DownloadStatus.Special);
- 
+                    while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special);
+
+                    //执行shell
+                    if(OperatingSystem.IsLinux() && Config.Core_RunConfig._Linux_Only_ShellSwitch)
+                    {
+                        Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
+                    }
+                    
 
                     //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                     Basics.DownloadCompletedReset(ref roomCard);

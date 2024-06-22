@@ -1622,6 +1622,50 @@ namespace Core
                 }
             }
 
+            private static string Linux_Only_ShellSwitch = "false";
+            /// <summary>
+            /// 是否开启Linux下的Shell脚本支持
+            /// 默认值：false
+            /// </summary>
+            public bool _Linux_Only_ShellSwitch
+            {
+                get
+                {
+                    return bool.Parse(Linux_Only_ShellSwitch);
+                }
+                set
+                {
+                    if (value.ToString() != Linux_Only_ShellSwitch)
+                    {
+                        Linux_Only_ShellSwitch = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Linux_Only_ShellCommand = string.Empty;
+            /// <summary>
+            /// Linux下将执行的Shell命令模版
+            /// 默认值：空字符串(string.Empty)
+            /// </summary>
+            public string _Linux_Only_ShellCommand
+            {
+                get
+                {
+                    return Linux_Only_ShellCommand;
+                }
+                set
+                {
+                    if (value.ToString() != Linux_Only_ShellCommand)
+                    {
+                        Linux_Only_ShellCommand = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

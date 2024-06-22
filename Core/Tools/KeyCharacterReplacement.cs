@@ -46,6 +46,9 @@ namespace Core.Tools
                     Title = new() { Value = "【自我介绍】大家好！我叫绊(kizuna)爱(ai)" },
                 };
             }
+            string WorkPath = ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}", DateTime.Now, uid);
+            WorkPath = Path.GetFullPath(WorkPath);
+
             Text = Text
                 .Replace("{ROOMID}", roomCardClass.RoomId.ToString())
                 .Replace("{YYYY}", dateTime.ToString("yyyy"))
@@ -65,11 +68,54 @@ namespace Core.Tools
                 .Replace("{ss}", dateTime.ToString("ss"))
                 .Replace("{fff}", dateTime.ToString("fff"))
                 .Replace("{NAME}", roomCardClass.Name)
+                .Replace("{Name}", roomCardClass.Name)
                 .Replace("{DATE}", dateTime.ToString("yyyy_MM_dd"))
+                .Replace("{Date}", dateTime.ToString("yyyy_MM_dd"))
                 .Replace("{TIME}", dateTime.ToString("HH_mm_ss"))
-                .Replace("{TITLE}", roomCardClass.Title.Value);
+                .Replace("{Time}", dateTime.ToString("HH_mm_ss"))
+                .Replace("{TITLE}", roomCardClass.Title.Value)
+                .Replace("{Title}", roomCardClass.Title.Value)
+                .Replace("{R}",new Random().Next(1000,9999).ToString())
+                .Replace("{CWD}",WorkPath);
+
+            Replace_Shell_Keyword(roomCardClass, ref Text);
+
             return Text;
         }
+
+        /// <summary>
+        /// 替换{Shell}关键字
+        /// </summary>
+        /// <param name="text">待替换的字符</param>
+        /// <param name="roomCard">需要替换的房间卡片</param>
+        /// <returns></returns>
+        public static void Replace_Shell_Keyword(RoomCardClass roomCard, ref string text)
+        {
+            var fileTypes = new Dictionary<string, List<string>>
+            {
+                {"{AfterRepairFiles}", roomCard.DownInfo.DownloadFileList.VideoFile},
+                {"{DanmakuFiles}", roomCard.DownInfo.DownloadFileList.DanmuFile},
+                {"{SCFiles}", roomCard.DownInfo.DownloadFileList.SCFile},
+                {"{GuardFiles}", roomCard.DownInfo.DownloadFileList.GuardFile},
+                {"{GiftFiles}", roomCard.DownInfo.DownloadFileList.GiftFile}
+            };
+
+            List<string> SumFiles = new List<string>();
+
+            foreach (var fileType in fileTypes)
+            {
+                var files = fileType.Value.Where(File.Exists).Select(f => new FileInfo(f).FullName);
+                SumFiles.AddRange(files);
+                text = text.Replace(fileType.Key, string.Join(",", files));
+            }
+
+            string sumFilesString = string.Join(",", SumFiles);
+            text.Replace("{Files}", sumFilesString);
+        }
+
+
+
+
 
         /// <summary>
         /// 随机字符串
