@@ -44,9 +44,9 @@ public partial class DefaultPage
         //更新公告
         UpdateAnnouncementTimer = new Timer(UpdateAnnouncement, null, 1, 1000 * 60 * 60);
         //代理状态检测
-        ProxyDetectionTimer = new Timer(ProxyDetection, null, 1, 1000 * 60);
+        ProxyDetectionTimer = new Timer(ProxyDetection, null, 1, 1000 * 60 * 30);
         //IP版本检测
-        IpvDetectionTimer = new Timer(IpvDetection, null, 1, 1000 * 60);
+        IpvDetectionTimer = new Timer(IpvDetection, null, 1, 1000 * 60 * 30);
 
     }
 
