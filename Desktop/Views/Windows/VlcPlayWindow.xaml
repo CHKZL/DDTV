@@ -13,13 +13,15 @@
         Closing="FluentWindow_Closing" KeyDown="FluentWindow_KeyDown"
         >
     <vlc:VideoView Margin="1" x:Name="videoView">
-        <Grid Background="#01000000" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel">
+        <Grid Background="#01000000" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel" SizeChanged="Grid_SizeChanged">
             <Grid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="刷新" Icon="{ui:SymbolIcon ArrowClockwise20}" Click="F5_MenuItem_Click"/>
                     <Separator/>
+                    <MenuItem Header="展示\隐藏弹幕" Icon="{ui:SymbolIcon Chat20}" Click="MenuItem_Switch_Danma_Exhibition_Click"/>
+                    <Separator/>
                     <MenuItem Header="切换全屏状态" Click="FullScreenSwitch_MenuItem_Click"  Icon="{ui:SymbolIcon FullScreenMaximize20}"/>
-                    <MenuItem Header="展示弹幕发送框" Icon="{ui:SymbolIcon News20}" Click="MenuItem_Click"/>
+                    <MenuItem Header="展示弹幕发送框" Icon="{ui:SymbolIcon News20}" Click="MenuItem_Switch_Danma_Send_Click"/>
                     <Separator/>
                     <MenuItem Header="关闭本窗口" Click="ExitWindow_MenuItem_Click" Icon="{ui:SymbolIcon ArrowExit20}"/>
                 </ContextMenu>

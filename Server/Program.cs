@@ -27,21 +27,28 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
-            if (!Array.Exists(args, element => element.Contains("--StartMode")))
+            try
             {
-                string[] N_args = new string[args.Length + 1];
-                for (int i = 0; i < args.Length; i++)
+                if (!Array.Exists(args, element => element.Contains("--StartMode")))
                 {
-                    N_args[i] = args[i];
+                    string[] N_args = new string[args.Length + 1];
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        N_args[i] = args[i];
+                    }
+                    N_args[N_args.Length - 1] = "--StartMode=Server";
                 }
-                N_args[N_args.Length - 1] = "--StartMode=Server";
-            }
-            if (!args.Contains("Desktop") && !args.Contains("Client"))
-            {
-                Console.OutputEncoding = System.Text.Encoding.UTF8;
-            }
+                if (!args.Contains("Desktop") && !args.Contains("Client"))
+                {
+                    Console.OutputEncoding = System.Text.Encoding.UTF8;
+                }
 
-            MainAsync(args).GetAwaiter().GetResult();
+                MainAsync(args).GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"系统触发出现了无法处理的错误，DDTV无法处理该问题，错误堆栈:{ex.ToString()}");
+            }
         }
 
         public static async Task MainAsync(string[] args)

@@ -99,7 +99,7 @@ public partial class SettingsPage
         {
             if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || string.IsNullOrEmpty(DesktopPort_InputControl.Text) || string.IsNullOrEmpty(DesktopAccessKeyId_InputControl.Text) || string.IsNullOrEmpty(DesktopAccessKeySecret_InputControl.Text))
             {
-                MainWindow.SnackbarService.Show("保存失败", "请检查基础设置中远程服务器相关配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+                MainWindow.SnackbarService.Show("保存失败", "请检查确保基础设置中远程服务器相关配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
                 return false;
             }
             string url = DesktopIP_InputControl.Text;
@@ -107,22 +107,34 @@ public partial class SettingsPage
             bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
             if (!result)
             {
-                MainWindow.SnackbarService.Show("保存失败", "请检查填写的远端服务地址是否符合Url格式，例如：“http://example.com”或者“http://127.0.0.1”，Url字符串请勿携带端口", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+                MainWindow.SnackbarService.Show("保存失败", "请检查确保填写的远端服务地址是否符合Url格式，例如：“http://example.com”或者“http://127.0.0.1”，Url字符串请勿携带端口", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
                 return false;
             }
         }
-        //API地址检测
+        //远程地址检测
         if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || string.IsNullOrEmpty(DesktopPort_InputControl.Text))
         {
-            MainWindow.SnackbarService.Show("保存失败", "API地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保远程服务器地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
         }
+        //API_Url配置保存
+        if (string.IsNullOrEmpty(MainDomainName_TextBox.Text) || string.IsNullOrEmpty(LiveDomainName_TextBox.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保API地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }
+        //WebHook配置保存
+        if ((bool)WebHook_SwitchControl.IsChecked && string.IsNullOrEmpty(WebHookUrl_InputControl.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保WebHook地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }     
         #endregion
 
         #region 文件路径相关设置检查
         if (string.IsNullOrEmpty(RecPathInputBox.Text) || string.IsNullOrEmpty(DefaultLiverFolderNameInputBox.Text) || string.IsNullOrEmpty(DefaulFileNameFormatInputBox.Text))
         {
-            MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
             return false;
         }
         try
@@ -134,22 +146,41 @@ public partial class SettingsPage
             bool containsInvalidChars = RecPath.IndexOfAny(Path.GetInvalidPathChars()) >= 0;
             if (containsInvalidChars)
             {
-                MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+                MainWindow.SnackbarService.Show("保存失败", "请检查确保录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
                 return false;
             }
         }
         catch (Exception)
         {
-            MainWindow.SnackbarService.Show("保存失败", "请检查录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保录制文件夹保存路径相关配置格式正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
             return false;
         }
         #endregion
 
         #region 录制功能设置
+
+        //录制模式
+        if (RecordingMode_ComboBox.SelectedIndex != 1 && string.IsNullOrEmpty(HlsWaitingTime_InputControl.Text))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保HLS等待时间配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }
+
         //自动转码参数检查
         if (string.IsNullOrEmpty(AutomaticRepair_Arguments_InputBox.Text))
         {
-            MainWindow.SnackbarService.Show("保存失败", "亲检查修复和转码的执行参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保修复和转码的执行参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }
+
+
+        #endregion
+
+        #region 播放窗口设置
+        //弹幕速度设置
+        if (string.IsNullOrEmpty(PlayWindowDanmaSpeed_InputBox.Text) && int.Parse(PlayWindowDanmaSpeed_InputBox.Text)>0)
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查确播放窗口弹幕速度参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
         }
         #endregion
@@ -219,7 +250,7 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._SystemCardReminder = (bool)SystemCardReminder_ToggleSwitch.IsChecked;
         }
-        //API配置保存
+        //API_Url配置保存
         Config.Core_RunConfig._MainDomainName = MainDomainName_TextBox.Text;
         Config.Core_RunConfig._LiveDomainName = LiveDomainName_TextBox.Text;
         //开发版更新配置
@@ -274,6 +305,28 @@ public partial class SettingsPage
         if (Config.Core_RunConfig.CutAccordingToTime_For_ComboBox != CutAccordingToTime_For_ComboBox.SelectedIndex)
         {
             Config.Core_RunConfig.CutAccordingToTime_For_ComboBox = CutAccordingToTime_For_ComboBox.SelectedIndex;
+        }
+        #endregion
+
+        #region 播放窗口设置
+        //弹幕默认开关设置
+        if (Config.Core_RunConfig._PlayWindowDanmaSwitch != PlayWindowDanmaSwitch_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._PlayWindowDanmaSwitch = (bool)PlayWindowDanmaSwitch_CheckBox.IsChecked;
+        }
+        //弹幕速度设置
+        if (Config.Core_RunConfig._PlayWindowDanmaSpeed != int.Parse(PlayWindowDanmaSpeed_InputBox.Text))
+        {
+            Config.Core_RunConfig._PlayWindowDanmaSpeed = int.Parse(PlayWindowDanmaSpeed_InputBox.Text);
+        }
+        if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically != PlayWindowDanmaSpeed_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._PlayDanmaSpeed_Dynamically = (bool)PlayWindowDanmaSpeed_CheckBox.IsChecked;
+        }
+        //弹幕字号设置
+        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != int.Parse(PlayWindowDanmaSize.Text))
+        {
+            Config.Core_RunConfig._PlayWindowDanmaFontSize = int.Parse(PlayWindowDanmaSize.Text);
         }
         #endregion
 

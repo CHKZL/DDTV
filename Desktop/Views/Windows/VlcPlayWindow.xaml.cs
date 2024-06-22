@@ -43,6 +43,7 @@ namespace Desktop.Views.Windows
         private LibVLC _libVLC;
         private LibVLCSharp.Shared.MediaPlayer _mediaPlayer;
         internal VlcPlayModels vlcPlayModels { get; private set; }
+        private bool DanmaSwitch = false;
 
         /// <summary>
         /// 弹幕渲染实例
@@ -98,9 +99,12 @@ namespace Desktop.Views.Windows
             PlaySteam();
             Dispatcher.Invoke(() =>
             {
-                barrageConfig = new BarrageConfig(DanmaCanvas, ((double)this.Width / 800) * Core_RunConfig._PlayWindowDanmaSpeed);
+                barrageConfig = new BarrageConfig(DanmaCanvas, this.Width);
             });
-            SetDanma();
+            if(Core_RunConfig._PlayWindowDanmaSwitch)
+            {
+                SetDanma();
+            }
             Dispatcher.Invoke(() =>
             {
                 DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
@@ -126,8 +130,14 @@ namespace Desktop.Views.Windows
 
         private async void SetDanma()
         {
+            if(DanmaSwitch)
+            {
+                return;
+            }
+            DanmaSwitch = true;
             await Task.Run(() =>
             {
+
                 if (roomCard.DownInfo.LiveChatListener == null)
                 {
                     roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
@@ -139,6 +149,28 @@ namespace Desktop.Views.Windows
                 }
                 roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
                 roomCard.DownInfo.LiveChatListener.Register.Add("VlcPlayWindow");
+            });
+        }
+
+        private async void CloseDanma()
+        {
+            DanmaSwitch = false;
+            await Task.Run(() =>
+            {
+                if (roomCard.DownInfo.LiveChatListener != null && roomCard.DownInfo.LiveChatListener.Register.Count > 0)
+                {
+
+                    roomCard.DownInfo.LiveChatListener.MessageReceived -= LiveChatListener_MessageReceived;
+
+                    roomCard.DownInfo.LiveChatListener.Register.Remove("VlcPlayWindow");
+                    if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
+                    {
+
+                        roomCard.DownInfo.LiveChatListener.Dispose();
+                        roomCard.DownInfo.LiveChatListener = null;
+                    }
+
+                }
             });
         }
 
@@ -256,15 +288,9 @@ namespace Desktop.Views.Windows
                 }
                 Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],关闭播放器");
             }
-            if (roomCard.DownInfo.LiveChatListener != null && roomCard.DownInfo.LiveChatListener.Register.Count > 0)
+            if(DanmaSwitch)
             {
-                roomCard.DownInfo.LiveChatListener.Register.Remove("VlcPlayWindow");
-                if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
-                {
-
-                    roomCard.DownInfo.LiveChatListener.Dispose();
-                    roomCard.DownInfo.LiveChatListener = null;
-                }
+                CloseDanma();
             }
         }
 
@@ -465,7 +491,7 @@ namespace Desktop.Views.Windows
             PlaySteam();
         }
 
-        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        private void MenuItem_Switch_Danma_Send_Click(object sender, RoutedEventArgs e)
         {
             if(DanmaBox.Visibility== Visibility.Collapsed)
             {
@@ -474,6 +500,24 @@ namespace Desktop.Views.Windows
             else
             {
                 DanmaBox.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (barrageConfig != null)
+                barrageConfig._width = this.Width;
+        }
+
+        private void MenuItem_Switch_Danma_Exhibition_Click(object sender, RoutedEventArgs e)
+        {
+            if(DanmaSwitch)
+            {
+                CloseDanma();
+            }
+            else
+            {
+                SetDanma();
             }
         }
     }

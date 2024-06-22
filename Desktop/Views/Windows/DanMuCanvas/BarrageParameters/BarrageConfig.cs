@@ -23,13 +23,13 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
         /// </summary>
         public decimal reduceSpeed;
         /// <summary>
-        /// 单个弹幕的结束时间
-        /// </summary>
-        public double initFinishTime;
-        /// <summary>
         /// 弹幕当前高度
         /// </summary>
         public int height = 0;
+        /// <summary>
+        /// 当前窗口宽度，用于计算弹幕速度
+        /// </summary>
+        public double _width = 0;
         #endregion
 
         #region 运行时
@@ -37,12 +37,12 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
         #endregion
 
         #region 初始化
-        public BarrageConfig(Canvas canvas,double speed)
+        public BarrageConfig(Canvas canvas,double width)
         {
             //InitializeColors();
             this.canvas = canvas;
             reduceSpeed = decimal.Parse("0.5");
-            initFinishTime = speed;
+            _width = width;
         }
 
         #endregion
@@ -111,7 +111,14 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
                                                          //从右往左
             animation.From = canvas.ActualWidth;
             animation.To = 0 - (Config.Core_RunConfig._PlayWindowDanmaFontSize * textblock.Text.Length);
-            animation.Duration = TimeSpan.FromSeconds(30-initFinishTime);
+            if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically)
+            {
+                animation.Duration = TimeSpan.FromSeconds(Config.Core_RunConfig._PlayWindowDanmaSpeed);
+            }
+            else
+            {
+                animation.Duration = TimeSpan.FromSeconds(_width / 800 * Config.Core_RunConfig._PlayWindowDanmaSpeed);
+            }
             animation.AutoReverse = false;
             animation.Completed += (object sender, EventArgs e) =>
             {
@@ -188,7 +195,14 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
                                                           //从右往左
             animation.From = canvas.ActualWidth;
             animation.To = 0 - (Config.Core_RunConfig._PlayWindowDanmaFontSize * textblock.Text.Length);
-            animation.Duration = TimeSpan.FromSeconds(initFinishTime);
+            if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically)
+            {
+                animation.Duration = TimeSpan.FromSeconds(Config.Core_RunConfig._PlayWindowDanmaSpeed);
+            }
+            else
+            {
+                animation.Duration = TimeSpan.FromSeconds(_width / 800 * Config.Core_RunConfig._PlayWindowDanmaSpeed);
+            }
             animation.AutoReverse = false;
             animation.Completed += (object sender, EventArgs e) =>
             {

@@ -538,7 +538,105 @@
                         
                     </StackPanel>
                 </ui:CardExpander>
-               
+                <ui:CardExpander Grid.Row="4" Icon="{ui:SymbolIcon CalendarPlay20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放窗设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="在线播放功能相关设置" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0,24,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
+                        </Grid>
+
+                        <ui:CardExpander Icon="{ui:SymbolIcon Chat20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放窗弹幕" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="针对标准播放窗口的弹幕相关设置内容" />
+                                    </Grid>
+
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Row="0" Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="打开播放器时默认开关" />
+                                        <CheckBox Name="PlayWindowDanmaSwitch_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="默认打开弹幕" IsChecked="{Binding _PlayWindowDanmaSwitch, Mode=OneWay}"/>
+                                    </Grid>
+                                    <Grid Grid.Row="0" Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕字体大小" />
+                                        <ui:NumberBox Name="PlayWindowDanmaSize"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _PlayWindowDanmaFontSize, Mode=OneWay}"/>
+                                    </Grid>
+                                    <Grid Grid.Row="0" Grid.Column="2">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度" />
+                                        <ui:NumberBox Name="PlayWindowDanmaSpeed_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _PlayWindowDanmaSpeed, Mode=OneWay}"/>
+                                    </Grid>
+                                    <Grid Grid.Row="0" Grid.Column="3">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度是否跟随播放大小变化动态变化" />
+                                        <CheckBox Name="PlayWindowDanmaSpeed_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="跟随" IsChecked="{Binding _PlayDanmaSpeed_Dynamically, Mode=OneWay}"/>
+                                    </Grid>
+                                    
+                                  
+                                </Grid>
+                                
+                            </StackPanel>
+                        </ui:CardExpander>
+
+                    </StackPanel>
+
+                </ui:CardExpander>
             </Grid>
 
         </StackPanel>

@@ -1485,10 +1485,10 @@ namespace Core
                 }
             }
 
-            private static string PlayWindowSubtitleFontSize = "26";
+            private static string PlayWindowSubtitleFontSize = "30";
             /// <summary>
             /// 播放窗口字幕字号
-            /// 默认值：1250
+            /// 默认值：30
             /// </summary>
             public int _PlayWindowSubtitleFontSize
             {
@@ -1507,10 +1507,10 @@ namespace Core
                 }
             }
 
-            private static string PlayWindowDanmaFontSize = "26";
+            private static string PlayWindowDanmaFontSize = "30";
             /// <summary>
             /// 播放窗口弹幕字号
-            /// 默认值：1250
+            /// 默认值：30
             /// </summary>
             public int _PlayWindowDanmaFontSize
             {
@@ -1551,7 +1551,7 @@ namespace Core
                 }
             }
 
-            private static string PlayWindowDanmaSpeed = "15";
+            private static string PlayWindowDanmaSpeed = "6";
             /// <summary>
             /// 播放窗口弹幕速度
             /// 默认值：15
@@ -1572,6 +1572,51 @@ namespace Core
                     }
                 }
             }
+
+            private static string PlayDanmaSpeed_Dynamically = "false";
+            /// <summary>
+            /// 播放窗口弹幕速度是否跟随窗口变化变化
+            /// 默认值：false
+            /// </summary>
+            public bool _PlayDanmaSpeed_Dynamically
+            {
+                get
+                {
+                    return bool.Parse(PlayDanmaSpeed_Dynamically);
+                }
+                set
+                {
+                    if (value.ToString() != PlayDanmaSpeed_Dynamically)
+                    {
+                        PlayDanmaSpeed_Dynamically = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string PlayWindowDanmaSwitch = "false";
+            /// <summary>
+            /// 打开播放窗时，是否默认打开弹幕
+            /// 默认值：false
+            /// </summary>
+            public bool _PlayWindowDanmaSwitch
+            {
+                get
+                {
+                    return bool.Parse(PlayWindowDanmaSwitch);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowDanmaSwitch)
+                    {
+                        PlayWindowDanmaSwitch = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }
