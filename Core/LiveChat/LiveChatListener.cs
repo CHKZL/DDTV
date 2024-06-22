@@ -64,6 +64,7 @@ namespace Core.LiveChat
             {
                 m_ReceiveBuffer = new byte[1024 * 512];
                 State = true;
+                
                 await ConnectAsync();
             }
             catch (Exception e)

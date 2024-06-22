@@ -30,7 +30,7 @@ namespace Core.Tools
         /// </summary>
         /// <param name="Text"></param>
         /// <returns></returns>
-        public static string ReplaceKeyword(string Text, DateTime dateTime = default,long uid=-1)
+        public static string ReplaceKeyword(string Text, DateTime dateTime = default,long uid=-1,bool Stop=false)
         {
             RoomCardClass roomCardClass = new RoomCardClass();
             if (uid != -1)
@@ -46,8 +46,12 @@ namespace Core.Tools
                     Title = new() { Value = "【自我介绍】大家好！我叫绊(kizuna)爱(ai)" },
                 };
             }
-            string WorkPath = ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}", DateTime.Now, uid);
-            WorkPath = Path.GetFullPath(WorkPath);
+            string WorkPath = "";
+            if (!Stop)
+            {
+                WorkPath = ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}", DateTime.Now, uid, true);
+                WorkPath = Path.GetFullPath(WorkPath);
+            }
 
             Text = Text
                 .Replace("{ROOMID}", roomCardClass.RoomId.ToString())
