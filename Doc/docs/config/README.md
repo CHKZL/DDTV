@@ -1,8 +1,10 @@
 # 配置文件说明
 
+配置文件都保存在`./bin/Config/`文件夹中
+
 ## 当前存在的配置文件列表
-|文件名|DDTV_GUI适用|DDTV_WEB_Server适用|功能|是否可编辑|
+|文件名||功能|是否可编辑|
 |:--:|:--:|:--:|:--:|:--:|
-|RoomListConfig.json|✔️|✔️|房间配置信息|✔️|
-|DDTV_Config.ini|✔️|✔️|DDTV的通用配置文件|✔️|
-|BiliUser.ini|✔️|✔️|用户本地加密缓存扫码登陆阿B信息||
+|RoomListConfig.json|房间配置信息|✔️|
+|DDTV_Config.ini|DDTV的通用配置文件|✔️|
+|BiliUser.ini|用户本地加密缓存扫码登陆阿B信息（通过本地秘钥加密，纯本地保存）|
