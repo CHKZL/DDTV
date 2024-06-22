@@ -31,6 +31,13 @@ namespace Core
 
         public static void Start(string[] args)
         {
+            if (!OperatingSystem.IsWindows())
+            {
+                Console.WriteLine("当前为非Windows环境，请确保已安装ffmpeg，否则自动修复和封装转码会失败！");
+                Console.WriteLine("当前为非Windows环境，请确保已安装ffmpeg，否则自动修复和封装转码会失败！");
+                Console.WriteLine("当前为非Windows环境，请确保已安装ffmpeg，否则自动修复和封装转码会失败！");
+                Console.WriteLine("如确认已安装，可忽略该消息。");
+            }
             stopwatch.Start();
             CoreStartCompletEvent += (sender, e) =>
             {
@@ -67,6 +74,7 @@ namespace Core
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
             StartStatistics();
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
+            
 
         }
 
