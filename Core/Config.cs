@@ -88,6 +88,7 @@ namespace Core
         {
             { "StartMode", ExpandOption.SetStartMode },
             { "RecordingMode", ExpandOption.SetRecordingMode },
+            { "no-update", ExpandOption.SetNoUpdate}
         };
 
         public static RunConfig Core_RunConfig { get; set; } = new();
@@ -146,6 +147,10 @@ namespace Core
                         Core_RunConfig._RecordingMode = RecordingMode.HLS_Only;
                         break;
                 }
+            }
+            internal static void SetNoUpdate(string value)
+            {
+                ProgramUpdates.Effective = false;
             }
         }
 

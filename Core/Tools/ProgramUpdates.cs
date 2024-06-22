@@ -26,10 +26,15 @@ namespace Core.Tools
         private static string type = string.Empty;
         private static string ver = string.Empty;
         public static event EventHandler<EventArgs> NewVersionAvailableEvent;//检测到新版本
+        /// <summary>
+        /// 更新程序是否生效
+        /// </summary>
+        public static bool Effective = true;
 
         public static async void RegularInspection(object state)
         {
-            await CheckForNewVersions();
+            if (Effective)
+                await CheckForNewVersions();
         }
 
         internal static bool GetCurrentVersion()

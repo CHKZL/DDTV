@@ -84,15 +84,7 @@ namespace Core
         /// 启动参数初始化
         /// </summary>
         private static void StartParameterInitialization(string[] args)
-        {
-            string? DockerEnvironment = Environment.GetEnvironmentVariable("DDTV_Docker_Project");
-            if (!string.IsNullOrEmpty(DockerEnvironment))
-            {
-                if (DockerEnvironment =="DDTV_Server")
-                {
-                    Init.Mode = Mode.Docker;
-                }
-            }
+        {      
             foreach (var arg in args)
             {
                 if (arg.StartsWith("--"))
@@ -117,6 +109,14 @@ namespace Core
                     {
                         Console.WriteLine($"未知的option: {optionName}");
                     }
+                }
+            }
+            string? DockerEnvironment = Environment.GetEnvironmentVariable("DDTV_Docker_Project");
+            if (!string.IsNullOrEmpty(DockerEnvironment))
+            {
+                if (DockerEnvironment =="DDTV_Server")
+                {
+                    Init.Mode = Mode.Docker;
                 }
             }
         }
