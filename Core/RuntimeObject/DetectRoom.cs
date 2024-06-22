@@ -38,107 +38,116 @@ namespace Core.RuntimeObject
         /// <param name="roomCard"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, (RoomCardClass Card, bool IsFirst) LiveInvoke)
         {
-            RoomCardClass roomCard = LiveInvoke.Card;
-            List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
-
-            if (roomCard.live_status.Value != 1)
+            try
             {
-                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.RoomId}({roomCard.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
-                return;
-            }
 
-           
 
-            ////如果Core的初始化时间小于20秒，则认为该任务是之前就开播了，不当作新开播任务
-            //bool  = Core.Init.GetRunTime() > 20 ? true : false;
-            OperationQueue.Add(Opcode.Download.StartLiveEvent, $"开播事件，房间UID:{roomCard.UID}", roomCard.UID);
+                RoomCardClass roomCard = LiveInvoke.Card;
+                List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
 
-            if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
-            {
-                // 这里应该是开播广播事件
-
-                OperationQueue.Add(Opcode.Download.StartBroadcastingReminder, $"开播提醒，房间UID:{roomCard.UID}", roomCard.UID);
-            }
-
-            if (roomCard.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || roomCard.AppointmentRecord)
-            {
-                if (roomCard.DownInfo.IsDownload)
+                if (roomCard.live_status.Value != 1)
                 {
-                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                    Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.RoomId}({roomCard.Name})触发录制事件，但目前该房间检测到未开播，跳过本次录制任务");
                     return;
                 }
-                roomCard.DownInfo.IsDownload = true;
-                if (roomCard.IsRecDanmu)
-                {              
-                    if (roomCard.DownInfo.LiveChatListener == null)
-                    {
-                        roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
-                        roomCard.DownInfo.LiveChatListener.Connect();
-                    }
-                    else if (!roomCard.DownInfo.LiveChatListener.State)
-                    {
-                        roomCard.DownInfo.LiveChatListener.Connect();
-                    }
-                    roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
-                }
-                try
+
+                OperationQueue.Add(Opcode.Download.StartLiveEvent, $"开播事件，房间UID:{roomCard.UID}", roomCard.UID);
+
+                if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
                 {
+                    // 这里应该是开播广播事件
+
+                    OperationQueue.Add(Opcode.Download.StartBroadcastingReminder, $"开播提醒，房间UID:{roomCard.UID}", roomCard.UID);
+                }
+                
+                if (roomCard.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || roomCard.AppointmentRecord)
+                {
+                    if (roomCard.DownInfo.IsDownload)
+                    {
+                        Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                        return;
+                    }
+                    roomCard.DownInfo.IsDownload = true;
                     if (roomCard.IsRecDanmu)
                     {
-                        roomCard.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
-                    }
-                    bool Reconnection = false;
-                    do
-                    {
-                        //如果是启动后第一次房间状态查询就触发下载，那就当作重连处理
-                        if(LiveInvoke.IsFirst)
+                        
+                        if (roomCard.DownInfo.LiveChatListener == null)
                         {
-                            Reconnection = true;
+                            roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                            roomCard.DownInfo.LiveChatListener.Connect();
                         }
-                        //核心下载函数
-                        await Basics.HandleRecordingAsync(roomCard, triggerTypes, Reconnection,LiveInvoke.IsFirst);
-                        //设置为重连模式
-                        Reconnection = true;
-                    }
-                    //如果检测到还在开播，且用户没有取消，那么就再来一次
-                    while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special);
-
-                    //执行shell
-                    if(OperatingSystem.IsLinux() && Config.Core_RunConfig._Linux_Only_ShellSwitch)
-                    {
-                        Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
+                        else if (!roomCard.DownInfo.LiveChatListener.State)
+                        {
+                            roomCard.DownInfo.LiveChatListener.Connect();
+                        }
+                        roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
                     }
                     
-
-                    //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
-                    Basics.DownloadCompletedReset(ref roomCard);
-                    string msg = $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : "");
-                    OperationQueue.Add(Opcode.Download.RecordingEnd, msg, roomCard.UID);
-                    Log.Info(nameof(DetectRoom_LiveStart), msg);
-                    roomCard.DownInfo.Unmark = false;
-                    roomCard.DownInfo.IsDownload = false;
-                }
-                finally
-                {
-                    if (roomCard.DownInfo.LiveChatListener != null)
+                    try
                     {
-                        roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
-                        if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
+                        if (roomCard.IsRecDanmu)
                         {
-                            roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
-                            try
-                            {
-                                roomCard.DownInfo.LiveChatListener.Dispose();
-                                roomCard.DownInfo.LiveChatListener = null;
-                            }
-                            catch (Exception)
-                            { }
+                            if (roomCard.DownInfo.LiveChatListener != null)
+                                roomCard.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
                         }
-                    }
+                        bool Reconnection = false;
+                        do
+                        {
+                            //如果是启动后第一次房间状态查询就触发下载，那就当作重连处理
+                            if (LiveInvoke.IsFirst)
+                            {
+                                Reconnection = true;
+                            }
+                            //核心下载函数
+                            await Basics.HandleRecordingAsync(roomCard, triggerTypes, Reconnection, LiveInvoke.IsFirst);
+                            //设置为重连模式
+                            Reconnection = true;
+                        }
+                        //如果检测到还在开播，且用户没有取消，那么就再来一次
+                        while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special);
 
+                        //执行shell
+                        if (OperatingSystem.IsLinux() && Config.Core_RunConfig._Linux_Only_ShellSwitch)
+                        {
+                            Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
+                        }
+
+
+                        //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
+                        Basics.DownloadCompletedReset(ref roomCard);
+                        string msg = $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : "");
+                        OperationQueue.Add(Opcode.Download.RecordingEnd, msg, roomCard.UID);
+                        Log.Info(nameof(DetectRoom_LiveStart), msg);
+                        roomCard.DownInfo.Unmark = false;
+                        roomCard.DownInfo.IsDownload = false;
+                    }
+                    finally
+                    {
+                        if (roomCard.DownInfo.LiveChatListener != null)
+                        {
+                            roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
+                            if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)
+                            {
+                                roomCard.DownInfo.LiveChatListener.DanmuMessage = null;
+                                try
+                                {
+                                    roomCard.DownInfo.LiveChatListener.Dispose();
+                                    roomCard.DownInfo.LiveChatListener = null;
+                                }
+                                catch (Exception)
+                                { }
+                            }
+                        }
+
+                    }
                 }
             }
+            catch (Exception)
+            {
+                ;
+            }
         }
+
 
 
 
