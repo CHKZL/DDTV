@@ -51,7 +51,6 @@ namespace Desktop.Views.Control
                         Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid);
                         vlcPlayWindow.Show();
                     });
-
                 }
                 else
                 {
@@ -60,12 +59,8 @@ namespace Desktop.Views.Control
                         Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
                         WebPlayWindow.Show();
                     });
-
                 }
-
             });
-
-
         }
 
         /// <summary>

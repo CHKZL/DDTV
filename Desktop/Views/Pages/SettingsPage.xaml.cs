@@ -14,6 +14,8 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
 using System.Windows.Navigation;
 using Wpf.Ui;
 using Wpf.Ui.Appearance;
@@ -34,6 +36,41 @@ public partial class SettingsPage
     {
         InitializeComponent();
         this.DataContext = configViewModel;
+
+
+        SaveTipsAnimation();
+
+    }
+
+    private void SaveTipsAnimation()
+    {
+        int basicTime = 400;
+
+        // 创建一个颜色动画
+        ColorAnimationUsingKeyFrames colorAnimation = new ColorAnimationUsingKeyFrames();
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 0))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Orange, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 1))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Yellow, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 2))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 3))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Cyan, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 4))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 5))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Purple, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 6))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 7))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Cyan, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 8))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 9))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Yellow, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 10))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Orange, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 11))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 12))));
+        colorAnimation.RepeatBehavior = RepeatBehavior.Forever;
+
+        // 创建一个线性渐变刷，并将动画应用到其中一个渐变停止的颜色上
+        LinearGradientBrush brush = new LinearGradientBrush();
+        GradientStop stop = new GradientStop();
+        brush.GradientStops.Add(stop);
+        stop.BeginAnimation(GradientStop.ColorProperty, colorAnimation);
+
+        // 将刷子应用到TextBlock的前景色上
+        SaveTips.Foreground = brush;
     }
 
     /// <summary>

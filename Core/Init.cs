@@ -26,10 +26,12 @@ namespace Core
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
         private static Timer Update_Timer;
+        
+        private static Stopwatch stopwatch = new Stopwatch();
 
         public static void Start(string[] args)
         {
-
+            stopwatch.Start();
             CoreStartCompletEvent += (sender, e) =>
             {
                 //注册Core启动完成触发事件
@@ -49,7 +51,7 @@ namespace Core
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             //给文件系统一点时间创建各种路径
-            Thread.Sleep(50);
+            Thread.Sleep(100);
             Log.LogInit();
             Log.Info(nameof(Init), $"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init), $"检查和创建必要的目录");
@@ -57,14 +59,14 @@ namespace Core
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
             Core.RuntimeObject.Account.CheckLoginStatus();
-            Log.Info(nameof(Init), $"Core初始化完成");
+            Log.Info(nameof(Init), $"Core初始化完成");         
+            Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
-            stopwatch.Start();
+            
             Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
             StartStatistics();
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
-
 
         }
 
@@ -99,7 +101,6 @@ namespace Core
                     {
                         optionName = arg.Substring(2); // 获取选项名称
                     }
-
                     if (OptionHandlers.ContainsKey(optionName))
                     {
                         OptionHandlers[optionName](optionValue);
@@ -111,7 +112,6 @@ namespace Core
                 }
             }
         }
-
 
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace Core
             }
         }
 
-        private static Stopwatch stopwatch = new Stopwatch();
+        
 
         /// <summary>
         /// 初始化文件和目录

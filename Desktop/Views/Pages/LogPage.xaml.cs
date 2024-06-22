@@ -31,13 +31,17 @@ public partial class LogPage
 
     private void Log_LogAddEvent(object? sender, EventArgs e)
     {
-        Application.Current.Dispatcher.Invoke(() =>
+        LogClass? logClass = (LogClass)sender;
+        if (logClass != null && !logClass.Message.Contains("使用内存"))
         {
-            LogCollection.Insert(0, (LogClass)sender);
-            while (LogCollection.Count > 200)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                LogCollection.RemoveAt(LogCollection.Count - 1);
-            }
-        });
+                LogCollection.Insert(0, (LogClass)sender);
+                while (LogCollection.Count > 200)
+                {
+                    LogCollection.RemoveAt(LogCollection.Count - 1);
+                }
+            });
+        }
     }
 }

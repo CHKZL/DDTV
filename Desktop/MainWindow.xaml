@@ -53,6 +53,11 @@
                             <ui:SymbolIcon Symbol="Receipt20" />
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="关于" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:AboutPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="DrinkCoffee20" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
                 </ui:NavigationView.MenuItems>
                 <ui:NavigationView.FooterMenuItems>
                     <ui:NavigationViewItem Content="设置" NavigationCacheMode="Disabled" TargetPageType="{x:Type pages:SettingsPage}">
@@ -61,6 +66,7 @@
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
                 </ui:NavigationView.FooterMenuItems>
+                
             </ui:NavigationView>
 
             <ui:TitleBar Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/DDTV.ico" />

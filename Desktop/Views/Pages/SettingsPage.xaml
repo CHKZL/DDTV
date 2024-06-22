@@ -24,7 +24,14 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button Grid.Column="0" Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Left" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
-                <ui:TextBlock Grid.Column="1" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Left"  Text="请注意：未保存退出当前页面将丢失已修改内容" />
+
+
+
+                <ui:TextBlock Name="SaveTips" Grid.Column="1" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Left"  Text="请注意：未保存退出当前页面将丢失已修改内容" />
+                
+                
+                
+                
                 <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
             </Grid>
 
@@ -531,71 +538,7 @@
                         
                     </StackPanel>
                 </ui:CardExpander>
-                <!--关于-->
-                <Grid Grid.Row="99">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Margin="0,24,0,0" FontSize="20" FontWeight="Medium" Text="关于" />
-                    <ui:CardExpander Grid.Row="1" VerticalAlignment="Bottom">
-                        <ui:CardExpander.Icon>
-                            <ui:ImageIcon Source="pack://application:,,,/Assets/DDTV.ico" Width="50"/>
-                        </ui:CardExpander.Icon>
-                        <ui:CardExpander.Header>
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="DDTV" />
-                                <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="Copyright © 2024 Open Source Community." />
-                            </Grid>
-                        </ui:CardExpander.Header>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <!--<StackPanel Grid.Row="0" Margin="24,20,24,0">
-                                <Grid>
-                                    <TextBlock Margin="0,0,0,0" FontSize="14" FontWeight="Medium" Text="查看文档" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                                    <ui:Anchor Margin="0,0,0,0" Content="https://ddtv.pro" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://ddtv.pro" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </StackPanel>-->
-
-                            <StackPanel Grid.Row="1" Margin="24,20,24,0">
-                                <Grid>
-                                    <TextBlock Margin="0,0,0,0" FontSize="14" FontWeight="Medium" Text="项目地址" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                                    <ui:Anchor Margin="0,0,0,0" Content="https://github.com/CHKZL/DDTV" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="2" Margin="24,20,24,0">
-                                <Grid>
-                                    <TextBlock Margin="0,0,0,0" FontSize="14" FontWeight="Medium" Text="问题反馈" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                                    <ui:Anchor Margin="0,0,0,0" Content="https://github.com/CHKZL/DDTV/issues" Icon="{ui:SymbolIcon Link24}" NavigateUri="https://github.com/CHKZL/DDTV/issues" VerticalAlignment="Center" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </StackPanel>
-
-                            <StackPanel Grid.Row="3" Margin="24,20,24,0">
-                                <Grid>
-                                    <TextBlock Margin="0,0,0,0" FontSize="14" FontWeight="Medium" Text="其他问题" VerticalAlignment="Center" HorizontalAlignment="Left" />
-                                    <TextBlock Margin="0,0,0,0" FontSize="14" FontWeight="Medium" Text="请加群：338182356" VerticalAlignment="Center" HorizontalAlignment="Right" />
-                                </Grid>
-                            </StackPanel>
-                        </Grid>
-
-                    </ui:CardExpander>
-                    
-                </Grid>
+               
             </Grid>
 
         </StackPanel>
