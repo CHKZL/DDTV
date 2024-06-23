@@ -41,6 +41,7 @@ namespace Server
         // 这个方法用于配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;

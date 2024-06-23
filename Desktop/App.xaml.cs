@@ -12,6 +12,7 @@ using Wpf.Ui;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using Microsoft.AspNetCore.Http.Features;
+using System.IO;
 
 
 
@@ -29,6 +30,8 @@ namespace Desktop
         {
             try
             {
+                Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
+                Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
                 base.OnStartup(e);
                 var services = new ServiceCollection();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
