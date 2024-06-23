@@ -256,6 +256,8 @@ namespace Core.LiveChat
                 catch (Exception e)
                 {
                     string A = e.ToString();
+                    Log.Error(nameof(_innerHeartbeat), $"检测到网络环境发生变化，出现错误", e);
+                    break;
                 }
                 //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:over");
             }
