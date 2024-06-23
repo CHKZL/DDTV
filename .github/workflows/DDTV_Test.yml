@@ -150,12 +150,6 @@ jobs:
         run: cp -r Static Server/build_output/Static
 
 
-      - name: Copy ffmpeg.exe (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir Server\\build_output\\Plugins\\ffmpeg
-          copy Server\\Plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
-
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
         run: |       
