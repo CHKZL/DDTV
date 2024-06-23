@@ -85,11 +85,11 @@ namespace Desktop.Views.Windows
         {
             if ((bool)RecDanmuChechBox.IsChecked)
             {
-                _IsDanmu = true;
+                _IsRemind = true;
             }
             else
             {
-                _IsDanmu = false;
+                _IsRemind = false;
             }
         }
 
