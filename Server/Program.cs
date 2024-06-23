@@ -27,6 +27,7 @@ namespace Server
 
         public static async Task Main(string[] args)
         {
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             try
             {
                 if (!Array.Exists(args, element => element.Contains("--StartMode")))

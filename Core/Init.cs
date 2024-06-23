@@ -47,7 +47,7 @@ namespace Core
 
             //启动参数初始化
             StartParameterInitialization(args);
-
+            Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             //初始化文件和目录
