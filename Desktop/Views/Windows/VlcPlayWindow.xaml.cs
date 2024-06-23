@@ -226,10 +226,21 @@ namespace Desktop.Views.Windows
                         CancellationTokenSource cts = new CancellationTokenSource();
                         Task task = Task.Run(() =>
                         {
-                            var media = new Media(_libVLC, Url, FromType.FromLocation);
+                            if (_libVLC != null && !string.IsNullOrEmpty(Url))
+                            {
+                                var media = new Media(_libVLC, Url, FromType.FromLocation);
 
-                            _mediaPlayer.Media = media;
-                            _mediaPlayer.Play();
+                                _mediaPlayer.Media = media;
+                                _mediaPlayer?.Play();
+                            }
+                            else
+                            {
+                                vlcPlayModels.MessageVisibility = Visibility.Visible;
+                                vlcPlayModels.OnPropertyChanged("MessageVisibility");
+                                vlcPlayModels.MessageText = "直播间已下拨获取地址失败，如需更新请右键刷新";
+                                vlcPlayModels.OnPropertyChanged("MessageText");
+                                return;
+                            }
                         }, cts.Token);
 
                         if (!task.Wait(TimeSpan.FromSeconds(10)))
