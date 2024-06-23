@@ -30,7 +30,14 @@ namespace Core
 
             lock (varMap)
                 foreach (var fieldInfo in _Config)
+                {
                     varMap.Add(fieldInfo.Name, fieldInfo);
+                    if (!fieldInfo.Name.ToLower().Contains("Access"))
+                    {
+                        string ConfigText = $"从配置文件获取参数初始化：{fieldInfo.Name}={fieldInfo.GetValue(null)}";
+                        Log.Info(nameof(Config), ConfigText);
+                    }
+                }
             Thread.Sleep(500);
             ReadConfiguration();
             RoomConfig.LoadRoomConfigurationFile();
