@@ -53,7 +53,6 @@ namespace Core
             //初始化文件和目录
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;

@@ -14,6 +14,7 @@ using Server.WebAppServices.Middleware;
 using System.Runtime.InteropServices;
 using Core;
 using Microsoft.AspNetCore.Http.Features;
+using System.Net;
 
 namespace Server
 {
@@ -40,6 +41,10 @@ namespace Server
         // 这个方法用于配置HTTP请求管道
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            ServicePointManager.DnsRefreshTimeout = 0;
+            ServicePointManager.DefaultConnectionLimit = 4096 * 16;
+            ServicePointManager.Expect100Continue = false;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             app.UseWebSockets();
             app.UseMiddleware<WebSocketControl>();
             app.UseMiddleware<AccessControl>();
