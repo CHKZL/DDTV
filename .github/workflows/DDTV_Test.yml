@@ -150,15 +150,11 @@ jobs:
         run: cp -r Static Server/build_output/Static
 
 
-      - name: Move ffmpeg (Windows)  
-        if: runner.os == 'Windows'
-        shell: pwsh
+      - name: Copy ffmpeg.exe (Windows)
+        if: matrix.os == 'windows-latest'
         run: |
-          $source = "Server/build_output/Plugins/*"
-          $destination = "Server/build_output/Plugins"
-    
-          New-Item -ItemType Directory -Force -Path $destination
-          Move-Item -Path $source -Destination $destination -Force
+          mkdir Server\\build_output\\Plugins\\ffmpeg
+          copy Server\\Plugins\\ffmpeg\\ffmpeg.exe Server\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
 
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
