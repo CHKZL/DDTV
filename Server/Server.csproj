@@ -19,23 +19,11 @@
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
 	</ItemGroup>
 
-	<!--包含ffmpeg.exe -->
-	<ItemGroup Condition="'@(Contain-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
-		<None Update="Plugins\ffmpeg\ffmpeg.exe">
-			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-		</None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<Contain Include="win-x86;win-x64" />
 	</ItemGroup>
 
-	<!-- 不包含ffmpeg.exe -->
-	<ItemGroup Condition="'@(Exclud-&gt;Contains($(RuntimeIdentifier)))' == 'True'">
-		<None Update="Plugins\ffmpeg\ffmpeg.exe">
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
-		</None>
-	</ItemGroup>
 	<ItemGroup>
 	  <Content Include="resource\DDTV.ico" />
 	</ItemGroup>
@@ -51,7 +39,7 @@
 
 
 	<ItemGroup>
-	  <None Update="PluginsPlugins\ffmpeg\ffmpeg.exe">
+	  <None Update="Plugins\ffmpeg\ffmpeg.exe">
 	    <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 	  </None>
 	  <None Update="resource\DDTV.ico">
