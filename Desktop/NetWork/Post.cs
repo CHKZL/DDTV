@@ -17,6 +17,8 @@ namespace Desktop.NetWork
 {
     public class Post
     {
+        static int PostErrorCount = 0;
+        static bool First = true;
         /// <summary>
         /// 同步POST方法
         /// </summary>
@@ -51,7 +53,7 @@ namespace Desktop.NetWork
                 dic.Remove("access_key_secret");
                 using (HttpClient client = new HttpClient())
                 {
-                    client.Timeout = new TimeSpan(0,0,8);
+                    client.Timeout = new TimeSpan(0, 0, 8);
                     var content = new FormUrlEncodedContent(dic);
                     var response = await client.PostAsync(url, content);
                     var responseString = response.Content.ReadAsStringAsync().Result;
@@ -61,7 +63,21 @@ namespace Desktop.NetWork
             }
             catch (Exception ex)
             {
-                Log.Warn(nameof(PostBody),$"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}",ex);
+                PostErrorCount++;
+                if (PostErrorCount > 30)
+                {
+                    PostErrorCount = 0;
+                    Log.Warn(nameof(PostBody), $"发起Post请求出错Conut达到50，如需查看详情，请查看sqlite日志文件");
+                }
+                if (First)
+                {
+                    First = false;
+                    Log.Warn(nameof(PostBody), $"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
+                }
+                else
+                {
+                    Log.Warn(nameof(PostBody), $"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
+                }
                 return default;
             }
         }

@@ -102,7 +102,7 @@ namespace Desktop
             Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
             //初始化底部提示框
             SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
-            SnackbarService.SetSnackbarPresenter(ConfigSnackbar);
+            SnackbarService.SetSnackbarPresenter(MainSnackbar);
             //初始化托盘
             notify();
             //初始化确认窗口

@@ -18,6 +18,8 @@ namespace Desktop.NetWork
 {
     public class Get
     {
+        static int GetErrorCount = 0;
+        static bool First = true;
         public static T GetBody<T>(string url, Dictionary<string, string> _dic = null)
         {
             if (!string.IsNullOrEmpty(url) && url.Substring(0, 4) != "http")
@@ -59,8 +61,24 @@ namespace Desktop.NetWork
                     return A.data;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                GetErrorCount++;
+                if (GetErrorCount > 30)
+                {
+                    GetErrorCount = 0;
+                    Log.Warn(nameof(GetBody), $"发起Get请求出错Conut达到50，如需查看详情，请查看sqlite日志文件");
+                }
+                if (First)
+                {
+                    First = false;
+                    Log.Warn(nameof(GetBody), $"发起Get请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
+                }
+                else
+                {
+                    Log.Warn(nameof(GetBody), $"发起Get请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
+                }
+                
                 return default;
             }
         }
