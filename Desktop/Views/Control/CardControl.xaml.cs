@@ -137,7 +137,17 @@ namespace Desktop.Views.Control
                 if (State == null)
                 {
                     Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
+                    Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.SnackbarService.Show("删除房间失败", $"操作{dataCard.Nickname}({dataCard.Room_Id})时调用Core的API[batch_delete_rooms]删除房间失败", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle20), TimeSpan.FromSeconds(3));
+                    });
+                    return;
                 }
+                Dispatcher.Invoke(() =>
+                {
+                    MainWindow.SnackbarService.Show("删除房间成功", $"{dataCard.Nickname}({dataCard.Room_Id})已从房间配置中删除", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark20), TimeSpan.FromSeconds(3));
+                });
+
             });
 
         }
@@ -155,6 +165,17 @@ namespace Desktop.Views.Control
                 if (State == false)
                 {
                     Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);
+                    Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.SnackbarService.Show("取消录制失败", $"操作{dataCard.Nickname}({dataCard.Room_Id})时调用Core的API[cancel_task]取消录制任务失败", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle20), TimeSpan.FromSeconds(3));
+                    });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.SnackbarService.Show("取消录制成功", $"已取消{dataCard.Nickname}({dataCard.Room_Id})的录制任务", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark20), TimeSpan.FromSeconds(3));
+                    });
                 }
             });
         }
