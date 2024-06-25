@@ -23,8 +23,7 @@ namespace Desktop
     /// </summary>
     public partial class App : Application
     {
-        public static ServiceProvider _ServiceProvider;
-
+        public static ServiceProvider _MainSnackbarServiceProvider;
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -35,7 +34,7 @@ namespace Desktop
                 base.OnStartup(e);
                 var services = new ServiceCollection();
                 services.AddSingleton<ISnackbarService, SnackbarService>();
-                _ServiceProvider = services.BuildServiceProvider();
+                _MainSnackbarServiceProvider = services.BuildServiceProvider();
                 Host.CreateDefaultBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {

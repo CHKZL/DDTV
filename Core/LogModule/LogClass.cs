@@ -12,6 +12,8 @@ namespace Core.LogModule
     
     public class LogClass
     {
+
+
         public enum LogType
         {
             /// <summary>

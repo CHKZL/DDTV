@@ -7,6 +7,8 @@ using Desktop.Views.Windows.DanMuCanvas.BarrageParameters;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.DependencyInjection;
+using Notifications.Wpf;
 using SharpCompress.Common;
 using SkiaSharp;
 using System;
@@ -26,6 +28,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Wpf.Ui;
 using Wpf.Ui.Controls;
 using static Core.Config;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
@@ -42,9 +45,22 @@ namespace Desktop.Views.Windows
 
         private LibVLC _libVLC;
         private LibVLCSharp.Shared.MediaPlayer _mediaPlayer;
+        /// <summary>
+        /// 窗口展示内容数据绑定源
+        /// </summary>
         internal VlcPlayModels vlcPlayModels { get; private set; }
+        /// <summary>
+        /// 当前窗口弹幕开关状态
+        /// </summary>
         private bool DanmaSwitch = false;
-
+        /// <summary>
+        /// 当前窗口的置顶状态
+        /// </summary>
+        private bool TopMostSwitch = false; 
+        /// <summary>
+        /// 当前播放窗口所属的房间卡
+        /// </summary>
+        private RoomCardClass roomCard = new();
         /// <summary>
         /// 弹幕渲染实例
         /// </summary>
@@ -59,7 +75,6 @@ namespace Desktop.Views.Windows
             public int Time { get; set; } = 0;
         }
 
-        private RoomCardClass roomCard = new();
         public VlcPlayWindow(long uid)
         {
             InitializeComponent();
@@ -524,11 +539,39 @@ namespace Desktop.Views.Windows
         {
             if(DanmaSwitch)
             {
+                SetNotificatom("关闭弹幕显示",$"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已关闭");
                 CloseDanma();
             }
             else
             {
+                SetNotificatom("打开弹幕显示",$"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已打开");
                 SetDanma();
+            }
+        }
+
+        private void SetNotificatom(string Title, string Message="'")
+        {
+            MainWindow.notificationManager.Show(new NotificationContent
+            {
+                Title = Title,
+                Message = Message,
+                Type = NotificationType.Success
+            });
+        }
+
+        private void MenuItem_TopMost_Click(object sender, RoutedEventArgs e)
+        {
+            if (TopMostSwitch)
+            {
+                this.Topmost = false;
+                TopMostSwitch = false;
+                SetNotificatom("撤销窗口置顶",$"{roomCard.Name}({roomCard.RoomId})窗口置顶已关闭");
+            }
+            else
+            {
+                this.Topmost = true;
+                TopMostSwitch = true;
+                SetNotificatom("打开窗口置顶",$"{roomCard.Name}({roomCard.RoomId})窗口置顶已打开");
             }
         }
     }
