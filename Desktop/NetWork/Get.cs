@@ -65,9 +65,9 @@ namespace Desktop.NetWork
             {
                 GetErrorCount++;
                 if (GetErrorCount > 30)
-                {
+                {     
+                    Log.Warn(nameof(GetBody), $"触发DesktopTips={GetErrorCount}");
                     GetErrorCount = 0;
-                    Log.Warn(nameof(GetBody), $"发起Get请求出错Conut达到50，如需查看详情，请查看sqlite日志文件");
                 }
                 if (First)
                 {

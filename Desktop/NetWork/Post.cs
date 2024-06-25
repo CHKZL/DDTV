@@ -66,8 +66,8 @@ namespace Desktop.NetWork
                 PostErrorCount++;
                 if (PostErrorCount > 30)
                 {
+                    Log.Warn(nameof(PostBody), $"触发DesktopTips={PostErrorCount}");
                     PostErrorCount = 0;
-                    Log.Warn(nameof(PostBody), $"发起Post请求出错Conut达到50，如需查看详情，请查看sqlite日志文件");
                 }
                 if (First)
                 {

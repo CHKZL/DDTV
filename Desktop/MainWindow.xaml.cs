@@ -41,7 +41,7 @@ namespace Desktop
         /// <summary>
         /// 系统托盘通知
         /// </summary>
-        public NotificationManager notificationManager = new NotificationManager();
+        public static NotificationManager notificationManager = new NotificationManager();
         /// <summary>
         /// 确认窗口
         /// </summary>
@@ -101,7 +101,7 @@ namespace Desktop
             //设置默认显示页
             Loaded += (_, _) => RootNavigation.Navigate(typeof(DefaultPage));
             //初始化底部提示框
-            SnackbarService = Desktop.App._ServiceProvider.GetRequiredService<ISnackbarService>();
+            SnackbarService = Desktop.App._MainSnackbarServiceProvider.GetRequiredService<ISnackbarService>();
             SnackbarService.SetSnackbarPresenter(MainSnackbar);
             //初始化托盘
             notify();

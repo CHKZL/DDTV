@@ -20,10 +20,11 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-
-        <ui:ListView Margin="0,0,0,0" Name="LogView"  ItemsSource="{Binding LogCollection}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}">
+        <ui:TextBlock Name="LogTips" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Right"  Text="Log系统状态:记录中 tag标记:"/>
+        <ui:ListView Grid.Row="1" Margin="0,0,0,0" Name="LogView"  ItemsSource="{Binding LogCollection}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}">
             <ui:ListView.View>
                 <ui:GridView>
                     <ui:GridViewColumn MinWidth="70"  DisplayMemberBinding="{Binding Type}" Header="类型"/>

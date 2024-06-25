@@ -16,7 +16,7 @@ namespace Desktop.Views.Pages;
 public partial class LogPage
 {
     public ObservableCollection<LogClass> LogCollection = new();
-
+    static long ErrorCount = 0;
 
     public LogPage()
     {
@@ -27,6 +27,7 @@ public partial class LogPage
             LogCollection.Add(log);
         }
         Log.LogAddEvent += Log_LogAddEvent;
+        LogTips.Text = "Log系统状态:记录中 tag标记:" + ErrorCount;
     }
 
     private void Log_LogAddEvent(object? sender, EventArgs e)
@@ -34,14 +35,26 @@ public partial class LogPage
         LogClass? logClass = (LogClass)sender;
         if (logClass != null && !logClass.Message.Contains("使用内存"))
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (logClass.Message.Contains("触发DesktopTips") && logClass.Message.Split('=').Length > 1 && long.TryParse(logClass.Message.Split('=')[1], out long Count))
+            {
+                ErrorCount += Count;
+                Dispatcher.Invoke(() =>
+                {
+                    LogTips.Text = "Log系统状态:记录中 tag标记:" + ErrorCount;
+                });
+            }
+            Dispatcher.Invoke(() =>
             {
                 LogCollection.Insert(0, (LogClass)sender);
-                while (LogCollection.Count > 200)
+            });
+            while (LogCollection.Count > 200)
+            {
+                Dispatcher.Invoke(() =>
                 {
                     LogCollection.RemoveAt(LogCollection.Count - 1);
-                }
-            });
+                });
+            }
+
         }
     }
 }
