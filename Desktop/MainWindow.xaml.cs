@@ -6,7 +6,7 @@ using Desktop.Views.Pages;
 using Desktop.Views.Windows;
 using Masuit.Tools.Win32;
 using Microsoft.Extensions.DependencyInjection;
-using Notifications.Wpf;
+using Notification.Wpf;
 using System.Diagnostics;
 using System.Reflection;
 using System.Text;
@@ -264,12 +264,16 @@ namespace Desktop
             List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
             if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
             {
-                notificationManager.Show(new NotificationContent
+                Dispatcher.Invoke(() =>
                 {
-                    Title = "DDTV-开播提醒",
-                    Message = $"【{roomCard.Name}】的直播开始啦",
-                    Type = NotificationType.Information
+                    notificationManager.Show(new NotificationContent
+                    {
+                        Title = "DDTV-开播提醒",
+                        Message = $"【{roomCard.Name}】的直播开始啦",
+                        Type = NotificationType.Information
+                    });
                 });
+
             }
         }
 
