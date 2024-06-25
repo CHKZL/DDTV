@@ -73,11 +73,11 @@ namespace Desktop.Views.Windows
         {
             if ((bool)RemindChechBox.IsChecked)
             {
-                _IsDanmu = true;
+                _IsRemind= true;
             }
             else
             {
-                _IsDanmu = false;
+                _IsRemind = false;
             }
         }
 
@@ -85,11 +85,11 @@ namespace Desktop.Views.Windows
         {
             if ((bool)RecDanmuChechBox.IsChecked)
             {
-                _IsRemind = true;
+                _IsDanmu  = true;
             }
             else
             {
-                _IsRemind = false;
+                _IsDanmu = false;
             }
         }
 

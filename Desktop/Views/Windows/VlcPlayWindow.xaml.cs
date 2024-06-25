@@ -8,7 +8,7 @@ using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
-using Notifications.Wpf;
+using Notification.Wpf;
 using SharpCompress.Common;
 using SkiaSharp;
 using System;
@@ -549,14 +549,20 @@ namespace Desktop.Views.Windows
             }
         }
 
-        private void SetNotificatom(string Title, string Message="'")
+        private void SetNotificatom(string Title, string Message = "'")
         {
-            MainWindow.notificationManager.Show(new NotificationContent
+            Dispatcher.Invoke(() =>
             {
-                Title = Title,
-                Message = Message,
-                Type = NotificationType.Success
+                MainWindow.notificationManager.Show(new NotificationContent
+                {
+                    Title = Title,
+                    Message = Message,
+                    Type = NotificationType.Success,
+                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString("#00CC33")
+
+                });
             });
+
         }
 
         private void MenuItem_TopMost_Click(object sender, RoutedEventArgs e)
