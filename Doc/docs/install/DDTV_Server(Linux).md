@@ -9,6 +9,7 @@ DDTV聊天吹水群:`522865400`
 
 ## 2.安装
 DDTV_Server是免安装的，把下载下来的压缩包解压到任意当前linux用户有**读写权限**的路径即可   
+搜索`chmod`命令了解如何在linux上更改文件和文件夹权限
 
 ## 3.启动准备
 ### 运行环境准备
@@ -17,7 +18,12 @@ DDTV_Server依赖于`ffmpeg`，请先根据您的系统环境安装`ffmpeg`
 >linux请根据您使用的发行版本自行使用`apt`或`yum`等包管理工具自行安装`ffmpeg`   
 >例如ubuntu下使用以下命令进行安装  
 >```shell
->sudo apt-get install ffmpeg
+>sudo apt install ffmpeg
+>```
+
+缺少libgdiplus包可能无法在shell中正确显示登录用的二维码
+>```shell
+>sudo apt install libgdiplus
 >```
 
 ### 配置房间文件
@@ -48,6 +54,19 @@ DDTV_Server依赖于`ffmpeg`，请先根据您的系统环境安装`ffmpeg`
 ## 4.启动&初始化
 1.使用压缩包最外层提供的sh脚本启动或者使用`./bin/Server.dll`命令直接启动，如果要在无GUI的linux服务器上后台运行请使用`screen`进行启动，**请勿使用`nohup`的方式进行启动**。   
 然后根据控制台窗口显示的内容操作即可  
+
+示例：
+启动：
+>```shell
+>screen /your/path/DDTV_Server.sh
+>```
+ctrl+a再按d，可退出screen页面
+
+恢复页面：
+>```shell
+>screen -r
+>```
+再按ctrl+c可终止并自动退出screen页面
 
 ## 其他功能
 如有任何疑问都可以加群338182356进行对线  
