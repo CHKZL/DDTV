@@ -379,7 +379,32 @@
                     </ui:CardExpander.Header>
 
                     <StackPanel Margin="24,0,24,0">
-                        <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon Voicemail24}">
+
+                        <ui:CardControl Padding="15,15,20,15" Header="默认录制清晰度等级" Icon="{ui:SymbolIcon EyeTracking20}" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="如无目标分辨率，会使用接近的分辨率进行录制">
+                                    <ComboBox Name="DefaultResolution_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding _DefaultResolution_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
+                                        <ComboBoxItem Content="流畅"/>
+                                        <ComboBoxItem Content="高清" />
+                                        <ComboBoxItem Content="超清" />
+                                        <ComboBoxItem Content="蓝光" />
+                                        <ComboBoxItem Content="原画" />
+                                        <ComboBoxItem Content="4K" />
+                                        <ComboBoxItem Content="杜比" />
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
+                        <ui:CardExpander Icon="{ui:SymbolIcon Voicemail24}">
                             <ui:CardExpander.Header>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -423,7 +448,7 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <ui:CardExpander Grid.Row="1" Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
+                        <ui:CardExpander Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
                             <ui:CardExpander.Header>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
