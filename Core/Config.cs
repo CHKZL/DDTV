@@ -868,7 +868,7 @@ namespace Core
 
             private static string DefaultResolution = "10000";
             /// <summary>
-            /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000
+            /// 默认分辨率 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000  4K:20000  杜比:30000
             /// 默认值：10000
             /// </summary>
             public int _DefaultResolution
@@ -885,6 +885,62 @@ namespace Core
                 }
             }
 
+            /// <summary>
+            /// 默认录制分辨率设置界面下拉框选项
+            /// </summary>
+            public int _DefaultResolution_For_ComboBox
+            {
+                get
+                {
+                   switch(_DefaultResolution)
+                    {
+                        case 80:
+                            return 0;
+                        case 150:
+                            return 1;
+                        case 250:
+                            return 2;
+                        case 400:
+                            return 3;
+                        case 10000:
+                            return 4;
+                        case 20000:
+                            return 5;
+                        case 30000:
+                            return 6;
+                        default:
+                            return 4; 
+                    }
+                }
+                set
+                {
+                    switch (value)
+                    {
+                        case 0:
+                            _DefaultResolution = 80;
+                            break;
+                        case 1:
+                            _DefaultResolution = 150;
+                            break;
+                        case 2:
+                            _DefaultResolution = 250;
+                            break;
+                        case 3:
+                            _DefaultResolution = 400;
+                            break;
+                        case 4:
+                            _DefaultResolution = 10000;
+                            break;
+                        case 5:
+                            _DefaultResolution = 20000;
+                            break;
+                        case 6:
+                            _DefaultResolution = 30000;
+                            break;
+                    }
+                    OnPropertyChanged();
+                }
+            }
 
             private static string Port = "11419";
             /// <summary>

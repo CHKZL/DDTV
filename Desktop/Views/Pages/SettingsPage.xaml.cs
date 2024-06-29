@@ -282,6 +282,11 @@ public partial class SettingsPage
         #endregion
 
         #region 录制功能设置保存
+        //录制分辨率
+        if (Config.Core_RunConfig._DefaultResolution_For_ComboBox != DefaultResolution_For_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig._DefaultResolution_For_ComboBox = DefaultResolution_For_ComboBox.SelectedIndex;
+        }
         //录制模式
         if ((int)Config.Core_RunConfig._RecordingMode - 1 != RecordingMode_ComboBox.SelectedIndex)
         {
