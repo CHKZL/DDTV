@@ -1729,6 +1729,28 @@ namespace Core
                 }
             }
 
+            private static string SaveCover = "false";
+            /// <summary>
+            /// 开始录制时时候保存当前直播间封面
+            /// 默认值：false
+            /// </summary>
+            public bool _SaveCover
+            {
+                get
+                {
+                    return bool.Parse(SaveCover);
+                }
+                set
+                {
+                    if (value.ToString() != SaveCover)
+                    {
+                        SaveCover = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

@@ -311,6 +311,12 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig.CutAccordingToTime_For_ComboBox = CutAccordingToTime_For_ComboBox.SelectedIndex;
         }
+        //保存直播间封面
+        if (Config.Core_RunConfig._SaveCover != SaveCover_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._SaveCover = (bool)SaveCover_SwitchControl.IsChecked;
+        }
+
         #endregion
 
         #region 播放窗口设置
