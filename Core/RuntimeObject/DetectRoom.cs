@@ -91,6 +91,11 @@ namespace Core.RuntimeObject
                                 roomCard.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
                         }
                         bool Reconnection = false;
+                        //保存封面
+                        if(Config.Core_RunConfig._SaveCover)
+                        {
+                            Cover.SaveCover(roomCard);
+                        }
                         do
                         {
                             //如果是启动后第一次房间状态查询就触发下载，那就当作重连处理

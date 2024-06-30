@@ -560,7 +560,22 @@
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>
-                        
+                        <ui:CardControl Padding="15,20,20,20" Header="开始录制时保存当前直播间封面" Icon="{ui:SymbolIcon Image20}" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="SaveCover_SwitchControl" IsChecked="{Binding _SaveCover, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                     </StackPanel>
                 </ui:CardExpander>
                 <ui:CardExpander Grid.Row="4" Icon="{ui:SymbolIcon CalendarPlay20}">
