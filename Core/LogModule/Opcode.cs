@@ -176,6 +176,10 @@ namespace Core.LogModule
             /// FLV任务成功开始
             /// </summary>
             FlvTaskStart=40109,
+            /// <summary>
+            /// 下播提醒
+            /// </summary>
+            EndBroadcastingReminder=40110,
         }
     }
 }

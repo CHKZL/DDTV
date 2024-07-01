@@ -165,10 +165,14 @@ namespace Core.RuntimeObject
         {
             if (e.IsRemind)
             {
-                string msg = $"{e.RoomId}({e.Name})下播";
-                OperationQueue.Add(Opcode.Download.StopLiveEvent, msg, e.UID);
-                Log.Info(nameof(DetectRoom_LiveEnd), msg);
+                string msg1 = $"下播提醒，房间：{e.RoomId}({e.Name})";
+                OperationQueue.Add(Opcode.Download.EndBroadcastingReminder, msg1, e.UID);
+                Log.Info(nameof(DetectRoom_LiveEnd), msg1);
             }
+
+            string msg2 = $"下播事件，房间：{e.RoomId}({e.Name})";
+            OperationQueue.Add(Opcode.Download.StopLiveEvent, msg2, e.UID);
+            Log.Info(nameof(DetectRoom_LiveEnd), msg2);
         }
 
 
