@@ -298,7 +298,6 @@ namespace Core.RuntimeObject.Download
         /// <returns>是否成功</returns>
         internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card,bool AnchorReStream = false)
         {
-            const long FileSizeThreshold = 8 * 1024 * 1024; // 8MB
             if (card.DownInfo.IsCut)
             {
                 return DlwnloadTaskState.Cut;
@@ -313,13 +312,13 @@ namespace Core.RuntimeObject.Download
                 if (fileExists)
                 {
                     System.IO.FileInfo fileInfo = new(File);
-                    if (fileInfo.Length > FileSizeThreshold)
+                    if (fileInfo.Length > Config.Core_RunConfig._AutomaticFileCleaningThreshold)
                     {
                         return DlwnloadTaskState.Success;
                     }
                     else
                     {
-                        Tools.FileOperations.Delete(File, $"文件大小小于设置的{(FileSizeThreshold / 1024 / 1024)}MB，自动删除");
+                        Tools.FileOperations.Delete(File, $"文件大小小于设置的{(Config.Core_RunConfig._AutomaticFileCleaningThreshold / 1024 / 1024)}MB，自动删除");
                     }
 
                 }
