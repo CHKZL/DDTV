@@ -900,7 +900,7 @@ namespace Core.RuntimeObject
                         RoomCardClass card = new RoomCardClass()
                         {
                             UID = data.uid,
-                            Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            Title = new() { Value = data.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
                             live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
@@ -931,7 +931,7 @@ namespace Core.RuntimeObject
                     else
                     {
                         OldCard.UID = data.uid;
-                        OldCard.Title = new() { Value = data.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.Title = new() { Value = data.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.RoomId = data.room_id;
                         OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) };
 
@@ -1070,7 +1070,7 @@ namespace Core.RuntimeObject
                             Name = userInfo.data.name,
                             url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                             roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) },
-                            Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            Title = new() { Value = userInfo.data.live_room.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
                             cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
                             face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
                             sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
@@ -1086,7 +1086,7 @@ namespace Core.RuntimeObject
                         OldCard.Name = userInfo.data.name;
                         OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
                         OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) };
-                        OldCard.Title = new() { Value = userInfo.data.live_room.title, ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.Title = new() { Value = userInfo.data.live_room.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
                         OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };
                         OldCard.sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue };
