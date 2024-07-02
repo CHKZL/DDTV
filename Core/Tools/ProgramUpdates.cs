@@ -177,8 +177,8 @@ namespace Core.Tools
                     catch (Exception ex)
                     {
                         error_count++;
-                        Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
-
+                        Console.WriteLine($"出现网络错误，进行重试\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+                        Log.Error(nameof(ProgramUpdates), $"出现网络错误",ex,false);
 
                     }
                 } while (string.IsNullOrEmpty(str));
