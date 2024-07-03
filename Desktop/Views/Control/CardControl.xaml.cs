@@ -5,6 +5,7 @@ using Desktop.Models;
 using Desktop.Views.Windows;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -187,6 +188,17 @@ namespace Desktop.Views.Control
             _Room.GetCardForUID(dataCard.Uid, ref roomCardClass);
             Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
             danmaOnlyWindow.Show();
+        }
+
+        private void MenuItem_OpenLiveUlr_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            var psi = new ProcessStartInfo
+            {
+                FileName = "https://live.bilibili.com/" + dataCard.Room_Id,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
         }
     }
 }

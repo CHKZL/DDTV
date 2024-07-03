@@ -13,6 +13,7 @@ using SharpCompress.Common;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -592,6 +593,17 @@ namespace Desktop.Views.Windows
                 Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
                 DanmaOnly_DanmaInput.Clear();
             }
+        }
+
+        private void MenuItem_OpenLiveUlr_Click(object sender, RoutedEventArgs e)
+        {
+              
+            var psi = new ProcessStartInfo
+            {
+                FileName = "https://live.bilibili.com/" + roomCard.RoomId,
+                UseShellExecute = true
+            };
+            Process.Start(psi);
         }
     }
 }
