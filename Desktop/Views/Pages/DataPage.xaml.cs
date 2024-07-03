@@ -14,6 +14,7 @@ using System.IO;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
@@ -260,7 +261,12 @@ public partial class DataPage
 
     private void ScreenName_Click(object sender, RoutedEventArgs e)
     {
-        if (!string.IsNullOrEmpty(ScreenNameBox.Text))
+        ScreenName();
+    }
+
+    private void ScreenName()
+    {
+         if (!string.IsNullOrEmpty(ScreenNameBox.Text))
         {
             screen_name = ScreenNameBox.Text;
         }
@@ -327,5 +333,13 @@ public partial class DataPage
     private void CardDataGrid_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         Width = (int)CardsItemsControl.ActualWidth;
+    }
+
+    private void ScreenNameBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
+        {
+            ScreenName();
+        }
     }
 }
