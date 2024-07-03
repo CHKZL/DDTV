@@ -25,7 +25,9 @@
                     <MenuItem Header="切换全屏状态" Click="FullScreenSwitch_MenuItem_Click"  Icon="{ui:SymbolIcon FullScreenMaximize20}"/>
                     
                     <MenuItem Header="展示弹幕发送框" Icon="{ui:SymbolIcon News20}" Click="MenuItem_Switch_Danma_Send_Click"/>
+                    <MenuItem Header="在浏览器打开直播间" Icon="{ui:SymbolIcon WebAsset20}" Click="MenuItem_OpenLiveUlr_Click"/>
                     <Separator/>
+                    
                     <MenuItem Header="关闭本窗口" Click="ExitWindow_MenuItem_Click" Icon="{ui:SymbolIcon ArrowExit20}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
