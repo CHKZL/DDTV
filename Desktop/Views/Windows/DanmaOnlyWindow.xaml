@@ -22,6 +22,8 @@
             <ui:ListView.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="复制" Click="CopyMenuItem_Click"/>
+                    <Separator/>
+                    <MenuItem Header="设置本窗口置顶状态" Click="MenuItem_TopMost_Click"/>
                 </ContextMenu>
             </ui:ListView.ContextMenu>
             <ui:ListView.View>
