@@ -577,7 +577,21 @@ namespace Desktop.Views.Windows
             {
                 this.Topmost = true;
                 TopMostSwitch = true;
-                SetNotificatom("打开窗口置顶",$"{roomCard.Name}({roomCard.RoomId})窗口置顶已打开");
+                SetNotificatom("打开窗口置顶", $"{roomCard.Name}({roomCard.RoomId})窗口置顶已打开");
+            }
+        }
+
+        private void DanmaOnly_DanmaInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
+            {
+                string T = DanmaOnly_DanmaInput.Text;
+                if (string.IsNullOrEmpty(T) && T.Length > 20)
+                {
+                    return;
+                }
+                Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
+                DanmaOnly_DanmaInput.Clear();
             }
         }
     }
