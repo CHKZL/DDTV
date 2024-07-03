@@ -40,7 +40,7 @@
             </ComboBox>
             <ComboBox Name="PageComboBox" Width="100" SelectedIndex="0" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Left" ItemsSource="{Binding PageComboBoxItems}" SelectionChanged="PageComboBox_SelectionChanged">
             </ComboBox>
-            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Column="2" FontSize="20" Margin="50,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" />
+            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Column="2" FontSize="20" Margin="50,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" KeyDown="ScreenNameBox_KeyDown" />
             <Button Grid.Column="3" FontSize="20" Margin="0,0,170,0" Height="36" Content="搜索" HorizontalAlignment="Right" Click="ScreenName_Click"/>
 
             <ui:DropDownButton Grid.Column="4" FontSize="20" Margin="0,0,5,0" Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" HorizontalAlignment="Right">
