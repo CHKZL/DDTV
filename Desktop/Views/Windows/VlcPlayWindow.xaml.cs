@@ -407,7 +407,6 @@ namespace Desktop.Views.Windows
                         break;
                     }
                 }
-                double b = Core.Init.GetRunTime();
                 danMuOrbitInfos[Index].Time = (int)(Init.GetRunTime() + 5);
                 //非UI线程调用UI组件
                 System.Windows.Application.Current.Dispatcher.Invoke(async () =>
