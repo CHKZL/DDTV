@@ -163,5 +163,19 @@ namespace Desktop.Views.Windows
                 textBox.SelectionStart = selectionStart > 20 ? 20 : selectionStart;
             }
         }
+
+        private void DanmaOnly_DanmaInput_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
+            {
+                string T = DanmaOnly_DanmaInput.Text;
+                if (string.IsNullOrEmpty(T) && T.Length > 20)
+                {
+                    return;
+                }
+                Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
+                DanmaOnly_DanmaInput.Clear();
+            }
+        }
     }
 }

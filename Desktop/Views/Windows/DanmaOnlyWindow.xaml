@@ -35,7 +35,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <ui:TextBox Name="DanmaOnly_DanmaInput" Grid.Column="0" Margin="10,0,10,4" PlaceholderText="输入弹幕内容" Text="" TextChanged="DanmaOnly_DanmaInput_TextChanged"/>
+            <ui:TextBox Name="DanmaOnly_DanmaInput" Grid.Column="0" Margin="10,0,10,4" PlaceholderText="输入弹幕内容" Text="" TextChanged="DanmaOnly_DanmaInput_TextChanged" KeyDown="DanmaOnly_DanmaInput_KeyDown"/>
             <ui:Button Grid.Column="1"  Margin="0,0,10,4" Content="发送" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon Send20}" Click="Send_Danma_Button_Click"/>
         </Grid>
     </Grid>
