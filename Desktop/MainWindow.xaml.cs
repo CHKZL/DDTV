@@ -113,7 +113,7 @@ namespace Desktop
             Detect.detectRoom.LiveStart += DetectRoom_LiveStart;
             //初始化VLC播放器组件
             LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
-
+             
         }
 
         private void InitializeTitleMode()
@@ -303,8 +303,15 @@ namespace Desktop
                 DataSource.LoginStatus.LoginWindowDisplayStatus = true;
                 Dispatcher.Invoke(() =>
                 {
-                    QrLogin qrLogin = new QrLogin();
-                    qrLogin.ShowDialog();
+                    if (Core.Init.GetRunTime() < 90)
+                    {
+                        QrLogin qrLogin = new QrLogin();
+                        qrLogin.ShowDialog();
+                    }
+                    else
+                    {
+                        MainWindow.SnackbarService.Show("登录态检查失败", $"检查账号信息的登陆状态有效性失败，该提示一般是由于登录态已过期造成的（如账号在其他地方登陆过多，异地登录等触发风控），也有可能是网络不稳定造成，如果频繁提示或者录制失败请尝试重新登陆，重新登陆请到设置-登录态管理中进行", ControlAppearance.Primary, new SymbolIcon(SymbolRegular.CloudError20), TimeSpan.FromSeconds(30));
+                    }
                 });
 
             }

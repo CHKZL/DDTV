@@ -122,7 +122,7 @@ namespace Core
 
 
         /// <summary>
-        /// 获取Core初始化完成后的运行毫秒数
+        /// 获取Core初始化完成后的运行秒数
         /// </summary>
         /// <returns></returns>
         public static double GetRunTime()
