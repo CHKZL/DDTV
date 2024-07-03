@@ -1,6 +1,7 @@
 ﻿using Core.LiveChat;
 using Core.LogModule;
 using Core.RuntimeObject;
+using Notification.Wpf;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,6 +29,10 @@ namespace Desktop.Views.Windows
     {
         RoomCardClass roomCard;
         public ObservableCollection<DanmaOnly> DanmaCollection = new();
+        /// <summary>
+        /// 当前窗口的置顶状态
+        /// </summary>
+        private bool TopMostSwitch = false;
         public DanmaOnlyWindow(RoomCardClass Card)
         {
             InitializeComponent();
@@ -176,6 +181,37 @@ namespace Desktop.Views.Windows
                 Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
                 DanmaOnly_DanmaInput.Clear();
             }
+        }
+
+        private void MenuItem_TopMost_Click(object sender, RoutedEventArgs e)
+        {
+            if (TopMostSwitch)
+            {
+                this.Topmost = false;
+                TopMostSwitch = false;
+                SetNotificatom("撤销窗口置顶", $"{roomCard.Name}({roomCard.RoomId})窗口置顶已关闭");
+            }
+            else
+            {
+                this.Topmost = true;
+                TopMostSwitch = true;
+                SetNotificatom("打开窗口置顶", $"{roomCard.Name}({roomCard.RoomId})窗口置顶已打开");
+            }
+        }
+        private void SetNotificatom(string Title, string Message = "'")
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MainWindow.notificationManager.Show(new NotificationContent
+                {
+                    Title = Title,
+                    Message = Message,
+                    Type = NotificationType.Success,
+                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString("#00CC33")
+
+                });
+            });
+
         }
     }
 }
