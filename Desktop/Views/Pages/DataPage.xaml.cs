@@ -84,7 +84,6 @@ public partial class DataPage
     /// </summary>
     public void Add_ImportFromFollowList_Menu()
     {
-
         Task.Run(() =>
         {
             try

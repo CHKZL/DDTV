@@ -1,4 +1,5 @@
-﻿using ConsoleTableExt;
+﻿using AngleSharp.Io;
+using ConsoleTableExt;
 using Core.LiveChat;
 using Core.LogModule;
 using Core.Network.Methods;
@@ -342,7 +343,7 @@ namespace Core.RuntimeObject.Download
         /// <param name="codec_name">编码(目前固定avc)</param>
         /// <param name="Definition">清晰度等级</param>
         /// <returns></returns>
-        public static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name, int Definition = 10000)
+        public static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name, long Definition = 10000)
         {
             HostClass hostClass = new();
             PlayInfo_Class playInfo = GetPlayInfo(RoomId, Definition);
@@ -373,10 +374,34 @@ namespace Core.RuntimeObject.Download
             return hostClass;
         }
 
-        //public static string[] GetOptionalClarity(long RoomId)
-        //{
-
-        //}
+        /// <summary>
+        /// 获取可选清晰度列表
+        /// </summary>
+        /// <param name="RoomId">房间号</param>
+        /// <param name="protocol_name">类型(http_hls/http_stream)</param>
+        /// <param name="format_name">封装(flv/fmp4)</param>
+        /// <param name="codec_name">编码(目前固定avc)</param>
+        /// <returns></returns>
+        public static List<long> GetOptionalClarity(long RoomId, string protocol_name, string format_name, string codec_name)
+        {
+            List<long> Definition = new();
+            HostClass hostClass = new();
+            PlayInfo_Class playInfo = GetPlayInfo(RoomId, 10000);
+            if (playInfo == null || playInfo.data.playurl_info == null || playInfo.data.playurl_info.playurl == null)
+                return Definition;
+            hostClass.all_special_types = playInfo.data.all_special_types;
+            PlayInfo_Class.Stream? stream = playInfo.data.playurl_info.playurl.stream.FirstOrDefault(x => x.protocol_name == protocol_name);
+            if (stream == null)
+                return Definition;
+            PlayInfo_Class.Format? format = stream.format.FirstOrDefault(x => x.format_name == format_name);
+            if (format == null)
+                return Definition;
+            PlayInfo_Class.Codec? codec = format.codec.FirstOrDefault(x => x.codec_name == codec_name);
+            if (codec == null)
+                return Definition;
+            Definition = codec.accept_qn;
+            return Definition;
+        }
 
 
 

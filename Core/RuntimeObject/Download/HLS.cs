@@ -287,7 +287,7 @@ namespace Core.RuntimeObject.Download
         /// <param name="Url"></param>
         /// <returns></returns>
 
-        public static bool GetHlsAvcUrl(RoomCardClass roomCard,int Definition, out string Url)
+        public static bool GetHlsAvcUrl(RoomCardClass roomCard,long Definition, out string Url)
         {
             Url = "";
             if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
