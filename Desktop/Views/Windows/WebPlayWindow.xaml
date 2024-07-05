@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
         <wv2:WebView2 Grid.Row="1" Grid.Column="0" Name="WV2" Source="" Loaded="WV2_Loaded"/>
 
-        <ui:TitleBar Name="UI_TitleBar"
+        <ui:TitleBar Margin="0,2,0,0" Name="UI_TitleBar"
                      Height="30"
                      Title="DDTV5-Desktop"
                      Grid.Row="0"

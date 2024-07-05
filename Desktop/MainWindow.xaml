@@ -69,7 +69,7 @@
                 
             </ui:NavigationView>
 
-            <ui:TitleBar Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/DDTV.ico" />
+            <ui:TitleBar Margin="0,2,0,0"  Name="UI_TitleBar" Height="30" Title="DDTV5-Desktop" Grid.Row="0" Icon="pack://application:,,,/DDTV.ico" />
         </Grid>
         <Grid>
             <ui:SnackbarPresenter Height="150" Name="MainSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>

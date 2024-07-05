@@ -24,14 +24,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ui:Button Grid.Column="0" Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Left" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
-
-
-
                 <ui:TextBlock Name="SaveTips" Grid.Column="1" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Left"  Text="请注意：未保存退出当前页面将丢失已修改内容" />
-                
-                
-                
-                
                 <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
             </Grid>
 
@@ -390,7 +383,7 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="如无目标分辨率，会使用接近的分辨率进行录制">
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="如无目标分辨率，会使用接近的分辨率进行录制。【警告】如果清晰度差距过大，可能会录制失败，推荐使用原画">
                                     <ComboBox Name="DefaultResolution_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding _DefaultResolution_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
                                         <ComboBoxItem Content="流畅"/>
                                         <ComboBoxItem Content="高清" />
@@ -600,6 +593,29 @@
                                 <RowDefinition Height="auto" />
                             </Grid.RowDefinitions>
                         </Grid>
+                        <ui:CardControl Padding="15,15,20,15" Header="标准播放器默认加载的清晰度" Icon="{ui:SymbolIcon EyeTracking20}" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="如无目标清晰度，会尝试使用接近的清晰度进行播放。【警告】如果清晰度差距过大，可能会播放失败，推荐使用原画">
+                                    <ComboBox Name="DefaultPlayResolution_For_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding _DefaultPlayResolution_For_ComboBox,Mode=OneWay}" Margin="0,0,5,0">
+                                        <ComboBoxItem Content="流畅"/>
+                                        <ComboBoxItem Content="高清" />
+                                        <ComboBoxItem Content="超清" />
+                                        <ComboBoxItem Content="蓝光" />
+                                        <ComboBoxItem Content="原画" />
+                                        <ComboBoxItem Content="4K" />
+                                        <ComboBoxItem Content="杜比" />
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
 
                         <ui:CardExpander Icon="{ui:SymbolIcon Chat20}">
                             <ui:CardExpander.Header>

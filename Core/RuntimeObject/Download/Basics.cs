@@ -198,7 +198,7 @@ namespace Core.RuntimeObject.Download
             {
                 return false;
             }
-            hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc");
+            hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc",Core.Config.Core_RunConfig._DefaultResolution);
             if (hostClass.Effective)
             {
                 string Inp = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
@@ -286,7 +286,7 @@ namespace Core.RuntimeObject.Download
         /// <returns></returns>
         internal static HostClass GetFlvHost_avc(RoomCardClass roomCard)
         {
-            return _GetHost(roomCard.RoomId, "http_stream", "flv", "avc");
+            return _GetHost(roomCard.RoomId, "http_stream", "flv", "avc",Core.Config.Core_RunConfig._DefaultResolution);
         }
 
         /// <summary>
@@ -333,11 +333,19 @@ namespace Core.RuntimeObject.Download
         #region Private Method
 
 
-
-        public static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name)
+        /// <summary>
+        /// 获取直播间直播流的Host信息
+        /// </summary>
+        /// <param name="RoomId">房间号</param>
+        /// <param name="protocol_name">类型(http_hls/http_stream)</param>
+        /// <param name="format_name">封装(flv/fmp4)</param>
+        /// <param name="codec_name">编码(目前固定avc)</param>
+        /// <param name="Definition">清晰度等级</param>
+        /// <returns></returns>
+        public static HostClass _GetHost(long RoomId, string protocol_name, string format_name, string codec_name, int Definition = 10000)
         {
             HostClass hostClass = new();
-            PlayInfo_Class playInfo = GetPlayInfo(RoomId);
+            PlayInfo_Class playInfo = GetPlayInfo(RoomId, Definition);
             if (playInfo == null || playInfo.data.playurl_info == null || playInfo.data.playurl_info.playurl == null)
                 return hostClass;
             hostClass.all_special_types = playInfo.data.all_special_types;
@@ -364,6 +372,11 @@ namespace Core.RuntimeObject.Download
             };
             return hostClass;
         }
+
+        //public static string[] GetOptionalClarity(long RoomId)
+        //{
+
+        //}
 
 
 

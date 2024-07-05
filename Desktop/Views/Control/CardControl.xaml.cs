@@ -74,11 +74,9 @@ namespace Desktop.Views.Control
             RoomCardClass roomCard = new();
             _Room.GetCardForUID(uid, ref roomCard);
             string url = "";
-            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url)) && !string.IsNullOrEmpty(url))
+            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, Core.Config.Core_RunConfig._DefaultPlayResolution, out url)) && !string.IsNullOrEmpty(url))
             {
-
                 return true;
-
             }
             return false;
         }
