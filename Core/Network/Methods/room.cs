@@ -25,7 +25,7 @@ namespace Core.Network.Methods
         /// <param name="RoomId"></param>
         /// <param name="Definition">清晰度</param>
         /// <returns></returns>
-        internal static PlayInfo_Class GetPlayInfo(long RoomId,int Definition)
+        internal static PlayInfo_Class GetPlayInfo(long RoomId,long Definition)
         {
             return _PlayInfo(RoomId,Definition);
         }
@@ -54,7 +54,7 @@ namespace Core.Network.Methods
 
         #region Private Method
 
-        private static PlayInfo_Class _PlayInfo(long RoomId,int Definition)
+        private static PlayInfo_Class _PlayInfo(long RoomId,long Definition)
         {
             string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Definition}&platform=web&ptype=8", true);
             PlayInfo_Class hLSHostClass = new();
