@@ -10,8 +10,7 @@
         WindowStyle="None"
         Background="{x:Null}"
         Title="VlcPlayWindow" Height="450" Width="800" 
-        Closing="FluentWindow_Closing" KeyDown="FluentWindow_KeyDown"
-        >
+        Closing="FluentWindow_Closing" KeyDown="FluentWindow_KeyDown">
     <vlc:VideoView Margin="1" x:Name="videoView">
         <Grid Background="#01000000" MouseLeftButtonDown="Grid_MouseLeftButtonDown" MouseWheel="Grid_MouseWheel" SizeChanged="Grid_SizeChanged">
             <Grid.ContextMenu>
@@ -19,6 +18,8 @@
                     <MenuItem Header="窗口置顶" Icon="{ui:SymbolIcon BorderTopBottomThick20}" Click="MenuItem_TopMost_Click"/>
                     <Separator/>
                     <MenuItem Header="刷新" Icon="{ui:SymbolIcon ArrowClockwise20}" Click="F5_MenuItem_Click"/>
+                    <MenuItem Name="SwitchPlaybackClarity_Menu" Header="切换清晰度" Icon="{ui:SymbolIcon Fps6020}">
+                    </MenuItem>
                     <Separator/>
                     <MenuItem Header="展示\隐藏弹幕" Icon="{ui:SymbolIcon Chat20}" Click="MenuItem_Switch_Danma_Exhibition_Click"/>
                     <Separator/>

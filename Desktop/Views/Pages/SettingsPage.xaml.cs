@@ -320,6 +320,11 @@ public partial class SettingsPage
         #endregion
 
         #region 播放窗口设置
+        //播放分辨率
+        if (Config.Core_RunConfig._DefaultPlayResolution_For_ComboBox != DefaultPlayResolution_For_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig._DefaultPlayResolution_For_ComboBox = DefaultPlayResolution_For_ComboBox.SelectedIndex;
+        }
         //弹幕默认开关设置
         if (Config.Core_RunConfig._PlayWindowDanmaSwitch != PlayWindowDanmaSwitch_CheckBox.IsChecked)
         {

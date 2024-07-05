@@ -23,10 +23,11 @@ namespace Core.Network.Methods
         /// 获取直播间视频源信息
         /// </summary>
         /// <param name="RoomId"></param>
+        /// <param name="Definition">清晰度</param>
         /// <returns></returns>
-        internal static PlayInfo_Class GetPlayInfo(long RoomId)
+        internal static PlayInfo_Class GetPlayInfo(long RoomId,int Definition)
         {
-            return _PlayInfo(RoomId);
+            return _PlayInfo(RoomId,Definition);
         }
 
         /// <summary>
@@ -53,9 +54,9 @@ namespace Core.Network.Methods
 
         #region Private Method
 
-        private static PlayInfo_Class _PlayInfo(long RoomId)
+        private static PlayInfo_Class _PlayInfo(long RoomId,int Definition)
         {
-            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Config.Core_RunConfig._DefaultResolution}&platform=web&ptype=8", true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1&qn={Definition}&platform=web&ptype=8", true);
             PlayInfo_Class hLSHostClass = new();
             try
             {

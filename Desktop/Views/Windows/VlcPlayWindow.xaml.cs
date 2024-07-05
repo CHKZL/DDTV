@@ -57,7 +57,7 @@ namespace Desktop.Views.Windows
         /// <summary>
         /// 当前窗口的置顶状态
         /// </summary>
-        private bool TopMostSwitch = false; 
+        private bool TopMostSwitch = false;
         /// <summary>
         /// 当前播放窗口所属的房间卡
         /// </summary>
@@ -70,6 +70,10 @@ namespace Desktop.Views.Windows
         /// 弹幕发射轨道
         /// </summary>
         public DanMuOrbitInfo[] danMuOrbitInfos = new DanMuOrbitInfo[100];
+        /// <summary>
+        /// 当前窗口的清晰度
+        /// </summary>
+        public int CurrentWindowClarity = Core_RunConfig._DefaultPlayResolution;
         public class DanMuOrbitInfo
         {
             public string Text { get; set; }
@@ -80,7 +84,7 @@ namespace Desktop.Views.Windows
         {
             InitializeComponent();
             vlcPlayModels = new();
-
+            CurrentWindowClarity =
             this.DataContext = vlcPlayModels;
             _Room.GetCardForUID(uid, ref roomCard);
 
@@ -112,12 +116,12 @@ namespace Desktop.Views.Windows
         }
         public void InitVlcPlay(long uid)
         {
-            PlaySteam();
+            PlaySteam(null, CurrentWindowClarity);
             Dispatcher.Invoke(() =>
             {
                 barrageConfig = new BarrageConfig(DanmaCanvas, this.Width);
             });
-            if(Core_RunConfig._PlayWindowDanmaSwitch)
+            if (Core_RunConfig._PlayWindowDanmaSwitch)
             {
                 SetDanma();
             }
@@ -141,12 +145,12 @@ namespace Desktop.Views.Windows
         {
             vlcPlayModels.LoadingVisibility = Visibility.Visible;
             vlcPlayModels.OnPropertyChanged("LoadingVisibility");
-            PlaySteam();
+            PlaySteam(null, CurrentWindowClarity);
         }
 
         private async void SetDanma()
         {
-            if(DanmaSwitch)
+            if (DanmaSwitch)
             {
                 return;
             }
@@ -207,7 +211,7 @@ namespace Desktop.Views.Windows
         /// 播放网络路径直播流
         /// </summary>
         /// <param name="Url"></param>
-        public async void PlaySteam(string Url = null)
+        public async void PlaySteam(string Url = null, int Definition = 10000)
         {
             Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],播放网络路径直播流");
             await Task.Run(() =>
@@ -231,7 +235,7 @@ namespace Desktop.Views.Windows
                 }
                 if (string.IsNullOrEmpty(Url))
                 {
-                    Url = GeUrl();
+                    Url = GeUrl(Core_RunConfig._DefaultPlayResolution);
                 }
                 try
                 {
@@ -289,10 +293,10 @@ namespace Desktop.Views.Windows
         /// </summary>
         /// <param name="uid"></param>
         /// <returns></returns>
-        public string GeUrl()
+        public string GeUrl(int Definition)
         {
             string url = "";
-            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, out url)))
+            if (roomCard != null && (Core.RuntimeObject.Download.HLS.GetHlsAvcUrl(roomCard, Definition, out url)))
             {
                 Log.Info(nameof(GeUrl), $"房间号:[{roomCard.RoomId}]，获取到直播流地址:[{url}]");
                 return url;
@@ -315,7 +319,7 @@ namespace Desktop.Views.Windows
                 }
                 Log.Info(nameof(PlaySteam), $"房间号:[{roomCard.RoomId}],关闭播放器");
             }
-            if(DanmaSwitch)
+            if (DanmaSwitch)
             {
                 CloseDanma();
             }
@@ -484,7 +488,7 @@ namespace Desktop.Views.Windows
             {
                 vlcPlayModels.LoadingVisibility = Visibility.Visible;
                 vlcPlayModels.OnPropertyChanged("LoadingVisibility");
-                PlaySteam();
+                PlaySteam(null, CurrentWindowClarity);
             }
         }
 
@@ -514,12 +518,12 @@ namespace Desktop.Views.Windows
         {
             vlcPlayModels.LoadingVisibility = Visibility.Visible;
             vlcPlayModels.OnPropertyChanged("LoadingVisibility");
-            PlaySteam();
+            PlaySteam(null, CurrentWindowClarity);
         }
 
         private void MenuItem_Switch_Danma_Send_Click(object sender, RoutedEventArgs e)
         {
-            if(DanmaBox.Visibility== Visibility.Collapsed)
+            if (DanmaBox.Visibility == Visibility.Collapsed)
             {
                 DanmaBox.Visibility = Visibility.Visible;
             }
@@ -537,14 +541,14 @@ namespace Desktop.Views.Windows
 
         private void MenuItem_Switch_Danma_Exhibition_Click(object sender, RoutedEventArgs e)
         {
-            if(DanmaSwitch)
+            if (DanmaSwitch)
             {
-                SetNotificatom("关闭弹幕显示",$"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已关闭");
+                SetNotificatom("关闭弹幕显示", $"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已关闭");
                 CloseDanma();
             }
             else
             {
-                SetNotificatom("打开弹幕显示",$"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已打开");
+                SetNotificatom("打开弹幕显示", $"{roomCard.Name}({roomCard.RoomId})播放窗口的弹幕显示已打开");
                 SetDanma();
             }
         }
@@ -571,7 +575,7 @@ namespace Desktop.Views.Windows
             {
                 this.Topmost = false;
                 TopMostSwitch = false;
-                SetNotificatom("撤销窗口置顶",$"{roomCard.Name}({roomCard.RoomId})窗口置顶已关闭");
+                SetNotificatom("撤销窗口置顶", $"{roomCard.Name}({roomCard.RoomId})窗口置顶已关闭");
             }
             else
             {
@@ -597,7 +601,7 @@ namespace Desktop.Views.Windows
 
         private void MenuItem_OpenLiveUlr_Click(object sender, RoutedEventArgs e)
         {
-              
+
             var psi = new ProcessStartInfo
             {
                 FileName = "https://live.bilibili.com/" + roomCard.RoomId,
