@@ -119,6 +119,8 @@ namespace Core.RuntimeObject.Download
                     }
                 });
                 _stopTask.Start();
+
+                Log.Info(nameof(DlwnloadHls_avc_flv), $"创建文件[{card.DownInfo.DownloadFileList.CurrentOperationVideoFile}]");
                 await downloader.DownloadFileTaskAsync(DlwnloadURL, File);
                 hlsState = CheckAndHandleFile(File, ref card);
                 try
@@ -126,7 +128,7 @@ namespace Core.RuntimeObject.Download
                     stopWatch.Stop();
                 }
                 catch (Exception)
-                {}
+                { }
             });
             return (hlsState, File);
         }

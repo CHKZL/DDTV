@@ -169,7 +169,7 @@ namespace Core.RuntimeObject.Download
                                     //把当前写入文件写入记录
                                     string F_S = Config.Core_RunConfig._RecordingStorageDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
                                     card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
-                                    Log.Debug("test",card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
+                                    Log.Info(nameof(DlwnloadHls_avc_mp4),$"创建文件[{card.DownInfo.DownloadFileList.CurrentOperationVideoFile}]");
                                      //正式开始下载提示
                                     LogDownloadStart(card,"HLS");
                                     
