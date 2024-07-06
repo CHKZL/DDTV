@@ -233,7 +233,7 @@ namespace Core.Tools
                     }
                     
 
-                    if (ffmpegupdate && checkVersion())
+                    if (ffmpegupdate || checkVersion())
                     {
                         string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
                         string web = Get(DL_FileListUrl);
