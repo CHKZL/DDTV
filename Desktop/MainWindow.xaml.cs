@@ -64,7 +64,7 @@ namespace Desktop
 
         public MainWindow()
         {
-            if(Application_Startup())
+            if (Application_Startup())
             {
                 Environment.Exit(-114514);
                 return;
@@ -113,7 +113,6 @@ namespace Desktop
             Detect.detectRoom.LiveStart += DetectRoom_LiveStart;
             //初始化VLC播放器组件
             LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
-             
         }
 
         private void InitializeTitleMode()
@@ -186,7 +185,7 @@ namespace Desktop
                     this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
                     System.Threading.Thread.Sleep(500);
                     return true;
-                    
+
                 }
             }
             return false;
@@ -233,7 +232,7 @@ namespace Desktop
         /// <exception cref="NotImplementedException"></exception>
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
-            if (Config.Core_RunConfig._ZoomOutMode!=0 && this.WindowState == WindowState.Minimized)
+            if (Config.Core_RunConfig._ZoomOutMode != 0 && this.WindowState == WindowState.Minimized)
             {
                 this.Hide();
             }

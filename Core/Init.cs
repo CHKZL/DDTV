@@ -26,7 +26,7 @@ namespace Core
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
         private static Timer Update_Timer;
-        
+
         private static Stopwatch stopwatch = new Stopwatch();
 
         public static void Start(string[] args)
@@ -65,15 +65,15 @@ namespace Core
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
             Core.RuntimeObject.Account.CheckLoginStatus();
-            Log.Info(nameof(Init), $"Core初始化完成");         
+            Log.Info(nameof(Init), $"Core初始化完成");
             Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
-            
+
             Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
             Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
             StartStatistics();
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
-            
+
 
         }
 
@@ -83,7 +83,7 @@ namespace Core
         /// 启动参数初始化
         /// </summary>
         private static void StartParameterInitialization(string[] args)
-        {      
+        {
             foreach (var arg in args)
             {
                 if (arg.StartsWith("--"))
@@ -113,7 +113,7 @@ namespace Core
             string? DockerEnvironment = Environment.GetEnvironmentVariable("DDTV_Docker_Project");
             if (!string.IsNullOrEmpty(DockerEnvironment))
             {
-                if (DockerEnvironment =="DDTV_Server")
+                if (DockerEnvironment == "DDTV_Server")
                 {
                     Init.Mode = Mode.Docker;
                 }
@@ -138,7 +138,7 @@ namespace Core
             }
         }
 
-        
+
 
         /// <summary>
         /// 初始化文件和目录
@@ -200,8 +200,9 @@ namespace Core
             {
                 using (HttpClient _httpClient = new HttpClient())
                 {
-                    _httpClient.Timeout = new TimeSpan(0,0,8);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 8);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"System/{System.Runtime.InteropServices.RuntimeInformation.OSDescription} DDTV/{Ver} Bili/{RuntimeObject.Account.AccountInformation.Uid}");
                     string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Start.txt").Result;
                     if (A == "1" || A == "1\r\n")
                     {
@@ -222,8 +223,9 @@ namespace Core
             {
                 using (HttpClient _httpClient = new HttpClient())
                 {
-                    _httpClient.Timeout = new TimeSpan(0,0,8);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 8);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                    _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"System/{System.Runtime.InteropServices.RuntimeInformation.OSDescription} DDTV/{Ver} Bili/{RuntimeObject.Account.AccountInformation.Uid}");
                     string A = _httpClient.GetStringAsync("https://update5.ddtv.pro/Heartbeat.txt").Result;
                     if (A == "1" || A == "1\r\n")
                     {
