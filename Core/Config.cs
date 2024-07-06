@@ -1848,22 +1848,22 @@ namespace Core
                 }
             }
 
-            private static string UsingEnvironmentVariablesFFMPEG = "false";
+            private static string UsingCustomFFMPEG = string.Empty;
             /// <summary>
-            /// 是否读取环境变量中的FFMPEG路径（环境变量为"DDTV_FFMPEG",值为FFMPEG可执行程序的完整路径）
-            /// 默认值：false
+            /// 是否使用自定义FFMPEG路径，如果要使用，该值为ffmpeg.exe的绝对路径，例如[D:/test/ffmpeg.exe]
+            /// 默认值：string.Empty
             /// </summary>
-            public bool _UsingEnvironmentVariablesFFMPEG
+            public string _UsingCustomFFMPEG
             {
                 get
                 {
-                    return bool.Parse(UsingEnvironmentVariablesFFMPEG);
+                    return UsingCustomFFMPEG;
                 }
                 set
                 {
-                    if (value.ToString() != UsingEnvironmentVariablesFFMPEG)
+                    if (value.ToString() != UsingCustomFFMPEG)
                     {
-                        UsingEnvironmentVariablesFFMPEG = value.ToString();
+                        UsingCustomFFMPEG = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }

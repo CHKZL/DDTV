@@ -1,6 +1,7 @@
 ﻿using AngleSharp.Io.Dom;
 using Core.LogModule;
 using Core.RuntimeObject;
+using Masuit.Tools;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -66,10 +67,10 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    string? path = Environment.GetEnvironmentVariable("DDTV_FFMPEG");
-                    if (Config.Core_RunConfig._UsingEnvironmentVariablesFFMPEG && !string.IsNullOrEmpty(path) && File.Exists(path))
+
+                    if (!string.IsNullOrEmpty(Config.Core_RunConfig._UsingCustomFFMPEG) && File.Exists(Config.Core_RunConfig._UsingCustomFFMPEG))
                     {
-                        process.StartInfo.FileName = path;
+                        process.StartInfo.FileName = Config.Core_RunConfig._UsingCustomFFMPEG;
                     }
                     else if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
                     {
