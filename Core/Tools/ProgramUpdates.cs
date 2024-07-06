@@ -328,7 +328,7 @@ namespace Core.Tools
                         {
                             string ffmpegPath = "./plugins/ffmpeg/ffmpeg.exe";
                             string ffmpegUpdatePath = Core.Config.Core_RunConfig._TemporaryFileDirectory + "update_ffmpeg.exe";
-                            if (DownloadFileAsync(url, ffmpegUpdatePath))
+                            if (DownloadFileAsync(url, ffmpegUpdatePath,true))
                             {
                                 if (File.Exists(ffmpegUpdatePath))
                                 {
@@ -339,6 +339,10 @@ namespace Core.Tools
                                     File.Move(ffmpegUpdatePath, ffmpegPath);
                                     Log.Info(nameof(ReplaceUpdateFfmpe), "检查并更新ffmpeg依赖完成");
                                 }
+                            }
+                            else
+                            {
+                                Log.Warn(nameof(ReplaceUpdateFfmpe), "尝试检查并更新ffmpeg依赖时，无法连接R2服务器，更新失败");
                             }
                         }
                         catch (Exception ex)
@@ -475,7 +479,7 @@ namespace Core.Tools
                 return str;
             }
 
-            public static bool DownloadFileAsync(string url, string outputPath)
+            public static bool DownloadFileAsync(string url, string outputPath, bool restrictedPrimaryServer = false)
             {
                 int error_count = 0;
                 while (true)
@@ -492,6 +496,11 @@ namespace Core.Tools
                     }
                     else
                     {
+                        if(restrictedPrimaryServer)
+                        {
+                            Log.Info(nameof(Update_UpdateProgram),$"出现网络错误,MainOnly");
+                            return false;
+                        }
                         FileDownloadAddress = MainDomainName + url;
                     }
                     try
