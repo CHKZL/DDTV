@@ -892,7 +892,7 @@ namespace Core
             {
                 get
                 {
-                   switch(_DefaultResolution)
+                    switch (_DefaultResolution)
                     {
                         case 80:
                             return 0;
@@ -909,7 +909,7 @@ namespace Core
                         case 30000:
                             return 6;
                         default:
-                            return 4; 
+                            return 4;
                     }
                 }
                 set
@@ -1842,6 +1842,28 @@ namespace Core
                     if (value.ToString() != AutomaticFileCleaningThreshold)
                     {
                         AutomaticFileCleaningThreshold = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string UsingCustomFFMPEG = string.Empty;
+            /// <summary>
+            /// 是否使用自定义FFMPEG路径，如果要使用，该值为ffmpeg.exe的绝对路径，例如[D:/test/ffmpeg.exe]
+            /// 默认值：string.Empty
+            /// </summary>
+            public string _UsingCustomFFMPEG
+            {
+                get
+                {
+                    return UsingCustomFFMPEG;
+                }
+                set
+                {
+                    if (value.ToString() != UsingCustomFFMPEG)
+                    {
+                        UsingCustomFFMPEG = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }

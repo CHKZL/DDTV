@@ -66,7 +66,11 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
+                    if (!string.IsNullOrEmpty(Config.Core_RunConfig._UsingCustomFFMPEG) && File.Exists(Config.Core_RunConfig._UsingCustomFFMPEG))
+                    {
+                        process.StartInfo.FileName = Config.Core_RunConfig._UsingCustomFFMPEG;
+                    }
+                    else if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
                     {
                         process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
                     }
