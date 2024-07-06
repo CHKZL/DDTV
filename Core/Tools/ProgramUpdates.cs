@@ -247,9 +247,8 @@ namespace Core.Tools
                                     }
                                 }
 
-                                if (!item.FilePath.Contains("bin/Update"))
+                                if (!item.FilePath.Contains("bin/Update") && !item.FileName.ToLower().Contains("ffmpeg.exe"))
                                 {
-
                                     FileUpdateStatus = false;
                                 }
 
@@ -274,7 +273,16 @@ namespace Core.Tools
                                 {
                                     try
                                     {
-                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                        if(item.Value.Name.ToLower().Contains("ffmpeg.exe"))
+                                        {
+                                            ReplaceUpdateFfmpe(item.Key);
+                                            dl_ok = true;
+                                        }
+                                        else
+                                        {
+                                            dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                        }
+                                        
                                     }
                                     catch (Exception)
                                     {
@@ -293,6 +301,42 @@ namespace Core.Tools
                     }
                 }
             }
+            private static bool FFmpegUpdateing = false;
+            private static void ReplaceUpdateFfmpe(string url)
+            {
+                Task.Run(() =>
+                {
+                    if (!FFmpegUpdateing)
+                    {
+                        FFmpegUpdateing = true;
+
+                        Thread.Sleep(60 * 1000);
+                        try
+                        {
+                            string ffmpegPath = "./plugins/ffmpeg/ffmpeg.exe";
+                            string ffmpegUpdatePath = Core.Config.Core_RunConfig._TemporaryFileDirectory + "update_ffmpeg.exe";
+                            if (DownloadFileAsync(url, ffmpegUpdatePath))
+                            {
+                                if (File.Exists(ffmpegUpdatePath))
+                                {
+                                    if (File.Exists(ffmpegPath))
+                                    {
+                                        File.Delete(ffmpegPath);
+                                    }
+                                    File.Move(ffmpegUpdatePath, ffmpegPath);
+                                    Log.Info(nameof(ReplaceUpdateFfmpe), "检查并更新ffmpeg依赖完成");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Error(nameof(ReplaceUpdateFfmpe), "尝试检查并更新ffmpeg依赖失败", ex, true);
+                        }
+                        FFmpegUpdateing = false;
+                    }
+                });
+            }
+
             public static bool checkVersion()
             {
                 string FI = "";

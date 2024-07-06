@@ -58,6 +58,7 @@ namespace Update
                 {
                     foreach (var item in B.files)
                     {
+
                         //文件更新状态（是否需要更新）
                         bool FileUpdateStatus = true;
 
@@ -67,7 +68,7 @@ namespace Update
                             FilePath = FilePath.Replace("bin/", "DDTV/");
                         }
 
-                        if (item.FilePath.Contains("bin/Update"))
+                        if (item.FilePath.Contains("bin/Update") || item.FileName.ToLower().Contains("ffmpeg.exe"))
                         {
                             FileUpdateStatus = false;
                         }
@@ -90,22 +91,23 @@ namespace Update
                     }
                     int i = 1;
                     foreach (var item in map)
-                    {
-                        long bytes = item.Value.Size;
-                        string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
-                        Console.Write($"进度：{i}/{map.Count}  |  文件大小{size}，开始更新文件【{item.Value.Name}】.......");
-                        string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
-                        if (!Directory.Exists(directoryPath))
-                        {
-                            Directory.CreateDirectory(directoryPath);
-                        }
-                        bool dl_ok = false;
-                        do
-                        {
-                            dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
-                        } while (!dl_ok);
-                        Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
-                        i++;
+                    { 
+                            long bytes = item.Value.Size;
+                            string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
+                            Console.Write($"进度：{i}/{map.Count}  |  文件大小{size}，开始更新文件【{item.Value.Name}】.......");
+                            string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
+                            if (!Directory.Exists(directoryPath))
+                            {
+                                Directory.CreateDirectory(directoryPath);
+                            }
+                            bool dl_ok = false;
+                            do
+                            {
+                                dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                            } while (!dl_ok);
+                            Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
+                            i++;
+                        
                     }
                     Console.WriteLine($"更新完成");
                     if (OperatingSystem.IsWindows())
