@@ -66,7 +66,12 @@ namespace Core.Tools
                 };  // 捕捉的信息
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
+                    string? path = Environment.GetEnvironmentVariable("DDTV_FFMPEG");
+                    if (Config.Core_RunConfig._UsingEnvironmentVariablesFFMPEG && !string.IsNullOrEmpty(path) && File.Exists(path))
+                    {
+                        process.StartInfo.FileName = path;
+                    }
+                    else if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
                     {
                         process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
                     }

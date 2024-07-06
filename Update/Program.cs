@@ -68,7 +68,7 @@ namespace Update
                             FilePath = FilePath.Replace("bin/", "DDTV/");
                         }
 
-                        if (item.FilePath.Contains("bin/Update") || item.FileName.ToLower().Contains("ffmpeg.exe"))
+                        if (item.FilePath.Contains("bin/Update"))
                         {
                             FileUpdateStatus = false;
                         }
