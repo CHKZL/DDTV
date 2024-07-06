@@ -220,7 +220,20 @@ namespace Core.Tools
                 {
                     _httpClient.Timeout = new TimeSpan(0, 0, 10);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                    if (checkVersion())
+
+                    bool ffmpegupdate = false;
+                    string ffmpegPath = "./plugins/ffmpeg/ffmpeg.exe";
+                    if(File.Exists(ffmpegPath))
+                    {
+                        FileInfo fileInfo = new(ffmpegPath);
+                        if (fileInfo.Length < 100000000)
+                        {
+                            ffmpegupdate = true;
+                        }
+                    }
+                    
+
+                    if (ffmpegupdate && checkVersion())
                     {
                         string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
                         string web = Get(DL_FileListUrl);
