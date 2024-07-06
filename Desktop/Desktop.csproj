@@ -1,91 +1,97 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Globals">
-    <WebView2LoaderPreference>Static</WebView2LoaderPreference>
-  </PropertyGroup>
+	<PropertyGroup Label="Globals">
+		<WebView2LoaderPreference>Static</WebView2LoaderPreference>
+	</PropertyGroup>
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
-	<UseWindowsForms>true</UseWindowsForms>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <UseWPF>true</UseWPF>
-    <PackageIcon>DDTV.ico</PackageIcon>
-    <Platforms>AnyCPU</Platforms>
-    <ApplicationIcon>Assets\DDTV.ico</ApplicationIcon>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows7.0</TargetFramework>
+		<UseWindowsForms>true</UseWindowsForms>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<PackageIcon>DDTV.ico</PackageIcon>
+		<Platforms>AnyCPU</Platforms>
+		<ApplicationIcon>Assets\DDTV.ico</ApplicationIcon>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>embedded</DebugType>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Remove="Assets\DDTV.ico" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Assets\DDTV.ico" />
+	</ItemGroup>
 
-  <ItemGroup>
-	  <Resource Include="Assets\DDTV.ico">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Resource>
-  </ItemGroup>
+	<ItemGroup>
+		<Resource Include="Assets\DDTV.ico">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="LibVLCSharp.WPF" Version="3.8.5" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2535.41" />
-    <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
-    <PackageReference Include="Notification.Wpf" Version="8.0.0" />
-    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
-    <PackageReference Include="WPF-UI" Version="3.0.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="LibVLCSharp.WPF" Version="3.8.5" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2535.41" />
+		<PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
+		<PackageReference Include="Notification.Wpf" Version="8.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+		<PackageReference Include="WPF-UI" Version="3.0.4" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Server\Server.csproj" />
-    <ProjectReference Include="..\Core\Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Server\Server.csproj" />
+		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Views\Control\CardControl.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Update="Views\Windows\AddRoom.xaml.cs">
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Views\Control\CardControl.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+		<Compile Update="Views\Windows\AddRoom.xaml.cs">
+			<SubType>Code</SubType>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Resource\" />
-  </ItemGroup>
+	<ItemGroup>
+		<Folder Include="Resource\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Update="DDTV.ico">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Update="DDTV.ico">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 
-  <ItemGroup>
-    <Page Update="Views\Pages\ToolsPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
+	</ItemGroup>
+	<ItemGroup Condition="'$(OS)' == 'Windows_NT'">
+		<None Update="plugins\ffmpeg\ffmpeg.exe">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Page Update="Views\Pages\ToolsPage.xaml">
+			<SubType>Designer</SubType>
+		</Page>
+	</ItemGroup>
 
 </Project>

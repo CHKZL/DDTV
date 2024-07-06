@@ -149,13 +149,6 @@ jobs:
       - name: Copy Static folder to build_output
         run: cp -r Static Server/build_output/Static
 
-
-      - name: Copy ffmpeg.exe (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir Server/build_output/Plugins/Plugins/ffmpeg
-          copy Server/Plugins/ffmpeg/ffmpeg.exe Server/build_output/Plugins/Plugins/ffmpeg/ffmpeg.exe
-
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
         run: |       
@@ -301,12 +294,6 @@ jobs:
       - name: Copy Static folder to build_output
         run: cp -r Static Desktop/build_output/Static
 
-      - name: Copy ffmpeg.exe (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir Desktop\\build_output\\Plugins\\ffmpeg
-          copy Desktop\\Plugins\\ffmpeg\\ffmpeg.exe Desktop\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
-
       - name: Copy VLC (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
@@ -430,12 +417,6 @@ jobs:
 
       - name: Copy Static folder to build_output
         run: cp -r Static Client/build_output/Static
-
-      - name: Copy ffmpeg.exe (Windows)
-        if: matrix.os == 'windows-latest'
-        run: |
-          mkdir Client\\build_output\\Plugins\\ffmpeg
-          copy Client\\Plugins\\ffmpeg\\ffmpeg.exe Client\\build_output\\Plugins\\ffmpeg\\ffmpeg.exe
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
