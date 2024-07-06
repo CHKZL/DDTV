@@ -82,11 +82,6 @@
 		</None>
 
 	</ItemGroup>
-	<ItemGroup Condition="'$(OS)' == 'Windows_NT'">
-		<None Update="plugins\ffmpeg\ffmpeg.exe">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 
 	<ItemGroup>
 		<Page Update="Views\Pages\ToolsPage.xaml">

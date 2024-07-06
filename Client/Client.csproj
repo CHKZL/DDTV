@@ -20,11 +20,6 @@
 	<ItemGroup>
 		<Content Include="DDTV.ico" />
 	</ItemGroup>
-	<ItemGroup Condition="'$(OS)' == 'Windows_NT'">
-		<None Update="plugins\ffmpeg\ffmpeg.exe">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2420.47" />
 		<PackageReference Include="System.Drawing.Common" Version="8.0.4" />
@@ -33,6 +28,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Server\Server.csproj" />
 		<ProjectReference Include="..\Core\Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="plugins\" />
 	</ItemGroup>
 
 </Project>
