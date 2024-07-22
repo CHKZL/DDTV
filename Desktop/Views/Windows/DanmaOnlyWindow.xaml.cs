@@ -85,6 +85,11 @@ namespace Desktop.Views.Windows
                         msg.Message = $"{GuardBuyEvent.UserName}：购买大航海[{(GuardBuyEvent.GuardLevel == 1 ? "总督" : GuardBuyEvent.GuardLevel == 2 ? "提督" : "舰长")}]一共[{GuardBuyEvent.Number}]个月";
                         break;
                     }
+                case GuardRenewEventArgs guardRenewEvent:
+                    {
+                        msg.Message = $"{guardRenewEvent.UserName}：购买大航海[{(guardRenewEvent.GuardLevel == 1 ? "总督" : guardRenewEvent.GuardLevel == 2 ? "提督" : "舰长")}]一共[{guardRenewEvent.Number}]个月";
+                        break;
+                    }
                 case SendGiftEventArgs sendGiftEventArgs:
                     {
                         msg.Message = $"{sendGiftEventArgs.UserName}：赠送[{sendGiftEventArgs.GiftName}]礼物[{sendGiftEventArgs.Amount}]个";

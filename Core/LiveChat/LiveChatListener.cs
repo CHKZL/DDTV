@@ -503,6 +503,10 @@ namespace Core.LiveChat
                     break;
                 //续费舰长
                 case "USER_TOAST_MSG":
+                    MessageReceived(this, new GuardRenewEventArgs(obj));
+                    break;
+                case "USER_TOAST_MSG_V2":
+                    MessageReceived(this, new GuardRenewEventArgs(obj));
                     break;
                 //在房间内续费了舰长
                 case "NOTICE_MSG":

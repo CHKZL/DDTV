@@ -466,6 +466,22 @@ namespace Core.RuntimeObject.Download
                         });
                         break;
                     }
+                case GuardRenewEventArgs guardRenewEvent:
+                    {
+
+                        liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                        {
+                            GuardLevel = guardRenewEvent.GuardLevel,
+                            GuradName = guardRenewEvent.GuardName,
+                            Number = guardRenewEvent.Number,
+                            Price = guardRenewEvent.Price,
+                            Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
+                            Timestamp = guardRenewEvent.Timestamp,
+                            UserId = guardRenewEvent.UserId,
+                            UserName = guardRenewEvent.UserName
+                        });
+                        break;
+                    }
                 case SendGiftEventArgs sendGiftEventArgs:
                     {
                         liveChatListener.DanmuMessage.Gift.Add(new Danmu.GiftInfo()

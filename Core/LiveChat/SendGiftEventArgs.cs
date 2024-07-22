@@ -8,42 +8,61 @@ using System.Threading.Tasks;
 
 namespace Core.LiveChat
 {
-    public class GuardBuyEventArgs : MessageEventArgs
+      public class SendGiftEventArgs : MessageEventArgs
     {
-        /// <summary>
-        /// 舰长等级：1-总督 2-提督 3-舰长
-        /// </summary>
+        public long UserId { get; set; }
+
+        public string UserName { get; set; } 
+
         public int GuardLevel { get; set; }
-
-        public string GuardName { get; set; }
-
+        public string GiftAction { get; set; }
         /// <summary>
-        /// 花费：单位金瓜子
+        /// 礼物编号
         /// </summary>
-        public int Price { get; set; }
-
-        public int UserId { get; set; }
-
-        public string UserName { get; set; }
-
-        //public string GiftId { get; set; }
-
+        public int GiftId { get; set; }
         /// <summary>
-        /// 数量
+        /// 礼物类型
         /// </summary>
-        public int Number { get; set; }
+        public int GiftType { get; set; }
+        /// <summary>
+        /// 礼物名称
+        /// </summary>
+        public string GiftName { get; set; }
+        /// <summary>
+        /// 礼物价值
+        /// </summary>
+        public float GiftPrice { get; set; }
+
+        public int TotalCoin { get; set; }
+        /// <summary>
+        /// 礼物数量
+        /// </summary>
+        public int Amount { get; set; }
+
+        public bool IsGoldGift { get; set; }
+
+        public string CoinType { get; set; }
+
         public long Timestamp { get; set; }
 
-        internal GuardBuyEventArgs(JsonObject obj) : base(obj)
+        public string AvatarUrl { get; set; }
+
+        internal SendGiftEventArgs(JsonObject obj) : base(obj)
         {
+            UserId = (long)obj["data"]["uid"];
+            UserName = (string)obj["data"]["uname"];
+            TotalCoin = (int)obj["data"]["total_coin"];
+            Amount = (int)obj["data"]["num"];
+            GiftName = (string)obj["data"]["giftName"];
+            GiftId = (int)obj["data"]["giftId"];
+            GiftType = (int)obj["data"]["giftType"];
+            GiftPrice = (float)obj["data"]["price"];
             GuardLevel = (int)obj["data"]["guard_level"];
-            UserId = (int)obj["data"]["uid"];
-            UserName = (string)obj["data"]["username"];
-            GuardName = (string)obj["data"]["gift_name"];
-            Price = (int)obj["data"]["price"];
-            Number = (int)obj["data"]["num"];
-            Timestamp = (long)obj["data"]["start_time"];
-            //GiftId = obj["data"]["gift_id"].Value<string>();//舰长没有
+            GiftAction = (string)obj["data"]["action"];
+            CoinType = (string)obj["data"]["coin_type"];
+            IsGoldGift = (string)obj["data"]["coin_type"] == "gold";
+            Timestamp = (long)obj["data"]["timestamp"];
+            AvatarUrl = (string)obj["data"]["face"];
         }
     }
 }
