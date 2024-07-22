@@ -305,7 +305,7 @@ namespace Core
                         roomListDiscard.data.Add(item.Value);
                     }
                     // 支持基本拉丁语和中文字符
-                    string jsonString = JsonSerializer.Serialize(roomListDiscard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
+                    string jsonString = JsonSerializer.Serialize(roomListDiscard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All), WriteIndented = true });
 
                     string filePath = $"{Core_RunConfig._RoomConfigFile}";
                     if (File.Exists(filePath))
