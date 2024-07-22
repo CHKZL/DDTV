@@ -135,7 +135,7 @@ public partial class DefaultPage
                 if (proxyUri?.AbsoluteUri != Config.Core_RunConfig._LiveDomainName)
                 {
                     Log.Info(nameof(ProxyDetection), $"系统代理已启用，代理地址：{proxyUri.AbsoluteUri}", false);
-                    SetProxyState("异常：检测到代理生效中");
+                    SetProxyState("检测到系统代理已启用");
                     SetProxyUrl($"当前代理地址:{proxyUri.AbsoluteUri}");
                     return;
                 }
@@ -169,10 +169,10 @@ public partial class DefaultPage
                     switch (tempSocket.AddressFamily)
                     {
                         case AddressFamily.InterNetwork:
-                            SetIpvState("正常，目前使用的IPv4");
+                            SetIpvState("目前使用的IPv4协议");
                             break;
                         case AddressFamily.InterNetworkV6:
-                            SetIpvState("异常，目前使用的IPv6");
+                            SetIpvState("目前使用的IPv6协议");
                             Log.Info(nameof(IpvDetection), $"当前为IPv6访问状态", false);
                             break;
                     }
