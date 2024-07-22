@@ -20,7 +20,7 @@
     <PackageReference Include="Downloader" Version="3.0.6" />
     <PackageReference Include="Masuit.Tools.AspNetCore" Version="1.2.8.1" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
     <PackageReference Include="SkiaSharp" Version="2.88.6" />
     <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.6" />
     <PackageReference Include="SkiaSharp.QrCode" Version="0.6.0" />
