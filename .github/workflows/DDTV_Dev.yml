@@ -44,10 +44,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.x
+      - name: Use .NET 8.0.302
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.302'
 
       - name: Download and extract latest release (Linux or macOS)
         if: runner.os != 'Windows'
@@ -239,10 +239,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.x
+      - name: Use .NET 8.0.302
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.302'
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
@@ -369,10 +369,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.x
+      - name: Use .NET 8.0.302
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '8.0.302'
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
