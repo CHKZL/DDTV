@@ -125,7 +125,7 @@ jobs:
         run: cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --publishTrimmed true --output build_update_output
 
       - name: Move Update (Linux or macOS)
         if: runner.os != 'Windows'
@@ -298,7 +298,7 @@ jobs:
         run: cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --publishTrimmed true --output build_update_output
 
       - name: Move Update (Windows)  
         if: runner.os == 'Windows'
@@ -427,7 +427,7 @@ jobs:
         run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --publishTrimmed true --output build_update_output
 
       - name: Move Update (Windows)  
         if: runner.os == 'Windows'
