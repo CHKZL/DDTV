@@ -107,7 +107,7 @@ namespace Update
                             time += 20;
                         } while (!dl_ok);
                         Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
-                        i++;
+                        i++; 
                     }
                     Console.WriteLine($"更新完成");
                     if (OperatingSystem.IsWindows())
