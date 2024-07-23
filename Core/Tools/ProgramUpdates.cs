@@ -222,7 +222,7 @@ namespace Core.Tools
                 Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
                 using (HttpClient _httpClient = new HttpClient())
                 {
-                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 15);
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     if (checkVersion())
                     {
@@ -274,16 +274,18 @@ namespace Core.Tools
                                     Directory.CreateDirectory(directoryPath);
                                 }
                                 bool dl_ok = false;
+                                int time = 10;
                                 do
                                 {
                                     try
                                     {
-                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath,time);
                                     }
                                     catch (Exception)
                                     {
 
                                     }
+                                    time += 20;
                                 } while (!dl_ok);
                                 Log.Info(nameof(Update_UpdateProgram), $" | 更新文件【{item.Value.Name}】成功");
                                 i++;
@@ -392,7 +394,7 @@ namespace Core.Tools
                         }
                         using (HttpClient _httpClient = new HttpClient())
                         {
-                            _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                            _httpClient.Timeout = new TimeSpan(0, 0, 20);
                             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                             str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
                             error_count++;
@@ -422,7 +424,7 @@ namespace Core.Tools
                 return str;
             }
 
-            public static bool DownloadFileAsync(string url, string outputPath)
+            public static bool DownloadFileAsync(string url, string outputPath,long Time = 10)
             {
                 int error_count = 0;
                 while (true)
@@ -445,7 +447,7 @@ namespace Core.Tools
                     {
                         using (HttpClient _httpClient = new HttpClient())
                         {
-                            _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                            _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
                             _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                             using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
                             response.EnsureSuccessStatusCode();
