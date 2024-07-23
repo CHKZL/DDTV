@@ -100,9 +100,11 @@ namespace Update
                             Directory.CreateDirectory(directoryPath);
                         }
                         bool dl_ok = false;
+                        int time = 10;
                         do
                         {
                             dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
+                            time += 20;
                         } while (!dl_ok);
                         Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
                         i++;
@@ -259,7 +261,7 @@ namespace Update
             return str;
         }
 
-        public static bool DownloadFileAsync(string url, string outputPath)
+        public static bool DownloadFileAsync(string url, string outputPath,long Time = 10)
         {
             int error_count = 0;
             while (true)
@@ -281,7 +283,7 @@ namespace Update
                 try
                 {
                     HttpClient _httpClient = new HttpClient();
-                    _httpClient.Timeout = new TimeSpan(0, 0, 10);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
                     _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
                     using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
                     response.EnsureSuccessStatusCode();
