@@ -108,26 +108,26 @@
             </Grid>
             <Grid Grid.Row="6" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
-                    <Grid>
+                    <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前通信协议" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,15,0" Text="{Binding IpvState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding IpvState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"></TextBlock>
                     </Grid>
 
                 </Border>
             </Grid>
             <Grid Grid.Row="7" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
-                    <Grid>
+                    <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0" Margin="0,0,0,0" Text="当前代理状态" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="0,0,15,0" Text="{Binding ProxyState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="{Binding ProxyUrl}"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="0,0,0,0" Text="{Binding ProxyState,Mode=OneWay}" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="{Binding ProxyUrl}"></TextBlock>
                     </Grid>
                     
                 </Border>
