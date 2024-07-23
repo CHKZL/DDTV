@@ -34,7 +34,11 @@ namespace Core.Tools
         public static async void RegularInspection(object state)
         {
             if (Effective)
+            {
+                Effective = false;
                 await CheckForNewVersions();
+                Effective = true;
+            }
         }
 
         internal static bool GetCurrentVersion()
