@@ -40,7 +40,7 @@ namespace Update
                 Isdocker = true;
             }
 
-            Console.WriteLine("开始更新DDTV");
+            Console.WriteLine("开始更新DDTV，请勿点击本程序任何位置，防止进入'快捷编辑模式'阻塞更新，如果已点击，请点击回车回复");
             DisableConsoleQuickEdit.Go();
             Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
             Console.WriteLine($"当前工作路径:{Environment.CurrentDirectory}");
