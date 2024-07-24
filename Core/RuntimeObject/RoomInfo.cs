@@ -67,9 +67,12 @@ namespace Core.RuntimeObject
         {
             try
             {
-                ModifyRecordingSettings(new List<long> { UID }, AutoRec, IsAdd);
+                //设置开播提示
                 ModifyRoomPromptSettings(new List<long> { UID }, Remind, IsAdd);
+                //设置弹幕录制
                 ModifyRoomDmSettings(new List<long> { UID }, RecDanmu, IsAdd);
+                //设置录制模式
+                ModifyRecordingSettings(new List<long> { UID }, AutoRec, IsAdd);
                 return true;
             }
             catch (Exception e)
