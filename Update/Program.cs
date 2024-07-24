@@ -1,8 +1,11 @@
-﻿using Newtonsoft.Json;
+﻿using Amazon.S3;
+using Amazon.S3.Model;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using static Update.GetFileSchemaJSON;
 
@@ -18,6 +21,16 @@ namespace Update
         public static string R_ver = string.Empty;
         public static bool Isdev = false;
         public static bool Isdocker = false;
+
+
+        //仅拥有OSS目标桶读取权限的AK信息
+        private static string endpoint = "https://oss-cn-shanghai.aliyuncs.com";
+        private static string accessKeyId = "LTAI5t7qGLy8Yt2mfZMKZ2Ae";
+        private static string accessKeySecret = "SN3ZHWVL1cLnAgLeFkhRtoxPGs1Yo6";
+        public static string Bucket = "ddtv5-update";
+        private static AmazonS3Client ossClient = null;
+
+
         public static void Main(string[] args)
         {
             if (args.Length != 0)
@@ -103,8 +116,23 @@ namespace Update
                         int time = 10;
                         do
                         {
-                            dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath);
-                            time += 20;
+                            try
+                            {
+                                dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath, time);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                            if (time < 36000)
+                            {
+                                time = time * 2;
+                            }
+                            else
+                            {
+                                Console.WriteLine($" | 【{item.Value.Name}】超时跳过");
+                                break;
+                            }
                         } while (!dl_ok);
                         Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
                         i++; 
@@ -225,16 +253,25 @@ namespace Update
                         //Console.WriteLine($"使用备用服务器进行重试.....");
                         FileDownloadAddress = AlternativeDomainName + URL;
                         Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
+
+                        string FileKey = URL.Substring(1, URL.Length - 1);
+
+                        var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
+                        var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                        using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
+                        using StreamReader reader = new StreamReader(response.ResponseStream);
+                        str = reader.ReadToEndAsync().Result;
+                         error_count++;
                     }
                     else
                     {
                         FileDownloadAddress = MainDomainName + URL;
+                        HttpClient _httpClient = new HttpClient();
+                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                        str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+                        error_count++;
                     }
-                    HttpClient _httpClient = new HttpClient();
-                    _httpClient.Timeout = new TimeSpan(0, 0, 5);
-                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                    str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
-                    error_count++;
+
                 }
                 catch (WebException webex)
                 {
@@ -275,43 +312,59 @@ namespace Update
                     }
                     FileDownloadAddress = AlternativeDomainName + url;
                     Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
+                    try
+                    {
+                        var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20).Add(TimeSpan.FromSeconds(Time)) };
+                        var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                        string FileKey = url.Substring(1, url.Length - 1);
+                        using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
+                        response.WriteResponseStreamToFileAsync(outputPath, false, new System.Threading.CancellationToken()).Wait();
+                        return true;
+                    }
+                    catch (Exception ex)
+                    {
+                        error_count++;
+                        Console.WriteLine($"出现网络错误1");
+
+                    }
                 }
                 else
                 {
                     FileDownloadAddress = MainDomainName + url;
-                }
-                try
-                {
-                    HttpClient _httpClient = new HttpClient();
-                    _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
-                    _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                    using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
-                    response.EnsureSuccessStatusCode();
-                    using var output = new FileStream(outputPath, FileMode.Create);
-                    using var contentStream = response.Content.ReadAsStreamAsync().Result;
-                    contentStream.CopyTo(output);
-                    return true;
-                }
-                catch (WebException webex)
-                {
-                    error_count++;
-                    switch (webex.Status)
+                    try
                     {
-                        case WebExceptionStatus.Timeout:
-                            Console.WriteLine($"下载文件超时:{FileDownloadAddress}");
-                            break;
+                        HttpClient _httpClient = new HttpClient();
+                        _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
+                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                        using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
+                        response.EnsureSuccessStatusCode();
+                        using var output = new FileStream(outputPath, FileMode.Create);
+                        using var contentStream = response.Content.ReadAsStreamAsync().Result;
+                        contentStream.CopyTo(output);
+                        return true;
+                    }
+                    catch (WebException webex)
+                    {
+                        error_count++;
+                        switch (webex.Status)
+                        {
+                            case WebExceptionStatus.Timeout:
+                                Console.WriteLine($"下载文件超时:{FileDownloadAddress}");
+                                break;
 
-                        default:
-                            Console.WriteLine($"网络错误，请检查网络状况或者代理设置...开始重试.....");
-                            break;
+                            default:
+                                Console.WriteLine($"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                                break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        error_count++;
+                        Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
+
                     }
                 }
-                catch (Exception ex)
-                {
-                    error_count++;
-                    Console.WriteLine($"出现网络错误，错误详情：{ex.ToString()}\r\n\r\n===========执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
 
-                }
                 Thread.Sleep(1000);
             }
             return false;

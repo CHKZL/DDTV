@@ -1,8 +1,17 @@
-﻿using AngleSharp.Dom;
+﻿using Aliyun.OSS;
+using Amazon.Runtime.Internal;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Amazon.S3;
+using Amazon.S3.Model;
+using AngleSharp.Dom;
+using AngleSharp.Io;
 using Core.LogModule;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using SharpCompress.Common;
+using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,6 +20,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.ConstrainedExecution;
+using System.Security.AccessControl;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +36,14 @@ namespace Core.Tools
         private static string type = string.Empty;
         private static string ver = string.Empty;
         public static event EventHandler<EventArgs> NewVersionAvailableEvent;//检测到新版本
+
+        //仅拥有OSS目标桶读取权限的AK信息
+        private static string endpoint = "https://oss-cn-shanghai.aliyuncs.com";
+        private static string accessKeyId = "LTAI5t7qGLy8Yt2mfZMKZ2Ae";
+        private static string accessKeySecret = "SN3ZHWVL1cLnAgLeFkhRtoxPGs1Yo6";
+        public static string Bucket = "ddtv5-update";
+        private static AmazonS3Client ossClient = null;
+
         /// <summary>
         /// 更新程序是否生效
         /// </summary>
@@ -156,13 +174,24 @@ namespace Core.Tools
                             Log.Info(nameof(ProgramUpdates), $"使用备用服务器进行重试.....");
                             FileDownloadAddress = AlternativeDomainName + URL;
                             Log.Info(nameof(ProgramUpdates), $"从主服务器获取更新失败，尝试从备用服务器获取....");
+
+                            string FileKey = URL.Substring(1, URL.Length - 1);
+
+                            var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
+                            var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                            using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
+                            using StreamReader reader = new StreamReader(response.ResponseStream);
+                            str = reader.ReadToEndAsync().Result;
+                            error_count++;
                         }
                         else
                         {
                             FileDownloadAddress = MainDomainName + URL;
+                            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                            str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+                            error_count++;
                         }
-                        _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                        str = _httpClient.GetStringAsync(FileDownloadAddress).Result;
+
                     }
                     catch (WebException webex)
                     {
@@ -268,7 +297,7 @@ namespace Core.Tools
                                 long bytes = item.Value.Size;
                                 string size = (bytes >= 1 << 30) ? $"{(double)bytes / (1 << 30):F2} GB" : (bytes >= 1 << 20) ? $"{(double)bytes / (1 << 20):F2} MB" : (bytes >= 1 << 10) ? $"{(double)bytes / (1 << 10):F2} KB" : $"{bytes} Bytes";
                                 Log.Info(nameof(Update_UpdateProgram), $"进度：{i}/{map.Count}  |  文件大小{size}字节，开始更新文件【{item.Value.Name}】.......");
-                                string directoryPath = Path.GetDirectoryName(item.Value.FilePath);
+                                string directoryPath = System.IO.Path.GetDirectoryName(item.Value.FilePath);
                                 if (!Directory.Exists(directoryPath))
                                 {
                                     Directory.CreateDirectory(directoryPath);
@@ -285,7 +314,15 @@ namespace Core.Tools
                                     {
 
                                     }
-                                    time += 20;
+                                    if(time<36000)
+                                    {
+                                        time = time * 2;
+                                    }
+                                    else
+                                    {
+                                        Log.Info(nameof(Update_UpdateProgram), $" | 【{item.Value.Name}】超时跳过");
+                                        break;
+                                    }
                                 } while (!dl_ok);
                                 Log.Info(nameof(Update_UpdateProgram), $" | 更新文件【{item.Value.Name}】成功");
                                 i++;
@@ -438,45 +475,61 @@ namespace Core.Tools
                         }
                         FileDownloadAddress = AlternativeDomainName + url;
                         Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
+                        try
+                        {
+                            var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20).Add(TimeSpan.FromSeconds(Time)) };
+                            var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                            string FileKey = url.Substring(1, url.Length - 1);
+                            using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
+                            response.WriteResponseStreamToFileAsync(outputPath, false, new System.Threading.CancellationToken()).Wait();
+                            return true;
+                        }
+                        catch (Exception ex)
+                        {
+                            error_count++;
+                            Log.Info(nameof(Update_UpdateProgram), $"出现网络错误1");
+
+                        }
                     }
                     else
                     {
                         FileDownloadAddress = MainDomainName + url;
-                    }
-                    try
-                    {
-                        using (HttpClient _httpClient = new HttpClient())
+                        try
                         {
-                            _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
-                            _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                            using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
-                            response.EnsureSuccessStatusCode();
-                            using var output = new FileStream(outputPath, FileMode.Create);
-                            using var contentStream = response.Content.ReadAsStreamAsync().Result;
-                            contentStream.CopyTo(output);
-                            return true;
+                            using (HttpClient _httpClient = new HttpClient())
+                            {
+                                _httpClient.Timeout = new TimeSpan(0, 0, 10).Add(TimeSpan.FromSeconds(Time));
+                                _httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
+                                using var response = _httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead).Result;
+                                response.EnsureSuccessStatusCode();
+                                using var output = new FileStream(outputPath, FileMode.Create);
+                                using var contentStream = response.Content.ReadAsStreamAsync().Result;
+                                contentStream.CopyTo(output);
+                                return true;
+                            }
+                        }
+                        catch (WebException webex)
+                        {
+                            error_count++;
+                            switch (webex.Status)
+                            {
+                                case WebExceptionStatus.Timeout:
+                                    Log.Info(nameof(Update_UpdateProgram), $"下载文件超时:{FileDownloadAddress}");
+                                    break;
+
+                                default:
+                                    Log.Info(nameof(Update_UpdateProgram), $"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                                    break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            error_count++;
+                            Log.Info(nameof(Update_UpdateProgram), $"出现网络错误2");
+
                         }
                     }
-                    catch (WebException webex)
-                    {
-                        error_count++;
-                        switch (webex.Status)
-                        {
-                            case WebExceptionStatus.Timeout:
-                                Log.Info(nameof(Update_UpdateProgram),$"下载文件超时:{FileDownloadAddress}");
-                                break;
 
-                            default:
-                                Log.Info(nameof(Update_UpdateProgram),$"网络错误，请检查网络状况或者代理设置...开始重试.....");
-                                break;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        error_count++;
-                        Log.Info(nameof(Update_UpdateProgram),$"出现网络错误2");
-
-                    }
                     Thread.Sleep(1000);
                 }
                 return false;

@@ -68,9 +68,11 @@ namespace Core
             Log.Info(nameof(Init), $"Core初始化完成");
             Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
-
-            Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
-            Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+            if (Mode != Mode.Core)
+            {
+                Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
+                Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+            }
             StartStatistics();
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
 
