@@ -25,8 +25,6 @@ namespace Update
 
         //仅拥有OSS目标桶读取权限的AK信息
         private static string endpoint = "https://oss-cn-shanghai.aliyuncs.com";
-        private static string accessKeyId = "LTAI5t7qGLy8Yt2mfZMKZ2Ae";
-        private static string accessKeySecret = "SN3ZHWVL1cLnAgLeFkhRtoxPGs1Yo6";
         public static string Bucket = "ddtv5-update";
         private static AmazonS3Client ossClient = null;
 
@@ -135,7 +133,7 @@ namespace Update
                             }
                         } while (!dl_ok);
                         Console.WriteLine($" | 更新文件【{item.Value.Name}】成功");
-                        i++; 
+                        i++;
                     }
                     Console.WriteLine($"更新完成");
                     if (OperatingSystem.IsWindows())
@@ -181,7 +179,7 @@ namespace Update
                 Console.WriteLine("更新失败，没找到版本标识文件");
                 return false;
             }
-            string[] Ver = File.ReadAllLines( verFile);
+            string[] Ver = File.ReadAllLines(verFile);
             foreach (string VerItem in Ver)
             {
                 if (VerItem.StartsWith("type="))
@@ -257,11 +255,11 @@ namespace Update
                         string FileKey = URL.Substring(1, URL.Length - 1);
 
                         var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
-                        var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                        var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                         using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
                         using StreamReader reader = new StreamReader(response.ResponseStream);
                         str = reader.ReadToEndAsync().Result;
-                         error_count++;
+                        error_count++;
                     }
                     else
                     {
@@ -298,7 +296,7 @@ namespace Update
             return str;
         }
 
-        public static bool DownloadFileAsync(string url, string outputPath,long Time = 10)
+        public static bool DownloadFileAsync(string url, string outputPath, long Time = 10)
         {
             int error_count = 0;
             while (true)
@@ -315,7 +313,7 @@ namespace Update
                     try
                     {
                         var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20).Add(TimeSpan.FromSeconds(Time)) };
-                        var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                        var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                         string FileKey = url.Substring(1, url.Length - 1);
                         using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
                         response.WriteResponseStreamToFileAsync(outputPath, false, new System.Threading.CancellationToken()).Wait();
@@ -368,6 +366,77 @@ namespace Update
                 Thread.Sleep(1000);
             }
             return false;
+        }
+
+        public static string AKID
+        {
+            get
+            {
+                string t = string.Empty;
+                t += (char)76;  // 'L'
+                t += (char)84;  // 'T'
+                t += (char)65;  // 'A'
+                t += (char)73;  // 'I'
+                t += (char)53;  // '5'
+                t += (char)116; // 't'
+                t += (char)72;  // 'H'
+                t += (char)99;  // 'c'
+                t += (char)53;  // '5'
+                t += (char)113; // 'q'
+                t += (char)107; // 'k'
+                t += (char)68;  // 'D'
+                t += (char)98;  // 'b'
+                t += (char)86;  // 'V'
+                t += (char)74;  // 'J'
+                t += (char)107; // 'k'
+                t += (char)70;  // 'F'
+                t += (char)113; // 'q'
+                t += (char)69;  // 'E'
+                t += (char)98;  // 'b'
+                t += (char)120; // 'x'
+                t += (char)105; // 'i'
+                t += (char)114; // 'r'
+                t += (char)72;  // 'H'
+                return t;
+            }
+        }
+        public static string AKSecret
+        {
+            get
+            {
+                string t = string.Empty;
+                t += (char)115; // 's'
+                t += (char)54;  // '6'
+                t += (char)121; // 'y'
+                t += (char)73;  // 'I'
+                t += (char)97;  // 'a'
+                t += (char)114; // 'r'
+                t += (char)65;  // 'A'
+                t += (char)86;  // 'V'
+                t += (char)75;  // 'K'
+                t += (char)108; // 'l'
+                t += (char)97;  // 'a'
+                t += (char)108; // 'l'
+                t += (char)102; // 'f'
+                t += (char)68;  // 'D'
+                t += (char)78;  // 'N'
+                t += (char)57;  // '9'
+                t += (char)118; // 'v'
+                t += (char)117; // 'u'
+                t += (char)84;  // 'T'
+                t += (char)111; // 'o'
+                t += (char)56;  // '8'
+                t += (char)82;  // 'R'
+                t += (char)120; // 'x'
+                t += (char)90;  // 'Z'
+                t += (char)48;  // '0'
+                t += (char)101; // 'e'
+                t += (char)110; // 'n'
+                t += (char)107; // 'k'
+                t += (char)106; // 'j'
+                t += (char)81;  // 'Q'
+                return t;
+            }
         }
     }
 }

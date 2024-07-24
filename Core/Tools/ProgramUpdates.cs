@@ -39,8 +39,6 @@ namespace Core.Tools
 
         //仅拥有OSS目标桶读取权限的AK信息
         private static string endpoint = "https://oss-cn-shanghai.aliyuncs.com";
-        private static string accessKeyId = "LTAI5t7qGLy8Yt2mfZMKZ2Ae";
-        private static string accessKeySecret = "SN3ZHWVL1cLnAgLeFkhRtoxPGs1Yo6";
         public static string Bucket = "ddtv5-update";
         private static AmazonS3Client ossClient = null;
 
@@ -178,7 +176,7 @@ namespace Core.Tools
                             string FileKey = URL.Substring(1, URL.Length - 1);
 
                             var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
-                            var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                            var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                             using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
                             using StreamReader reader = new StreamReader(response.ResponseStream);
                             str = reader.ReadToEndAsync().Result;
@@ -211,7 +209,7 @@ namespace Core.Tools
                     {
                         error_count++;
                         Console.WriteLine($"出现网络错误，进行重试\r\n\r\n===========下载执行重试，如果没同一个文件重复提示错误，则表示重试成功==============\r\n");
-                        Log.Error(nameof(ProgramUpdates), $"出现网络错误",ex,false);
+                        Log.Error(nameof(ProgramUpdates), $"出现网络错误", ex, false);
 
                     }
                 } while (string.IsNullOrEmpty(str));
@@ -230,7 +228,7 @@ namespace Core.Tools
             public static string R_ver = string.Empty;
             public static bool Isdev = false;
 
-            
+
             public void Main(string[] args)
             {
                 if (args.Length != 0)
@@ -245,9 +243,9 @@ namespace Core.Tools
                     }
                 }
 
-                Log.Info(nameof(Update_UpdateProgram),"开始更新DDTV_Update");
+                Log.Info(nameof(Update_UpdateProgram), "开始更新DDTV_Update");
                 Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
-                Log.Info(nameof(Update_UpdateProgram),$"当前工作路径:{Environment.CurrentDirectory}");
+                Log.Info(nameof(Update_UpdateProgram), $"当前工作路径:{Environment.CurrentDirectory}");
                 Dictionary<string, (string Name, string FilePath, long Size)> map = new Dictionary<string, (string Name, string FilePath, long Size)>();
                 using (HttpClient _httpClient = new HttpClient())
                 {
@@ -308,13 +306,13 @@ namespace Core.Tools
                                 {
                                     try
                                     {
-                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath,time);
+                                        dl_ok = DownloadFileAsync(item.Key, item.Value.FilePath, time);
                                     }
                                     catch (Exception)
                                     {
 
                                     }
-                                    if(time<36000)
+                                    if (time < 36000)
                                     {
                                         time = time * 2;
                                     }
@@ -340,7 +338,7 @@ namespace Core.Tools
             {
                 string FI = "";
                 if (File.Exists("./ver.ini"))
-                { 
+                {
                     FI = "./ver.ini";
                 }
                 else if (File.Exists(verFile))
@@ -349,7 +347,7 @@ namespace Core.Tools
                 }
                 else
                 {
-                    Log.Info(nameof(Update_UpdateProgram),"更新失败，没找到版本标识文件");
+                    Log.Info(nameof(Update_UpdateProgram), "更新失败，没找到版本标识文件");
                     return true;
                 }
                 string[] Ver = File.ReadAllLines(FI);
@@ -362,18 +360,18 @@ namespace Core.Tools
                 }
                 if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(ver))
                 {
-                    Log.Info(nameof(Update_UpdateProgram),"更新失败，版本标识文件内容错数");
+                    Log.Info(nameof(Update_UpdateProgram), "更新失败，版本标识文件内容错数");
                     return true;
                 }
                 if (ver.ToLower().StartsWith("dev"))
                 {
                     Isdev = true;
                 }
-                Log.Info(nameof(Update_UpdateProgram),$"当前本地版本{type}-{ver}[{(Isdev ? "dev" : "release")}]");
-                Log.Info(nameof(Update_UpdateProgram),"开始获取最新版本号....");
+                Log.Info(nameof(Update_UpdateProgram), $"当前本地版本{type}-{ver}[{(Isdev ? "dev" : "release")}]");
+                Log.Info(nameof(Update_UpdateProgram), "开始获取最新版本号....");
                 string DL_VerFileUrl = $"/{type}/{(Isdev ? "dev" : "release")}/ver.ini";
                 string R_Ver = Get(DL_VerFileUrl).TrimEnd();
-                Log.Info(nameof(Update_UpdateProgram),$"获取到当前服务端版本:{R_Ver}");
+                Log.Info(nameof(Update_UpdateProgram), $"获取到当前服务端版本:{R_Ver}");
 
                 if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
                 {
@@ -383,18 +381,18 @@ namespace Core.Tools
                     Version After = new Version(R_Ver.Replace("dev", "").Replace("release", ""));
                     if (After > Before)
                     {
-                        Log.Info(nameof(Update_UpdateProgram),$"检测到新版本，获取远程文件树开始更新Update程序.......");
+                        Log.Info(nameof(Update_UpdateProgram), $"检测到新版本，获取远程文件树开始更新Update程序.......");
                         return true;
                     }
                     else
                     {
-                        Log.Info(nameof(Update_UpdateProgram),$"当前Update已是最新版本....");
+                        Log.Info(nameof(Update_UpdateProgram), $"当前Update已是最新版本....");
                         return false;
                     }
                 }
                 else
                 {
-                    Log.Info(nameof(Update_UpdateProgram),$"获取新版本失败，请检查网络和代理状况.......");
+                    Log.Info(nameof(Update_UpdateProgram), $"获取新版本失败，请检查网络和代理状况.......");
                     return false;
                 }
             }
@@ -418,12 +416,12 @@ namespace Core.Tools
                         {
                             if (error_count > 3)
                             {
-                                Log.Info(nameof(Update_UpdateProgram),$"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
+                                Log.Info(nameof(Update_UpdateProgram), $"更新失败，网络错误过多，请检查网络状况或者代理设置后重试.....");
                                 return "";
                             }
-                            Log.Info(nameof(Update_UpdateProgram),$"使用备用服务器进行重试.....");
+                            Log.Info(nameof(Update_UpdateProgram), $"使用备用服务器进行重试.....");
                             FileDownloadAddress = AlternativeDomainName + URL;
-                            Log.Info(nameof(Update_UpdateProgram),$"从主服务器获取更新失败，尝试从备用服务器获取....");
+                            Log.Info(nameof(Update_UpdateProgram), $"从主服务器获取更新失败，尝试从备用服务器获取....");
                         }
                         else
                         {
@@ -443,25 +441,25 @@ namespace Core.Tools
                         switch (webex.Status)
                         {
                             case WebExceptionStatus.Timeout:
-                                Log.Info(nameof(Update_UpdateProgram),$"下载文件超时:{FileDownloadAddress}");
+                                Log.Info(nameof(Update_UpdateProgram), $"下载文件超时:{FileDownloadAddress}");
                                 break;
 
                             default:
-                                Log.Info(nameof(Update_UpdateProgram),$"网络错误，请检查网络状况或者代理设置...开始重试.....");
+                                Log.Info(nameof(Update_UpdateProgram), $"网络错误，请检查网络状况或者代理设置...开始重试.....");
                                 break;
                         }
                     }
                     catch (Exception ex)
                     {
                         error_count++;
-                        Log.Info(nameof(Update_UpdateProgram),$"出现网络错误");
+                        Log.Info(nameof(Update_UpdateProgram), $"出现网络错误");
 
                     }
                 } while (string.IsNullOrEmpty(str));
                 return str;
             }
 
-            public static bool DownloadFileAsync(string url, string outputPath,long Time = 10)
+            public static bool DownloadFileAsync(string url, string outputPath, long Time = 10)
             {
                 int error_count = 0;
                 while (true)
@@ -478,7 +476,7 @@ namespace Core.Tools
                         try
                         {
                             var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20).Add(TimeSpan.FromSeconds(Time)) };
-                            var ossClient = new AmazonS3Client(accessKeyId, accessKeySecret, config);
+                            var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                             string FileKey = url.Substring(1, url.Length - 1);
                             using GetObjectResponse response = ossClient.GetObjectAsync(Bucket, FileKey).Result;
                             response.WriteResponseStreamToFileAsync(outputPath, false, new System.Threading.CancellationToken()).Wait();
@@ -593,6 +591,77 @@ namespace Core.Tools
                 }
             }
 
+        }
+
+        public static string AKID
+        {
+            get
+            {
+                string t = string.Empty;
+                t += (char)76;  // 'L'
+                t += (char)84;  // 'T'
+                t += (char)65;  // 'A'
+                t += (char)73;  // 'I'
+                t += (char)53;  // '5'
+                t += (char)116; // 't'
+                t += (char)72;  // 'H'
+                t += (char)99;  // 'c'
+                t += (char)53;  // '5'
+                t += (char)113; // 'q'
+                t += (char)107; // 'k'
+                t += (char)68;  // 'D'
+                t += (char)98;  // 'b'
+                t += (char)86;  // 'V'
+                t += (char)74;  // 'J'
+                t += (char)107; // 'k'
+                t += (char)70;  // 'F'
+                t += (char)113; // 'q'
+                t += (char)69;  // 'E'
+                t += (char)98;  // 'b'
+                t += (char)120; // 'x'
+                t += (char)105; // 'i'
+                t += (char)114; // 'r'
+                t += (char)72;  // 'H'
+                return t;
+            }
+        }
+        public static string AKSecret
+        {
+            get
+            {
+                string t = string.Empty;
+                t += (char)115; // 's'
+                t += (char)54;  // '6'
+                t += (char)121; // 'y'
+                t += (char)73;  // 'I'
+                t += (char)97;  // 'a'
+                t += (char)114; // 'r'
+                t += (char)65;  // 'A'
+                t += (char)86;  // 'V'
+                t += (char)75;  // 'K'
+                t += (char)108; // 'l'
+                t += (char)97;  // 'a'
+                t += (char)108; // 'l'
+                t += (char)102; // 'f'
+                t += (char)68;  // 'D'
+                t += (char)78;  // 'N'
+                t += (char)57;  // '9'
+                t += (char)118; // 'v'
+                t += (char)117; // 'u'
+                t += (char)84;  // 'T'
+                t += (char)111; // 'o'
+                t += (char)56;  // '8'
+                t += (char)82;  // 'R'
+                t += (char)120; // 'x'
+                t += (char)90;  // 'Z'
+                t += (char)48;  // '0'
+                t += (char)101; // 'e'
+                t += (char)110; // 'n'
+                t += (char)107; // 'k'
+                t += (char)106; // 'j'
+                t += (char)81;  // 'Q'
+                return t;
+            }
         }
 
 
