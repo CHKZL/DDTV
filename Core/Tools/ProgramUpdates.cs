@@ -30,7 +30,7 @@ namespace Core.Tools
 {
     public class ProgramUpdates
     {
-        public static string MainDomainName = "https://ddtv-update.top";
+        public static string MainDomainName = "https://dl.ddtv-update.top";
         public static string AlternativeDomainName = "https://update5.ddtv.pro";
         private static string verFile = "./ver.ini";
         private static string type = string.Empty;
@@ -220,7 +220,7 @@ namespace Core.Tools
 
         public class Update_UpdateProgram
         {
-            public static string MainDomainName = "https://ddtv-update.top";
+            public static string MainDomainName = "https://dl.ddtv-update.top";
             public static string AlternativeDomainName = "https://update5.ddtv.pro";
             public static string verFile = "../ver.ini";
             public static string type = string.Empty;
