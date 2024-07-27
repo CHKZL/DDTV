@@ -1,0 +1,77 @@
+name: Bug Report for DDTV
+description: Create a bug report if there is something wrong with the DDTV.
+title: "[Bug]: "
+labels: ["Bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for helping us make DDTV better!
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: |
+        Please tell us what you expected to happen and what actually happened.
+      placeholder: An error x ocurred when I did y! But I expected z to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce?
+      description: |
+        Provide the command you ran or explain the steps you did.
+      placeholder: Tell us step by step how to reproduce the issue! E.g. I cannot start DDTV GUI on Linux.
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: Branch
+      description: |
+        Which branch are you using?
+      options:
+        - main (main DDTV5 branch)
+        - other (ddtv3 and even older ddtv2)
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: On which host OS are you running DDTV and observing this problem?
+      multiple: false
+      options:
+        - Linux
+        - Windows 10
+        - Windows 7
+        - Windows XP
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: On which version DDTV?
+      multiple: false
+      options:
+        - DDTV GUI
+        - DDTV Server
+        - DDTV CLI
+        - other
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirm-newest-version
+    attributes:
+      label: Are you 100% sure you are using newest dev version?
+      options:
+        - label: Yes, I 100% confirm.
+          required: false
+  - type: input
+    id: logs
+    attributes:
+      label: Relevant log
+      description: |
+        Paste the file here:
+Footer
