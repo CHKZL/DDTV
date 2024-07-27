@@ -1,5 +1,4 @@
-﻿using Aliyun.OSS;
-using Amazon.Runtime.Internal;
+﻿using Amazon.Runtime.Internal;
 using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Amazon.S3;
 using Amazon.S3.Model;
