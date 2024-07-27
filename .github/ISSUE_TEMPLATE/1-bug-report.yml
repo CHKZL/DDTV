@@ -44,7 +44,7 @@ body:
         请注意，精简系统不提供任何支持，建议重装正常系统。
       multiple: false
       options:
-        - Linux
+        - Linux(请在怎么复现里注明发行版)
         - Windows 11
         - Windows 11 精简版
         - Windows 10
@@ -53,6 +53,7 @@ body:
         - Windows 7
         - Windows 7 精简版
         - Windows XP
+        - MacOS(请在怎么复现里注明具体版本和设备)
         - 其他，在怎么复现里写一下。
     validations:
       required: true
@@ -62,9 +63,12 @@ body:
       label: 哪个版本的 DDTV?
       multiple: false
       options:
-        - DDTV GUI
-        - DDTV Server
-        - DDTV CLI
+        - DDTV5_Destkop
+        - DDTV5_Client
+        - DDTV5_Server
+        - DDTV3_GUI
+        - DDTV3_Server
+        - DDTV3_CLI
         - 其他
     validations:
       required: true
