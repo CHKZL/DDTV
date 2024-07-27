@@ -13,7 +13,7 @@ body:
       label: 咋了？
       description: |
         预期发生什么，实际发生了什么？
-      placeholder: 我录播完成后发现DDTV炸了！按理来讲它不应该炸的。
+      placeholder: 我录播完成后发现录播花屏/声音不同步了！。
     validations:
       required: true
   - type: textarea
@@ -22,7 +22,7 @@ body:
       label: 怎么复现？
       description: |
         **完整和详细的列出你做了什么。**
-      placeholder: 冷静，一步一步的列出你进行了哪些操作复现了问题。举个例子：我录播花屏/声音不同步了！我首先添加了房间114514, 点击了开始录制, 主播下播后打开文件发现声音和画面不同步。
+      placeholder: 冷静，一步一步的列出你进行了哪些操作复现了问题。举个例子：我首先添加了房间114514, 点击了开始录制, 主播下播后打开文件发现声音和画面不同步。
     validations:
       required: true
   - type: dropdown
@@ -75,10 +75,9 @@ body:
       options:
         - label: 是的，我 100% 确定。
           required: false
-  - type: input
+  - type: textarea
     id: logs
     attributes:
       label: 相关日志
       description: |
         直接粘贴过来就行。
-Footer
