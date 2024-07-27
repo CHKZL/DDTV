@@ -1,77 +1,84 @@
 name: Bug Report for DDTV
-description: Create a bug report if there is something wrong with the DDTV.
+description: DDTV 出事的时候创建一个问题反馈。
 title: "[Bug]: "
 labels: ["Bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for helping us make DDTV better!
+        首先感谢你能让 DDTV 变得更好！
   - type: textarea
     id: what-happened
     attributes:
-      label: What happened?
+      label: 咋了？
       description: |
-        Please tell us what you expected to happen and what actually happened.
-      placeholder: An error x ocurred when I did y! But I expected z to happen.
+        预期发生什么，实际发生了什么？
+      placeholder: 我录播完成后发现DDTV炸了！按理来讲它不应该炸的。
     validations:
       required: true
   - type: textarea
     id: reproduce
     attributes:
-      label: How to reproduce?
+      label: 怎么复现？
       description: |
-        Provide the command you ran or explain the steps you did.
-      placeholder: Tell us step by step how to reproduce the issue! E.g. I cannot start DDTV GUI on Linux.
+        **完整和详细的列出你做了什么。**
+      placeholder: 冷静，一步一步的列出你进行了哪些操作复现了问题。举个例子：我录播花屏/声音不同步了！我首先添加了房间114514, 点击了开始录制, 主播下播后打开文件发现声音和画面不同步。
     validations:
       required: true
   - type: dropdown
     id: version
     attributes:
-      label: Branch
+      label: 分支
       description: |
-        Which branch are you using?
+        你在用哪个分支？
       options:
-        - main (main DDTV5 branch)
-        - other (ddtv3 and even older ddtv2)
+        - main (DDTV5)
+        - other (ddtv3 或者更出土的 ddtv2)
     validations:
       required: true
   - type: dropdown
-    id: host
+    id: os
     attributes:
-      label: On which host OS are you running DDTV and observing this problem?
+      label: 你运行 DDTV 的电脑系统是什么？
+      description: |
+        请注意，精简系统不提供任何支持，建议重装正常系统。
       multiple: false
       options:
         - Linux
+        - Windows 11
+        - Windows 11 精简版
         - Windows 10
+        - Windows 10 精简版
+        - Windows 8
         - Windows 7
+        - Windows 7 精简版
         - Windows XP
-        - Other
+        - 其他，在怎么复现里写一下。
     validations:
       required: true
   - type: dropdown
-    id: host
+    id: ddtv-version
     attributes:
-      label: On which version DDTV?
+      label: 哪个版本的 DDTV?
       multiple: false
       options:
         - DDTV GUI
         - DDTV Server
         - DDTV CLI
-        - other
+        - 其他
     validations:
       required: true
   - type: checkboxes
     id: confirm-newest-version
     attributes:
-      label: Are you 100% sure you are using newest dev version?
+      label: 你 100% 确定你在使用最新的开发板吗？在打勾前请运行一次检查更新。
       options:
-        - label: Yes, I 100% confirm.
+        - label: 是的，我 100% 确定。
           required: false
   - type: input
     id: logs
     attributes:
-      label: Relevant log
+      label: 相关日志
       description: |
-        Paste the file here:
+        直接粘贴过来就行。
 Footer
