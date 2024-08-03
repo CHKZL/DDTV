@@ -128,12 +128,13 @@ namespace Desktop.DataSource
                     Nickname = item.userInfo.name,
                     //Live_Status = item.roomInfo.liveStatus,
                     //Live_Status_IsVisible = item.roomInfo.liveStatus ? System.Windows.Visibility.Visible : System.Windows.Visibility.Collapsed,
+                    //#00aeec
                     IsRec = item.userInfo.isAutoRec,
-                    RecSign = item.userInfo.isAutoRec ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    RecSign = !item.userInfo.isAutoRec ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")) : item.taskStatus.isDownload ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00aeec")),
                     IsDanmu = item.userInfo.isRecDanmu,
-                    DanmuSign = item.userInfo.isRecDanmu ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    DanmuSign = !item.userInfo.isRecDanmu ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")) : item.taskStatus.isDanma ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00aeec")),
                     IsRemind = item.userInfo.isRemind,
-                    RemindSign = item.userInfo.isRemind ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#fb7299")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
+                    RemindSign = item.userInfo.isRemind ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#00aeec")) : new SolidColorBrush((Color)ColorConverter.ConvertFromString("#777777")),
 
                     Rec_Status = item.taskStatus.isDownload,
                     Rec_Status_IsVisible = item.taskStatus.isDownload ? Visibility.Visible : Visibility.Collapsed,

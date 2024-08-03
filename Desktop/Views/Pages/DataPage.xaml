@@ -15,6 +15,9 @@
     Foreground="{DynamicResource TextFillColorPrimaryBrush}"
     ScrollViewer.CanContentScroll="False"
     mc:Ignorable="d">
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Page.Resources>
 
     <Grid Margin="20,0,20,20" SizeChanged="CardDataGrid_SizeChanged">
         <Grid.RowDefinitions>
@@ -23,6 +26,7 @@
         </Grid.RowDefinitions>
         <Grid Margin="20,0,20,10" Grid.Row="0">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -40,15 +44,27 @@
             </ComboBox>
             <ComboBox Name="PageComboBox" Width="100" SelectedIndex="0" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Left" ItemsSource="{Binding PageComboBoxItems}" SelectionChanged="PageComboBox_SelectionChanged">
             </ComboBox>
-            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Column="2" FontSize="20" Margin="50,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" KeyDown="ScreenNameBox_KeyDown" />
-            <Button Grid.Column="3" FontSize="20" Margin="0,0,170,0" Height="36" Content="搜索" HorizontalAlignment="Right" Click="ScreenName_Click"/>
-
-            <ui:DropDownButton Grid.Column="4" FontSize="20" Margin="0,0,5,0" Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" HorizontalAlignment="Right">
+            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Column="2" FontSize="20" Margin="20,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" KeyDown="ScreenNameBox_KeyDown" />
+            <Button Grid.Column="3" FontSize="20" Margin="0,0,0,0" Height="36" Content="搜索" HorizontalAlignment="Right" Click="ScreenName_Click"/>
+            <Grid Grid.Column="4"  Margin="15,0,0,0" VerticalAlignment="Center"  ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="初次录制时如果需要同时录制弹幕，请先打开弹幕，再打开录制。&#x0a;否则第一次只会录制视频。">
+                <StackPanel>
+                    <TextBlock TextWrapping="Wrap">
+                        <Run Text="卡片三兄弟："/>
+                        <Run Text="灰色:关闭" Foreground="#999999" />
+                        <Run Text="|"/>
+                        <Run Text="蓝色:打开" Foreground="#00aeec" />
+                        <Run Text="|"/>                  
+                        <Run Text="粉色:录制中" Foreground="#fb7299" />
+                        <Run Text=""/>
+                    </TextBlock>
+                </StackPanel>
+            </Grid>
+            <ui:DropDownButton Grid.Column="5" FontSize="20" Margin="0,0,5,0" Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" HorizontalAlignment="Right">
                 <ui:DropDownButton.Flyout>
                     <ContextMenu>
                         <MenuItem Header="用房间号添加一个房间" Click="AddRoomCardForRoomId_Click"/>
                         <MenuItem Header="用UID添加（可批量）" Click="AddRoomCardForUid_Click"/>
-                       
+
                         <Separator />
                         <MenuItem Name="ImportFromFollowList_Menu" Header="从关注分组导入"/>
                         <Separator />
@@ -70,9 +86,15 @@
             ItemsSource="{Binding CardsCollection}">
             <ui:VirtualizingItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <local:CardControl />
+                    <local:CardControl>
+
+                    </local:CardControl>
                 </DataTemplate>
             </ui:VirtualizingItemsControl.ItemTemplate>
         </ui:VirtualizingItemsControl>
     </Grid>
+
+
 </Page>
+
+    

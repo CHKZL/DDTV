@@ -43,7 +43,7 @@
 
         <TextBlock Text="{Binding LiveTime_str}" Margin="100,75,0,0" Foreground="#dddddd"  FontSize="15" />
         <TextBlock Text="{Binding DownloadSpe_str}" Margin="225,75,0,0" Foreground="#dddddd"  FontSize="15" />
-        <ui:Button Foreground="{Binding RecSign}" FontSize="20" Margin="20,100,0,0" Content="录制" Icon="{ui:SymbolIcon Video32}"/>
+        <ui:Button Foreground="{Binding RecSign}" FontSize="20" Margin="20,100,0,0" Content="录制" Icon="{ui:SymbolIcon Video32}" />
         <ui:Button Foreground="{Binding DanmuSign}" FontSize="20" Margin="120,100,0,0" Content="弹幕" Icon="{ui:SymbolIcon ChartPerson28}"/>
         <ui:Button Foreground="{Binding RemindSign}" FontSize="20" Margin="220,100,0,0" Content="提醒" Icon="{ui:SymbolIcon AlertOn24}"/>
         <Border Background="Transparent" MouseLeftButtonDown="Border_DoubleClickToOpenPlaybackWindow"></Border>

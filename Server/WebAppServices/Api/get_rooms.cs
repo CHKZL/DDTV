@@ -203,8 +203,15 @@ namespace Server.WebAppServices.Api
                             startTime = roomList.ElementAt(i).Value.DownInfo.StartTime,
                             title = roomList.ElementAt(i).Value.Title.Value,
                             status = roomList.ElementAt(i).Value.DownInfo.Status,
-                            downloadRate= roomList.ElementAt(i).Value.DownInfo.RealTimeDownloadSpe
+                            downloadRate = roomList.ElementAt(i).Value.DownInfo.RealTimeDownloadSpe,
+                            isDanma = false
                         };
+
+                        if(roomList.ElementAt(i).Value.DownInfo.LiveChatListener!=null && roomList.ElementAt(i).Value.DownInfo.LiveChatListener.Register.Contains("DetectRoom_LiveStart"))
+                        {
+                            completeInfo.taskStatus.isDanma = true;
+                        }
+
                         completeRoomInfoRes.completeInfoList.Add(completeInfo);
                     }
                 }
@@ -266,6 +273,7 @@ namespace Server.WebAppServices.Api
                     public DateTime startTime { get; set; }
                     public DateTime endTime { get; set; }
                     public string title { get; set; }
+                    public bool isDanma { get; set; }
                 }
             }
         }
