@@ -163,7 +163,7 @@ jobs:
           echo "Creating shortcut for Server"
           echo "#!/bin/bash" > Server/build_output/DDTV_Server.sh
           echo "dir=\$(cd \"\$(dirname \"\$0\")\"; pwd)" >> Server/build_output/DDTV_Server.sh
-          echo "\$dir/bin/Server" >> Server/build_output/DDTV_Server.sh
+          echo "\"\$dir\"/bin/Server" >> Server/build_output/DDTV_Server.sh
           chmod +x Server/build_output/DDTV_Server.sh
 
       - name: Move all files to bin folder and create shortcut (Windows)  
