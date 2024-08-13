@@ -847,7 +847,7 @@ namespace Core
             private static string DeleteOriginalFileAfterRepair = "true";
             /// <summary>
             /// 修复完成后删除源文件（bool）
-            /// 默认值：false
+            /// 默认值：true
             /// </summary>
             public bool _DeleteOriginalFileAfterRepair
             {
