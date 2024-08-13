@@ -316,6 +316,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._SaveCover = (bool)SaveCover_SwitchControl.IsChecked;
         }
+        //修复完成后删除原始文件开关
+        if (Config.Core_RunConfig._DeleteOriginalFileAfterRepair != DeleteOriginalFileAfterRepair_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._DeleteOriginalFileAfterRepair = (bool)DeleteOriginalFileAfterRepair_SwitchControl.IsChecked;
+        }
 
         #endregion
 

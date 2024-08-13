@@ -569,6 +569,27 @@
                             </Grid>
                         </ui:CardControl>
 
+                        <ui:CardControl Padding="15,20,20,20" Header="录制并修复完成后，删除原始文件（如果网络环境不好，可以关闭该选项，保留原始文件）" Icon="{ui:SymbolIcon DeleteArrowBack20}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Width="500">
+                                    <TextBlock Text="当网络环境不好（主播或者你本地）时，可能会产生录制了很长时间，但是修复后文件很小的情况。&#x0a; 这是由于原始直播文件时间戳错误导致的，DDTV录制完成后的修复操作使用的是-copy操作，原始文件是怎样就输出怎样。&#x0a; 这种情况下可以尝试关掉本开关，关掉后，修复完成后会保留原始文件，之后可以尝试用其他转码软件对原始文件进行转码尝试修复" TextWrapping="Wrap"/>
+                                </ToolTip>
+                            </ToolTipService.ToolTip>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="DeleteOriginalFileAfterRepair_SwitchControl" IsChecked="{Binding _DeleteOriginalFileAfterRepair, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+                        
                     </StackPanel>
                 </ui:CardExpander>
                 <ui:CardExpander Grid.Row="4" Icon="{ui:SymbolIcon CalendarPlay20}">
