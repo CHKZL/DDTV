@@ -75,7 +75,7 @@ namespace Desktop.Views.Windows
                         string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
                         if (BlockWords.Any(Danmu.Message.Contains))
                         {
-                            break;
+                            return;
                         }
                         msg.Message = $"{Danmu.UserName}：{Danmu.Message}";
                         break;
@@ -97,6 +97,11 @@ namespace Desktop.Views.Windows
                     }
                 case SendGiftEventArgs sendGiftEventArgs:
                     {
+                        string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
+                        if (BlockWords.Any(sendGiftEventArgs.GiftName.Contains))
+                        {
+                            return;
+                        }
                         msg.Message = $"{sendGiftEventArgs.UserName}：赠送[{sendGiftEventArgs.GiftName}]礼物[{sendGiftEventArgs.Amount}]个";
                         break;
                     }
