@@ -251,6 +251,11 @@ namespace Desktop.Views.Windows
             {
                 case DanmuMessageEventArgs Danmu:
                     {
+                        string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
+                        if (BlockWords.Any(Danmu.Message.Contains))
+                        {
+                            break;
+                        }
                         AddDanmu(Danmu.Message, false, Danmu.UserId);
                         break;
                     }

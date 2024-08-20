@@ -418,7 +418,11 @@ namespace Core.RuntimeObject.Download
             {
                 case DanmuMessageEventArgs Danmu:
                     {
-
+                        string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
+                        if (BlockWords.Any(Danmu.Message.Contains))
+                        {
+                            break;
+                        }
                         liveChatListener.DanmuMessage.Danmu.Add(new Danmu.DanmuInfo
                         {
                             color = Danmu.MessageColor,
@@ -432,6 +436,7 @@ namespace Core.RuntimeObject.Download
                             Nickname = Danmu.UserName,
                             LV = Danmu.GuardLV
                         });
+
                         break;
                     }
                 case SuperchatEventArg SuperchatEvent:
