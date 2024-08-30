@@ -72,6 +72,15 @@ body:
         - 其他
     validations:
       required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 版本号多少？
+      description: |
+        当前你使用的DDTV版本号多少，版本号是一个X.X.X.X格式的数字
+      placeholder: 5.x.x.x
+    validations:
+      required: true
   - type: checkboxes
     id: confirm-newest-version
     attributes:
