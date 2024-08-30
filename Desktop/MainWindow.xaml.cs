@@ -83,6 +83,7 @@ namespace Desktop
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
             }
 
+
         }
 
         /// <summary>
@@ -113,6 +114,15 @@ namespace Desktop
             Detect.detectRoom.LiveStart += DetectRoom_LiveStart;
             //初始化VLC播放器组件
             LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
+            //初始化系统休眠设置
+            if (Config.Core_RunConfig._SystemCardReminder)
+            {
+                WindowsAPI.CloseWindowsHibernation();
+            }
+            else
+            {
+                WindowsAPI.OpenWindowsHibernation();
+            }
         }
 
         private void InitializeTitleMode()

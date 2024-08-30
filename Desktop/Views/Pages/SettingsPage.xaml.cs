@@ -230,7 +230,7 @@ public partial class SettingsPage
             }
         }
 
-        #region 保存远程连接相关设置 
+        #region 基础设置相关设
         //远程连接配置保存
         Config.Core_RunConfig._DesktopRemoteServer = (bool)DesktopRemoteServer_SwitchControl.IsChecked;
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
@@ -253,6 +253,19 @@ public partial class SettingsPage
         //API_Url配置保存
         Config.Core_RunConfig._MainDomainName = MainDomainName_TextBox.Text;
         Config.Core_RunConfig._LiveDomainName = LiveDomainName_TextBox.Text;
+        //修改系统休眠行为
+        if (Config.Core_RunConfig._PreventWindowsHibernation != PreventWindowsHibernation_ToggleSwitch.IsChecked)
+        {
+            Config.Core_RunConfig._PreventWindowsHibernation = (bool)PreventWindowsHibernation_ToggleSwitch.IsChecked;
+            if (Config.Core_RunConfig._SystemCardReminder)
+            {
+                WindowsAPI.CloseWindowsHibernation();
+            }
+            else
+            {
+                WindowsAPI.OpenWindowsHibernation();
+            }
+        }
         //开发版更新配置
         if (Config.Core_RunConfig._DevelopmentVersion != DevelopmentVersion_ToggleSwitch.IsChecked)
         {

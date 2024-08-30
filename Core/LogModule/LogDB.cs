@@ -130,7 +130,7 @@ namespace Core.LogModule
                 }
                 catch (Exception e)
                 {
-                    Log.Error(nameof(LogDB), "日志数据库写入出现未知错误");
+                    Log.Error(nameof(LogDB), $"日志数据库写入出现未知错误:{e.ToString()}");
                     return false;
                 }
             }

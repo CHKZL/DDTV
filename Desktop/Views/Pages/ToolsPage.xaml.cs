@@ -18,7 +18,7 @@ namespace Desktop.Views.Pages;
 public partial class ToolsPage
 {
 
-      internal static ToolsPageModels toolsPageModels { get; private set; }
+    internal static ToolsPageModels toolsPageModels { get; private set; }
     public ToolsPage()
     {
         InitializeComponent();

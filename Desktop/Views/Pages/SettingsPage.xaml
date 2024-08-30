@@ -118,6 +118,18 @@
                             </Grid>
                         </ui:CardControl>
 
+                        <ui:CardControl Padding="20,10,20,10" Header="阻止系统休眠（打开后会阻止系统进入休眠，模式防止录制失败）" Icon="{ui:SymbolIcon Sleep20}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="PreventWindowsHibernation_ToggleSwitch" Height="35" IsChecked="{Binding _PreventWindowsHibernation, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                         <ui:CardControl Padding="20,10,20,10" Header="接收开发版更新　（新功能功能优先推送）" Icon="{ui:SymbolIcon DeveloperBoardLightningToolbox20}">
                             <Grid>
                                 <Grid.ColumnDefinitions>

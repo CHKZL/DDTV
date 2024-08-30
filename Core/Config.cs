@@ -1892,6 +1892,28 @@ namespace Core
                 }
             }
 
+            private static string PreventWindowsHibernation = "false";
+            /// <summary>
+            /// 阻止Windows休眠
+            /// 默认值：false
+            /// </summary>
+            public bool _PreventWindowsHibernation
+            {
+                get
+                {
+                    return bool.Parse(PreventWindowsHibernation);
+                }
+                set
+                {
+                    if (value.ToString() != PreventWindowsHibernation)
+                    {
+                        PreventWindowsHibernation = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }
