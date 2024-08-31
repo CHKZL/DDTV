@@ -13,7 +13,7 @@ body:
       label: 咋了？
       description: |
         预期发生什么，实际发生了什么？
-      placeholder: 我录播完成后发现录播花屏/声音不同步了！。
+      placeholder: 我录播完成后发现录播花屏/声音不同步了！
     validations:
       required: true
   - type: textarea
@@ -46,12 +46,9 @@ body:
       options:
         - Linux(请在怎么复现里注明发行版)
         - Windows 11
-        - Windows 11 精简版
         - Windows 10
-        - Windows 10 精简版
         - Windows 8
         - Windows 7
-        - Windows 7 精简版
         - Windows XP
         - MacOS(请在怎么复现里注明具体版本和设备)
         - 其他，在怎么复现里写一下。
@@ -69,6 +66,7 @@ body:
         - DDTV3_GUI
         - DDTV3_Server
         - DDTV3_CLI
+        - DDTV...2?
         - 其他
     validations:
       required: true
@@ -84,7 +82,7 @@ body:
   - type: checkboxes
     id: confirm-newest-version
     attributes:
-      label: 你 100% 确定你在使用最新的开发板吗？在打勾前请运行一次检查更新。
+      label: 你 100% 确定你在使用最新的开发版吗？在打勾前请运行一次检查更新。
       options:
         - label: 是的，我 100% 确定。
           required: false
