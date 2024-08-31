@@ -1,0 +1,29 @@
+name: Feature request for DDTV
+description: 想要的功能不在 DDTV 里？
+title: "[Feature Request]: "
+labels: ["Feature Request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        首先感谢你能让 DDTV 变得更好！
+  - type: textarea
+    id: what-function
+    attributes:
+      label: 你希望开发者添加什么功能？
+      placeholder: 我希望开发者能添加一些大米。
+    validations:
+      required: true
+  - type: textarea
+    id: scene
+    attributes:
+      label: 什么使用场景？
+      placeholder: 每个功能都有存在的意义。举个例子：每次打开 DDTV 都看不见大米，这使我的内心很悲伤，很心急。忧郁的日子里无法镇静。
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: 相关信息
+      description: |
+        直接粘贴过来就行，可以是你认为相关的任何东西。
