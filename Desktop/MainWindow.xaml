@@ -43,6 +43,11 @@
                             <ui:SymbolIcon Symbol="DataHistogram24" />
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
+                    <ui:NavigationViewItem Content="录制历史" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:HistoryPage}">
+                        <ui:NavigationViewItem.Icon>
+                            <ui:SymbolIcon Symbol="History20" />
+                        </ui:NavigationViewItem.Icon>
+                    </ui:NavigationViewItem>
                     <ui:NavigationViewItem Content="更多工具" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:ToolsPage}">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="Toolbox20" />

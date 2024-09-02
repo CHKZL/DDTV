@@ -83,6 +83,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\Pages\HistoryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\Pages\ToolsPage.xaml">
       <SubType>Designer</SubType>
     </Page>

@@ -18,8 +18,24 @@ namespace Core.RuntimeObject
 {
     public class Detect
     {
-        public static DetectRoom detectRoom = new();//实例化房间监听    
-        
+        /// <summary>
+        /// 实例化房间监听
+        /// </summary>
+        public static DetectRoom detectRoom = new();
+        /// <summary>
+        /// 新增录制结束事件
+        /// </summary>
+        public static event EventHandler<EventArgs> RecEndEvent;
+        /// <summary>
+        /// 录制完成历史记录
+        /// </summary>
+        public static List<History> histories = new();
+        public class History
+        {
+            public string Name { set; get; } = "";
+            public string Time { set; get; } = "";
+            public string Title { set; get; } = "";
+        }
 
         public Detect()
         {
@@ -38,6 +54,7 @@ namespace Core.RuntimeObject
         /// <param name="roomCard"></param>
         internal static async void DetectRoom_LiveStart(Object? sender, (RoomCardClass Card, bool IsFirst) LiveInvoke)
         {
+
             try
             {
 
@@ -82,7 +99,8 @@ namespace Core.RuntimeObject
                         }
                         roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
                     }
-                    
+
+
                     try
                     {
                         if (roomCard.IsRecDanmu)
@@ -116,7 +134,14 @@ namespace Core.RuntimeObject
                         {
                             Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
                         }
-
+                        History history = new History()
+                        {
+                            Name = roomCard.Name,
+                            Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                            Title = roomCard.Title.Value
+                        };
+                        histories.Add(history);
+                        RecEndEvent?.Invoke(history, new EventArgs());
 
                         //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                         Basics.DownloadCompletedReset(ref roomCard);

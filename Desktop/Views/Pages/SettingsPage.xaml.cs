@@ -334,7 +334,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._DeleteOriginalFileAfterRepair = (bool)DeleteOriginalFileAfterRepair_SwitchControl.IsChecked;
         }
-
+        //设置屏蔽词
+        if(Config.Core_RunConfig._BlockBarrageList != BlockBarrageList_TextBox.Text)
+        {
+            Config.Core_RunConfig._BlockBarrageList = BlockBarrageList_TextBox.Text;
+        }
         #endregion
 
         #region 播放窗口设置

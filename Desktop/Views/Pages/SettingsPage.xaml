@@ -601,7 +601,34 @@
                                 </Grid>
                             </Grid>
                         </ui:CardControl>
-                        
+
+                        <ui:CardExpander Icon="{ui:SymbolIcon TextBulletListSquareShield20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="设置屏蔽词" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="如果弹幕信息中包含屏蔽词内容，这条弹幕信息将会在全局被忽略" />
+                                    </Grid>
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <ui:TextBox Name="BlockBarrageList_TextBox" PlaceholderText="请输入屏蔽词，不同的屏蔽词之间，使用'|'符号进行分割" Text="{Binding _BlockBarrageList,Mode=OneWay}"/>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
                     </StackPanel>
                 </ui:CardExpander>
                 <ui:CardExpander Grid.Row="4" Icon="{ui:SymbolIcon CalendarPlay20}">

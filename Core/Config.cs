@@ -1870,10 +1870,10 @@ namespace Core
                 }
             }
 
-            private static string BlockBarrageList = "屏蔽示例文本|这是第二个屏蔽词|这是第三个|想必你看懂了，屏蔽词使用什么符号分割";
+            private static string BlockBarrageList = "";
             /// <summary>
             /// 弹幕屏蔽列表（使用"|"进行分割关键词）
-            /// 默认值：屏蔽示例文本|这是第二个屏蔽词|这是第三个|想必你看懂了，屏蔽词使用什么符号分割
+            /// 默认值：string.Empty
             /// </summary>
             public string _BlockBarrageList
             {

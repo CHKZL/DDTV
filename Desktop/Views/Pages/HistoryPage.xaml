@@ -1,0 +1,39 @@
+<Page
+    x:Class="Desktop.Views.Pages.HistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Desktop.Views.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    Title="HistoryPage"
+    d:DesignHeight="650"
+    d:DesignWidth="1255"
+    ui:Design.Background="{DynamicResource ApplicationBackgroundBrush}"
+    ui:Design.Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+    mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Margin="42,0,42,42">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <ui:Button Content="打开录制文件夹" HorizontalAlignment="Right" Click="Button_Click"/>
+                <ui:ListView Grid.Row="1" Margin="0,0,0,0" Name="HistoryView"  ItemsSource="{Binding historyPageModels}" SelectedIndex="0" SelectionMode="Single" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <ui:ListView.View>
+                        <ui:GridView>
+                            <ui:GridViewColumn MinWidth="170"  DisplayMemberBinding="{Binding Time}" Header="完成时间"/>
+                            <ui:GridViewColumn MinWidth="200"  DisplayMemberBinding="{Binding Name}" Header="名称"/>
+                            <ui:GridViewColumn MinWidth="600"  DisplayMemberBinding="{Binding Title}" Header="标题"/>
+                        </ui:GridView>
+                    </ui:ListView.View>
+                </ui:ListView>
+            </Grid>
+            
+        </StackPanel>
+        <ContentPresenter x:Name="RootContentDialogPresenter" />
+    </Grid>
+</Page>
