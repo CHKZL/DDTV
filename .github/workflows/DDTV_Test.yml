@@ -44,10 +44,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs
+        if: runner.os != 'Windows'
+        run: sudo rm -rf /usr/share/dotnet/sdk/*
+
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version    
 
       - name: Download and extract latest release (Linux or macOS)
         if: runner.os != 'Windows'
@@ -115,7 +127,7 @@ jobs:
           $current_time = $beijingTime.ToString("HH:mm:ss")
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
-          (Get-Content Core/Init.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
+          (Get-Content Core/Config.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
 
       - name: Replace VerString (Linux or macOS)
         if: runner.os != 'Windows'
@@ -259,10 +271,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version   
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
@@ -308,7 +328,7 @@ jobs:
           $current_time = $beijingTime.ToString("HH:mm:ss")
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
-          (Get-Content Core/Init.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
+          (Get-Content Core/Config.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
 
         shell: pwsh
 
@@ -400,10 +420,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version   
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
@@ -429,15 +457,15 @@ jobs:
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
 
-      - name: Modify default update mode (Linux or macOS)
-        if: runner.os != 'Windows'
-        run: |
-          export TZ='Asia/Shanghai'
-          current_date=$(date +%Y-%m-%d)
-          current_time=$(date +%H:%M:%S)
-          combined_date_time="${current_date} ${current_time}"
-          echo ${combined_date_time}
-          sed -i.bak 's/string DevelopmentVersion = "false"/string DevelopmentVersion = "true"/g' Core/Config.cs
+      - name: Modify default update mode (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Config.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
 
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'

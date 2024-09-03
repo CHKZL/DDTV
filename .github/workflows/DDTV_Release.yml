@@ -44,10 +44,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs
+        if: runner.os != 'Windows'
+        run: sudo rm -rf /usr/share/dotnet/sdk/*
+
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version   
 
       - name: Download and extract latest release (Linux or macOS)
         if: runner.os != 'Windows'
@@ -251,10 +263,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version   
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
@@ -380,10 +400,18 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Use .NET 8.0.303
+      - name: Remove all .NET SDKs (Windows)
+        if: runner.os == 'Windows'
+        run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
+        shell: pwsh
+
+      - name: Setup .NET 8.0.303
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.303'
+
+      - name: Check .NET SDK version
+        run: dotnet --version   
 
       - name: Download and extract latest release (Windows)
         if: runner.os == 'Windows'
