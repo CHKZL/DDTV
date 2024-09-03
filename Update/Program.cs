@@ -22,6 +22,8 @@ namespace Update
         public static bool Isdev = false;
         public static bool Isdocker = false;
 
+        public static bool RemoteFailure = false;
+
 
         //仅拥有OSS目标桶读取权限的AK信息
         private static string endpoint = "https://oss-cn-shanghai.aliyuncs.com";
@@ -302,16 +304,24 @@ namespace Update
             while (true)
             {
                 string FileDownloadAddress;
-                if (error_count > 2)
+                
+                if (RemoteFailure || error_count > 2)
                 {
                     if (error_count > 5)
                     {
                         break;
                     }
+                    if(RemoteFailure)
+                    {
+                        goto Spare;
+                    }
                     FileDownloadAddress = AlternativeDomainName + url;
                     Console.WriteLine($"从主服务器获取更新失败，尝试从备用服务器获取....");
+                    RemoteFailure = true;
+                    Spare: //备用服务器下载
                     try
                     {
+                        
                         var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20).Add(TimeSpan.FromSeconds(Time)) };
                         var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                         string FileKey = url.Substring(1, url.Length - 1);
@@ -322,7 +332,7 @@ namespace Update
                     catch (Exception ex)
                     {
                         error_count++;
-                        Console.WriteLine($"出现网络错误1");
+                        Console.WriteLine($"出现网络错误1，进行重试");
 
                     }
                 }

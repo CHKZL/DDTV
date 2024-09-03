@@ -405,7 +405,7 @@ namespace Core
             private static string ValidAccount = "-1";
             /// <summary>
             /// 生效的账号配置文件
-            /// 默认值：./Temporary/LoginQr.png
+            /// 默认值：-1
             /// </summary>
             public string _ValidAccount
             {

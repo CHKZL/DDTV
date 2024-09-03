@@ -97,6 +97,26 @@ jobs:
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
 
+      - name: Modify default update mode (Linux or macOS)
+        if: runner.os != 'Windows'
+        run: |
+          export TZ='Asia/Shanghai'
+          current_date=$(date +%Y-%m-%d)
+          current_time=$(date +%H:%M:%S)
+          combined_date_time="${current_date} ${current_time}"
+          echo ${combined_date_time}
+          sed -i.bak 's/string DevelopmentVersion = "false"/string DevelopmentVersion = "true"/g' Core/Config.cs
+      
+      - name: Modify default update mode (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
+
       - name: Replace VerString (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
@@ -268,6 +288,16 @@ jobs:
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
 
+      - name: Modify default update mode (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
+
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
         run: |
@@ -397,6 +427,16 @@ jobs:
           $combined_date_time = "$current_date $current_time"
           Write-Output $combined_date_time
           (Get-Content Core/Init.cs) -replace 'CompilationTime', $combined_date_time | Set-Content Core/Init.cs
+
+      - name: Modify default update mode (Windows)
+        if: runner.os == 'Windows'
+        run: |  
+          $beijingTime = [System.TimeZoneInfo]::ConvertTimeFromUtc((Get-Date).ToUniversalTime(), [System.TimeZoneInfo]::FindSystemTimeZoneById('China Standard Time'))
+          $current_date = $beijingTime.ToString("yyyy-MM-dd")
+          $current_time = $beijingTime.ToString("HH:mm:ss")
+          $combined_date_time = "$current_date $current_time"
+          Write-Output $combined_date_time
+          (Get-Content Core/Init.cs) -replace 'string DevelopmentVersion = "false"', 'string DevelopmentVersion = "true"' | Set-Content Core/Config.cs
 
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
