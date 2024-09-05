@@ -70,7 +70,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="连接远程DDTV5 Server" />
-                                    <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="不是用本Destop自带的服务端，而使用远程服务器" />
+                                    <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="关闭本地Destop自带的服务端功能，连接并使用远程服务器上的服务端。【如果没看懂，就别开】" />
                                     <ui:ToggleSwitch Name="DesktopRemoteServer_SwitchControl" IsChecked="{Binding _DesktopRemoteServer, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
                                 </Grid>
                             </ui:CardExpander.Header>
