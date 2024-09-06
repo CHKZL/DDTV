@@ -115,7 +115,7 @@ namespace Desktop
             //初始化VLC播放器组件
             LibVLCSharp.Shared.Core.Initialize("./plugins/vlc");
             //初始化系统休眠设置
-            if (Config.Core_RunConfig._SystemCardReminder)
+            if (Config.Core_RunConfig._PreventWindowsHibernation)
             {
                 WindowsAPI.CloseWindowsHibernation();
             }
