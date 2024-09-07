@@ -73,7 +73,7 @@ namespace Desktop.Views.Windows
                 case DanmuMessageEventArgs Danmu:
                     {
                         string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
-                        if (BlockWords.Any(Danmu.Message.Contains))
+                        if (BlockWords.Any(word => !string.IsNullOrEmpty(word) && Danmu.Message.Contains(word)))
                         {
                             return;
                         }
@@ -98,7 +98,7 @@ namespace Desktop.Views.Windows
                 case SendGiftEventArgs sendGiftEventArgs:
                     {
                         string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
-                        if (BlockWords.Any(sendGiftEventArgs.GiftName.Contains))
+                        if (BlockWords.Any(word => !string.IsNullOrEmpty(word) && sendGiftEventArgs.GiftName.Contains(word)))
                         {
                             return;
                         }
