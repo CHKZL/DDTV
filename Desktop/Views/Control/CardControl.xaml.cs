@@ -198,5 +198,33 @@ namespace Desktop.Views.Control
             };
             Process.Start(psi);
         }
+
+        private void Snapshot_Task_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            Dictionary<string, string> dic = new Dictionary<string, string>
+            {
+                {"uid", dataCard.Uid.ToString() }
+            };
+            Task.Run(() =>
+            {
+                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic).Result;
+                if (!message.state)
+                {
+                    Log.Info(nameof(Snapshot_Task_Click), $"生成直播间录制快照失败，原因:{message.message}");
+                    Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.SnackbarService.Show("快照失败", $"生成直播间录制快照失败，原因:{message.message}", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle20), TimeSpan.FromSeconds(5));
+                    });
+                }
+                else
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        MainWindow.SnackbarService.Show("快照完成", $"生成直播间录制快照完成，已输出到DDTV临时文件夹中（{message.message}）", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark20), TimeSpan.FromSeconds(10));
+                    });
+                }
+            });
+        }
     }
 }

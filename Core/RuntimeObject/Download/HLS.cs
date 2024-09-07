@@ -167,7 +167,7 @@ namespace Core.RuntimeObject.Download
                                 if (InitialRequest)
                                 {
                                     //把当前写入文件写入记录
-                                    string F_S = Config.Core_RunConfig._RecordingStorageDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
+                                    string F_S = Config.Core_RunConfig._RecFileDirectory + "/" + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
                                     card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
                                     Log.Debug("test",card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
                                      //正式开始下载提示

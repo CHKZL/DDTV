@@ -725,28 +725,28 @@ namespace Core.RuntimeObject
         /// <param name="UIDList"></param>
         internal static void _BatchUpdateRoomStatusForLiveStream(List<long> UIDList)
         {
-          
-                UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
-                UIDList = null;
-                if (uidsInfo_Class != null && uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
+
+            UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
+            UIDList = null;
+            if (uidsInfo_Class != null && uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
+            {
+                foreach (var item in uidsInfo_Class.data)
                 {
-                    foreach (var item in uidsInfo_Class.data)
+                    long.TryParse(item.Key, out long uid);
+                    if (uid > 0)
                     {
-                        long.TryParse(item.Key, out long uid);
-                        if (uid > 0)
+                        RoomCardClass roomCard = new();
+                        if (_Room.GetCardForUID(uid, ref roomCard))
                         {
-                            RoomCardClass roomCard = new();
-                            if (_Room.GetCardForUID(uid, ref roomCard))
-                            {
-                                _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard));
-                            }
-                            roomCard = null;
+                            _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard));
                         }
+                        roomCard = null;
                     }
                 }
-                uidsInfo_Class = null;
-                
-           
+            }
+            uidsInfo_Class = null;
+
+
         }
 
         #endregion
@@ -756,7 +756,7 @@ namespace Core.RuntimeObject
 
         private static long _GetLiveTime(long Uid)
         {
-           RoomCardClass roomCard = new();
+            RoomCardClass roomCard = new();
             if (!_Room.GetCardForUID(Uid, ref roomCard))
             {
                 roomCard = ToRoomCard(GetRoomInfo(GetRoomId(Uid)), roomCard);
@@ -903,7 +903,7 @@ namespace Core.RuntimeObject
                         RoomCardClass card = new RoomCardClass()
                         {
                             UID = data.uid,
-                            Title = new() { Value = data.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            Title = new() { Value = data.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
                             live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
@@ -934,7 +934,7 @@ namespace Core.RuntimeObject
                     else
                     {
                         OldCard.UID = data.uid;
-                        OldCard.Title = new() { Value = data.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.Title = new() { Value = data.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.RoomId = data.room_id;
                         OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) };
 
@@ -976,8 +976,8 @@ namespace Core.RuntimeObject
             }
             catch (Exception ex)
             {
-                string A = data != null ? JsonSerializer.Serialize(data, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
-                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string A = data != null ? JsonSerializer.Serialize(data, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
+                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
                 Log.Error(nameof(ToRoomCard), $"在UidsInfo_Class.Data的TRC操作中出现意料外的错误，错误堆栈:[UidsInfo_Class.Data:{A}];[RoomCard:{B}]", ex, true);
                 return null;
             }
@@ -1051,8 +1051,8 @@ namespace Core.RuntimeObject
             }
             catch (Exception ex)
             {
-                string A = roomInfo != null ? JsonSerializer.Serialize(roomInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
-                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string A = roomInfo != null ? JsonSerializer.Serialize(roomInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
+                string B = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
                 Log.Error(nameof(ToRoomCard), $"在RoomInfo_Class的TRC操作中出现意料外的错误，错误堆栈:[RoomInfo_Class:{A}];[RoomCard:{B}]", ex, true);
                 return null;
             }
@@ -1073,7 +1073,7 @@ namespace Core.RuntimeObject
                             Name = userInfo.data.name,
                             url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                             roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) },
-                            Title = new() { Value = userInfo.data.live_room.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            Title = new() { Value = userInfo.data.live_room.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
                             cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) },
                             face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue },
                             sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue },
@@ -1089,7 +1089,7 @@ namespace Core.RuntimeObject
                         OldCard.Name = userInfo.data.name;
                         OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
                         OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) };
-                        OldCard.Title = new() { Value = userInfo.data.live_room.title.Replace("/","-").Replace("\\","-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.Title = new() { Value = userInfo.data.live_room.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.cover_from_user = new() { Value = userInfo.data.live_room.cover, ExpirationTime = DateTime.Now.AddMinutes(10) };
                         OldCard.face = new() { Value = userInfo.data.face, ExpirationTime = DateTime.MaxValue };
                         OldCard.sex = new() { Value = userInfo.data.sex, ExpirationTime = DateTime.MaxValue };
@@ -1106,8 +1106,8 @@ namespace Core.RuntimeObject
             catch (Exception ex)
             {
 
-                string userInfoContent = userInfo != null ? JsonSerializer.Serialize(userInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
-                string oldCardContent = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)}) : "内容为空";
+                string userInfoContent = userInfo != null ? JsonSerializer.Serialize(userInfo, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
+                string oldCardContent = OldCard != null ? JsonSerializer.Serialize(OldCard, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) }) : "内容为空";
                 Log.Error(nameof(ToRoomCard), $"在UserInfo的TRC操作中出现意料外的错误，错误原始数据:[userInfo:{userInfoContent}];[RoomCard:{oldCardContent}];堆栈:{ex.ToString}", ex, true);
                 return null;
             }
@@ -1340,22 +1340,22 @@ namespace Core.RuntimeObject
         /// 轮播状态(0：未轮播 1：轮播)
         /// </summary>
         public ExpansionType<int> roundStatus = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-         [JsonIgnore]
+        [JsonIgnore]
         /// <summary>
         /// 直播间网页url
         /// </summary>
         public ExpansionType<string> url = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-         [JsonIgnore]
+        [JsonIgnore]
         /// <summary>
         /// 用户等级
         /// </summary>
         public ExpansionType<int> level = new() { ExpirationTime = DateTime.UnixEpoch, Value = -1 };
-         [JsonIgnore]
+        [JsonIgnore]
         /// <summary>
         /// 主播性别
         /// </summary>
         public ExpansionType<string> sex = new() { ExpirationTime = DateTime.UnixEpoch, Value = string.Empty };
-         [JsonIgnore]
+        [JsonIgnore]
         /// <summary>
         /// 主播简介
         /// </summary>
@@ -1378,35 +1378,35 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 当前是否在下载
             /// </summary>
-            public bool IsDownload = false;
+            public bool IsDownload { set; get; } = false;
             /// <summary>
             /// 是否触发瞎几把剪
             /// </summary>
-            public bool IsCut = false;
+            public bool IsCut { set; get; } = false;
             /// <summary>
             /// 任务类型
             /// </summary>
-            public TaskType taskType = TaskType.NewTask;
+            public TaskType taskType { set; get; } = TaskType.NewTask;
             /// <summary>
             /// 当前房间下载任务总大小
             /// </summary>
-            public long DownloadSize = 0;
+            public long DownloadSize { set; get; } = 0;
             /// <summary>
             /// 实时下载速度
             /// </summary>
-            public double RealTimeDownloadSpe = 0;
+            public double RealTimeDownloadSpe { set; get; } = 0;
             /// <summary>
             /// 任务状态
             /// </summary>
-            public DownloadStatus Status = DownloadStatus.NewTask;
+            public DownloadStatus Status { set; get; } = DownloadStatus.NewTask;
             /// <summary>
             /// 任务开始时间
             /// </summary>
-            public DateTime StartTime = DateTime.UnixEpoch;
+            public DateTime StartTime { set; get; } = DateTime.UnixEpoch;
             /// <summary>
             /// 任务结束时间
             /// </summary>
-            public DateTime EndTime = DateTime.UnixEpoch;
+            public DateTime EndTime { set; get; } = DateTime.UnixEpoch;
             /// <summary>
             /// 弹幕对象
             /// </summary>
@@ -1416,11 +1416,11 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 取消录制标记
             /// </summary>
-            public bool Unmark = false;
+            public bool Unmark { set; get; } = false;
             /// <summary>
             /// 该录制任务的文件名缓存
             /// </summary>
-            public DownloadFile DownloadFileList = new();
+            public DownloadFile DownloadFileList { set; get; } = new();
 
             public class DownloadFile
             {

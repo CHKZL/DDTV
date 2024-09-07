@@ -28,10 +28,12 @@ namespace Desktop.NetWork
         /// <returns>请求返回体</returns>
         public static async Task<T> PostBody<T>(string url, Dictionary<string, string> _dic = null)
         {
+
             if (!string.IsNullOrEmpty(url) && url.Length > 5 && url.Substring(0, 4) != "http")
             {
                 url = "http://" + url;
             }
+
             try
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>
@@ -58,6 +60,7 @@ namespace Desktop.NetWork
                     var response = await client.PostAsync(url, content);
                     var responseString = response.Content.ReadAsStringAsync().Result;
                     OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
+                    
                     return A.data;
                 }
             }

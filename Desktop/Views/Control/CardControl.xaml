@@ -18,6 +18,9 @@
             <MenuItem Header="切换提醒开关" Click="MenuItem_ModifyRoom_Remind_Click"/>
             <Separator Visibility="{Binding Rec_Status_IsVisible}"/>
             <MenuItem Visibility="{Binding Rec_Status_IsVisible}" Header="取消录制" Click="Cancel_Task_Click"/>
+            <Separator Visibility="{Binding Rec_Status_IsVisible}"/>
+            <MenuItem Visibility="{Binding Rec_Status_IsVisible}" Header="生成快照用于切片" Click="Snapshot_Task_Click"
+                      ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="【弱鸡硬盘慎用，会卡】在不影响主进程录制的情况下，将当前录制中的文件输出一份到临时文件夹方便使用（需要自行fix或转码，临时文件夹为DDTV文件中的Temporary）"/>
             <Separator />
             <MenuItem Header="删除房间" Click="DelRoom_Click"/>
         </ContextMenu>

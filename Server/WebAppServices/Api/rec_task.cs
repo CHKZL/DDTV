@@ -76,4 +76,25 @@ namespace Server.WebAppServices.Api
             return Content(MessageBase.MssagePack(nameof(cut_task), TaskInfo.State, $"{TaskInfo.Message}"), "application/json");
         }
     }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/rec_task/[controller]")]
+    [Login]
+    [Tags("rec_task")]
+    public class generate_snapshot : ControllerBase
+    {
+        /// <summary>
+        /// 创建直播间快照用于快速切片
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid"></param>
+        /// <returns></returns>
+        [HttpPost(Name = "generate_snapshot")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0)
+        {
+            var message = Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(uid);
+            return Content(MessageBase.MssagePack(nameof(generate_snapshot),message,message.state?"创建快照成功":"创建快照失败", message.state?MessageCode.code.ok:MessageCode.code.OperationFailed), "application/json");
+        }
+    }
 }

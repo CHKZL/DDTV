@@ -202,11 +202,11 @@ namespace Core.RuntimeObject
         /// <summary>
         /// 储存原始弹幕信息到xml文件
         /// </summary>
-        /// <param name="danmuInfo"></param>
-        /// <param name="FileName"></param>
-        /// <param name="Name"></param>
-        /// <param name="roomId"></param>
-        private static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId)
+        /// <param name="danmuInfo">弹幕信息对象</param>
+        /// <param name="FileName">保存路径</param>
+        /// <param name="Name">昵称</param>
+        /// <param name="roomId">房间号</param>
+        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId)
         {
             string XML = string.Empty;
             XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +

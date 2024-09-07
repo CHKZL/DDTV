@@ -230,7 +230,12 @@ namespace Core.RuntimeObject.Download
         }
 
 
-
+        /// <summary>
+        /// 识别M3U8文件格式适配二级M3U8
+        /// </summary>
+        /// <param name="M3U8"></param>
+        /// <param name="hostClass"></param>
+        /// <returns></returns>
         internal static string Senior_M3U8_Analysis(string M3U8, ref HostClass hostClass)
         {
             if (string.IsNullOrEmpty(M3U8) || !M3U8.Contains("index.m3u8"))
@@ -252,6 +257,8 @@ namespace Core.RuntimeObject.Download
             }
             return M3U8;
         }
+
+
         /// <summary>
         /// 刷新HlsHost信息
         /// </summary>
@@ -408,7 +415,6 @@ namespace Core.RuntimeObject.Download
             Definition = codec.accept_qn;
             return Definition;
         }
-
 
 
         public static void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
