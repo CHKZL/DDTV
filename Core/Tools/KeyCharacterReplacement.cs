@@ -77,8 +77,8 @@ namespace Core.Tools
                 .Replace("{Date}", dateTime.ToString("yyyy_MM_dd"))
                 .Replace("{TIME}", dateTime.ToString("HH_mm_ss"))
                 .Replace("{Time}", dateTime.ToString("HH_mm_ss"))
-                .Replace("{TITLE}", roomCardClass.Title.Value)
-                .Replace("{Title}", roomCardClass.Title.Value)
+                .Replace("{TITLE}", CheckFilenames(roomCardClass.Title.Value))
+                .Replace("{Title}", CheckFilenames(roomCardClass.Title.Value))
                 .Replace("{R}",new Random().Next(1000,9999).ToString())
                 .Replace("{CWD}",WorkPath);
 

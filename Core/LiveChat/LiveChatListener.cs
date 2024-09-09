@@ -35,7 +35,6 @@ namespace Core.LiveChat
 
 
         public long RoomId = 0;
-        public string Title = string.Empty;
         public string Name = string.Empty;
         public string File = string.Empty;
         public event EventHandler<MessageEventArgs> MessageReceived;
@@ -52,7 +51,6 @@ namespace Core.LiveChat
         public LiveChatListener(long roomId)
         {
             RoomId = roomId;
-            Title = Tools.KeyCharacterReplacement.CheckFilenames(RoomInfo.GetTitle(RoomInfo.GetUid(roomId)));
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
             File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, RoomInfo.GetUid(roomId))}";
 
