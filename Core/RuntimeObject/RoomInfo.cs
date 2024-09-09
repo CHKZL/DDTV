@@ -1452,6 +1452,10 @@ namespace Core.RuntimeObject
                 /// 当前正在进行文件写入的视频文件
                 /// </summary>
                 public string CurrentOperationVideoFile { get; set; } = string.Empty;
+                /// <summary>
+                /// 是否正在生成快照
+                /// </summary>
+                public bool SnapshotGenerationInProgress { get; set; } = false;
             }
 
             public DownloadInfo Clone()

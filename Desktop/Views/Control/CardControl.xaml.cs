@@ -208,7 +208,7 @@ namespace Desktop.Views.Control
             };
             Task.Run(() =>
             {
-                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic).Result;
+                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic,new TimeSpan(0,1,0)).Result;
                 if (!message.state)
                 {
                     Log.Info(nameof(Snapshot_Task_Click), $"生成直播间录制快照失败，原因:{message.message}");
