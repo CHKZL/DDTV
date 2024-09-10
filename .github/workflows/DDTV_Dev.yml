@@ -551,28 +551,47 @@ jobs:
             (cd $f && zip -r ../$f-${{ github.ref_name }}.zip .)
           done
 
-      - name: Get previous release tag
-        id: prev_release
+      - name: Get previous release tags
+        id: prev_releases
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: releases } = await github.repos.listReleases({
+            const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+            const { data: releases } = await octokit.rest.repos.listReleases({
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            if (releases.length > 1) {
-              core.setOutput('tag', releases[1].tag_name);
-            } else {
-              core.setOutput('tag', '');
+            let lastRelease = '';
+            let lastPreRelease = '';
+            for (const release of releases) {
+              if (!release.prerelease && !lastRelease) {
+                lastRelease = release.tag_name;
+              }
+              if (release.prerelease && !lastPreRelease) {
+                lastPreRelease = release.tag_name;
+              }
+              if (lastRelease && lastPreRelease) break;
             }
+            core.setOutput('lastRelease', lastRelease);
+            core.setOutput('lastPreRelease', lastPreRelease);
 
       - name: Get commit messages
         id: commit_messages
-        if: steps.prev_release.outputs.tag != ''
         run: |
           git fetch --tags
-          git log --pretty=format:"%s" ${{ steps.prev_release.outputs.tag }}..${{ github.sha }} > commit_messages.txt
-  
+          if [ "${{ github.event.release.prerelease }}" = "true" ]; then
+            if [ "${{ steps.prev_releases.outputs.lastPreRelease }}" != "" ]; then
+              git log --pretty=format:"%s" ${{ steps.prev_releases.outputs.lastPreRelease }}..${{ github.sha }} > commit_messages.txt
+            else
+              echo "No previous pre-release found." > commit_messages.txt
+            fi
+          else
+            if [ "${{ steps.prev_releases.outputs.lastRelease }}" != "" ]; then
+              git log --pretty=format:"%s" ${{ steps.prev_releases.outputs.lastRelease }}..${{ github.sha }} > commit_messages.txt
+            else
+              echo "No previous release found." > commit_messages.txt
+            fi
+
       - name: Set release body
         id: release_body
         run: |
@@ -585,8 +604,8 @@ jobs:
           echo "" >> release_body.txt
           echo "DDTV5.x分为三个版本：【Server】、【Client】、【Desktop】" >> release_body.txt
           echo "【Server】：为控制台应用，自带WEBUI服务，跨平台适配win、linux、mac" >> release_body.txt
-          echo "【Client】：为Server的Windows平台下的窗口程序封装，在Server的基础上提供了WEBUI的桌面窗口，只适配Windows，适合win下的轻量化用户" >> release_body.  txt
-          echo "【Desktop】：Windows下的完全体，提供Server和Client的所有功能，以及特有的观看和桌面端控制UI，支持连接远程Server，为只适配Windows的WPF应用" >>   release_body.txt
+          echo "【Client】：为Server的Windows平台下的窗口程序封装，在Server的基础上提供了WEBUI的桌面窗口，只适配Windows，适合win下的轻量化用户" >> release_body.txt
+          echo "【Desktop】：Windows下的完全体，提供Server和Client的所有功能，以及特有的观看和桌面端控制UI，支持连接远程Server，为只适配Windows的WPF应用" >> release_body.txt
           echo "请根据使用环境选择下载的包体" >> release_body.txt
           echo "包体的命名规则为：DDTV-[版本]-[系统环境]-latest-[适配硬件架构]-dev[版本号].zip" >> release_body.txt
           echo "例如使用微软Windows操作系统的AMD or 英特尔CPU想使用桌面版本的就该选择:[DDTV-Desktop-windows-latest-win-x64-dev]" >> release_body.txt
