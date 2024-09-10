@@ -4,23 +4,13 @@
 // All Rights Reserved.
 
 using Core;
-using Desktop.Models;
 using Desktop.Views.Windows;
-using Masuit.Tools;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
 using System.Windows.Media;
-using System.Windows.Navigation;
-using Wpf.Ui;
-using Wpf.Ui.Appearance;
+using System.Windows.Media.Animation;
 using Wpf.Ui.Controls;
-using Wpf.Ui.Extensions;
 using static Core.RuntimeObject.Download.Basics;
 
 namespace Desktop.Views.Pages;
@@ -128,7 +118,7 @@ public partial class SettingsPage
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确保WebHook地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
-        }     
+        }
         #endregion
 
         #region 文件路径相关设置检查
@@ -178,7 +168,7 @@ public partial class SettingsPage
 
         #region 播放窗口设置
         //弹幕速度设置
-        if (string.IsNullOrEmpty(PlayWindowDanmaSpeed_InputBox.Text) && int.Parse(PlayWindowDanmaSpeed_InputBox.Text)>0)
+        if (string.IsNullOrEmpty(PlayWindowDanmaSpeed_InputBox.Text) && int.Parse(PlayWindowDanmaSpeed_InputBox.Text) > 0)
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确播放窗口弹幕速度参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
@@ -335,7 +325,7 @@ public partial class SettingsPage
             Config.Core_RunConfig._DeleteOriginalFileAfterRepair = (bool)DeleteOriginalFileAfterRepair_SwitchControl.IsChecked;
         }
         //设置屏蔽词
-        if(Config.Core_RunConfig._BlockBarrageList != BlockBarrageList_TextBox.Text)
+        if (Config.Core_RunConfig._BlockBarrageList != BlockBarrageList_TextBox.Text)
         {
             Config.Core_RunConfig._BlockBarrageList = BlockBarrageList_TextBox.Text;
         }

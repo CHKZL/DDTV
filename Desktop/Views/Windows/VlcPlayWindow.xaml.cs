@@ -6,34 +6,15 @@ using Desktop.Models;
 using Desktop.Views.Windows.DanMuCanvas.BarrageParameters;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Wpf;
-using SharpCompress.Common;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Channels;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using Wpf.Ui;
 using Wpf.Ui.Controls;
 using static Core.Config;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 using Key = System.Windows.Input.Key;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
 
@@ -75,6 +56,10 @@ namespace Desktop.Views.Windows
         /// 当前窗口的清晰度
         /// </summary>
         public long CurrentWindowClarity = 10000;
+        /// <summary>
+        /// 宽高比是否初始化
+        /// </summary>
+        public bool InitializeAspectRatio = false;
         public class DanMuOrbitInfo
         {
             public string Text { get; set; }
@@ -115,6 +100,10 @@ namespace Desktop.Views.Windows
             Task.Run(() => InitVlcPlay(uid));
             Task.Run(() => SetClarityMenu());
         }
+        /// <summary>
+        /// 初始化播放器和弹幕渲染Canvas
+        /// </summary>
+        /// <param name="uid"></param>
         public void InitVlcPlay(long uid)
         {
             PlaySteam(null);
@@ -132,6 +121,9 @@ namespace Desktop.Views.Windows
             });
         }
 
+        /// <summary>
+        /// 获取和设置分辨率选项
+        /// </summary>
         private void SetClarityMenu()
         {
             List<long> DefinitionList = Core.RuntimeObject.Download.Basics.GetOptionalClarity(roomCard.RoomId, "http_hls", "fmp4", "avc");
@@ -169,7 +161,7 @@ namespace Desktop.Views.Windows
         private void ModifyResolutionRightClickMenuEvent_Click(object sender, RoutedEventArgs e)
         {
             MenuItem clickedMenuItem = sender as MenuItem;
-            
+
             Dispatcher.Invoke(() =>
             {
                 CurrentWindowClarity = (long)clickedMenuItem.Tag; // 获取被点击的菜单项的索引
@@ -188,6 +180,31 @@ namespace Desktop.Views.Windows
                 Thread.Sleep(3000);
                 vlcPlayModels.LoadingVisibility = Visibility.Collapsed;
                 vlcPlayModels.OnPropertyChanged("LoadingVisibility");
+                //初始化宽高比
+                if (!InitializeAspectRatio)
+                {
+                    if (_mediaPlayer != null && _mediaPlayer.Media != null && _mediaPlayer.Media.Tracks.Length > 0)
+                    {
+                        try
+                        {
+                            var videoWidth = _mediaPlayer.Media.Tracks[0].Data.Video.Width;
+                            var videoHeight = _mediaPlayer.Media.Tracks[0].Data.Video.Height;
+                            if (videoHeight > videoWidth)
+                            {
+                                Dispatcher.Invoke(() =>
+                                {
+                                    this.Width = 450;
+                                    this.Height = 800;
+                                });
+
+                            }
+                        }
+                        catch (Exception) { }
+                        InitializeAspectRatio = true;
+                    }
+
+
+                }
             });
         }
 

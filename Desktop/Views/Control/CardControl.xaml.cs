@@ -1,23 +1,11 @@
 ﻿using Core;
 using Core.LogModule;
 using Core.RuntimeObject;
-using Desktop.Models;
 using Desktop.Views.Windows;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Control
@@ -208,7 +196,7 @@ namespace Desktop.Views.Control
             };
             Task.Run(() =>
             {
-                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic,new TimeSpan(0,1,0)).Result;
+                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic, new TimeSpan(0, 1, 0)).Result;
                 if (!message.state)
                 {
                     Log.Info(nameof(Snapshot_Task_Click), $"生成直播间录制快照失败，原因:{message.message}");

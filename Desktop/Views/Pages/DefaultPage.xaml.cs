@@ -6,13 +6,9 @@
 using Core;
 using Core.LogModule;
 using Desktop.Models;
-using SixLabors.ImageSharp.Drawing;
-using System.Collections.ObjectModel;
-using System.Net.Sockets;
 using System.Net;
-using System.Windows;
+using System.Net.Sockets;
 using static Server.WebAppServices.Api.get_system_resources;
-using Castle.DynamicProxy;
 
 namespace Desktop.Views.Pages;
 
@@ -114,7 +110,7 @@ public partial class DefaultPage
             Log.Warn(nameof(UpdateAnnouncement), "更新公告出现错误，错误堆栈已写文本记录文件", ex, false);
         }
     }
-    
+
     /// <summary>
     /// 检测代理状态
     /// </summary>
@@ -127,7 +123,7 @@ public partial class DefaultPage
             if (defaultProxy != null)
             {
                 var proxyUri = defaultProxy.GetProxy(new Uri(Config.Core_RunConfig._LiveDomainName));
-                if(proxyUri==null)
+                if (proxyUri == null)
                 {
                     SetProxyState("正常，未检测到代理");
                     return;
@@ -156,7 +152,7 @@ public partial class DefaultPage
     {
         try
         {
-            string url = Config.Core_RunConfig._LiveDomainName.ToLower().Replace("https://", "").Replace("http://","");
+            string url = Config.Core_RunConfig._LiveDomainName.ToLower().Replace("https://", "").Replace("http://", "");
             IPHostEntry hostEntry = Dns.GetHostEntry(url);
             foreach (IPAddress ipAddress in hostEntry.AddressList)
             {
@@ -176,7 +172,7 @@ public partial class DefaultPage
                             Log.Info(nameof(IpvDetection), $"当前为IPv6访问状态", false);
                             break;
                     }
-                    
+
                     tempSocket.Close();
                     break;
                 }

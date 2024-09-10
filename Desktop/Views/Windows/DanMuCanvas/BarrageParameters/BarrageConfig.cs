@@ -1,11 +1,6 @@
 ﻿using Core;
 using Desktop.Views.Windows.DanMuCanvas.Models;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -37,7 +32,7 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
         #endregion
 
         #region 初始化
-        public BarrageConfig(Canvas canvas,double width)
+        public BarrageConfig(Canvas canvas, double width)
         {
             //InitializeColors();
             this.canvas = canvas;
@@ -69,11 +64,11 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
                 grid.Children.Add(strokeTextBlock);
             }
             TextBlock textblock = new TextBlock();
-            if(File.Exists("./typeface.ttf"))
+            if (File.Exists("./typeface.ttf"))
             {
                 textblock.FontFamily = new FontFamily(new Uri("file:///" + System.IO.Path.GetFullPath("./")), "./#typeface");
             }
-            
+
             if (!string.IsNullOrEmpty(contentlist.nickName))
             {
                 textblock.Text = $"{contentlist.nickName}:{contentlist.content}";

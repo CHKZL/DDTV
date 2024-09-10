@@ -3,28 +3,17 @@
 // Copyright (C) Leszek Pomianowski and WPF UI Contributors.
 // All Rights Reserved.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Diagnostics.Metrics;
-using System.IO;
-using System.Threading;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Core;
 using Core.LogModule;
 using Desktop.Models;
 using Desktop.Views.Windows;
-using Masuit.Tools;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Newtonsoft.Json;
-using Wpf.Ui;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.IO;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using Wpf.Ui.Controls;
 using static Core.Network.Methods.Follow;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
@@ -197,7 +186,7 @@ public partial class DataPage
 
     public static void Refresher(object state)
     {
-         DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards();
+        DataSource.RetrieveData.UI_RoomCards.RefreshRoomCards();
     }
     public class SortableObservableCollection<T> : ObservableCollection<T>
     {
@@ -265,7 +254,7 @@ public partial class DataPage
 
     private void ScreenName()
     {
-         if (!string.IsNullOrEmpty(ScreenNameBox.Text))
+        if (!string.IsNullOrEmpty(ScreenNameBox.Text))
         {
             screen_name = ScreenNameBox.Text;
         }

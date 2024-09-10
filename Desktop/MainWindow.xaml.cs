@@ -1,31 +1,17 @@
 ﻿using Core;
 using Core.LogModule;
 using Core.RuntimeObject;
-using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
-using Masuit.Tools.Win32;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Wpf;
 using System.Diagnostics;
 using System.Reflection;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Wpf.Ui;
-using Wpf.Ui.Appearance;
 using Wpf.Ui.Controls;
 using static Core.RuntimeObject.Detect;
 using static Core.Tools.DokiDoki;
-using static Server.WebAppServices.Api.get_system_resources;
 
 namespace Desktop
 {

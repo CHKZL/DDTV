@@ -1,23 +1,12 @@
 ﻿using Core.LiveChat;
-using Core.LogModule;
 using Core.RuntimeObject;
 using Notification.Wpf;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Windows
@@ -60,7 +49,7 @@ namespace Desktop.Views.Windows
                 Dispatcher.Invoke(() =>
                 {
                     DanmaCollection.Add(new DanmaOnly { Message = $"等待直播间消息中..." });
-                });       
+                });
             });
         }
 
@@ -165,7 +154,7 @@ namespace Desktop.Views.Windows
         private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
         {
             string T = DanmaOnly_DanmaInput.Text;
-            if(string.IsNullOrEmpty(T) && T.Length>20)
+            if (string.IsNullOrEmpty(T) && T.Length > 20)
             {
                 return;
             }
@@ -176,7 +165,7 @@ namespace Desktop.Views.Windows
         private void DanmaOnly_DanmaInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             System.Windows.Controls.TextBox? textBox = sender as System.Windows.Controls.TextBox;
-            if (textBox!=null && textBox.Text.Length > 20)
+            if (textBox != null && textBox.Text.Length > 20)
             {
                 int selectionStart = textBox.SelectionStart;
                 textBox.Text = textBox.Text.Substring(0, 20);

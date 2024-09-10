@@ -4,11 +4,7 @@
 // All Rights Reserved.
 
 using Core;
-using Core.LogModule;
-using Core.Tools;
-using Desktop.Models;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;

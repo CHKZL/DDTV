@@ -1,21 +1,9 @@
 ﻿using Core;
 using Core.LogModule;
-using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Pages;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Wpf.Ui.Controls;
-using static Core.Network.Methods.Room;
-using static Desktop.Views.Pages.DataPage;
 
 
 

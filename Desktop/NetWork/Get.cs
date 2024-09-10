@@ -1,18 +1,6 @@
-﻿using AngleSharp.Dom;
-using Core.LogModule;
-using Core.RuntimeObject;
+﻿using Core.LogModule;
 using Newtonsoft.Json;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Desktop.NetWork
 {
@@ -53,7 +41,7 @@ namespace Desktop.NetWork
 
                 using (HttpClient _httpClient = new HttpClient())
                 {
-                    _httpClient.Timeout = new TimeSpan(0,0,8);
+                    _httpClient.Timeout = new TimeSpan(0, 0, 8);
                     HttpResponseMessage response = _httpClient.GetAsync($"{url}?{Parameter}").Result;
                     response.EnsureSuccessStatusCode();
                     string responseBody = response.Content.ReadAsStringAsync().Result;
@@ -65,7 +53,7 @@ namespace Desktop.NetWork
             {
                 GetErrorCount++;
                 if (GetErrorCount > 30)
-                {     
+                {
                     Log.Warn(nameof(GetBody), $"触发DesktopTips={GetErrorCount}");
                     GetErrorCount = 0;
                 }
@@ -78,7 +66,7 @@ namespace Desktop.NetWork
                 {
                     Log.Warn(nameof(GetBody), $"发起Get请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
                 }
-                
+
                 return default;
             }
         }

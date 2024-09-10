@@ -1,21 +1,6 @@
 ﻿using Core.LogModule;
 using Core.RuntimeObject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
 namespace Desktop.Views.Windows
@@ -36,11 +21,11 @@ namespace Desktop.Views.Windows
             Task.Run(() =>
             {
                 _uid = RoomInfo.GetUid(_room_id);
-               
+
                 _nickname = RoomInfo.GetNickname(_uid);
                 Dispatcher.Invoke(() =>
                 {
-                     this.Title = RoomInfo.GetTitle(_uid);
+                    this.Title = RoomInfo.GetTitle(_uid);
                     UI_TitleBar.Title = $"{_nickname}({_room_id}) - {this.Title}(该直播间只有FLV流，使用WEB兼容模式播放)";
                 });
             });

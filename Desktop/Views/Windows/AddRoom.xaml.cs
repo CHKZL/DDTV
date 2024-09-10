@@ -1,28 +1,7 @@
 ﻿using Core;
-using Desktop.Models;
 using Masuit.Tools;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Net.Codecrete.QrCodeGenerator;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 using Wpf.Ui.Controls;
-using static Desktop.Views.Pages.DataPage;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Desktop.Views.Windows
 {
@@ -52,7 +31,7 @@ namespace Desktop.Views.Windows
                     RoomId_TextBox.PlaceholderText = "请输入房间号";
                     break;
                 case Mode.UidNumberMode:
-                     RoomId_TextBox.PlaceholderText = "请输入UID,多个UID请使用逗号分割";
+                    RoomId_TextBox.PlaceholderText = "请输入UID,多个UID请使用逗号分割";
                     break;
             }
         }
@@ -73,7 +52,7 @@ namespace Desktop.Views.Windows
         {
             if ((bool)RemindChechBox.IsChecked)
             {
-                _IsRemind= true;
+                _IsRemind = true;
             }
             else
             {
@@ -85,7 +64,7 @@ namespace Desktop.Views.Windows
         {
             if ((bool)RecDanmuChechBox.IsChecked)
             {
-                _IsDanmu  = true;
+                _IsDanmu = true;
             }
             else
             {
@@ -156,8 +135,8 @@ namespace Desktop.Views.Windows
                     }
                 case Mode.UidNumberMode:
                     {
-                        string UidStr = RoomId_TextBox.Text.Replace("，",",");
-                        List<long> UidList= new List<long>();
+                        string UidStr = RoomId_TextBox.Text.Replace("，", ",");
+                        List<long> UidList = new List<long>();
                         if (string.IsNullOrEmpty(UidStr))
                         {
                             System.Windows.MessageBox.Show("请输入房间号");
