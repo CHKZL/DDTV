@@ -143,6 +143,10 @@ namespace Core.RuntimeObject
                         histories.Add(history);
                         RecEndEvent?.Invoke(history, new EventArgs());
 
+
+                    }
+                    finally
+                    {
                         //在这一步之前应该处理完所有本次录制任务的工作，执行完成后，清空本次除了录制的文件以外的所有记录
                         Basics.DownloadCompletedReset(ref roomCard);
                         string msg = $"{roomCard.Name}({roomCard.RoomId})录制结束" + (roomCard.DownInfo.Unmark ? "【原因：用户取消】" : "");
@@ -150,9 +154,7 @@ namespace Core.RuntimeObject
                         Log.Info(nameof(DetectRoom_LiveStart), msg);
                         roomCard.DownInfo.Unmark = false;
                         roomCard.DownInfo.IsDownload = false;
-                    }
-                    finally
-                    {
+
                         if (roomCard.DownInfo.LiveChatListener != null)
                         {
                             roomCard.DownInfo.LiveChatListener.Register.Remove("DetectRoom_LiveStart");
