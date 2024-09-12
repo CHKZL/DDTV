@@ -87,6 +87,8 @@ namespace Desktop.Views.Windows
                 vlcPlayModels.OnPropertyChanged("MessageText");
                 return;
             }
+
+            this.Title = $"{roomCard.Name}({roomCard.RoomId}) - {roomCard.Title.Value}";
             Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
 
             _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)} --no-cert-verification"]);
@@ -321,7 +323,6 @@ namespace Desktop.Views.Windows
                             if (_libVLC != null && !string.IsNullOrEmpty(Url))
                             {
                                 var media = new Media(_libVLC, Url, FromType.FromLocation);
-
                                 _mediaPlayer.Media = media;
                                 _mediaPlayer?.Play();
                             }
@@ -406,9 +407,9 @@ namespace Desktop.Views.Windows
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             int v = 0;
-            if (videoView != null && videoView.MediaPlayer != null)
+            if (_mediaPlayer != null)
             {
-                videoView.Dispatcher.Invoke(() => v = videoView.MediaPlayer.Volume);
+                videoView.Dispatcher.Invoke(() => v = _mediaPlayer.Volume);
             }
             if (e.Delta > 0)
             {
@@ -440,12 +441,12 @@ namespace Desktop.Views.Windows
         /// <param name="i"></param>
         private void SetVolume(int i)
         {
-            if (videoView != null && videoView.MediaPlayer != null)
+            if (videoView != null && _mediaPlayer != null)
             {
 
                 videoView.Dispatcher.Invoke(() =>
                 {
-                    videoView.MediaPlayer.Volume = i;
+                    _mediaPlayer.Volume = i;
                     vlcPlayModels.VolumeVisibility = Visibility.Visible;
                     vlcPlayModels.OnPropertyChanged("VolumeVisibility");
                     Task.Run(() =>
@@ -523,7 +524,7 @@ namespace Desktop.Views.Windows
                 int v = 0;
                 if (videoView != null && videoView.MediaPlayer != null)
                 {
-                    videoView.Dispatcher.Invoke(() => v = videoView.MediaPlayer.Volume);
+                    videoView.Dispatcher.Invoke(() => v = _mediaPlayer.Volume);
                 }
                 //音量增加
                 if (e.KeyStates == Keyboard.GetKeyStates(Key.Up))
