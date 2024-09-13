@@ -1039,10 +1039,10 @@ namespace Core
                 }
             }
 
-            private static string IP = "http://127.0.0.1";
+            private static string IP = "http://localhost";
             /// <summary>
             /// WEB服务监听的IP地址
-            /// 默认值：http://127.0.0.1
+            /// 默认值：http://localhost
             /// </summary>
             public string _IP
             {
@@ -1204,10 +1204,10 @@ namespace Core
                 }
             }
 
-            private static string DesktopIP = "http://127.0.0.1";
+            private static string DesktopIP = "http://localhost";
             /// <summary>
             /// 桌面版连接远程服务器的IP地址（当DesktopRemoteServer为True时生效）
-            /// 默认值：http://127.0.0.1
+            /// 默认值：http://localhost
             /// </summary>
             public string _DesktopIP
             {

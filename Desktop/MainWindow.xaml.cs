@@ -115,7 +115,7 @@ namespace Desktop
         {
             Task.Run(() =>
             {
-                if (!Config.Core_RunConfig._DesktopIP.Contains("//127.") && !Config.Core_RunConfig._DesktopIP.Contains("//0."))
+                if (!Config.Core_RunConfig._DesktopIP.Contains("//127.") && !Config.Core_RunConfig._DesktopIP.Contains("//0.") && !Config.Core_RunConfig._DesktopIP.Contains("localhost"))
                 {
                     ToConnectToRemoteServer = true;
                 }
