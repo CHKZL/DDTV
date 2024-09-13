@@ -129,7 +129,7 @@ namespace Server
                 string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
                 app.Urls.Add(rurl);
                 Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://127.0.0.1:{Config.Core_RunConfig._Port} ]");
+                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://localhost:{Config.Core_RunConfig._Port} ]");
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
                     Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
