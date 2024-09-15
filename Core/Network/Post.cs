@@ -121,7 +121,7 @@ namespace Core.Network
                     catch (Exception ex)
                     {
                         Thread.Sleep(300);
-                        Log.Error(nameof(PostBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                        Log.Error(nameof(PostBody), $"发起Post请求，目标:【{url}】未知错误，详细堆栈:{ex.ToString()}", ex, false);
                         continue; // 如果没有达到最大尝试次数，就继续尝试
                     }
                 }

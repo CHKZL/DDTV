@@ -79,7 +79,7 @@ namespace Core.Network
                     {
                         Thread.Sleep(300);
                         if (IsCookie)
-                            Log.Error(nameof(GetBody), $"发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
+                            Log.Error(nameof(GetBody), $"发起Get请求，目标:【{url}】发生未知错误，详细堆栈:{ex.ToString()}", ex, false);
                         continue; // 如果没有达到最大尝试次数，就继续尝试
                     }
                 }
