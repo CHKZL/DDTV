@@ -82,7 +82,7 @@ body:
   - type: checkboxes
     id: confirm-newest-version
     attributes:
-      label: 你 100% 确定你在使用最新的开发版吗？在打勾前请运行一次检查更新。
+      label: 你 100% 确定你在使用最新的开发版吗？在打勾前请确保打开[接受开发版本]的开关，再运行一次检查更新。
       options:
         - label: 是的，我 100% 确定。
           required: false
