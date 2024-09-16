@@ -60,11 +60,11 @@ namespace Desktop.NetWork
                 if (First)
                 {
                     First = false;
-                    Log.Warn(nameof(GetBody), $"发起Get请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
+                    Log.Warn(nameof(GetBody), $"发起Get请求出错({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
                 }
                 else
                 {
-                    Log.Warn(nameof(GetBody), $"发起Get请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
+                    Log.Warn(nameof(GetBody), $"发起Get请求出错({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
                 }
 
                 return default;

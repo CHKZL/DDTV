@@ -67,16 +67,16 @@ namespace Desktop.NetWork
                 if (First)
                 {
                     First = false;
-                    Log.Warn(nameof(PostBody), $"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
+                    Log.Warn(nameof(PostBody), $"发起Post请求出错({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex);
                 }
                 else
                 {
-                    Log.Warn(nameof(PostBody), $"发起Post请求出错,URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
+                    Log.Warn(nameof(PostBody), $"发起Post请求出错({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]，错误堆栈：\r\n{ex.ToString()}", ex, false);
                 }
 
                 if (ex is TaskCanceledException)
                 {
-                    Log.Warn(nameof(PostBody), $"发起Post请求超时,URL:[{url}]", ex);
+                    Log.Warn(nameof(PostBody), $"发起Post请求超时({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]", ex);
                 }
 
                 return default;
