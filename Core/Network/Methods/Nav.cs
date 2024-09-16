@@ -40,7 +40,14 @@ namespace Core.Network.Methods
                 }
                 catch (Exception e)
                 {
-                    Log.Error(nameof(_NAV), $"获取Nva状态出现错误，重试。获取到的状态内容文本:{WebText}",e);
+                    if(string.IsNullOrEmpty(WebText))
+                    {
+                        Log.Warn(nameof(_NAV), $"获取Nva状态失败，获取到空内容，请检查网络连通性..");
+                    }
+                    else
+                    {
+                        Log.Error(nameof(_NAV), $"获取Nva状态出现错误，重试。获取到的状态内容文本:{WebText}",e);
+                    }
                     if (attempt == maxAttempts - 1)
                     {
                         return null;
