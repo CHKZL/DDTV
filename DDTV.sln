@@ -20,6 +20,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PushUpdate", "PushUpdate\Pu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Update", "Update\Update.csproj", "{928C4353-5FA1-4B77-BB3A-657633E1539A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebuggingClientPackage", "DebuggingClientPackage\DebuggingClientPackage.csproj", "{90D3546B-6C7A-4862-A121-BAA31ABB0727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,14 @@ Global
 		{928C4353-5FA1-4B77-BB3A-657633E1539A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{928C4353-5FA1-4B77-BB3A-657633E1539A}.Release|x64.ActiveCfg = Release|Any CPU
 		{928C4353-5FA1-4B77-BB3A-657633E1539A}.Release|x64.Build.0 = Release|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Debug|x64.Build.0 = Debug|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Release|x64.ActiveCfg = Release|Any CPU
+		{90D3546B-6C7A-4862-A121-BAA31ABB0727}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
