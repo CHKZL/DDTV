@@ -99,6 +99,12 @@ namespace Server
                                     }
                                     break;
                                 }
+                            case ConsoleKey.D:
+                                {
+                                    Console.WriteLine("触发Debug快照");
+                                    Core.Tools.DebuggingRecord.GenerateReportSnapshot();
+                                    break;
+                                }
                             case ConsoleKey.Z:
                                 {
                                     Console.WriteLine((Config.Core_RunConfig._DebugMode ? "关闭" : "打开") + "调试模式");

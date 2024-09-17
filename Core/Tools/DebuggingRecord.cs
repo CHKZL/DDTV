@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Core.LogModule;
+using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace Core.Tools
             string ZipFilePath = string.Empty;
             try
             {
-                string GID = Guid.NewGuid().ToString();
+                string GID = $"Debug_{DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fff")}";
                 GIDPath = $"{Config.Core_RunConfig._TemporaryFileDirectory}{GID}/";
                 if(!Directory.Exists(GIDPath))
                 {
@@ -88,6 +89,7 @@ namespace Core.Tools
                 FileInfo ZipFileInfo = new(ZipFilePath);
                 string EncryofFilaName = $"{Config.Core_RunConfig._DebugFileDirectory}{ZipFileInfo.Name}_Encryof.{ZipFileInfo.Extension}";
                 EncryptFile(ZipFilePath, EncryofFilaName);
+                Log.Info(nameof(GenerateReportSnapshot),$"生成Debug快照成功，生成文件{EncryofFilaName}");
                 return EncryofFilaName;
             }
             catch (Exception e)
