@@ -5,6 +5,7 @@
 
 using Core;
 using Desktop.Views.Windows;
+using SharpCompress.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -459,6 +460,24 @@ public partial class SettingsPage
                 QrLogin qrLogin = new QrLogin();
                 qrLogin.ShowDialog();
             });
+        }
+    }
+
+    private void Generate_Debug_Click(object sender, RoutedEventArgs e)
+    {
+        string DebugFilePath = Core.Tools.DebuggingRecord.GenerateReportSnapshot();
+        if(string.IsNullOrEmpty(DebugFilePath))
+        {
+            MainWindow.SnackbarService.Show("生成排故快照", "生成排故障快照文件失败...", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.ArrowSync20), TimeSpan.FromSeconds(5));
+        }
+        else
+        {
+            if (File.Exists(DebugFilePath))
+            {
+                FileInfo fileInfo = new(DebugFilePath);
+                Process.Start("explorer.exe", $"/select,\"{fileInfo.FullName}\"");
+            }
+
         }
     }
 }

@@ -163,7 +163,10 @@ namespace Core
             {
                 Directory.CreateDirectory(Config.Core_RunConfig._RecFileDirectory);
             }
-
+            if (!Directory.Exists(Config.Core_RunConfig._DebugFileDirectory))
+            {
+                Directory.CreateDirectory(Config.Core_RunConfig._DebugFileDirectory);
+            }
             DeleteUnexpectedFiles();
 
 

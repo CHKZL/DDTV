@@ -630,6 +630,16 @@ namespace Core
                 }
             }
 
+            private static string DebugFileDirectory = "./Debug/";
+            /// <summary>
+            /// 用于生成排查文件的文件夹（字符串）
+            /// 默认值：./Debug/
+            /// </summary>
+            public string _DebugFileDirectory
+            {
+                get => DebugFileDirectory;
+            }
+
 
             private static string DefaultLiverFolderName = "{ROOMID}_{NAME}";
             /// <summary>

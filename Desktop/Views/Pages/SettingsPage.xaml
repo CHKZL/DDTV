@@ -21,11 +21,13 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
                 <ui:Button Grid.Column="0" Margin="0,0,0,10" Content="保存全部" FontSize="20" HorizontalAlignment="Left" Icon="{ui:SymbolIcon Save20}" Click="Config_Save_Button_Click"/>
                 <ui:TextBlock Name="SaveTips" Grid.Column="1" Margin="10,8,0,0"  FontSize="16" FontTypography="Body" HorizontalAlignment="Left"  Text="请注意：未保存退出当前页面将丢失已修改内容" />
-                <ui:Button Grid.Column="2" Margin="0,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
+                <ui:Button Grid.Column="2" Margin="30,0,0,10" Content="生成排故调试快照" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon BugArrowCounterclockwise20}" Click="Generate_Debug_Click" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="点击后将会将现在的配置和本次启动产生的日志文件打包加密生成一个zip包"/>
+                <ui:Button Grid.Column="3" Margin="30,0,0,10" Content="检查更新" FontSize="20" HorizontalAlignment="Right" Icon="{ui:SymbolIcon DocumentHeaderArrowDown20}" Click="CheckForUpdates_Click"/>
             </Grid>
 
             <Grid>

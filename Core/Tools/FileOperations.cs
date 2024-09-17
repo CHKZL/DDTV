@@ -30,9 +30,31 @@ namespace Core.Tools
                 {
                     Log.Warn(nameof(DeletePathFile), $"要删除的路径不存在");
                 }
-                dir.Delete(true);
+                string[] Files = GetAllFiles(targetDir);
+                foreach (var item in Files)
+                {
+                    Delete(item);
+                }
             });
         }
+
+        /// <summary>
+        /// 获取目标文件夹的所有子文件结构树
+        /// </summary>
+        /// <param name="targetDirectory"></param>
+        /// <returns></returns>
+        public static string[] GetAllFiles(string targetDirectory)
+        {
+            if (Directory.Exists(targetDirectory))
+            {
+                return Directory.GetFiles(targetDirectory, "*", SearchOption.AllDirectories);
+            }
+            else
+            {
+                return new string[0]; // 如果目标文件夹不存在，返回一个空数组
+            }
+        }
+
         /// <summary>
         /// 在指定路径中创建所有目录
         /// </summary>
@@ -64,6 +86,12 @@ namespace Core.Tools
 
         private static List<(string File, string Message)> _DelFileList = new();
         private static bool DelState = false;
+
+        /// <summary>
+        /// 删除文件队列
+        /// </summary>
+        /// <param name="Path"></param>
+        /// <param name="Message"></param>
         public static void Delete(string Path, string Message = "")
         {
             if (!DelState)
@@ -107,7 +135,7 @@ namespace Core.Tools
         }
 
 
-        
+
 
 
         /// <summary>
@@ -149,6 +177,32 @@ namespace Core.Tools
                 }
 
                 return directoryNode;
+            }
+        }
+
+        /// <summary>
+        /// 复制源文件夹中的所有文件到目标文件夹
+        /// </summary>
+        /// <param name="sourceDirectory">源文件夹</param>
+        /// <param name="destinationDirectory">目标文件夹</param>
+        public static void CopyAllFiles(string sourceDirectory, string destinationDirectory)
+        {
+            // 确保目标文件夹存在
+            Directory.CreateDirectory(destinationDirectory);
+
+            // 获取源文件夹中的所有文件
+            string[] files = Directory.GetFiles(sourceDirectory);
+
+            foreach (string file in files)
+            {
+                // 获取文件名
+                string fileName = Path.GetFileName(file);
+
+                // 生成目标文件路径
+                string destFile = Path.Combine(destinationDirectory, fileName);
+
+                // 复制文件
+                File.Copy(file, destFile, true);
             }
         }
 

@@ -16,6 +16,9 @@ namespace Core.LogModule
         internal static string ErrorFilePath = string.Empty;
         internal static StreamWriter streamWriter = default;
 
+
+       
+
         public static class Config
         {
             #region 初始化数据库
