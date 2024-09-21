@@ -98,6 +98,7 @@ namespace Core.Tools
             }
             finally
             {
+                Tools.FileOperations.DeleteEmptyDirectories(Core.Config.Core_RunConfig._TemporaryFileDirectory);
                 if (Directory.Exists(GIDPath))
                 {
                     Tools.FileOperations.DeletePathFile(GIDPath);

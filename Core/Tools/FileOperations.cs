@@ -134,7 +134,26 @@ namespace Core.Tools
             _DelFileList.Add((Path, Message));
         }
 
+        /// <summary>
+        /// 删除空白文件夹
+        /// </summary>
+        /// <param name="path"></param>
+        public static void DeleteEmptyDirectories(string path)
+        {
+            Task.Run(() =>
+            {
+                foreach (var directory in Directory.GetDirectories(path))
+                {
+                    DeleteEmptyDirectories(directory);
+                    if (Directory.GetFiles(directory).Length == 0 && Directory.GetDirectories(directory).Length == 0)
+                    {
+                        Directory.Delete(directory);
+                        Log.Info(nameof(DeleteEmptyDirectories), $"删除空白文件夹[{directory}");
+                    }
+                }
+            });
 
+        }
 
 
 

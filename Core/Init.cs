@@ -181,6 +181,7 @@ namespace Core
             {
                 Tools.FileOperations.Delete($"{Core_RunConfig._ConfigDirectory}{Core_RunConfig._UserInfoCoinfFileExtension}", "发现空白登录态文件可能导致错误，已清理");
             }
+            Tools.FileOperations.DeleteEmptyDirectories(Core.Config.Core_RunConfig._TemporaryFileDirectory);
         }
 
         private static void ProgramUpdates_NewVersionAvailableEvent(object? sender, EventArgs e)
