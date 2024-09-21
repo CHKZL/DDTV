@@ -24,7 +24,7 @@ namespace Core.RuntimeObject.Download
 
             try
             {
-                if (Card.DownInfo.DownloadFileList.SnapshotGenerationInProgress) Card.DownInfo.DownloadFileList.SnapshotGenerationInProgress = true;
+                if (!Card.DownInfo.DownloadFileList.SnapshotGenerationInProgress) Card.DownInfo.DownloadFileList.SnapshotGenerationInProgress = true;
                 else return (false, "当前房间已有快照正在生成中");
 
                 string videoFile = Card.DownInfo.DownloadFileList.CurrentOperationVideoFile;
