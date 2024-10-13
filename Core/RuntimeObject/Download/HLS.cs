@@ -237,28 +237,44 @@ namespace Core.RuntimeObject.Download
             {
                 return DlwnloadTaskState.StopLive;
             }
-            if(card.DownInfo.Unmark)
+
+            if (card.DownInfo.Unmark)
             {
                 return DlwnloadTaskState.UserCancellation;
             }
-            //是否为收费直播
+            //
             bool isPaidLiveStream = hostClass.all_special_types.Contains(1);
+            string url = string.Empty;
+
+            //是否为收费直播
             if (isPaidLiveStream)
-            {   
-                card.DownInfo.Status = RoomCardClass.DownloadStatus.Special;            
-                return DlwnloadTaskState.PaidLiveStream;
+            {
+                //测是否有门票
+                if (!GetHlsAvcUrl(card, Core.Config.Core_RunConfig._DefaultResolution, out url))
+                {
+                    //没门票
+                    card.DownInfo.Status = RoomCardClass.DownloadStatus.Special;
+                    return DlwnloadTaskState.PaidLiveStream;
+                }
+                //有门票
+                if (!string.IsNullOrEmpty(url))
+                {
+                    Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]检测到收费直播，但是好像有门票，继续尝试录制");
+                }
             }
+            //是否有HLS流
             if (hostClass.Effective)
             {
-               card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
+                card.DownInfo.Status = RoomCardClass.DownloadStatus.Downloading;
                 return DlwnloadTaskState.Default;
             }
             else
             {
-                 card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
+                card.DownInfo.Status = RoomCardClass.DownloadStatus.Standby;
                 return DlwnloadTaskState.NoHLSStreamExists;
             }
         }
+
 
         /// <summary>
         /// 更新下载速度

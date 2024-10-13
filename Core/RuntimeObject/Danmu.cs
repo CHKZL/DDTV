@@ -206,7 +206,9 @@ namespace Core.RuntimeObject
         /// <param name="FileName">保存路径</param>
         /// <param name="Name">昵称</param>
         /// <param name="roomId">房间号</param>
-        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId)
+        /// <param name="IsTemporary">是否为临时保存（不删除记录）</param>
+        /// <returns></returns>
+        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId,bool IsTemporary= false)
         {
             string XML = string.Empty;
             XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
