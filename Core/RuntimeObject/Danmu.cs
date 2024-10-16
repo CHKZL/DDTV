@@ -15,6 +15,7 @@ using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Danmu;
 using Core.Network;
 using AngleSharp.Dom;
+using Core.Account;
 
 namespace Core.RuntimeObject
 {
@@ -31,15 +32,19 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="roomId">房间号(长房间号)</param>
         /// <param name="Message">发送信息(不能超过20个字符)</param>
-        public static void SendDanmu(string roomId, string Message)
+        public static void SendDanmu(string roomId, string Message,AccountInformation account = null)
         {
             Task.Run(() =>
             {
+                if(account==null)
+                {
+                    account = Account.AccountInformation;
+                }
                 try
                 {
                     CookieContainer CK = new CookieContainer { MaxCookieSize = 4096, PerDomainCapacity = 50 };
 
-                    string[] cook = Account.AccountInformation.strCookies.Replace(" ", "").Split(';');
+                    string[] cook = account.strCookies.Replace(" ", "").Split(';');
                     for (int i = 0; i < cook.Length; i++)
                     {
                         if (!string.IsNullOrEmpty(cook[i]))
@@ -57,8 +62,8 @@ namespace Core.RuntimeObject
                         { "msg", Message },
                         { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
                         { "roomid", roomId },
-                        { "csrf_token", Account.AccountInformation.CsrfToken },
-                        { "csrf", Account.AccountInformation.CsrfToken }
+                        { "csrf_token", account.CsrfToken },
+                        { "csrf", account.CsrfToken }
                     };
 
 
@@ -70,8 +75,8 @@ namespace Core.RuntimeObject
                         req.ContentType = "application/x-www-form-urlencoded";
                         req.UserAgent = Config.Core_RunConfig._HTTP_UA;
 
-                        if (RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
-                            req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                        if (account != null && account.State)
+                            req.Headers.Add("Cookie", account.strCookies);
                         #region 添加Post 参数  
                         StringBuilder builder = new StringBuilder();
                         int i = 0;
@@ -123,6 +128,7 @@ namespace Core.RuntimeObject
                         }
                         if(result.Contains("\"code\":0"))
                         {
+                             Log.Info(nameof(SendDanmu), $"账号【{account.Uid}】在【{roomId}】中发送弹幕【{Message}】成功");
                             //发送成功
                         }
                     }
