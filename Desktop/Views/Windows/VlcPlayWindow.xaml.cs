@@ -18,6 +18,7 @@ using static Core.Config;
 using Key = System.Windows.Input.Key;
 using MenuItem = Wpf.Ui.Controls.MenuItem;
 
+
 namespace Desktop.Views.Windows
 {
     /// <summary>
@@ -60,6 +61,10 @@ namespace Desktop.Views.Windows
         /// 宽高比是否初始化
         /// </summary>
         public bool InitializeAspectRatio = false;
+        /// <summary>
+        /// 用于跟踪当前是否为全屏状态
+        /// </summary>
+        public bool isFullScreen = false;
         public class DanMuOrbitInfo
         {
             public string Text { get; set; }
@@ -398,10 +403,37 @@ namespace Desktop.Views.Windows
             }
         }
 
+        private DateTime lastClickTime = DateTime.MinValue; // 上次点击的时间
 
         private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             this.DragMove();
+            DateTime now = DateTime.Now;
+            // 检查是否为双击（两次点击间隔小于系统双击时间）
+            if ((now - lastClickTime).TotalMilliseconds <= SystemInformation.DoubleClickTime)
+            {
+                ToggleFullScreen();
+            }
+            lastClickTime = now;
+        }
+        private void ToggleFullScreen()
+        {
+            if (!isFullScreen)
+            {
+                // 切换到全屏模式
+                this.WindowStyle = WindowStyle.None;
+                this.WindowState = WindowState.Maximized;
+                this.ResizeMode = ResizeMode.NoResize;
+                isFullScreen = true;
+            }
+            else
+            {
+                // 切换回窗口模式
+                this.WindowStyle = WindowStyle.SingleBorderWindow;
+                this.WindowState = WindowState.Normal;
+                this.ResizeMode = ResizeMode.CanResize;
+                isFullScreen = false;
+            }
         }
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -682,5 +714,7 @@ namespace Desktop.Views.Windows
             };
             Process.Start(psi);
         }
+
+
     }
 }
