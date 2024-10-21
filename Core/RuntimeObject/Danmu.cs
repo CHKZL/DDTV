@@ -32,11 +32,11 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="roomId">房间号(长房间号)</param>
         /// <param name="Message">发送信息(不能超过20个字符)</param>
-        public static void SendDanmu(string roomId, string Message,AccountInformation account = null)
+        public static void SendDanmu(string roomId, string Message, AccountInformation account = null, bool IsShowUid = false,bool IsShowRoomId =false)
         {
             Task.Run(() =>
             {
-                if(account==null)
+                if (account == null)
                 {
                     account = Account.AccountInformation;
                 }
@@ -126,9 +126,9 @@ namespace Core.RuntimeObject
                                 catch (Exception) { }
                             }
                         }
-                        if(result.Contains("\"code\":0"))
+                        if (result.Contains("\"code\":0"))
                         {
-                             Log.Info(nameof(SendDanmu), $"账号【{account.Uid}】在【{roomId}】中发送弹幕【{Message}】成功");
+                            Log.Info(nameof(SendDanmu), $"账号【{(IsShowUid?account.Uid:"*******")}】在【{(IsShowRoomId?roomId:"*******")}】中发送弹幕【{Message}】成功");
                             //发送成功
                         }
                     }
@@ -214,7 +214,7 @@ namespace Core.RuntimeObject
         /// <param name="roomId">房间号</param>
         /// <param name="IsTemporary">是否为临时保存（不删除记录）</param>
         /// <returns></returns>
-        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId,bool IsTemporary= false)
+        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId, bool IsTemporary = false)
         {
             string XML = string.Empty;
             XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
