@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebuggingClientPackage", "D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Send_Test", "Send_Test\Send_Test.csproj", "{35D7C067-EBCA-43FA-8554-B33A678237EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Send_Danmu", "Send_Danmu\Send_Danmu.csproj", "{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +96,14 @@ Global
 		{35D7C067-EBCA-43FA-8554-B33A678237EC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{35D7C067-EBCA-43FA-8554-B33A678237EC}.Release|x64.ActiveCfg = Release|Any CPU
 		{35D7C067-EBCA-43FA-8554-B33A678237EC}.Release|x64.Build.0 = Release|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Debug|x64.Build.0 = Debug|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Release|x64.ActiveCfg = Release|Any CPU
+		{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
