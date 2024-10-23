@@ -378,6 +378,7 @@ namespace Update
             return false;
         }
 
+        //更新桶的只读ak
         public static string AKID
         {
             get

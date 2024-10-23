@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Dom;
+using Core.Account;
 using Core.LogModule;
 using Core.RuntimeObject;
 using SkiaSharp;
@@ -23,7 +24,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3)
+        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3,AccountInformation account = null)
         {
 //#if DEBUG
 //            Log.Debug(nameof(GetBody), $"发起Get请求，目标:{url}");
@@ -40,11 +41,14 @@ namespace Core.Network
                 req.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3";
                 req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 req.Headers.Add(HttpRequestHeader.CacheControl, "max-age=0");
-                req.Timeout=8000;
+                req.Timeout = 8000;
                 if (!string.IsNullOrEmpty(ContentType)) req.ContentType = ContentType;
                 if (!string.IsNullOrEmpty(referer)) req.Referer = referer;
                 if (specialheaders != null) req.Headers = specialheaders;
-                if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                if (account != null)
+                    req.Headers.Add("Cookie", account.strCookies);
+                else if (IsCookie && RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
+                    req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
                 for (int attempt = 0; attempt < maxAttempts; attempt++)
                 {
                     try

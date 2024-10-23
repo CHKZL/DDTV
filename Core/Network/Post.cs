@@ -1,4 +1,5 @@
 ﻿using AngleSharp.Io;
+using Core.Account;
 using Core.LogModule;
 using Core.RuntimeObject;
 using System;
@@ -24,7 +25,7 @@ namespace Core.Network
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
         /// <returns>请求返回体</returns>
-        public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3,CookieContainer cookieContainer =null)
+        public static string PostBody(string url, Dictionary<string, string> dic, bool IsCookie = false, string jsondate = "", string contenttype = "application/x-www-form-urlencoded;charset=utf-8", string referer = "", WebHeaderCollection specialheaders = null, int maxAttempts = 3,CookieContainer cookieContainer =null,AccountInformation account =null)
         {
 //# if DEBUG
 //            Log.Debug(nameof(PostBody), $"发起Post请求，目标:{url}");
@@ -41,7 +42,12 @@ namespace Core.Network
                 req.UserAgent = Config.Core_RunConfig._HTTP_UA;
                 if (specialheaders != null) req.Headers = specialheaders;
                 req.Timeout=8000;
-                if (IsCookie && RuntimeObject.Account.AccountInformation!=null && RuntimeObject.Account.AccountInformation.State) req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                if (account != null)
+                {
+                    req.Headers.Add("Cookie", account.strCookies); 
+                }
+                else if (IsCookie && RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
+                    req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
 
                 byte[] bdata = Encoding.UTF8.GetBytes(jsondate);
                 Stream sdata = req.GetRequestStream();
