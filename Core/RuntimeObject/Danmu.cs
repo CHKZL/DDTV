@@ -128,7 +128,7 @@ namespace Core.RuntimeObject
                         }
                         if (result.Contains("\"code\":0"))
                         {
-                            Log.Info(nameof(SendDanmu), $"账号【{(IsShowUid?account.Uid:"*******")}】在【{(IsShowRoomId?roomId:"*******")}】中发送弹幕【{Message}】成功");
+                            Log.Info(nameof(SendDanmu), $"在【{(IsShowRoomId?roomId:"*******")}】中发送弹幕【{Message}】成功");
                             //发送成功
                         }
                     }

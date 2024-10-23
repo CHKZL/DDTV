@@ -1,4 +1,5 @@
-﻿using Masuit.Tools;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Masuit.Tools;
 using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
@@ -71,6 +72,18 @@ namespace Core.Tools
                 string source = fsInput.ReadAllText(Encoding.UTF8);
                 outputText = UnAesStr(source, Config.Core_RunConfig._Key, Config.Core_RunConfig._IV);
             }
+        }
+        /// <summary>
+        /// 输入加密文本输出解密文字
+        /// </summary>
+        /// <param name="inputFile">输入的文件路径</param>
+        /// <param name="outputText">输出的文本</param>
+        /// <param name="key"></param>
+        /// <param name="iv"></param>
+        /// <returns></returns>
+        public static void DecryptFile_Str(string inputStr, out string outputText)
+        {
+            outputText = UnAesStr(inputStr, Config.Core_RunConfig._Key, Config.Core_RunConfig._IV);
         }
 
 
