@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using Amazon.Runtime.Internal.Transform;
+using Core.LogModule;
 using Core.RuntimeObject;
 using Core.Tools;
 using System.ComponentModel;
@@ -100,7 +101,9 @@ namespace Core
             //设置启动后是否执行自动升级逻辑，这个参数只用携带，没有参数
             { "no-update", ExpandOption.SetNoUpdate},
             //设置配置文件路径
-            { "conf", ExpandOption.SetConfigFilePath}
+            { "conf", ExpandOption.SetConfigFilePath},
+            //设置直接接同意用户协议，终端不再弹出确认
+            { "accept-eula",ExpandOption.SetEula}
         };
 
         public static RunConfig Core_RunConfig { get; set; } = new();
@@ -167,6 +170,14 @@ namespace Core
             internal static void SetNoUpdate(string value)
             {
                 ProgramUpdates.Effective = false;
+            }
+             /// <summary>
+            /// 设置启动后是否执行自动升级逻辑
+            /// </summary>
+            /// <param name="value"></param>
+            internal static void SetEula(string value)
+            {
+                Core.Config.Core_RunConfig._UseAgree = true;
             }
             /// <summary>
             /// 设置配置文件路径

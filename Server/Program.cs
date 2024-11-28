@@ -218,20 +218,23 @@ namespace Server
                             }
                             if (!Account.AccountInformation.State)
                             {
-                                if(Init.Mode!= Config.Mode.Desktop && Init.Mode!= Config.Mode.Client && Init.Mode!= Config.Mode.Docker)
+                                if (Init.Mode != Config.Mode.Desktop && Init.Mode != Config.Mode.Client && Init.Mode != Config.Mode.Docker)
                                 {
-                                    Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
-                                        "使用前须知：\r\n" +
-                                        "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
-                                        "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
-                                        "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
-                                        "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
-
-                                    _UseAgree();
-
-                                    while (!Core.Config.Core_RunConfig._UseAgree)
+                                    if (!Core.Config.Core_RunConfig._UseAgree)
                                     {
-                                        Thread.Sleep(500);
+                                        Log.Info(nameof(DDTVService), "\r\n当前状态:未登录\r\n" +
+                                            "使用前须知：\r\n" +
+                                            "1、在使用本软件的过程中的产生的任何资料、数据等所有数据都归属原所有者。\r\n" +
+                                            "2、本软件所使用的所有资源，以及服务，均搜集自互联网，版权属于相应的个体，我们只是基于互联网使用了公开的资源进行开发。\r\n" +
+                                            "3、本软件所登陆的阿B账号仅保存在您本地，且只会用于和阿B的服务接口交互。\r\n" +
+                                            "\r\n如果您了解且同意以上内容，请按Y进入登陆流程，按其他任意键退出\r\n");
+
+                                        _UseAgree();
+
+                                        while (!Core.Config.Core_RunConfig._UseAgree)
+                                        {
+                                            Thread.Sleep(500);
+                                        }
                                     }
                                     await Login.QR();//如果没有登录态，需要执行扫码
                                     while (!Account.AccountInformation.State)
