@@ -93,9 +93,13 @@ namespace Core
         /// </summary>
         internal static Dictionary<string, Action<string>> OptionHandlers = new Dictionary<string, Action<string>>(StringComparer.OrdinalIgnoreCase)
         {
+            //设置启动模式，用于判断启动环境和版本，一般用户不用关心和使用
             { "StartMode", ExpandOption.SetStartMode },
+            //设置启动后使用的录制模式
             { "RecordingMode", ExpandOption.SetRecordingMode },
+            //设置启动后是否执行自动升级逻辑，这个参数只用携带，没有参数
             { "no-update", ExpandOption.SetNoUpdate},
+            //设置配置文件路径
             { "conf", ExpandOption.SetConfigFilePath}
         };
 
