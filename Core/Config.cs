@@ -95,7 +95,8 @@ namespace Core
         {
             { "StartMode", ExpandOption.SetStartMode },
             { "RecordingMode", ExpandOption.SetRecordingMode },
-            { "no-update", ExpandOption.SetNoUpdate}
+            { "no-update", ExpandOption.SetNoUpdate},
+            { "conf", ExpandOption.SetConfigFilePath}
         };
 
         public static RunConfig Core_RunConfig { get; set; } = new();
@@ -155,9 +156,21 @@ namespace Core
                         break;
                 }
             }
+            /// <summary>
+            /// 设置启动后是否执行自动升级逻辑
+            /// </summary>
+            /// <param name="value"></param>
             internal static void SetNoUpdate(string value)
             {
                 ProgramUpdates.Effective = false;
+            }
+            /// <summary>
+            /// 设置配置文件路径
+            /// </summary>
+            /// <param name="value"></param>
+            internal static void SetConfigFilePath(string value)
+            {
+                Core.Config.RunConfig.ConfigurationFile = value;
             }
         }
 
@@ -546,14 +559,30 @@ namespace Core
                 get => ConfigDirectory;
             }
 
-            internal static string ConfigurationFile = $"DDTV_Config.ini";
+            public static string ConfigurationFile = $"DDTV_Config.ini";
             /// <summary>
             /// 默认的配置文件路径（字符串）
             /// 默认值：./Config/DDTV_Config.ini
             /// </summary>
             public string _ConfigurationFile
             {
-                get => $"{_ConfigDirectory}{ConfigurationFile}";
+                get {
+                    if (ConfigurationFile == "DDTV_Config.ini")
+                    {
+                        return $"{_ConfigDirectory}{ConfigurationFile}";
+                    }
+                    else
+                    {
+                        return ConfigurationFile;
+                    }
+                }
+                set
+                {
+                    if (!string.IsNullOrEmpty(value))
+                        ConfigurationFile = value;
+                    else
+                        ConfigurationFile = "DDTV_Config.ini";
+                }
             }
 
             private static string Key = "34D3D9‭9D34894461‭91AB9B8‭582454669";

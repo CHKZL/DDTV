@@ -2,7 +2,6 @@
   "profiles": {
     "Client": {
       "commandName": "Project",
-      "commandLineArgs": "--StartMode=Server\r\n--no-update",
       "remoteDebugEnabled": true,
       "authenticationMode": "None"
     }

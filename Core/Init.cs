@@ -84,8 +84,13 @@ namespace Core
         /// <summary>
         /// 启动参数初始化
         /// </summary>
-        private static void StartParameterInitialization(string[] args)
+        public static void StartParameterInitialization(string[] args)
         {
+            string _conf = args.Where(x => x.Contains("--conf")).First();
+            if (!string.IsNullOrEmpty(_conf))
+            {
+                Core.Config.RunConfig.ConfigurationFile = _conf.Split('=')?[1];
+            }
             foreach (var arg in args)
             {
                 if (arg.StartsWith("--"))
@@ -102,13 +107,21 @@ namespace Core
                     {
                         optionName = arg.Substring(2); // 获取选项名称
                     }
-                    if (OptionHandlers.ContainsKey(optionName))
+                    try
                     {
-                        OptionHandlers[optionName](optionValue);
+                        if (OptionHandlers.ContainsKey(optionName))
+                        {
+                            OptionHandlers[optionName](optionValue);
+                        }
+                        else
+                        {
+                            Console.WriteLine($"未知的option: {optionName}");
+                        }
                     }
-                    else
+                    catch (Exception e)
                     {
-                        Console.WriteLine($"未知的option: {optionName}");
+
+                        throw;
                     }
                 }
             }
