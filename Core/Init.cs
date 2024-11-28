@@ -86,7 +86,7 @@ namespace Core
         /// </summary>
         public static void StartParameterInitialization(string[] args)
         {
-            string _conf = args.Where(x => x.Contains("--conf")).First();
+            string _conf = args.Where(x => x.Contains("--conf")).FirstOrDefault();
             if (!string.IsNullOrEmpty(_conf))
             {
                 Core.Config.RunConfig.ConfigurationFile = _conf.Split('=')?[1];
