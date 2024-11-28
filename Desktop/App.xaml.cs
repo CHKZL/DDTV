@@ -40,7 +40,7 @@ namespace Desktop
                 Host.CreateDefaultBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        Task.Run(() => Service.CreateHostBuilder(new string[] { }).Build().Run());
+                        Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
 
                         webBuilder.UseStartup<Server.Startup>();
                         string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
