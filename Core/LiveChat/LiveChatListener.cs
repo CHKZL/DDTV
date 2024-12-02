@@ -471,6 +471,7 @@ namespace Core.LiveChat
             }
             catch (Exception) { return; }
             string cmd = (string)obj["cmd"];
+            //Log.Info("test",$"收到cmd：{cmd}");
             switch (cmd)
             {
 
