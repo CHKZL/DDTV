@@ -124,7 +124,7 @@ namespace Core.RuntimeObject.Download
                                 {
                                     downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
                                 }
-                                if (currentLocation != 0)
+                                if (currentLocation != 0 && Core.Config.Core_RunConfig._ReconnectAnchorReStream)
                                 {
                                     //用于处理流悄悄切了，但是没有发现的情况
                                     bool FileNameTimeout = hostClass.eXTM3U.eXTINFs.All(extinf =>
@@ -133,7 +133,7 @@ namespace Core.RuntimeObject.Download
                                         {
                                             return value != currentLocation;
                                         }
-                                        return false; 
+                                        return false;
                                     });
                                     if (FileNameTimeout)
                                     {
@@ -143,12 +143,12 @@ namespace Core.RuntimeObject.Download
                                     }
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
-                                {                               
+                                {
                                     if (long.TryParse(item.FileName, out long index) && (index == currentLocation + 1 || currentLocation == 0))
                                     {
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                         currentLocation = index;
-                                    }        
+                                    }
                                 }
                                 hostClass.eXTM3U.eXTINFs = new();
                                 values.Add((downloadSizeForThisCycle, DateTime.Now));

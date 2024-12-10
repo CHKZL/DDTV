@@ -1968,6 +1968,28 @@ namespace Core
                 }
             }
 
+            private static string ReconnectAnchorReStream = "false";
+            /// <summary>
+            /// 碰到HLS流编号不连贯是否切断重连
+            /// 默认值：false
+            /// </summary>
+            public bool _ReconnectAnchorReStream
+            {
+                get
+                {
+                    return bool.Parse(ReconnectAnchorReStream);
+                }
+                set
+                {
+                    if (value.ToString() != ReconnectAnchorReStream)
+                    {
+                        ReconnectAnchorReStream = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }
