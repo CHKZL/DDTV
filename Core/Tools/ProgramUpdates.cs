@@ -673,11 +673,17 @@ namespace Core.Tools
                 {
                     if (new FileInfo("./Plugins/ffmpeg/ffmpeg.exe").Length < 70000000)
                     {
-                        Log.Info(nameof(Update_FFMPEG),"检查到FFEMPG版本过老，开始更新");
-                        string url = "https://ddtv.pro/ffmpeg_update/github.js";
-
+                        Log.Info(nameof(Update_FFMPEG), "检查到FFEMPG版本过老，开始更新");
+                        string url = "FFMPEG/github.js";
                     re_run:
-                        string File_Url = Network.Get.GetBody(url, false);
+
+                        var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
+                        var ossClient = new AmazonS3Client(AKID, AKSecret, config);
+                        GetObjectResponse response = ossClient.GetObjectAsync(Bucket, url).Result;
+                        StreamReader reader = new StreamReader(response.ResponseStream);
+                        string File_Url = reader.ReadToEndAsync().Result;
+
+                       
                         string downloadPath = $"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg.zip";
                         string extractPath = $"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg";
                         try
@@ -691,10 +697,10 @@ namespace Core.Tools
                         catch (Exception ex)
                         {
 
-                            if (url == "https://ddtv.pro/ffmpeg_update/github.js")
+                            if (url == "FFMPEG/github.js")
                             {
                                 Log.Error(nameof(Update_FFMPEG), "更新FFMPEG出现错误,重试", ex, false);
-                                url = "https://ddtv.pro/ffmpeg_update/cf.js";
+                                url = "FFMPEG/cf.js";
                                 goto re_run;
                             }
                             Log.Error(nameof(Update_FFMPEG), "更新FFMPE重试失败，本次放弃更新", ex, false);
