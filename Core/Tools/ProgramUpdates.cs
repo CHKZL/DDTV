@@ -712,6 +712,7 @@ namespace Core.Tools
                             
                             Log.Info(nameof(Update_FFMPEG),$"解压新ffmpeg文件到【./plugins/ffmpeg/new_ffmpeg.exe】，下次重新启动ddtv时自动替换生效");
                             Thread.Sleep(1000);
+                            Tools.FileOperations.Delete(downloadPath);
                             Tools.FileOperations.DeletePathFile($"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg");
 
                             return;
