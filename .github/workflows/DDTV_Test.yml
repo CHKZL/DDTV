@@ -186,17 +186,6 @@ jobs:
           mkdir Server/build_output/Plugins/Plugins/ffmpeg
           curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip
           tar -xf ffmpeg.zip --directory Server/build_output/Plugins/Plugins/ffmpeg --strip-components=1 ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe
-      
-      - name: Verify ffmpeg.exe
-        if: matrix.os == 'windows-latest'
-        run: |
-          if [ -f "Server/build_output/Plugins/Plugins/ffmpeg/ffmpeg.exe" ]; then
-            echo "ffmpeg.exe downloaded and extracted successfully."
-          else
-            echo "Failed to download and extract ffmpeg.exe."
-            exit 1
-          fi
-      
 
       - name: Move all files to bin folder and create shortcut (Linux or macOS)
         if: runner.os != 'Windows'
@@ -368,16 +357,6 @@ jobs:
           mkdir Desktop/build_output/Plugins/Plugins/ffmpeg
           curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip
           tar -xf ffmpeg.zip --directory Desktop/build_output/Plugins/Plugins/ffmpeg --strip-components=1 ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe
-      
-      - name: Verify ffmpeg.exe
-        if: matrix.os == 'windows-latest'
-        run: |
-          if [ -f "Desktop/build_output/Plugins/Plugins/ffmpeg/ffmpeg.exe" ]; then
-            echo "ffmpeg.exe downloaded and extracted successfully."
-          else
-            echo "Failed to download and extract ffmpeg.exe."
-            exit 1
-          fi
 
       - name: Copy VLC (Windows)  
         if: runner.os == 'Windows'
@@ -527,17 +506,7 @@ jobs:
           mkdir Client/build_output/Plugins/Plugins/ffmpeg
           curl -L -o ffmpeg.zip https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-win64-gpl.zip
           tar -xf ffmpeg.zip --directory Client/build_output/Plugins/Plugins/ffmpeg --strip-components=1 ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe
-      
-      - name: Verify ffmpeg.exe
-        if: matrix.os == 'windows-latest'
-        run: |
-          if [ -f "Client/build_output/Plugins/Plugins/ffmpeg/ffmpeg.exe" ]; then
-            echo "ffmpeg.exe downloaded and extracted successfully."
-          else
-            echo "Failed to download and extract ffmpeg.exe."
-            exit 1
-          fi
-          
+
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
         shell: pwsh
