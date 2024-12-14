@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.LogModule;
 using Core.RuntimeObject;
+using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
@@ -44,6 +45,10 @@ namespace Desktop
         /// 是否连接远程服务器
         /// </summary>
         public static bool ToConnectToRemoteServer = false;
+        /// <summary>
+        /// 更新目录房间列表录制中数量定时器
+        /// </summary>
+        private Timer IpvDetectionTimer;
 
         public static Config.RunConfig configViewModel { get; set; } = new();
 
@@ -109,6 +114,8 @@ namespace Desktop
             {
                 WindowsAPI.OpenWindowsHibernation();
             }
+            //更新目录房间列表录制中数量
+            IpvDetectionTimer = new Timer(UpdateNumberRecordedRoomsInDirectoryRoomList, null, 1, 5000);
         }
 
         private void InitializeTitleMode()
@@ -338,6 +345,25 @@ namespace Desktop
                 {
                     e.Cancel = true;
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// 更新目录房间列表录制中数量
+        /// </summary>
+        /// <param name="state"></param>
+        public static void UpdateNumberRecordedRoomsInDirectoryRoomList(object state)
+        {
+            try
+            {
+                (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
+                configViewModel.DataPageTitle = $"房间列表 ({count.RecCount})";
+                configViewModel.OnPropertyChanged("DataPageTitle");
+            }
+            catch (Exception ex)
+            {
+                Log.Warn(nameof(UpdateNumberRecordedRoomsInDirectoryRoomList), "更新房间统计出现错误，错误堆栈已写文本记录文件", ex, false);
             }
         }
     }

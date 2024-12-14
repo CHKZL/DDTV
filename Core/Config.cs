@@ -425,10 +425,18 @@ namespace Core
         public class RunConfig : INotifyPropertyChanged
         {
             public event PropertyChangedEventHandler PropertyChanged;
-            protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+            public virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public string DefaultPageTitle { get; set; } = "首页";
+            public string DataPageTitle { get; set; } = "房间列表";
+            public string HistoryPageTitle { get; set; } = "录制历史";
+            public string ToolsPageTitle { get; set; } = "更多工具";
+            public string LogPageTitle { get; set; } = "日志";
+            public string AboutPageTitle { get; set; } = "关于";
+            public string SettingsPageTitle { get; set; } = "设置";
 
             private static string ValidAccount = "-1";
             /// <summary>

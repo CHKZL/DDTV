@@ -38,7 +38,7 @@
                             <ui:SymbolIcon Symbol="Home24" />
                         </ui:NavigationViewItem.Icon>
                     </ui:NavigationViewItem>
-                    <ui:NavigationViewItem Content="房间列表页" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:DataPage}">
+                    <ui:NavigationViewItem Content="{Binding DataPageTitle,Mode=OneWay}" NavigationCacheMode="Enabled" TargetPageType="{x:Type pages:DataPage}">
                         <ui:NavigationViewItem.Icon>
                             <ui:SymbolIcon Symbol="DataHistogram24" />
                         </ui:NavigationViewItem.Icon>
