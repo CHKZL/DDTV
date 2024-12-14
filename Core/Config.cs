@@ -429,7 +429,7 @@ namespace Core
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
-
+            public string ProgramTitle { get; set; } = "";
             public string DefaultPageTitle { get; set; } = "首页";
             public string DataPageTitle { get; set; } = "房间列表";
             public string HistoryPageTitle { get; set; } = "录制历史";

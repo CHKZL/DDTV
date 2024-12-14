@@ -4,6 +4,7 @@ using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Pages;
 using Desktop.Views.Windows;
+using LibVLCSharp.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Wpf;
 using System.Diagnostics;
@@ -51,6 +52,9 @@ namespace Desktop
         private Timer IpvDetectionTimer;
 
         public static Config.RunConfig configViewModel { get; set; } = new();
+
+        public static string P_Title = string.Empty;
+
 
 
         public MainWindow()
@@ -115,7 +119,7 @@ namespace Desktop
                 WindowsAPI.OpenWindowsHibernation();
             }
             //更新目录房间列表录制中数量
-            IpvDetectionTimer = new Timer(UpdateNumberRecordedRoomsInDirectoryRoomList, null, 1, 5000);
+            IpvDetectionTimer = new Timer(UpdateNumberRecordedRoomsInDirectoryRoomList, null, 1, 1000);
         }
 
         private void InitializeTitleMode()
@@ -150,13 +154,14 @@ namespace Desktop
                                 if (Core.Init.Ver != doki.Ver)
                                 {
                                     MainWindow.SnackbarService.Show("远程版本不一致", $"检测到远程模式下远程版本与本地Desktop版本不一致！这可能会造成未知的问题，请尽快更新双端到最新版本！\n本地Desktop版本号:【{Core.Init.Ver}】|远程版本号:【{doki.Ver}】", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle24), TimeSpan.FromSeconds(5));
-                                    this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                    this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
                                 }
                                 else
                                 {
-                                    this.Title = $"{doki.InitType}|{doki.Ver}|{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                    this.Title = $"{doki.InitType}|{doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
                                 }
-                                UI_TitleBar.Title = this.Title;
+                                P_Title = this.Title;
+                                //UI_TitleBar.Title = P_Title.Replace("%%%","正在初始化");
                             });
                         }
                     }
@@ -360,6 +365,9 @@ namespace Desktop
                 (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
                 configViewModel.DataPageTitle = $"房间列表 ({count.RecCount})";
                 configViewModel.OnPropertyChanged("DataPageTitle");
+
+                configViewModel.ProgramTitle = P_Title.Replace("%%%",$"{count.RecCount}录制中|{count.LiveCount}开播中|{count.MonitoringCount}监控中");
+                configViewModel.OnPropertyChanged("ProgramTitle");
             }
             catch (Exception ex)
             {
