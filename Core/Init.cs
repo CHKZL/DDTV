@@ -10,6 +10,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Config;
+using static Core.Tools.ProgramUpdates;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Core
@@ -25,7 +26,8 @@ namespace Core
         public static string ClientAID = string.Empty;
         public static string CompiledVersion = "CompilationTime";
         public static Mode Mode = Mode.Core;
-        private static Timer Update_Timer;
+        private static Timer Core_Update_Timer;
+        private static Timer FFMPEG_Update_Timer;
 
         private static Stopwatch stopwatch = new Stopwatch();
 
@@ -67,19 +69,17 @@ namespace Core
             Core.RuntimeObject.Account.CheckLoginStatus();
             Log.Info(nameof(Init), $"Core初始化完成");
             Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");
+            CheckStatusFFMPEGFile();
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
             if (Mode != Mode.Core)
             {
-                Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
+                Core_Update_Timer = new Timer(Core.Tools.ProgramUpdates.RegularInspection, null, 1, 1000 * 60 * 30);
                 Core.Tools.ProgramUpdates.NewVersionAvailableEvent += ProgramUpdates_NewVersionAvailableEvent;
+                FFMPEG_Update_Timer = new Timer(Core.Tools.ProgramUpdates.Update_FFMPEG.CheckUpdateFFmpegAsync, null, 1, 1000 * 60 * 60 * 24);
             }
             StartStatistics();
             Timer_Heartbeat = new Timer(HeartbeatStatistics, null, 1, 1000 * 3600);
-
-
         }
-
-
 
         /// <summary>
         /// 启动参数初始化
@@ -257,6 +257,20 @@ namespace Core
                 }
             }
             catch (Exception) { }
+        }
+
+        /// <summary>
+        /// 检查FFMPEG文件状态
+        /// </summary>
+        public static void CheckStatusFFMPEGFile()
+        {
+            if (OperatingSystem.IsWindows() && Directory.Exists("./plugins/ffmpeg") && File.Exists("./plugins/ffmpeg/new_ffmpeg.exe"))
+            {    
+                Log.Info(nameof(CheckStatusFFMPEGFile),$"检测到新FFMPEG文件【./plugins/ffmpeg/new_ffmpeg.exe】，开始替换新文件");
+                File.Copy("./plugins/ffmpeg/new_ffmpeg.exe", "./plugins/ffmpeg/ffmpeg.exe", true);
+                Tools.FileOperations.Delete("./plugins/ffmpeg/new_ffmpeg.exe");
+                Log.Info(nameof(CheckStatusFFMPEGFile),$"自动替换FFMPEG生效");
+            }
         }
 
     }

@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Formats.Tar;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -660,6 +661,95 @@ namespace Core.Tools
                 t += (char)106; // 'j'
                 t += (char)81;  // 'Q'
                 return t;
+            }
+        }
+
+        public class Update_FFMPEG
+        {
+            public static async void CheckUpdateFFmpegAsync(object state)
+            {
+                
+                if (Directory.Exists("./Plugins/ffmpeg/") && File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
+                {
+                    if (new FileInfo("./Plugins/ffmpeg/ffmpeg.exe").Length < 70000000)
+                    {
+                        Log.Info(nameof(Update_FFMPEG),"检查到FFEMPG版本过老，开始更新");
+                        string url = "https://ddtv.pro/ffmpeg_update/github.js";
+
+                    re_run:
+                        string File_Url = Network.Get.GetBody(url, false);
+                        string downloadPath = $"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg.zip";
+                        string extractPath = $"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg";
+                        try
+                        {
+                            Log.Info(nameof(Update_FFMPEG),$"开始下载新ffmpeg文件:{File_Url}");
+                            await DownloadFileAsync(File_Url, downloadPath);
+                            Log.Info(nameof(Update_FFMPEG),$"开始解压新ffmpeg文件:{downloadPath}");
+                            ExtractZipFile(downloadPath, extractPath);
+                            Log.Info(nameof(Update_FFMPEG),$"解压新ffmpeg文件完成");
+                        }
+                        catch (Exception ex)
+                        {
+
+                            if (url == "https://ddtv.pro/ffmpeg_update/github.js")
+                            {
+                                Log.Error(nameof(Update_FFMPEG), "更新FFMPEG出现错误,重试", ex, false);
+                                url = "https://ddtv.pro/ffmpeg_update/cf.js";
+                                goto re_run;
+                            }
+                            Log.Error(nameof(Update_FFMPEG), "更新FFMPE重试失败，本次放弃更新", ex, false);
+                            return;
+                        }
+                        if(File.Exists($"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe"))
+                        {
+                            File.Copy($"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg/ffmpeg-master-latest-win64-gpl/bin/ffmpeg.exe", "./plugins/ffmpeg/new_ffmpeg.exe");
+                            
+                            Log.Info(nameof(Update_FFMPEG),$"解压新ffmpeg文件到【./plugins/ffmpeg/new_ffmpeg.exe】，下次重新启动ddtv时自动替换生效");
+                            Thread.Sleep(1000);
+                            Tools.FileOperations.DeletePathFile($"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg");
+
+                            return;
+                        }
+                    }
+                }
+            }
+
+            static async Task DownloadFileAsync(string url, string destinationPath)
+            {
+                try
+                {
+                    using (HttpClient client = new HttpClient())
+                    {
+                        HttpResponseMessage response = await client.GetAsync(url);
+                        response.EnsureSuccessStatusCode();
+                        using (var fs = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))
+                        {
+                            await response.Content.CopyToAsync(fs);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error downloading file: " + ex.Message);
+                }
+               
+            }
+
+            static void ExtractZipFile(string zipPath, string extractPath)
+            {
+                try
+                {
+                    if (Directory.Exists(extractPath))
+                    {
+                        Directory.Delete(extractPath, true);
+                    }
+                    Directory.CreateDirectory(extractPath);
+                    ZipFile.ExtractToDirectory(zipPath, extractPath);
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception("Error extracting zip file: " + ex.Message);
+                }  
             }
         }
 
