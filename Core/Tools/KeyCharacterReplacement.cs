@@ -1,4 +1,5 @@
-﻿using Core.RuntimeObject;
+﻿using Core.LogModule;
+using Core.RuntimeObject;
 using Masuit.Tools;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,11 @@ namespace Core.Tools
                 .Replace("{R}",new Random().Next(1000,9999).ToString())
                 .Replace("{CWD}",WorkPath);
 
-            Replace_Shell_Keyword(roomCardClass, ref Text);
+            if(!string.IsNullOrEmpty(roomCardClass.Shell))
+            {
+                Replace_Shell_Keyword(roomCardClass, ref Text);
+            }
+            
 
             return Text;
         }
@@ -95,6 +100,7 @@ namespace Core.Tools
         /// <returns></returns>
         public static void Replace_Shell_Keyword(RoomCardClass roomCard, ref string text)
         {
+            Log.Warn("Shell",$"收到Shell脚本，原始脚本信息：【{text}】");
             var fileTypes = new Dictionary<string, List<string>>
             {
                 {"{AfterRepairFiles}", roomCard.DownInfo.DownloadFileList.VideoFile},
@@ -114,7 +120,9 @@ namespace Core.Tools
             }
 
             string sumFilesString = string.Join(",", SumFiles);
-            text.Replace("{Files}", sumFilesString);
+            text = text.Replace("{Files}", sumFilesString);
+            
+            Log.Warn("Shell",$"Shell脚本替换关键词信息后命令：【{text}】");
         }
 
 
