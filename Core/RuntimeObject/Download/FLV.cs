@@ -94,7 +94,7 @@ namespace Core.RuntimeObject.Download
                 HostClass hostClass = GetFlvHost_avc(card);
                 string DlwnloadURL = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
                 //把当前写入文件写入记录
-                string F_S = Config.Core_RunConfig._RecFileDirectory + "/" + File.Replace(Config.Core_RunConfig._RecFileDirectory, "").Replace("\\", "/");
+                string F_S = Config.Core_RunConfig._RecFileDirectory + (Config.Core_RunConfig._RecFileDirectory.EndsWith("/") || Config.Core_RunConfig._RecFileDirectory.EndsWith("\\")?"":"/") + File.Replace(Config.Core_RunConfig._RecFileDirectory, "").Replace("\\", "/");
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
                 //下载提示
                 LogDownloadStart(card, "FLV");
