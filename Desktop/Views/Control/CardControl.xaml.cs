@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.LogModule;
 using Core.RuntimeObject;
+using Desktop.Models;
 using Desktop.Views.Windows;
 using System.Diagnostics;
 using System.Windows;
@@ -212,6 +213,16 @@ namespace Desktop.Views.Control
                         MainWindow.SnackbarService.Show("快照完成", $"生成直播间录制快照完成，已输出到DDTV临时文件夹中（{message.message}）", ControlAppearance.Success, new SymbolIcon(SymbolRegular.Checkmark20), TimeSpan.FromSeconds(10));
                     });
                 }
+            });
+        }
+
+        private void MenuItem_Compatible_PlayWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            Dispatcher.Invoke(() =>
+            {
+                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                WebPlayWindow.Show();
             });
         }
     }

@@ -26,7 +26,7 @@ namespace Desktop.Views.Windows
                 Dispatcher.Invoke(() =>
                 {
                     this.Title = RoomInfo.GetTitle(_uid);
-                    UI_TitleBar.Title = $"{_nickname}({_room_id}) - {this.Title}(该直播间只有FLV流，使用WEB兼容模式播放)";
+                    UI_TitleBar.Title = $"{_nickname}({_room_id}) - {this.Title}【WEB兼容模式】(可能由于该直播间只有FLV流或者网络质量不佳)";
                 });
             });
 

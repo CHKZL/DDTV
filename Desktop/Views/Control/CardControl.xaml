@@ -10,8 +10,11 @@
     <UserControl.Resources>
         <ContextMenu x:Key="CardContextMenu">
             <MenuItem Header="打开窗口观看" Click="MenuItem_PlayWindow_Click"/>
+            <MenuItem Header="打开兼容播放窗口观看" Click="MenuItem_Compatible_PlayWindow_Click" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="用于网络不稳定或者标准窗口加载不出来直播画面的情况"/>
+            <Separator />
             <MenuItem Header="单独打开弹幕查看器" Click="MenuItem_DanmaOnly_Click"/>
             <MenuItem Header="在浏览器打开直播间" Click="MenuItem_OpenLiveUlr_Click"/>
+
             <Separator />
             <MenuItem Header="切换录制设置" Click="MenuItem_ModifyRoom_AutoRec_Click"/>
             <MenuItem Header="切换弹幕设置" Click="MenuItem_ModifyRoom_Danmu_Click"/>
