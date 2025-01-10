@@ -75,12 +75,12 @@ namespace Core.Tools
                 if (File.Exists(LogModule.LogDB.ErrorFilePath))
                 {
                     FileInfo fileInfo = new(LogModule.LogDB.ErrorFilePath);
-                    File.Copy(LogModule.LogDB.ErrorFilePath, $"{GIDPath}{fileInfo.Name}");
+                    File.Copy(LogModule.LogDB.ErrorFilePath, $"{GIDPath}{fileInfo.Name}",true);
                 }
                 if (File.Exists(LogModule.LogDB.dbPath))
                 {
                     FileInfo fileInfo = new(LogModule.LogDB.dbPath);
-                    File.Copy(LogModule.LogDB.dbPath, $"{GIDPath}{fileInfo.Name}");
+                    File.Copy(LogModule.LogDB.dbPath, $"{GIDPath}{fileInfo.Name}",true);
                 }
 
 
