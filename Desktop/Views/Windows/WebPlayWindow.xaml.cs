@@ -70,8 +70,8 @@ namespace Desktop.Views.Windows
                 {
                     if (item != null && item.Split('=').Length == 2)
                     {
-                        string name = item.Split('=')[0];
-                        string value = item.Split('=')[1];
+                        string name = item.Split('=')[0].TrimStart().TrimEnd();
+                        string value = item.Split('=')[1].TrimStart().TrimEnd();
                         string D = ".bilibili.com";
 
                         var cookie = WV2.CoreWebView2.CookieManager.CreateCookie(name, value, D, "/");
@@ -81,7 +81,7 @@ namespace Desktop.Views.Windows
                 string uc = test.UC;
                 WV2.CoreWebView2.Navigate($"{uc}{_room_id}&send=0&recommend=0&fullscreen=0");
             }
-            catch (Exception EX)
+             catch (Exception EX)
             {
                 Log.Error(nameof(WebPlayWindow), $"房间号:[{_room_id}],打开错误", EX, true);
             }
