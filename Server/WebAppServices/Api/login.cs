@@ -65,24 +65,15 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_login_url")]
         public async Task<ActionResult> Get()
         {
-            int waitTime = 0;
-            while (waitTime <= 3000)
+            string URL = await Core.RuntimeObject.Login.get_login_urlAsync();
+            if(string.IsNullOrEmpty(URL))
             {
-                if (System.IO.File.Exists(Core.Config.Core_RunConfig._QrUrl))
-                {
-                    FileInfo fi = new FileInfo(Core.Config.Core_RunConfig._QrUrl);
-                    using (FileStream fs = fi.OpenRead())
-                    {
-                        return Content(MessageBase.MssagePack(nameof(get_login_url), fs.ReadAllText(Encoding.UTF8), $"获取用于生成登陆二维码的URL字符串"), "application/json");
-                    }
-                }
-                else
-                {
-                    await Task.Delay(1000);
-                    waitTime += 1000;
-                }
+                 return Content(MessageBase.MssagePack(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期"), "application/json");
             }
-            return Content(MessageBase.MssagePack(nameof(get_login_url), false, $"登陆文件不存在，请检查是否调用登陆接口且未过期"), "application/json");
+            else
+            {
+                 return Content(MessageBase.MssagePack(nameof(get_login_url), URL, $"获取用于生成登陆二维码的URL字符串"), "application/json");
+            }  
         }
     }
 

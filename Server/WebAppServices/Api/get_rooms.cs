@@ -39,11 +39,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "room_statistics")]
         public ActionResult Post(PostCommonParameters commonParameters)
         {
-            var roomList = _Room.GetCardListClone(_Room.SearchType.All);
-            (int MonitoringCount, int LiveCount, int RecCount) count = new();
-            count.MonitoringCount = roomList.Count;
-            count.LiveCount = roomList.Where(x => x.Value.live_status.Value == 1).Count();
-            count.RecCount = roomList.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby).Count();
+            (int MonitoringCount, int LiveCount, int RecCount) count = Core.RuntimeObject._Room.Overview.GetRoomStatisticsOverview();
             return Content(MessageBase.MssagePack(nameof(room_information), count), "application/json");
         }
     }
@@ -107,174 +103,14 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "batch_complete_room_information")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] _Room.SearchType type=_Room.SearchType.All, [FromForm] string screen_name = "")
         {
-            try
-            {
-                Data completeRoomInfoRes = new Data();
-                var roomList = _Room.GetCardListClone(type, screen_name);
-                completeRoomInfoRes.total = roomList.Count;
-                if (quantity == 0)
-                {
-                    foreach (var room in roomList)
-                    {
-                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
-                        completeInfo.uid = room.Value.UID;
-                        completeInfo.roomId = room.Value.RoomId;
-                        completeInfo.userInfo = new()
-                        {
-                            isAutoRec = room.Value.IsAutoRec,
-                            description = room.Value.Description,
-                            isRecDanmu = room.Value.IsRecDanmu,
-                            isRemind = room.Value.IsRemind,
-                            name = room.Value.Name,
-                            sex = room.Value.sex.Value,
-                            sign = room.Value.sign.Value,
-                            uid = room.Value.UID,
-                            appointmentRecord = room.Value.AppointmentRecord,
-                        };
-                        completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
-                        {
-                            areaName = room.Value.area_v2_name.Value,
-                            attention = room.Value.attention.Value,
-                            coverFromUser = room.Value.cover_from_user.Value,
-                            face = room.Value.face.Value,
-                            keyFrame = room.Value.keyframe.Value,
-                            liveStatus = room.Value.live_status.Value == 1 ? true : false,
-                            liveTime = room.Value.live_time.Value,
-                            roomId = room.Value.RoomId,
-                            shortId = room.Value.short_id.Value,
-                            tags = room.Value.tags.Value,
-                            title = room.Value.Title.Value,
-                            url = $"https://live.bilibili.com/{room.Value.RoomId}",
-                            specialType = room.Value.special_type.Value,
-                        };
-                        
-                        completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
-                        {
-                            downloadSize = room.Value.DownInfo.DownloadSize,
-                            endTime = room.Value.DownInfo.EndTime,
-                            isDownload = room.Value.DownInfo.IsDownload,
-                            startTime = room.Value.DownInfo.StartTime,
-                            title = room.Value.Title.Value,
-                            status = room.Value.DownInfo.Status,
-                            downloadRate=room.Value.DownInfo.RealTimeDownloadSpe
-                        };
-                        completeRoomInfoRes.completeInfoList.Add(completeInfo);
-                    }
-                }
-                else
-                {
-                    for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity; i++)
-                    {
-                        Data.CompleteInfo completeInfo = new Data.CompleteInfo();
-                        completeInfo.uid = roomList.ElementAt(i).Value.UID;
-                        completeInfo.roomId = roomList.ElementAt(i).Value.RoomId;
-                        completeInfo.userInfo = new()
-                        {
-                            isAutoRec = roomList.ElementAt(i).Value.IsAutoRec,
-                            description = roomList.ElementAt(i).Value.Description,
-                            isRecDanmu = roomList.ElementAt(i).Value.IsRecDanmu,
-                            isRemind = roomList.ElementAt(i).Value.IsRemind,
-                            name = roomList.ElementAt(i).Value.Name,
-                            sex = roomList.ElementAt(i).Value.sex.Value,
-                            sign = roomList.ElementAt(i).Value.sign.Value,
-                            uid = roomList.ElementAt(i).Value.UID,
-                            appointmentRecord=roomList.ElementAt(i).Value.AppointmentRecord
-                        };
-                        completeInfo.roomInfo = new Data.CompleteInfo.RoomInfo()
-                        {
-                            areaName = roomList.ElementAt(i).Value.area_v2_name.Value,
-                            attention = roomList.ElementAt(i).Value.attention.Value,
-                            coverFromUser = roomList.ElementAt(i).Value.cover_from_user.Value,
-                            face = roomList.ElementAt(i).Value.face.Value,
-                            keyFrame = roomList.ElementAt(i).Value.keyframe.Value,
-                            liveStatus = roomList.ElementAt(i).Value.live_status.Value == 1 ? true : false,
-                            liveTime = roomList.ElementAt(i).Value.live_time.Value,
-                            roomId = roomList.ElementAt(i).Value.RoomId,
-                            shortId = roomList.ElementAt(i).Value.short_id.Value,
-                            tags = roomList.ElementAt(i).Value.tags.Value,
-                            title = roomList.ElementAt(i).Value.Title.Value,
-                            url = $"https://live.bilibili.com/{roomList.ElementAt(i).Value.RoomId}"
-                        };
-                        completeInfo.taskStatus = new Data.CompleteInfo.TaskStatus()
-                        {
-                            downloadSize = roomList.ElementAt(i).Value.DownInfo.DownloadSize,
-                            endTime = roomList.ElementAt(i).Value.DownInfo.EndTime,
-                            isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,
-                            startTime = roomList.ElementAt(i).Value.DownInfo.StartTime,
-                            title = roomList.ElementAt(i).Value.Title.Value,
-                            status = roomList.ElementAt(i).Value.DownInfo.Status,
-                            downloadRate = roomList.ElementAt(i).Value.DownInfo.RealTimeDownloadSpe,
-                            isDanma = false
-                        };
-
-                        if(roomList.ElementAt(i).Value.DownInfo.LiveChatListener!=null && roomList.ElementAt(i).Value.DownInfo.LiveChatListener.Register.Contains("DetectRoom_LiveStart"))
-                        {
-                            completeInfo.taskStatus.isDanma = true;
-                        }
-
-                        completeRoomInfoRes.completeInfoList.Add(completeInfo);
-                    }
-                }
-                roomList.Clear();
-                roomList = null;
-                return Content(MessageBase.MssagePack(nameof(batch_complete_room_information), completeRoomInfoRes), "application/json");
-            }
-            catch (Exception)
+            Core.RuntimeObject._Room.Overview.CardData completeRoomInfoRes = Core.RuntimeObject._Room.Overview.GetCardOverview(quantity,page,type,screen_name);
+            if(completeRoomInfoRes==null)
             {
                 return Content(MessageBase.MssagePack(nameof(batch_complete_room_information), "", "请求错误", code.ParameterError), "application/json");
             }
-        }
-        public class Data
-        {
-            public int total { get; set; } = 0;
-            public List<CompleteInfo> completeInfoList { get; set; } = new();
-            public class CompleteInfo
+            else
             {
-                public long uid { get; set; }
-                public long roomId { get; set; }
-                public UserInfo userInfo { get; set; } = new();
-                public RoomInfo roomInfo { get; set; } = new();
-                public TaskStatus taskStatus { get; set; } = new();
-                public class UserInfo
-                {
-                    public string name { get; set; }
-                    public string description { get; set; }
-                    public long uid { get; set; }
-                    public bool isAutoRec { get; set; }
-                    public bool isRemind { get; set; }
-                    public bool isRecDanmu { get; set; }
-                    public string sex { get; set; }
-                    public string sign { get; set; }
-                    public bool appointmentRecord {  get; set; }
-                }
-                public class RoomInfo
-                {
-                    public long roomId { get; set; }
-                    public string title { get; set; }
-                    public int attention { get; set; }
-                    public long liveTime { get; set; }
-                    public bool liveStatus { get; set; }
-                    public int shortId { get; set; }
-                    public string areaName { get; set; }
-                    public string face { get; set; }
-                    public string tags { get; set; }
-                    public string coverFromUser { get; set; }
-                    public string keyFrame { get; set; }
-                    public string url { get; set; }
-                    public int specialType { get; set; }
-
-                }
-                public class TaskStatus
-                {
-                    public bool isDownload { get; set; }
-                    public long downloadSize { get; set; }
-                    public double downloadRate {  get; set; }
-                    public DownloadStatus status { get; set; }
-                    public DateTime startTime { get; set; }
-                    public DateTime endTime { get; set; }
-                    public string title { get; set; }
-                    public bool isDanma { get; set; }
-                }
+                return Content(MessageBase.MssagePack(nameof(batch_complete_room_information), completeRoomInfoRes), "application/json");
             }
         }
     }

@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Wpf.Ui.Controls;
@@ -136,7 +137,18 @@ public partial class DataPage
                     {"remind","false" },
                     {"rec_danmu","false" },
                 };
-                List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+
+                List<(long key, int State, string Message)> State = new();
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                {
+                    State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+                }
+                else
+                {
+                    State = Core.RuntimeObject._Room.BatchAddRooms(string.Join(",", _uidl));
+                }
+
                 if (State == null)
                 {
                     Log.Warn(nameof(ImportFromFollowList_ChildMenuItem_Click), "调用Core的API[batch_add_room]批量添加房间失败，返回的对象为Null，详情请查看Core日志", null, true);

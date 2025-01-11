@@ -12,7 +12,7 @@ using static Core.Account.Kernel.ByQRCode;
 
 namespace Server
 {
-    internal class Login
+    public class Login
     {
         public static async Task QR()
         {

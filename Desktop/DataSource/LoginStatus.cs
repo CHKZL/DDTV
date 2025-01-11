@@ -1,4 +1,5 @@
 ﻿using Core;
+using static Core.Tools.DokiDoki;
 
 namespace Desktop.DataSource
 {
@@ -17,13 +18,24 @@ namespace Desktop.DataSource
         {
             Task.Run(() =>
             {
-                if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
+                bool status = false;
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    Thread.Sleep(1000);
                     if (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result)
                     {
-                        LoginFailureEvent?.Invoke(null, new EventArgs());
+                        status = true;
                     }
+                }
+                else
+                {
+                    if (!Core.RuntimeObject.Account.GetLoginStatus())
+                    {
+                        status = true;
+                    }
+                }
+                if (status)
+                {
+                    LoginFailureEvent?.Invoke(null, new EventArgs());
                 }
             });
         }

@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using Core;
+using Core.LogModule;
 using Core.RuntimeObject;
 using System.Windows;
 using Wpf.Ui.Controls;
@@ -50,11 +51,21 @@ namespace Desktop.Views.Windows
             await WV2.EnsureCoreWebView2Async(null);
             try
             {
-                string C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c").Replace(" ", "");
-                if (string.IsNullOrEmpty(C))
+                string C = string.Empty;
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    C = NetWork.Get.GetBody<string>("http://127.0.0.1:11419/api/system/get_c").Replace(" ", "");
+                    C = NetWork.Get.GetBody<string>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_c").Replace(" ", "");
+                    if (string.IsNullOrEmpty(C))
+                    {
+                        C = NetWork.Get.GetBody<string>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_c").Replace(" ", "");
+                    }
                 }
+                else
+                {
+                    C = Core.RuntimeObject.Account.AccountInformation.strCookies;
+                }
+
+                
                 foreach (var item in C.Split(';'))
                 {
                     if (item != null && item.Split('=').Length == 2)

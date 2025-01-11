@@ -4,13 +4,60 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Core.Tools.SystemResource.GetHDDInfo;
+using static Core.Tools.SystemResource.GetMemInfo;
 
 namespace Core.Tools
 {
     public class SystemResource
     {
+        public static class Overview
+        {
+            public static SystemResourceClass GetOverview()
+            {
+                SystemResourceClass systemResourceClass = new();
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    systemResourceClass = new()
+                    {
+                        HDDInfo = GetHDDInfo.GetLinux(),
+                        Memory = GetMemInfo.GetLiunx(),
+                        Platform = "Linux"
+                    };
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    systemResourceClass = new()
+                    {
+                        Memory = GetMemInfo.GetWindows(),
+                        Platform = "Windows"
+                    };
+                    string DriveLetter = Path.GetFullPath(Core.Config.Core_RunConfig._RecFileDirectory)[..1];
+                    systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
+                }
+                return systemResourceClass;
+            }
+            public class SystemResourceClass
+            {
+                /// <summary>
+                /// 平台
+                /// </summary>
+                public string Platform { set; get; }
+                /// <summary>
+                /// 内存
+                /// </summary>
+                public MemInfo Memory { set; get; }
+                /// <summary>
+                /// 硬盘信息
+                /// </summary>
+                public List<HDDInfo> HDDInfo { set; get; }
+        }
+        }
+        
+
         public class GetHDDInfo
         {
             public static List<HDDInfo> GetWindows(string DriveLetter)

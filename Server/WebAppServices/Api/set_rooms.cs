@@ -135,18 +135,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "batch_add_room")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string uids, [FromForm] bool auto_rec, [FromForm] bool remind, [FromForm] bool rec_danmu)
         {
-            List<(long key, int State, string Message)> list = new();
-            string[] uid = uids.Split(',');
-
-            foreach (var item in uid)
-            {
-                if (long.TryParse(item, out long u))
-                {
-                    (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, u, 0, true);
-                    list.Add(Info); 
-                }
-            }
-            return Content(MessageBase.MssagePack(nameof(batch_add_room), list), "application/json");
+            return Content(MessageBase.MssagePack(nameof(batch_add_room), Core.RuntimeObject._Room.BatchAddRooms(uids,auto_rec, remind, rec_danmu)), "application/json");
         }
     }
 
@@ -166,18 +155,7 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "batch_delete_rooms")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string uids)
         {
-            List<(long key, bool State, string Message)> list = new();
-            string[] uid = uids.Split(',');
-            foreach (var item in uid)
-            {
-                if (long.TryParse(item, out long u))
-                {
-                    (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(u, 0, true);
-                    list.Add(Info);
-                }
-
-            }
-            return Content(MessageBase.MssagePack(nameof(batch_delete_rooms), list), "application/json");
+            return Content(MessageBase.MssagePack(nameof(batch_delete_rooms), Core.RuntimeObject._Room.BatchDeleteRooms(uids)), "application/json");
         }
     }
 

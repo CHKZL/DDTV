@@ -14,6 +14,7 @@ using Wpf.Ui;
 using Wpf.Ui.Controls;
 using static Core.RuntimeObject.Detect;
 using static Core.Tools.DokiDoki;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Desktop
 {
@@ -145,7 +146,14 @@ namespace Desktop
                     }
                     try
                     {
-                        doki = NetWork.Get.GetBody<DokiClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/dokidoki");
+                        if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                        {
+                            doki = NetWork.Get.GetBody<DokiClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/dokidoki");
+                        }
+                        else
+                        {
+                            doki = Core.Tools.DokiDoki.GetDoki();
+                        }
                         if (doki != null)
                         {
                             Dispatcher.Invoke(() =>
@@ -362,7 +370,18 @@ namespace Desktop
         {
             try
             {
-                (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
+                (int MonitoringCount, int LiveCount, int RecCount) count = new();
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                {
+                    count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
+                }
+                else
+                {
+                    count = Core.RuntimeObject._Room.Overview.GetRoomStatisticsOverview();
+                }
+
+
                 configViewModel.DataPageTitle = $"房间列表 ({count.RecCount})";
                 configViewModel.OnPropertyChanged("DataPageTitle");
 

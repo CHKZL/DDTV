@@ -1,10 +1,13 @@
 ﻿using Core;
 using Core.LogModule;
 using Net.Codecrete.QrCodeGenerator;
+using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Wpf.Ui.Controls;
+using static Core.Tools.SystemResource.Overview;
+using static System.Windows.Forms.AxHost;
 
 namespace Desktop.Views.Windows
 {
@@ -29,7 +32,15 @@ namespace Desktop.Views.Windows
                             string URL = string.Empty;
                             do
                             {
-                                URL = NetWork.Get.GetBody<string>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_url");
+                                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                                {
+                                    URL = NetWork.Get.GetBody<string>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_url");
+                                }
+                                else
+                                {
+                                    URL = Core.RuntimeObject.Login.get_login_urlAsync().Result;
+                                }           
+
                                 if (string.IsNullOrEmpty(URL))
                                 {
                                     Log.Warn(nameof(QrLogin), "调用Core的API[get_login_url]失败，获取到的信息为空，请检查Core日志");
@@ -73,7 +84,15 @@ namespace Desktop.Views.Windows
                                         break;
                                     }
                                     Thread.Sleep(500);
-                                } while (!NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result);
+                                } while (
+                                (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                                ?
+                                !NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status").Result
+                                :
+                                !Core.RuntimeObject.Account.GetLoginStatus()
+                                );
+
+
                                 Dispatcher.Invoke(() =>
                                 {
                                     Log.Info(nameof(QrLogin), "登陆完成，关闭QR扫码窗口");

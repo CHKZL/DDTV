@@ -14,6 +14,7 @@ using static Core.Tools.SystemResource.GetHDDInfo;
 using static Core.Tools.SystemResource.GetMemInfo;
 using static FastExpressionCompiler.ImTools.FHashMap;
 using System.Net;
+using static Core.Tools.SystemResource.Overview;
 
 namespace Server.WebAppServices.Api
 {
@@ -73,43 +74,10 @@ namespace Server.WebAppServices.Api
         [HttpGet(Name = "get_system_resources")]
         public ActionResult Get(GetCommonParameters commonParameters)
         {
-            SystemResourceClass systemResourceClass = new();
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                systemResourceClass = new()
-                {
-                    HDDInfo = GetHDDInfo.GetLinux(),
-                    Memory = GetMemInfo.GetLiunx(),
-                    Platform = "Linux"
-                };
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                systemResourceClass = new()
-                {
-                    Memory = GetMemInfo.GetWindows(),
-                    Platform = "Windows"
-                };
-                string DriveLetter = Path.GetFullPath(Core.Config.Core_RunConfig._RecFileDirectory)[..1];
-                systemResourceClass.HDDInfo = GetHDDInfo.GetWindows(DriveLetter);
-            }
+            SystemResourceClass systemResourceClass = Core.Tools.SystemResource.Overview.GetOverview();
             return Content(MessageBase.MssagePack(nameof(get_system_resources), systemResourceClass, "SystemResource"), "application/json");
         }
-        public class SystemResourceClass
-        {
-            /// <summary>
-            /// 平台
-            /// </summary>
-            public string Platform { set; get; }
-            /// <summary>
-            /// 内存
-            /// </summary>
-            public MemInfo Memory { set; get; }
-            /// <summary>
-            /// 硬盘信息
-            /// </summary>
-            public List<HDDInfo> HDDInfo { set; get; }
-        }
+     
     }
 
     [Produces(MediaTypeNames.Application.Json)]

@@ -1,5 +1,7 @@
 ﻿using Core;
 using Masuit.Tools;
+using System;
+using System.Security.Cryptography;
 using System.Windows;
 using Wpf.Ui.Controls;
 
@@ -103,7 +105,18 @@ namespace Desktop.Views.Windows
                                         {"rec_danmu",_IsDanmu.ToString() },
                                     };
                                 });
-                                int State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
+                                int State = 0;
+
+                                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                                {
+                                    State = NetWork.Post.PostBody<int>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/add_room", dic).Result;
+                                }
+                                else
+                                {
+                                    State = Core.RuntimeObject._Room.AddRoom(_IsAutoRec, _IsRemind, _IsDanmu, 0, long.Parse(RoomId_TextBox.Text), false).State;
+                                }
+
+
                                 Dispatcher.Invoke(() =>
                                 {
                                     switch (State)
@@ -154,19 +167,30 @@ namespace Desktop.Views.Windows
                             Task.Run(() =>
                             {
 
-                                long[] _uidl = new long[UidList.Count];
-                                for (int i = 0; i < UidList.Count; i++)
+                            long[] _uidl = new long[UidList.Count];
+                            for (int i = 0; i < UidList.Count; i++)
+                            {
+                                _uidl[i] = UidList[i];
+                            }
+                            Dictionary<string, string> dic = new Dictionary<string, string>
+                            {
+                                { "uids", string.Join(",", _uidl) },
+                                { "auto_rec", _IsAutoRec.ToString() },
+                                { "remind", _IsRemind.ToString() },
+                                { "rec_danmu", _IsDanmu.ToString() },
+                            };
+                            List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+
+                                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                                 {
-                                    _uidl[i] = UidList[i];
+                                    State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
                                 }
-                                Dictionary<string, string> dic = new Dictionary<string, string>
+                                else
                                 {
-                                    {"uids", string.Join(",",_uidl) },
-                                    {"auto_rec",_IsAutoRec.ToString() },
-                                    {"remind",_IsRemind.ToString() },
-                                    {"rec_danmu",_IsDanmu.ToString() },
-                                };
-                                List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+                                    State = Core.RuntimeObject._Room.BatchAddRooms(string.Join(",", _uidl), _IsAutoRec, _IsRemind, _IsDanmu);
+                                }
+
+
                                 Dispatcher.Invoke(() =>
                                 {
                                     if (State == null)

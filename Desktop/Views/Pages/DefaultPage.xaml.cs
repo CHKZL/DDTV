@@ -6,9 +6,13 @@
 using Core;
 using Core.LogModule;
 using Desktop.Models;
+using System;
 using System.Net;
 using System.Net.Sockets;
+using static Core.Tools.DokiDoki;
+using static Core.Tools.SystemResource.Overview;
 using static Server.WebAppServices.Api.get_system_resources;
+using static System.Windows.Forms.AxHost;
 
 namespace Desktop.Views.Pages;
 
@@ -193,7 +197,18 @@ public partial class DefaultPage
 
         try
         {
-            (int MonitoringCount, int LiveCount, int RecCount) count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
+            (int MonitoringCount, int LiveCount, int RecCount) count = new();
+
+            if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+            {
+                count = NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics").Result;
+            }
+            else
+            {
+                count = Core.RuntimeObject._Room.Overview.GetRoomStatisticsOverview();
+            }
+
+
             SetMonitoringCount(count.MonitoringCount);
             SetLiveCount(count.LiveCount);
             SetRecCount(count.RecCount);
@@ -212,7 +227,18 @@ public partial class DefaultPage
     {
         try
         {
-            SystemResourceClass systemResourceClass = NetWork.Get.GetBody<SystemResourceClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_system_resources");
+            SystemResourceClass systemResourceClass = new();
+            if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+            {
+                systemResourceClass = NetWork.Get.GetBody<SystemResourceClass>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/system/get_system_resources");
+            }
+            else
+            {
+                systemResourceClass = Core.Tools.SystemResource.Overview.GetOverview();
+            }
+
+
+            
             if (systemResourceClass != null)
             {
                 int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);

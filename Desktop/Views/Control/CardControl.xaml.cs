@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Wpf.Ui.Controls;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Desktop.Views.Control
 {
@@ -121,7 +123,18 @@ namespace Desktop.Views.Control
             };
             Task.Run(() =>
             {
-                List<(long key, bool State, string Message)> State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic).Result;
+                List<(long key, bool State, string Message)> State = new();
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                {
+                    State = NetWork.Post.PostBody<List<(long key, bool State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_delete_rooms", dic).Result;
+                }
+                else
+                {
+                    State = Core.RuntimeObject._Room.BatchDeleteRooms(dataCard.Uid.ToString());
+                }
+
+
                 if (State == null)
                 {
                     Log.Warn(nameof(DelRoom_Click), "调用Core的API[batch_delete_rooms]删除房间失败，返回的对象为Null，详情请查看Core日志", null, true);
@@ -149,7 +162,18 @@ namespace Desktop.Views.Control
             };
             Task.Run(() =>
             {
-                bool State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic).Result;
+                bool State = false;
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                {
+                   State = NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/cancel_task", dic).Result;
+                }
+                else
+                {
+                    State = Core.RuntimeObject._Room.CancelTask(dataCard.Uid).State;
+                }
+
+
                 if (State == false)
                 {
                     Log.Warn(nameof(DelRoom_Click), "调用Core的API[cancel_task]取消录制任务失败，详情请查看Core日志", null, true);
@@ -197,7 +221,17 @@ namespace Desktop.Views.Control
             };
             Task.Run(() =>
             {
-                var message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic, new TimeSpan(0, 1, 0)).Result;
+                (bool state, string message) message = new();
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
+                {
+                    message = NetWork.Post.PostBody<(bool state, string message)>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/rec_task/generate_snapshot", dic, new TimeSpan(0, 1, 0)).Result;
+                }
+                else
+                {
+                    message = Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(dataCard.Uid);
+                }
+
                 if (!message.state)
                 {
                     Log.Info(nameof(Snapshot_Task_Click), $"生成直播间录制快照失败，原因:{message.message}");

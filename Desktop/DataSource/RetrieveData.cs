@@ -1,9 +1,12 @@
 ﻿using Core;
 using Core.LogModule;
+using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Pages;
 using System.Windows;
 using System.Windows.Media;
+using static System.Windows.Forms.AxHost;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 
@@ -21,25 +24,45 @@ namespace Desktop.DataSource
                 {
                     return;
                 }
-                Dictionary<string, string> dir = new Dictionary<string, string>();
-                if (!string.IsNullOrEmpty(DataPage.screen_name))
+
+
+                Core.RuntimeObject._Room.Overview.CardData Cards = new();
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    dir = new Dictionary<string, string>()
+                    Dictionary<string, string> dir = new Dictionary<string, string>();
+                    if (!string.IsNullOrEmpty(DataPage.screen_name))
                     {
-                        {"screen_name",DataPage.screen_name }
-                    };
+                        dir = new Dictionary<string, string>()
+                        {
+                            {"screen_name",DataPage.screen_name }
+                        };
+                    }
+                    else
+                    {
+                        dir = new Dictionary<string, string>()
+                        {
+                            {"quantity","102" },
+                            {"page",DataPage.PageIndex.ToString() },
+                            {"type",DataPage.CardType.ToString() },
+                            {"screen_name","" }
+                        };
+                    }
+                    Cards = NetWork.Post.PostBody<Core.RuntimeObject._Room.Overview.CardData>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/batch_complete_room_information", dir).Result;
                 }
                 else
                 {
-                    dir = new Dictionary<string, string>()
+                    if (!string.IsNullOrEmpty(DataPage.screen_name))
                     {
-                        {"quantity","102" },
-                        {"page",DataPage.PageIndex.ToString() },
-                        {"type",DataPage.CardType.ToString() },
-                        {"screen_name","" }
-                    };
+                         Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(0,0,Core.RuntimeObject._Room.SearchType.All,DataPage.screen_name);
+                    }
+                    else
+                    {
+                        Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(102,DataPage.PageIndex,(_Room.SearchType)DataPage.CardType);
+                    }
                 }
-                Server.WebAppServices.Api.batch_complete_room_information.Data Cards = NetWork.Post.PostBody<Server.WebAppServices.Api.batch_complete_room_information.Data>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/batch_complete_room_information", dir).Result;
+
+
 
                 if (Cards == null)
                 {
@@ -106,7 +129,7 @@ namespace Desktop.DataSource
                 });
             }
 
-            private static DataCard CreateDataCard(Server.WebAppServices.Api.batch_complete_room_information.Data.CompleteInfo item)
+            private static DataCard CreateDataCard(Core.RuntimeObject._Room.Overview.CardData.CompleteInfo item)
             {
                 DataCard dataCard = new DataCard
                 {
@@ -148,24 +171,45 @@ namespace Desktop.DataSource
         {
             public static void ModifyRoomSettings(long uid, bool IsAutoRec, bool IsRecDanmu, bool IsRemind)
             {
-                Dictionary<string, string> dic = new Dictionary<string, string>
+
+
+
+                if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    {"uid", uid.ToString() },
-                    {"AutoRec",IsAutoRec.ToString() },
-                    {"Remind",IsRemind.ToString() },
-                    {"RecDanmu",IsRecDanmu.ToString() },
-                };
-                Task.Run(() =>
+                    Dictionary<string, string> dic = new Dictionary<string, string>
+                    {
+                        {"uid", uid.ToString() },
+                        {"AutoRec",IsAutoRec.ToString() },
+                        {"Remind",IsRemind.ToString() },
+                        {"RecDanmu",IsRecDanmu.ToString() },
+                    };
+                    Task.Run(() =>
+                    {
+                        if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/modify_room_settings", dic).Result)
+                        {
+                            Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
+                        }
+                        else
+                        {
+                            Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
+                        }
+                    });
+                }
+                else
                 {
-                    if (NetWork.Post.PostBody<bool>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/modify_room_settings", dic).Result)
+                    Task.Run(() =>
                     {
-                        Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
-                    }
-                    else
-                    {
-                        Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
-                    }
-                });
+                        if (Core.RuntimeObject._Room.ModifyRoomSettings(uid, IsAutoRec, IsRecDanmu, IsRemind))
+                        {
+                            Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
+                        }
+                        else
+                        {
+                            Log.Warn(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置失败");
+                        }
+                    });
+                }
+
             }
         }
     }

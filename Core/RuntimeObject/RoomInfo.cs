@@ -2,6 +2,8 @@
 using Core.Network.Methods;
 using Masuit.Tools;
 using Masuit.Tools.Hardware;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -20,6 +22,243 @@ namespace Core.RuntimeObject
     public class _Room
     {
         private static ConcurrentDictionary<long, RoomCardClass> roomInfos = new ConcurrentDictionary<long, RoomCardClass>();
+
+        /// <summary>
+        /// 总览，用于输出WEB或者Destop显示内容
+        /// </summary>
+        public class Overview
+        {
+            public static CardData GetCardOverview(int quantity = 0,int page = 0, _Room.SearchType type=_Room.SearchType.All,string screen_name = "")
+            {
+                try
+                {
+                    CardData completeRoomInfoRes = new CardData();
+                    var roomList = _Room.GetCardListClone(type, screen_name);
+                    completeRoomInfoRes.total = roomList.Count;
+                    if (quantity == 0)
+                    {
+                        foreach (var room in roomList)
+                        {
+                            CardData.CompleteInfo completeInfo = new CardData.CompleteInfo();
+                            completeInfo.uid = room.Value.UID;
+                            completeInfo.roomId = room.Value.RoomId;
+                            completeInfo.userInfo = new()
+                            {
+                                isAutoRec = room.Value.IsAutoRec,
+                                description = room.Value.Description,
+                                isRecDanmu = room.Value.IsRecDanmu,
+                                isRemind = room.Value.IsRemind,
+                                name = room.Value.Name,
+                                sex = room.Value.sex.Value,
+                                sign = room.Value.sign.Value,
+                                uid = room.Value.UID,
+                                appointmentRecord = room.Value.AppointmentRecord,
+                            };
+                            completeInfo.roomInfo = new CardData.CompleteInfo.RoomInfo()
+                            {
+                                areaName = room.Value.area_v2_name.Value,
+                                attention = room.Value.attention.Value,
+                                coverFromUser = room.Value.cover_from_user.Value,
+                                face = room.Value.face.Value,
+                                keyFrame = room.Value.keyframe.Value,
+                                liveStatus = room.Value.live_status.Value == 1 ? true : false,
+                                liveTime = room.Value.live_time.Value,
+                                roomId = room.Value.RoomId,
+                                shortId = room.Value.short_id.Value,
+                                tags = room.Value.tags.Value,
+                                title = room.Value.Title.Value,
+                                url = $"https://live.bilibili.com/{room.Value.RoomId}",
+                                specialType = room.Value.special_type.Value,
+                            };
+
+                            completeInfo.taskStatus = new CardData.CompleteInfo.TaskStatus()
+                            {
+                                downloadSize = room.Value.DownInfo.DownloadSize,
+                                endTime = room.Value.DownInfo.EndTime,
+                                isDownload = room.Value.DownInfo.IsDownload,
+                                startTime = room.Value.DownInfo.StartTime,
+                                title = room.Value.Title.Value,
+                                status = room.Value.DownInfo.Status,
+                                downloadRate = room.Value.DownInfo.RealTimeDownloadSpe
+                            };
+                            completeRoomInfoRes.completeInfoList.Add(completeInfo);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = page * quantity - quantity; i < roomList.Count && i < page * quantity; i++)
+                        {
+                            CardData.CompleteInfo completeInfo = new CardData.CompleteInfo();
+                            completeInfo.uid = roomList.ElementAt(i).Value.UID;
+                            completeInfo.roomId = roomList.ElementAt(i).Value.RoomId;
+                            completeInfo.userInfo = new()
+                            {
+                                isAutoRec = roomList.ElementAt(i).Value.IsAutoRec,
+                                description = roomList.ElementAt(i).Value.Description,
+                                isRecDanmu = roomList.ElementAt(i).Value.IsRecDanmu,
+                                isRemind = roomList.ElementAt(i).Value.IsRemind,
+                                name = roomList.ElementAt(i).Value.Name,
+                                sex = roomList.ElementAt(i).Value.sex.Value,
+                                sign = roomList.ElementAt(i).Value.sign.Value,
+                                uid = roomList.ElementAt(i).Value.UID,
+                                appointmentRecord = roomList.ElementAt(i).Value.AppointmentRecord
+                            };
+                            completeInfo.roomInfo = new CardData.CompleteInfo.RoomInfo()
+                            {
+                                areaName = roomList.ElementAt(i).Value.area_v2_name.Value,
+                                attention = roomList.ElementAt(i).Value.attention.Value,
+                                coverFromUser = roomList.ElementAt(i).Value.cover_from_user.Value,
+                                face = roomList.ElementAt(i).Value.face.Value,
+                                keyFrame = roomList.ElementAt(i).Value.keyframe.Value,
+                                liveStatus = roomList.ElementAt(i).Value.live_status.Value == 1 ? true : false,
+                                liveTime = roomList.ElementAt(i).Value.live_time.Value,
+                                roomId = roomList.ElementAt(i).Value.RoomId,
+                                shortId = roomList.ElementAt(i).Value.short_id.Value,
+                                tags = roomList.ElementAt(i).Value.tags.Value,
+                                title = roomList.ElementAt(i).Value.Title.Value,
+                                url = $"https://live.bilibili.com/{roomList.ElementAt(i).Value.RoomId}"
+                            };
+                            completeInfo.taskStatus = new CardData.CompleteInfo.TaskStatus()
+                            {
+                                downloadSize = roomList.ElementAt(i).Value.DownInfo.DownloadSize,
+                                endTime = roomList.ElementAt(i).Value.DownInfo.EndTime,
+                                isDownload = roomList.ElementAt(i).Value.DownInfo.IsDownload,
+                                startTime = roomList.ElementAt(i).Value.DownInfo.StartTime,
+                                title = roomList.ElementAt(i).Value.Title.Value,
+                                status = roomList.ElementAt(i).Value.DownInfo.Status,
+                                downloadRate = roomList.ElementAt(i).Value.DownInfo.RealTimeDownloadSpe,
+                                isDanma = false
+                            };
+
+                            if (roomList.ElementAt(i).Value.DownInfo.LiveChatListener != null && roomList.ElementAt(i).Value.DownInfo.LiveChatListener.Register.Contains("DetectRoom_LiveStart"))
+                            {
+                                completeInfo.taskStatus.isDanma = true;
+                            }
+
+                            completeRoomInfoRes.completeInfoList.Add(completeInfo);
+                        }
+                    }
+                    roomList.Clear();
+                    roomList = null;
+                    return completeRoomInfoRes;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }
+
+            public class CardData
+            {
+                public int total { get; set; } = 0;
+                public List<CompleteInfo> completeInfoList { get; set; } = new();
+                public class CompleteInfo
+                {
+                    public long uid { get; set; }
+                    public long roomId { get; set; }
+                    public UserInfo userInfo { get; set; } = new();
+                    public RoomInfo roomInfo { get; set; } = new();
+                    public TaskStatus taskStatus { get; set; } = new();
+                    public class UserInfo
+                    {
+                        public string name { get; set; }
+                        public string description { get; set; }
+                        public long uid { get; set; }
+                        public bool isAutoRec { get; set; }
+                        public bool isRemind { get; set; }
+                        public bool isRecDanmu { get; set; }
+                        public string sex { get; set; }
+                        public string sign { get; set; }
+                        public bool appointmentRecord { get; set; }
+                    }
+                    public class RoomInfo
+                    {
+                        public long roomId { get; set; }
+                        public string title { get; set; }
+                        public int attention { get; set; }
+                        public long liveTime { get; set; }
+                        public bool liveStatus { get; set; }
+                        public int shortId { get; set; }
+                        public string areaName { get; set; }
+                        public string face { get; set; }
+                        public string tags { get; set; }
+                        public string coverFromUser { get; set; }
+                        public string keyFrame { get; set; }
+                        public string url { get; set; }
+                        public int specialType { get; set; }
+
+                    }
+                    public class TaskStatus
+                    {
+                        public bool isDownload { get; set; }
+                        public long downloadSize { get; set; }
+                        public double downloadRate { get; set; }
+                        public DownloadStatus status { get; set; }
+                        public DateTime startTime { get; set; }
+                        public DateTime endTime { get; set; }
+                        public string title { get; set; }
+                        public bool isDanma { get; set; }
+                    }
+                }
+            }
+
+            public static (int MonitoringCount, int LiveCount, int RecCount) GetRoomStatisticsOverview()
+            {
+                var roomList = _Room.GetCardListClone(_Room.SearchType.All);
+                (int MonitoringCount, int LiveCount, int RecCount) count = new();
+                count.MonitoringCount = roomList.Count;
+                count.LiveCount = roomList.Where(x => x.Value.live_status.Value == 1).Count();
+                count.RecCount = roomList.Where(x => x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Downloading || x.Value.DownInfo.Status == RoomCardClass.DownloadStatus.Standby).Count();
+                return count;
+            }
+        }
+
+        /// <summary>
+        /// 批量删除房间
+        /// </summary>
+        /// <param name="uids">使用半角逗号分割的UID符串</param>
+        /// <returns></returns>
+        public static List<(long key, bool State, string Message)> BatchDeleteRooms(string uids)
+        {
+            List<(long key, bool State, string Message)> list = new();
+            string[] uid = uids.Split(',');
+            foreach (var item in uid)
+            {
+                if (long.TryParse(item, out long u))
+                {
+                    (long key, bool State, string Message) Info = Core.RuntimeObject._Room.DelRoom(u, 0, true);
+                    list.Add(Info);
+                }
+
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// 批量增加房间
+        /// </summary>
+        /// <param name="uids">使用半角逗号分割的UID字符串</param>
+        /// <param name="auto_rec"></param>
+        /// <param name="remind"></param>
+        /// <param name="rec_danmu"></param>
+        /// <returns></returns>
+        public static List<(long key, int State, string Message)> BatchAddRooms(string uids,bool auto_rec=false, bool remind=false,bool rec_danmu=false)
+        {
+            List<(long key, int State, string Message)> list = new();
+            string[] uid = uids.Split(',');
+
+            foreach (var item in uid)
+            {
+                if (long.TryParse(item, out long u))
+                {
+                    (long key, int State, string Message) Info = Core.RuntimeObject._Room.AddRoom(auto_rec, remind, rec_danmu, u, 0, true);
+                    list.Add(Info);
+                }
+            }
+            return list;
+        }
+
+
         /// <summary>
         /// 通过UID获取房间卡
         /// </summary>

@@ -1998,6 +1998,29 @@ namespace Core
                 }
             }
 
+
+             private static string LocalHTTPMode = "false";
+            /// <summary>
+            /// 本地模式时，是否使用HTTP进行请求
+            /// 默认值：false
+            /// </summary>
+            public bool _LocalHTTPMode
+            {
+                get
+                {
+                    return bool.Parse(LocalHTTPMode);
+                }
+                set
+                {
+                    if (value.ToString() != LocalHTTPMode)
+                    {
+                        LocalHTTPMode = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }
