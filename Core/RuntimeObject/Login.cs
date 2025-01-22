@@ -13,7 +13,7 @@ namespace Core.RuntimeObject
         {
             string URL = string.Empty;
             int waitTime = 0;
-            while (waitTime <= 3000)
+            while (string.IsNullOrEmpty(URL) && waitTime <= 3000)
             {
                 if (System.IO.File.Exists(Core.Config.Core_RunConfig._QrUrl))
                 {
@@ -22,6 +22,7 @@ namespace Core.RuntimeObject
                     {
                         URL = fs.ReadAllText(Encoding.UTF8);  
                     }
+
                 }
                 else
                 {

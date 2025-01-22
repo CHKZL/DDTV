@@ -113,7 +113,10 @@ namespace Desktop.Views.Windows
                                 }
                                 else
                                 {
-                                    State = Core.RuntimeObject._Room.AddRoom(_IsAutoRec, _IsRemind, _IsDanmu, 0, long.Parse(RoomId_TextBox.Text), false).State;
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        State = Core.RuntimeObject._Room.AddRoom(_IsAutoRec, _IsRemind, _IsDanmu, 0, long.Parse(RoomId_TextBox.Text), false).State;
+                                    });
                                 }
 
 
@@ -167,19 +170,19 @@ namespace Desktop.Views.Windows
                             Task.Run(() =>
                             {
 
-                            long[] _uidl = new long[UidList.Count];
-                            for (int i = 0; i < UidList.Count; i++)
-                            {
-                                _uidl[i] = UidList[i];
-                            }
-                            Dictionary<string, string> dic = new Dictionary<string, string>
+                                long[] _uidl = new long[UidList.Count];
+                                for (int i = 0; i < UidList.Count; i++)
+                                {
+                                    _uidl[i] = UidList[i];
+                                }
+                                Dictionary<string, string> dic = new Dictionary<string, string>
                             {
                                 { "uids", string.Join(",", _uidl) },
                                 { "auto_rec", _IsAutoRec.ToString() },
                                 { "remind", _IsRemind.ToString() },
                                 { "rec_danmu", _IsDanmu.ToString() },
                             };
-                            List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
+                                List<(long key, int State, string Message)> State = NetWork.Post.PostBody<List<(long key, int State, string Message)>>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/set_rooms/batch_add_room", dic).Result;
 
                                 if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                                 {
