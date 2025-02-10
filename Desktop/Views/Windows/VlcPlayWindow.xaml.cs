@@ -600,7 +600,7 @@ namespace Desktop.Views.Windows
         private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
         {
             string T = DanmaOnly_DanmaInput.Text;
-            if (string.IsNullOrEmpty(T) && T.Length > 20)
+            if (string.IsNullOrEmpty(T) && T.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
             {
                 return;
             }
@@ -611,7 +611,8 @@ namespace Desktop.Views.Windows
         private void DanmaOnly_DanmaInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             System.Windows.Controls.TextBox? textBox = sender as System.Windows.Controls.TextBox;
-            if (textBox != null && textBox.Text.Length > 20)
+            int maxlen = Core.Config.Core_RunConfig._MaximumLengthDanmu;
+            if (textBox != null && textBox.Text.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
             {
                 int selectionStart = textBox.SelectionStart;
                 textBox.Text = textBox.Text.Substring(0, 20);
@@ -715,6 +716,12 @@ namespace Desktop.Views.Windows
             Process.Start(psi);
         }
 
-
+        private void MenuItem_DanmaOnly_Click(object sender, RoutedEventArgs e)
+        {
+            RoomCardClass roomCardClass = new();
+            _Room.GetCardForUID(roomCard.UID, ref roomCardClass);
+            Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
+            danmaOnlyWindow.Show();
+        }
     }
 }

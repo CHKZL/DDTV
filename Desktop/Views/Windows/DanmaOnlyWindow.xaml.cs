@@ -32,6 +32,7 @@ namespace Desktop.Views.Windows
                 Dispatcher.Invoke(() =>
                 {
                     UI_TitleBar.Title = $"{Card.Name}({Card.RoomId})";
+                    this.Title = UI_TitleBar.Title;
                     DanmaCollection.Add(new DanmaOnly { Message = $"连接[{Card.Name}({Card.RoomId})]直播间弹幕长连" });
                 });
 
@@ -154,8 +155,9 @@ namespace Desktop.Views.Windows
         private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
         {
             string T = DanmaOnly_DanmaInput.Text;
-            if (string.IsNullOrEmpty(T) && T.Length > 20)
+            if (string.IsNullOrEmpty(T) || T.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
             {
+                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为{Core.Config.Core_RunConfig._MaximumLengthDanmu}");
                 return;
             }
             Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
@@ -164,12 +166,16 @@ namespace Desktop.Views.Windows
 
         private void DanmaOnly_DanmaInput_TextChanged(object sender, TextChangedEventArgs e)
         {
+            //直接进行一个屏蔽，检查个屁，超过直接报错
+            //return;
+            //检测输入框长度，超过长度则截断
             System.Windows.Controls.TextBox? textBox = sender as System.Windows.Controls.TextBox;
-            if (textBox != null && textBox.Text.Length > 20)
+            int maxlen = Core.Config.Core_RunConfig._MaximumLengthDanmu;
+            if (textBox != null && textBox.Text.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
             {
                 int selectionStart = textBox.SelectionStart;
-                textBox.Text = textBox.Text.Substring(0, 20);
-                textBox.SelectionStart = selectionStart > 20 ? 20 : selectionStart;
+                textBox.Text = textBox.Text.Substring(0, maxlen);
+                textBox.SelectionStart = selectionStart > maxlen ? maxlen : selectionStart;
             }
         }
 

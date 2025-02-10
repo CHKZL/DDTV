@@ -647,8 +647,8 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放窗设置" />
-                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="在线播放功能相关设置" />
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="弹幕和播放窗设置" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="弹幕窗口以及在线播放功能窗口相关设置" />
                         </Grid>
                     </ui:CardExpander.Header>
                     <StackPanel Margin="24,0,24,0">
@@ -699,7 +699,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="播放窗弹幕" />
-                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="针对标准播放窗口的弹幕相关设置内容" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="针对标准播放窗口的弹幕显示相关设置内容" />
                                     </Grid>
 
                                 </Grid>
@@ -748,10 +748,65 @@
                                         <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度是否跟随播放大小变化动态变化" />
                                         <CheckBox Name="PlayWindowDanmaSpeed_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="跟随" IsChecked="{Binding _PlayDanmaSpeed_Dynamically, Mode=OneWay}"/>
                                     </Grid>
-                                    
-                                  
+
+
                                 </Grid>
-                                
+                            </StackPanel>
+                        </ui:CardExpander>
+
+                        <ui:CardExpander Icon="{ui:SymbolIcon TextWordCount20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="弹幕发送设置" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="发送弹幕功能的设置" />
+                                    </Grid>
+
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid Grid.Row="0" Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="发送弹幕最大长度（默认为20，请根据自己账号等级修改）" />
+                                        <ui:NumberBox Name="MaximumLengthDanmu_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _MaximumLengthDanmu, Mode=OneWay}"/>
+                                    </Grid>
+                                    <Grid Grid.Row="0" Grid.Column="2">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="auto" />
+                                            <RowDefinition Height="auto" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="打开兼容播放器时，是否自动打开单独的弹幕窗口" />
+                                        <CheckBox Name="CompatibilityModeDefaultsToOpeningPopupWindow_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="跟随" IsChecked="{Binding _CompatibilityModeDefaultsToOpeningPopupWindow, Mode=OneWay}"/>
+                                    </Grid>
+
+
+
+                                </Grid>
                             </StackPanel>
                         </ui:CardExpander>
 

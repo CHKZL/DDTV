@@ -2021,6 +2021,51 @@ namespace Core
                 }
             }
 
+            private static string MaximumLengthDanmu = "20";
+            /// <summary>
+            /// 弹幕最大长度（直播等级20以上可能会是30，用户自己配置）
+            /// 默认值：20
+            /// </summary>
+            public int _MaximumLengthDanmu
+            {
+                get
+                {
+                    return int.Parse(MaximumLengthDanmu);
+                }
+                set
+                {
+                    if (value.ToString() != MaximumLengthDanmu)
+                    {
+                        MaximumLengthDanmu = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            
+             private static string CompatibilityModeDefaultsToOpeningPopupWindow = "false";
+            /// <summary>
+            /// 打开兼容模式播放器时，是否默认打开弹幕窗口以方便弹幕查看和发送
+            /// 默认值：false
+            /// </summary>
+            public bool _CompatibilityModeDefaultsToOpeningPopupWindow
+            {
+                get
+                {
+                    return bool.Parse(LocalHTTPMode);
+                }
+                set
+                {
+                    if (value.ToString() != LocalHTTPMode)
+                    {
+                        LocalHTTPMode = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

@@ -31,7 +31,14 @@ namespace Desktop.Views.Windows
                 });
             });
 
+            if (Core.Config.Core_RunConfig._CompatibilityModeDefaultsToOpeningPopupWindow)
+            {
 
+                RoomCardClass roomCardClass = new();
+                _Room.GetCardForUID(_uid, ref roomCardClass);
+                Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
+                danmaOnlyWindow.Show();
+            }
 
             Log.Info(nameof(WebPlayWindow), $"房间号:[{room_id}],打开播放器");
         }

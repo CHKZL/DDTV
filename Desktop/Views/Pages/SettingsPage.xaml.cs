@@ -359,6 +359,19 @@ public partial class SettingsPage
         }
         #endregion
 
+        #region 弹幕发送设置
+        //弹幕最长字数设置
+        if (Config.Core_RunConfig._MaximumLengthDanmu != int.Parse(MaximumLengthDanmu_InputBox.Text))
+        {
+            Config.Core_RunConfig._MaximumLengthDanmu = int.Parse(MaximumLengthDanmu_InputBox.Text);
+        }
+        //打开兼容模式播放器时，是否默认打开弹幕窗口
+        if (Config.Core_RunConfig._CompatibilityModeDefaultsToOpeningPopupWindow != CompatibilityModeDefaultsToOpeningPopupWindow_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._CompatibilityModeDefaultsToOpeningPopupWindow = (bool)CompatibilityModeDefaultsToOpeningPopupWindow_CheckBox.IsChecked;
+        }
+        #endregion
+
         if (IsReboot)
         {
             MainWindow.SnackbarService.Show("保存成功", "多项配置需要重启后生效，5秒后自动重启DDTV", ControlAppearance.Caution, new SymbolIcon(SymbolRegular.SaveSync20), TimeSpan.FromSeconds(30));

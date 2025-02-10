@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Desktop.Views.Windows"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="DanmaOnlyWindow" Height="500" Width="450" MinWidth="450" Closing="FluentWindow_Closing">
+        Title="DanmaOnlyWindow" Height="500" Width="450" MinWidth="300" Closing="FluentWindow_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
