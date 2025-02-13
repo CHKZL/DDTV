@@ -238,7 +238,15 @@ namespace Desktop
             notifyIcon.Visible = true;
             notifyIcon.DoubleClick += NotifyIcon_Click;
             StateChanged += MainWindow_StateChanged; ;
-        }
+			//新增右键菜单
+			ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
+			//添加菜单项
+			ToolStripMenuItem rightClickExit = new ToolStripMenuItem("退出");
+			rightClickExit.Click += this.rightClickExit;
+			contextMenuStrip.Items.Add(rightClickExit);
+
+			notifyIcon.ContextMenuStrip = contextMenuStrip;
+		}
 
         /// <summary>
         /// 窗口缩小事件
@@ -265,15 +273,31 @@ namespace Desktop
             this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
         }
 
+		/// <summary>
+		/// 右键菜单退出
+		/// </summary>
+		private void rightClickExit(object? sender, EventArgs e)
+		{
+			if (!IsProgrammaticClose)
+			{
+				System.Windows.MessageBoxResult result = MessageBox.Show("确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。", "关闭确认", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
+				if (result == System.Windows.MessageBoxResult.Yes)
+				{
 
+					DataPage.Timer_DataPage?.Dispose();
+					DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
+					Environment.Exit(-114514);
+				}
+			}
+		}
 
-        /// <summary>
-        /// 开播事件，触发开播提醒
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void DetectRoom_LiveStart(object? sender, (RoomCardClass Card, bool Danma_MessageReceived) LiveInvoke)
+		/// <summary>
+		/// 开播事件，触发开播提醒
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <exception cref="NotImplementedException"></exception>
+		private void DetectRoom_LiveStart(object? sender, (RoomCardClass Card, bool Danma_MessageReceived) LiveInvoke)
         {
             RoomCardClass roomCard = LiveInvoke.Card;
             List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
