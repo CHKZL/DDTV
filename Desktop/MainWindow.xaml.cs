@@ -26,7 +26,7 @@ namespace Desktop
         /// <summary>
         /// 后台托盘
         /// </summary>
-        private NotifyIcon notifyIcon = null;
+        //private Wpf.Ui.Tray.Controls.NotifyIcon notifyIcon = null;
         /// <summary>
         /// 系统托盘通知
         /// </summary>
@@ -73,7 +73,8 @@ namespace Desktop
                 Thread.Sleep(1000);
                 //初始化各种page
                 Init();
-            }
+				InitializeNotifyIcon();
+			}
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
@@ -101,9 +102,10 @@ namespace Desktop
             SnackbarService = Desktop.App._MainSnackbarServiceProvider.GetRequiredService<ISnackbarService>();
             SnackbarService.SetSnackbarPresenter(MainSnackbar);
             //初始化托盘
-            notify();
-            //初始化确认窗口
-            _contentDialogService.SetDialogHost(RootContentDialogPresenter);
+            //notify();    已弃用
+            InitializeNotifyIcon();
+			//初始化确认窗口
+			_contentDialogService.SetDialogHost(RootContentDialogPresenter);
             //初始化标题和远程模式标志以及检查远程和本地版本号一致性
             InitializeTitleMode();
             //监听开播事件，用于开播提醒
@@ -230,35 +232,22 @@ namespace Desktop
             catch (Exception) { }
             return null;
         }
-        private void notify()
-        {
-            notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.Text = "DDTV";
-            notifyIcon.Icon = new System.Drawing.Icon("DDTV.ico");
-            notifyIcon.Visible = true;
-            notifyIcon.DoubleClick += NotifyIcon_Click;
-            StateChanged += MainWindow_StateChanged; ;
-			//新增右键菜单
-			ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
-			//添加菜单项
-			ToolStripMenuItem rightClickExit = new ToolStripMenuItem("退出");
-            ToolStripMenuItem rightClickForceShow = new ToolStripMenuItem("强制显示");
-			rightClickExit.Click += this.rightClickExit;
-            rightClickForceShow.Click += this.rightClickForceShow;
+        
 
-			contextMenuStrip.Items.Add(rightClickExit);
-            contextMenuStrip.Items.Add(rightClickForceShow);
-    
-			notifyIcon.ContextMenuStrip = contextMenuStrip;
+
+		private void InitializeNotifyIcon()
+		{
+			NotifyIcon notifyIconWindow = new NotifyIcon();
+			StateChanged += MainWindow_StateChanged;
 		}
 
-        /// <summary>
-        /// 窗口缩小事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void MainWindow_StateChanged(object? sender, EventArgs e)
+		/// <summary>
+		/// 窗口缩小事件
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <exception cref="NotImplementedException"></exception>
+		private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (Config.Core_RunConfig._ZoomOutMode != 0 && this.WindowState == WindowState.Minimized)
             {
@@ -277,36 +266,7 @@ namespace Desktop
             this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
         }
 
-		/// <summary>
-		/// 右键菜单退出
-		/// </summary>
-		private void rightClickExit(object? sender, EventArgs e)
-		{
-			if (!IsProgrammaticClose)
-			{
-				System.Windows.MessageBoxResult result = MessageBox.Show("确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。", "关闭确认", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
-				if (result == System.Windows.MessageBoxResult.Yes)
-				{
-
-					DataPage.Timer_DataPage?.Dispose();
-					DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-					Environment.Exit(-114514);
-				}
-			}
-		}
-		///<summary>
-		///右键强制显示
-		///</summary>
-		private void rightClickForceShow(object? sender, EventArgs e)
-		{
-
-			this.Show();
-			this.WindowState= WindowState.Normal;
-			this.Left = (System.Windows.SystemParameters.PrimaryScreenWidth - this.ActualWidth) / 2;
-			this.Top = (System.Windows.SystemParameters.PrimaryScreenHeight - this.ActualHeight) / 2;
-			this.Activate();
-			
-		}
+       
 
 		/// <summary>
 		/// 开播事件，触发开播提醒

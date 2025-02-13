@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Desktop.NotifyIcon"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+        >
+    <tray:NotifyIcon
+        TooltipText="DDTV"
+        Icon="pack://application:,,,/Assets/DDTV.ico"
+         Visibility="Visible"
+        LeftClick="NotifyIcon_Click">
+        
+        <tray:NotifyIcon.Menu>
+            <ContextMenu>
+                <MenuItem Name="exitMenu" Header="退出"/>
+                <MenuItem Name="forceShowMenu" Header="强制显示" />
+            </ContextMenu>
+        </tray:NotifyIcon.Menu>
+    </tray:NotifyIcon>
+</UserControl>

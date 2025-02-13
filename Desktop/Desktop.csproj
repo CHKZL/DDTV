@@ -43,7 +43,8 @@
     <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />
     <PackageReference Include="Notification.Wpf" Version="8.0.0" />
     <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
-    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <PackageReference Include="WPF-UI" Version="4.0.0" />
+    <PackageReference Include="WPF-UI.Tray" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
