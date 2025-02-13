@@ -242,9 +242,13 @@ namespace Desktop
 			ContextMenuStrip contextMenuStrip = new ContextMenuStrip();
 			//添加菜单项
 			ToolStripMenuItem rightClickExit = new ToolStripMenuItem("退出");
+            ToolStripMenuItem rightClickForceShow = new ToolStripMenuItem("强制显示");
 			rightClickExit.Click += this.rightClickExit;
-			contextMenuStrip.Items.Add(rightClickExit);
+            rightClickForceShow.Click += this.rightClickForceShow;
 
+			contextMenuStrip.Items.Add(rightClickExit);
+            contextMenuStrip.Items.Add(rightClickForceShow);
+    
 			notifyIcon.ContextMenuStrip = contextMenuStrip;
 		}
 
@@ -289,6 +293,19 @@ namespace Desktop
 					Environment.Exit(-114514);
 				}
 			}
+		}
+		///<summary>
+		///右键强制显示
+		///</summary>
+		private void rightClickForceShow(object? sender, EventArgs e)
+		{
+
+			this.Show();
+			this.WindowState= WindowState.Normal;
+			this.Left = (System.Windows.SystemParameters.PrimaryScreenWidth - this.ActualWidth) / 2;
+			this.Top = (System.Windows.SystemParameters.PrimaryScreenHeight - this.ActualHeight) / 2;
+			this.Activate();
+			
 		}
 
 		/// <summary>
