@@ -33,7 +33,7 @@ namespace Desktop
 		{
 			exitMenu.Click += RightClickExit;
 			forceShowMenu.Click += rightClickForceShow;
-			 
+			//此处没绑定单击事件，因为单击事件在xaml中已经绑定了XD
 		}
 
 		/// <summary>
