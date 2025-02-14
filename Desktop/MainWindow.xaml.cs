@@ -23,14 +23,15 @@ namespace Desktop
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
-        /// <summary>
-        /// 后台托盘
-        /// </summary>
-        //private Wpf.Ui.Tray.Controls.NotifyIcon notifyIcon = null;
-        /// <summary>
-        /// 系统托盘通知
-        /// </summary>
-        public static NotificationManager notificationManager = new NotificationManager();
+		/// <summary>
+		/// 后台托盘     改为NotifyIcon控件实现，原代码撇了
+		/// </summary>
+
+
+		/// <summary>
+		/// 系统托盘通知
+		/// </summary>
+		public static NotificationManager notificationManager = new NotificationManager();
         /// <summary>
         /// 确认窗口
         /// </summary>
@@ -83,10 +84,10 @@ namespace Desktop
 
         }
 
-        /// <summary>
-        /// 初始化各种页面内容
-        /// </summary>
-        public void Init()
+		/// <summary>
+		/// 初始化各种页面内容
+		/// </summary>
+		public void Init()
         {
             //设置房间卡片列表页定时任务
             DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 1000);
