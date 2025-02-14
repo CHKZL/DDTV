@@ -130,7 +130,7 @@ jobs:
       - name: Replace VerString (Linux or macOS)
         if: runner.os != 'Windows'
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TAG_NAME="Test5.0.0"
           VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^test([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
@@ -141,7 +141,7 @@ jobs:
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
         run: |
-          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $TAG_NAME = "Test5.0.0"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
@@ -310,7 +310,7 @@ jobs:
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
         run: |
-          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $TAG_NAME = "Test5.0.0"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
@@ -470,7 +470,7 @@ jobs:
       - name: Replace VerString (Windows)
         if: runner.os == 'Windows'
         run: |
-          $TAG_NAME = "${env:GITHUB_REF}".Replace("refs/tags/", "")
+          $TAG_NAME = "Test5.0.0"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
