@@ -77,10 +77,12 @@
             <ui:TitleBar Margin="0,2,0,0"  Name="UI_TitleBar" Height="30" Title="{Binding ProgramTitle}" Grid.Row="0" Icon="pack://application:,,,/DDTV.ico" />
         </Grid>
         <Grid>
+            <local:NotifyIcon x:Name="notifyIcon" />
+            <!--增加托盘图标控件-->
+        </Grid>
+        <Grid>
             <ui:SnackbarPresenter Height="150" Name="MainSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>
         </Grid>
         <ContentPresenter x:Name="RootContentDialogPresenter" />
     </Grid>
-   
-    
 </ui:FluentWindow>

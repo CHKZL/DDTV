@@ -23,14 +23,15 @@ namespace Desktop
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
-        /// <summary>
-        /// 后台托盘
-        /// </summary>
-        private NotifyIcon notifyIcon = null;
-        /// <summary>
-        /// 系统托盘通知
-        /// </summary>
-        public static NotificationManager notificationManager = new NotificationManager();
+		/// <summary>
+		/// 后台托盘     改为NotifyIcon控件实现，原代码撇了
+		/// </summary>
+
+
+		/// <summary>
+		/// 系统托盘通知
+		/// </summary>
+		public static NotificationManager notificationManager = new NotificationManager();
         /// <summary>
         /// 确认窗口
         /// </summary>
@@ -73,7 +74,8 @@ namespace Desktop
                 Thread.Sleep(1000);
                 //初始化各种page
                 Init();
-            }
+				InitializeNotifyIcon();
+			}
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
@@ -82,10 +84,10 @@ namespace Desktop
 
         }
 
-        /// <summary>
-        /// 初始化各种页面内容
-        /// </summary>
-        public void Init()
+		/// <summary>
+		/// 初始化各种页面内容
+		/// </summary>
+		public void Init()
         {
             //设置房间卡片列表页定时任务
             DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 1000);
@@ -101,9 +103,9 @@ namespace Desktop
             SnackbarService = Desktop.App._MainSnackbarServiceProvider.GetRequiredService<ISnackbarService>();
             SnackbarService.SetSnackbarPresenter(MainSnackbar);
             //初始化托盘
-            notify();
-            //初始化确认窗口
-            _contentDialogService.SetDialogHost(RootContentDialogPresenter);
+            InitializeNotifyIcon();
+			//初始化确认窗口
+			_contentDialogService.SetDialogHost(RootContentDialogPresenter);
             //初始化标题和远程模式标志以及检查远程和本地版本号一致性
             InitializeTitleMode();
             //监听开播事件，用于开播提醒
@@ -230,50 +232,38 @@ namespace Desktop
             catch (Exception) { }
             return null;
         }
-        private void notify()
-        {
-            notifyIcon = new System.Windows.Forms.NotifyIcon();
-            notifyIcon.Text = "DDTV";
-            notifyIcon.Icon = new System.Drawing.Icon("DDTV.ico");
-            notifyIcon.Visible = true;
-            notifyIcon.DoubleClick += NotifyIcon_Click;
-            StateChanged += MainWindow_StateChanged; ;
-        }
+        
 
         /// <summary>
-        /// 窗口缩小事件
+        /// 初始化托盘图标，原有托盘图标动作重写到NotifyIcon控件内
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void MainWindow_StateChanged(object? sender, EventArgs e)
+		private void InitializeNotifyIcon()
+		{
+			NotifyIcon notifyIconWindow = new NotifyIcon();
+			StateChanged += MainWindow_StateChanged;
+		}
+
+		/// <summary>
+		/// 窗口缩小事件
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <exception cref="NotImplementedException"></exception>
+		private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (Config.Core_RunConfig._ZoomOutMode != 0 && this.WindowState == WindowState.Minimized)
             {
                 this.Hide();
             }
         }
-        /// <summary>
-        /// 双击托盘ICON事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
 
-        private void NotifyIcon_Click(object? sender, EventArgs e)
-        {
-            this.Show();  // 显示窗口
-            this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
-        }
-
-
-
-        /// <summary>
-        /// 开播事件，触发开播提醒
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        private void DetectRoom_LiveStart(object? sender, (RoomCardClass Card, bool Danma_MessageReceived) LiveInvoke)
+		/// <summary>
+		/// 开播事件，触发开播提醒
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		/// <exception cref="NotImplementedException"></exception>
+		private void DetectRoom_LiveStart(object? sender, (RoomCardClass Card, bool Danma_MessageReceived) LiveInvoke)
         {
             RoomCardClass roomCard = LiveInvoke.Card;
             List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
