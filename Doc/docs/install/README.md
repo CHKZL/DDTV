@@ -1,5 +1,5 @@
 # 版本介绍
-DDTV提供了`DDTV_Server`、`DDTV_Clietn`、`DDTV_Desktop`三个版本方便给不同需求的用户自行选择使用  
+DDTV提供了`DDTV_Server`、`DDTV_Client`、`DDTV_Desktop`三个版本方便给不同需求的用户自行选择使用  
 
 【Server】：为控制台应用，自带WEBUI服务，跨平台适配win、linux、mac  
 【Client】：为Server的Windows平台下的窗口程序封装，在Server的基础上提供了WEBUI的桌面窗口，只适配Windows，适合win下的轻量化用户  
