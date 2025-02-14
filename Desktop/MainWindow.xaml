@@ -78,6 +78,7 @@
         </Grid>
         <Grid>
             <local:NotifyIcon x:Name="notifyIcon" />
+            <!--增加托盘图标控件-->
         </Grid>
         <Grid>
             <ui:SnackbarPresenter Height="150" Name="MainSnackbar" VerticalAlignment="Bottom"></ui:SnackbarPresenter>

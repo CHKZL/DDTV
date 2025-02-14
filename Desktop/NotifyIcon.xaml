@@ -2,18 +2,20 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:tray="http://schemas.lepo.co/wpfui/2022/xaml/tray"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        >
+        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    <!-- 定义托盘图标控件 -->
     <tray:NotifyIcon
-        TooltipText="DDTV"
-        Icon="pack://application:,,,/Assets/DDTV.ico"
-         Visibility="Visible"
-        LeftClick="NotifyIcon_Click">
+        TooltipText="DDTV" 
+        Icon="pack://application:,,,/Assets/DDTV.ico" 
+        Visibility="Visible" 
+        LeftClick="NotifyIcon_Click"> 
         
+        <!-- 定义托盘图标的上下文菜单 -->
         <tray:NotifyIcon.Menu>
             <ContextMenu>
-                <MenuItem Name="exitMenu" Header="退出"/>
-                <MenuItem Name="forceShowMenu" Header="强制显示" />
+                <!-- 定义上下文菜单项 -->
+                <MenuItem Name="exitMenu" Header="退出"/> 
+                <MenuItem Name="forceShowMenu" Header="强制显示" /> 
             </ContextMenu>
         </tray:NotifyIcon.Menu>
     </tray:NotifyIcon>
