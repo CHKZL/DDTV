@@ -14,7 +14,8 @@
         <tray:NotifyIcon.Menu>
             <ContextMenu>
                 <!-- 定义上下文菜单项 -->
-                <MenuItem Name="exitMenu" Header="退出"/> 
+                <MenuItem Name="exitMenu" Header="退出"/>
+                <Separator />
                 <MenuItem Name="forceShowMenu" Header="强制显示" /> 
             </ContextMenu>
         </tray:NotifyIcon.Menu>
