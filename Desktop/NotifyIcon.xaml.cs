@@ -35,6 +35,12 @@ namespace Desktop
 			forceShowMenu.Click += rightClickForceShow;
 			 
 		}
+
+		/// <summary>
+		/// 右键退出点击动作
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void RightClickExit(object sender, RoutedEventArgs e)
 		{
 			if (!MainWindow.IsProgrammaticClose)
@@ -49,6 +55,11 @@ namespace Desktop
 			}
 		}
 
+		/// <summary>
+		/// 右键强制显示点击动作
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void rightClickForceShow(object sender, RoutedEventArgs e)
 		{
 			MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
@@ -61,6 +72,12 @@ namespace Desktop
 				mainWindow.Activate();
 			}
 		}
+
+		/// <summary>
+		/// 双击通知栏图标显示主窗口
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void NotifyIcon_Click(object? sender, EventArgs e)
 		{
 			MainWindow mainWindow = Application.Current.MainWindow as MainWindow;

@@ -102,7 +102,6 @@ namespace Desktop
             SnackbarService = Desktop.App._MainSnackbarServiceProvider.GetRequiredService<ISnackbarService>();
             SnackbarService.SetSnackbarPresenter(MainSnackbar);
             //初始化托盘
-            //notify();    已弃用
             InitializeNotifyIcon();
 			//初始化确认窗口
 			_contentDialogService.SetDialogHost(RootContentDialogPresenter);
@@ -234,7 +233,9 @@ namespace Desktop
         }
         
 
-
+        /// <summary>
+        /// 初始化托盘图标，原有托盘图标动作重写到NotifyIcon控件内
+        /// </summary>
 		private void InitializeNotifyIcon()
 		{
 			NotifyIcon notifyIconWindow = new NotifyIcon();
@@ -254,19 +255,6 @@ namespace Desktop
                 this.Hide();
             }
         }
-        /// <summary>
-        /// 双击托盘ICON事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-
-        private void NotifyIcon_Click(object? sender, EventArgs e)
-        {
-            this.Show();  // 显示窗口
-            this.WindowState = WindowState.Normal;  // 设置窗口状态为正常
-        }
-
-       
 
 		/// <summary>
 		/// 开播事件，触发开播提醒
