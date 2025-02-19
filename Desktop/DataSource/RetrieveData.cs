@@ -199,7 +199,7 @@ namespace Desktop.DataSource
                 {
                     Task.Run(() =>
                     {
-                        if (Core.RuntimeObject._Room.ModifyRoomSettings(uid, IsAutoRec, IsRecDanmu, IsRemind))
+                        if (Core.RuntimeObject._Room.ModifyRoomSettings(uid, IsAutoRec,IsRemind ,IsRecDanmu ))
                         {
                             Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
                         }
