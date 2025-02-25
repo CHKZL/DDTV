@@ -37,7 +37,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="LibVLCSharp.WPF" Version="3.9.0" />
+    <PackageReference Include="LibVLCSharp.WPF" Version="3.9.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.2535.41" />
     <PackageReference Include="Net.Codecrete.QrCodeGenerator" Version="2.0.5" />

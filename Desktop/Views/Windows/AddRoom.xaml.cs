@@ -113,10 +113,13 @@ namespace Desktop.Views.Windows
                                 }
                                 else
                                 {
+                                    string roomid = string.Empty; 
                                     Dispatcher.Invoke(() =>
                                     {
-                                        State = Core.RuntimeObject._Room.AddRoom(_IsAutoRec, _IsRemind, _IsDanmu, 0, long.Parse(RoomId_TextBox.Text), false).State;
+                                        roomid = RoomId_TextBox.Text;
                                     });
+                                    State = Core.RuntimeObject._Room.AddRoom(_IsAutoRec, _IsRemind, _IsDanmu, 0, long.Parse(roomid), false).State;
+
                                 }
 
 
