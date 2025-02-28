@@ -99,6 +99,11 @@
     <Page Update="Views\Pages\ToolsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Update="Views\Control\NotifyIcon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <XamlRuntime>Wpf</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>
