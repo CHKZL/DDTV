@@ -76,7 +76,7 @@ namespace Core.RuntimeObject.Download
             if (roomCard.IsRecDanmu && roomCard.DownInfo.LiveChatListener != null)
             {
                 roomCard.DownInfo.LiveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
-                Danmu.SevaDanmu(roomCard.DownInfo.LiveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
+                Danmu.SaveDanmu(roomCard.DownInfo.LiveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
             //如果是付费直播，结束当前录制任务
             if(result.TaskState == DlwnloadTaskState.PaidLiveStream)

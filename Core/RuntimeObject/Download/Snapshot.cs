@@ -36,10 +36,10 @@ namespace Core.RuntimeObject.Download
                 var listener = Card.DownInfo.LiveChatListener;
                 if (listener != null)
                 {
-                    Danmu.SevaDanmu(listener.DanmuMessage.Danmu, tempFile, Card.Name, Card.RoomId);
-                    Danmu.SevaGift(listener.DanmuMessage.Gift, tempFile);
-                    Danmu.SevaGuardBuy(listener.DanmuMessage.GuardBuy, tempFile);
-                    Danmu.SevaSuperChat(listener.DanmuMessage.SuperChat, tempFile);
+                    Danmu.SaveDanmu(listener.DanmuMessage.Danmu, tempFile, Card.Name, Card.RoomId);
+                    Danmu.SaveGift(listener.DanmuMessage.Gift, tempFile);
+                    Danmu.SaveGuardBuy(listener.DanmuMessage.GuardBuy, tempFile);
+                    Danmu.SaveSuperChat(listener.DanmuMessage.SuperChat, tempFile);
                 }
                 return (true, tempFile);
             }
