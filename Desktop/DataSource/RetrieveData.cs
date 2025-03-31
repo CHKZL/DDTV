@@ -54,11 +54,11 @@ namespace Desktop.DataSource
                 {
                     if (!string.IsNullOrEmpty(DataPage.screen_name))
                     {
-                         Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(0,0,Core.RuntimeObject._Room.SearchType.All,DataPage.screen_name);
+                        Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(0, 0, Core.RuntimeObject._Room.SearchType.All, DataPage.screen_name);
                     }
                     else
                     {
-                        Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(102,DataPage.PageIndex,(_Room.SearchType)DataPage.CardType);
+                        Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(102, DataPage.PageIndex, (_Room.SearchType)DataPage.CardType);
                     }
                 }
 
@@ -122,10 +122,46 @@ namespace Desktop.DataSource
                         else
                         {
                             DataCard dataCard = CreateDataCard(item);
-                            Views.Pages.DataPage.CardsCollection.Add(dataCard);
-
+                            if (dataCard.IsDownload)
+                            {
+                                for (int i = 0; i < DataPage.CardsCollection.Count(); i++)
+                                {
+                                    if (!DataPage.CardsCollection[i].IsDownload)
+                                    {
+                                        Views.Pages.DataPage.CardsCollection.Insert(i, dataCard);
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (dataCard.IsRec)
+                            {
+                                for (int i = 0; i < DataPage.CardsCollection.Count(); i++)
+                                {
+                                    if (!DataPage.CardsCollection[i].IsRec)
+                                    {
+                                        Views.Pages.DataPage.CardsCollection.Insert(i, dataCard);
+                                        break;
+                                    }
+                                }
+                            }
+                            else if (dataCard.IsRemind)
+                            {
+                                for (int i = 0; i < DataPage.CardsCollection.Count(); i++)
+                                {
+                                    if (!DataPage.CardsCollection[i].IsRemind)
+                                    {
+                                        Views.Pages.DataPage.CardsCollection.Insert(i, dataCard);
+                                        break;
+                                    }
+                                }
+                            }
+                            if(!Views.Pages.DataPage.CardsCollection.Contains(dataCard))
+                            {
+                                Views.Pages.DataPage.CardsCollection.Add(dataCard);
+                            }
                         }
                     }
+
                 });
             }
 
@@ -199,7 +235,7 @@ namespace Desktop.DataSource
                 {
                     Task.Run(() =>
                     {
-                        if (Core.RuntimeObject._Room.ModifyRoomSettings(uid, IsAutoRec,IsRemind ,IsRecDanmu ))
+                        if (Core.RuntimeObject._Room.ModifyRoomSettings(uid, IsAutoRec, IsRemind, IsRecDanmu))
                         {
                             Log.Info(nameof(ModifyRoomSettings), "调用Core的API[batch_delete_rooms]修改房间配置成功");
                         }

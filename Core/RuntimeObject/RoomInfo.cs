@@ -1384,8 +1384,7 @@ namespace Core.RuntimeObject
         public long UID { get; set; } = -1;
         [JsonPropertyName("IsAutoRec")]
         /// <summary>
-        /// 是否自动录制
-        /// (Local值)
+        /// 是否自动录制 (Local值)
         /// </summary>
         public bool IsAutoRec { set; get; } = false;
         [JsonPropertyName("IsRemind")]
