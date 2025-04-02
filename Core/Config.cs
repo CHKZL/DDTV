@@ -171,7 +171,7 @@ namespace Core
             {
                 ProgramUpdates.Effective = false;
             }
-             /// <summary>
+            /// <summary>
             /// 设置启动后是否执行自动升级逻辑
             /// </summary>
             /// <param name="value"></param>
@@ -589,7 +589,8 @@ namespace Core
             /// </summary>
             public string _ConfigurationFile
             {
-                get {
+                get
+                {
                     if (ConfigurationFile == "DDTV_Config.ini")
                     {
                         return $"{_ConfigDirectory}{ConfigurationFile}";
@@ -1999,7 +2000,7 @@ namespace Core
             }
 
 
-             private static string LocalHTTPMode = "false";
+            private static string LocalHTTPMode = "false";
             /// <summary>
             /// 本地模式时，是否使用HTTP进行请求
             /// 默认值：false
@@ -2043,8 +2044,8 @@ namespace Core
                 }
             }
 
-            
-             private static string CompatibilityModeDefaultsToOpeningPopupWindow = "false";
+
+            private static string CompatibilityModeDefaultsToOpeningPopupWindow = "false";
             /// <summary>
             /// 打开兼容模式播放器时，是否默认打开弹幕窗口以方便弹幕查看和发送
             /// 默认值：false
@@ -2060,6 +2061,28 @@ namespace Core
                     if (value.ToString() != LocalHTTPMode)
                     {
                         LocalHTTPMode = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string EnableSwagger = "false";
+            /// <summary>
+            /// 是否启用Swagger
+            /// 默认值：false
+            /// </summary>
+            public bool _EnableSwagger
+            {
+                get
+                {
+                    return bool.Parse(EnableSwagger);
+                }
+                set
+                {
+                    if (value.ToString() != EnableSwagger)
+                    {
+                        EnableSwagger = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }

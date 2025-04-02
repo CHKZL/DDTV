@@ -84,21 +84,25 @@ namespace Server
                 builder.Services.AddControllers();
 
                 builder.Services.AddEndpointsApiExplorer();
-                builder.Services.AddSwaggerGen(options =>
+
+                if (Config.Core_RunConfig._EnableSwagger)
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo
+                    builder.Services.AddSwaggerGen(options =>
                     {
-                        Version = "v1",
-                        Title = "DDTV5_API",
-                        License = new OpenApiLicense
+                        options.SwaggerDoc("v1", new OpenApiInfo
                         {
-                            Name = "[项目地址]",
-                            Url = new Uri("https://github.com/CHKZL/DDTV")
-                        }
+                            Version = "v1",
+                            Title = "DDTV5_API",
+                            License = new OpenApiLicense
+                            {
+                                Name = "[项目地址]",
+                                Url = new Uri("https://github.com/CHKZL/DDTV")
+                            }
+                        });
+                        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
                     });
-                    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                    options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
-                });
+                }
                 builder.Services.AddMvc();
 
 
@@ -106,8 +110,11 @@ namespace Server
 
                 app.UseWebSockets();
                 app.UseMiddleware<WebSocketControl>();
-                app.UseSwagger();
-                app.UseSwaggerUI();
+                if (Config.Core_RunConfig._EnableSwagger)
+                {
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                }
                 app.UseMiddleware<AccessControl>();
                 //app.UseHttpsRedirection();
                 app.UseAuthorization();
