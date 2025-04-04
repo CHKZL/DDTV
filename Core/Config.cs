@@ -2089,6 +2089,28 @@ namespace Core
                 }
             }
 
+            private static string TranscodeFileDifference = "0.05";
+            /// <summary>
+            /// fix文件和最终文件之间可以接受的最大文件误差大小，默认5%，例如原始文件100kb，最大能接受文件为95kb，否则就保留原始文件
+            /// 默认值：0.05
+            /// </summary>
+            public double _TranscodeFileDifference
+            {
+                get
+                {
+                    return double.Parse(TranscodeFileDifference);
+                }
+                set
+                {
+                    if (value.ToString() != TranscodeFileDifference)
+                    {
+                        TranscodeFileDifference = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }
