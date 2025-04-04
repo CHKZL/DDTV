@@ -103,7 +103,7 @@ namespace Core.Tools
                     FileInfo after_fileInfo = new FileInfo(after);
                     FileInfo before_fileInfo = new FileInfo(before);
                     //根据配置文件和原始文件，计算可以接受的文件大小差异
-                    int FileDifferenceSize = (int)(before_fileInfo.Length * Config.Core_RunConfig._TranscodeFileDifference);
+                    long FileDifferenceSize = (long)(before_fileInfo.Length * Config.Core_RunConfig._TranscodeFileDifference);
                     //如果修复后的文件大小大于原始文件大小+差异值，删除源文件
                     if (after_fileInfo.Length + FileDifferenceSize > before_fileInfo.Length && Config.Core_RunConfig._DeleteOriginalFileAfterRepair)
                     {
