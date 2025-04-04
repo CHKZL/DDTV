@@ -70,6 +70,7 @@ namespace Core.RuntimeObject.Download
                     long StartLiveTime = card.live_time.Value;
                     
                     stopWatch.Start();
+                    int RetryCount = 0;
                     while (true)
                     {
                         //处理大小限制分割
@@ -115,7 +116,13 @@ namespace Core.RuntimeObject.Download
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
                                     case DlwnloadTaskState.Default:
-                                        break;
+                                        if(RetryCount>5)
+                                        {
+                                            CheckAndHandleFile(File, ref card);
+                                            hlsState = DlwnloadTaskState.NoHLSStreamExists;
+                                        }
+                                        RetryCount++;
+                                        return;
                                 }
                             }
                             else
@@ -144,7 +151,7 @@ namespace Core.RuntimeObject.Download
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
                                 {
-                                    if (long.TryParse(item.FileName, out long index) && (index == currentLocation + 1 || currentLocation == 0))
+                                    if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                         currentLocation = index;

@@ -100,11 +100,17 @@ namespace Core.Tools
                 // 转码完成后，如果目标文件存在且大小合理，删除源文件
                 if (Card != null && File.Exists(after))
                 {
-                    FileInfo fileInfo = new FileInfo(after);
-                    int FileSizeThreshold = 8 * 1024 * 1024;
-                    if (fileInfo.Length > 8 * 1024 * 1024 && Config.Core_RunConfig._DeleteOriginalFileAfterRepair)
+                    FileInfo after_fileInfo = new FileInfo(after);
+                    FileInfo before_fileInfo = new FileInfo(before);
+                    int FileSizeThreshold = 1024 * 1024;
+                    if (after_fileInfo.Length + FileSizeThreshold > before_fileInfo.Length && Config.Core_RunConfig._DeleteOriginalFileAfterRepair)
                     {
                         Tools.FileOperations.Delete(before, $"符合修复条件，自动删除源文件");
+                        Log.Info(nameof(TranscodeAsync), $"符合修复条件，自动删除源文件:[{before}]");
+                    }
+                    else
+                    {
+                        Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，放弃删除源文件:[{before}]");
                     }
                 }
                 if (process != null)

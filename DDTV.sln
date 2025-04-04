@@ -26,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Send_Test", "Send_Test\Send
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Send_Danmu", "Send_Danmu\Send_Danmu.csproj", "{0F0DC4A0-EA63-4644-AA3F-5F9296395C27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanmuTest", "DanmuTest\DanmuTest.csproj", "{F97C7027-93C3-4BFF-A43D-EA1717954F5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DanmuTest", "DanmuTest\DanmuTest.csproj", "{F97C7027-93C3-4BFF-A43D-EA1717954F5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

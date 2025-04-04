@@ -19,6 +19,8 @@ jobs:
         include:
           - os: windows-latest
             runtime: win-x64
+          - os: windows-latest
+            runtime: win-arm64
           - os: macOS-latest
             runtime: osx-arm64
           - os: ubuntu-latest
@@ -260,6 +262,8 @@ jobs:
         include:
           - os: windows-latest
             runtime: win-x64
+          - os: windows-latest
+            runtime: win-arm64
 
 
     runs-on: ${{ matrix.os }}

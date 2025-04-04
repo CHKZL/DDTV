@@ -8,6 +8,7 @@ using LibVLCSharp.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Notification.Wpf;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using Wpf.Ui;
@@ -80,7 +81,6 @@ namespace Desktop
             {
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
             }
-
 
         }
 

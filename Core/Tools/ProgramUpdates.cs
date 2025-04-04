@@ -674,7 +674,7 @@ namespace Core.Tools
 
                     if (Directory.Exists("./Plugins/ffmpeg/") && File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
                     {
-                        if (new FileInfo("./Plugins/ffmpeg/ffmpeg.exe").Length < 70000000)
+                        if (new FileInfo("./Plugins/ffmpeg/ffmpeg.exe").LastWriteTime < new DateTime(2025,4,1))
                         {
                             Log.Info(nameof(Update_FFMPEG), "检查到FFEMPG版本过老，开始更新");
                             string url = "FFMPEG/github.js";
