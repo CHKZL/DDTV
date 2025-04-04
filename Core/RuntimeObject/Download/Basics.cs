@@ -27,19 +27,20 @@ namespace Core.RuntimeObject.Download
         /// <param name="triggerTypes"></param>
         /// <param name="Reconnection"></param>
         /// <param name="IsFirst">是否为本次直播第一次触发</param>
-        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, bool Reconnection,bool IsFirst)
+        /// <param name="Try_count">尝试次数</param>
+        internal static async Task HandleRecordingAsync(RoomCardClass roomCard, List<TriggerType> triggerTypes, bool Reconnection, bool IsFirst)
         {
             if (!Reconnection || IsFirst)
             {
                 OperationQueue.Add(Opcode.Download.StartRecording, $"开始录制，房间UID:{roomCard.UID}", roomCard.UID);
-                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");          
+                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发开播事件,开始录制【触发类型:" + (triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) ? "手动触发" : "自动触发") + "】");
             }
             else
             {
                 OperationQueue.Add(Opcode.Download.Reconnect, $"录制连接，房间UID:{roomCard.UID}", roomCard.UID);
                 Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})检测到任务，录制连接，房间UID:{roomCard.UID}");
             }
-         
+
 
             (DlwnloadTaskState TaskState, string FileName) result = new();
             switch (Config.Core_RunConfig._RecordingMode)
@@ -79,7 +80,7 @@ namespace Core.RuntimeObject.Download
                 Danmu.SevaDanmu(roomCard.DownInfo.LiveChatListener, result.TaskState == DlwnloadTaskState.SuccessfulButNotStream ? true : false, ref roomCard);
             }
             //如果是付费直播，结束当前录制任务
-            if(result.TaskState == DlwnloadTaskState.PaidLiveStream)
+            if (result.TaskState == DlwnloadTaskState.PaidLiveStream)
             {
                 roomCard.DownInfo.Status = RoomCardClass.DownloadStatus.Special;
             }
@@ -88,13 +89,13 @@ namespace Core.RuntimeObject.Download
             {
                 roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName);
             }
-             if (
-                (
-                result.TaskState == DlwnloadTaskState.Success ||
-                result.TaskState == DlwnloadTaskState.Cut ||
-                result.TaskState == DlwnloadTaskState.AnchorReStream
-                ) 
-                && Config.Core_RunConfig._AutomaticRepair)
+            if (
+               (
+               result.TaskState == DlwnloadTaskState.Success ||
+               result.TaskState == DlwnloadTaskState.Cut ||
+               result.TaskState == DlwnloadTaskState.AnchorReStream
+               )
+               && Config.Core_RunConfig._AutomaticRepair)
             {
                 Tools.Transcode transcode = new Tools.Transcode();
                 try
@@ -205,7 +206,7 @@ namespace Core.RuntimeObject.Download
             {
                 return false;
             }
-            hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc",Core.Config.Core_RunConfig._DefaultResolution);
+            hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc", Core.Config.Core_RunConfig._DefaultResolution);
             if (hostClass.Effective)
             {
                 string Inp = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
@@ -215,7 +216,7 @@ namespace Core.RuntimeObject.Download
                     Log.Debug("GetHlsHost_avc", $"获取网络文件为空，房间号:{roomCard.RoomId}");
                 }
                 webref = Senior_M3U8_Analysis(webref, ref hostClass);
-                
+
                 hostClass = Tools.Linq.SerializedM3U8(webref, ref hostClass);
                 if (hostClass.eXTM3U.eXTINFs.Count != 0)
                 {
@@ -242,7 +243,7 @@ namespace Core.RuntimeObject.Download
             {
                 return M3U8;
             }
-            
+
             string[] _A = M3U8.Split("\n");
             foreach (var item in _A)
             {
@@ -281,7 +282,7 @@ namespace Core.RuntimeObject.Download
             if (!string.IsNullOrEmpty(fileContent))
             {
                 string webref = Network.Download.File.GetFileToString(fileContent, true);
-                 if (string.IsNullOrEmpty(webref))
+                if (string.IsNullOrEmpty(webref))
                 {
                     Log.Debug("GetHlsHost_avc", $"获取网络文件为空，房间号:{roomCard.RoomId}");
                 }
@@ -300,7 +301,7 @@ namespace Core.RuntimeObject.Download
         /// <returns></returns>
         internal static HostClass GetFlvHost_avc(RoomCardClass roomCard)
         {
-            return _GetHost(roomCard.RoomId, "http_stream", "flv", "avc",Core.Config.Core_RunConfig._DefaultResolution);
+            return _GetHost(roomCard.RoomId, "http_stream", "flv", "avc", Core.Config.Core_RunConfig._DefaultResolution);
         }
 
         /// <summary>
@@ -310,13 +311,13 @@ namespace Core.RuntimeObject.Download
         /// <param name="card"></param>
         /// <param name="AnchorReStream">主播重新推流</param>
         /// <returns>是否成功</returns>
-        internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card,bool AnchorReStream = false)
+        internal static DlwnloadTaskState CheckAndHandleFile(string File, ref RoomCardClass card, bool AnchorReStream = false)
         {
             if (card.DownInfo.IsCut)
             {
                 return DlwnloadTaskState.Cut;
             }
-            if(AnchorReStream)
+            if (AnchorReStream)
             {
                 return DlwnloadTaskState.AnchorReStream;
             }

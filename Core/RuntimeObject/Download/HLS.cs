@@ -70,6 +70,7 @@ namespace Core.RuntimeObject.Download
                     long StartLiveTime = card.live_time.Value;
                     
                     stopWatch.Start();
+                    int RetryCount = 0;
                     while (true)
                     {
                         //处理大小限制分割
@@ -115,7 +116,13 @@ namespace Core.RuntimeObject.Download
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
                                     case DlwnloadTaskState.Default:
-                                        break;
+                                        if(RetryCount>5)
+                                        {
+                                            CheckAndHandleFile(File, ref card);
+                                            hlsState = DlwnloadTaskState.NoHLSStreamExists;
+                                        }
+                                        RetryCount++;
+                                        return;
                                 }
                             }
                             else

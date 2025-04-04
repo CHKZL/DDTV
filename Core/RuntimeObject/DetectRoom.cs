@@ -57,8 +57,6 @@ namespace Core.RuntimeObject
 
             try
             {
-
-
                 RoomCardClass roomCard = LiveInvoke.Card;
                 List<TriggerType> triggerTypes = sender as List<TriggerType> ?? new List<TriggerType>();
 
@@ -93,14 +91,14 @@ namespace Core.RuntimeObject
                             roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
                             roomCard.DownInfo.LiveChatListener.Connect();
                         }
-                        else if (!roomCard.DownInfo.LiveChatListener.State)
+                        else
                         {
+                            roomCard.DownInfo.LiveChatListener.Dispose();
+                            Thread.Sleep(100);
                             roomCard.DownInfo.LiveChatListener.Connect();
                         }
                         roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
                     }
-
-
                     try
                     {
                         if (roomCard.IsRecDanmu)
@@ -114,8 +112,10 @@ namespace Core.RuntimeObject
                         {
                             Cover.SaveCover(roomCard);
                         }
+                        int Try_count = 0;
                         do
                         {
+                            Try_count++;
                             //如果是启动后第一次房间状态查询就触发下载，那就当作重连处理
                             if (LiveInvoke.IsFirst)
                             {
@@ -142,8 +142,6 @@ namespace Core.RuntimeObject
                         };
                         histories.Add(history);
                         RecEndEvent?.Invoke(history, new EventArgs());
-
-
                     }
                     finally
                     {
