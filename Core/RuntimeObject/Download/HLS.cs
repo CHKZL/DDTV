@@ -151,7 +151,7 @@ namespace Core.RuntimeObject.Download
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
                                 {
-                                    if (long.TryParse(item.FileName, out long index) && (index == currentLocation + 1 || currentLocation == 0))
+                                    if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                         currentLocation = index;

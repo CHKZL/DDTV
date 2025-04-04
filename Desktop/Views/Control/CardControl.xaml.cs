@@ -27,8 +27,17 @@ namespace Desktop.Views.Control
             var menuItem = (System.Windows.Controls.MenuItem)sender;
             var contextMenu = (ContextMenu)menuItem.Parent;
             var grid = (Grid)contextMenu.PlacementTarget;
-            Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
-            return dataContext;
+            if (grid != null)
+            {
+                Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
+                return dataContext;
+            }
+            else
+            {
+                //如果触发了这里，说明UI有BUG，需要修复
+                return new Models.DataCard();
+            }
+            
         }
 
         private void MenuItem_PlayWindow_Click(object sender, RoutedEventArgs e)
