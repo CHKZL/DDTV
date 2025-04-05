@@ -26,32 +26,40 @@ namespace Desktop.Views.Windows
         {
             InitializeComponent();
             roomCard = Card;
-            DanmaView.ItemsSource = DanmaCollection;
-            Task.Run(() =>
+            if (roomCard != null && roomCard.RoomId > 0)
             {
-                Dispatcher.Invoke(() =>
+                DanmaView.ItemsSource = DanmaCollection;
+                Task.Run(() =>
                 {
-                    UI_TitleBar.Title = $"{Card.Name}({Card.RoomId})";
-                    this.Title = UI_TitleBar.Title;
-                    DanmaCollection.Add(new DanmaOnly { Message = $"连接[{Card.Name}({Card.RoomId})]直播间弹幕长连" });
-                });
+                    Dispatcher.Invoke(() =>
+                    {
+                        UI_TitleBar.Title = $"{Card.Name}({Card.RoomId})";
+                        this.Title = UI_TitleBar.Title;
+                        DanmaCollection.Add(new DanmaOnly { Message = $"连接[{Card.Name}({Card.RoomId})]直播间弹幕长连" });
+                    });
 
-                if (roomCard.DownInfo.LiveChatListener == null)
-                {
-                    roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
-                    roomCard.DownInfo.LiveChatListener.Connect();
-                }
-                else if (!roomCard.DownInfo.LiveChatListener.State)
-                {
-                    roomCard.DownInfo.LiveChatListener.Connect();
-                }
-                roomCard.DownInfo.LiveChatListener.Register.Add("DanmaOnlyWindow");
-                roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
-                Dispatcher.Invoke(() =>
-                {
-                    DanmaCollection.Add(new DanmaOnly { Message = $"等待直播间消息中..." });
+                    if (roomCard.DownInfo.LiveChatListener == null)
+                    {
+                        roomCard.DownInfo.LiveChatListener = new Core.LiveChat.LiveChatListener(roomCard.RoomId);
+                        roomCard.DownInfo.LiveChatListener.Connect();
+                    }
+                    else if (!roomCard.DownInfo.LiveChatListener.State)
+                    {
+                        roomCard.DownInfo.LiveChatListener.Connect();
+                    }
+                    roomCard.DownInfo.LiveChatListener.Register.Add("DanmaOnlyWindow");
+                    roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    Dispatcher.Invoke(() =>
+                    {
+                        DanmaCollection.Add(new DanmaOnly { Message = $"等待直播间消息中..." });
+                    });
                 });
-            });
+            }
+            else
+            {
+                this.Close();
+                return;
+            }
         }
 
         private void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
