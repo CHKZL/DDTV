@@ -9,7 +9,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static FastExpressionCompiler.ImTools.FHashMap;
 
 namespace Core.Network
 {

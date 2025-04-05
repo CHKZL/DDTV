@@ -8,7 +8,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.RuntimeObject.Download.Basics;
-using static FastExpressionCompiler.ImTools.FHashMap;
 
 namespace Core.RuntimeObject.Download
 {

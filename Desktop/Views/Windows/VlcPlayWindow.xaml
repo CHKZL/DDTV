@@ -36,7 +36,7 @@
 
             <ui:Button Visibility="{Binding VolumeVisibility,Mode=OneWay}"  FontSize="50" Icon="{ui:SymbolIcon Speaker248}" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ui:Button.Content>
-                    <TextBlock FontSize="30" Text="{Binding Volume,Mode=OneWay}" Foreground="White" Opacity="0.8"/>
+                    <TextBlock FontSize="30" Text="{Binding Volume,Mode=OneWay}" Foreground="White" Opacity="1"/>
                 </ui:Button.Content>
             </ui:Button>
             <Canvas Name="DanmaCanvas" Opacity="1"/>
