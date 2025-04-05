@@ -146,7 +146,7 @@ namespace Core.RuntimeObject
         /// <param name="liveChatListener"></param>
         /// <param name="DeleteCurrentContent">只删除当前内容，不保存</param>
         /// <param name="card"></param>
-        public static void SevaDanmu(LiveChat.LiveChatListener liveChatListener, bool DeleteCurrentContent, ref RoomCardClass card)
+        public static void SaveDanmu(LiveChat.LiveChatListener liveChatListener, bool DeleteCurrentContent, ref RoomCardClass card)
         {
             string Message = "保存弹幕相关文件";
             if (!DeleteCurrentContent)
@@ -157,33 +157,33 @@ namespace Core.RuntimeObject
                     string File = liveChatListener.File + $"_{liveChatListener.SaveCount}";
                     if (liveChatListener.DanmuMessage.Danmu != null && liveChatListener.DanmuMessage.Danmu.Count > 0)
                     {
-                        FileInfo fileInfo = SevaDanmu(liveChatListener.DanmuMessage.Danmu, File, liveChatListener.Name, liveChatListener.RoomId);
+                        FileInfo fileInfo = SaveDanmu(liveChatListener.DanmuMessage.Danmu, File, liveChatListener.Name, liveChatListener.RoomId);
 
-                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{File}");
+                        Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{File}");
                         card.DownInfo.DownloadFileList.DanmuFile.Add(fileInfo.FullName);
                     }
                     if (liveChatListener.DanmuMessage.Gift != null && liveChatListener.DanmuMessage.Gift.Count > 0)
                     {
-                        FileInfo fileInfo = SevaGift(liveChatListener.DanmuMessage.Gift, File);
-                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存送礼记录相关文件为{File}");
+                        FileInfo fileInfo = SaveGift(liveChatListener.DanmuMessage.Gift, File);
+                        Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存送礼记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.GiftFile.Add(fileInfo.FullName);
                     }
                     if (liveChatListener.DanmuMessage.GuardBuy != null && liveChatListener.DanmuMessage.GuardBuy.Count > 0)
                     {
-                        FileInfo fileInfo = SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, File);
-                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存上舰记录相关文件为{File}");
+                        FileInfo fileInfo = SaveGuardBuy(liveChatListener.DanmuMessage.GuardBuy, File);
+                        Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存上舰记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.GuardFile.Add(fileInfo.FullName);
                     }
                     if (liveChatListener.DanmuMessage.SuperChat != null && liveChatListener.DanmuMessage.SuperChat.Count > 0)
                     {
-                        FileInfo fileInfo = SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, File);
-                        Log.Info(nameof(SevaDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存SC记录相关文件为{File}");
+                        FileInfo fileInfo = SaveSuperChat(liveChatListener.DanmuMessage.SuperChat, File);
+                        Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存SC记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.SCFile.Add(fileInfo.FullName);
                     }
                 }
                 else
                 {
-                    Log.Warn(nameof(SevaDanmu), "liveChatListener或DanmuMessage为Null");
+                    Log.Warn(nameof(SaveDanmu), "liveChatListener或DanmuMessage为Null");
                 }
             }
             else
@@ -200,7 +200,7 @@ namespace Core.RuntimeObject
 
 
             OperationQueue.Add(Opcode.Download.SaveBulletScreenFile, Message, card.UID);
-            Log.Info(nameof(SevaDanmu), Message);
+            Log.Info(nameof(SaveDanmu), Message);
         }
         #endregion
 
@@ -214,7 +214,7 @@ namespace Core.RuntimeObject
         /// <param name="roomId">房间号</param>
         /// <param name="IsTemporary">是否为临时保存（不删除记录）</param>
         /// <returns></returns>
-        public static FileInfo SevaDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId, bool IsTemporary = false)
+        public static FileInfo SaveDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId, bool IsTemporary = false)
         {
             string XML = string.Empty;
             XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
@@ -272,7 +272,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="GiftInfo"></param>
         /// <param name="FileName"></param>
-        public static FileInfo SevaGift(List<GiftInfo> GiftInfo, string FileName)
+        public static FileInfo SaveGift(List<GiftInfo> GiftInfo, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,礼物名称,礼物数量,礼物单价,时间戳";
             List<GiftInfo> A = GiftInfo.DeepClone();
@@ -289,7 +289,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="guardBuyInfos"></param>
         /// <param name="FileName"></param>
-        public static FileInfo SevaGuardBuy(List<GuardBuyInfo> guardBuyInfos, string FileName)
+        public static FileInfo SaveGuardBuy(List<GuardBuyInfo> guardBuyInfos, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,上舰类型,上舰时间,每月价格,时间戳";
             List<GuardBuyInfo> A = guardBuyInfos.DeepClone();
@@ -307,7 +307,7 @@ namespace Core.RuntimeObject
         /// </summary>
         /// <param name="superChatInfos"></param>
         /// <param name="FileName"></param>
-        public static FileInfo SevaSuperChat(List<SuperChatInfo> superChatInfos, string FileName)
+        public static FileInfo SaveSuperChat(List<SuperChatInfo> superChatInfos, string FileName)
         {
             string Gift = "视频时间,送礼人昵称,送礼人Uid,SC金额,消息原文,翻译消息,时间戳";
             List<SuperChatInfo> A = superChatInfos.DeepClone();
