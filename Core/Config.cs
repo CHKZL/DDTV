@@ -2111,6 +2111,28 @@ namespace Core
                 }
             }
 
+            private static string EnableWebServer = "true";
+            /// <summary>
+            /// 是否启用WEB服务和端口监听功能
+            /// 默认值：true
+            /// </summary>
+            public bool _EnableWebServer
+            {
+                get
+                {
+                    return bool.Parse(EnableWebServer);
+                }
+                set
+                {
+                    if (value.ToString() != EnableWebServer)
+                    {
+                        EnableWebServer = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
         }
         #endregion
     }

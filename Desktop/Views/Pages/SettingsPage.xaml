@@ -187,7 +187,7 @@
                                     <Label Grid.Row="0" Grid.Column="0" Margin="0,0,10,0" Content="远程服务器地址" />
                                     <ui:TextBox Name="DesktopIP_InputControl" Grid.Row="1" Grid.Column="0" Margin="0,0,10,0" PlaceholderText="http://127.0.0.1" Text="{Binding _DesktopIP, Mode=OneWay}"/>
                                     <Label Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="远程服务器端口(Port)" />
-                                    <ui:NumberBox Name="DesktopPort_InputControl" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="11419" Minimum="1" Maximum="65535" Text="{Binding _DesktopPort, Mode=OneWay}"/>
+                                    <ui:NumberBox Name="DesktopPort_InputControl" Grid.Row="1" Grid.Column="1" Margin="10,0,0,0" PlaceholderText="11419" Minimum="1" Maximum="65535" Value="{Binding _DesktopPort, Mode=OneWay}"/>
 
                                     <Label Grid.Row="2" Grid.Column="0" Margin="0,10,10,0" Content="远程服务器AccessKeyId" />
                                     <ui:TextBox Name="DesktopAccessKeyId_InputControl" Grid.Row="3" Grid.Column="0" Margin="0,0,10,0" Text="{Binding _DesktopAccessKeyId, Mode=OneWay}"/>
@@ -453,7 +453,7 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <Label Grid.Row="0" Grid.Column="0" Margin="10,0,0,0" Content="创建任务时为HLS的等待时间(秒)" />
-                                    <ui:NumberBox Name="HlsWaitingTime_InputControl" Grid.Row="1" Grid.Column="0" Margin="10,0,0,0" Width="150" HorizontalAlignment="Left" PlaceholderText="30" Minimum="15" Maximum="300" Text="{Binding _HlsWaitingTime, Mode=OneWay}"/>
+                                    <ui:NumberBox Name="HlsWaitingTime_InputControl" Grid.Row="1" Grid.Column="0" Margin="10,0,0,0" Width="150" HorizontalAlignment="Left" PlaceholderText="30" Minimum="15" Maximum="300" Value="{Binding _HlsWaitingTime, Mode=OneWay}"/>
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>
@@ -730,7 +730,7 @@
                                             <RowDefinition Height="auto" />
                                         </Grid.RowDefinitions>
                                         <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕字体大小" />
-                                        <ui:NumberBox Name="PlayWindowDanmaSize"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _PlayWindowDanmaFontSize, Mode=OneWay}"/>
+                                        <ui:NumberBox Name="PlayWindowDanmaSize"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaFontSize, Mode=OneWay}"/>
                                     </Grid>
                                     <Grid Grid.Row="0" Grid.Column="2">
                                         <Grid.RowDefinitions>
@@ -738,7 +738,7 @@
                                             <RowDefinition Height="auto" />
                                         </Grid.RowDefinitions>
                                         <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度" />
-                                        <ui:NumberBox Name="PlayWindowDanmaSpeed_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _PlayWindowDanmaSpeed, Mode=OneWay}"/>
+                                        <ui:NumberBox Name="PlayWindowDanmaSpeed_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaSpeed, Mode=OneWay}"/>
                                     </Grid>
                                     <Grid Grid.Row="0" Grid.Column="3">
                                         <Grid.RowDefinitions>
@@ -793,7 +793,7 @@
                                             <RowDefinition Height="auto" />
                                         </Grid.RowDefinitions>
                                         <Label Grid.Row="0" Margin="10,0,0,0" Content="发送弹幕最大长度（默认为20，请根据自己账号等级修改）" />
-                                        <ui:NumberBox Name="MaximumLengthDanmu_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Text="{Binding _MaximumLengthDanmu, Mode=OneWay}"/>
+                                        <ui:NumberBox Name="MaximumLengthDanmu_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _MaximumLengthDanmu, Mode=OneWay}"/>
                                     </Grid>
                                     <Grid Grid.Row="0" Grid.Column="2">
                                         <Grid.RowDefinitions>

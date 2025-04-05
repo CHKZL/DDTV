@@ -63,93 +63,102 @@ namespace Server
                 //等待Core启动后再启动WEB服务
                 await Init.CoreStartAwait.Task;
 
-                if (PortInspect())
+                if (Core.Config.Core_RunConfig._EnableWebServer)
                 {
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
-                    Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
-                    return;
-                }
-                WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-                builder.Services.Configure<FormOptions>(options =>
-                {
-                    options.ValueCountLimit = 1024 * 1024;
-                });
-
-                builder.Logging.AddFilter((category, level) =>
-                {
-                    return level >= LogLevel.Warning;
-                });
-
-                builder.Services.AddControllers();
-
-                builder.Services.AddEndpointsApiExplorer();
-
-                if (Config.Core_RunConfig._EnableSwagger)
-                {
-                    builder.Services.AddSwaggerGen(options =>
+                    if (PortInspect())
                     {
-                        options.SwaggerDoc("v1", new OpenApiInfo
-                        {
-                            Version = "v1",
-                            Title = "DDTV5_API",
-                            License = new OpenApiLicense
-                            {
-                                Name = "[项目地址]",
-                                Url = new Uri("https://github.com/CHKZL/DDTV")
-                            }
-                        });
-                        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                        options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                        Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
+                        Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
+                        Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
+                        return;
+                    }
+                    WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+                    builder.Services.Configure<FormOptions>(options =>
+                    {
+                        options.ValueCountLimit = 1024 * 1024;
                     });
+
+                    builder.Logging.AddFilter((category, level) =>
+                    {
+                        return level >= LogLevel.Warning;
+                    });
+
+                    builder.Services.AddControllers();
+
+                    builder.Services.AddEndpointsApiExplorer();
+
+                    if (Config.Core_RunConfig._EnableSwagger)
+                    {
+                        builder.Services.AddSwaggerGen(options =>
+                        {
+                            options.SwaggerDoc("v1", new OpenApiInfo
+                            {
+                                Version = "v1",
+                                Title = "DDTV5_API",
+                                License = new OpenApiLicense
+                                {
+                                    Name = "[项目地址]",
+                                    Url = new Uri("https://github.com/CHKZL/DDTV")
+                                }
+                            });
+                            var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                            options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+                        });
+                    }
+                    builder.Services.AddMvc();
+
+
+                    var app = builder.Build();
+
+                    app.UseWebSockets();
+                    app.UseMiddleware<WebSocketControl>();
+                    if (Config.Core_RunConfig._EnableSwagger)
+                    {
+                        app.UseSwagger();
+                        app.UseSwaggerUI();
+                    }
+                    app.UseMiddleware<AccessControl>();
+                    //app.UseHttpsRedirection();
+                    app.UseAuthorization();
+                    app.MapControllers();
+                    //app.UseStatusCodePagesWithRedirects("/api/not_found");
+                    //app.UseStatusCodePagesWithRedirects("/index");
+                    app.UseStaticFiles(new StaticFileOptions
+                    {
+                        //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
+                        FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._WebUiDirectory))),
+                        RequestPath = ""
+                    });
+                    app.UseStaticFiles(new StaticFileOptions
+                    {
+                        //将录制路径映射为一个虚拟路径的静态文件服务，让web去读取用于播放和下载
+                        FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._RecFileDirectory))),
+                        RequestPath = Config.Core_RunConfig._RecordingStorageDirectory
+                    });
+                    string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
+                    app.Urls.Add(rurl);
+                    Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
+                    Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://localhost:{Config.Core_RunConfig._Port} ]");
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
+                    }
+                    WebAppServices.WS.WebSocketQueue.Start();
+                    Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
+                    //Task.Run(() =>
+                    //{
+                    //    Thread.Sleep(1000);
+                    //    WebServerStartCompletEvent?.Invoke(null, new EventArgs());
+                    //});
+                    app.Run();
                 }
-                builder.Services.AddMvc();
-
-
-                var app = builder.Build();
-
-                app.UseWebSockets();
-                app.UseMiddleware<WebSocketControl>();
-                if (Config.Core_RunConfig._EnableSwagger)
+                else
                 {
-                    app.UseSwagger();
-                    app.UseSwaggerUI();
+                    while (true)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
-                app.UseMiddleware<AccessControl>();
-                //app.UseHttpsRedirection();
-                app.UseAuthorization();
-                app.MapControllers();
-                //app.UseStatusCodePagesWithRedirects("/api/not_found");
-                //app.UseStatusCodePagesWithRedirects("/index");
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    //将WEBUI的文件映射到根目录提供静态文件服务以提供WEBUI
-                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._WebUiDirectory))),
-                    RequestPath = ""
-                });
-                app.UseStaticFiles(new StaticFileOptions
-                {
-                    //将录制路径映射为一个虚拟路径的静态文件服务，让web去读取用于播放和下载
-                    FileProvider = new PhysicalFileProvider(Core.Tools.FileOperations.CreateAll(Path.GetFullPath(Config.Core_RunConfig._RecFileDirectory))),
-                    RequestPath = Config.Core_RunConfig._RecordingStorageDirectory
-                });
-                string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";
-                app.Urls.Add(rurl);
-                Log.Info(nameof(Main), $"WebApplication开始运行，开始监听[{rurl}]");
-                Log.Info(nameof(Main), $"本地访问请浏览器打开[ http://localhost:{Config.Core_RunConfig._Port} ]");
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    Log.Info(nameof(Main), $"检测到当前是Windows环境，请确保终端的快捷编辑功能关闭，否则可能被误触导致该终端暂停运行");
-                }
-                WebAppServices.WS.WebSocketQueue.Start();
-                Log.Info(nameof(Main), $"WebSocket，开始监听，路径：[/ws]");
-                //Task.Run(() =>
-                //{
-                //    Thread.Sleep(1000);
-                //    WebServerStartCompletEvent?.Invoke(null, new EventArgs());
-                //});
-                app.Run();
-
             }
             catch (Exception e)
             {

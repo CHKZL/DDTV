@@ -57,7 +57,8 @@ namespace Desktop.Views.Windows
             }
             else
             {
-                this.Close();
+                 MainWindow.SnackbarService.Show("单独弹幕窗口打开失败", "没有获取到对应的直播间信息，请再次手动打开弹幕窗口重试或联系开发者", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.CalendarError24), TimeSpan.FromSeconds(8));
+                //this.Close();
                 return;
             }
         }
@@ -127,7 +128,7 @@ namespace Desktop.Views.Windows
 
         private void FluentWindow_Closing(object sender, CancelEventArgs e)
         {
-            if (roomCard.DownInfo.LiveChatListener != null)
+            if (roomCard!=null && roomCard.DownInfo.LiveChatListener != null)
             {
                 roomCard.DownInfo.LiveChatListener.Register.Remove("DanmaOnlyWindow");
                 if (roomCard.DownInfo.LiveChatListener.Register.Count == 0)

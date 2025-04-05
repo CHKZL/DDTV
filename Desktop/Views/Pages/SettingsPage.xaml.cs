@@ -103,7 +103,7 @@ public partial class SettingsPage
             }
         }
         //远程地址检测
-        if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || string.IsNullOrEmpty(DesktopPort_InputControl.Text))
+        if (string.IsNullOrEmpty(DesktopIP_InputControl.Text) || DesktopPort_InputControl.Value<=0)
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确保远程服务器地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
@@ -151,7 +151,7 @@ public partial class SettingsPage
         #region 录制功能设置
 
         //录制模式
-        if (RecordingMode_ComboBox.SelectedIndex != 1 && string.IsNullOrEmpty(HlsWaitingTime_InputControl.Text))
+        if (RecordingMode_ComboBox.SelectedIndex != 1 && HlsWaitingTime_InputControl.Value<=0)
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确保HLS等待时间配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
@@ -227,7 +227,7 @@ public partial class SettingsPage
         if (DesktopRemoteServer_SwitchControl.IsChecked == true ? true : false)
         {
             Config.Core_RunConfig._DesktopIP = DesktopIP_InputControl.Text;
-            Config.Core_RunConfig._DesktopPort = int.Parse(DesktopPort_InputControl.Text);
+            Config.Core_RunConfig._DesktopPort = (int)DesktopPort_InputControl.Value;
             Config.Core_RunConfig._DesktopAccessKeyId = DesktopAccessKeyId_InputControl.Text;
             Config.Core_RunConfig._DesktopAccessKeySecret = DesktopAccessKeySecret_InputControl.Text;
         }
@@ -296,7 +296,7 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._RecordingMode = (RecordingMode)RecordingMode_ComboBox.SelectedIndex + 1;
         }
-        Config.Core_RunConfig._HlsWaitingTime = int.Parse(HlsWaitingTime_InputControl.Text);
+        Config.Core_RunConfig._HlsWaitingTime = (int)HlsWaitingTime_InputControl.Value;
 
         //自动转码
         if (Config.Core_RunConfig._AutomaticRepair != AutomaticRepair_SwitchControl.IsChecked)
@@ -344,26 +344,26 @@ public partial class SettingsPage
             Config.Core_RunConfig._PlayWindowDanmaSwitch = (bool)PlayWindowDanmaSwitch_CheckBox.IsChecked;
         }
         //弹幕速度设置
-        if (Config.Core_RunConfig._PlayWindowDanmaSpeed != int.Parse(PlayWindowDanmaSpeed_InputBox.Text))
+        if (Config.Core_RunConfig._PlayWindowDanmaSpeed != (int)PlayWindowDanmaSpeed_InputBox.Value)
         {
-            Config.Core_RunConfig._PlayWindowDanmaSpeed = int.Parse(PlayWindowDanmaSpeed_InputBox.Text);
+            Config.Core_RunConfig._PlayWindowDanmaSpeed = (int)PlayWindowDanmaSpeed_InputBox.Value;
         }
         if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically != PlayWindowDanmaSpeed_CheckBox.IsChecked)
         {
             Config.Core_RunConfig._PlayDanmaSpeed_Dynamically = (bool)PlayWindowDanmaSpeed_CheckBox.IsChecked;
         }
         //弹幕字号设置
-        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != int.Parse(PlayWindowDanmaSize.Text))
+        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != (int)PlayWindowDanmaSize.Value)
         {
-            Config.Core_RunConfig._PlayWindowDanmaFontSize = int.Parse(PlayWindowDanmaSize.Text);
+            Config.Core_RunConfig._PlayWindowDanmaFontSize = (int)PlayWindowDanmaSize.Value;
         }
         #endregion
 
         #region 弹幕发送设置
         //弹幕最长字数设置
-        if (Config.Core_RunConfig._MaximumLengthDanmu != int.Parse(MaximumLengthDanmu_InputBox.Text))
+        if (Config.Core_RunConfig._MaximumLengthDanmu != (int)MaximumLengthDanmu_InputBox.Value)
         {
-            Config.Core_RunConfig._MaximumLengthDanmu = int.Parse(MaximumLengthDanmu_InputBox.Text);
+            Config.Core_RunConfig._MaximumLengthDanmu = (int)MaximumLengthDanmu_InputBox.Value;
         }
         //打开兼容模式播放器时，是否默认打开弹幕窗口
         if (Config.Core_RunConfig._CompatibilityModeDefaultsToOpeningPopupWindow != CompatibilityModeDefaultsToOpeningPopupWindow_CheckBox.IsChecked)
