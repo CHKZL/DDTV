@@ -62,8 +62,8 @@ namespace Server
                 ServicePointManager.DefaultConnectionLimit = 4096 * 16;
                 //等待Core启动后再启动WEB服务
                 await Init.CoreStartAwait.Task;
-
-                if (Core.Config.Core_RunConfig._EnableWebServer)
+                //只有WebServer配置启动，且端口不为0时才启动WebServer
+                if (Core.Config.Core_RunConfig._EnableWebServer && Config.Core_RunConfig._Port!=0)
                 {
                     if (PortInspect())
                     {
