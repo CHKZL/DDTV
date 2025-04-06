@@ -15,14 +15,13 @@ namespace Desktop.Views.Windows
         long _uid = 0;
         string _nickname = string.Empty;
         //RoomCardClass _roomCard;
-        public WebPlayWindow(long room_id)
+        public WebPlayWindow(long room_id,long uid)
         {
             _room_id = room_id;
+            _uid = uid;
             InitializeComponent();
             Task.Run(() =>
             {
-                _uid = RoomInfo.GetUid(_room_id);
-
                 _nickname = RoomInfo.GetNickname(_uid);
                 Dispatcher.Invoke(() =>
                 {

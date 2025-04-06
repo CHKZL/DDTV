@@ -73,7 +73,7 @@ namespace Desktop.Views.Control
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                        Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id,dataCard.Uid);
                         WebPlayWindow.Show();
                     });
                 }
@@ -113,7 +113,7 @@ namespace Desktop.Views.Control
                 }
                 else
                 {
-                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id,dataCard.Uid);
                     WebPlayWindow.Show();
                 }
 
@@ -280,7 +280,7 @@ namespace Desktop.Views.Control
             Models.DataCard dataCard = GetDataCard(sender);
             Dispatcher.Invoke(() =>
             {
-                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id);
+                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id,dataCard.Uid);
                 WebPlayWindow.Show();
             });
         }
