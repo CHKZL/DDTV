@@ -101,19 +101,16 @@ namespace Core.RuntimeObject
                     {
                         try
                         {
-                            if (GetNavState())
+                            //三重判断
+                            if (GetNavState() || GetNavState() || GetNavState())
                             {
                                 AccountInformation.State = true;
                                 _AccountStatus = true;
-                                //if (!Core.Config.Core._LoginStatus)
-                                //    Core.Config.Core._LoginStatus = true;
                             }
                             else
                             {
                                 AccountInformation.State = false;
                                 _AccountStatus = false;
-                                //if (Core.Config.Core._LoginStatus)
-                                //    Core.Config.Core._LoginStatus = false;
                             }
                             if (_accountInformation == null || !_accountInformation.State)
                             {
@@ -143,11 +140,12 @@ namespace Core.RuntimeObject
 
 
         /// <summary>
-        /// 验证当前阿B登陆是否有效
+        /// 验证当前登录态是否有效
         /// </summary>
         /// <returns></returns>
         public static bool GetNavState()
         {
+            Thread.Sleep(new Random().Next(500, 2000));
             var LoginStatus = Network.Methods.Nav.GetNav();
             if (LoginStatus != null && LoginStatus.code == 0)
             {
