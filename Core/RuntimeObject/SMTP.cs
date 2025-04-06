@@ -21,7 +21,7 @@ namespace Core.RuntimeObject
         /// </summary>
         public static event EventHandler<SMTP_EventType> MailEvent;
 
-        public static void TriggerEvent(object? sender,SMTP_EventType e)
+        public static void TriggerEvent(object? sender, SMTP_EventType e)
         {
             if (Enable)
             {
@@ -68,7 +68,7 @@ namespace Core.RuntimeObject
             }
         }
 
-       
+
 
 
         /// <summary>
@@ -77,11 +77,11 @@ namespace Core.RuntimeObject
         /// <param name="subject">邮件主题</param>
         /// <param name="body">邮件正文</param>
         /// <returns>是否发送成功</returns>
-        public static void Send(string subject,string body)
+        public static void Send(string subject, string body)
         {
-            if(Config.Core_RunConfig._Email_EnableSmtp)
+            if (Config.Core_RunConfig._Email_EnableSmtp)
             {
-                _SendEmail(Config.Core_RunConfig._Email_SmtpTo, subject, body, Config.Core_RunConfig._Email_SmtpFrom, Config.Core_RunConfig._Email_SmtpUserName, Config.Core_RunConfig._Email_SmtpPassword);
+                Task.Run(() => _SendEmail(Config.Core_RunConfig._Email_SmtpTo, subject, body, Config.Core_RunConfig._Email_SmtpFrom, Config.Core_RunConfig._Email_SmtpUserName, Config.Core_RunConfig._Email_SmtpPassword));
             }
         }
 
@@ -94,12 +94,12 @@ namespace Core.RuntimeObject
         /// <param name="fromEmail">发件人邮箱地址(QQ邮箱)</param>
         /// <param name="fromName">发件人显示名称</param>
         /// <param name="smtpPassword">密码</param>
-        /// <returns>是否发送成功</returns>
-        public static bool _SendEmail(string toEmail, string subject, string body, string fromEmail, string fromName, string smtpPassword)
+        public static void _SendEmail(string toEmail, string subject, string body, string fromEmail, string fromName, string smtpPassword)
         {
+
             try
             {
-                string b = MAIL_STR.Replace("${Event}",subject).Replace("${Msg}",body);
+                string b = MAIL_STR.Replace("${Event}", subject).Replace("${Msg}", body);
                 var mailMessage = new MailMessage
                 {
                     From = new MailAddress(fromEmail, fromName),
@@ -120,13 +120,15 @@ namespace Core.RuntimeObject
                 };
 
                 smtpClient.Send(mailMessage);
-                return true;
+                Log.Info(nameof(_SendEmail), $"发送邮件成功: {subject}");
+
             }
             catch (Exception ex)
             {
-                Log.Warn(nameof(_SendEmail),$"发送邮件失败: {ex.Message}");
-                return false;
+                Log.Warn(nameof(_SendEmail), $"发送邮件失败: {ex.Message}");
+
             }
+
         }
         public enum SMTP_EventType
         {
