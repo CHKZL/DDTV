@@ -36,8 +36,11 @@ namespace Desktop.Views.Windows
 
                 RoomCardClass roomCardClass = new();
                 _Room.GetCardForUID(_uid, ref roomCardClass);
-                Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
-                danmaOnlyWindow.Show();
+                if (roomCardClass != null && roomCardClass.RoomId != 0)
+                {
+                    Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
+                    danmaOnlyWindow.Show();
+                }
             }
 
             Log.Info(nameof(WebPlayWindow), $"房间号:[{room_id}],打开播放器");

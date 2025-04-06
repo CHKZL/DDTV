@@ -1,4 +1,5 @@
 ﻿using Core.LogModule;
+using Core.RuntimeObject;
 using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
@@ -61,6 +62,7 @@ namespace Core
             //给文件系统一点时间创建各种路径
             Thread.Sleep(100);
             Log.LogInit();
+            SMTP.Init();
             Log.Info(nameof(Init), $"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init), $"检查和创建必要的目录");
             Log.Info(nameof(Init), $"初始化ServicePointManager对象");

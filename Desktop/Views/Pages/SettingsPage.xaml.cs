@@ -5,6 +5,7 @@
 
 using Core;
 using Desktop.Views.Windows;
+using Masuit.Tools;
 using SharpCompress.Common;
 using System.Diagnostics;
 using System.IO;
@@ -120,6 +121,17 @@ public partial class SettingsPage
             MainWindow.SnackbarService.Show("保存失败", "请检查确保WebHook地址配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
         }
+        //SMTP配置保存
+        if ((bool)SMTP_SwitchControl.IsChecked)
+        {
+            if (string.IsNullOrEmpty(Email_SmtpServer_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPort_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpUserName_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPassword_InputControl.Password) || string.IsNullOrEmpty(Email_SmtpFrom_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpTo_InputControl.Text))
+            {
+                MainWindow.SnackbarService.Show("保存失败", "请检查确保SMTP配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+                return false;
+            }
+        }
+
+
         #endregion
 
         #region 文件路径相关设置检查
@@ -271,6 +283,54 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._WebHookAddress = WebHookUrl_InputControl.Text;
         }
+
+        //SMTP设置
+        if (Config.Core_RunConfig._Email_EnableSmtp != SMTP_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._Email_EnableSmtp = (bool)SMTP_SwitchControl.IsChecked;
+        }
+        if (Config.Core_RunConfig._Email_SmtpServer != Email_SmtpServer_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpServer = Email_SmtpServer_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_SmtpPort != Email_SmtpPort_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpPort = Email_SmtpPort_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_SmtpUserName != Email_SmtpUserName_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpUserName = Email_SmtpUserName_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_SmtpPassword != Email_SmtpPassword_InputControl.Password)
+        {
+            Config.Core_RunConfig._Email_SmtpPassword = Email_SmtpPassword_InputControl.Password;
+        }
+        if (Config.Core_RunConfig._Email_SmtpFrom != Email_SmtpFrom_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpFrom = Email_SmtpFrom_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_SmtpTo != Email_SmtpTo_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpTo = Email_SmtpTo_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_LoginFailureReminder_Enable != SMTP_LoginStatus_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._Email_LoginFailureReminder_Enable = (bool)SMTP_LoginStatus_CheckBox.IsChecked;
+        }
+        if (Config.Core_RunConfig._Email_StartLive_Enable != SMTP_StartLive_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._Email_StartLive_Enable = (bool)SMTP_StartLive_CheckBox.IsChecked;
+        }
+        if (Config.Core_RunConfig._Email_RecEnd_Enable != SMTP_RecEnd_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._Email_RecEnd_Enable = (bool)SMTP_RecEnd_CheckBox.IsChecked;
+        }
+        if (Config.Core_RunConfig._Email_TranscodingFail_Enable != SMTP_TranscodingFail_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._Email_TranscodingFail_Enable = (bool)SMTP_TranscodingFail_CheckBox.IsChecked;
+        }
+
+
 
         #endregion
 
@@ -491,6 +551,29 @@ public partial class SettingsPage
                 Process.Start("explorer.exe", $"/select,\"{fileInfo.FullName}\"");
             }
 
+        }
+    }
+
+    private void Send_TestMail_Button_Click(object sender, RoutedEventArgs e)
+    {
+        string server = Email_SmtpServer_InputControl.Text;
+        string port = Email_SmtpPort_InputControl.Text;
+        string username = Email_SmtpUserName_InputControl.Text;
+        string password = Email_SmtpPassword_InputControl.Password;
+        string from = Email_SmtpFrom_InputControl.Text;
+        string to = Email_SmtpTo_InputControl.Text;
+        if(string.IsNullOrEmpty(server)||string.IsNullOrEmpty(port)||string.IsNullOrEmpty(username)||string.IsNullOrEmpty(password)||string.IsNullOrEmpty(from)||string.IsNullOrEmpty(to))
+        {
+            MessageBox.Show("请确保SMTP配置正确且不为空");
+            return;
+        }
+        if (int.TryParse(port, out int p))
+        {
+            Core.RuntimeObject.SMTP._SendEmail(to,"SMTP功能测试", "如果你看到这条消息，说明SMTP功能测试成功",from,username,password);
+        }
+        else
+        {
+            MessageBox.Show("请确保输入的端口号正确");
         }
     }
 }

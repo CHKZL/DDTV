@@ -2133,6 +2133,246 @@ namespace Core
                 }
             }
 
+            #region Email
+            private static string Email_EnableSmtp = "false";
+            /// <summary>
+            /// 是否启用SMTP邮件服务
+            /// 默认值：false
+            /// </summary>
+            public bool _Email_EnableSmtp
+            {
+                get
+                {
+                    return bool.Parse(Email_EnableSmtp);
+                }
+                set
+                {
+                    if (value.ToString() != Email_EnableSmtp)
+                    {
+                        Email_EnableSmtp = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_SmtpServer = "";
+            /// <summary>
+            /// SMTP服务器地址
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _Email_SmtpServer
+            {
+                get
+                {
+                    return Email_SmtpServer;
+                }
+                set
+                {
+                    if (value != Email_SmtpServer)
+                    {
+                        Email_SmtpServer = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_SmtpPort = "25";
+            /// <summary>
+            /// SMTP服务器端口
+            /// 默认值：25
+            /// </summary>
+            public string _Email_SmtpPort
+            {
+                get => Email_SmtpPort;
+                set
+                {
+                    if (value != Email_SmtpPort)
+                    {
+                        Email_SmtpPort = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+            private static string Email_SmtpUserName = "";
+            /// <summary>
+            /// SMTP服务用户名
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _Email_SmtpUserName
+            {
+                get
+                {
+                    return Email_SmtpUserName;
+                }
+                set
+                {
+                    if (value != Email_SmtpUserName)
+                    {
+                        Email_SmtpUserName = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_SmtpPassword = "";
+            /// <summary>
+            /// SMTP服务密码
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _Email_SmtpPassword
+            {
+                get
+                {
+                    return Email_SmtpPassword;
+                }
+                set
+                {
+                    if (value != Email_SmtpPassword)
+                    {
+                        Email_SmtpPassword = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+            private static string Email_SmtpFrom = "";
+            /// <summary>
+            /// SMTP服务发件人
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _Email_SmtpFrom
+            {
+                get
+                {
+                    return Email_SmtpFrom;
+                }
+                set
+                {
+                    if (value != Email_SmtpFrom)
+                    {
+                        Email_SmtpFrom = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_SmtpTo = "";
+            /// <summary>
+            /// SMTP服务收件人
+            /// 默认值：string.Empty(空)
+            /// </summary>
+            public string _Email_SmtpTo
+            {
+                get
+                {
+                    return Email_SmtpTo;
+                }
+                set
+                {
+                    if (value != Email_SmtpTo)
+                    {
+                        Email_SmtpTo = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_LoginFailureReminder_Enable = "false";
+            /// <summary>
+            /// 登陆失效邮件提醒
+            /// 默认值：false
+            /// </summary>
+            public bool _Email_LoginFailureReminder_Enable
+            {
+                get
+                {
+                    return bool.Parse(Email_LoginFailureReminder_Enable);
+                }
+                set
+                {
+                    if (value.ToString() != Email_LoginFailureReminder_Enable)
+                    {
+                        Email_LoginFailureReminder_Enable = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_StartLive_Enable = "false";
+            /// <summary>
+            /// 开始直播邮件提醒
+            /// 默认值：false
+            /// </summary>
+            public bool _Email_StartLive_Enable
+            {
+                get
+                {
+                    return bool.Parse(Email_StartLive_Enable);
+                }
+                set
+                {
+                    if (value.ToString() != Email_StartLive_Enable)
+                    {
+                        Email_StartLive_Enable = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_RecEnd_Enable = "false";
+            /// <summary>
+            /// 录制结束邮件提醒
+            /// 默认值：false
+            /// </summary>
+            public bool _Email_RecEnd_Enable
+            {
+                get
+                {
+                    return bool.Parse(Email_RecEnd_Enable);
+                }
+                set
+                {
+                    if (value.ToString() != Email_RecEnd_Enable)
+                    {
+                        Email_RecEnd_Enable = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_TranscodingFail_Enable = "false";
+            /// <summary>
+            /// 转码失败邮件提醒
+            /// 默认值：false
+            /// </summary>
+            public bool _Email_TranscodingFail_Enable
+            {
+                get
+                {
+                    return bool.Parse(Email_TranscodingFail_Enable);
+                }
+                set
+                {
+                    if (value.ToString() != Email_TranscodingFail_Enable)
+                    {
+                        Email_TranscodingFail_Enable = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            #endregion
+
         }
         #endregion
     }

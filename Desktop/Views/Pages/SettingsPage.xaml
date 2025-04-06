@@ -155,6 +155,105 @@
                             </StackPanel>
                         </ui:CardExpander>
 
+                        <ui:CardExpander Icon="{ui:SymbolIcon MailAlert24}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="SMTP邮件通知" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="将在触发特定事件的时候发送邮件到配置的邮箱地址" />
+                                        <ui:ToggleSwitch Name="SMTP_SwitchControl" IsChecked="{Binding _Email_EnableSmtp, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                    </Grid>
+
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="0,0,0,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid Margin="10,5,0,5" Grid.Row="0">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label  Grid.Column="0" Margin="0,0,5,0" Content="服务器地址" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpServer_InputControl" Grid.Column="1" Margin="0,0,10,0" Text="{Binding _Email_SmtpServer, Mode=OneWay}"/>
+                                            <Label  Grid.Column="2" Margin="20,0,5,0" Content="端口号" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpPort_InputControl" Grid.Column="3" Margin="0,0,10,0" Text="{Binding _Email_SmtpPort, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Margin="10,5,0,5" Grid.Row="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label  Grid.Column="0" Margin="0,0,5,0" Content="用户名" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpUserName_InputControl" Grid.Column="1" Margin="0,0,10,0" Text="{Binding _Email_SmtpUserName, Mode=OneWay}"/>
+                                            <Label  Grid.Column="2" Margin="20,0,5,0" Content="密码" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:PasswordBox Name="Email_SmtpPassword_InputControl" Grid.Column="3" Margin="0,0,10,0" Text="{Binding _Email_SmtpPassword, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Margin="10,5,0,5" Grid.Row="2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label  Grid.Column="0" Margin="0,0,5,0" Content="发件人" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpFrom_InputControl" Grid.Column="1" Margin="0,0,10,0" Text="{Binding _Email_SmtpFrom, Mode=OneWay}"/>
+                                            <Label  Grid.Column="2" Margin="20,0,5,0" Content="收件人" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpTo_InputControl" Grid.Column="3" Margin="0,0,10,0" Text="{Binding _Email_SmtpTo, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Margin="10,5,0,5" Grid.Row="3">
+                                            <ui:Button Content="发送测试邮件" VerticalAlignment="Center" HorizontalAlignment="Right" Click="Send_TestMail_Button_Click"/>
+                                        </Grid>
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="20,10,5,10" Content="可选事件(触发事件后发送邮件通知)" VerticalAlignment="Center"  HorizontalAlignment="Left"/>
+                                        <Grid Grid.Row="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <CheckBox Grid.Row="0" Content="登陆状态失效" Name="SMTP_LoginStatus_CheckBox" IsChecked="{Binding _Email_LoginFailureReminder_Enable, Mode=OneWay}"/>
+                                            <CheckBox Grid.Row="1" Content="开播提醒" Name="SMTP_StartLive_CheckBox" IsChecked="{Binding _Email_StartLive_Enable, Mode=OneWay}"/>
+                                            <CheckBox Grid.Row="2" Content="录制完成" Name="SMTP_RecEnd_CheckBox" IsChecked="{Binding _Email_RecEnd_Enable, Mode=OneWay}"/>
+                                            <CheckBox Grid.Row="3" Content="转码失败" Name="SMTP_TranscodingFail_CheckBox" IsChecked="{Binding _Email_TranscodingFail_Enable, Mode=OneWay}"/>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
+
                         <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon DatabaseArrowRight24}">
                             <ui:CardExpander.Header>
                                 <Grid>
@@ -197,53 +296,85 @@
                             </StackPanel>
                         </ui:CardExpander>
 
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="*" />
-                                <RowDefinition Height="*" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="auto" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Row="0"  Margin="10,10,0,0" Content="使用的API地址【如无接口代理或不熟悉请勿修改】" />
-                            <Grid Grid.Row="1">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-                                <ui:CardControl Grid.Column="0" Padding="20,10,20,10" Header="主站API">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="Auto" />
-                                        </Grid.ColumnDefinitions>
+                        <ui:CardExpander Icon="{ui:SymbolIcon AirplaneTakeOff24}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
-                                            <ui:TextBox Name="MainDomainName_TextBox" Grid.Row="1" Grid.Column="0" Width="300" Margin="0,0,10,0" PlaceholderText="https://api.bilibili.com" Text="{Binding _MainDomainName, Mode=OneWay}"/>
-                                        </Grid>
-                                    </Grid>
-                                </ui:CardControl>
-                                <ui:CardControl Grid.Column="1" Padding="20,10,20,10" Header="直播API">
-                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
-                                            <ui:TextBox Name="LiveDomainName_TextBox" Grid.Row="1" Grid.Column="0" Width="300" Margin="0,0,10,0" PlaceholderText="https://api.live.bilibili.com" Text="{Binding _LiveDomainName, Mode=OneWay}"/>
-                                        </Grid>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="API代理" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="将使用配置的代理地址替换正常情况下会访问的目标地址" />
+                                       
                                     </Grid>
-                                </ui:CardControl>
-                            </Grid>
-                        </Grid>
+
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Row="0"  Margin="10,10,0,0" Content="使用的API地址【如无接口代理或不熟悉请勿修改】" />
+                                    <Grid Grid.Row="1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:CardControl Grid.Column="0" Padding="20,10,20,10" Header="主站API">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                                    <ui:TextBox Name="MainDomainName_TextBox" Grid.Row="1" Grid.Column="0" Width="300" Margin="0,0,10,0" PlaceholderText="https://api.bilibili.com" Text="{Binding _MainDomainName, Mode=OneWay}"/>
+                                                </Grid>
+                                            </Grid>
+                                        </ui:CardControl>
+                                        <ui:CardControl Grid.Column="1" Padding="20,10,20,10" Header="直播API">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                                    <ui:TextBox Name="LiveDomainName_TextBox" Grid.Row="1" Grid.Column="0" Width="300" Margin="0,0,10,0" PlaceholderText="https://api.live.bilibili.com" Text="{Binding _LiveDomainName, Mode=OneWay}"/>
+                                                </Grid>
+                                            </Grid>
+                                        </ui:CardControl>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
+
+
+
+
+
+                        
                         
 
 

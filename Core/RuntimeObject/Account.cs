@@ -138,6 +138,7 @@ namespace Core.RuntimeObject
             string Message = $"触发登陆失效事件";
             OperationQueue.Add(Opcode.Account.InvalidLoginStatus, Message);
             Log.Info(nameof(CheckLoginStatus), $"触发登陆失效事件");
+            SMTP.TriggerEvent(null, SMTP.SMTP_EventType.LoginFailureReminder);
         }
 
 

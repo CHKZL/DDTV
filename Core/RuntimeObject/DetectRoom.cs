@@ -71,7 +71,7 @@ namespace Core.RuntimeObject
                 if (roomCard.IsRemind && triggerTypes.Contains(TriggerType.RegularTasks))
                 {
                     // 这里应该是开播广播事件
-
+                    SMTP.TriggerEvent(roomCard, SMTP.SMTP_EventType.StartLive);
                     OperationQueue.Add(Opcode.Download.StartBroadcastingReminder, $"开播提醒，房间UID:{roomCard.UID}", roomCard.UID);
                 }
                 
@@ -142,6 +142,8 @@ namespace Core.RuntimeObject
                         };
                         histories.Add(history);
                         RecEndEvent?.Invoke(history, new EventArgs());
+
+                        SMTP.TriggerEvent(roomCard, SMTP.SMTP_EventType.RecEnd);
                     }
                     finally
                     {

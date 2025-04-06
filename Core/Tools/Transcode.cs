@@ -130,6 +130,11 @@ namespace Core.Tools
                     }
                 }
                 Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
+                if (Card != null)
+                {
+                    SMTP.TriggerEvent(Card, SMTP.SMTP_EventType.TranscodingFail);
+                }
+
             }
             if (Card != null)
                 Card.DownInfo.DownloadFileList.TranscodingCount++;
