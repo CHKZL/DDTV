@@ -562,14 +562,14 @@ public partial class SettingsPage
         string password = Email_SmtpPassword_InputControl.Password;
         string from = Email_SmtpFrom_InputControl.Text;
         string to = Email_SmtpTo_InputControl.Text;
-        if(string.IsNullOrEmpty(server)||string.IsNullOrEmpty(port)||string.IsNullOrEmpty(username)||string.IsNullOrEmpty(password)||string.IsNullOrEmpty(from)||string.IsNullOrEmpty(to))
+        if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(port) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to))
         {
             MessageBox.Show("请确保SMTP配置正确且不为空");
             return;
         }
         if (int.TryParse(port, out int p))
         {
-            Core.RuntimeObject.SMTP._SendEmail(to,"SMTP功能测试", "如果你看到这条消息，说明SMTP功能测试成功",from,username,password);
+            Task.Run(() => Core.RuntimeObject.SMTP._SendEmail(to, "SMTP功能测试", "如果你看到这条消息，说明SMTP功能测试成功", from, username, password));
         }
         else
         {
