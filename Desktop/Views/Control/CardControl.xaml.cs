@@ -3,6 +3,7 @@ using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
 using Desktop.Views.Windows;
+using Microsoft.VisualBasic.Logging;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +11,7 @@ using System.Windows.Input;
 using Wpf.Ui.Controls;
 using static System.Windows.Forms.AxHost;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Log = Core.LogModule.Log;
 
 namespace Desktop.Views.Control
 {
@@ -29,11 +31,25 @@ namespace Desktop.Views.Control
             var grid = (Grid)contextMenu.PlacementTarget;
             if (grid != null)
             {
-                Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
-                return dataContext;
+                try
+                {
+                    if(grid.DataContext.GetType()!= typeof(Models.DataCard))
+                    {
+                       Log.Warn(nameof(GetDataCard),"因为快速操作，导致UI关键对象跟踪失败");
+                    }
+                    Models.DataCard dataContext = (Models.DataCard)grid.DataContext;
+                     return dataContext;
+                }
+                catch (Exception e)
+                {
+                    Log.Warn(nameof(GetDataCard),"获取房间卡片快照失败:1",e,true);
+                    return new Models.DataCard();
+                }
+               
             }
             else
             {
+                Log.Warn(nameof(GetDataCard),"获取房间卡片快照失败:2");
                 //如果触发了这里，说明UI有BUG，需要修复
                 return new Models.DataCard();
             }

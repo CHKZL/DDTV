@@ -90,7 +90,7 @@ namespace Desktop
 		public void Init()
         {
             //设置房间卡片列表页定时任务
-            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 1000);
+            DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 500);
             //设置登录失效事件（失效后弹出扫码框）
             DataSource.LoginStatus.LoginFailureEvent += LoginStatus_LoginFailureEvent;
             //设置登录态检测定时任务
