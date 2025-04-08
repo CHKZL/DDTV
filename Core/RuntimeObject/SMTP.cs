@@ -45,9 +45,13 @@ namespace Core.RuntimeObject
                     "录制结束提示",
                     $"你设置的录制直播间【{room.Name}({room.RoomId})）】录制任务结束"
                 ),
-                SMTP_EventType.TranscodingFail when sender is RoomCardClass room => (
+                SMTP_EventType.TranscodingFail when sender is (RoomCardClass room,string ErrorStr) => (
                     "修复或转码失败",
-                    $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复任务失败！"
+                    $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复任务失败！，详细错误：\r\n{ErrorStr}"
+                ),
+                SMTP_EventType.AbandonTranscod when sender is RoomCardClass room => (
+                    "放弃转码",
+                    $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复的输出文件小于预期，放弃删除源文件！"
                 ),
                 _ => (string.Empty, string.Empty)
             };
@@ -147,7 +151,11 @@ namespace Core.RuntimeObject
             /// <summary>
             /// 转码失败
             /// </summary>
-            TranscodingFail
+            TranscodingFail,
+            /// <summary>
+            /// 放弃转码
+            /// </summary>
+            AbandonTranscod
         }
     }
 

@@ -24,6 +24,7 @@ namespace Core.Tools
         public async Task TranscodeAsync(string before, string after, RoomCardClass Card = null)
         {
             List<string> LogText = new List<string>();
+            string LogTextAsString = string.Empty; // 用来保存LogText转成字符串的结果
             try
             {
                 if (Card != null)
@@ -110,14 +111,19 @@ namespace Core.Tools
                         Tools.FileOperations.Delete(before, $"符合修复条件，自动删除源文件");
                         Log.Info(nameof(TranscodeAsync), $"符合修复条件，自动删除源文件:[{before}]");
                     }
+                    else if (!Config.Core_RunConfig._DeleteOriginalFileAfterRepair)
+                    {
+                        Log.Info(nameof(TranscodeAsync), $"配置项[_DeleteOriginalFileAfterRepair]已设置关闭，放弃删除源文件:[{before}]");
+                    }
                     else
                     {
+                        SMTP.TriggerEvent(Card, SMTP.SMTP_EventType.AbandonTranscod);
                         Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，放弃删除源文件:[{before}]");
                     }
                 }
                 if (process != null)
                     process = null;
-                LogText = null;
+
             }
             catch (Exception e)
             {
@@ -129,15 +135,21 @@ namespace Core.Tools
                         fileStream.WriteLine(item);
                     }
                 }
+
+                // 将LogText转成字符串并保存到LogTextAsString
+                LogTextAsString = string.Join(Environment.NewLine, LogText);
+
                 Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
                 if (Card != null)
                 {
-                    SMTP.TriggerEvent(Card, SMTP.SMTP_EventType.TranscodingFail);
+                    SMTP.TriggerEvent((Card,LogTextAsString), SMTP.SMTP_EventType.TranscodingFail);
                 }
 
             }
             if (Card != null)
                 Card.DownInfo.DownloadFileList.TranscodingCount++;
+
+            LogText = null;
         }
     }
 }
