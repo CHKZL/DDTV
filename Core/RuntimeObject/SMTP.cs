@@ -33,23 +33,23 @@ namespace Core.RuntimeObject
         {
             var (subject, body) = e switch
             {
-                SMTP_EventType.LoginFailureReminder => (
+                SMTP_EventType.LoginFailureReminder when Config.Core_RunConfig._Email_LoginFailureReminder_Enable => (
                     "登陆失效",
                     "DDTV的登陆状态可能已失效，如果稳定出现该提示邮件，请确保登录态有效或者网络连接稳定"
                 ),
-                SMTP_EventType.StartLive when sender is RoomCardClass room => (
+                SMTP_EventType.StartLive when sender is RoomCardClass room && Config.Core_RunConfig._Email_StartLive_Enable => (
                     "开播提醒",
                     $"你设置了开播提醒的主播【{room.Name}({room.RoomId})）】开始主直播啦！"
                 ),
-                SMTP_EventType.RecEnd when sender is RoomCardClass room => (
+                SMTP_EventType.RecEnd when sender is RoomCardClass room && Config.Core_RunConfig._Email_RecEnd_Enable=> (
                     "录制结束提示",
                     $"你设置的录制直播间【{room.Name}({room.RoomId})）】录制任务结束"
                 ),
-                SMTP_EventType.TranscodingFail when sender is (RoomCardClass room,string ErrorStr) => (
+                SMTP_EventType.TranscodingFail when sender is (RoomCardClass room,string ErrorStr)  && Config.Core_RunConfig._Email_TranscodingFail_Enable=> (
                     "修复或转码失败",
                     $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复任务失败！，详细错误：\r\n{ErrorStr}"
                 ),
-                SMTP_EventType.AbandonTranscod when sender is RoomCardClass room => (
+                SMTP_EventType.AbandonTranscod when sender is RoomCardClass room && Config.Core_RunConfig._Email_TranscodingFail_Enable=> (
                     "放弃转码",
                     $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复的输出文件小于预期，放弃删除源文件！"
                 ),
