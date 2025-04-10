@@ -2009,7 +2009,7 @@ namespace Core
             {
                 get
                 {
-                    return bool.Parse(LocalHTTPMode);
+                    return bool.Parse("false");
                 }
                 set
                 {
