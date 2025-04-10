@@ -2054,13 +2054,13 @@ namespace Core
             {
                 get
                 {
-                    return bool.Parse(LocalHTTPMode);
+                    return bool.Parse(CompatibilityModeDefaultsToOpeningPopupWindow);
                 }
                 set
                 {
-                    if (value.ToString() != LocalHTTPMode)
+                    if (value.ToString() != CompatibilityModeDefaultsToOpeningPopupWindow)
                     {
-                        LocalHTTPMode = value.ToString();
+                        CompatibilityModeDefaultsToOpeningPopupWindow = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }
