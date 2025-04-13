@@ -76,7 +76,27 @@ namespace Server.WebAppServices.Api
             SystemResourceClass systemResourceClass = Core.Tools.SystemResource.Overview.GetOverview();
             return Content(MessageBase.MssagePack(nameof(get_system_resources), systemResourceClass, "SystemResource"), "application/json");
         }
-     
+
+    }
+
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/system/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class generate_debug_file_snapshot : ControllerBase
+    {
+        /// <summary>
+        /// 生成debug快照文件
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet(Name = "get_debug_file_snapshot")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            string file_path = Core.Tools.DebuggingRecord.GenerateReportSnapshot();
+            return Content(MessageBase.MssagePack(nameof(generate_debug_file_snapshot), file_path, "GenerateReportSnapshot"), "application/json");
+        }
+
     }
 
     [Produces(MediaTypeNames.Application.Json)]
