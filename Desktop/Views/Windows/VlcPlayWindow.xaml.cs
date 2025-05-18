@@ -96,7 +96,7 @@ namespace Desktop.Views.Windows
             this.Title = $"{roomCard.Name}({roomCard.RoomId}) - {roomCard.Title.Value}";
             Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
 
-            _libVLC = new LibVLC([$"--network-caching={new Random().Next(3000, 4000)} --no-cert-verification"]);
+            _libVLC = new LibVLC([$"--network-caching={new Random().Next(5000, 7000)} --no-cert-verification"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
 
             videoView.MediaPlayer = _mediaPlayer;
