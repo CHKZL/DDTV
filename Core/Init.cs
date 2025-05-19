@@ -8,6 +8,7 @@ using System.Formats.Tar;
 using System.Linq;
 using System.Net;
 using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Config;
@@ -68,6 +69,7 @@ namespace Core
             Log.Info(nameof(Init), $"初始化ServicePointManager对象");
             Config.WriteConfiguration();
             var _ = Core.RuntimeObject.Account.AccountInformation;
+            long.TryParse(_.Uid, out Core.Network.Methods.User.uid);
             Core.RuntimeObject.Account.CheckLoginStatus();
             Log.Info(nameof(Init), $"Core初始化完成");
             Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");

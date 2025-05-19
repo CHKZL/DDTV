@@ -17,7 +17,7 @@ namespace Core.Network.Methods
 
         private static string imgKey = string.Empty;
         private static string subKey = string.Empty;
-        private static long uid = 0;
+        public static long uid = 0;
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace Core.Network.Methods
                 }
             }
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            string salt = Get_salt(imgKey, subKey);
+            string salt = Get_salt();
             string Query = Get_w_rid_string(Uid, timestamp, salt);
             string WebText = Get.GetBody($"{Config.Core_RunConfig._MainDomainName}/x/space/wbi/acc/info?{Query}", true);
             UserInfo UserInfo_Class = new();
@@ -66,8 +66,16 @@ namespace Core.Network.Methods
             }
 
         }
-        private static string Get_salt(string imgKey, string subKey)
+        private static string Get_salt()
         {
+            if(uid !=0 &&(string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey)))
+            {
+                GetUserInfo(uid);
+            }
+            if(string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey))
+            {
+                return "";
+            }
             var n = imgKey + subKey;
             var array = n.ToCharArray();
             var order = new int[] { 46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35, 27, 43, 5, 49,
@@ -82,6 +90,13 @@ namespace Core.Network.Methods
         {
             string w_rid = GetMd5Hash("mid=" + uid + "&platform=web&token=&web_location=1550101&wts=" + timestamp + salt);
             return $"mid={uid}&token=&platform=web&web_location=1550101&w_rid={w_rid}&wts={timestamp}";
+        }
+        public static string Get_Play_w_rid_string(long room_id,long qn)
+        {
+            long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            string salt = Get_salt();
+            string w_rid = GetMd5Hash($"codec=0,1,2&platform=web&format=0,1,2&protocol=0,1&ptype=8&qn={qn}&req_reason=0&room_id={room_id}&web_location=444.8&wts=" + timestamp + salt);
+            return $"codec=0,1,2&platform=web&format=0,1,2&protocol=0,1&ptype=8&qn={qn}&req_reason=0&room_id={room_id}&web_location=444.8&w_rid={w_rid}&wts={timestamp}";
         }
         private static string GetMd5Hash(string input)
         {
