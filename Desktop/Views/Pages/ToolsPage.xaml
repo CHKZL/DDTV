@@ -33,7 +33,7 @@
          
               
                 <!--登录态相关设置-->
-                <ui:CardExpander Grid.Row="2" Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
+                <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
                     <ui:CardExpander.Header>
                         <Grid>
                             <Grid.RowDefinitions>
@@ -62,7 +62,33 @@
                     </StackPanel>
 
                 </ui:CardExpander>
-               
+                <ui:CardExpander Grid.Row="1" Icon="{ui:SymbolIcon Wrench20}">
+                    <ui:CardExpander.Header>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="MKVToolNix修复" />
+                            <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="自动转码的时间与实际时间不符可以使用该功能进行修复" />
+                        </Grid>
+                    </ui:CardExpander.Header>
+                    <StackPanel Margin="24,0,24,0">
+                        <Grid VerticalAlignment="Center"  HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+                            <ui:Button Grid.Column="0" Content="选择源文件！非转码后带有_fix后缀的文件"  VerticalAlignment="Center" Click="MKVToolnix_Repair_Button_Click"/>
+                            <ui:TextBlock Margin="24,0,0,0"  Name="FixtimeTextBlock" Grid.Column="1" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="选择文件后，修复将在后台进行，请稍候查看原路径'_fix'后缀文件即可"/>
+                        </Grid>
+                    </StackPanel>
+                </ui:CardExpander>
+
             </Grid>
 
         </StackPanel>

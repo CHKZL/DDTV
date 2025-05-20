@@ -10,6 +10,7 @@ namespace Desktop.Models
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         public string FixMessage { set; get; } = string.Empty;
-    }
+        public string FixTimeMessage { set; get; } = string.Empty;
+	}
 }
 
