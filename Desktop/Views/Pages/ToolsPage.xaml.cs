@@ -55,4 +55,41 @@ public partial class ToolsPage
 
 
     }
+
+	//新按钮对应的事件（MKVToolnix修复）
+	private void MKVToolnix_Repair_Button_Click(object sender, RoutedEventArgs e)
+	{
+		OpenFileDialog openFileDialog = new OpenFileDialog();
+		openFileDialog.Filter = "需要修复时长的视频文件(*.flv,*.mp4)|*.flv;*.mp4";
+		if (openFileDialog.ShowDialog() == DialogResult.OK)
+		{
+			string result = openFileDialog.FileName;
+			Task.Run(async () =>
+			{
+				Transcode transcode = new Transcode();
+				try
+				{
+					toolsPageModels.FixTimeMessage = "正在用MKVToolNix修复文件";
+					Dispatcher.Invoke(() => FixtimeTextBlock.Text = toolsPageModels.FixTimeMessage);
+					toolsPageModels.OnPropertyChanged("FixTimeMessage");
+					string before = result;
+					string after = System.IO.Path.Combine(
+						System.IO.Path.GetDirectoryName(result)!,
+						System.IO.Path.GetFileNameWithoutExtension(result) + "_fix.mkv"
+					);
+					await transcode.FixDurationWithMkvToolnixAsync(before, after);
+					toolsPageModels.FixTimeMessage = "MKVToolNix修复完成";
+					Dispatcher.Invoke(() => FixtimeTextBlock.Text = toolsPageModels.FixTimeMessage);
+					toolsPageModels.OnPropertyChanged("FixTimeMessage");
+				}
+				catch (Exception ex)
+				{
+					toolsPageModels.FixTimeMessage = "MKVToolNix修复发生错误，详情查看日志";
+					Dispatcher.Invoke(() => FixtimeTextBlock.Text = toolsPageModels.FixTimeMessage);
+					toolsPageModels.OnPropertyChanged("FixTimeMessage");
+					Log.Error(nameof(MKVToolnix_Repair_Button_Click), $"MKVToolNix修复时出现意外错误，文件:{result}");
+				}
+			});
+		}
+	}
 }
