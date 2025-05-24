@@ -723,5 +723,31 @@ namespace Desktop.Views.Windows
             Windows.DanmaOnlyWindow danmaOnlyWindow = new(roomCardClass);
             danmaOnlyWindow.Show();
         }
+
+        private void PasteStreamAddress_MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (_mediaPlayer?.Media == null || string.IsNullOrEmpty(_mediaPlayer.Media.Mrl))
+            {
+                Log.Info("VlcPlayWindow", "流地址复制失败：当前无有效流地址（Media未初始化或Mrl为空）");
+                return;
+            }
+
+            string streamAddress = _mediaPlayer.Media.Mrl;
+
+            try
+            {
+                System.Windows.Clipboard.SetText(streamAddress);
+                Log.Info("VlcPlayWindow", $"流地址已复制到剪贴板：{streamAddress}");
+            }
+            catch (Exception ex) when (ex is System.Runtime.InteropServices.COMException || ex is System.Threading.ThreadStateException)
+            {
+                // 特定处理剪贴板相关的异常（如COM异常、线程状态异常）
+                Log.Warn("VlcPlayWindow", $"流地址复制到剪贴板失败（剪贴板访问错误）", ex, false);
+            }
+            catch (Exception ex)
+            {
+                Log.Warn("VlcPlayWindow", $"流地址复制到剪贴板失败（未知错误）", ex, false);
+            }
+        }
     }
 }

@@ -29,7 +29,8 @@
                     <MenuItem Header="在浏览器打开直播间" Icon="{ui:SymbolIcon WebAsset20}" Click="MenuItem_OpenLiveUlr_Click"/>
                     <MenuItem Header="单独打开弹幕查看器" Icon="{ui:SymbolIcon TextWordCount20}" Click="MenuItem_DanmaOnly_Click"/>
                     <Separator/>
-                    
+                    <MenuItem Header="复制流地址到粘贴板" Icon="{ui:SymbolIcon CopyArrowRight24}" Click="PasteStreamAddress_MenuItem_Click"/>
+                    <Separator/>
                     <MenuItem Header="关闭本窗口" Click="ExitWindow_MenuItem_Click" Icon="{ui:SymbolIcon ArrowExit20}"/>
                 </ContextMenu>
             </Grid.ContextMenu>
