@@ -83,7 +83,7 @@
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
-                            <ui:Button Grid.Column="0" Content="选择源文件！非转码后带有_fix后缀的文件"  VerticalAlignment="Center" Click="MKVToolnix_Repair_Button_Click"/>
+                            <ui:Button Grid.Column="0" Content="选择录制的文件(如果fix文件失败，请尝试源文件)"  VerticalAlignment="Center" Click="MKVToolnix_Repair_Button_Click"/>
                             <ui:TextBlock Margin="24,0,0,0"  Name="FixtimeTextBlock" Grid.Column="1" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="选择文件后，修复将在后台进行，请稍候查看原路径'_fix'后缀文件即可"/>
                         </Grid>
                     </StackPanel>
