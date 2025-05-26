@@ -107,7 +107,7 @@ namespace Core.LogModule
         /// <param name="Message">信息</param>
         /// <param name="exception">堆栈</param>
         /// <param name="IsDisplay">是否显示</param>
-        public static void Warn(string Source, string Message,Exception? exception = null, bool IsDisplay = true)
+        public static void Warn(string Source, string Message, Exception? exception = null, bool IsDisplay = true)
         {
             LogClass logClass = new()
             {
@@ -116,6 +116,8 @@ namespace Core.LogModule
                 Source = Source,
                 Time = DateTime.Now,
                 Type = LogClass.LogType.Warn,
+                Error = true,
+                exception = exception,
                 IsDisplay = IsDisplay,
             };
             _LogPrint(logClass);
@@ -136,7 +138,7 @@ namespace Core.LogModule
                 Source = Source,
                 Time = DateTime.Now,
                 Type = LogClass.LogType.Error,
-                IsError = true,
+                Error = true,
                 exception = exception,
                 IsDisplay = IsDisplay,
             };
@@ -159,10 +161,10 @@ namespace Core.LogModule
                 {
                     lock (console)
                     {
-                        if (logClass.IsError)
+                        if (logClass.Error)
                         {
                             logClass.Message = logClass.Message + " ,详细信息已写入txt文本日志中";                      
-                            string ErrorText = $"\n{logClass.Time}:[Error][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}";
+                            string ErrorText = $"\n{logClass.Time}:[{logClass.Type.ToString()}][{logClass.Source}][{logClass.RunningTime}]{logClass.Message}";
                             if (logClass.exception != null)
                             {
                                 ErrorText += $"错误堆栈\n{logClass.exception.ToString()}";

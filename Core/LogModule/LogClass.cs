@@ -110,7 +110,7 @@ namespace Core.LogModule
         /// <summary>
         /// 是否需要写入txt记录的错误
         /// </summary>
-        public bool IsError { set; get; }
+        public bool Error { set; get; }
         /// <summary>
         /// IsError为真时有效，记录错误详细信息
         /// </summary>

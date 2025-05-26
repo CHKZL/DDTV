@@ -19,7 +19,7 @@ namespace Core.Network.Methods
 
         private static string imgKey = string.Empty;
         private static string subKey = string.Empty;
-        private static string P_salt =string.Empty; 
+        private static string P_salt = string.Empty;
         public static long uid = 0;
 
         #endregion
@@ -79,7 +79,7 @@ namespace Core.Network.Methods
             {
                 GetUserInfo(uid);
             }
-            if(string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey))
+            if (string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey))
             {
                 return "";
             }
@@ -91,7 +91,7 @@ namespace Core.Network.Methods
                 24,55 ,40 ,61 ,26 ,17 ,0 ,1 ,60 ,51 ,30 ,4 ,22 ,25 ,54 ,21 ,56 ,59 ,6 ,63 ,57 ,62 ,
                 11 ,36 ,20 ,34 ,44 ,52 };
             var salt = new string(order.Select(i => array[i]).ToArray()).Substring(0, 32); // 按照特定顺序混淆并取前32位
-            if(string.IsNullOrEmpty(P_salt))
+            if (string.IsNullOrEmpty(P_salt))
             {
                 P_salt = salt;
             }
@@ -146,7 +146,7 @@ namespace Core.Network.Methods
                 Console.WriteLine("URL 格式错误");
             }
 
-        return parameters;
+            return parameters;
         }
 
         private static string Get_w_rid_string(long uid, long timestamp, string salt)
@@ -154,7 +154,7 @@ namespace Core.Network.Methods
             string w_rid = GetMd5Hash("mid=" + uid + "&platform=web&token=&web_location=1550101&wts=" + timestamp + salt);
             return $"mid={uid}&token=&platform=web&web_location=1550101&w_rid={w_rid}&wts={timestamp}";
         }
-        public static string Get_Play_w_rid_string(long room_id,long qn)
+        public static string Get_Play_w_rid_string(long room_id, long qn)
         {
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
             string salt = Get_salt();
@@ -162,26 +162,44 @@ namespace Core.Network.Methods
             return $"codec=0,1,2&platform=web&format=0,1,2&protocol=0,1&ptype=8&qn={qn}&req_reason=0&room_id={room_id}&web_location=444.8&w_rid={w_rid}&wts={timestamp}";
         }
 
+        /// <summary>
+        /// 生成带有签名参数的URL
+        /// </summary>
+        /// <param name="url">原始URL</param>
+        /// <returns>添加了签名参数(w_rid)和时间戳(wts)的新URL</returns>
         public static string GetRidURL(string url)
         {
-            Dictionary<string, string> Params = GetUrlParams(url);
+            // 1. 从URL中获取所有参数
+            var queryParams = GetUrlParams(url);
+            var baseUrl = url.Split('?')[0];
+
+            // 2. 生成时间戳并添加随机盐值
             long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
-            Params.Add("wts", $"{timestamp}{Get_salt()}");
-            // 按照Key的字母顺序排序
-            var sortedParams = Params.OrderBy(kv => kv.Key, StringComparer.Ordinal);
-            // 拼接成 key=value 格式并用 & 连接
-            var result = string.Join("&", sortedParams.Select(kv => $"{kv.Key}={kv.Value}"));
-            string w_rid = GetMd5Hash(result);
-            Params.Remove("wts");
-            Params.Add("w_rid", $"{w_rid}");
-            Params.Add("wts", $"{timestamp}");
+            string tempValue = $"{timestamp}{Get_salt()}";
 
-            // 按照Key的字母顺序排序
-            sortedParams = Params.OrderBy(kv => kv.Key, StringComparer.Ordinal);
-            // 拼接成 key=value 格式并用 & 连接
-            result = string.Join("&", sortedParams.Select(kv => $"{kv.Key}={kv.Value}"));
+            // 3. 创建临时字典用于签名计算（包含原始参数和临时wts）
+            var signParams = new Dictionary<string, string>(queryParams)
+            {
+                ["wts"] = tempValue
+            };
 
-            return url.Split('?')[0] + "?" + result;
+            // 4. 生成签名
+            string paramString = string.Join("&", signParams.OrderBy(kv => kv.Key, StringComparer.Ordinal)
+                                                          .Select(kv => $"{kv.Key}={kv.Value}"));
+            string w_rid = GetMd5Hash(paramString);
+
+            // 5. 构建最终参数字典（包含原始参数、签名和正式时间戳）
+            var finalParams = new Dictionary<string, string>(queryParams)
+            {
+                ["w_rid"] = w_rid,
+                ["wts"] = timestamp.ToString()
+            };
+
+            // 6. 生成最终查询字符串
+            string finalQuery = string.Join("&", finalParams.OrderBy(kv => kv.Key, StringComparer.Ordinal)
+                                                           .Select(kv => $"{kv.Key}={kv.Value}"));
+
+            return $"{baseUrl}?{finalQuery}";
         }
 
 

@@ -56,9 +56,8 @@ namespace Core.Network.Methods
 
         private static PlayInfo_Class _PlayInfo(long RoomId,long Definition)
         {
-            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1,2&qn={Definition}&platform=web&ptype=8", true);
-            //这段注释的代码不要删掉，如果请求失败了可以尝试使用下面这个带签名的试试
-            //string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?{Core.Network.Methods.User.Get_Play_w_rid_string(RoomId,Definition)}", true);
+            string url = GetRidURL($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1,2&qn={Definition}&platform=web&ptype=8");
+            string WebText = Get.GetBody(url, true);
             PlayInfo_Class hLSHostClass = new();
             try
             {
