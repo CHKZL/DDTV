@@ -23,8 +23,9 @@ namespace Core.Network
         /// <param name="IsCookie">cookies集合实例</param>
         /// <param name="referer">Referer</param>
         /// <param name="specialheaders">除前面之外的Headers</param>
+        /// <param name="IsRid">是否使用w_rid签名</param>
         /// <returns>请求返回体</returns>
-        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3,AccountInformation account = null)
+        public static string GetBody(string url, bool IsCookie = false, string referer = "", WebHeaderCollection specialheaders = null, string ContentType = "application/x-www-form-urlencoded", int maxAttempts = 3,AccountInformation account = null,bool IsRid=false)
         {
 //#if DEBUG
 //            Log.Debug(nameof(GetBody), $"发起Get请求，目标:{url}");
@@ -34,6 +35,10 @@ namespace Core.Network
             HttpWebResponse rep = null;
             try
             {
+                if(IsRid)
+                {
+                    url = Core.Network.Methods.User.GetRidURL(url);
+                }
                 req = (HttpWebRequest)WebRequest.Create(url);
                 req.ServerCertificateValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; };
                 req.ServicePoint.Expect100Continue = false;

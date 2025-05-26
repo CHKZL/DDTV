@@ -7,6 +7,8 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
+using static Core.LogModule.Opcode;
 using static Core.Network.Methods.Nav;
 
 namespace Core.Network.Methods
@@ -17,6 +19,7 @@ namespace Core.Network.Methods
 
         private static string imgKey = string.Empty;
         private static string subKey = string.Empty;
+        private static string P_salt =string.Empty; 
         public static long uid = 0;
 
         #endregion
@@ -68,7 +71,11 @@ namespace Core.Network.Methods
         }
         private static string Get_salt()
         {
-            if(uid !=0 &&(string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey)))
+            if (!string.IsNullOrEmpty(P_salt))
+            {
+                return P_salt;
+            }
+            if (uid != 0 && (string.IsNullOrEmpty(imgKey) || string.IsNullOrEmpty(subKey)))
             {
                 GetUserInfo(uid);
             }
@@ -84,8 +91,64 @@ namespace Core.Network.Methods
                 24,55 ,40 ,61 ,26 ,17 ,0 ,1 ,60 ,51 ,30 ,4 ,22 ,25 ,54 ,21 ,56 ,59 ,6 ,63 ,57 ,62 ,
                 11 ,36 ,20 ,34 ,44 ,52 };
             var salt = new string(order.Select(i => array[i]).ToArray()).Substring(0, 32); // 按照特定顺序混淆并取前32位
+            if(string.IsNullOrEmpty(P_salt))
+            {
+                P_salt = salt;
+            }
             return salt;
         }
+        private static Dictionary<string, string> GetUrlParams(string url)
+        {
+            var parameters = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            if (string.IsNullOrWhiteSpace(url))
+                return parameters;
+
+            try
+            {
+                // 使用 Uri 类解析 URL
+                var uri = new Uri(url);
+                var query = uri.Query;
+
+                // 如果 URL 没有查询参数，返回空字典
+                if (string.IsNullOrEmpty(query))
+                    return parameters;
+
+                // 去掉开头的 '?'
+                if (query.StartsWith("?"))
+                    query = query.Substring(1);
+
+                // 拆分参数
+                var pairs = query.Split('&');
+                foreach (var pair in pairs)
+                {
+                    if (string.IsNullOrWhiteSpace(pair))
+                        continue;
+
+                    var keyValue = pair.Split('=');
+                    if (keyValue.Length == 0)
+                        continue;
+
+                    var key = keyValue[0];
+                    var value = keyValue.Length > 1 ? keyValue[1] : string.Empty;
+
+                    // URL 解码（处理 %20 等编码字符）
+                    key = HttpUtility.UrlDecode(key);
+                    value = HttpUtility.UrlDecode(value);
+
+                    // 如果 key 已存在，可以选择抛出异常或覆盖（这里选择覆盖）
+                    parameters[key] = value;
+                }
+            }
+            catch (UriFormatException)
+            {
+                // 如果 URL 格式错误，返回空字典或抛出异常（根据需求调整）
+                Console.WriteLine("URL 格式错误");
+            }
+
+        return parameters;
+        }
+
         private static string Get_w_rid_string(long uid, long timestamp, string salt)
         {
             string w_rid = GetMd5Hash("mid=" + uid + "&platform=web&token=&web_location=1550101&wts=" + timestamp + salt);
@@ -98,6 +161,30 @@ namespace Core.Network.Methods
             string w_rid = GetMd5Hash($"codec=0,1,2&platform=web&format=0,1,2&protocol=0,1&ptype=8&qn={qn}&req_reason=0&room_id={room_id}&web_location=444.8&wts=" + timestamp + salt);
             return $"codec=0,1,2&platform=web&format=0,1,2&protocol=0,1&ptype=8&qn={qn}&req_reason=0&room_id={room_id}&web_location=444.8&w_rid={w_rid}&wts={timestamp}";
         }
+
+        public static string GetRidURL(string url)
+        {
+            Dictionary<string, string> Params = GetUrlParams(url);
+            long timestamp = DateTimeOffset.Now.ToUnixTimeSeconds();
+            Params.Add("wts", $"{timestamp}{Get_salt()}");
+            // 按照Key的字母顺序排序
+            var sortedParams = Params.OrderBy(kv => kv.Key, StringComparer.Ordinal);
+            // 拼接成 key=value 格式并用 & 连接
+            var result = string.Join("&", sortedParams.Select(kv => $"{kv.Key}={kv.Value}"));
+            string w_rid = GetMd5Hash(result);
+            Params.Remove("wts");
+            Params.Add("w_rid", $"{w_rid}");
+            Params.Add("wts", $"{timestamp}");
+
+            // 按照Key的字母顺序排序
+            sortedParams = Params.OrderBy(kv => kv.Key, StringComparer.Ordinal);
+            // 拼接成 key=value 格式并用 & 连接
+            result = string.Join("&", sortedParams.Select(kv => $"{kv.Key}={kv.Value}"));
+
+            return url.Split('?')[0] + "?" + result;
+        }
+
+
         private static string GetMd5Hash(string input)
         {
             MD5 md5Hash = MD5.Create();
