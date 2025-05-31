@@ -11,11 +11,16 @@ namespace Desktop.Views.Windows
     /// </summary>
     public partial class WebPlayWindow : FluentWindow
     {
+        /// <summary>
+        /// 当前窗口的置顶状态
+        /// </summary>
+        private bool TopMostSwitch = false;
+
         long _room_id = 0;
         long _uid = 0;
         string _nickname = string.Empty;
         //RoomCardClass _roomCard;
-        public WebPlayWindow(long room_id,long uid)
+        public WebPlayWindow(long room_id, long uid)
         {
             _room_id = room_id;
             _uid = uid;
@@ -43,6 +48,12 @@ namespace Desktop.Views.Windows
             }
 
             Log.Info(nameof(WebPlayWindow), $"房间号:[{room_id}],打开播放器");
+            //是否置顶
+            if (Config.Core_RunConfig._CompatibilityWindowTop)
+            {
+                this.Topmost = true;
+                TopMostSwitch = true;
+            }
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -175,6 +186,20 @@ namespace Desktop.Views.Windows
                     t += (char)61;
                     return t;
                 }
+            }
+        }
+
+        private void MenuItem_TopMost_Click(object sender, RoutedEventArgs e)
+        {
+            if (TopMostSwitch)
+            {
+                this.Topmost = false;
+                TopMostSwitch = false;
+            }
+            else
+            {
+                this.Topmost = true;
+                TopMostSwitch = true;
             }
         }
     }

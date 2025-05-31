@@ -2371,6 +2371,28 @@ namespace Core
                 }
             }
 
+            private static string CompatibilityWindowTop = "false";
+            /// <summary>
+            /// 打开兼容窗口播放时，兼容窗口是否强制置顶
+            /// 默认值：false
+            /// </summary>
+            public bool _CompatibilityWindowTop
+            {
+                get
+                {
+                    return bool.Parse(CompatibilityWindowTop);
+                }
+                set
+                {
+                    if (value.ToString() != CompatibilityWindowTop)
+                    {
+                        CompatibilityWindowTop = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             #endregion
 
         }

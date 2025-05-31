@@ -403,6 +403,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._PlayWindowDanmaSwitch = (bool)PlayWindowDanmaSwitch_CheckBox.IsChecked;
         }
+        //弹幕字号设置
+        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != (int)PlayWindowDanmaSize.Value)
+        {
+            Config.Core_RunConfig._PlayWindowDanmaFontSize = (int)PlayWindowDanmaSize.Value;
+        }
         //弹幕速度设置
         if (Config.Core_RunConfig._PlayWindowDanmaSpeed != (int)PlayWindowDanmaSpeed_InputBox.Value)
         {
@@ -412,10 +417,15 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._PlayDanmaSpeed_Dynamically = (bool)PlayWindowDanmaSpeed_CheckBox.IsChecked;
         }
-        //弹幕字号设置
-        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != (int)PlayWindowDanmaSize.Value)
+        //弹幕速度是否跟随播放大小变化动态变化
+        if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically != PlayWindowDanmaSpeed_CheckBox.IsChecked)
         {
-            Config.Core_RunConfig._PlayWindowDanmaFontSize = (int)PlayWindowDanmaSize.Value;
+            Config.Core_RunConfig._PlayDanmaSpeed_Dynamically = (bool)PlayWindowDanmaSpeed_CheckBox.IsChecked;
+        }
+        //兼容播放器窗口强制置顶
+        if (Config.Core_RunConfig._CompatibilityWindowTop != CompatibilityWindowTop_CheckBox.IsChecked)
+        {
+            Config.Core_RunConfig._CompatibilityWindowTop = (bool)CompatibilityWindowTop_CheckBox.IsChecked;
         }
         #endregion
 

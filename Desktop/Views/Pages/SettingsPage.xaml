@@ -841,45 +841,58 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid Grid.Row="0" Grid.Column="0">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="打开播放器时默认开关" />
-                                        <CheckBox Name="PlayWindowDanmaSwitch_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="默认打开弹幕" IsChecked="{Binding _PlayWindowDanmaSwitch, Mode=OneWay}"/>
+                                    
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid Grid.Column="0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Margin="10,0,0,0" Content="打开播放器时默认开关" />
+                                            <CheckBox Name="PlayWindowDanmaSwitch_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="默认打开弹幕" IsChecked="{Binding _PlayWindowDanmaSwitch, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Grid.Column="1">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕字体大小" />
+                                            <ui:NumberBox Name="PlayWindowDanmaSize"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaFontSize, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Grid.Column="2">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度" />
+                                            <ui:NumberBox Name="PlayWindowDanmaSpeed_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaSpeed, Mode=OneWay}"/>
+                                        </Grid>
+                                        <Grid Grid.Column="3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度是否跟随播放大小变化动态变化" />
+                                            <CheckBox Name="PlayWindowDanmaSpeed_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="跟随" IsChecked="{Binding _PlayDanmaSpeed_Dynamically, Mode=OneWay}"/>
+                                        </Grid>
                                     </Grid>
-                                    <Grid Grid.Row="0" Grid.Column="1">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕字体大小" />
-                                        <ui:NumberBox Name="PlayWindowDanmaSize"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaFontSize, Mode=OneWay}"/>
+                                    <Grid Grid.Row="1">
+                                        <Grid Grid.Column="0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <CheckBox Name="CompatibilityWindowTop_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="兼容播放器窗口强制置顶" IsChecked="{Binding _CompatibilityWindowTop, Mode=OneWay}"/>
+                                        </Grid>
                                     </Grid>
-                                    <Grid Grid.Row="0" Grid.Column="2">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度" />
-                                        <ui:NumberBox Name="PlayWindowDanmaSpeed_InputBox"  Grid.Row="1" Width="200" HorizontalAlignment="Left" Margin="10,0,0,0" PlaceholderText="15" Minimum="1" Maximum="100" Value="{Binding _PlayWindowDanmaSpeed, Mode=OneWay}"/>
-                                    </Grid>
-                                    <Grid Grid.Row="0" Grid.Column="3">
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="弹幕速度是否跟随播放大小变化动态变化" />
-                                        <CheckBox Name="PlayWindowDanmaSpeed_CheckBox" Grid.Row="1" HorizontalAlignment="Left" Margin="10,0,0,0" Content="跟随" IsChecked="{Binding _PlayDanmaSpeed_Dynamically, Mode=OneWay}"/>
-                                    </Grid>
-
+                                   
+                                    
 
                                 </Grid>
                             </StackPanel>
