@@ -166,23 +166,43 @@ namespace Core.LiveChat
             JObject JO = new JObject();
             try
             {
-                int tra = 0;
+                int attempt = 0;
+                const int MaxRetryAttempts = 3;
+                const int RetryDelayWhenNoHosts = 5000;
+                const int NormalRetryDelay = 1000;
+                const string LogPrefix = $"{nameof(LiveChatListener)}_{nameof(ConnectAsync)}";
                 do
                 {
                     WssInfo = GetWssInfo();
+                    attempt++;
+
                     if (WssInfo == null)
                     {
-                        Log.Warn(nameof(LiveChatListener) + "_" + nameof(ConnectAsync) + "_" + nameof(GetWssInfo), $"请求wss地址出现空地址", null, false);
+                        Log.Warn($"{LogPrefix}_{nameof(GetWssInfo)}", "请求wss地址出现空地址", null, false);
                     }
-                    tra++;
-                    if (tra >= 3)
+                    else if (WssInfo.data.host_list.Count < 1)
                     {
-                        Log.Warn(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接3次都超时，放弃本次连接，10秒后重试", null, true);
+                        Log.Debug($"{LogPrefix}", "获取到的host列表为空，等待重试...");
+                    }
+
+                    if (attempt >= MaxRetryAttempts)
+                    {
+                        Log.Warn(LogPrefix, "LiveChatListener连接3次都超时，放弃本次连接，10秒后重试", null, true);
                         Dispose();
                         return;
                     }
-                    Thread.Sleep(1000);
-                } while (WssInfo == null);
+                    if(WssInfo?.data.host_list.Count < 1)
+                    {
+                        Thread.Sleep(RetryDelayWhenNoHosts);
+                        Log.Warn(LogPrefix, "LiveChatListener连接成功，但是获取到的host_list为空，5秒后重试", null, true);
+                    }
+                    else
+                    {
+                        Thread.Sleep(NormalRetryDelay);
+                    }
+                    
+
+                } while (WssInfo == null || WssInfo.data.host_list.Count < 1);
 
                 string URL = "wss://" + WssInfo.data.host_list[new Random().Next(0, WssInfo.data.host_list.Count)].host + "/sub";
                 //Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"弹幕连接地址:[{URL}]");
