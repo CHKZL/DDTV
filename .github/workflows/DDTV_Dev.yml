@@ -369,6 +369,18 @@ jobs:
           New-Item -ItemType Directory -Force -Path $destination
           Move-Item -Path $source -Destination $destination
 
+      - name: Copy MKVToolnix (Windows)  
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          mkdir Desktop/build_output/Plugins/MKVToolnix
+          
+          $source = "Desktop/Plugins/MKVToolnix/*"
+          $destination = "Desktop/build_output/Plugins/MKVToolnix"
+    
+          New-Item -ItemType Directory -Force -Path $destination
+          Move-Item -Path $source -Destination $destination
+
           
       - name: Move all files to bin folder and create shortcut (Windows)  
         if: runner.os == 'Windows'
