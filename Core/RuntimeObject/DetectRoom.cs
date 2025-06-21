@@ -129,10 +129,10 @@ namespace Core.RuntimeObject
                         //如果检测到还在开播，且用户没有取消，那么就再来一次
                         while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special);
 
-                        //执行shell
+                        //执行shell  
                         if (OperatingSystem.IsLinux() && Config.Core_RunConfig._Linux_Only_ShellSwitch)
                         {
-                            Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
+                            Tools.Shell.Run(Tools.KeyCharacterReplacement.ReplaceKeyword(!string.IsNullOrEmpty(roomCard.Shell)?roomCard.Shell:Config.Core_RunConfig._Linux_Only_ShellCommand, DateTime.Now, roomCard.UID));
                         }
                         History history = new History()
                         {

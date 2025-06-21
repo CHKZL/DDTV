@@ -83,12 +83,10 @@ namespace Core.Tools
                 .Replace("{R}",new Random().Next(1000,9999).ToString())
                 .Replace("{CWD}",WorkPath);
 
-            if(!string.IsNullOrEmpty(roomCardClass.Shell))
+            if(Config.Core_RunConfig._Linux_Only_ShellSwitch)
             {
                 Replace_Shell_Keyword(roomCardClass, ref Text);
             }
-            
-
             return Text;
         }
 
