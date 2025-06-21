@@ -53,6 +53,7 @@ module.exports = {
             '',
             'DDTV_Config',
             'RoomListConfig.json',
+            'shell.md'
           ]
         }
       ], '/about/': [
