@@ -142,7 +142,7 @@ namespace Core.LiveChat
 
         private DanMuWssInfo GetWssInfo()
         {
-            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id={RoomId}&type=0" , true,IsRid:true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id={RoomId}&type=0&web_location=444.8" , true,IsRid:true);
             DanMuWssInfo roomInfo = new();
             try
             {

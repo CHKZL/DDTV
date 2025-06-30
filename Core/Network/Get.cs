@@ -35,6 +35,10 @@ namespace Core.Network
             HttpWebResponse rep = null;
             try
             {
+                if(url.Contains("getDanmuInfo"))
+                {
+                    ;
+                }
                 if(IsRid)
                 {
                     url = Core.Network.Methods.User.GetRidURL(url);
@@ -53,7 +57,11 @@ namespace Core.Network
                 if (account != null)
                     req.Headers.Add("Cookie", account.strCookies);
                 else if (IsCookie && RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
-                    req.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
+                {
+                    string str = $"{RuntimeObject.Account.AccountInformation.strCookies}; buvid3={Core.Account.AccountBuvid.CreateUniqueIdentifier()}";
+                    req.Headers.Add("Cookie", str);
+                }
+                    
                 for (int attempt = 0; attempt < maxAttempts; attempt++)
                 {
                     try
