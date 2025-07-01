@@ -6,6 +6,8 @@
 using Core.LogModule;
 using Core.Tools;
 using Desktop.Models;
+using System.IO;
+using System.Net.Http;
 using System.Windows;
 
 namespace Desktop.Views.Pages;
@@ -16,13 +18,20 @@ namespace Desktop.Views.Pages;
 public partial class ToolsPage
 {
 
-    internal static ToolsPageModels toolsPageModels { get; private set; }
+	// mkvmerge.exe 目标路径
+	private readonly string mkvmergePath = System.IO.Path.Combine(
+		AppDomain.CurrentDomain.BaseDirectory, "Plugins", "MKVToolNix", "mkvmerge.exe");
+	// 下载地址
+	private readonly string mkvmergeUrl = "https://dl.ddtv-update.top/plugins/MKVToolnix/mkvmerge.exe";
+
+	internal static ToolsPageModels toolsPageModels { get; private set; }
     public ToolsPage()
     {
         InitializeComponent();
         toolsPageModels = new();
         this.DataContext = toolsPageModels;
-    }
+		CheckMkvmergeExists();
+	}
 
     private void ManualFix_Button_Click(object sender, RoutedEventArgs e)
     {
@@ -90,6 +99,52 @@ public partial class ToolsPage
 					Log.Error(nameof(MKVToolnix_Repair_Button_Click), $"MKVToolNix修复时出现意外错误，文件:{result}");
 				}
 			});
+		}
+	}
+	/// <summary>
+	/// 检查mkvmerge.exe是否存在，决定按钮显示
+	/// </summary>
+	private void CheckMkvmergeExists()
+	{
+		if (File.Exists(mkvmergePath))
+		{
+			DownloadMkvmergeButton.Visibility = Visibility.Collapsed;
+			MKVToolNixFixButton.Visibility = Visibility.Visible;
+			FixtimeTextBlock.Visibility = Visibility.Visible;
+		}
+		else
+		{
+			DownloadMkvmergeButton.Visibility = Visibility.Visible;
+			MKVToolNixFixButton.Visibility = Visibility.Collapsed;
+			FixtimeTextBlock.Visibility = Visibility.Collapsed;
+		}
+	}
+	/// <summary>
+	/// 下载mkvmerge.exe按钮点击事件
+	/// </summary>
+	private async void DownloadMkvmerge_Button_Click(object sender, RoutedEventArgs e)
+	{
+		DownloadMkvmergeButton.IsEnabled = false;
+		DownloadMkvmergeButton.Content = "正在下载...";
+
+		try
+		{
+			Directory.CreateDirectory(System.IO.Path.GetDirectoryName(mkvmergePath)!);
+
+			using var httpClient = new HttpClient();
+			var data = await httpClient.GetByteArrayAsync(mkvmergeUrl);
+			await File.WriteAllBytesAsync(mkvmergePath, data);
+
+			DownloadMkvmergeButton.Content = "下载完成";
+			await Task.Delay(1000);
+
+			CheckMkvmergeExists();
+		}
+		catch (Exception ex)
+		{
+			DownloadMkvmergeButton.Content = "下载失败，点击重试";
+			DownloadMkvmergeButton.IsEnabled = true;
+			MessageBox.Show("下载mkvmerge.exe失败：" + ex.Message, "下载失败", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 	}
 }
