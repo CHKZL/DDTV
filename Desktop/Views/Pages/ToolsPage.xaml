@@ -30,8 +30,8 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-         
-              
+
+
                 <!--登录态相关设置-->
                 <ui:CardExpander Grid.Row="0" Icon="{ui:SymbolIcon ArrowSyncCheckmark20}">
                     <ui:CardExpander.Header>
@@ -83,8 +83,15 @@
                                 <ColumnDefinition Width="auto" />
                                 <ColumnDefinition Width="auto" />
                             </Grid.ColumnDefinitions>
-                            <ui:Button Grid.Column="0" Content="选择录制的文件(如果fix文件失败，请尝试源文件)"  VerticalAlignment="Center" Click="MKVToolnix_Repair_Button_Click"/>
-                            <ui:TextBlock Margin="24,0,0,0"  Name="FixtimeTextBlock" Grid.Column="1" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="选择文件后，修复将在后台进行，请稍候查看原路径'_fix'后缀文件即可"/>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ui:Button Grid.Row="0" x:Name="DownloadMkvmergeButton" Grid.Column="0" Content="下载mkvmerge.exe" Margin="0,10,0,0" VerticalAlignment="Center" Click="DownloadMkvmerge_Button_Click" Visibility="Collapsed"/>
+                            <ui:Button Grid.Row="1" x:Name="MKVToolNixFixButton" Grid.Column="0" Content="选择录制的文件(如果fix文件失败，请尝试源文件)"  VerticalAlignment="Center" Click="MKVToolnix_Repair_Button_Click" Visibility="Collapsed"/>
+                            <ui:ProgressRing x:Name="MkvmergeDownloadProgressRing" Grid.Row="0" Grid.Column="0" Width="32"  Height="32"  Margin="12,10,0,0"  Visibility="Collapsed"/>
+                            <ui:TextBlock x:Name="MkvmergeDownloadProgressText" Grid.Row="0"  Grid.Column="1"   Margin="12,10,0,0"  FontSize="16" VerticalAlignment="Center"  Visibility="Collapsed" Text="下载进度：0%"/>
+                            <ui:TextBlock Margin="24,0,0,0"  Name="FixtimeTextBlock" Grid.Row="1" Grid.Column="1" FontSize="16"  VerticalAlignment="Center" FontTypography="Body" Text="选择文件后，修复将在后台进行，请稍候查看原路径'_fix'后缀文件即可"/>
                         </Grid>
                     </StackPanel>
                 </ui:CardExpander>

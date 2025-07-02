@@ -58,8 +58,6 @@ namespace Desktop
 
         public static string P_Title = string.Empty;
 
-
-
         public MainWindow()
         {
             if (Application_Startup())
