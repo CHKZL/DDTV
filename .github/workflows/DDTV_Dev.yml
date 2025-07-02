@@ -4,12 +4,6 @@ on:
   push:
     tags:
       - "dev*"
-  pull_request:
-    paths:
-      - 'Server/**'
-      - 'Client/**'
-      - 'Desktop/**'
-      - '!**/README.md'
   workflow_dispatch:
 
 jobs:
