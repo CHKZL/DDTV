@@ -217,7 +217,7 @@ namespace Core.Tools
                 return str;
             }
         }
-
+        private static DateTime Update_UpdateProgramRecordedTime = DateTime.Now.AddYears(-10);
         public class Update_UpdateProgram
         {
             public static string MainDomainName = "https://dl.ddtv-update.top";
@@ -231,6 +231,12 @@ namespace Core.Tools
 
             public void Main(string[] args)
             {
+                if((DateTime.Now - Update_UpdateProgramRecordedTime).TotalMinutes < 30)
+                {
+                    Log.Info(nameof(Update_UpdateProgram), "30分钟内更新过update程序，跳过本次更新");
+                    return;
+                }
+                Update_UpdateProgramRecordedTime = DateTime.Now;
                 if (args.Length != 0)
                 {
                     if (args.Contains("dev"))

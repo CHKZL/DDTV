@@ -47,8 +47,12 @@ namespace Desktop.Views.Windows
                     {
                         roomCard.DownInfo.LiveChatListener.Connect();
                     }
-                    roomCard.DownInfo.LiveChatListener.Register.Add("DanmaOnlyWindow");
-                    roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    if (roomCard.DownInfo.LiveChatListener != null)
+                    {
+                        roomCard.DownInfo.LiveChatListener.Register.Add("DanmaOnlyWindow");
+                        roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                    }
+
                     Dispatcher.Invoke(() =>
                     {
                         DanmaCollection.Add(new DanmaOnly { Message = $"等待直播间消息中..." });
