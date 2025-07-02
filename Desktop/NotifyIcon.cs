@@ -22,7 +22,6 @@ namespace Desktop
 		/// </summary>
 		public NotifyIcon()
 		{
-			InitializeComponent();
 			Loaded += NotifyIcon_Loaded;
 			Unloaded += NotifyIcon_Unloaded;
 		}
