@@ -120,6 +120,121 @@ public partial class ToolsPage
 		}
 	}
 	/// <summary>
+	/// 下载mkvmerge.exe按钮点击事件（加了一个进度环一个文字显示，点击后直接隐藏下载按钮）
+	/// </summary>
+	private async void DownloadMkvmerge_Button_Click(object sender, RoutedEventArgs e)
+	{
+		// 禁用并隐藏下载按钮，防止重复点击
+		DownloadMkvmergeButton.IsEnabled = false;
+		DownloadMkvmergeButton.Visibility = Visibility.Collapsed;
+
+		// 显示进度环和进度文本，初始为不确定状态
+		Dispatcher.Invoke(() =>
+		{
+			MkvmergeDownloadProgressRing.Visibility = Visibility.Visible;
+			MkvmergeDownloadProgressRing.IsIndeterminate = true;
+			MkvmergeDownloadProgressRing.Progress = 0;
+			MkvmergeDownloadProgressText.Visibility = Visibility.Visible;
+			MkvmergeDownloadProgressText.Text = "下载进度：0%";
+		});
+
+		try
+		{
+			// 确保目标目录存在
+			Directory.CreateDirectory(System.IO.Path.GetDirectoryName(mkvmergePath)!);
+
+			// 发起 HTTP 请求，获取响应流
+			using var httpClient = new HttpClient();
+			using var response = await httpClient.GetAsync(mkvmergeUrl, HttpCompletionOption.ResponseHeadersRead);
+			response.EnsureSuccessStatusCode();
+
+			// 获取文件总长度，用于判断是否可以显示具体进度
+			var total = response.Content.Headers.ContentLength ?? -1L;
+			var canReportProgress = total > 0;
+
+			// 如果可以获取总长度，切换为确定进度模式
+			if (canReportProgress)
+			{
+				Dispatcher.Invoke(() =>
+				{
+					MkvmergeDownloadProgressRing.IsIndeterminate = false;
+					MkvmergeDownloadProgressRing.Progress = 0;
+				});
+			}
+
+			using var stream = await response.Content.ReadAsStreamAsync();
+			using var fileStream = new FileStream(mkvmergePath, FileMode.Create, FileAccess.Write, FileShare.None);
+
+			var buffer = new byte[81920];
+			long totalRead = 0;
+			int read;
+			// 循环读取并写入文件，同时更新进度
+			while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+			{
+				await fileStream.WriteAsync(buffer, 0, read);
+				totalRead += read;
+				if (canReportProgress)
+				{
+					double percent = (double)totalRead / total * 100;
+					// 在UI线程上更新进度环和进度文本
+					Dispatcher.Invoke(() =>
+					{
+						MkvmergeDownloadProgressRing.Progress = percent;
+						MkvmergeDownloadProgressText.Text = $"下载进度：{percent:F0}%";
+					});
+				}
+			}
+
+			// 下载完成，显示100%
+			Dispatcher.Invoke(() =>
+			{
+				MkvmergeDownloadProgressRing.Progress = 100;
+				MkvmergeDownloadProgressText.Text = "下载进度：100%";
+			});
+			await Task.Delay(500);
+
+			// 隐藏进度环和进度文本
+			Dispatcher.Invoke(() =>
+			{
+				MkvmergeDownloadProgressRing.Visibility = Visibility.Collapsed;
+				MkvmergeDownloadProgressText.Visibility = Visibility.Collapsed;
+			});
+			// 检查并切换按钮显示状态
+			CheckMkvmergeExists();
+		}
+		catch (Exception ex)
+		{
+			// 下载失败，恢复按钮并提示
+			Dispatcher.Invoke(() =>
+			{
+				MkvmergeDownloadProgressRing.Visibility = Visibility.Collapsed;
+				MkvmergeDownloadProgressText.Visibility = Visibility.Collapsed;
+				DownloadMkvmergeButton.Visibility = Visibility.Visible;
+				DownloadMkvmergeButton.IsEnabled = true;
+				DownloadMkvmergeButton.Content = "下载失败，点击重试";
+			});
+			MessageBox.Show("下载mkvmerge.exe失败：" + ex.Message, "下载失败", MessageBoxButton.OK, MessageBoxImage.Error);
+		}
+	}
+	/// <summary>
+	/// 检查mkvmerge.exe是否存在，决定按钮显示
+	/// </summary>
+	private void CheckMkvmergeExists()
+	{
+		if (File.Exists(mkvmergePath))
+		{
+			DownloadMkvmergeButton.Visibility = Visibility.Collapsed;
+			MKVToolNixFixButton.Visibility = Visibility.Visible;
+			FixtimeTextBlock.Visibility = Visibility.Visible;
+		}
+		else
+		{
+			DownloadMkvmergeButton.Visibility = Visibility.Visible;
+			MKVToolNixFixButton.Visibility = Visibility.Collapsed;
+			FixtimeTextBlock.Visibility = Visibility.Collapsed;
+		}
+	}
+	/// <summary>
 	/// 下载mkvmerge.exe按钮点击事件
 	/// </summary>
 	private async void DownloadMkvmerge_Button_Click(object sender, RoutedEventArgs e)
