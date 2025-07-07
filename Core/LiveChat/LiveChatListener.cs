@@ -23,7 +23,7 @@ using static Core.Network.Methods.Room;
 
 namespace Core.LiveChat
 {
-    public class LiveChatListener
+    public class LiveChatListener : IDisposable
     {
         #region Properties
         private ClientWebSocket m_client;
@@ -33,18 +33,16 @@ namespace Core.LiveChat
         private bool _disposed = false;
         private bool _Cancel = false;
 
-
-        public long RoomId = 0;
-        public string Name = string.Empty;
-        public string File = string.Empty;
+        public long RoomId { get; set; } = 0;
+        public string Name { get; set; } = string.Empty;
+        public string File { get; set; } = string.Empty;
         public event EventHandler<MessageEventArgs> MessageReceived;
         public event EventHandler<EventArgs> DisposeSent;
-        public bool State = false;
-        public List<string> Register = new();
-        public RuntimeObject.Danmu.DanmuMessage DanmuMessage = new();
-        public Stopwatch TimeStopwatch;
-        public int SaveCount = 1;
-
+        public bool State { get; set; } = false;
+        public List<string> Register { get; set; } = new();
+        public RuntimeObject.Danmu.DanmuMessage DanmuMessage { get; set; } = new();
+        public Stopwatch TimeStopwatch { get; set; }
+        public int SaveCount { get; set; } = 1;
         #endregion
 
         #region Public Method
@@ -53,16 +51,19 @@ namespace Core.LiveChat
             RoomId = roomId;
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
             File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, RoomInfo.GetUid(roomId))}";
-
+            DanmuMessage = new RuntimeObject.Danmu.DanmuMessage();
         }
 
+        /// <summary>
+        /// 连接到直播间弹幕服务器
+        /// </summary>
         public async void Connect()
         {
             try
             {
                 m_ReceiveBuffer = new byte[1024 * 512];
                 State = true;
-                
+
                 await ConnectAsync();
             }
             catch (Exception e)
@@ -71,6 +72,10 @@ namespace Core.LiveChat
                 Dispose();
             }
         }
+
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
         public void Close()
         {
             if (Register.Count != 0)
@@ -78,38 +83,38 @@ namespace Core.LiveChat
                 Connect();
                 return;
             }
+
             _Cancel = true;
             m_ReceiveBuffer = null;
+
             if (TimeStopwatch != null)
             {
                 TimeStopwatch.Stop();
                 TimeStopwatch = null;
             }
+
             try
             {
-                if (m_innerRts != null)
-                {
-                    m_innerRts.Cancel();
-                }
+                m_innerRts?.Cancel();
             }
-            catch (Exception)
-            { }
+            catch (Exception) { }
+
             try
             {
                 m_client?.Dispose();
             }
             catch (Exception) { }
+
             try
             {
                 m_innerRts?.Dispose();
             }
             catch (Exception) { }
-            try
-            {
-                m_ReceiveBuffer = null;
-            }
-            catch (Exception) { }
         }
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
         public void Dispose()
         {
             try
@@ -120,12 +125,12 @@ namespace Core.LiveChat
                 }
                 _disposed = true;
                 State = false;
-                if (DisposeSent != null)
-                    DisposeSent.Invoke(this, EventArgs.Empty);
+
+                DisposeSent?.Invoke(this, EventArgs.Empty);
 
                 if (Register.Count != 0)
                 {
-
+                    // 如果有注册信息，可以在这里处理
                 }
             }
             catch (Exception E)
@@ -133,17 +138,17 @@ namespace Core.LiveChat
                 Log.Error(nameof(LiveChatListener), "关闭LiveChatListener连接时出现未知错误", E, false);
             }
         }
-
-
-
         #endregion
 
         #region Private Method
-
+        /// <summary>
+        /// 获取弹幕服务器WebSocket信息
+        /// </summary>
         private DanMuWssInfo GetWssInfo()
         {
-            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id={RoomId}&type=0&web_location=444.8" , true,IsRid:true);
+            string WebText = Get.GetBody($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v1/index/getDanmuInfo?id={RoomId}&type=0&web_location=444.8", true, IsRid: true);
             DanMuWssInfo roomInfo = new();
+
             try
             {
                 roomInfo = JsonSerializer.Deserialize<DanMuWssInfo>(WebText);
@@ -155,15 +160,19 @@ namespace Core.LiveChat
             }
         }
 
+        /// <summary>
+        /// 异步连接到弹幕服务器
+        /// </summary>
         private async Task ConnectAsync()
         {
             if (_disposed)
             {
-                throw new ObjectDisposedException("");
+                throw new ObjectDisposedException(nameof(LiveChatListener));
             }
+
             m_client = new ClientWebSocket();
             m_innerRts = new CancellationTokenSource();
-            JObject JO = new JObject();
+
             try
             {
                 int attempt = 0;
@@ -171,6 +180,8 @@ namespace Core.LiveChat
                 const int RetryDelayWhenNoHosts = 5000;
                 const int NormalRetryDelay = 1000;
                 const string LogPrefix = $"{nameof(LiveChatListener)}_{nameof(ConnectAsync)}";
+
+                // 重试获取WSS信息
                 do
                 {
                     WssInfo = GetWssInfo();
@@ -191,79 +202,85 @@ namespace Core.LiveChat
                         Dispose();
                         return;
                     }
-                    if(WssInfo?.data.host_list.Count < 1)
+
+                    if (WssInfo?.data.host_list.Count < 1)
                     {
-                        Thread.Sleep(RetryDelayWhenNoHosts);
+                        await Task.Delay(RetryDelayWhenNoHosts);
                         Log.Warn(LogPrefix, "LiveChatListener连接成功，但是获取到的host_list为空，5秒后重试", null, true);
                     }
                     else
                     {
-                        Thread.Sleep(NormalRetryDelay);
+                        await Task.Delay(NormalRetryDelay);
                     }
-                    
 
                 } while (WssInfo == null || WssInfo.data.host_list.Count < 1);
 
+                // 随机选择一个服务器连接
                 string URL = "wss://" + WssInfo.data.host_list[new Random().Next(0, WssInfo.data.host_list.Count)].host + "/sub";
-                //Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"弹幕连接地址:[{URL}]");
                 await m_client.ConnectAsync(new Uri(URL), new CancellationTokenSource().Token);
+
+                // 发送认证信息
+                await _sendObject(7, new
+                {
+                    uid = long.Parse(RuntimeObject.Account.AccountInformation.Uid),
+                    roomid = RoomId,
+                    protover = 3,
+                    buvid = RuntimeObject.Account.AccountInformation.Buvid,
+                    platform = "web",
+                    type = 2,
+                    key = WssInfo.data.token
+                });
+
+                // 启动接收循环
+                _ = _innerLoop().ContinueWith((t) =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        if (!m_innerRts.IsCancellationRequested)
+                        {
+                            MessageReceived?.Invoke(this, new ExceptionEventArgs(t.Exception.InnerException));
+                            m_innerRts.Cancel();
+                        }
+                    }
+                    else
+                    {
+                        Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接断开并回收");
+                        Dispose();
+                    }
+
+                    try
+                    {
+                        if (m_client.State == WebSocketState.Open && !_disposed)
+                        {
+                            m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生意料外的错误", ex, false);
+                        Dispose();
+                    }
+                });
+
+                // 启动心跳任务
+                _ = _innerHeartbeat();
             }
             catch (Exception e)
             {
                 Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生错误", e, true);
                 Dispose();
             }
-            await _sendObject(7, new
-            {
-                uid = long.Parse(RuntimeObject.Account.AccountInformation.Uid),
-                roomid = RoomId,
-                protover = 3,
-                buvid = RuntimeObject.Account.AccountInformation.Buvid,
-                platform = "web",
-                type = 2,
-                key = WssInfo.data.token
-            });
-
-            _ = _innerLoop().ContinueWith((t) =>
-           {
-               if (t.IsFaulted)
-               {
-                   if (!m_innerRts.IsCancellationRequested)
-                   {
-                       MessageReceived(this, new ExceptionEventArgs(t.Exception.InnerException));
-                       m_innerRts.Cancel();
-                   }
-               }
-               else
-               {
-                   Log.Info(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接断开并回收");
-                   Dispose();
-               }
-               try
-               {
-                   if (m_client.State == WebSocketState.Open && !_disposed)
-                   {
-                       m_client.CloseAsync(WebSocketCloseStatus.NormalClosure, string.Empty, CancellationToken.None).Wait();
-                   }
-               }
-               catch (Exception ex)
-               {
-                   Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生意料外的错误", ex, false);
-                   Dispose();
-               }
-           });
-            _ = _innerHeartbeat();
         }
 
+        /// <summary>
+        /// 心跳任务，每10秒发送一次心跳包
+        /// </summary>
         private async Task _innerHeartbeat()
         {
-            //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:start");
             while (!m_innerRts.IsCancellationRequested)
             {
-                //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:in");
                 try
                 {
-                    //UnityEngine.Debug.Log("heartbeat");
                     await _sendBinary(2, Encoding.UTF8.GetBytes("[object Object]"));
                     await Task.Delay(10 * 1000, m_innerRts.Token);
                 }
@@ -273,27 +290,29 @@ namespace Core.LiveChat
                 }
                 catch (Exception e)
                 {
-                    string A = e.ToString();
                     Log.Error(nameof(_innerHeartbeat), $"检测到网络环境发生变化，出现错误", e);
                     break;
                 }
-                //Log.Info(nameof(_innerHeartbeat), $"_innerHeartbeat:over");
             }
         }
 
+        /// <summary>
+        /// 接收消息的主循环
+        /// </summary>
         private async Task _innerLoop()
         {
 #if DEBUG
-            //InfoLog.InfoPrintf("LiveChatListener开始连接，房间号:" + TroomId, InfoLog.InfoClass.Debug);
             Log.Info(nameof(LiveChatListener) + "_" + nameof(_innerLoop), $"建立与(room_id:{RoomId})直播间的长连");
 #endif
             TimeStopwatch = Stopwatch.StartNew();
+
             while (!m_innerRts.IsCancellationRequested)
             {
                 try
                 {
                     WebSocketReceiveResult result = null;
                     int length = 0;
+
                     do
                     {
                         try
@@ -303,12 +322,12 @@ namespace Core.LiveChat
                         }
                         catch (Exception e)
                         {
-                            //Log.Warn(nameof(_innerLoop), $"_sendObject:{e.ToString()}", e, false);
                             Dispose();
                             return;
                         }
                     }
                     while (!result.EndOfMessage);
+
                     DepackDanmakuData(m_ReceiveBuffer);
                 }
                 catch (OperationCanceledException ex)
@@ -324,7 +343,6 @@ namespace Core.LiveChat
                 catch (WebSocketException we)
                 {
                     Log.Warn(nameof(_innerLoop) + "_WebSocketException", $"_sendObject:{we.ToString()}", we, false);
-
                 }
                 catch (Newtonsoft.Json.JsonException ex)
                 {
@@ -334,8 +352,6 @@ namespace Core.LiveChat
                 catch (Exception e)
                 {
                     Log.Warn(nameof(_innerLoop) + "_Exception", $"_sendObject:{e.ToString()}", e, false);
-                    //UnityEngine.Debug.LogException(e);
-
                 }
             }
         }
@@ -345,25 +361,32 @@ namespace Core.LiveChat
         /// </summary>
         private void DepackDanmakuData(byte[] messages)
         {
+            if (messages == null || messages.Length < 16)
+            {
+                Log.Warn(nameof(LiveChatListener) + "_" + nameof(DepackDanmakuData), $"消息长度不足16字节");
+                return;
+            }
+
             byte[] headerBuffer = new byte[16];
             Array.Copy(messages, 0, headerBuffer, 0, 16);
             DanmakuProtocol protocol = new DanmakuProtocol(headerBuffer);
-
 
             if (protocol.PacketLength < 16)
             {
                 Log.Warn(nameof(LiveChatListener) + "_" + nameof(DepackDanmakuData), $"LiveChatListener初始化bodyLength出现错误长度<16");
                 return;
             }
+
             int bodyLength = protocol.PacketLength - 16;
             if (bodyLength == 0)
             {
-                //continue;
                 Log.Warn(nameof(LiveChatListener) + "_" + nameof(DepackDanmakuData), $"LiveChatListener初始化bodyLength出现错误长度0");
                 return;
             }
+
             byte[] buffer = new byte[bodyLength];
             Array.Copy(messages, 16, buffer, 0, bodyLength);
+
             switch (protocol.Version)
             {
                 case 1:
@@ -373,21 +396,26 @@ namespace Core.LiveChat
                     {
                         var ms = new MemoryStream(buffer, 2, bodyLength - 2);
                         var deflate = new DeflateStream(ms, CompressionMode.Decompress);
+
                         while (deflate.Read(headerBuffer, 0, 16) > 0)
                         {
                             protocol = new DanmakuProtocol(headerBuffer);
                             bodyLength = protocol.PacketLength - 16;
+
                             if (bodyLength == 0)
                             {
                                 continue; // 没有内容了
                             }
+
                             if (buffer.Length < bodyLength) // 不够长再申请
                             {
                                 buffer = new byte[bodyLength];
                             }
+
                             deflate.Read(buffer, 0, bodyLength);
-                            ProcessDanmakuData(protocol.Operation, buffer, bodyLength);//对加密消息进行解密
+                            ProcessDanmakuData(protocol.Operation, buffer, bodyLength);
                         }
+
                         ms.Dispose();
                         deflate.Dispose();
                         break;
@@ -395,16 +423,14 @@ namespace Core.LiveChat
                 case 3:
                     using (var inputStream = new MemoryStream(buffer))
                     using (var outputStream = new MemoryStream())
-                    using (var decompressionStream = new BrotliStream(inputStream, CompressionMode.Decompress))//Brotli是好文明，不用自己写轮子
+                    using (var decompressionStream = new BrotliStream(inputStream, CompressionMode.Decompress))
                     {
                         decompressionStream.CopyTo(outputStream);
                         buffer = outputStream.ToArray();
                     }
-                    ProcessDanmakuData(protocol.Operation, buffer, buffer.Length, true);//对加密消息进行解密
+                    ProcessDanmakuData(protocol.Operation, buffer, buffer.Length, true);
                     break;
-
                 default:
-
                     break;
             }
         }
@@ -416,16 +442,16 @@ namespace Core.LiveChat
         {
             switch (opt)
             {
-                case 3:
+                case 3: // 人气值
                     {
                         if (length == 4)
                         {
-                            int 人气值 = buffer[3] + buffer[2] * 255 + buffer[1] * 255 * 255 + buffer[0] * 255 * 255 * 255;
-                            _parse("{\"cmd\":\"LiveP\",\"LiveP\":" + 人气值 + ",\"roomID\":" + RoomId + "}");
+                            int popularity = buffer[3] + buffer[2] * 255 + buffer[1] * 255 * 255 + buffer[0] * 255 * 255 * 255;
+                            _parse("{\"cmd\":\"LiveP\",\"LiveP\":" + popularity + ",\"roomID\":" + RoomId + "}");
                         }
                         break;
                     }
-                case 5:
+                case 5: // 弹幕消息
                     {
                         try
                         {
@@ -438,7 +464,7 @@ namespace Core.LiveChat
                                     Array.Copy(buffer, 16, a, 0, len - 16);
                                     string jsonBody = Encoding.UTF8.GetString(a, 0, len - 16);
                                     jsonBody = Regex.Unescape(jsonBody);
-                                    _parse(jsonBody);//如果是有效包，就丢给MessageReceived事件触发
+                                    _parse(jsonBody);
                                     byte[] b = new byte[buffer.Length - len];
                                     Array.Copy(buffer, len, b, 0, buffer.Length - len);
                                     buffer = b;
@@ -450,17 +476,16 @@ namespace Core.LiveChat
                                 jsonBody = Regex.Unescape(jsonBody);
                                 _parse(jsonBody);
                             }
-
                         }
                         catch (Exception ex)
                         {
                             if (ex is Newtonsoft.Json.JsonException || ex is KeyNotFoundException)
                             {
-                                //LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] 弹幕识别错误 {json}" });
+                                // 忽略JSON解析错误
                             }
                             else
                             {
-                                //LogEvent?.Invoke(this, new LogEventArgs { Log = $@"[{_roomId}] {ex}" });
+                                Log.Error(nameof(ProcessDanmakuData), "处理弹幕数据时出错", ex);
                             }
                         }
                         break;
@@ -470,131 +495,111 @@ namespace Core.LiveChat
             }
         }
 
+        /// <summary>
+        /// 解析JSON消息并触发相应事件
+        /// </summary>
         private void _parse(string jsonBody)
         {
             var obj = new JsonObject();
+
             try
             {
                 jsonBody = ReplaceString(jsonBody);
+
+                // 处理DANMU_MSG的特殊格式
                 if (jsonBody.Contains("DANMU_MSG"))
                 {
                     jsonBody = jsonBody.Replace("\"extra\":\"", "\"extra\":");
                     jsonBody = jsonBody.Replace("\"{}\",", "");
                     jsonBody = jsonBody.Replace("}\",\"", "},\"");
                 }
-                if (!jsonBody.Contains("DANMU_MSG") && !jsonBody.Contains("SUPER_CHAT_MESSAGE") && !jsonBody.Contains("SEND_GIFT") && !jsonBody.Contains("GUARD_BUY") && !jsonBody.Contains("DANMU_MSG"))
+
+                // 过滤不需要处理的消息类型
+                if (!jsonBody.Contains("DANMU_MSG") && !jsonBody.Contains("SUPER_CHAT_MESSAGE") &&
+                    !jsonBody.Contains("SEND_GIFT") && !jsonBody.Contains("GUARD_BUY"))
                 {
                     return;
                 }
 
                 obj = JsonNode.Parse(jsonBody).AsObject();
             }
-            catch (Exception) { return; }
+            catch (Exception)
+            {
+                return;
+            }
+
             string cmd = (string)obj["cmd"];
-            //Log.Info("test",$"收到cmd：{cmd}");
+
             switch (cmd)
             {
-
-                //弹幕信息
+                // 弹幕信息
                 case "DANMU_MSG":
-                    MessageReceived(this, new DanmuMessageEventArgs(obj));
+                    MessageReceived?.Invoke(this, new DanmuMessageEventArgs(obj));
                     break;
-                //SC信息
+                // SC信息
                 case "SUPER_CHAT_MESSAGE":
-                    MessageReceived(this, new SuperchatEventArg(obj));
+                    MessageReceived?.Invoke(this, new SuperchatEventArg(obj));
                     break;
-                //礼物
+                // 礼物
                 case "SEND_GIFT":
-                    MessageReceived(this, new SendGiftEventArgs(obj));
+                    MessageReceived?.Invoke(this, new SendGiftEventArgs(obj));
                     break;
-                //舰组信息(上舰)
+                // 舰组信息(上舰)
                 case "GUARD_BUY":
-                    MessageReceived(this, new GuardBuyEventArgs(obj));
+                    MessageReceived?.Invoke(this, new GuardBuyEventArgs(obj));
                     break;
-                //小时榜单变动通知
-                case "ACTIVITY_BANNER_UPDATE_V2":
-                    break;
-                //礼物combo
-                case "COMBO_SEND":
-                    break;
-                //进场特效
-                case "ENTRY_EFFECT":
-                    break;
-                //续费舰长
+                // 续费舰长
                 case "USER_TOAST_MSG":
-                    MessageReceived(this, new GuardRenewEventArgs(obj));
-                    break;
                 case "USER_TOAST_MSG_V2":
-                    MessageReceived(this, new GuardRenewEventArgs(obj));
+                    MessageReceived?.Invoke(this, new GuardRenewEventArgs(obj));
                     break;
-                //在房间内续费了舰长
-                case "NOTICE_MSG":
-                    break;
-                //欢迎
-                case "WELCOME":
-                    break;
-                //人气值(心跳数据)
-                case "LiveP":
-                    break;
-                //管理员警告
-                case "WARNING":
-                    //MessageReceived(this, new WarningEventArg(obj));
-                    break;
-                //开播_心跳
-                case "LIVE":
-                    //应该还有收费直播的鉴权信息，但是这里就不细说了
-                    break;
-                //下播_心跳
-                case "PREPARING":
-                    break;
-                case "INTERACT_WORD":
-                    //进场消息（弹幕区展示进场消息，粉丝勋章，姥爷，榜单）和用户关注、分享、特别关注直播间
-                    break;
-                case "PANEL":
-                    //小时榜信息更新
-                    break;
-                case "ONLINE_RANK_COUNT":
-                    //服务等级（降级后会变化）
-                    break;
-                case "ONLINE_RANK_V2":
-                    //高能榜更新
-                    break;
-                case "ROOM_BANNER":
-                    //房间横幅信息，应该就是置顶的那个跳转广告
-                    break;
-                case "ACTIVITY_RED_PACKET":
-                    //红包抽奖弹幕
-                    break;
-                //切断直播间
-                case "CUT_OFF":
-                    //MessageReceived(this, new CutOffEventArg(obj));
+                // 其他不需要处理的消息类型
+                case "ACTIVITY_BANNER_UPDATE_V2":  // 小时榜单变动通知
+                case "COMBO_SEND":                 // 礼物combo
+                case "ENTRY_EFFECT":               // 进场特效
+                case "NOTICE_MSG":                 // 在房间内续费了舰长
+                case "WELCOME":                    // 欢迎
+                case "LiveP":                      // 人气值(心跳数据)
+                case "WARNING":                    // 管理员警告
+                case "LIVE":                       // 开播_心跳
+                case "PREPARING":                  // 下播_心跳
+                case "INTERACT_WORD":              // 进场消息
+                case "PANEL":                      // 小时榜信息更新
+                case "ONLINE_RANK_COUNT":          // 服务等级（降级后会变化）
+                case "ONLINE_RANK_V2":             // 高能榜更新
+                case "ROOM_BANNER":                // 房间横幅信息
+                case "ACTIVITY_RED_PACKET":        // 红包抽奖弹幕
+                case "CUT_OFF":                    // 切断直播间
                     break;
                 default:
-                    //Console.WriteLine(cmd);
-                    //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"收到未知CMD:{cmd}");
-                    //MessageReceived(this, new MessageEventArgs(obj));
+                    // 未知CMD类型
                     break;
             }
-            return;
         }
 
         /// <summary>
-        ///   替换部分字符串
+        /// 替换JSON字符串中的特殊字符
         /// </summary>
-        /// <param name="sPassed">需要替换的字符串</param>
-        /// <returns></returns>
         private static string ReplaceString(string JsonString)
         {
-            if (JsonString == null) { return JsonString; }
+            if (JsonString == null)
+            {
+                return JsonString;
+            }
+
             if (JsonString.Contains("\\"))
             {
                 JsonString = JsonString.Replace("\\", "\\\\");
             }
+
             JsonString = Regex.Replace(JsonString, @"[\n\r]", "");
             JsonString = JsonString.Trim();
             return JsonString;
         }
 
+        /// <summary>
+        /// 发送JSON对象
+        /// </summary>
         private async Task _sendObject(int type, object obj)
         {
             try
@@ -603,41 +608,50 @@ namespace Core.LiveChat
                 {
                     return;
                 }
-                //string jsonBody = JsonConvert.SerializeObject(obj, Formatting.None);
-                string jsonBody = JsonSerializer.Serialize(obj, new JsonSerializerOptions() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) });
-                //Log.Info(nameof(LiveChatListener) + "_" + nameof(_sendObject), $"_sendObject:{jsonBody}");
-                //Log.Log.AddLog(nameof(LiveChatListener), Log.LogClass.LogType.Info, $"发送WS信息:\r\n{jsonBody}");
-                await _sendBinary(type, System.Text.Encoding.UTF8.GetBytes(jsonBody));
-            }
-            catch (Exception)
-            {
 
+                string jsonBody = JsonSerializer.Serialize(obj, new JsonSerializerOptions()
+                {
+                    Encoder = JavaScriptEncoder.Create(UnicodeRanges.All)
+                });
+
+                await _sendBinary(type, Encoding.UTF8.GetBytes(jsonBody));
+            }
+            catch (Exception ex)
+            {
+                Log.Error(nameof(_sendObject), "发送JSON对象时出错", ex);
             }
         }
+
+        /// <summary>
+        /// 发送二进制数据
+        /// </summary>
         private async Task _sendBinary(int type, byte[] body)
         {
+            if (m_client?.State != WebSocketState.Open)
+            {
+                return;
+            }
+
             byte[] head = new byte[16];
             using (MemoryStream ms = new MemoryStream(head))
+            using (BinaryWriter bw = new BinaryWriter(ms))
             {
-                using (BinaryWriter bw = new BinaryWriter(ms))
-                {
-                    bw.WriteBE(16 + body.Length);
-                    bw.WriteBE((ushort)16);
-                    bw.WriteBE((ushort)1);
-                    bw.WriteBE(type);
-                    bw.WriteBE(1);
-                }
+                bw.WriteBE(16 + body.Length);
+                bw.WriteBE((ushort)16);
+                bw.WriteBE((ushort)1);
+                bw.WriteBE(type);
+                bw.WriteBE(1);
             }
+
             byte[] tail = new byte[16 + body.Length];
             Array.Copy(head, 0, tail, 0, 16);
             Array.Copy(body, 0, tail, 16, body.Length);
+
             await m_client.SendAsync(new ArraySegment<byte>(tail), WebSocketMessageType.Binary, true, CancellationToken.None);
         }
-
         #endregion
 
         #region private Class
-
         /// <summary>
         /// 消息协议
         /// </summary>
@@ -677,17 +691,22 @@ namespace Core.LiveChat
             }
         }
 
+        /// <summary>
+        /// 弹幕WebSocket服务器信息
+        /// </summary>
         private class DanMuWssInfo
         {
             public long code { get; set; }
             public string message { get; set; }
             public long ttl { get; set; }
             public Data data { get; set; } = new();
+
             public class Data
             {
                 public long uid { set; get; }
                 public string token { set; get; }
                 public List<Host> host_list { set; get; } = new List<Host>();
+
                 public class Host
                 {
                     public string host { set; get; }
@@ -697,8 +716,6 @@ namespace Core.LiveChat
                 }
             }
         }
-
-
         #endregion
     }
 }
