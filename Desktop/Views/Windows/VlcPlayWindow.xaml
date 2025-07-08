@@ -35,9 +35,14 @@
                 </ContextMenu>
             </Grid.ContextMenu>
 
-            <ui:Button Visibility="{Binding VolumeVisibility,Mode=OneWay}"  FontSize="50" Icon="{ui:SymbolIcon Speaker248}" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <ui:Button Visibility="{Binding VolumeVisibility,Mode=OneWay}" FontSize="50" Icon="{ui:SymbolIcon Speaker248}" IsEnabled="False" VerticalAlignment="Center" HorizontalAlignment="Center">
                 <ui:Button.Content>
-                    <TextBlock FontSize="30" Text="{Binding Volume,Mode=OneWay}" Foreground="White" Opacity="1"/>
+                    <TextBlock FontSize="30" Text="{Binding Volume,Mode=OneWay}" Foreground="White" Opacity="1">
+                        <TextBlock.Effect>
+                            <!-- 使用DropShadowEffect创建描边效果 -->
+                            <DropShadowEffect Color="Black" ShadowDepth="2" BlurRadius="1" Opacity="1"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
                 </ui:Button.Content>
             </ui:Button>
             <Canvas Name="DanmaCanvas" Opacity="1"/>
