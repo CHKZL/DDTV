@@ -2022,10 +2022,10 @@ namespace Core
                 }
             }
 
-            private static string MaximumLengthDanmu = "20";
+            private static string MaximumLengthDanmu = "40";
             /// <summary>
-            /// 弹幕最大长度（直播等级20以上可能会是30，用户自己配置）
-            /// 默认值：20
+            /// 弹幕最大长度（直播等级20以上可能会是30，用户自己配置）2025-07-23 补充：发现直播间普通用户也可以发送40个字了
+            /// 默认值：40
             /// </summary>
             public int _MaximumLengthDanmu
             {

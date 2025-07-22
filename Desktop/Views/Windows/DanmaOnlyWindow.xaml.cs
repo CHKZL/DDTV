@@ -168,9 +168,9 @@ namespace Desktop.Views.Windows
         private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
         {
             string T = DanmaOnly_DanmaInput.Text;
-            if (string.IsNullOrEmpty(T) || T.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
+            if (string.IsNullOrEmpty(T) || T.Length > 40/*Core.Config.Core_RunConfig._MaximumLengthDanmu*/)
             {
-                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为{Core.Config.Core_RunConfig._MaximumLengthDanmu}");
+                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为40");
                 return;
             }
             Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
@@ -197,7 +197,7 @@ namespace Desktop.Views.Windows
             if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
             {
                 string T = DanmaOnly_DanmaInput.Text;
-                if (string.IsNullOrEmpty(T) && T.Length > 20)
+                if (string.IsNullOrEmpty(T) && T.Length > 40)
                 {
                     return;
                 }
