@@ -1,4 +1,5 @@
 ﻿using Core;
+using Core.Account;
 using Core.LogModule;
 using Core.RuntimeObject;
 using Desktop.Models;
@@ -162,11 +163,11 @@ namespace Desktop
                                 if (Core.Init.Ver != doki.Ver)
                                 {
                                     MainWindow.SnackbarService.Show("远程版本不一致", $"检测到远程模式下远程版本与本地Desktop版本不一致！这可能会造成未知的问题，请尽快更新双端到最新版本！\n本地Desktop版本号:【{Core.Init.Ver}】|远程版本号:【{doki.Ver}】", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.ErrorCircle24), TimeSpan.FromSeconds(5));
-                                    this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                    this.Title = $"{doki.InitType}|本地 {Core.Init.Ver}|远程 {doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}$$$";
                                 }
                                 else
                                 {
-                                    this.Title = $"{doki.InitType}|{doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}";
+                                    this.Title = $"{doki.InitType}|{doki.Ver}| %%% |{Enum.GetName(typeof(Config.Mode), doki.StartMode)}【{doki.CompilationMode}】(编译时间:{doki.CompiledVersion}){(ToConnectToRemoteServer ? "【远程模式】" : "")}$$$";
                                 }
                                 P_Title = this.Title;
                                 //UI_TitleBar.Title = P_Title.Replace("%%%","正在初始化");
@@ -373,7 +374,7 @@ namespace Desktop
                 configViewModel.DataPageTitle = $"房间列表 ({count.RecCount})";
                 configViewModel.OnPropertyChanged("DataPageTitle");
 
-                configViewModel.ProgramTitle = P_Title.Replace("%%%",$"{count.RecCount}录制中|{count.LiveCount}开播中|{count.MonitoringCount}监控中");
+                configViewModel.ProgramTitle = P_Title.Replace("%%%",$"{count.RecCount}录制中|{count.LiveCount}开播中|{count.MonitoringCount}监控中").Replace("$$$",$"{(!Core.RuntimeObject.Account.AccountInformation.State ? "【警告！登陆态已失效】" : "")}");
                 configViewModel.OnPropertyChanged("ProgramTitle");
             }
             catch (Exception ex)

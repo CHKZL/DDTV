@@ -9,10 +9,13 @@ using Desktop.Models;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows.Media.Animation;
+using System.Windows.Media;
 using static Core.Tools.DokiDoki;
 using static Core.Tools.SystemResource.Overview;
 using static Server.WebAppServices.Api.get_system_resources;
 using static System.Windows.Forms.AxHost;
+using Core.RuntimeObject;
 
 namespace Desktop.Views.Pages;
 
@@ -31,6 +34,7 @@ public partial class DefaultPage
 
     public DefaultPage()
     {
+        Core.RuntimeObject.Account.LoginFailureEvent += Account_LoginFailureEvent;
         InitializeComponent();
         PageComboBoxItems = new();
         this.DataContext = PageComboBoxItems;
@@ -47,7 +51,42 @@ public partial class DefaultPage
         ProxyDetectionTimer = new Timer(ProxyDetection, null, 1, 1000 * 60 * 30);
         //IP版本检测
         IpvDetectionTimer = new Timer(IpvDetection, null, 1, 1000 * 60 * 30);
+        WarningMessageAnimation();
+        
+    }
 
+    /// <summary>
+    /// 警告信息跑马灯
+    /// </summary>
+    private void WarningMessageAnimation()
+    {
+        int basicTime = 400;
+
+        // 创建一个颜色动画
+        ColorAnimationUsingKeyFrames colorAnimation = new ColorAnimationUsingKeyFrames();
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 0))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Orange, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 1))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Yellow, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 2))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 3))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Cyan, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 4))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 5))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Purple, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 6))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Blue, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 7))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Cyan, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 8))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Green, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 9))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Yellow, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 10))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Orange, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 11))));
+        colorAnimation.KeyFrames.Add(new LinearColorKeyFrame(Colors.Red, KeyTime.FromTimeSpan(TimeSpan.FromMilliseconds(basicTime * 12))));
+        colorAnimation.RepeatBehavior = RepeatBehavior.Forever;
+
+        // 创建一个线性渐变刷，并将动画应用到其中一个渐变停止的颜色上
+        LinearGradientBrush brush = new LinearGradientBrush();
+        GradientStop stop = new GradientStop();
+        brush.GradientStops.Add(stop);
+        stop.BeginAnimation(GradientStop.ColorProperty, colorAnimation);
+
+        // 将刷子应用到TextBlock的前景色上
+        WarningMessage.Foreground = brush;
     }
 
     public static void SetMonitoringCount(int count)
@@ -64,6 +103,11 @@ public partial class DefaultPage
     {
         PageComboBoxItems.RecCount = count;
         PageComboBoxItems.OnPropertyChanged("RecCount");
+    }
+    public static void SetWarningMessage(string str)
+    {
+        PageComboBoxItems.WarningMessage = str;
+        PageComboBoxItems.OnPropertyChanged("WarningMessage");
     }
     public static void SetHardDiskUsageRate(int count)
     {
@@ -275,5 +319,11 @@ public partial class DefaultPage
         {
             Log.Warn(nameof(UpdateRuntimeStatistics), "更新公告出现错误，错误堆栈已写文本记录文件", ex, false);
         }
+    }
+
+    private static void Account_LoginFailureEvent(object? sender, EventArgs e)
+    {
+        string Message = $"警告：登录态已失效！请在设置界面重新扫码登陆";
+        SetWarningMessage(Message);
     }
 }

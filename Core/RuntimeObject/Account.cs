@@ -44,7 +44,17 @@ namespace Core.RuntimeObject
                             }
                         }
                         Log.Info(nameof(AccountInformation), $"读取User配置文件{ACC}");
-                        Tools.Encryption.DecryptFile(ACC, out string accountString);
+                        string accountString = string.Empty;
+                        try
+                        {
+                            Tools.Encryption.DecryptFile(ACC, out accountString);
+                        }
+                        catch (Exception)
+                        {
+                            _accountInformation = new();
+                            LoginFailureEvent?.Invoke(null, new EventArgs());
+                            return _accountInformation;
+                        }
                         var tempAccountInfo = JsonSerializer.Deserialize<AccountInformation>(accountString);
                         if (tempAccountInfo?.State == true)
                         {

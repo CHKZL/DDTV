@@ -94,6 +94,17 @@
                     </Grid>
                 </Border>
             </Grid>
+            <Grid Grid.Row="4" Grid.Column="0" Margin="3">
+                <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                    <Grid Margin="25,0,25,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ui:TextBlock Name="WarningMessage" Grid.Column="0" Margin="0,0,0,0"  FontSize="18" FontTypography="Body" HorizontalAlignment="Left" Text="{Binding WarningMessage,Mode=OneWay}" VerticalAlignment="Center" />
+                    </Grid>
+                </Border>
+            </Grid>
             <Grid Grid.Row="5" Grid.Column="0" Margin="3">
                 <Border CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid Margin="25,0,25,0">

@@ -95,6 +95,7 @@ namespace Desktop.Views.Windows
 
                                 Dispatcher.Invoke(() =>
                                 {
+                                    Desktop.Views.Pages.DefaultPage.SetWarningMessage("");
                                     Log.Info(nameof(QrLogin), "登陆完成，关闭QR扫码窗口");
                                     DataSource.LoginStatus.LoginWindowDisplayStatus = false;
                                     this.Close();

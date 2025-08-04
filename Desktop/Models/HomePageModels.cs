@@ -19,5 +19,7 @@ namespace Desktop.Models
         public string ProxyState { get; set; } = "正常，未检测到代理";
         public string ProxyUrl { get; set; } = "";
         public string announcement { get; set; } = "";
+        public string WarningMessage { get; set; } = "";//例如：【警告：登录态已失效！请在设置界面重新扫码登陆】
+
     }
 }
