@@ -48,11 +48,12 @@ namespace Core
                 //注册Core启动完成触发事件
                 CoreStartAwait.SetResult(true);
             };
-
             //启动参数初始化
             StartParameterInitialization(args);
+            //将当前路径从 引用路径 修改至 程序所在目录
             Directory.SetCurrentDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;//将当前路径从 引用路径 修改至 程序所在目录
+            Environment.CurrentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //设置当前运行模式
             AppContext.SetSwitch("System.Drawing.EnableUnixSupport", true);
             //初始化文件和目录
             InitDirectoryAndFile();
@@ -62,17 +63,25 @@ namespace Core
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             //给文件系统一点时间创建各种路径
             Thread.Sleep(100);
+            //初始化日志系统
             Log.LogInit();
+            //初始化邮件事件系统
             SMTP.Init();
             Log.Info(nameof(Init), $"初始化工作路径为:{Environment.CurrentDirectory}");
             Log.Info(nameof(Init), $"检查和创建必要的目录");
             Log.Info(nameof(Init), $"初始化ServicePointManager对象");
+            //触发一次写配置文件以生成可能不存在的配置文件
             Config.WriteConfiguration();
+            //初始化一次登录态信息，防止后面空对象
             var _ = Core.RuntimeObject.Account.AccountInformation;
+            //如果没有大聪明乱输UID，就把Uid设置为配置文件中的uid信息
             long.TryParse(_.Uid, out Core.Network.Methods.User.uid);
+            //启动登录态检查进程
             Core.RuntimeObject.Account.CheckLoginStatus();
+
             Log.Info(nameof(Init), $"Core初始化完成");
             Log.Info(nameof(Init), $"启动耗时{stopwatch.ElapsedMilliseconds}毫秒");
+
             CheckStatusFFMPEGFile();
             Task.Run(() => CoreStartCompletEvent?.Invoke(null, new EventArgs()));
             if (Mode != Mode.Core)
