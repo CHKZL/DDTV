@@ -28,7 +28,16 @@
             </Grid.RowDefinitions>
 
             <ui:NavigationView x:Name="RootNavigation" Grid.Row="1" IsBackButtonVisible="Collapsed" OpenPaneLength="180" >
-
+                <ui:NavigationView.Resources>
+                    <!--感谢群友开源一直寻思是separator的问题（误）-->
+                    <Style TargetType="Border">
+                        <Style.Triggers>
+                            <Trigger Property="Height" Value="1">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ui:NavigationView.Resources>
                 <ui:NavigationView.Header>
                     <ui:BreadcrumbBar Margin="42,32,0,0" FontSize="28" FontWeight="DemiBold" />
                 </ui:NavigationView.Header>
