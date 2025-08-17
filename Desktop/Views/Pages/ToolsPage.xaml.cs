@@ -36,7 +36,7 @@ public partial class ToolsPage
     private void ManualFix_Button_Click(object sender, RoutedEventArgs e)
     {
         OpenFileDialog openFileDialog = new OpenFileDialog();
-        openFileDialog.Filter = "录制的视频文件(*.flv, *.mp4)|*.flv;*.mp4";
+        openFileDialog.Filter = "录制的视频文件(*.flv, *.mp4, *.mkv)|*.flv;*.mp4;*.mkv";
         if (openFileDialog.ShowDialog() == DialogResult.OK)
         {
             string result = openFileDialog.FileName;
