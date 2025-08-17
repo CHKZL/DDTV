@@ -49,7 +49,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" Margin="3" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                <Border Grid.Column="0" Margin="0" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
@@ -59,7 +59,7 @@
                         <TextBlock Grid.Column="1" Text="{Binding LiveCount,Mode=OneWay}" FontSize="50" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
                     </Grid>
                 </Border>
-                <Border Grid.Column="1" Margin="3" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
+                <Border Grid.Column="1" Margin="3,0,0,0" CornerRadius="10" BorderBrush="#CCCCCC" BorderThickness="0,0,0,0"  Background="#343434">
                     <Grid Margin="25,0,25,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />

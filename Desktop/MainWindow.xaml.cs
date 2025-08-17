@@ -321,41 +321,81 @@ namespace Desktop
             }
         }
 
-        /// <summary>
-        /// 关闭后事件
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void Window_Closed(object sender, EventArgs e)
-        {
-            DataPage.Timer_DataPage?.Dispose();
-            DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-            Environment.Exit(-114514);
-        }
+		/// <summary>
+		/// 关闭后事件 (保留用于其他可能的清理操作)
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Window_Closed(object sender, EventArgs e)
+		{
+			// 如果通过其他方式关闭，确保清理操作执行
+			if (!IsProgrammaticClose)
+			{
+				DataPage.Timer_DataPage?.Dispose();
+				DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
+				Environment.Exit(-114514);
+			}
+		}
 
-        /// <summary>
-        /// 关闭前确认关闭
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void FluentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (!IsProgrammaticClose)
-            {
-                System.Windows.MessageBoxResult result = System.Windows.MessageBox.Show("确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。", "关闭确认", System.Windows.MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (result == System.Windows.MessageBoxResult.No)
-                {
-                    e.Cancel = true;
-                }
-            }
-        }
+		/// <summary>
+		/// 关闭前确认关闭
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private async void FluentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+		{
+			if (!IsProgrammaticClose)
+			{
+				e.Cancel = true; // 先取消关闭
+
+				bool shouldExit = await ShowExitConfirmationAsync();
+				if (shouldExit)
+				{
+					Environment.Exit(-114514);
+				}
+			}
+		}
+
+		/// <summary>
+		/// 执行退出确认逻辑（供外部调用）
+		/// </summary>
+		/// <returns>返回 true 表示用户确认退出，false 表示取消</returns>
+		public async Task<bool> ShowExitConfirmationAsync()
+		{
+			var messageBox = new Wpf.Ui.Controls.MessageBox
+			{
+				Title = "关闭确认",
+				Content = "确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。",
+				PrimaryButtonText = "是",
+				SecondaryButtonText = "否",
+				IsCloseButtonEnabled = false,
+				Owner = this,  // 设置父窗口为当前主窗口
+				WindowStartupLocation = WindowStartupLocation.CenterOwner  // 相对于父窗口居中
+			};
+
+			var result = await messageBox.ShowDialogAsync();
+
+			if (result == Wpf.Ui.Controls.MessageBoxResult.Primary)
+			{
+				// 执行清理操作
+				DataPage.Timer_DataPage?.Dispose();
+				DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
+
+				// 设置程序化关闭标志
+				IsProgrammaticClose = true;
+
+				return true;
+			}
+
+			return false;
+		}
 
 
-        /// <summary>
-        /// 更新目录房间列表录制中数量
-        /// </summary>
-        /// <param name="state"></param>
-        public static void UpdateNumberRecordedRoomsInDirectoryRoomList(object state)
+		/// <summary>
+		/// 更新目录房间列表录制中数量
+		/// </summary>
+		/// <param name="state"></param>
+		public static void UpdateNumberRecordedRoomsInDirectoryRoomList(object state)
         {
             try
             {

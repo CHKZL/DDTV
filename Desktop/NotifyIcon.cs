@@ -88,28 +88,18 @@ namespace Desktop
 		}
 
 		/// <summary>
-		/// 右键退出菜单项点击事件，弹出确认对话框并处理退出逻辑。
+		/// 右键退出菜单项点击事件，调用主窗口的退出确认逻辑。
 		/// </summary>
 		private async void RightClickExit(object sender, RoutedEventArgs e)
 		{
-			var messageBox = new Wpf.Ui.Controls.MessageBox
+			MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
+			if (mainWindow != null)
 			{
-				Title = "关闭确认",
-				Content = "确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。",
-				PrimaryButtonText = "是",
-				SecondaryButtonText = "否",
-				IsCloseButtonEnabled = false 
-				/*注意：IsCloseButtonEnabled 属性仅在 Wpf.Ui 4.0.3里可用，
-				如果确定要更新的话可以把mainwindow里面的 FluentWindow_Closing也给换成这个退出，统一风格（
-				如果不合并把pr关掉我改回去*/
-			};
-
-			var result = await messageBox.ShowDialogAsync();
-
-			if (result == Wpf.Ui.Controls.MessageBoxResult.Primary)
-			{
-				Desktop.Views.Pages.DataPage.Timer_DataPage?.Dispose();
-				Environment.Exit(-114514);
+				bool shouldExit = await mainWindow.ShowExitConfirmationAsync();
+				if (shouldExit)
+				{
+					Environment.Exit(-114514);
+				}
 			}
 		}
 
