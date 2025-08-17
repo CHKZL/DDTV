@@ -2393,6 +2393,28 @@ namespace Core
                 }
             }
 
+            private static string DetectErroneousFilesFixThem = "false";
+            /// <summary>
+            /// 如果检测到修复的文件大小不符合预期，尝试修复
+            /// 默认值：false
+            /// </summary>
+            public bool _DetectErroneousFilesFixThem
+            {
+                get
+                {
+                    return bool.Parse(DetectErroneousFilesFixThem);
+                }
+                set
+                {
+                    if (value.ToString() != DetectErroneousFilesFixThem)
+                    {
+                        DetectErroneousFilesFixThem = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             #endregion
 
         }

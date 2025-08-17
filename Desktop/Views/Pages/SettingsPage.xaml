@@ -605,8 +605,8 @@
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
-                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="自动转码" />
-                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="录制完成自动修复和转码" />
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="快捷修复\转码" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="录制完成后进行快捷修复和转码" />
                                     </Grid>
                                     <ui:ToggleSwitch Name="AutomaticRepair_SwitchControl" IsChecked="{Binding _AutomaticRepair, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
                                 </Grid>
@@ -621,10 +621,25 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
-                                    <Label Grid.Row="0"  Margin="10,0,0,0" Content="修复和转码的执行参数"/>
-                                    <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="AutomaticRepair_Arguments_InputBox" Margin="0,0,0,0"  Text="{Binding _AutomaticRepair_Arguments, Mode=OneWay}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="请使用&quot;{before}&quot;来标识原始文件，使用&quot;{after}&quot;来标识输出文件，默认为：&#x0a;-y -i &quot;{before}&quot; -c copy &quot;{after}&quot;"/>
+                                    <Grid Grid.Row="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0"  Margin="10,0,0,0" Content="快捷修复和转码的执行参数"/>
+                                        <ui:TextBox  Grid.Row="1" Grid.Column="0" Name="AutomaticRepair_Arguments_InputBox" Margin="0,0,0,0"  Text="{Binding _AutomaticRepair_Arguments, Mode=OneWay}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="请使用&quot;{before}&quot;来标识原始文件，使用&quot;{after}&quot;来标识输出文件，默认为：&#x0a;-y -i &quot;{before}&quot; -c copy &quot;{after}&quot;"/>
+                                    </Grid>
+                                    <Grid Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,10,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" Content="如果快捷修复后，发现文件大小不对劲，进行高级修复（请注意！该功能会进行完整的文件重写！注意硬盘IO负载！）" />
+                                        <CheckBox Name="DetectErroneousFilesFixThem_InputBox" Grid.Row="1" HorizontalAlignment="Left" Margin="0,0,0,0" Content="确认进行高级修复" IsChecked="{Binding _DetectErroneousFilesFixThem, Mode=OneWay}"/>
+                                    </Grid>
                                 </Grid>
                             </StackPanel>
+
                         </ui:CardExpander>
                         <ui:CardExpander Icon="{ui:SymbolIcon Cut20}">
                             <ui:CardExpander.Header>

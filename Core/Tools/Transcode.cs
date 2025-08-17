@@ -118,7 +118,17 @@ namespace Core.Tools
                     else
                     {
                         SMTP.TriggerEvent(Card, SMTP.SMTP_EventType.AbandonTranscod);
-                        Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，放弃删除源文件:[{before}]");
+                        
+                        //判断高级修复
+                        if(Config.Core_RunConfig._DetectErroneousFilesFixThem)
+                        {
+                            Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，进行高级修复，源文件:[{before}]，目标文件：[{after}]");
+                            await FixDurationWithMkvToolnixAsync(before, after);
+                        }
+                        else
+                        {
+                            Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，放弃删除源文件:[{before}]");
+                        }
                     }
                 }
                 if (process != null)

@@ -169,7 +169,7 @@ public partial class SettingsPage
             return false;
         }
 
-        //自动转码参数检查
+        //快捷转码参数检查
         if (string.IsNullOrEmpty(AutomaticRepair_Arguments_InputBox.Text))
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确保修复和转码的执行参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
@@ -358,12 +358,19 @@ public partial class SettingsPage
         }
         Config.Core_RunConfig._HlsWaitingTime = (int)HlsWaitingTime_InputControl.Value;
 
-        //自动转码
+        //快捷修复\转码
         if (Config.Core_RunConfig._AutomaticRepair != AutomaticRepair_SwitchControl.IsChecked)
         {
             Config.Core_RunConfig._AutomaticRepair = (bool)AutomaticRepair_SwitchControl.IsChecked;
         }
         Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
+
+        //高级修复
+        if (Config.Core_RunConfig._DetectErroneousFilesFixThem != DetectErroneousFilesFixThem_InputBox.IsChecked)
+        {
+            Config.Core_RunConfig._DetectErroneousFilesFixThem = (bool)DetectErroneousFilesFixThem_InputBox.IsChecked;
+        }
+
 
         //文件按大小分割
         if (Config.Core_RunConfig.CutAccordingToSize_For_ComboBox != CutAccordingToSize_For_ComboBox.SelectedIndex)

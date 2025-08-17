@@ -78,13 +78,13 @@ public partial class ToolsPage
 				Transcode transcode = new Transcode();
 				try
 				{
-					toolsPageModels.FixTimeMessage = "正在用MKVToolNix修复文件";
+					toolsPageModels.FixTimeMessage = "正在用MKVToolNix修复文件，修复时间根据文件大小和硬盘速度会有变化，请稍候...";
 					Dispatcher.Invoke(() => FixtimeTextBlock.Text = toolsPageModels.FixTimeMessage);
 					toolsPageModels.OnPropertyChanged("FixTimeMessage");
 					string before = result;
 					string after = System.IO.Path.Combine(
 						System.IO.Path.GetDirectoryName(result)!,
-						System.IO.Path.GetFileNameWithoutExtension(result) + "_fix.mkv"
+						System.IO.Path.GetFileNameWithoutExtension(result) + "_fix.mp4"
 					);
 					await transcode.FixDurationWithMkvToolnixAsync(before, after);
 					toolsPageModels.FixTimeMessage = "MKVToolNix修复完成";
