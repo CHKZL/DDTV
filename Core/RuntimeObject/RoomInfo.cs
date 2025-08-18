@@ -504,6 +504,10 @@ namespace Core.RuntimeObject
                 case SearchType.LiveButNotRecord:
                     keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.live_status.Value == 1 && !x.Value.IsAutoRec));
                     break;
+                //提醒状态为“打开”状态的
+                case SearchType.ReminderStatusOn:
+                    keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos.Where(x => x.Value.IsRemind));
+                    break;
                 //把全部以原始字母顺序排列返回
                 case SearchType.Original:
                     keyValuePairs = new Dictionary<long, RoomCardClass>(roomInfos);
@@ -826,6 +830,10 @@ namespace Core.RuntimeObject
             /// 开但未录制
             /// </summary>
             LiveButNotRecord,
+            /// <summary>
+            /// 提醒状态开
+            /// </summary>
+            ReminderStatusOn,
             /// <summary>
             /// 原始数据(按照字母顺序升序排列)
             /// </summary>

@@ -41,6 +41,7 @@
                 <ComboBoxItem Content="开播中" />
                 <ComboBoxItem Content="未开播" />
                 <ComboBoxItem Content="开播但未录制" />
+                <ComboBoxItem Content="提醒状态开" />
             </ComboBox>
             <ComboBox Name="PageComboBox" Width="100" SelectedIndex="0" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Left" ItemsSource="{Binding PageComboBoxItems}" SelectionChanged="PageComboBox_SelectionChanged">
             </ComboBox>

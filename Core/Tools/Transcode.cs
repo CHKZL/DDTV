@@ -206,14 +206,8 @@ namespace Core.Tools
                     try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch { }
                 };
 
-                // 可在config里增加usingCustomMKVmerge增加自定义路径功能
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    //if (!string.IsNullOrEmpty(Config.Core_RunConfig._UsingCustomMKVMERGE) && File.Exists(Config.Core_RunConfig._UsingCustomMKVMERGE))
-                    //{
-                    //	process.StartInfo.FileName = Config.Core_RunConfig._UsingCustomMKVMERGE;
-                    //}
-                    //else 
                     if (File.Exists("./Plugins/MKVToolNix/mkvmerge.exe"))
                     {
                         process.StartInfo.FileName = "./Plugins/MKVToolNix/mkvmerge.exe";
