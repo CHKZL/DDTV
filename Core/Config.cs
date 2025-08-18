@@ -2415,6 +2415,25 @@ namespace Core
                 }
             }
 
+            private static string DurationLogStorage = "2592000";
+            /// <summary>
+            /// 日志保存的时长(秒)
+            /// 默认值：2592000 (一个月)
+            /// </summary>
+            public long _DurationLogStorage
+            {
+                get => long.Parse(DurationLogStorage);
+                set
+                {
+                    if (value.ToString() != DurationLogStorage)
+                    {
+                        DurationLogStorage = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             #endregion
 
         }
