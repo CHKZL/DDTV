@@ -35,8 +35,8 @@ namespace Core
                     varMap.Add(fieldInfo.Name, fieldInfo);
                     if (!fieldInfo.Name.ToLower().Contains("Access"))
                     {
-                        string ConfigText = $"从配置文件获取参数初始化：{fieldInfo.Name}={fieldInfo.GetValue(null)}";
-                        Log.Info(nameof(Config), ConfigText);
+                        //string ConfigText = $"从配置文件获取参数初始化：{fieldInfo.Name}={fieldInfo.GetValue(null)}";
+                        //Log.Info(nameof(Config), ConfigText);
                     }
                 }
             Thread.Sleep(500);
@@ -208,6 +208,11 @@ namespace Core
                             try
                             {
                                 varMap[item.Split('=')[0]].SetValue(null, item.Split('=')[1]);
+                                if (!item.Split('=')[0].ToLower().Contains("access"))
+                                {
+                                    string ConfigText = $"从配置文件获取参数初始化：{item.Split('=')[0]}={item.Split('=')[1]}";
+                                    Log.Info(nameof(ReadConfiguration), ConfigText);
+                                }
                             }
                             catch (Exception) { }
                         }
