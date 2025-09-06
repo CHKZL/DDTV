@@ -1219,6 +1219,7 @@ namespace Core
                         AccessKeySecret = Tools.KeyCharacterReplacement.
                             GetRandomStr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789!@#$%^&*()_+-/?|}{",16);
                         _AccessKeySecret = AccessKeySecret;
+                        Console.WriteLine($"初次使用，随机生成的AccessKeySecret为：{AccessKeySecret}");
                     }
                     return AccessKeySecret;
                 }
