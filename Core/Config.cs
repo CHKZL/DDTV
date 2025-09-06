@@ -1218,6 +1218,7 @@ namespace Core
                     {
                         AccessKeySecret = Tools.KeyCharacterReplacement.
                             GetRandomStr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789!@#$%^&*()_+-/?|}{",16);
+                        _AccessKeySecret = AccessKeySecret;
                     }
                     return AccessKeySecret;
                 }
