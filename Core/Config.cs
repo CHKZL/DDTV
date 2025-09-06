@@ -1205,14 +1205,22 @@ namespace Core
                 }
             }
 
-            private static string AccessKeySecret = "ddtv";
+            private static string AccessKeySecret = string.Empty;
             /// <summary>
-            /// API鉴权所使用的AccessKeySecret 为字符串，默认"ddtv"
-            /// 默认值：ddtv
+            /// API鉴权所使用的AccessKeySecret 为字符串，为了安全起见，初次使用时，会随机生成一个字符串，详情请启动后查看配置文件
+            /// 默认值：随机字符创
             /// </summary>
             public string _AccessKeySecret
             {
-                get => AccessKeySecret;
+                get 
+                {
+                    if(string.IsNullOrEmpty(AccessKeySecret))
+                    {
+                        AccessKeySecret = Tools.KeyCharacterReplacement.
+                            GetRandomStr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789!@#$%^&*()_+-/?|}{",16);
+                    }
+                    return AccessKeySecret;
+                }
                 set
                 {
                     if (value != AccessKeySecret)
