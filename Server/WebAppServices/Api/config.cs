@@ -365,10 +365,10 @@ namespace Server.WebAppServices.Api
         /// <param name="time">切割的时长（单位秒）</param>
         /// <returns></returns>
         [HttpPost(Name = "set_cut_according_time")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long time)
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long cut_time)
         {
-            Core.Config.Core_RunConfig._CutAccordingToTime = time;
-            return Content(MessageBase.MssagePack(nameof(set_cut_according_time), "", $"根据录制时长切割视频文件的时长设置为{time}秒"), "application/json");
+            Core.Config.Core_RunConfig._CutAccordingToTime = cut_time;
+            return Content(MessageBase.MssagePack(nameof(set_cut_according_time), "", $"根据录制时长切割视频文件的时长设置为{cut_time}秒"), "application/json");
         }
     }
 
