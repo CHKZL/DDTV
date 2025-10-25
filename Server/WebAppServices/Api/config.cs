@@ -350,5 +350,27 @@ namespace Server.WebAppServices.Api
     }
 
 
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class set_cut_according_time : ControllerBase
+    {
+
+        /// <summary>
+        /// 设置根据录制时长切割视频文件的时长
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="time">文件写入完成的时候是否修复</param>
+        /// <returns></returns>
+        [HttpPost(Name = "set_cut_according_time")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long time)
+        {
+            Core.Config.Core_RunConfig._CutAccordingToTime = time;
+            return Content(MessageBase.MssagePack(nameof(set_cut_according_time), "", $"根据录制时长切割视频文件的时长设置为{time}秒"), "application/json");
+        }
+    }
+
 
 }

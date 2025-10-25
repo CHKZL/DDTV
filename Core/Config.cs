@@ -1110,7 +1110,7 @@ namespace Core
             private static string IP = "http://localhost";
             /// <summary>
             /// WEB服务监听的IP地址
-            /// 默认值：http://localhost
+            /// 默认值：http://localhost （为完整URL，应为前端网址，必须带协议和端口号，如：http://127.0.0.1:11419）
             /// </summary>
             public string _IP
             {

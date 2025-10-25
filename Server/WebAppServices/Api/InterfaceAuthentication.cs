@@ -43,20 +43,14 @@ namespace Server.WebAppServices.Middleware
         [HttpPost(Name = "Attribute")]
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            ;
-
             // 检查请求方法是否为POST或GET，如果不是，则返回未授权
             if (context.HttpContext.Request.Method != "POST" && context.HttpContext.Request.Method != "GET")
             {
                 Unauthorized(context);
                 return;
             }
-
             // 根据请求方法从表单或查询字符串中获取参数
             var parameters = context.HttpContext.Request.Method == "POST" ? new Dictionary<string, StringValues>(context.HttpContext.Request.Form) : new Dictionary<string, StringValues>(context.HttpContext.Request.Query);
-
-
-
             // 检查参数，如果满足任意条件则返回未授权：【提交了"accesskeysecret"】【未包含"sig"】【未包含"accesskeyid"】【"accesskeyid"和配置文件中不一致】【不包含"time"】【"time"和当前服务器时间差距超过300秒】
             if (parameters.ContainsKey("access_key_secret") ||
                !parameters.ContainsKey("sig") ||
@@ -67,7 +61,6 @@ namespace Server.WebAppServices.Middleware
                 Unauthorized(context);
                 return;
             }
-
             if (int.TryParse(parameters["time"], out int time))
             {
                 //时间戳和当前差距超过300秒
@@ -83,15 +76,10 @@ namespace Server.WebAppServices.Middleware
                 Unauthorized(context);
                 return;
             }
-
-
-
             // 将"accesskeysecret"添加到参数字典中
             parameters.Add("access_key_secret", Core.Config.Core_RunConfig._AccessKeySecret);
-
             // 创建签名字符串，排除"sig"，并按键排序（字母顺序）
             string AuthenticationOriginalStr = string.Join(";", parameters.Where(p => p.Key.ToLower() != "sig").OrderBy(p => p.Key).Select(p => $"{p.Key.ToLower()}={p.Value}"));
-
             // 使用SHA1加密签名字符串
             string sig = Core.Tools.Encryption.SHA1_Encrypt(AuthenticationOriginalStr);
             // 如果签名不匹配，则返回未授权
