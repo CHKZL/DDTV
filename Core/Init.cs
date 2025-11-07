@@ -199,7 +199,7 @@ namespace Core
         }
 
         /// <summary>
-        /// 清理以外存在的文件
+        /// 清理意外存在的文件
         /// </summary>
         private static void DeleteUnexpectedFiles()
         {
