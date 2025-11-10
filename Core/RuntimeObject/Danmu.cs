@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Web.HttpUtility;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
@@ -59,7 +60,7 @@ namespace Core.RuntimeObject
                         { "color", "16777215" },
                         { "fontsize", "25" },
                         { "mode", "1" },
-                        { "msg", Message },
+                        { "msg", UrlEncode(Message, Encoding.UTF8) },
                         { "rnd", (DateTime.Now - TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1))).TotalSeconds.ToString() },
                         { "roomid", roomId },
                         { "csrf_token", account.CsrfToken },
