@@ -267,10 +267,6 @@ namespace Core.RuntimeObject
         public static bool GetCardForUID(long UID, ref RoomCardClass roomCard)
         {
             roomCard = roomInfos.FirstOrDefault(x => x.Key == UID).Value;
-            if(roomCard==null)
-            {
-                ;
-            }
             if (roomCard != null)
             {
                 return true;

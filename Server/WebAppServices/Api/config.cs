@@ -1,15 +1,17 @@
-﻿using Server.WebAppServices.Middleware;
-using Core.Network.Methods;
+﻿using Core.Network.Methods;
+using Core.RuntimeObject;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Server.WebAppServices.Middleware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
-using static Server.WebAppServices.Middleware.InterfaceAuthentication;
 using static Core.Tools.FileOperations;
+using static Server.WebAppServices.MessageCode;
+using static Server.WebAppServices.Middleware.InterfaceAuthentication;
 
 namespace Server.WebAppServices.Api
 {
@@ -118,11 +120,11 @@ namespace Server.WebAppServices.Api
         /// <param name="check">二次确认key</param>
         /// <returns></returns>
         [HttpPost(Name = "set_default_file_path_name_format")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string default_liver_folder_name,[FromForm] string default_data_folder_name,[FromForm] string default_file_name, [FromForm] string check = "")
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] string default_liver_folder_name, [FromForm] string default_data_folder_name, [FromForm] string default_file_name, [FromForm] string check = "")
         {
             if (string.IsNullOrEmpty(check))
             {
-                string A = $"{default_liver_folder_name}/{default_data_folder_name}{(string.IsNullOrEmpty(default_data_folder_name)?"":"/")}{default_file_name}";
+                string A = $"{default_liver_folder_name}/{default_data_folder_name}{(string.IsNullOrEmpty(default_data_folder_name) ? "" : "/")}{default_file_name}";
                 cache.set_default_all_name = A;
                 cache.set_default_liver_folder_name = default_liver_folder_name;
                 cache.set_default_data_folder_name = default_data_folder_name;
@@ -362,7 +364,7 @@ namespace Server.WebAppServices.Api
         /// 设置根据录制时长切割视频文件的时长
         /// </summary>
         /// <param name="commonParameters"></param>
-        /// <param name="time">切割的时长（单位秒）</param>
+        /// <param name="cut_time">切割的时长（单位秒）</param>
         /// <returns></returns>
         [HttpPost(Name = "set_cut_according_time")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long cut_time)
@@ -372,7 +374,7 @@ namespace Server.WebAppServices.Api
         }
     }
 
-        [Produces(MediaTypeNames.Application.Json)]
+    [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
     [Route("api/config/[controller]")]
     [Login]
@@ -381,7 +383,7 @@ namespace Server.WebAppServices.Api
     {
 
         /// <summary>
-        /// 设置根据录制时长切割视频文件的大小
+        /// 设置根据录制文件大小切割视频文件
         /// </summary>
         /// <param name="commonParameters"></param>
         /// <param name="size">切割的大小（单位字节）</param>
@@ -395,4 +397,92 @@ namespace Server.WebAppServices.Api
     }
 
 
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class set_room_cut_according_to_size : ControllerBase
+    {
+
+        /// <summary>
+        /// 房间维度设置根据录制文件大小切割视频文件（UID\房间号至少填一个）
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="size">切割的大小（单位字节）</param>
+        /// <param name="uid">用户UID</param>
+        /// <param name="roomid">房间号</param>
+        /// <returns></returns>
+        [HttpPost(Name = "set_room_cut_according_to_size")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long size, [FromForm] long uid = 0, [FromForm] long roomid = 0)
+        {
+            if (size <= 0)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_size), false, "设置的切割大小不正确", code.OperationFailed), "application/json");
+            }
+            if (uid == 0 && roomid == 0)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_size), false, "UID和房间号不正确", code.OperationFailed), "application/json");
+            }
+            RoomCardClass Card = new RoomCardClass();
+            if (uid != 0)
+            {
+                _Room.GetCardForUID(uid, ref Card);
+            }
+            else if (roomid != 0)
+            {
+                _Room.GetCardFoRoomId(roomid, ref Card);
+            }
+            if (Card == null)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_size), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
+            }
+            Card.RoomCutAccordingToSize = size;
+            return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_size), "", $"设置房间[{(uid == 0 ? "rooid:" + roomid : "uid:" + uid)}]根据录制时长切割视频文件的大小设置为{size}byte"), "application/json");
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class set_room_cut_according_to_time : ControllerBase
+    {
+
+        /// <summary>
+        /// 房间维度设置根据录制时长切割视频文件的大小（UID\房间号至少填一个）
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="cut_time">切割的时长（单位秒）</param>
+        /// <param name="uid">用户UID</param>
+        /// <param name="roomid">房间号</param>
+        /// <returns></returns>
+        [HttpPost(Name = "set_room_cut_according_to_time")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long cut_time, [FromForm] long uid = 0, [FromForm] long roomid = 0)
+        {
+            if (cut_time <= 0)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_time), false, "设置的切割时间不正确", code.OperationFailed), "application/json");
+            }
+            if (uid == 0 && roomid == 0)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_time), false, "UID和房间号不正确", code.OperationFailed), "application/json");
+            }
+            RoomCardClass Card = new RoomCardClass();
+            if (uid != 0)
+            {
+                _Room.GetCardForUID(uid, ref Card);
+            }
+            else if (roomid != 0)
+            {
+                _Room.GetCardFoRoomId(roomid, ref Card);
+            }
+            if (Card == null)
+            {
+                return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_time), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
+            }
+            Card.RoomCutAccordingToTime = cut_time;
+            return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_time), "", $"设置房间[{(uid == 0 ? "rooid:" + roomid : "uid:" + uid)}]根据录制时长切割视频文件的时长设置为{cut_time}秒"), "application/json");
+        }
+    }
 }

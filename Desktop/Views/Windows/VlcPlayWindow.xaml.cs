@@ -65,6 +65,9 @@ namespace Desktop.Views.Windows
         /// 用于跟踪当前是否为全屏状态
         /// </summary>
         public bool isFullScreen = false;
+
+        // 重连锁
+        private volatile bool _reconnectLock = false;
         public class DanMuOrbitInfo
         {
             public string Text { get; set; }
@@ -96,7 +99,7 @@ namespace Desktop.Views.Windows
             this.Title = $"{roomCard.Name}({roomCard.RoomId}) - {roomCard.Title.Value}";
             Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
 
-            _libVLC = new LibVLC([$"--network-caching={new Random().Next(5000, 7000)} --no-cert-verification"]);
+            _libVLC = new LibVLC([$"--network-caching=3000 --live-caching=3000 --no-cache --hls-segment-threads=3 --no-cert-verification"]);
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(_libVLC);
 
             videoView.MediaPlayer = _mediaPlayer;
