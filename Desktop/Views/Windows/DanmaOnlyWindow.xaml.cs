@@ -85,7 +85,7 @@ namespace Desktop.Views.Windows
                     }
                 case SuperchatEventArg SuperchatEvent:
                     {
-                        msg.Message = $"{SuperchatEvent.UserName}：打赏SC[{SuperchatEvent.Price}]";
+                        msg.Message = $"{SuperchatEvent.UserName}：打赏SC[{SuperchatEvent.Price}]{SuperchatEvent.Message}";
                         break;
                     }
                 case GuardBuyEventArgs GuardBuyEvent:
