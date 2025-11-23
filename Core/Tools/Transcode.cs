@@ -15,6 +15,27 @@ namespace Core.Tools
     public class Transcode
     {
 
+
+        public static string GetFFMPEGPath()
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                if (!string.IsNullOrEmpty(Config.Core_RunConfig._UsingCustomFFMPEG) && File.Exists(Config.Core_RunConfig._UsingCustomFFMPEG))
+                {
+                    return Config.Core_RunConfig._UsingCustomFFMPEG;
+                }
+                else if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
+                {
+                    return "./Plugins/ffmpeg/ffmpeg.exe";
+                }
+                else if (File.Exists("./Plugins/Plugins/ffmpeg/ffmpeg.exe"))
+                {
+                    return "./Plugins/Plugins/ffmpeg/ffmpeg.exe";
+                }
+            }
+            return "ffmpeg";
+        }
+
         /// <summary>
         /// 异步转码函数
         /// </summary>
@@ -65,25 +86,8 @@ namespace Core.Tools
                     {
                     }
                 };  // 捕捉的信息
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    if (!string.IsNullOrEmpty(Config.Core_RunConfig._UsingCustomFFMPEG) && File.Exists(Config.Core_RunConfig._UsingCustomFFMPEG))
-                    {
-                        process.StartInfo.FileName = Config.Core_RunConfig._UsingCustomFFMPEG;
-                    }
-                    else if (File.Exists("./Plugins/ffmpeg/ffmpeg.exe"))
-                    {
-                        process.StartInfo.FileName = "./Plugins/ffmpeg/ffmpeg.exe";
-                    }
-                    else if (File.Exists("./Plugins/Plugins/ffmpeg/ffmpeg.exe"))
-                    {
-                        process.StartInfo.FileName = "./Plugins/Plugins/ffmpeg/ffmpeg.exe";
-                    }
-                }
-                else
-                {
-                    process.StartInfo.FileName = "ffmpeg";
-                }
+
+                process.StartInfo.FileName = GetFFMPEGPath();
 
                 // 启动Process
                 process.Start();
@@ -118,9 +122,9 @@ namespace Core.Tools
                     else
                     {
                         SMTP.TriggerEvent(Card, SMTP.SMTP_EventType.AbandonTranscod);
-                        
+
                         //判断高级修复
-                        if(Config.Core_RunConfig._DetectErroneousFilesFixThem)
+                        if (Config.Core_RunConfig._DetectErroneousFilesFixThem)
                         {
                             Log.Info(nameof(TranscodeAsync), $"修复后的文件大小不符合预期，进行高级修复，源文件:[{before}]，目标文件：[{after}]");
                             await FixDurationWithMkvToolnixAsync(before, after);
@@ -152,7 +156,7 @@ namespace Core.Tools
                 Log.Info(nameof(TranscodeAsync), $"修复/转码任务完成:输出fix_log文件[{before + "_fix日志.log"}]");
                 if (Card != null)
                 {
-                    SMTP.TriggerEvent((Card,LogTextAsString), SMTP.SMTP_EventType.TranscodingFail);
+                    SMTP.TriggerEvent((Card, LogTextAsString), SMTP.SMTP_EventType.TranscodingFail);
                 }
 
             }
@@ -161,17 +165,17 @@ namespace Core.Tools
 
             LogText = null;
         }
-		/// <summary>
-		/// 使用 MKVToolNix 修复 MKV 文件时长的异步函数
-		/// </summary>
-		/// <param name="before">源文件路径</param>
-		/// <param name="after">目标文件路径</param>
-		/// <param name="Card">可选，房间卡对象</param>
-		/// <returns>Task</returns>
-		public async Task FixDurationWithMkvToolnixAsync(string before, string after)
-		{
-			List<string> LogText = new List<string>();
-			string LogTextAsString = string.Empty;
+        /// <summary>
+        /// 使用 MKVToolNix 修复 MKV 文件时长的异步函数
+        /// </summary>
+        /// <param name="before">源文件路径</param>
+        /// <param name="after">目标文件路径</param>
+        /// <param name="Card">可选，房间卡对象</param>
+        /// <returns>Task</returns>
+        public async Task FixDurationWithMkvToolnixAsync(string before, string after)
+        {
+            List<string> LogText = new List<string>();
+            string LogTextAsString = string.Empty;
             try
             {
 
@@ -249,9 +253,123 @@ namespace Core.Tools
                 }
                 LogTextAsString = string.Join(Environment.NewLine, LogText);
                 Log.Info(nameof(FixDurationWithMkvToolnixAsync), $"MKVToolNix修复任务完成:输出fix_log文件[{before + "_MKVToolNix_fix日志.log"}]");
-               
+
             }
-			LogText = null;
-		}
+            LogText = null;
+        }
+
+        /// <summary>
+        /// 使用 ffmpeg 将多个媒体分片文件追加合并到一个现有的视频文件中。
+        /// </summary>
+        /// <param name="outputFilePath">目标输出文件路径（将被追加内容）。</param>
+        /// <param name="fragmentFilePaths">待合并的分片文件路径列表（顺序必须正确）。</param>
+        /// <param name="deleteFragmentsAfterMerge">合并成功后是否删除源分片文件。</param>
+        /// <returns>一个元组，包含合并操作的成功状态和错误信息（如果失败）。</returns>
+        public static (bool Success, string ErrorMessage) MergeFragmentsToFile(
+            string outputFilePath,
+            List<string> fragmentFilePaths,
+            bool deleteFragmentsAfterMerge = true)
+        {
+            // 1. 输入参数验证
+            if (string.IsNullOrEmpty(outputFilePath))
+            {
+                return (false, "目标文件路径不能为空。");
+            }
+            if (fragmentFilePaths == null || fragmentFilePaths.Count == 0)
+            {
+                return (false, "分片文件列表不能为空。");
+            }
+            foreach (var path in fragmentFilePaths)
+            {
+                if (!File.Exists(path))
+                {
+                    return (false, $"分片文件不存在: {path}");
+                }
+            }
+
+            // 2. 生成分片列表文件 (list.txt)
+            string listFilePath = Path.Combine(Path.GetDirectoryName(outputFilePath) ?? "", "list.txt");
+            try
+            {
+                using (var writer = new StreamWriter(listFilePath))
+                {
+                    foreach (var path in fragmentFilePaths)
+                    {
+                        // ffmpeg 的 concat 协议要求路径用单引号包裹，并且反斜杠需要转义
+                        writer.WriteLine($"file '{path.Replace("\\", "\\\\")}'");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, $"创建分片列表文件失败: {ex.Message}");
+            }
+
+            // 3. 构建并执行 ffmpeg 命令
+            string arguments = $"-f concat -safe 0 -i \"{listFilePath}\" -c copy -bsf:a aac_adtstoasc -y \"{outputFilePath}\"";
+
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = GetFFMPEGPath(),
+                Arguments = arguments,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                StandardOutputEncoding = System.Text.Encoding.UTF8,
+                StandardErrorEncoding = System.Text.Encoding.UTF8
+            };
+
+            using (var process = new Process { StartInfo = startInfo })
+            {
+                try
+                {
+                    process.Start();
+                    string output = process.StandardOutput.ReadToEnd();
+                    string error = process.StandardError.ReadToEnd();
+                    process.WaitForExit();
+
+                    if (process.ExitCode != 0)
+                    {
+                        // 合并失败，返回错误信息
+                        return (false, $"ffmpeg 执行失败 (Exit Code: {process.ExitCode})。错误详情: {error}。命令行: {GetFFMPEGPath()} {arguments}");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return (false, $"启动 ffmpeg 进程失败: {ex.Message}");
+                }
+            }
+
+            // 4. 清理工作
+            try
+            {
+                // 删除临时的列表文件
+                if (File.Exists(listFilePath))
+                {
+                    File.Delete(listFilePath);
+                }
+
+                // 如果设置了，删除源分片文件
+                if (deleteFragmentsAfterMerge)
+                {
+                    foreach (var path in fragmentFilePaths)
+                    {
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 清理失败不影响合并结果，但应记录警告
+                Console.WriteLine($"合并成功，但清理临时文件时发生警告: {ex.Message}");
+            }
+
+            // 5. 成功完成
+            return (true, string.Empty);
+        }
     }
 }

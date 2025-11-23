@@ -1428,6 +1428,18 @@ namespace Core.RuntimeObject
         /// (Local值)
         /// </summary>
         public bool AppointmentRecord { set; get; } = false;
+        [JsonPropertyName("RoomCutAccordingToSize")]
+        /// <summary>
+        /// 只针对本房间生效的根据文件大小切割视频文件(字节)
+        /// (Local值)
+        /// </summary>
+        public long RoomCutAccordingToSize { set; get; } = 0;
+        [JsonPropertyName("RoomCutAccordingToTime")]
+        /// <summary>
+        /// 只针对本房间生效的根据录制时长切割视频文件(秒)
+        /// (Local值)
+        /// </summary>
+        public long RoomCutAccordingToTime { set; get; } = 0;
         /// <summary>
         /// 标题
         /// </summary>

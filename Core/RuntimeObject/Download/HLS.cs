@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.RuntimeObject.Download.Basics;
+using static Core.RuntimeObject.Download.Basics.HostClass.EXTM3U;
 
 namespace Core.RuntimeObject.Download
 {
@@ -18,17 +19,17 @@ namespace Core.RuntimeObject.Download
         /// <param name="card">房间卡片信息</param>
         /// <param name="Reconnection">是否为重连</param>
         /// <returns>[TaskStatus]任务状态；[FileName]下载成功的文件名</returns>
-        public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card,bool Reconnection)
+        public static async Task<(DlwnloadTaskState hlsState, string FileName)> DlwnloadHls_avc_mp4(RoomCardClass card, bool Reconnection)
         {
             DlwnloadTaskState hlsState = DlwnloadTaskState.Default;
             string File = string.Empty;
             Stopwatch stopWatch = new Stopwatch();
             await Task.Run(() =>
             {
-                InitializeDownload(card,RoomCardClass.TaskType.HLS_AVC);
+                InitializeDownload(card, RoomCardClass.TaskType.HLS_AVC);
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 long roomId = card.RoomId;
-                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword( $"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName)?"":"/")}{Config.Core_RunConfig._DefaultFileName}",DateTime.Now,card.UID)}_original.mp4";
+                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, card.UID)}_original.mp4";
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 //本地Task下载的文件大小
@@ -54,7 +55,7 @@ namespace Core.RuntimeObject.Download
                                 hlsState = CheckAndHandleFile(File, ref card);
                                 return;
                             case DlwnloadTaskState.PaidLiveStream:
-                                 CheckAndHandleFile(File, ref card);
+                                CheckAndHandleFile(File, ref card);
                                 Log.Warn(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但直播间为收费直播间(大航海或者门票直播)，创建任务失败，跳过当前任务");
                                 return;
                             case DlwnloadTaskState.NoHLSStreamExists:
@@ -68,15 +69,15 @@ namespace Core.RuntimeObject.Download
                     bool InitialRequest = true;
                     long currentLocation = 0;
                     long StartLiveTime = card.live_time.Value;
-                    
+
                     stopWatch.Start();
                     int RetryCount = 0;
                     while (true)
                     {
                         //处理大小限制分割
-                        if (Config.Core_RunConfig._CutAccordingToSize > 0)
+                        if (Config.Core_RunConfig._CutAccordingToSize > 0 || card.RoomCutAccordingToSize > 0)
                         {
-                            if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize)
+                            if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize || DownloadFileSizeForThisTask > card.RoomCutAccordingToSize)
                             {
                                 Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发时间分割");
                                 hlsState = DlwnloadTaskState.Success;
@@ -84,9 +85,9 @@ namespace Core.RuntimeObject.Download
                             }
                         }
                         //处理时间限制分割
-                        if (Config.Core_RunConfig._CutAccordingToTime > 0)
+                        if (Config.Core_RunConfig._CutAccordingToTime > 0 || card.RoomCutAccordingToTime > 0)
                         {
-                            if (stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime)
+                            if (stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime || stopWatch.Elapsed.TotalSeconds > card.RoomCutAccordingToTime)
                             {
                                 Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发文件大小分割");
                                 hlsState = DlwnloadTaskState.Success;
@@ -97,9 +98,9 @@ namespace Core.RuntimeObject.Download
                         long downloadSizeForThisCycle = 0;
                         try
                         {
-                            if (card.DownInfo.Unmark || card.DownInfo.IsCut || card.live_time.Value!=StartLiveTime)
+                            if (card.DownInfo.Unmark || card.DownInfo.IsCut || card.live_time.Value != StartLiveTime)
                             {
-                                hlsState = CheckAndHandleFile(File, ref card,card.live_time.Value!=StartLiveTime?true:false);
+                                hlsState = CheckAndHandleFile(File, ref card, card.live_time.Value != StartLiveTime ? true : false);
                                 return;
                             }
                             //刷新Host信息，获取最新的直播流片段
@@ -116,7 +117,7 @@ namespace Core.RuntimeObject.Download
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
                                     case DlwnloadTaskState.Default:
-                                        if(RetryCount>5)
+                                        if (RetryCount > 5)
                                         {
                                             CheckAndHandleFile(File, ref card);
                                             hlsState = DlwnloadTaskState.NoHLSStreamExists;
@@ -173,7 +174,7 @@ namespace Core.RuntimeObject.Download
                                         {
                                             CheckAndHandleFile(File, ref card);
                                             Thread.Sleep(1000 * 10);
-                                        }                                        
+                                        }
                                         return;
                                     }
                                     else
@@ -191,12 +192,12 @@ namespace Core.RuntimeObject.Download
                                 if (InitialRequest)
                                 {
                                     //把当前写入文件写入记录
-                                    string F_S = Config.Core_RunConfig._RecFileDirectory + (Config.Core_RunConfig._RecFileDirectory.EndsWith("/") || Config.Core_RunConfig._RecFileDirectory.EndsWith("\\")?"":"/") + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
+                                    string F_S = Config.Core_RunConfig._RecFileDirectory + (Config.Core_RunConfig._RecFileDirectory.EndsWith("/") || Config.Core_RunConfig._RecFileDirectory.EndsWith("\\") ? "" : "/") + fs.Name.Replace(new DirectoryInfo(Config.Core_RunConfig._RecFileDirectory).FullName, "").Replace("\\", "/");
                                     card.DownInfo.DownloadFileList.CurrentOperationVideoFile = F_S;
-                                    Log.Debug("test",card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
-                                     //正式开始下载提示
-                                    LogDownloadStart(card,"HLS");
-                                    
+                                    Log.Debug("test", card.DownInfo.DownloadFileList.CurrentOperationVideoFile);
+                                    //正式开始下载提示
+                                    LogDownloadStart(card, "HLS");
+
                                     hlsState = DlwnloadTaskState.Recording;
                                 }
                                 InitialRequest = false;
@@ -327,14 +328,14 @@ namespace Core.RuntimeObject.Download
         /// <param name="Url"></param>
         /// <returns></returns>
 
-        public static bool GetHlsAvcUrl(RoomCardClass roomCard,long Definition, out string Url)
+        public static bool GetHlsAvcUrl(RoomCardClass roomCard, long Definition, out string Url)
         {
             Url = "";
             if (!RoomInfo.GetLiveStatus(roomCard.RoomId))
             {
                 return false;
             }
-            HostClass hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc",Definition);
+            HostClass hostClass = _GetHost(roomCard.RoomId, "http_hls", "fmp4", "avc", Definition);
             if (hostClass.Effective)
             {
                 Url = $"{hostClass.host}{hostClass.base_url}{hostClass.uri_name}{hostClass.extra}";
