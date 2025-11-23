@@ -59,6 +59,7 @@ namespace Core
             InitDirectoryAndFile();
             ServicePointManager.DnsRefreshTimeout = 0;
             ServicePointManager.DefaultConnectionLimit = 4096 * 16;
+            System.Net.ServicePointManager.MaxServicePoints = 1024;
             ServicePointManager.Expect100Continue = false;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
             //给文件系统一点时间创建各种路径

@@ -57,7 +57,7 @@ namespace Core.Network.Methods
         private static PlayInfo_Class _PlayInfo(long RoomId,long Definition)
         {
             string url = GetRidURL($"{Config.Core_RunConfig._LiveDomainName}/xlive/web-room/v2/index/getRoomPlayInfo?room_id={RoomId}&protocol=0,1&format=0,1,2&codec=0,1,2&qn={Definition}&platform=web&ptype=8");
-            string WebText = Get.GetBody(url, true);
+            string WebText = Get.GetBody(url, true,ContentType:"application/vnd.apple.mpegurl");
             PlayInfo_Class hLSHostClass = new();
             try
             {

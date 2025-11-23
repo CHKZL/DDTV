@@ -29,7 +29,27 @@ namespace Core.RuntimeObject.Download
                 InitializeDownload(card, RoomCardClass.TaskType.HLS_AVC);
                 card.DownInfo.DownloadFileList.CurrentOperationVideoFile = string.Empty;
                 long roomId = card.RoomId;
-                File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, card.UID)}_original.mp4";
+
+
+                //构建要传递给 ReplaceKeyword 的完整文件名模板
+                //    这个模板包含了文件夹和文件名
+                string fileTemplate = Path.Combine(
+                    Config.Core_RunConfig._DefaultLiverFolderName,
+                    Config.Core_RunConfig._DefaultDataFolderName,
+                    Config.Core_RunConfig._DefaultFileName
+                );
+                // Path.Combine 会自动处理中间的分隔符，即使某些部分为空
+
+                // 对这个模板应用关键词替换，生成处理后的文件名（含相对路径）
+                string processedRelativePath = Core.Tools.KeyCharacterReplacement.ReplaceKeyword(fileTemplate, DateTime.Now, card.UID);
+                // 将处理后的相对路径与根目录拼接，并添加后缀
+                string finalFilePath = Path.Combine(Config.Core_RunConfig._RecFileDirectory, processedRelativePath) + "_original.mp4";
+
+
+
+                //File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, card.UID)}_original.mp4";
+
+                File = finalFilePath.Replace("\\","/");
                 CreateDirectoryIfNotExists(File.Substring(0, File.LastIndexOf('/')));
                 Thread.Sleep(5);
                 //本地Task下载的文件大小
@@ -151,12 +171,13 @@ namespace Core.RuntimeObject.Download
                                     }
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
-                                {
+                                {                 
                                     if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
+                                        Log.Info("test",$"index:{index} currentLocation:{currentLocation}");
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                         currentLocation = index;
-                                    }
+                                    }                                  
                                 }
                                 hostClass.eXTM3U.eXTINFs = new();
                                 values.Add((downloadSizeForThisCycle, DateTime.Now));
@@ -212,7 +233,7 @@ namespace Core.RuntimeObject.Download
                                 return;
                         }
                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
-                            Thread.Sleep(2000);
+                            Thread.Sleep(1000);
                         if (card.DownInfo.IsCut)
                             return;
                     }
