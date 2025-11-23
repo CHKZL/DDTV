@@ -396,6 +396,34 @@ namespace Server.WebAppServices.Api
         }
     }
 
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_cut_according_config : ControllerBase
+    {
+
+        /// <summary>
+        /// 获取根据录制文件大小和时长切割视频文件的配置
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <returns></returns>
+        [HttpGet(Name = "get_cut_according_config")]
+        public ActionResult Get(GetCommonParameters commonParameters)
+        {
+            Dictionary<string, long> cut_config = new Dictionary<string, long>()
+            {
+                {"size",Core.Config.Core_RunConfig._CutAccordingToSize},
+                {"time",Core.Config.Core_RunConfig._CutAccordingToTime}
+            };
+            
+            return Content(MessageBase.MssagePack(nameof(get_cut_according_config), cut_config,""), "application/json");
+        }
+    }
+
+
+
 
     [Produces(MediaTypeNames.Application.Json)]
     [ApiController]
@@ -483,6 +511,51 @@ namespace Server.WebAppServices.Api
             }
             Card.RoomCutAccordingToTime = cut_time;
             return Content(MessageBase.MssagePack(nameof(set_room_cut_according_to_time), "", $"设置房间[{(uid == 0 ? "rooid:" + roomid : "uid:" + uid)}]根据录制时长切割视频文件的时长设置为{cut_time}秒"), "application/json");
+        }
+    }
+    [Produces(MediaTypeNames.Application.Json)]
+    [ApiController]
+    [Route("api/config/[controller]")]
+    [Login]
+    [Tags("config")]
+    public class get_room_cut_according_config : ControllerBase
+    {
+
+        /// <summary>
+        /// 获取房间维度根据录制文件大小和时长切割视频文件的配置（UID\房间号至少填一个）
+        /// </summary>
+        /// <param name="commonParameters"></param>
+        /// <param name="uid">用户UID</param>
+        /// <param name="roomid">房间号</param>
+        /// <returns></returns>
+        [HttpPost(Name = "get_room_cut_according_config")]
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long roomid = 0)
+        {
+            RoomCardClass Card = new RoomCardClass();
+            if (uid != 0)
+            {
+                _Room.GetCardForUID(uid, ref Card);
+            }
+            else if (roomid != 0)
+            {
+                _Room.GetCardFoRoomId(roomid, ref Card);
+            }
+            else
+            {
+                return Content(MessageBase.MssagePack(nameof(get_room_cut_according_config), false, "UID和房间号不正确", code.OperationFailed), "application/json");
+            }
+            if (Card == null)
+            {
+                return Content(MessageBase.MssagePack(nameof(get_room_cut_according_config), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
+            }
+            
+            Dictionary<string, long> cut_config = new Dictionary<string, long>()
+            {
+                {"size",Card.RoomCutAccordingToSize},
+                {"time",Card.RoomCutAccordingToTime}
+            };
+
+            return Content(MessageBase.MssagePack(nameof(get_room_cut_according_config), cut_config, ""), "application/json");
         }
     }
 }
