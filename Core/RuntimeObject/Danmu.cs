@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Web.HttpUtility;
+using static System.Web.HttpUtility;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
