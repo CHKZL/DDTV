@@ -95,24 +95,26 @@ namespace Core.RuntimeObject.Download
                     while (true)
                     {
                         //处理大小限制分割
-                        if (Config.Core_RunConfig._CutAccordingToSize > 0 || card.RoomCutAccordingToSize > 0)
+                        if (
+                            (Config.Core_RunConfig._CutAccordingToSize > 0 && DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize)
+                             || 
+                            (card.RoomCutAccordingToSize > 0 && DownloadFileSizeForThisTask > card.RoomCutAccordingToSize)
+                        )
                         {
-                            if (DownloadFileSizeForThisTask > Config.Core_RunConfig._CutAccordingToSize || DownloadFileSizeForThisTask > card.RoomCutAccordingToSize)
-                            {
-                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发时间分割");
-                                hlsState = DlwnloadTaskState.Success;
-                                return;
-                            }
+                            Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发文件大小分割");
+                            hlsState = DlwnloadTaskState.Success;
+                            return;
                         }
                         //处理时间限制分割
-                        if (Config.Core_RunConfig._CutAccordingToTime > 0 || card.RoomCutAccordingToTime > 0)
+                        if (
+                            (Config.Core_RunConfig._CutAccordingToTime > 0 && stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime)
+                             || 
+                            (card.RoomCutAccordingToTime > 0 && stopWatch.Elapsed.TotalSeconds > card.RoomCutAccordingToTime)
+                        )
                         {
-                            if (stopWatch.Elapsed.TotalSeconds > Config.Core_RunConfig._CutAccordingToTime || stopWatch.Elapsed.TotalSeconds > card.RoomCutAccordingToTime)
-                            {
-                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发文件大小分割");
-                                hlsState = DlwnloadTaskState.Success;
-                                return;
-                            }
+                            Log.Info(nameof(DlwnloadHls_avc_mp4), $"{card.Name}({card.RoomId})触发时间分割");
+                            hlsState = DlwnloadTaskState.Success;
+                            return;
                         }
                         //本次循环下载的单体文件切片大小
                         long downloadSizeForThisCycle = 0;
