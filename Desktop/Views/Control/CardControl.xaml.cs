@@ -287,12 +287,15 @@ namespace Desktop.Views.Control
         }
         private void MenuItem_OpenRecFolder_Click(object sender, RoutedEventArgs e)
         {
-            string folderPath = Path.Combine(
-                Config.Core_RunConfig._DefaultLiverFolderName,
-                Config.Core_RunConfig._DefaultDataFolderName
-            );
             Models.DataCard dataCard = GetDataCard(sender);
-            folderPath = Path.GetFullPath(Path.Combine(Config.Core_RunConfig._RecFileDirectory,(Core.Tools.KeyCharacterReplacement.ReplaceKeyword(Text: folderPath, uid: dataCard.Uid) is var processedPath)? processedPath.Substring(0, processedPath.LastIndexOf('\\')): string.Empty));
+            string folderPath = Path.GetFullPath(Path.Combine(
+                Config.Core_RunConfig._RecFileDirectory,
+                Core.Tools.KeyCharacterReplacement.ReplaceKeyword(
+                    Text: Path.Combine(Config.Core_RunConfig._DefaultLiverFolderName),
+                    uid: dataCard.Uid
+                )));
+
+
 
             if (System.IO.Directory.Exists(folderPath))
                 {
