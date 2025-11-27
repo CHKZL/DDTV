@@ -53,6 +53,9 @@ namespace Core.RuntimeObject
                                 sign = room.Value.sign.Value,
                                 uid = room.Value.UID,
                                 appointmentRecord = room.Value.AppointmentRecord,
+                                RoomCutAccordingToTime = room.Value.RoomCutAccordingToTime,
+                                RoomCutAccordingToSize = room.Value.RoomCutAccordingToSize
+
                             };
                             completeInfo.roomInfo = new CardData.CompleteInfo.RoomInfo()
                             {
@@ -101,7 +104,9 @@ namespace Core.RuntimeObject
                                 sex = roomList.ElementAt(i).Value.sex.Value,
                                 sign = roomList.ElementAt(i).Value.sign.Value,
                                 uid = roomList.ElementAt(i).Value.UID,
-                                appointmentRecord = roomList.ElementAt(i).Value.AppointmentRecord
+                                appointmentRecord = roomList.ElementAt(i).Value.AppointmentRecord,
+                                RoomCutAccordingToSize = roomList.ElementAt(i).Value.RoomCutAccordingToSize,
+                                RoomCutAccordingToTime = roomList.ElementAt(i).Value.RoomCutAccordingToTime
                             };
                             completeInfo.roomInfo = new CardData.CompleteInfo.RoomInfo()
                             {
@@ -170,6 +175,8 @@ namespace Core.RuntimeObject
                         public string sex { get; set; }
                         public string sign { get; set; }
                         public bool appointmentRecord { get; set; }
+                        public long RoomCutAccordingToTime { get; set; }
+                        public long RoomCutAccordingToSize { get; set; }
                     }
                     public class RoomInfo
                     {
