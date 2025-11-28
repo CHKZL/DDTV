@@ -228,13 +228,21 @@ namespace Desktop.Views.Control
 
         private void MenuItem_OpenLiveUlr_Click(object sender, RoutedEventArgs e)
         {
-            Models.DataCard dataCard = GetDataCard(sender);
-            var psi = new ProcessStartInfo
+
+            try
             {
-                FileName = "https://live.bilibili.com/" + dataCard.Room_Id,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
+                Models.DataCard dataCard = GetDataCard(sender);
+                var psi = new ProcessStartInfo
+                {
+                    FileName = "https://live.bilibili.com/" + dataCard.Room_Id,
+                    UseShellExecute = true
+                };
+                Process.Start(psi);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(nameof(MenuItem_OpenLiveUlr_Click), "打开直播间网址失败", ex, true);
+            }
         }
 
         private void Snapshot_Task_Click(object sender, RoutedEventArgs e)

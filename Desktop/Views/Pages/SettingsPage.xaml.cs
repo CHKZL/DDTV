@@ -72,7 +72,45 @@ public partial class SettingsPage
     /// <param name="e"></param>
     private void OpenRecordingFolderInExplorer_Click(object sender, RoutedEventArgs e)
     {
-        Process.Start("explorer.exe", Path.GetFullPath(Config.Core_RunConfig._RecFileDirectory));
+
+        string recDir = Config.Core_RunConfig._RecFileDirectory;
+        if (string.IsNullOrWhiteSpace(recDir))
+        {
+            MainWindow.SnackbarService.Show("打开文件夹失败", "未设置录制文件夹路径", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        string fullPath;
+        try
+        {
+            fullPath = Path.GetFullPath(recDir);
+        }
+        catch (Exception)
+        {
+            MainWindow.SnackbarService.Show("打开文件夹失败", "录制文件夹路径无效", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        if (!Directory.Exists(fullPath))
+        {
+            MainWindow.SnackbarService.Show("打开文件夹失败", "录制文件夹不存在", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+            return;
+        }
+
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = fullPath,
+                UseShellExecute = true, // 使用 ShellExecute 以复用已有的 Explorer 窗口而不是新建 explorer.exe 进程
+                Verb = "open"
+            };
+            Process.Start(psi);
+        }
+        catch (Exception)
+        {
+            MainWindow.SnackbarService.Show("打开文件夹失败", "无法打开录制文件夹", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(5));
+        }
     }
 
     private async void Config_Save_Button_Click(object sender, RoutedEventArgs e)
