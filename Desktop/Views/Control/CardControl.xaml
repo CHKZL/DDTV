@@ -14,7 +14,7 @@
             <Separator />
             <MenuItem Header="单独打开弹幕查看器" Click="MenuItem_DanmaOnly_Click"/>
             <MenuItem Header="在浏览器打开直播间" Click="MenuItem_OpenLiveUlr_Click"/>
-
+            <MenuItem Header="打开录播文件夹" Click="MenuItem_OpenRecFolder_Click"/>
             <Separator />
             <MenuItem Header="切换录制设置" Click="MenuItem_ModifyRoom_AutoRec_Click"/>
             <MenuItem Header="切换弹幕设置" Click="MenuItem_ModifyRoom_Danmu_Click"/>
