@@ -5,6 +5,7 @@ using Desktop.Models;
 using Desktop.Views.Windows;
 using Microsoft.VisualBasic.Logging;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -291,6 +292,28 @@ namespace Desktop.Views.Control
                 Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id,dataCard.Uid);
                 WebPlayWindow.Show();
             });
+        }
+        private void MenuItem_OpenRecFolder_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            string folderPath = Path.GetFullPath(Path.Combine(
+                Config.Core_RunConfig._RecFileDirectory,
+                Core.Tools.KeyCharacterReplacement.ReplaceKeyword(
+                    Text: Path.Combine(Config.Core_RunConfig._DefaultLiverFolderName),
+                    uid: dataCard.Uid
+                )));
+
+
+
+            if (System.IO.Directory.Exists(folderPath))
+                {
+
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = folderPath,
+                        UseShellExecute = true
+                    });
+                }
         }
     }
 }
