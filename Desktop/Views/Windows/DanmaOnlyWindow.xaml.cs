@@ -188,6 +188,8 @@ namespace Desktop.Views.Windows
 
         private void Send_Danma_Button_Click(object sender, RoutedEventArgs e)
         {
+            Danmu.ReconnectRoomDanmaObjects(roomCard);
+            return;
             string T = DanmaOnly_DanmaInput.Text;
             if (string.IsNullOrEmpty(T) || T.Length > 40/*Core.Config.Core_RunConfig._MaximumLengthDanmu*/)
             {

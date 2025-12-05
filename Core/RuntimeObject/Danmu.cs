@@ -218,6 +218,7 @@ namespace Core.RuntimeObject
                 var _ = roomCard.DownInfo.LiveChatListener.DanmuMessage;
                 try
                 {
+                    roomCard.DownInfo.LiveChatListener._Cancel = true;
                     roomCard.DownInfo.LiveChatListener.Dispose();
                 }
                 catch (Exception)

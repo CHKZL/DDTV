@@ -31,7 +31,7 @@ namespace Core.LiveChat
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
         private bool _disposed = false;
-        private bool _Cancel = false;
+        public bool _Cancel = false;
 
         public long RoomId { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
@@ -86,14 +86,13 @@ namespace Core.LiveChat
         /// </summary>
         public void Close()
         {
-            MessageReceived?.Invoke(this, new MessageEventArgs(JsonNode.Parse("{\"cmd\":\"Reconnect\"}").AsObject()));
-            //if (Register.Count != 0)
-            //{
-            //    Connect();
-            //    return;
-            //}
-
+            if (Register.Count != 0 && !_Cancel)
+            {
+                MessageReceived?.Invoke(this, new MessageEventArgs(JsonNode.Parse("{\"cmd\":\"Reconnect\"}").AsObject()));
+                return;
+            }
             _Cancel = true;
+            
             m_ReceiveBuffer = null;
 
             if (TimeStopwatch != null)
