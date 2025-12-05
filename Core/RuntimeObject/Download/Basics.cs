@@ -513,6 +513,16 @@ namespace Core.RuntimeObject.Download
                             });
                             break;
                         }
+                    case MessageEventArgs messageEventArgs:
+                        {
+                            if (messageEventArgs.Command == "Reconnect")
+                            {
+                                RoomCardClass roomCardClass = new();
+                                _Room.GetCardFoRoomId(liveChatListener.RoomId, ref roomCardClass);
+                                Core.RuntimeObject.Danmu.ReconnectRoomDanmaObjects(roomCardClass);
+                            }
+                            break;
+                        }
                     default:
                         break;
                 }

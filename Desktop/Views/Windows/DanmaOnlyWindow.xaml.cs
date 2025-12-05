@@ -51,6 +51,7 @@ namespace Desktop.Views.Windows
                     {
                         roomCard.DownInfo.LiveChatListener.Register.Add("DanmaOnlyWindow");
                         roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                        Core.RuntimeObject.Danmu.DanmaTriggerReconnect += Instance_DanmaTriggerReconnect;
                     }
 
                     Dispatcher.Invoke(() =>
@@ -65,6 +66,16 @@ namespace Desktop.Views.Windows
                 //this.Close();
                 return;
             }
+        }
+
+        private void Instance_DanmaTriggerReconnect(object? sender, RoomCardClass e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                DanmaCollection.Add(new DanmaOnly { Message = $"弹幕重连中..." });
+            });
+            if (e.DownInfo.LiveChatListener != null)
+                e.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
         }
 
         private void LiveChatListener_MessageReceived(object? sender, Core.LiveChat.MessageEventArgs e)
@@ -108,6 +119,16 @@ namespace Desktop.Views.Windows
                         msg.Message = $"{sendGiftEventArgs.UserName}：赠送[{sendGiftEventArgs.GiftName}]礼物[{sendGiftEventArgs.Amount}]个";
                         break;
                     }
+                case MessageEventArgs messageEventArgs:
+                        {
+                            if (messageEventArgs.Command == "Reconnect")
+                            {
+                                RoomCardClass roomCardClass = new();
+                                _Room.GetCardFoRoomId(liveChatListener.RoomId, ref roomCardClass);
+                                Core.RuntimeObject.Danmu.ReconnectRoomDanmaObjects(roomCardClass);
+                            }
+                            break;
+                        }
                 default:
                     break;
             }

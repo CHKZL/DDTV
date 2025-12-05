@@ -46,12 +46,19 @@ namespace Core.LiveChat
         #endregion
 
         #region Public Method
-        public LiveChatListener(long roomId)
+        public LiveChatListener(long roomId,Danmu.DanmuMessage danmuMessage = null)
         {
             RoomId = roomId;
             Name = RoomInfo.GetNickname(RoomInfo.GetUid(roomId));
             File = $"{Config.Core_RunConfig._RecFileDirectory}{Core.Tools.KeyCharacterReplacement.ReplaceKeyword($"{Config.Core_RunConfig._DefaultLiverFolderName}/{Core.Config.Core_RunConfig._DefaultDataFolderName}{(string.IsNullOrEmpty(Core.Config.Core_RunConfig._DefaultDataFolderName) ? "" : "/")}{Config.Core_RunConfig._DefaultFileName}", DateTime.Now, RoomInfo.GetUid(roomId))}";
-            DanmuMessage = new RuntimeObject.Danmu.DanmuMessage();
+            if (danmuMessage == null)
+            {
+                DanmuMessage = new RuntimeObject.Danmu.DanmuMessage();
+            }
+            else
+            {
+                DanmuMessage = danmuMessage;
+            }
         }
 
         /// <summary>
@@ -73,16 +80,18 @@ namespace Core.LiveChat
             }
         }
 
+
         /// <summary>
         /// 关闭连接
         /// </summary>
         public void Close()
         {
-            if (Register.Count != 0)
-            {
-                Connect();
-                return;
-            }
+            MessageReceived?.Invoke(this, new MessageEventArgs(JsonNode.Parse("{\"cmd\":\"Reconnect\"}").AsObject()));
+            //if (Register.Count != 0)
+            //{
+            //    Connect();
+            //    return;
+            //}
 
             _Cancel = true;
             m_ReceiveBuffer = null;

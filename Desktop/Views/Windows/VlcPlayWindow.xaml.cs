@@ -245,9 +245,17 @@ namespace Desktop.Views.Windows
                     roomCard.DownInfo.LiveChatListener.Connect();
                 }
                 roomCard.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+                Core.RuntimeObject.Danmu.DanmaTriggerReconnect += Instance_DanmaTriggerReconnect; ;
                 roomCard.DownInfo.LiveChatListener.Register.Add("VlcPlayWindow");
             });
         }
+
+        private void Instance_DanmaTriggerReconnect(object? sender, RoomCardClass e)
+        {
+            if (e.DownInfo.LiveChatListener != null)
+                e.DownInfo.LiveChatListener.MessageReceived += LiveChatListener_MessageReceived;
+        }
+
 
         private async void CloseDanma()
         {
@@ -284,6 +292,16 @@ namespace Desktop.Views.Windows
                             return;
                         }
                         AddDanmu(Danmu.Message, false, Danmu.UserId);
+                        break;
+                    }
+                case MessageEventArgs messageEventArgs:
+                    {
+                        if (messageEventArgs.Command == "Reconnect")
+                        {
+                            RoomCardClass roomCardClass = new();
+                            _Room.GetCardFoRoomId(liveChatListener.RoomId, ref roomCardClass);
+                            Core.RuntimeObject.Danmu.ReconnectRoomDanmaObjects(roomCardClass);
+                        }
                         break;
                     }
             }

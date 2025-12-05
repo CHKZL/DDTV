@@ -105,6 +105,7 @@ namespace Core.RuntimeObject
                         {
                             if (roomCard.DownInfo.LiveChatListener != null)
                                 roomCard.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
+                            Core.RuntimeObject.Danmu.DanmaTriggerReconnect += Instance_DanmaTriggerReconnect;
                         }
                         bool Reconnection = false;
                         //保存封面
@@ -177,6 +178,15 @@ namespace Core.RuntimeObject
             catch (Exception)
             {
                 ;
+            }
+        }
+
+        private static void Instance_DanmaTriggerReconnect(object? sender, RoomCardClass e)
+        {
+            if (e.IsRecDanmu)
+            {
+                if (e.DownInfo.LiveChatListener != null)
+                    e.DownInfo.LiveChatListener.MessageReceived += Basics.LiveChatListener_MessageReceived;
             }
         }
 

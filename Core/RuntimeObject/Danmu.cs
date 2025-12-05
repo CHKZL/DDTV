@@ -1,28 +1,31 @@
-﻿using Core.LogModule;
+﻿using AngleSharp.Dom;
+using Core.Account;
+using Core.LogModule;
+using Core.Network;
 using Masuit.Tools;
 using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using static System.Web.HttpUtility;
 using System.Text;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 using static Core.RuntimeObject.Danmu;
-using Core.Network;
-using AngleSharp.Dom;
-using Core.Account;
+using static System.Web.HttpUtility;
 
 namespace Core.RuntimeObject
 {
     public class Danmu
     {
         #region Private Propertiess
+
+        public static event EventHandler<RoomCardClass> DanmaTriggerReconnect;
 
         #endregion
 
@@ -202,6 +205,33 @@ namespace Core.RuntimeObject
 
             OperationQueue.Add(Opcode.Download.SaveBulletScreenFile, Message, card.UID);
             Log.Info(nameof(SevaDanmu), Message);
+        }
+
+        /// <summary>
+        /// 重新连接弹幕对象，并触发重连通知事件
+        /// </summary>
+        /// <param name="roomCard"></param>
+        public static bool ReconnectRoomDanmaObjects(RoomCardClass roomCard)
+        {
+            if (roomCard != null && roomCard.RoomId > 0 && roomCard.DownInfo!=null && roomCard.DownInfo.LiveChatListener!=null)
+            {
+                var _ = roomCard.DownInfo.LiveChatListener.DanmuMessage;
+                try
+                {
+                    roomCard.DownInfo.LiveChatListener.Dispose();
+                }
+                catch (Exception)
+                {}
+                roomCard.DownInfo.LiveChatListener = new(roomCard.RoomId,_);
+                roomCard.DownInfo.LiveChatListener.Connect();
+                DanmaTriggerReconnect?.Invoke(null, roomCard);
+                return true;
+            }
+            else
+            {
+                Log.Warn(nameof(ReconnectRoomDanmaObjects), "重新连接弹幕对象失败，要重连的对象为空");
+                return false;
+            }
         }
         #endregion
 

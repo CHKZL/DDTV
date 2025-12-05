@@ -35,8 +35,10 @@ namespace Core
                     varMap.Add(fieldInfo.Name, fieldInfo);
                     if (!fieldInfo.Name.ToLower().Contains("Access"))
                     {
-                        //string ConfigText = $"从配置文件获取参数初始化：{fieldInfo.Name}={fieldInfo.GetValue(null)}";
-                        //Log.Info(nameof(Config), ConfigText);
+#if DEBUG
+                        string ConfigText = $"从配置文件获取参数初始化：{fieldInfo.Name}={fieldInfo.GetValue(null)}";
+                        Log.Info(nameof(Config), ConfigText);
+#endif
                     }
                 }
             Thread.Sleep(500);

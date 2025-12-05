@@ -183,7 +183,7 @@ namespace Core.RuntimeObject.Download
                                 {                 
                                     if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
-                                        Log.Info("test",$"index:{index} currentLocation:{currentLocation}");
+                                        //Log.Info("test",$"index:{index} currentLocation:{currentLocation}");
                                         downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
                                         currentLocation = index;
                                     }                                  
