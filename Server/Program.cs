@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
-using Microsoft.OpenApi.Models;
+//using Microsoft.OpenApi.Models;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Core;
@@ -91,16 +91,16 @@ namespace Server
                     {
                         builder.Services.AddSwaggerGen(options =>
                         {
-                            options.SwaggerDoc("v1", new OpenApiInfo
-                            {
-                                Version = "v1",
-                                Title = "DDTV5_API",
-                                License = new OpenApiLicense
-                                {
-                                    Name = "[项目地址]",
-                                    Url = new Uri("https://github.com/CHKZL/DDTV")
-                                }
-                            });
+                            //options.SwaggerDoc("v1", new OpenApiInfo
+                            //{
+                            //    Version = "v1",
+                            //    Title = "DDTV5_API",
+                            //    License = new OpenApiLicense
+                            //    {
+                            //        Name = "[项目地址]",
+                            //        Url = new Uri("https://github.com/CHKZL/DDTV")
+                            //    }
+                            //});
                             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
                         });
