@@ -88,9 +88,11 @@ namespace Core.LiveChat
         {
             if (Register.Count != 0 && !_Cancel)
             {
+                Log.Info(nameof(LiveChatListener) + "_" + nameof(Close), $"LiveChatListener连接断开，符合重连条件，进行重连");
                 MessageReceived?.Invoke(this, new MessageEventArgs(JsonNode.Parse("{\"cmd\":\"Reconnect\"}").AsObject()));
                 return;
             }
+
             _Cancel = true;
             
             m_ReceiveBuffer = null;

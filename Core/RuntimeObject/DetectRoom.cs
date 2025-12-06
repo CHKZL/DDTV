@@ -93,9 +93,7 @@ namespace Core.RuntimeObject
                         }
                         else
                         {
-                            roomCard.DownInfo.LiveChatListener.Dispose();
-                            Thread.Sleep(100);
-                            roomCard.DownInfo.LiveChatListener.Connect();
+                            Danmu.ReconnectRoomDanmaObjects(roomCard);
                         }
                         roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
                     }
