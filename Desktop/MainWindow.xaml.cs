@@ -81,15 +81,15 @@ namespace Desktop
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
             }
             Version dotnetVersion = Environment.Version;
-            Task.Run(() =>
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    Thread.Sleep(2000);
-                    MessageBox.Show("当前.NET版本:" + dotnetVersion.ToString());
-                });
+            //Task.Run(() =>
+            //{
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        Thread.Sleep(2000);
+            //        MessageBox.Show("当前.NET版本:" + dotnetVersion.ToString());
+            //    });
                
-            });
+            //});
         }
 
         /// <summary>
