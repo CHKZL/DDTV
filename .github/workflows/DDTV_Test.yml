@@ -256,6 +256,20 @@ jobs:
           name: DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
           path: Server/build_output
 
+      - uses: moomiji/docker-ddtv@v5
+        if: runner.os == 'Linux'
+        env:
+          DOCKERHUB_USERNAME: ddtv
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        with:
+          push:    false
+          repo:    ddtv/server
+          path:    ${{ github.workspace }}/Server/build_output
+          version: ${{ github.ref_name }}
+          runtime: ${{ matrix.runtime }}
+          os_id:                ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
+          dotnet-image-version: ${{ contains(matrix.runtime, 'musl') && '10.0-alpine' || '10.0' }}
+
   Desktop:
     strategy:
       matrix:
