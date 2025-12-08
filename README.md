@@ -1,6 +1,4 @@
-# 目前DDTV升级到5.x版本，完全重构的全新版本
-
-# 走过路过留个star吧
+# 走过路过留个star吧 :)
 
 [![Stargazers over time](https://starchart.cc/CHKZL/DDTV.svg)](https://starchart.cc/CHKZL/DDTV)
 
@@ -21,10 +19,10 @@
 
 |项目|框架|说明|
 |:--:|:--:|:--:|
-|Core|.NET 8|DDTV核心库|
-|Server|.NET 8 & ASP.NET 8|对Core进行更进一步封装集成了API接口和WEBUI服务|
-|Desktop|.NET8 Desktop|为Windows独占，带GUI以及在线观看等高级功能，包含Core和Server的所有功能|
-|Client|.NET 8|对Server进行了桌面化封装，提供WPF内嵌WEBUI|
+|Core|.NET 10|DDTV核心库|
+|Server|.NET 10 & ASP.NET 10|对Core进行更进一步封装集成了API接口和WEBUI服务|
+|Desktop|.NET10 Desktop|为Windows独占，带GUI以及在线观看等高级功能，包含Core和Server的所有功能|
+|Client|.NET 10|对Server进行了桌面化封装，提供WPF内嵌WEBUI|
 
 
 如果有更多功能欢迎加交流群 进行交流
