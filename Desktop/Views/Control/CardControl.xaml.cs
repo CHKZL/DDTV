@@ -28,7 +28,7 @@ namespace Desktop.Views.Control
         private Models.DataCard GetDataCard(object sender)
         {
             var menuItem = (System.Windows.Controls.MenuItem)sender;
-            var contextMenu = (ContextMenu)menuItem.Parent;
+            var contextMenu = (System.Windows.Controls.ContextMenu)menuItem.Parent;
             var grid = (Grid)contextMenu.PlacementTarget;
             if (grid != null)
             {

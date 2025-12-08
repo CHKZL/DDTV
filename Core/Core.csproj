@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Version>5.0.0.0</Version>
@@ -16,9 +16,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.S3" Version="3.7.310.8" />
+    <PackageReference Include="AWSSDK.S3" Version="4.0.14.1" />
     <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
-    <PackageReference Include="Downloader" Version="3.0.6" />
+    <PackageReference Include="Downloader" Version="4.0.3" />
     <PackageReference Include="Masuit.Tools.AspNetCore" Version="2025.1.7" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />

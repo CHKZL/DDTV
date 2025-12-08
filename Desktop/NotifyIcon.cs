@@ -12,7 +12,7 @@ namespace Desktop
 		private static readonly int WM_TASKBARCREATED = RegisterWindowMessage("TaskbarCreated");
 		private HwndSource? _hwndSource;
 		private MyNotifyIconService? _notifyIconService;
-		private ContextMenu _contextMenu;
+        private System.Windows.Controls.ContextMenu _contextMenu;
 
 		[DllImport("user32.dll")]
 		private static extern int RegisterWindowMessage(string lpString);
@@ -38,7 +38,7 @@ namespace Desktop
 				_hwndSource.AddHook(WndProc);
 
 				// 构建右键菜单
-				_contextMenu = new ContextMenu();
+				_contextMenu = new System.Windows.Controls.ContextMenu();
 				var forceShowMenu = new Wpf.Ui.Controls.MenuItem { Header = "强制显示" };
 				forceShowMenu.Click += rightClickForceShow;
 				var exitMenu = new Wpf.Ui.Controls.MenuItem { Header = "退出" };

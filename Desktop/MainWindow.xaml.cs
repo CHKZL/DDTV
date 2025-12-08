@@ -75,18 +75,27 @@ namespace Desktop
                 //初始化各种page
                 Init();
 				InitializeNotifyIcon();
-			}
+            }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show($"UI初始化出现重大错误，错误堆栈{ex.ToString()}");
             }
-
+            Version dotnetVersion = Environment.Version;
+            Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    Thread.Sleep(2000);
+                    MessageBox.Show("当前.NET版本:" + dotnetVersion.ToString());
+                });
+               
+            });
         }
 
-		/// <summary>
-		/// 初始化各种页面内容
-		/// </summary>
-		public void Init()
+        /// <summary>
+        /// 初始化各种页面内容
+        /// </summary>
+        public void Init()
         {
             //设置房间卡片列表页定时任务
             DataPage.Timer_DataPage = new Timer(DataPage.Refresher, null, 1, 500);
