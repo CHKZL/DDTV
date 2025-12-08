@@ -45,10 +45,10 @@ jobs:
         run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
         shell: pwsh
 
-      - name: Setup .NET 8.0.303
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.303'
+          dotnet-version: '10.0.100'
 
       - name: Check .NET SDK version
         run: dotnet --version   
@@ -261,10 +261,10 @@ jobs:
         run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
         shell: pwsh
 
-      - name: Setup .NET 8.0.303
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.303'
+          dotnet-version: '10.0.100'
 
       - name: Check .NET SDK version
         run: dotnet --version   
@@ -411,10 +411,10 @@ jobs:
         run: Remove-Item -Recurse -Force "C:\Program Files\dotnet\sdk\*"
         shell: pwsh
 
-      - name: Setup .NET 8.0.303
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.303'
+          dotnet-version: '10.0.100'
 
       - name: Check .NET SDK version
         run: dotnet --version   
