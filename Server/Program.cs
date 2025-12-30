@@ -67,6 +67,7 @@ namespace Server
                 {
                     if (PortInspect())
                     {
+                        Log.Error(nameof(Main), $"启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                         Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                         Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
                         Console.WriteLine($"[ERROR]!!!启动失败！WEB端口[{Core.Config.Core_RunConfig._Port}]被占用，请检查端口或更换端口！！！");
