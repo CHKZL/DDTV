@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using MailKit.Net.Smtp;
-using Core.LogModule;
 using MailKit.Security;
 using MimeKit;
 using System.Text;
 using System.Threading.Tasks;
+using Core.LogModule;
 
 namespace Core.RuntimeObject
 {
