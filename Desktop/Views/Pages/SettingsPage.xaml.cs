@@ -10,6 +10,7 @@ using SharpCompress.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 using Wpf.Ui.Controls;
@@ -162,7 +163,7 @@ public partial class SettingsPage
         //SMTP配置保存
         if ((bool)SMTP_SwitchControl.IsChecked)
         {
-            if (string.IsNullOrEmpty(Email_SmtpServer_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPort_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpUserName_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPassword_InputControl.Password) || string.IsNullOrEmpty(Email_SmtpFrom_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpTo_InputControl.Text))
+            if (string.IsNullOrEmpty(Email_SmtpServer_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPort_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpUserName_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPassword_InputControl.Password) || string.IsNullOrEmpty(Email_SmtpFrom_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpTo_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpFromName_InputControl.Text))
             {
                 MainWindow.SnackbarService.Show("保存失败", "请检查确保SMTP配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
                 return false;
@@ -347,9 +348,17 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._Email_SmtpFrom = Email_SmtpFrom_InputControl.Text;
         }
+        if (Config.Core_RunConfig._Email_SmtpFromName != Email_SmtpFromName_InputControl.Text)
+        {
+            Config.Core_RunConfig._Email_SmtpFromName = Email_SmtpFromName_InputControl.Text;
+        }
         if (Config.Core_RunConfig._Email_SmtpTo != Email_SmtpTo_InputControl.Text)
         {
             Config.Core_RunConfig._Email_SmtpTo = Email_SmtpTo_InputControl.Text;
+        }
+        if (Config.Core_RunConfig._Email_SmtpSecurity != Email_SmtpSecurity_ComboBox.SelectedValue?.ToString())
+        {
+            Config.Core_RunConfig._Email_SmtpSecurity = Email_SmtpSecurity_ComboBox.SelectedValue?.ToString();
         }
         if (Config.Core_RunConfig._Email_LoginFailureReminder_Enable != SMTP_LoginStatus_CheckBox.IsChecked)
         {
@@ -611,20 +620,22 @@ public partial class SettingsPage
 
     private void Send_TestMail_Button_Click(object sender, RoutedEventArgs e)
     {
+        string to = Email_SmtpTo_InputControl.Text;
+        string from = Email_SmtpFrom_InputControl.Text;
+        string fromname = Email_SmtpFromName_InputControl.Text; 
         string server = Email_SmtpServer_InputControl.Text;
         string port = Email_SmtpPort_InputControl.Text;
+        string security = Email_SmtpSecurity_ComboBox.SelectedValue?.ToString();
         string username = Email_SmtpUserName_InputControl.Text;
         string password = Email_SmtpPassword_InputControl.Password;
-        string from = Email_SmtpFrom_InputControl.Text;
-        string to = Email_SmtpTo_InputControl.Text;
-        if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(port) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to))
+        if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(port) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to) || string.IsNullOrEmpty(fromname))
         {
             MessageBox.Show("请确保SMTP配置正确且不为空");
             return;
         }
         if (int.TryParse(port, out int p))
         {
-            Task.Run(() => Core.RuntimeObject.SMTP._SendEmail(to, "SMTP功能测试", "如果你看到这条消息，说明SMTP功能测试成功", from, username, password));
+            Task.Run(() => Core.RuntimeObject.SMTP._SendEmail(to, "SMTP功能测试", "如果你看到这条消息，说明SMTP功能测试成功", from, fromname, server, p, security, username, password));
         }
         else
         {

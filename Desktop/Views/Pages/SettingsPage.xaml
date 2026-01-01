@@ -190,6 +190,7 @@
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="*" />
                                             <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
                                         </Grid.RowDefinitions>
                                         <Grid Margin="10,5,0,5" Grid.Row="0">
                                             <Grid.ColumnDefinitions>
@@ -228,7 +229,31 @@
                                             <ui:TextBox Name="Email_SmtpTo_InputControl" Grid.Column="3" Margin="0,0,10,0" Text="{Binding _Email_SmtpTo, Mode=OneWay}"/>
                                         </Grid>
                                         <Grid Margin="10,5,0,5" Grid.Row="3">
-                                            <ui:Button Content="发送测试邮件" VerticalAlignment="Center" HorizontalAlignment="Right" Click="Send_TestMail_Button_Click"/>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Label Grid.Column="0" Margin="0,0,5,0" Content="显示名" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <ui:TextBox Name="Email_SmtpFromName_InputControl" Grid.Column="1" Margin="0,0,10,0" Text="{Binding _Email_SmtpFromName, Mode=OneWay}"/>
+                                            <Label Grid.Column="2" Margin="20,0,5,0" Content="安全" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                            <ComboBox x:Name="Email_SmtpSecurity_ComboBox" Grid.Column="3" Margin="0,0,20,0" VerticalAlignment="Center" SelectedValue="{Binding _Email_SmtpSecurity, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedValuePath="Content" >
+                                                <ComboBoxItem Content="auto" />
+                                                <ComboBoxItem Content="starttls" />
+                                                <ComboBoxItem Content="tls" />
+                                                <ComboBoxItem Content="opportunistic" />
+                                                <ComboBoxItem Content="none" />
+                                            </ComboBox>
+                                        </Grid>
+                                        <Grid Margin="10,5,0,5" Grid.Row="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="4*" />
+                                            </Grid.ColumnDefinitions>
+                                            <ui:Button Grid.Column="3" Content="发送测试邮件" VerticalAlignment="Center" HorizontalAlignment="Right" Click="Send_TestMail_Button_Click"/>
                                         </Grid>
                                     </Grid>
                                     <Grid Grid.Row="1">
