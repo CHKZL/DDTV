@@ -163,7 +163,7 @@ public partial class SettingsPage
         //SMTP配置保存
         if ((bool)SMTP_SwitchControl.IsChecked)
         {
-            if (string.IsNullOrEmpty(Email_SmtpServer_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPort_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpUserName_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPassword_InputControl.Password) || string.IsNullOrEmpty(Email_SmtpFrom_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpTo_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpFromName_InputControl.Text))
+            if (string.IsNullOrEmpty(Email_SmtpServer_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPort_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpUserName_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpPassword_InputControl.Password) || string.IsNullOrEmpty(Email_SmtpFrom_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpTo_InputControl.Text) || string.IsNullOrEmpty(Email_SmtpFromName_InputControl.Text) || string.IsNullOrWhiteSpace(Email_SmtpSecurity_ComboBox.SelectedValue as string))
             {
                 MainWindow.SnackbarService.Show("保存失败", "请检查确保SMTP配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
                 return false;
@@ -628,7 +628,7 @@ public partial class SettingsPage
         string security = Email_SmtpSecurity_ComboBox.SelectedValue?.ToString();
         string username = Email_SmtpUserName_InputControl.Text;
         string password = Email_SmtpPassword_InputControl.Password;
-        if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(port) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to) || string.IsNullOrEmpty(fromname))
+        if (string.IsNullOrEmpty(server) || string.IsNullOrEmpty(port) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(from) || string.IsNullOrEmpty(to) || string.IsNullOrEmpty(fromname) || string.IsNullOrWhiteSpace(Email_SmtpSecurity_ComboBox.SelectedValue as string))
         {
             MessageBox.Show("请确保SMTP配置正确且不为空");
             return;
