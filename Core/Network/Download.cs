@@ -250,24 +250,35 @@ namespace Core.Network
 
                                 long oldPosition = fs.Position;
 
-                                string tempPath = Path.Combine(Core.Config.Core_RunConfig._TemporaryFileDirectory, DebugExpInfo);
 
-                                using (Stream dataStream = response.Content.ReadAsStreamAsync(cts.Token).GetAwaiter().GetResult())
+                                if (!string.IsNullOrEmpty(DebugExpInfo))
                                 {
-                                    var buffer = new byte[bufferSize];
-                                    int read;
-                                    while ((read = dataStream.ReadAsync(buffer, 0, buffer.Length, cts.Token).GetAwaiter().GetResult()) > 0)
+                                    string tempPath = Path.Combine(Core.Config.Core_RunConfig._TemporaryFileDirectory, DebugExpInfo);
+
+                                    using (Stream dataStream = response.Content.ReadAsStreamAsync(cts.Token).GetAwaiter().GetResult())
                                     {
-                                        fs.WriteAsync(buffer, 0, read, cts.Token).GetAwaiter().GetResult();
-                                        if (!string.IsNullOrEmpty(DebugExpInfo))
+                                        var buffer = new byte[bufferSize];
+                                        int read;
+                                        while ((read = dataStream.ReadAsync(buffer, 0, buffer.Length, cts.Token).GetAwaiter().GetResult()) > 0)
                                         {
                                             using (var tempFs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.None))
                                             {
+                                                fs.WriteAsync(buffer, 0, read, cts.Token).GetAwaiter().GetResult();
                                                 tempFs.WriteAsync(buffer, 0, read, cts.Token).GetAwaiter().GetResult();
                                             }
                                         }
                                     }
                                 }
+                                else
+                                {
+                                    using (Stream dataStream = response.Content.ReadAsStreamAsync(cts.Token).GetAwaiter().GetResult())
+                                    {
+                                        // CopyToAsync 支持 CancellationToken
+                                        dataStream.CopyToAsync(fs, bufferSize, cts.Token).GetAwaiter().GetResult();
+                                    }
+                                }
+
+
 
                                 long bytesWritten = fs.Position - oldPosition;
                                 //Log.Debug(nameof(GetFileToByte), $"成功下载 {bytesWritten} 字节。URL: {URL}");
