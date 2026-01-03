@@ -354,17 +354,17 @@ namespace Core.Network
                         catch (OperationCanceledException ex)
                         {
                             // 超时或被取消
-                            Log.Warn(nameof(GetFileToByte), $"下载超时 (Attempt {retries + 1}/{maxRetries})。URL: {URL}。错误: {ex.Message}");
+                            Log.Warn(nameof(GetNetworkByte), $"下载超时 (Attempt {retries + 1}/{maxRetries})。URL: {URL}。错误: {ex.Message}");
                         }
                         catch (HttpRequestException httpEx)
                         {
                             // HTTP错误，如404, 500等
-                            Log.Warn(nameof(GetFileToByte), $"HTTP请求失败 (Attempt {retries + 1}/{maxRetries})。URL: {URL}。错误: {httpEx.Message}");
+                            Log.Warn(nameof(GetNetworkByte), $"HTTP请求失败 (Attempt {retries + 1}/{maxRetries})。URL: {URL}。错误: {httpEx.Message}");
                         }
                         catch (Exception ex)
                         {
                             // 捕获非上述类型的异常
-                            Log.Error(nameof(GetFileToByte), $"发生未知错误 (Attempt {retries + 1}/{maxRetries})。URL: {URL}", ex, false);
+                            Log.Error(nameof(GetNetworkByte), $"发生未知错误 (Attempt {retries + 1}/{maxRetries})。URL: {URL}", ex, false);
                         }
 
                         // 如果还没到最大重试次数，则等待后继续循环（指数退避）
