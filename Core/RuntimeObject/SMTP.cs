@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Mail;
 using System.Net;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using System.Text;
 using System.Threading.Tasks;
 using Core.LogModule;
@@ -83,9 +85,28 @@ namespace Core.RuntimeObject
         /// <returns>是否发送成功</returns>
         public static void Send(string subject, string body)
         {
-            if (Config.Core_RunConfig._Email_EnableSmtp)
+            if (!Config.Core_RunConfig._Email_EnableSmtp)
+                return;
+            else if (Config.Core_RunConfig._Email_EnableSmtp)
             {
-                Task.Run(() => _SendEmail(Config.Core_RunConfig._Email_SmtpTo, subject, body, Config.Core_RunConfig._Email_SmtpFrom, Config.Core_RunConfig._Email_SmtpUserName, Config.Core_RunConfig._Email_SmtpPassword));
+                var toEmail = Config.Core_RunConfig._Email_SmtpTo;
+                var fromEmail = Config.Core_RunConfig._Email_SmtpFrom;
+                var fromName = Config.Core_RunConfig._Email_SmtpFromName;
+                var smtpUser = Config.Core_RunConfig._Email_SmtpUserName;
+                var smtpPassword = Config.Core_RunConfig._Email_SmtpPassword;
+                var smtpHost = Config.Core_RunConfig._Email_SmtpServer;
+                var smtpPort = int.Parse(Config.Core_RunConfig._Email_SmtpPort);
+                var smtpSecurity = Config.Core_RunConfig._Email_SmtpSecurity;
+                Task.Run(() => _SendEmail(toEmail,
+                                          subject,
+                                          body,
+                                          fromEmail,
+                                          fromName,
+                                          smtpHost,
+                                          smtpPort,
+                                          smtpSecurity,
+                                          smtpUser,
+                                          smtpPassword));
             }
         }
 
@@ -97,33 +118,30 @@ namespace Core.RuntimeObject
         /// <param name="body">邮件正文</param>
         /// <param name="fromEmail">发件人邮箱地址(QQ邮箱)</param>
         /// <param name="fromName">发件人显示名称</param>
+        /// <param name="smtpHost">smtp服务器</param>
+        /// <param name="smtpPort">smtp端口</param>
+        /// <param name="smtpSecurity">加密选项</param>
+        /// <param name="smtpUser">smtp用户名</param>
         /// <param name="smtpPassword">密码</param>
-        public static void _SendEmail(string toEmail, string subject, string body, string fromEmail, string fromName, string smtpPassword)
+        public static void _SendEmail(string toEmail, string subject, string body, string fromEmail, string fromName, string smtpHost, int smtpPort, string smtpSecurity, string smtpUser, string smtpPassword)
         {
 
             try
             {
                 string b = MAIL_STR.Replace("${Event}", subject).Replace("${Msg}", body);
-                var mailMessage = new MailMessage
-                {
-                    From = new MailAddress(fromEmail, fromName),
-                    Subject = subject,
-                    Body = b,
-                    IsBodyHtml = true,
-                    Priority = MailPriority.Normal
-                };
+                var mailMessage = new MimeMessage();
+                mailMessage.From.Add(new MailboxAddress(fromName, fromEmail));
+                mailMessage.To.Add(MailboxAddress.Parse(toEmail));
+                mailMessage.Subject = subject;
+                mailMessage.Body = new BodyBuilder { HtmlBody = b }.ToMessageBody();
 
-                mailMessage.To.Add(toEmail);
+                using var client = new MailKit.Net.Smtp.SmtpClient();
+                var options = ParseSecureSocketOptions(smtpSecurity);
+                client.Connect(smtpHost, smtpPort, options);
+                client.Authenticate(smtpUser, smtpPassword);
+                client.Send(mailMessage);
+                client.Disconnect(true);
 
-                var smtpClient = new SmtpClient(Config.Core_RunConfig._Email_SmtpServer, int.Parse(Config.Core_RunConfig._Email_SmtpPort))
-                {
-                    EnableSsl = true,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromEmail, smtpPassword),
-                    DeliveryMethod = SmtpDeliveryMethod.Network
-                };
-
-                smtpClient.Send(mailMessage);
                 Log.Info(nameof(_SendEmail), $"发送邮件成功: {subject}");
 
             }
@@ -134,6 +152,43 @@ namespace Core.RuntimeObject
             }
 
         }
+
+        private static SecureSocketOptions ParseSecureSocketOptions(string? value)
+        {
+            /// <summary>
+            /// 加密选项
+            /// SMTP 连接安全模式（字符串）
+            /// 可选值：auto / none / tls / starttls / opportunistic
+            /// - none：不加密
+            /// - tls：连接即 TLS（常见于 465，但你可自由组合端口）
+            /// - starttls：先明文连接再升级 TLS（常见于 587，但你可自由组合端口）
+            /// - opportunistic：服务器支持则升级，否则明文
+            /// - auto：让 MailKit 自动判断（仍允许端口自由组合）
+            /// 默认值：auto
+            /// </summary>
+            if (string.IsNullOrWhiteSpace(value))
+                return SecureSocketOptions.Auto;
+
+            switch (value.Trim().ToLowerInvariant())
+            {
+                case "none":
+                    return SecureSocketOptions.None;
+
+                case "tls":
+                    return SecureSocketOptions.SslOnConnect;
+
+                case "starttls":
+                    return SecureSocketOptions.StartTls;
+
+                case "opportunistic":
+                    return SecureSocketOptions.StartTlsWhenAvailable;
+
+                case "auto":
+                default:
+                    return SecureSocketOptions.Auto;
+            }
+        }
+
         public enum SMTP_EventType
         {
             /// <summary>

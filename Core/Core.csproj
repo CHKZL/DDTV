@@ -19,6 +19,7 @@
     <PackageReference Include="AWSSDK.S3" Version="4.0.14.1" />
     <PackageReference Include="ConsoleTableExt" Version="3.2.0" />
     <PackageReference Include="Downloader" Version="4.0.3" />
+    <PackageReference Include="MailKit" Version="4.14.1" />
     <PackageReference Include="Masuit.Tools.AspNetCore" Version="2025.1.7" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
