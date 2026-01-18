@@ -95,6 +95,7 @@ namespace Core.RuntimeObject.Download
                     int RetryCount = 0;
                     long TrackWidth = 0;
                     long TrackHeight = 0;
+                    long ReM3U8TimeCount = (long)stopWatch.Elapsed.TotalSeconds;
                     while (true)
                     {
                         //处理大小限制分割
@@ -168,11 +169,23 @@ namespace Core.RuntimeObject.Download
                                 }
                                 try
                                 {
+                                    //if (stopWatch.Elapsed.TotalSeconds - ReM3U8TimeCount > 50)
+                                    //{
+                                    //    ReM3U8TimeCount = (long)stopWatch.Elapsed.TotalSeconds;
+                                    //    GetHlsHost_avc(card, ref hostClass);
+                                    //}
+
                                     string m4sUrl = $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}";
                                     byte[] m4sBytes = Network.Download.File.GetNetworkByte(m4sUrl, true, "https://www.bilibili.com/");
                                     //Log.Debug ("test", $"m4sUrl:{m4sUrl}");
                                     long temp_TrackWidth = (long)(m4sBytes[240] * 0x100 * 0x100 * 0x100 + m4sBytes[241] * 0x100 * 0x100 + m4sBytes[242] * 0x100 + m4sBytes[243]) / 65536;
                                     long temp_TrackHeight = (long)(m4sBytes[244] * 0x100 * 0x100 * 0x100 + m4sBytes[245] * 0x100 * 0x100 + m4sBytes[246] * 0x100 + m4sBytes[247]) / 65536;
+                                    Log.Debug("test", $"temp_TrackWidth:{temp_TrackWidth} temp_TrackHeight:{temp_TrackHeight} TrackWidth:{TrackWidth} TrackHeight:{TrackHeight}");
+                                    if(InitialRequest)
+                                    {
+                                        TrackWidth = temp_TrackWidth;
+                                        TrackHeight = temp_TrackHeight;
+                                    }
                                     if (TrackWidth != 0 || TrackHeight != 0)
                                         if (temp_TrackWidth != 0 && temp_TrackHeight != 0)
                                             if (temp_TrackWidth != TrackWidth || temp_TrackHeight != TrackHeight)
@@ -181,6 +194,8 @@ namespace Core.RuntimeObject.Download
                                                 hlsState = DlwnloadTaskState.Success;
                                                 return;
                                             }
+
+
                                 }
                                 catch (Exception ex)
                                 {
