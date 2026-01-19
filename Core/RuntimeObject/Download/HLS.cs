@@ -1,4 +1,5 @@
-﻿using Core.LogModule;
+﻿using AngleSharp.Dom;
+using Core.LogModule;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -92,6 +93,9 @@ namespace Core.RuntimeObject.Download
 
                     stopWatch.Start();
                     int RetryCount = 0;
+                    long TrackWidth = 0;
+                    long TrackHeight = 0;
+                    long ReM3U8TimeCount = (long)stopWatch.Elapsed.TotalSeconds;
                     while (true)
                     {
                         //处理大小限制分割
@@ -159,8 +163,47 @@ namespace Core.RuntimeObject.Download
                             {
                                 if (InitialRequest)
                                 {
-                                    downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}");
+                                    string DebugFile = string.Empty;
+                                    //DebugFile = $"{hostClass.eXTM3U.eXTINFs[0].FileName+"_"+hostClass.eXTM3U.Map_URI.Replace(".m4s","_I.m4s")}";
+                                    downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}", DebugFile);
                                 }
+                                try
+                                {
+                                    //if (stopWatch.Elapsed.TotalSeconds - ReM3U8TimeCount > 50)
+                                    //{
+                                    //    ReM3U8TimeCount = (long)stopWatch.Elapsed.TotalSeconds;
+                                    //    GetHlsHost_avc(card, ref hostClass);
+                                    //}
+
+                                    string m4sUrl = $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}";
+                                    byte[] m4sBytes = Network.Download.File.GetNetworkByte(m4sUrl, true, "https://www.bilibili.com/");
+                                    //Log.Debug ("test", $"m4sUrl:{m4sUrl}");
+                                    long temp_TrackWidth = (long)(m4sBytes[240] * 0x100 * 0x100 * 0x100 + m4sBytes[241] * 0x100 * 0x100 + m4sBytes[242] * 0x100 + m4sBytes[243]) / 65536;
+                                    long temp_TrackHeight = (long)(m4sBytes[244] * 0x100 * 0x100 * 0x100 + m4sBytes[245] * 0x100 * 0x100 + m4sBytes[246] * 0x100 + m4sBytes[247]) / 65536;
+                                    //Log.Debug("test", $"temp_TrackWidth:{temp_TrackWidth} temp_TrackHeight:{temp_TrackHeight} TrackWidth:{TrackWidth} TrackHeight:{TrackHeight}");
+                                    if(InitialRequest)
+                                    {
+                                        TrackWidth = temp_TrackWidth;
+                                        TrackHeight = temp_TrackHeight;
+                                    }
+                                    if (TrackWidth != 0 || TrackHeight != 0)
+                                        if (temp_TrackWidth != 0 && temp_TrackHeight != 0)
+                                            if (temp_TrackWidth != TrackWidth || temp_TrackHeight != TrackHeight)
+                                            {
+                                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]检测到分辨率变化，进行切割处理");
+                                                hlsState = DlwnloadTaskState.Success;
+                                                return;
+                                            }
+
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]检测分辨率变化时出现了错误，跳过这个处理", ex);
+                                }
+
+
+
                                 if (currentLocation != 0 && Core.Config.Core_RunConfig._ReconnectAnchorReStream)
                                 {
                                     //用于处理流悄悄切了，但是没有发现的情况
@@ -180,11 +223,13 @@ namespace Core.RuntimeObject.Download
                                     }
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
-                                {                 
+                                {
                                     if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
+                                        string DebugFile = string.Empty;
+                                        //DebugFile = $"{item.FileName}_BP.m4s";
                                         //Log.Info("test",$"index:{index} currentLocation:{currentLocation}");
-                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}");
+                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}", DebugFile);
                                         currentLocation = index;
                                     }                                  
                                 }

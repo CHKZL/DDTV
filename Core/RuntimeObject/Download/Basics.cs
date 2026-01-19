@@ -182,10 +182,10 @@ namespace Core.RuntimeObject.Download
         /// <param name="fs">待写入的FileStream</param>
         /// <param name="url">待写入的文件原始网络路径</param>
         /// <returns>写入的文件byte数</returns>
-        internal static long WriteToFile(FileStream fs, string url)
+        internal static long WriteToFile(FileStream fs, string url, string DebugExpInfo = "")
         {
             long len = 0;
-            len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/");
+            len = Network.Download.File.GetFileToByte(fs, url, true, "https://www.bilibili.com/", DebugExpInfo:DebugExpInfo);
 
             return len;
         }
