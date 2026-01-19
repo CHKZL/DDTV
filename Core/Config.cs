@@ -2321,10 +2321,10 @@ namespace Core
                 }
             }
 
-            private static string Email_SmtpFromName = "";
+            private static string Email_SmtpFromName = "DDTV";
             /// <summary>
             /// SMTP 发件人显示名
-            /// 默认值：string.Empty(空)
+            /// 默认值：DDTV
             /// </summary>
             public string _Email_SmtpFromName
             {
