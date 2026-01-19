@@ -2213,6 +2213,27 @@ namespace Core
                     }
                 }
             }
+
+            private static string Email_SmtpSecurity = "auto";
+            /// <summary>
+            /// SMTP 连接安全模式（字符串）
+            /// 可选值：auto / none / tls / starttls / opportunistic
+            /// 默认值：auto
+            /// </summary>
+            public string _Email_SmtpSecurity
+            {
+                get => Email_SmtpSecurity;
+                set
+                {
+                    if (value != Email_SmtpSecurity)
+                    {
+                        Email_SmtpSecurity = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             private static string Email_SmtpUserName = "";
             /// <summary>
             /// SMTP服务用户名
@@ -2294,6 +2315,25 @@ namespace Core
                     if (value != Email_SmtpTo)
                     {
                         Email_SmtpTo = value;
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string Email_SmtpFromName = "DDTV";
+            /// <summary>
+            /// SMTP 发件人显示名
+            /// 默认值：DDTV
+            /// </summary>
+            public string _Email_SmtpFromName
+            {
+                get => Email_SmtpFromName;
+                set
+                {
+                    if (value != Email_SmtpFromName)
+                    {
+                        Email_SmtpFromName = value;
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }
