@@ -30,11 +30,11 @@ namespace Update
         public static string Bucket = "ddtv5-update";
         private static AmazonS3Client ossClient = null;
 
-        private static readonly object consoleLock = new object();
-        private static int completedFiles = 0;
+        private static readonly object consoleLock = new object();// 控制台并发访问用的
+        private static int completedFiles = 0; // 已成功下载并写入磁盘的文件计数（用InterLocked递增）
         private const int 最大并发下载数 = 10;
-        private static Dictionary<int, DownloadProgress> downloadProgressList = new Dictionary<int, DownloadProgress>();
-        private static int progressStartLine = 0;
+        private static DownloadProgress[] downloadProgressList = new DownloadProgress[最大并发下载数];// 按槽位索引存储每个并发槽的当前进度信息
+        private static int progressStartLine = 0;// 控制台中进度显示区域的起始行（基于 Console.CursorTop）
 
         public static void Main(string[] args)
         {
@@ -109,10 +109,12 @@ namespace Update
             Console.ReadKey();
         }
 
+        /// <summary>
+        /// 获取远程文件列表并生成需要更新的文件信息列表。返回的 List 中每一项包含下载 URL、本地文件路径、文件名和大小。
+        /// </summary>
+        /// <returns></returns>
         public static List<FileDownloadInfo> GetUpdateFileList()
         {
-            // 获取远程文件列表并生成需要更新的文件信息列表
-            // 返回的 List 中每一项包含下载 URL、本地文件路径、文件名和大小
             try
             {
                 string DL_FileListUrl = $"/{type}/{(Isdev ? "dev" : "release")}/{type}_Update.json";
@@ -169,12 +171,17 @@ namespace Update
         /// 并发下载文件列表。首轮每个文件最多重试 3 次，首轮完成后会对失败文件进行一次统一重试。
         /// 显示实时进度，最大并发由 `最大并发下载数` 控制。
         /// </summary>
-        public static async Task DownloadFilesAsync(List<FileDownloadInfo> fileList)
+        /// <param name="fileList">待下载的文件信息列表（每项包含 URL、本地路径、文件名、大小）。</param>
+        /// <param name="currentDepth">当前递归深度/重试轮次，从 0 开始。用于限制最大重试次数。</param>
+        /// <param name="originalTotalFiles">首次调用时的总文件数，用于最终统计。传入 -1 表示未初始化，方法在第一次进入时将其设为当前 `fileList.Count`。</param>
+        public static async Task DownloadFilesAsync(List<FileDownloadInfo> fileList, int currentDepth = 0, int originalTotalFiles = -1)
         {
             completedFiles = 0;
             int totalFiles = fileList.Count;
+            if (originalTotalFiles == -1)
+                originalTotalFiles = totalFiles;
             var semaphore = new SemaphoreSlim(最大并发下载数);
-            var tasks = new List<Task<bool>>();
+            var tasks = new List<Task<bool>>(fileList.Count);
             var failedFiles = new List<FileDownloadInfo>();
             int taskId = 0;
 
@@ -192,22 +199,22 @@ namespace Update
                 await semaphore.WaitAsync();
                 int currentTaskId = taskId++;
                 int sequenceNumber = idx + 1;
-
+                // 为每个下载任务创建一个独立的 Task，负责下载文件并更新进度
                 var task = Task.Run(async () =>
                 {
                     try
                     {
                         var progress = new DownloadProgress
                         {
-                            FileName = item.FileName,
-                            TotalSize = item.Size,
-                            TaskId = currentTaskId % 最大并发下载数,
+                            文件名 = item.FileName,
+                            总大小 = item.Size,
+                            任务ID = currentTaskId % 最大并发下载数,
                             Sequence = sequenceNumber
                         };
 
                         lock (consoleLock)
                         {
-                            downloadProgressList[progress.TaskId] = progress;
+                            downloadProgressList[progress.任务ID] = progress;
                         }
 
                         string directoryPath = Path.GetDirectoryName(item.FilePath);
@@ -248,13 +255,13 @@ namespace Update
                             }
                         }
 
-                        lock (consoleLock)
+                        lock (consoleLock)// 更新下载结果和进度显示
                         {
                             if (dl_ok)
                             {
                                 Interlocked.Increment(ref completedFiles);
                                 progress.Status = "完成";
-                                progress.Percentage = 100;
+                                progress.下载百分比 = 100;
                             }
                             else
                             {
@@ -296,182 +303,128 @@ namespace Update
 
             if (failedFiles.Count > 0)
             {
-                Console.WriteLine($"\n开始重试 {failedFiles.Count} 个失败文件...");
-                await Task.Delay(2000);
-                
-                var retryTasks = new List<Task<bool>>();
-                taskId = 0;
-
-                for (int idx = 0; idx < failedFiles.Count; idx++)
+                // 如果未达到最大递归深度，则对失败文件递归调用本方法进行重试
+                const int maxDepth = 2;
+                if (currentDepth < maxDepth)
                 {
-                    var item = failedFiles[idx];
-                    await semaphore.WaitAsync();
-                    int currentTaskId = taskId++;
-                    int sequenceNumber = fileList.IndexOf(item) + 1;
+                    Console.SetCursorPosition(0, progressStartLine + 最大并发下载数);
+                    Console.WriteLine($"\n第 {currentDepth + 1} 轮重试 {failedFiles.Count} 个失败文件...");
+                    await Task.Delay(2000);
 
-                    var retryTask = Task.Run(async () =>
-                    {
-                        try
-                        {
-                            var progress = new DownloadProgress
-                            {
-                                FileName = item.FileName,
-                                TotalSize = item.Size,
-                                TaskId = currentTaskId % 最大并发下载数,
-                                Sequence = sequenceNumber
-                            };
+                    // 清理进度显示数据，准备新的重试轮次显示
+                    Array.Clear(downloadProgressList, 0, downloadProgressList.Length);
 
-                            lock (consoleLock)
-                            {
-                                downloadProgressList[progress.TaskId] = progress;
-                            }
-
-                            bool dl_ok = await DownloadFileWithProgressAsync(item.Url, item.FilePath, 30, progress);
-
-                            lock (consoleLock)
-                            {
-                                if (dl_ok)
-                                {
-                                    Interlocked.Increment(ref completedFiles);
-                                    progress.Status = "完成";
-                                    progress.Percentage = 100;
-                                }
-                                else
-                                {
-                                    progress.Status = "最终失败";
-                                }
-                                UpdateProgressDisplay();
-                            }
-
-                            await Task.Delay(300);
-                            return dl_ok;
-                        }
-                        finally
-                        {
-                            semaphore.Release();
-                        }
-                    });
-
-                    retryTasks.Add(retryTask);
+                    await DownloadFilesAsync(failedFiles, currentDepth + 1, originalTotalFiles);
                 }
-
-                await Task.WhenAll(retryTasks);
-                Console.SetCursorPosition(0, progressStartLine + 最大并发下载数);
-                Console.WriteLine($"\n最终结果：成功 {completedFiles}/{totalFiles}，失败 {totalFiles - completedFiles} 个文件");
+                else
+                {
+                    Console.SetCursorPosition(0, progressStartLine + 最大并发下载数);
+                    Console.WriteLine($"\n最终结果：成功 {completedFiles}/{originalTotalFiles}，失败 {originalTotalFiles - completedFiles} 个文件");
+                }
             }
         }
 
+        /// <summary>
+        /// 更新下载进度信息显示
+        /// </summary>
         private static void UpdateProgressDisplay()
         {
             for (int i = 0; i < 最大并发下载数; i++)
             {
                 Console.SetCursorPosition(0, progressStartLine + i);
                 
-                    if (downloadProgressList.ContainsKey(i))
+                    if (downloadProgressList[i] != null)
                 {
                     var progress = downloadProgressList[i];
-                    string bar = GenerateProgressBar(progress.Percentage, 30);
-                    string speed = FormatSpeed(progress.Speed);
-                    string downloaded = FormatSize(progress.DownloadedSize);
-                    string total = FormatSize(progress.TotalSize);
+                    string bar = GenerateProgressBar(progress.下载百分比, 30);
+                    string speed = FormatBytes(progress.速度, true);
+                    string downloaded = FormatBytes(progress.已下载大小, false);
+                    string total = FormatBytes(progress.总大小, false);
                     string status = progress.Status ?? "下载中";
                     int seq = progress.Sequence > 0 ? progress.Sequence : i + 1;
                     
-                    string line = $"[{seq}] {bar} {progress.Percentage:F1}% | {downloaded}/{total} | {speed} | {status} | {TruncateString(progress.FileName, 20)}";
+                    string line = $"[{seq}] {bar} {progress.下载百分比:F1}% | {downloaded}/{total} | {speed} | {status} | {TruncateString(progress.文件名)}";
                     Console.Write(line.PadRight(Console.WindowWidth - 1));
                 }
-                else
-                {
-                    Console.Write("".PadRight(Console.WindowWidth - 1));
-                }
+                else  Console.Write("".PadRight(Console.WindowWidth - 1));
             }
         }
 
+        /// <summary>
+        /// 根据宽度和文件下载百分比生成进度条文本
+        /// </summary>
+        /// <param name="percentage"></param>
+        /// <param name="width"></param>
         private static string GenerateProgressBar(double percentage, int width)
         {
             int filled = (int)(percentage / 100.0 * width);
             return new string('█', filled) + new string(' ', width - filled);
         }
 
-        private static string FormatSpeed(long bytesPerSecond)
+        /// <summary>
+        /// 字符数转可读格式
+        /// 当 <paramref name="isSpeed"/> 为 true 时，会在单位后追加 "/s" 表示速度，否则表示大小
+        /// </summary>
+        /// <param name="bytes">字节数。</param>
+        /// <param name="isSpeed">是否以速度单位格式化（true 则返回速度单位）。</param>
+        private static string FormatBytes(long bytes, bool isSpeed)
         {
-            if (bytesPerSecond <= 0) return "0 B/s";
-            if (bytesPerSecond >= 1 << 20) return $"{(double)bytesPerSecond / (1 << 20):F2} MB/s";
-            if (bytesPerSecond >= 1 << 10) return $"{(double)bytesPerSecond / (1 << 10):F2} KB/s";
-            return $"{bytesPerSecond} B/s";
+            if (bytes <= 0) return "0 B" + (isSpeed ? "/s" : "");
+            string[] units = { "B", "KB", "MB", "GB", "TB" };
+            double v = bytes;
+            int idx = 0;
+            while (v >= 1024 && idx < units.Length - 1) { v /= 1024; idx++; }
+            var suf = isSpeed ? "/s" : "";
+            return idx == 0 ? $"{(long)v} {units[idx]}{suf}" : $"{v:F2} {units[idx]}{suf}";
         }
 
-        private static string FormatSize(long bytes)
-        {
-            if (bytes >= 1 << 30) return $"{(double)bytes / (1 << 30):F2} GB";
-            if (bytes >= 1 << 20) return $"{(double)bytes / (1 << 20):F2} MB";
-            if (bytes >= 1 << 10) return $"{(double)bytes / (1 << 10):F2} KB";
-            return $"{bytes} B";
-        }
-
-        private static string TruncateString(string str, int maxLength)
+        /// <summary>
+        /// 超过最大长度时截断字符串并添加省略号
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="maxLength"></param>
+        private static string TruncateString(string str, int maxLength=20)
         {
             if (string.IsNullOrEmpty(str)) return "";
             return str.Length <= maxLength ? str : str.Substring(0, maxLength - 3) + "...";
         }
 
+        /// <summary>
+        /// 下载文件并实时更新下载进度信息。根据 `RemoteFailure` 标志决定使用主服务器还是备用服务器进行下载，下载失败时会自动重试，重试次数过多时会切换服务器。
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="outputPath"></param>
+        /// <param name="timeoutSeconds"></param>
+        /// <param name="progress"></param>
         public static async Task<bool> DownloadFileWithProgressAsync(string url, string outputPath, long timeoutSeconds, DownloadProgress progress)
         {
             int error_count = 0;
             while (true)
             {
-                string FileDownloadAddress;
-                
+                if (error_count > 5) break;
+
                 if (RemoteFailure || error_count > 2)
                 {
-                    if (error_count > 5)
+                    if (!RemoteFailure)
                     {
-                        break;
+                        lock (consoleLock)
+                        {
+                            progress.Status = "切换备用服务器";
+                            UpdateProgressDisplay();
+                        }
+                        RemoteFailure = true;
                     }
-                    if(RemoteFailure)
-                    {
-                        goto Spare;
-                    }
-                    FileDownloadAddress = AlternativeDomainName + url;
-                    lock (consoleLock)
-                    {
-                        progress.Status = "切换备用服务器";
-                        UpdateProgressDisplay();
-                    }
-                    RemoteFailure = true;
-                    Spare:
                     try
                     {
                         var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20 + timeoutSeconds) };
                         var ossClient = new AmazonS3Client(AKID, AKSecret, config);
                         string FileKey = url.Substring(1, url.Length - 1);
-                        
                         using var response = await ossClient.GetObjectAsync(Bucket, FileKey);
                         using var fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
-                        
-                        var buffer = new byte[81920];
-                        int bytesRead;
-                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                        long lastBytes = 0;
-
-                        while ((bytesRead = await response.ResponseStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                        {
-                            await fileStream.WriteAsync(buffer, 0, bytesRead);
-                            progress.DownloadedSize += bytesRead;
-                            
-                            if (stopwatch.ElapsedMilliseconds > 500)
-                            {
-                                long currentBytes = progress.DownloadedSize;
-                                progress.Speed = (long)((currentBytes - lastBytes) / (stopwatch.ElapsedMilliseconds / 1000.0));
-                                progress.Percentage = (double)progress.DownloadedSize / progress.TotalSize * 100;
-                                lastBytes = currentBytes;
-                                stopwatch.Restart();
-                            }
-                        }
-                        
+                        await CopyStreamWithProgressAsync(response.ResponseStream, fileStream, progress);
                         return true;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         error_count++;
                         lock (consoleLock)
@@ -483,42 +436,19 @@ namespace Update
                 }
                 else
                 {
-                    FileDownloadAddress = MainDomainName + url;
                     try
                     {
                         using var httpClient = new HttpClient();
                         httpClient.Timeout = TimeSpan.FromSeconds(10 + timeoutSeconds);
                         httpClient.DefaultRequestHeaders.Referrer = new Uri("https://update5.ddtv.pro");
-                        
-                        using var response = await httpClient.GetAsync(FileDownloadAddress, HttpCompletionOption.ResponseHeadersRead);
+                        using var response = await httpClient.GetAsync(MainDomainName + url, HttpCompletionOption.ResponseHeadersRead);
                         response.EnsureSuccessStatusCode();
-                        
                         using var contentStream = await response.Content.ReadAsStreamAsync();
                         using var fileStream = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
-                        
-                        var buffer = new byte[81920];
-                        int bytesRead;
-                        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
-                        long lastBytes = 0;
-
-                        while ((bytesRead = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                        {
-                            await fileStream.WriteAsync(buffer, 0, bytesRead);
-                            progress.DownloadedSize += bytesRead;
-                            
-                            if (stopwatch.ElapsedMilliseconds > 500)
-                            {
-                                long currentBytes = progress.DownloadedSize;
-                                progress.Speed = (long)((currentBytes - lastBytes) / (stopwatch.ElapsedMilliseconds / 1000.0));
-                                progress.Percentage = (double)progress.DownloadedSize / progress.TotalSize * 100;
-                                lastBytes = currentBytes;
-                                stopwatch.Restart();
-                            }
-                        }
-                        
+                        await CopyStreamWithProgressAsync(contentStream, fileStream, progress);
                         return true;
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         error_count++;
                         lock (consoleLock)
@@ -532,6 +462,35 @@ namespace Update
                 await Task.Delay(250);
             }
             return false;
+        }
+
+        /// <summary>
+        /// 复制数据流的同时更新下载进度信息。每隔 500ms 更新一次速度和下载百分比
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="dest"></param>
+        /// <param name="progress"></param>
+        private static async Task CopyStreamWithProgressAsync(Stream source, FileStream dest, DownloadProgress progress)
+        {
+            var buffer = new byte[81920];
+            int bytesRead;
+            var stopwatch = Stopwatch.StartNew();
+            long lastBytes = 0;
+
+            while ((bytesRead = await source.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await dest.WriteAsync(buffer, 0, bytesRead);
+                Interlocked.Add(ref progress.已下载大小, bytesRead);
+
+                if (stopwatch.ElapsedMilliseconds > 500)
+                {
+                    long currentBytes = progress.已下载大小;
+                    progress.速度 = (long)((currentBytes - lastBytes) / (stopwatch.ElapsedMilliseconds / 1000.0));
+                    progress.下载百分比 = (double)progress.已下载大小 / progress.总大小 * 100;
+                    lastBytes = currentBytes;
+                    stopwatch.Restart();
+                }
+            }
         }
         public static bool checkVersion()
         {
@@ -729,19 +688,23 @@ namespace Update
             }
         }
     }
-
+    /// <summary>
+    /// 下载进度信息类（进入下载队列后）
+    /// </summary>
     public class DownloadProgress
     {
-        public int TaskId { get; set; }
-        public string FileName { get; set; }
-        public long TotalSize { get; set; }
-        public long DownloadedSize { get; set; }
-        public double Percentage { get; set; }
-        public long Speed { get; set; }
+        public int 任务ID { get; set; }
+        public string 文件名 { get; set; }
+        public long 总大小 { get; set; }
+        public long 已下载大小;
+        public double 下载百分比 { get; set; }
+        public long 速度 { get; set; }
         public string Status { get; set; }
         public int Sequence { get; set; }
     }
-
+    /// <summary>
+    /// 待下载文件的信息（来自远程文件清单）
+    /// </summary>
     public class FileDownloadInfo
     {
         public string Url { get; set; }
