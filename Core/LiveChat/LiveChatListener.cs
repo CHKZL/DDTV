@@ -557,6 +557,25 @@ namespace Core.LiveChat
                 case "SEND_GIFT":
                     MessageReceived?.Invoke(this, new SendGiftEventArgs(obj));
                     break;
+                // 礼物(protobuf版与SEND_GIFT语义等价，需同时兼容)
+                case "SEND_GIFT_V2":
+                    {
+                        try
+                        {
+                            JsonObject legacyData = SendGiftV2Parser.DecodeToLegacyGiftData(obj);
+                            if (legacyData != null)
+                            {
+                                // 解码后映射为旧版SEND_GIFT的data结构，下游消费逻辑保持不变
+                                obj["data"] = legacyData;
+                                MessageReceived?.Invoke(this, new SendGiftEventArgs(obj));
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Warn(nameof(LiveChatListener) + "_SEND_GIFT_V2", "解析SEND_GIFT_V2礼物消息失败", ex, false);
+                        }
+                        break;
+                    }
                 // 舰组信息(上舰)
                 case "GUARD_BUY":
                     MessageReceived?.Invoke(this, new GuardBuyEventArgs(obj));
