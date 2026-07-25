@@ -869,6 +869,18 @@
                             </Grid>
                         </ui:CardControl>
 
+                        <ui:CardControl Padding="15,15,20,15" Header="标准播放窗口观看时记录B站观看时长" Icon="{ui:SymbolIcon HeartPulse20}" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="打开后，使用标准(VLC)播放窗口观看直播时，会向B站发送观看心跳，计入B站观看时长(用于粉丝勋章亲密度结算等)。需要已登录B站账号；对新打开的播放窗口生效，关闭开关会立即停止所有进行中的心跳">
+                                    <ui:ToggleSwitch Name="PlayWindowWatchHeartbeat_ToggleSwitch" IsChecked="{Binding _PlayWindowWatchHeartbeat, Mode=OneWay}" Margin="0,0,5,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                         <ui:CardExpander Icon="{ui:SymbolIcon Chat20}">
                             <ui:CardExpander.Header>
                                 <Grid>

@@ -1934,6 +1934,28 @@ namespace Core
                 }
             }
 
+            private static string PlayWindowWatchHeartbeat = "false";
+            /// <summary>
+            /// 使用VLC播放窗口观看直播时，是否向B站发送观看心跳以记录观看时长（粉丝勋章亲密度结算依据）
+            /// 默认值：false
+            /// </summary>
+            public bool _PlayWindowWatchHeartbeat
+            {
+                get
+                {
+                    return ParseBool(PlayWindowWatchHeartbeat);
+                }
+                set
+                {
+                    if (value.ToString() != PlayWindowWatchHeartbeat)
+                    {
+                        PlayWindowWatchHeartbeat = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             private static string Linux_Only_ShellSwitch = "false";
             /// <summary>
             /// 是否开启Linux下的Shell脚本支持

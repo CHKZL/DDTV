@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Core.Tools;
 
 namespace DDTV.Tests;
@@ -78,6 +80,93 @@ public class ToolsTests
         Assert.NotNull(r2);
         Assert.Equal(10, r1.Length);
         Assert.Equal(10, r2.Length);
+    }
+}
+
+/// <summary>
+/// 观看心跳s签名(HmacChain)单元测试：SHA-224用FIPS标准向量锚定，链式逻辑用BCL内置HMAC交叉验证
+/// </summary>
+public class HmacChainTests
+{
+    private static string Hex(byte[] bytes) => Convert.ToHexString(bytes).ToLowerInvariant();
+
+    [Theory]
+    //FIPS 180-4标准测试向量
+    [InlineData("", "d14a028c2a3a2bc9476102bb288234c415a2b01f828ea62ac5b3e42f")]
+    [InlineData("abc", "23097d223405d8228642a477bda255b32aadbce4bda0b3f7e36c9da7")]
+    [InlineData("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq", "75388b16512776cc5dba5da1fd890150b0c6455cb4f58b1952522525")]
+    public void Sha224_KnownVectors_ShouldMatch(string input, string expected)
+    {
+        byte[] hash = Core.Tools.Sha224.ComputeHash(Encoding.UTF8.GetBytes(input));
+        Assert.Equal(expected, Hex(hash));
+    }
+
+    [Fact]
+    public void HmacSha224_Rfc4231Case1_ShouldMatch()
+    {
+        //RFC 4231 Test Case 1：key=20字节的0x0b，data="Hi There"
+        byte[] key = Enumerable.Repeat((byte)0x0b, 20).ToArray();
+        byte[] hash = HmacChain.HmacSha224(key, Encoding.UTF8.GetBytes("Hi There"));
+        Assert.Equal("896fb1128abbdf196832107cd49df33f47b4b1169912ba4f53684b22", Hex(hash));
+    }
+
+    [Fact]
+    public void HmacSha224_Rfc4231Case2_ShouldMatch()
+    {
+        //RFC 4231 Test Case 2：key="Jefe"，data="what do ya want for nothing?"
+        byte[] hash = HmacChain.HmacSha224(Encoding.UTF8.GetBytes("Jefe"), Encoding.UTF8.GetBytes("what do ya want for nothing?"));
+        Assert.Equal("a30e01098bc6dbbf45690f3a7e9e6d0f8bbea2a39e6148008fd05e44", Hex(hash));
+    }
+
+    [Fact]
+    public void Compute_SingleRule_ShouldEqualBuiltinHmac()
+    {
+        //单步链应等于对应的内置HMAC实现
+        string key = "seacasdgyijfhofiuxoannn";
+        string msg = "{\"id\":[3,321,0,11849457],\"device\":[\"AUTO123\",\"f14f8180-0000-0000-0000-000000000000\"],\"ets\":1717921241,\"benchmark\":\"seacasdgyijfhofiuxoannn\",\"time\":60,\"ts\":1717921241491,\"ua\":\"Mozilla/5.0\"}";
+        byte[] k = Encoding.UTF8.GetBytes(key);
+        byte[] m = Encoding.UTF8.GetBytes(msg);
+
+        using var md5 = new HMACMD5(k);
+        Assert.Equal(Hex(md5.ComputeHash(m)), HmacChain.Compute(msg, key, new[] { 0 }));
+        using var sha1 = new HMACSHA1(k);
+        Assert.Equal(Hex(sha1.ComputeHash(m)), HmacChain.Compute(msg, key, new[] { 1 }));
+        using var sha256 = new HMACSHA256(k);
+        Assert.Equal(Hex(sha256.ComputeHash(m)), HmacChain.Compute(msg, key, new[] { 2 }));
+        using var sha512 = new HMACSHA512(k);
+        Assert.Equal(Hex(sha512.ComputeHash(m)), HmacChain.Compute(msg, key, new[] { 4 }));
+        using var sha384 = new HMACSHA384(k);
+        Assert.Equal(Hex(sha384.ComputeHash(m)), HmacChain.Compute(msg, key, new[] { 5 }));
+    }
+
+    [Fact]
+    public void Compute_MultiRule_ShouldChainHexOutputs()
+    {
+        //多步链：上一步的小写hex字符串作为下一步输入
+        string key = "test_secret_key";
+        string msg = "test_message";
+        byte[] k = Encoding.UTF8.GetBytes(key);
+
+        string step1;
+        using (var h = new HMACSHA256(k)) { step1 = Hex(h.ComputeHash(Encoding.UTF8.GetBytes(msg))); }
+        string step2;
+        using (var h = new HMACSHA384(k)) { step2 = Hex(h.ComputeHash(Encoding.UTF8.GetBytes(step1))); }
+        string step3;
+        using (var h = new HMACSHA1(k)) { step3 = Hex(h.ComputeHash(Encoding.UTF8.GetBytes(step2))); }
+
+        Assert.Equal(step3, HmacChain.Compute(msg, key, new[] { 2, 5, 1 }));
+    }
+
+    [Fact]
+    public void Compute_EmptyRule_ShouldThrow()
+    {
+        Assert.Throws<ArgumentException>(() => HmacChain.Compute("msg", "key", Array.Empty<int>()));
+    }
+
+    [Fact]
+    public void Compute_UnknownRule_ShouldThrow()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => HmacChain.Compute("msg", "key", new[] { 9 }));
     }
 }
 

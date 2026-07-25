@@ -141,6 +141,8 @@ namespace Desktop.Views.Windows
             Task.Run(() => InitVlcPlay(uid));
             Task.Run(() => SetClarityMenu());
             PlayWindowManager.Register(this);
+            //观看时长心跳：配置开关打开期间，窗口存续即向B站上报观看行为(开关判断收口在管理器内)
+            Core.RuntimeObject.WatchHeartbeatManager.Register(roomCard.RoomId, roomCard.UID, "VlcPlayWindow");
         }
         /// <summary>
         /// 初始化播放器和弹幕渲染Canvas
@@ -543,6 +545,8 @@ namespace Desktop.Views.Windows
                 CloseDanma();
             }
             PlayWindowManager.Unregister(this);
+            //注销观看时长心跳引用(该房间引用清零后管理器自动停止心跳)
+            Core.RuntimeObject.WatchHeartbeatManager.Unregister(roomCard.RoomId, "VlcPlayWindow");
         }
 
         private DateTime lastClickTime = DateTime.MinValue; // 上次点击的时间

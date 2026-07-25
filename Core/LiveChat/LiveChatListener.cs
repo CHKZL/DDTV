@@ -517,6 +517,7 @@ namespace Core.LiveChat
             try
             {
                 jsonBody = ReplaceString(jsonBody);
+                
 
                 // 处理DANMU_MSG的特殊格式
                 if (jsonBody.Contains("DANMU_MSG"))
@@ -541,7 +542,7 @@ namespace Core.LiveChat
             }
 
             string cmd = (string)obj["cmd"];
-
+                
             switch (cmd)
             {
                 // 弹幕信息
@@ -582,6 +583,7 @@ namespace Core.LiveChat
                 case "ROOM_BANNER":                // 房间横幅信息
                 case "ACTIVITY_RED_PACKET":        // 红包抽奖弹幕
                 case "CUT_OFF":                    // 切断直播间
+                case "DANMU_MSG_MIRROR":           // 跨房弹幕
                     break;
                 default:
                     // 未知CMD类型

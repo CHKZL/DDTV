@@ -486,6 +486,15 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._CompatibilityWindowTop = (bool)CompatibilityWindowTop_CheckBox.IsChecked;
         }
+        //观看时长心跳开关(关闭时立即停止所有进行中的心跳会话，使关闭即时生效)
+        if (Config.Core_RunConfig._PlayWindowWatchHeartbeat != PlayWindowWatchHeartbeat_ToggleSwitch.IsChecked)
+        {
+            Config.Core_RunConfig._PlayWindowWatchHeartbeat = (bool)PlayWindowWatchHeartbeat_ToggleSwitch.IsChecked;
+            if (!(bool)PlayWindowWatchHeartbeat_ToggleSwitch.IsChecked)
+            {
+                Core.RuntimeObject.WatchHeartbeatManager.StopAll();
+            }
+        }
         #endregion
 
         #region 弹幕发送设置
