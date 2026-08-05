@@ -98,9 +98,13 @@ namespace Server.WebAppServices.Middleware
         /// <param name="context"></param>
         private static void Unauthorized(ActionExecutingContext context)
         {
-            context.HttpContext.Response.StatusCode = 401;
-            context.HttpContext.Response.Redirect("/api/unauthorized");
-            context.Result = new UnauthorizedResult();
+            // 直接返回401状态码和提示文本；不要使用Response.Redirect，重定向会把状态码覆盖为302
+            context.Result = new ContentResult
+            {
+                StatusCode = 401,
+                Content = "HTTP 401",
+                ContentType = "application/json"
+            };
         }
     }
 }

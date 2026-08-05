@@ -40,7 +40,7 @@ namespace Server.WebAppServices.Api
         public ActionResult Post(PostCommonParameters commonParameters)
         {
             (int MonitoringCount, int LiveCount, int RecCount) count = Core.RuntimeObject._Room.Overview.GetRoomStatisticsOverview();
-            return Content(MessageBase.MessagePack(nameof(room_information), count), "application/json");
+            return Content(MessageBase.MessagePack(nameof(room_statistics), count), "application/json");
         }
     }
 

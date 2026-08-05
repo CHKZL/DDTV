@@ -453,15 +453,8 @@ namespace Server.WebAppServices.Api
                 return Content(MessageBase.MessagePack(nameof(set_room_cut_according_to_size), false, "UID和房间号不正确", code.OperationFailed), "application/json");
             }
             RoomCardClass Card = new RoomCardClass();
-            if (uid != 0)
-            {
-                _Room.GetCardForUID(uid, ref Card);
-            }
-            else if (roomid != 0)
-            {
-                _Room.GetCardForRoomId(roomid, ref Card);
-            }
-            if (Card == null)
+            bool found = uid != 0 ? _Room.GetCardForUID(uid, ref Card) : _Room.GetCardForRoomId(roomid, ref Card);
+            if (!found)
             {
                 return Content(MessageBase.MessagePack(nameof(set_room_cut_according_to_size), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
             }
@@ -497,15 +490,8 @@ namespace Server.WebAppServices.Api
                 return Content(MessageBase.MessagePack(nameof(set_room_cut_according_to_time), false, "UID和房间号不正确", code.OperationFailed), "application/json");
             }
             RoomCardClass Card = new RoomCardClass();
-            if (uid != 0)
-            {
-                _Room.GetCardForUID(uid, ref Card);
-            }
-            else if (roomid != 0)
-            {
-                _Room.GetCardForRoomId(roomid, ref Card);
-            }
-            if (Card == null)
+            bool found = uid != 0 ? _Room.GetCardForUID(uid, ref Card) : _Room.GetCardForRoomId(roomid, ref Card);
+            if (!found)
             {
                 return Content(MessageBase.MessagePack(nameof(set_room_cut_according_to_time), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
             }
@@ -531,20 +517,13 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "get_room_cut_according_config")]
         public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0, [FromForm] long roomid = 0)
         {
-            RoomCardClass Card = new RoomCardClass();
-            if (uid != 0)
-            {
-                _Room.GetCardForUID(uid, ref Card);
-            }
-            else if (roomid != 0)
-            {
-                _Room.GetCardForRoomId(roomid, ref Card);
-            }
-            else
+            if (uid == 0 && roomid == 0)
             {
                 return Content(MessageBase.MessagePack(nameof(get_room_cut_according_config), false, "UID和房间号不正确", code.OperationFailed), "application/json");
             }
-            if (Card == null)
+            RoomCardClass Card = new RoomCardClass();
+            bool found = uid != 0 ? _Room.GetCardForUID(uid, ref Card) : _Room.GetCardForRoomId(roomid, ref Card);
+            if (!found)
             {
                 return Content(MessageBase.MessagePack(nameof(get_room_cut_according_config), false, "没有找到对应的直播间，请检查输入的uid和roomid", code.OperationFailed), "application/json");
             }

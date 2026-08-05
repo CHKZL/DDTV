@@ -25,6 +25,10 @@ module.exports = {
       { text: '主页', link: '/' },
       { text: '安装', link: '/install/' },
       { text: '配置说明', link: '/config/' },
+      { text: '进阶功能', link: '/AdvancedFeatures/' },
+      { text: 'API', link: '/API/' },
+      { text: '常见问题', link: '/QFA/' },
+      { text: '更新日志', link: '/CHANGELOG/' },
       { text: '关于项目', link: '/about/' }
     ],
     sidebar: {
@@ -35,7 +39,7 @@ module.exports = {
           sidebar: 'auto',
           children: [
             '',
-            'DDTV_Destkop(Windows)',
+            'DDTV_Desktop(Windows)',
             'DDTV_Server(Linux)',
             'DDTV_Server(Windows)',
             'DDTV_Client(Windows)', 
@@ -64,6 +68,41 @@ module.exports = {
           children: [
             '',
             '免责声明'
+          ]
+        }
+      ],
+      '/AdvancedFeatures/': [
+        {
+          title: '进阶功能',
+          collapsable: false,
+          sidebar: 'auto',
+          children: [
+            '',
+            '弹幕录制',
+            '时间轴修复',
+            '自动转码',
+            '自动切割',
+            '文件合并',
+            '邮件通知',
+            'WebHook',
+            '房间Shell命令',
+            '观看时长心跳',
+            'Debug模式',
+            'API',
+            'WebSocket服务器',
+            'WEB服务器'
+          ]
+        }
+      ],
+      '/API/': [
+        {
+          title: 'API 文档',
+          collapsable: false,
+          sidebar: 'auto',
+          children: [
+            '',
+            'API',
+            'WEB'
           ]
         }
       ]

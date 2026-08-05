@@ -190,28 +190,37 @@ namespace Core.RuntimeObject.Download
                                     string m4sUrl = $"{hostClass.host}{hostClass.base_url}{hostClass.eXTM3U.Map_URI}?{hostClass.extra}";
                                     byte[] m4sBytes = Network.Download.File.GetNetworkByte(m4sUrl, true, "https://www.bilibili.com/");
                                     //Log.Debug ("test", $"m4sUrl:{m4sUrl}");
-                                    long temp_TrackWidth = (long)(m4sBytes[240] * 0x100 * 0x100 * 0x100 + m4sBytes[241] * 0x100 * 0x100 + m4sBytes[242] * 0x100 + m4sBytes[243]) / 65536;
-                                    long temp_TrackHeight = (long)(m4sBytes[244] * 0x100 * 0x100 * 0x100 + m4sBytes[245] * 0x100 * 0x100 + m4sBytes[246] * 0x100 + m4sBytes[247]) / 65536;
-                                    //Log.Debug("test", $"temp_TrackWidth:{temp_TrackWidth} temp_TrackHeight:{temp_TrackHeight} TrackWidth:{TrackWidth} TrackHeight:{TrackHeight}");
-                                    if(InitialRequest)
+                                    if (TryParseResolution(m4sBytes, out long temp_TrackWidth, out long temp_TrackHeight))
                                     {
-                                        TrackWidth = temp_TrackWidth;
-                                        TrackHeight = temp_TrackHeight;
+                                        //Log.Debug("test", $"temp_TrackWidth:{temp_TrackWidth} temp_TrackHeight:{temp_TrackHeight} TrackWidth:{TrackWidth} TrackHeight:{TrackHeight}");
+                                        if (InitialRequest)
+                                        {
+                                            TrackWidth = temp_TrackWidth;
+                                            TrackHeight = temp_TrackHeight;
+                                        }
+                                        if (TrackWidth != 0 || TrackHeight != 0)
+                                            if (temp_TrackWidth != 0 && temp_TrackHeight != 0)
+                                                if (temp_TrackWidth != TrackWidth || temp_TrackHeight != TrackHeight)
+                                                {
+                                                    Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]检测到分辨率变化，进行切割处理");
+                                                    hlsState = DownloadTaskState.Success;
+                                                    return;
+                                                }
                                     }
-                                    if (TrackWidth != 0 || TrackHeight != 0)
-                                        if (temp_TrackWidth != 0 && temp_TrackHeight != 0)
-                                            if (temp_TrackWidth != TrackWidth || temp_TrackHeight != TrackHeight)
-                                            {
-                                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]检测到分辨率变化，进行切割处理");
-                                                hlsState = DownloadTaskState.Success;
-                                                return;
-                                            }
-
-
+                                    else
+                                    {
+                                        //分辨率检测是可选增强逻辑，init segment 异常时仅跳过本轮检测，不影响录制
+                                        string skipReason = m4sBytes == null
+                                            ? "init segment下载失败(未获取到数据，可能为网络问题或CDN拒绝请求)"
+                                            : m4sBytes.Length < 248
+                                                ? $"init segment响应内容过短(仅{m4sBytes.Length}字节，可能为CDN错误页或响应被截断)"
+                                                : "init segment内容不是合法的m4s文件(缺少ftyp文件头，可能为CDN错误页)";
+                                        Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]本轮分辨率变化检测已跳过：{skipReason}，录制不受影响，下一轮将自动重试");
+                                    }
                                 }
                                 catch (Exception ex)
                                 {
-                                    Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]检测分辨率变化时出现了错误，跳过这个处理", ex);
+                                    Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]本轮分辨率变化检测已跳过：下载或解析init segment时发生异常({ex.Message})，录制不受影响", ex);
                                 }
 
                                 // 检测 init segment 是否变化（主播连麦/重新推流后 B站会发送新的 init segment）
@@ -319,6 +328,32 @@ namespace Core.RuntimeObject.Download
 
 
 
+
+        /// <summary>
+        /// 从init segment(m4s)字节流中按固定偏移解析轨道分辨率(tkhd box，16.16定点数)
+        /// </summary>
+        /// <param name="m4sBytes">init segment字节内容</param>
+        /// <param name="width">解析出的宽度</param>
+        /// <param name="height">解析出的高度</param>
+        /// <returns>是否解析成功；内容缺失、过短或不是合法m4s时返回false</returns>
+        private static bool TryParseResolution(byte[] m4sBytes, out long width, out long height)
+        {
+            width = 0;
+            height = 0;
+            //分辨率字段位于固定偏移240~247，数组至少需要248字节
+            if (m4sBytes == null || m4sBytes.Length < 248)
+            {
+                return false;
+            }
+            //校验m4s文件头(box size + "ftyp"标识)，防止把CDN错误页等内容当作init segment解析
+            if (m4sBytes[4] != 'f' || m4sBytes[5] != 't' || m4sBytes[6] != 'y' || m4sBytes[7] != 'p')
+            {
+                return false;
+            }
+            width = (long)(m4sBytes[240] * 0x100 * 0x100 * 0x100 + m4sBytes[241] * 0x100 * 0x100 + m4sBytes[242] * 0x100 + m4sBytes[243]) / 65536;
+            height = (long)(m4sBytes[244] * 0x100 * 0x100 * 0x100 + m4sBytes[245] * 0x100 * 0x100 + m4sBytes[246] * 0x100 + m4sBytes[247]) / 65536;
+            return true;
+        }
 
         /// <summary>
         /// 处理Host刷新

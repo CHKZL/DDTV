@@ -6,14 +6,30 @@ DDTV功能反馈讨论群:`338182356`
 [GitHub](https://github.com/CHKZL/DDTV/releases/latest)   
 DDTV聊天吹水群:`522865400`  
 
+请根据你的CPU架构选择对应的包：`linux-x64`（常见x86_64服务器/电脑）、`linux-arm64`（aarch64）、`linux-arm`（32位armv7，如部分树莓派）。
 
 ## 2.安装
-DDTV_Server是免安装的，把下载下来的压缩包解压到任意当前linux用户有**读写权限**的路径即可   
+DDTV_Server是免安装的，且为**自包含发布**（无需安装.NET运行时），把下载下来的压缩包解压到任意当前linux用户有**读写权限**的路径即可   
 搜索`chmod`命令了解如何在linux上更改文件和文件夹权限
+
+解压后的目录结构大致为：  
+```
+DDTV_Server.sh      # 启动脚本（压缩包最外层）
+bin/
+  ├─ Server         # 原生可执行文件（自包含，无需dotnet命令）
+  ├─ Static/        # WEBUI静态文件
+  ├─ Update/        # 自动更新程序
+  └─ ...            # 运行库文件
+```
+
+如果启动脚本或主程序没有执行权限，请先赋予：
+```shell
+chmod +x ./DDTV_Server.sh ./bin/Server
+```
 
 ## 3.启动准备
 ### 运行环境准备
-DDTV_Server依赖于`ffmpeg`，请先根据您的系统环境安装`ffmpeg`  
+DDTV_Server依赖于`ffmpeg`（用于录制完成后的自动修复和合并转码），请先根据您的系统环境安装`ffmpeg`  
 
 >linux请根据您使用的发行版本自行使用`apt`或`yum`等包管理工具自行安装`ffmpeg`   
 >例如ubuntu/debian下使用以下命令进行安装  
@@ -21,13 +37,12 @@ DDTV_Server依赖于`ffmpeg`，请先根据您的系统环境安装`ffmpeg`
 >sudo apt install ffmpeg
 >```
 
-缺少libgdiplus包可能无法在shell中正确显示登录用的二维码
->```shell
->sudo apt install libgdiplus
->```
+:::tip 关于libgdiplus
+早期版本在Linux下显示登录二维码需要安装`libgdiplus`。当前版本的二维码已改用SkiaSharp/ZXing实现（控制台直接打印二维码字符画），**不再需要安装libgdiplus**。  
+:::
 
 ### 配置房间文件
-默认房间文件`./Config/RoomListConfig.json`格式为json字符串，默认为空json     
+默认房间文件`./Config/RoomListConfig.json`（相对于程序目录`bin/`）格式为json字符串，默认为空json     
 可以直接使用其他版本DDTV的房间配置文件复制过来即可  
 完整格式可参考配置文件说明中关于房间文件的说明  
 房间配置文件格式为  
@@ -35,24 +50,30 @@ DDTV_Server依赖于`ffmpeg`，请先根据您的系统环境安装`ffmpeg`
 {
             "name": "未来明-MiraiAkari",//昵称
             "Description": "",//备注
-            "RoomId": 6792401,//房间号
-            "UID": 238537745,//账号UID
+            "RoomId": 6792401,//房间号(长号)
+            "UID": 238537745,//主播账号UID
             "IsAutoRec": false,//开播后是否自动录制
-            "IsRemind": false,//开播后是否提醒(DDTV_GUI特有，在本版本中无效)
+            "IsRemind": false,//开播后是否提醒
             "IsRecDanmu": false,//是否录制该房间弹幕(需要打开总弹幕录制开关)
-            "Like": false///特别标注(本版本无效)
+            "Like": false,//特别标注
+            "Shell": "",//该房间录制完成后执行的Shell命令，留空不执行
+            "AppointmentRecord": false,//是否预约下一次录制
+            "RoomCutAccordingToSize": 0,//只针对本房间生效的按文件大小切割(字节)，0为不生效
+            "RoomCutAccordingToTime": 0//只针对本房间生效的按录制时长切割(秒)，0为不生效
 },
 ```
 多个这种格式的内容组成  
 
 :::danger 警告 
 手动编辑过后请检查JSON字符串的合法性，请保证确保符合参考文件的JSON文件格式！！！  
+（注意：上面示例中的中文注释仅为说明用途，实际写入文件时请删除注释）  
 ::: 
 ### WEB端口设置
 如果是部署在公网或者有需要从外部访问的需求，请在系统防火墙和可能存在的云平台安全组中打开DDTV_Server的WEB服务所需端口(默认为**11419**)  
 
 ## 4.启动&初始化
-1.使用压缩包最外层提供的sh脚本启动或者使用`./bin/Server.dll`命令直接启动，如果要在无GUI的linux服务器上后台运行请使用`screen`进行启动，**请勿使用`nohup`的方式进行启动**。   
+1.使用压缩包最外层提供的`DDTV_Server.sh`脚本启动，或直接运行`./bin/Server`（当前版本为自包含的原生可执行文件，**不需要也不能用`dotnet ./bin/Server.dll`方式启动**）。  
+如果要在无GUI的linux服务器上后台运行请使用`screen`进行启动，**请勿使用`nohup`的方式进行启动**。   
 然后根据控制台窗口显示的内容操作即可  
 
 示例：

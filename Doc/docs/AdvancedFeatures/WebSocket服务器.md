@@ -1,71 +1,52 @@
-# WebSocket服务器
+# WebSocket 服务器
 
-## 怎么启用WebSocket
-在``DDTVLiveRec.xxx.config``文件中，配置以下几个项目:  
-```xml
-<add key="WebSocketEnable" value="1" /><!-- 是否使能WebSocket服务器 -->
-<add key="WebSocketPort" value="11451" /><!-- WebSocket服务器初始化时使用的端口号 -->
-<add key="WebSocketUserName" value="username" /><!-- 用于获取Token的WebSocket服务器账号 -->
-<add key="WebSocketPassword" value="password" /><!-- 用于获取Token的WebSocket服务器密码 -->
+DDTV5 内置了一个 WebSocket 推送通道，用于把运行过程中的状态变化（开播、开始录制、录制结束、登录态变化、配置修改等）实时推送给所有已连接的客户端。WEBUI 的实时状态刷新就是基于它实现的。
+
+## 这是什么
+
+- WebSocket 服务**跟随 WEB 服务一起启动**，没有独立的开关和端口，挂在主 HTTP 服务的 `/ws` 路径上。
+- 只要 `EnableWebServer` 为 `true`（默认）且 `Port` 不为 0，WebSocket 推送就可用。
+- 连接**无鉴权**，不需要计算 `sig`。
+- 这是一个**单向推送通道**：服务端会主动广播事件消息；客户端发给服务端的消息只会被原样回显（echo），不会被处理。需要执行操作请使用 [HTTP API](./API.md)。
+
+## 怎么连接
+
 ```
-## WebSocket的数据包封装格式
-服务器对于往返的数据包都套用相同的外壳，如客户端发送给服务器的数据格式均为:  
+ws://<IP>:<端口>/ws
+```
+
+默认即 `ws://127.0.0.1:11419/ws`。用浏览器开发者工具就可以快速验证：
+
+```javascript
+const ws = new WebSocket("ws://127.0.0.1:11419/ws");
+ws.onmessage = (e) => console.log(JSON.parse(e.data));
+```
+
+连接成功后，每当 DDTV 发生状态变化（例如某个房间开播、开始录制），你就会收到一条 JSON 消息。
+
+## 推送消息长什么样
+
+每条推送消息都是统一的 JSON 结构：
+
 ```json
 {
-    "code":1001,//命令码
-    "Token":"xxxxxxxxxxxxxx",//用于验证身份的Token
-    "messge":""//具体的命令交互内容
+    "cmd": "StartRecording",
+    "code": 40104,
+    "data": { "Name": "某某主播", "UID": 672346917, "...": "..." },
+    "message": "开始录制"
 }
 ```
-::: tip 注意  
-其中Messge的内容应该为Json字符串，而不是Json对象  
-如:请求Token的完整命令应为:  
-```json
-{
-    "code":2001,
-    "Token":null,
-    "messge":"{\"UserName\":\"defaultUserName\",\"Password\":\"defaultPassword\"}"
-}
-``` 
-:::  
 
-:::danger 警告   
-此文档中的所有命令都只标注messge内容，外壳请自行添加  
-:::  
+- `cmd` / `code`：事件名称和事件代码（如 `40104` = 开始录制、`40105` = 录制结束、`40102` = 开播事件、`30106` = 登录态失效）
+- `data`：关联的房间信息对象（与具体房间无关的事件为 `null`）
+- `message`：事件描述文本
 
-服务器发送给客户端的外壳数据封装格式和API请求返回的信息格式一致，具体内容请参照[API请求](../API)  
+完整的事件代码表、`data` 字段结构、消息合并机制说明以及 JavaScript / Python 客户端示例，见 [WebSocket 推送协议文档](../API/WEB.md)。
 
-## 目前会响应的请求命令码
+## 使用建议
 
-|功能|命令码|
-|--|:--:|
-|请求WebSocketWToken|2001|
-|获取系统运行情况|2002|
-|查看当前配置文件|2003|
-|检查更新|2004|
-|获取系统运行日志|2005|
-|获取当前录制中的队列简报 | 2006|
-|获取所有下载任务的队列简报 | 2007|
-|根据录制任务GUID获取任务详情 | 2008|
-|根据录制任务GUID取消相应任务 | 2009|
-|增加配置文件中监听的房间 | 2010|
-|删除配置文件中监听的房间 | 2011|
-|修改房间的自动录制开关配置 | 2012|
-|获取当前房间配置列表总览 | 2013|
-|获取当前录制文件夹中的所有文件的列表 | 2014|
-|删除某个录制完成的文件 | 2015|
-|根据房间号获得相关录制文件 | 2016|
-|获取上传任务信息列表 | 2017|
-|获取上传中的任务信息列表 | 2018|
-
-## WebSocket服务器的工作流程
-WebSocket功能在使用具体命令前，需向DDTV发送2001命令，以获取Token  
-```json
-{
-    "UserName":"username",
-    "Password":"password"
-}
-```
-::: tip 提示  
-其他所有的操作均和[API请求](../API)一致，区别只是WebSocket服务器公共接口为code、Token和messge，其中messge为私有属性，无其他值，私有属性定义和API一致  
-:::  
+::: warning 注意
+- 服务端会把同一批中**相同事件 + 相同房间**的重复消息合并为最新一条再广播，因此该通道不适合当作完整事件日志；需要可靠事件流的场景请自行在接收端结合 HTTP API 查询兜底。
+- 消息不能丢的场景也可以改用 [WebHook](./WebHook.md)：同一份推送内容会以 HTTP POST 发到你配置的地址，无需维持长连接。
+- WebSocket 通道没有鉴权，请勿把 DDTV 的端口直接暴露到公网；如需远程访问请自行加反向代理和访问控制。
+:::

@@ -4,6 +4,10 @@ Docker 镜像在 [Docker Hub](https://hub.docker.com/u/ddtv) 和 [GitHub Contain
 
 两个位置提供的镜像完全一样，都是对 DDTV 发行版本的简单包装。
 
+:::tip 关于镜像的构建方式
+DDTV仓库中**不包含Dockerfile**。Docker镜像是在发布流水线（`DDTV_Release.yml`）中由第三方GitHub Action [moomiji/docker-ddtv](https://github.com/moomiji/docker-ddtv) 基于对应版本的发布产物自动构建并推送的，镜像仓库为`ddtv/server`，每次发布会同时构建`debian`和`alpine`两种基础系统的镜像。  
+:::
+
 ## 先决条件
   - Linux
   - 容器引擎，如 Docker-ce 18.03 或更高版本 ([安装教程](https://mirrors.tuna.tsinghua.edu.cn/help/docker-ce/))、Podman 等
@@ -20,6 +24,10 @@ Docker 镜像在 [Docker Hub](https://hub.docker.com/u/ddtv) 和 [GitHub Contain
 | :---- | :----: | :----: | :----: | :---- |
 | debian | ✅ | ✅ | ✅ | `latest` `debian` `5.*` `5.*.*` |
 | alpine | ✅ | ✅ | ✅ | `alpine` `5.*-alpine` `5.*.*-alpine` |
+
+:::warning 注意
+镜像标签由构建用的第三方Action生成（发布流水线会将发布版本号传入该Action），实际可用的标签名称请以[Docker Hub的ddtv/server标签页](https://hub.docker.com/r/ddtv/server/tags)或该Action的文档为准。  
+:::
 
 ## 最佳实践
 
@@ -41,6 +49,10 @@ sudo docker rm -f DDTV_Server
 ```
 
 ## 可用环境变量
+
+:::tip 提示
+以下镜像内路径与环境变量由镜像构建脚本（moomiji/docker-ddtv）定义，如有变动请以镜像文档为准。
+:::
 
 #### Docker 版独有环境变量
 

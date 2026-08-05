@@ -1,36 +1,58 @@
-# shell使用说明
+# Shell 使用说明
+
+DDTV 支持在**录制结束后自动执行 Shell 命令**，常用于自动上传网盘、转码后处理、通知等场景。本文从配置的角度说明相关字段如何填写；功能背景介绍另见高级功能中的[房间Shell命令](../AdvancedFeatures/房间Shell命令.md)。
 
 ## 系统要求
-- linux，并且支持`/bin/bash`命令，以及相关路径有能有读写权限
 
-## 注意事项
-- 执行时机为直播间录制结束(房间开播状态变化为未直播)时触发。
-- 因为本质是使用DOTNET的Process执行bash程序，使用的命令格式如下，请注意命令内容的和安全性
-```C#
-Process process = new Process
-{
-    StartInfo = new ProcessStartInfo
-    {
-        FileName = "/bin/bash",
-        Arguments = $"-c \"{Command}\"",
-        RedirectStandardOutput = true,
-        UseShellExecute = false,
-        CreateNoWindow = true
-    }
-};
-process.Start();
-string result = process.StandardOutput.ReadToEnd();
-process.WaitForExit();
-return result;
+- **仅 Linux 生效**（Windows / Desktop 版不会执行），且系统需支持 `/bin/bash`，DDTV 对相关路径有读写权限。
+
+## 涉及的配置项
+
+Shell 功能由两处配置共同控制：
+
+| 位置 | 字段 | 说明 |
+|---|---|---|
+| `DDTV_Config.ini` | `Linux_Only_ShellSwitch` | 总开关，布尔值。**必须为 `true` 才会执行任何 Shell 命令**，否则收到的执行请求会被直接拒绝 |
+| `DDTV_Config.ini` | `Linux_Only_ShellCommand` | 全局 Shell 命令模板。当房间没有单独配置 `Shell` 时使用该模板 |
+| `RoomListConfig.json` | 每个房间的 `Shell` 字段 | 房间级 Shell 命令，**优先级高于全局模板**：该房间 `Shell` 非空时使用房间自己的命令，否则回退到全局模板 |
+
+## 执行时机与方式
+
+- 触发时机：该房间的录制任务结束（房间直播状态变为未直播、下载循环退出）之后。
+- 实现方式：内部等价于 `/bin/bash -c "命令"`，同步等待执行结束并回收输出。
+
+::: danger 安全提示
+命令内容会被拼接进 `bash -c "..."` 中执行，请确保命令来源可信、注意转义与注入风险。可能包含空格或特殊字符的内容（如路径、文件名）**必须使用单引号**包裹，避免与外层双引号冲突。
+:::
+
+## 可用关键字
+
+以下文件类关键字会被替换为**半角逗号 `,` 分隔的绝对路径列表**（不存在的文件会被自动剔除）：
+
+| 关键字 | 替换内容 |
+|---|---|
+| `{AfterRepairFiles}` | 最终生成的视频文件列表，如 `/rec/A_fix.mp4,/rec/B_fix.mp4` |
+| `{DanmakuFiles}` | 弹幕录制文件列表（XML） |
+| `{SCFiles}` | SuperChat（醒目留言）记录文件列表 |
+| `{GuardFiles}` | 大航海记录文件列表 |
+| `{GiftFiles}` | 礼物记录文件列表 |
+| `{Files}` | 以上全部文件合并后的总列表 |
+
+此外还支持通用关键字：`{ROOMID}`（房间号）、`{NAME}`（主播昵称）、`{TITLE}`（直播标题）、`{DATE}`（`yyyy_MM_dd`）、`{TIME}`（`HH_mm_ss`）、`{YYYY}`/`{YY}`/`{MM}`/`{DD}`/`{HH}`/`{mm}`/`{SS}`/`{FFF}`（时间分量）、`{R}`（4 位随机数）、`{CWD}`（本次录制任务的完整工作目录）。
+
+::: warning 注意
+- 如果房间没有开启弹幕录制，`{DanmakuFiles}` 等关键字会被替换为空字符串，依赖这些参数的命令可能执行失败，请确保关键字与房间实际开启的功能匹配。
+- 文件列表是逗号分隔、无引号的，脚本中接收后需自行按逗号切分处理。
+:::
+
+## 示例
+
+把录制完成的视频和弹幕文件移到上传目录：
+
+```bash
+mv '{AfterRepairFiles}' '{DanmakuFiles}' /data/upload/
 ```
 
+## 排查执行情况
 
-## 关键配置
-- `DDTV_Config.ini`中的`Linux_Only_ShellSwitch`和`Linux_Only_ShellCommand`,前者为录制完成后是否执行shell的开关，布尔值。后者为全局的shell命令模版，当房间没有单独的shell命令时，就会使用这一个模版。
-- `RoomListConfig.json`中每个房间的`Shell`字段，这和上面的`Linux_Only_ShellCommand`功能相同，但是优先级更高，当某个房间有单独的shell的时候，会使用房间配置的shell而不是`Linux_Only_ShellCommand`
-
-## 关键字
-- `{AfterRepairFiles}`、`{DanmakuFiles}`、`{SCFiles}`、`{GuardFiles}`、`{GiftFiles}`,这5个关键字分别为，最后生成的录制文件，弹幕文件，SC记录文件，大航海记录文件，礼物记录文件，会被替换为半角逗号`,`进行分割的文件队列(例如：`{AfterRepairFiles}`会被替换为`/tmp/1/A.mp4,/tmp/1/B.mp4,/tmp/1/C.mp4`这样的绝对路径文件队列)
-
-## 怎么查看命令的替换和执行情况
-- 在本次启动的日志sqlite文件中，能看到Source为shell的记录，会将输入的原始shell以及替换后的shell打印出来
+每次执行时，DDTV 会把**原始命令**和**关键字替换后的命令**写入日志（日志中 Source 为 `Shell` 的记录，级别为 Warn），可在 WEBUI 日志页或日志文件中查看替换结果是否符合预期。
