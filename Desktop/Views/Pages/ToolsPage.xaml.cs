@@ -52,22 +52,27 @@ public partial class ToolsPage
                     string before = result;
                     string after = result.Replace(".mp4", "_fix.mp4").Replace(".flv", "_fix.mp4");
 
-                    // 检测是否是 fMP4 文件且存在结构断裂
-                    var scanResult = Core.Tools.Fmp4Repair.Scan(before);
-                    if (scanResult.IsCorrupted)
+                    // fMP4 结构预处理仅针对 MP4 文件；FLV/MKV 等容器直接转码，避免被误判为结构断裂
+                    bool isMp4 = string.Equals(System.IO.Path.GetExtension(before), ".mp4", StringComparison.OrdinalIgnoreCase);
+                    if (isMp4)
                     {
-                        toolsPageModels.FixMessage = "检测到文件结构断裂，正在预处理...";
-                        toolsPageModels.OnPropertyChanged("FixMessage");
+                        // 检测是否是 fMP4 文件且存在结构断裂（Boxes 为空说明未解析出有效 box，并非 fMP4，跳过预处理）
+                        var scanResult = Core.Tools.Fmp4Repair.Scan(before);
+                        if (scanResult.IsCorrupted && scanResult.Boxes.Count > 0)
+                        {
+                            toolsPageModels.FixMessage = "检测到文件结构断裂，正在预处理...";
+                            toolsPageModels.OnPropertyChanged("FixMessage");
 
-                        tempRepairedPath = before + ".struct_repaired.mp4";
-                        bool repairSuccess = Core.Tools.Fmp4Repair.RepairStructure(before, tempRepairedPath, scanResult);
-                        if (repairSuccess)
-                        {
-                            before = tempRepairedPath;
-                        }
-                        else
-                        {
-                            Log.Warn(nameof(ManualFix_Button_Click), $"fMP4 结构预处理失败，尝试直接转码: {result}");
+                            tempRepairedPath = before + ".struct_repaired.mp4";
+                            bool repairSuccess = Core.Tools.Fmp4Repair.RepairStructure(before, tempRepairedPath, scanResult);
+                            if (repairSuccess)
+                            {
+                                before = tempRepairedPath;
+                            }
+                            else
+                            {
+                                Log.Warn(nameof(ManualFix_Button_Click), $"fMP4 结构预处理失败，尝试直接转码: {result}");
+                            }
                         }
                     }
 

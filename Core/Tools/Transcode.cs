@@ -136,7 +136,6 @@ namespace Core.Tools
                 }
                 if (process != null)
                     process = null;
-
             }
             catch (Exception e)
             {

@@ -153,6 +153,8 @@ namespace Core.Tools
                 var scanResult = preScannedResult ?? ScanStructure(inputPath);
                 var boxes = scanResult.Boxes;
                 byte[] copyBuffer = new byte[64 * 1024]; // 64KB 流式拷贝缓冲区
+                bool initWritten = false;
+                int pairCount = 0;
 
                 using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
                 using (var outFs = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
@@ -163,6 +165,7 @@ namespace Core.Tools
                         if (boxes[i].type == Ftyp || boxes[i].type == Moov)
                         {
                             CopyRange(fs, outFs, boxes[i].offset, boxes[i].size, copyBuffer);
+                            initWritten = true;
                         }
                         else
                         {
@@ -171,7 +174,6 @@ namespace Core.Tools
                     }
 
                     // 提取所有 moof+mdat 对
-                    int pairCount = 0;
                     for (int i = 0; i < boxes.Count - 1; i++)
                     {
                         if (boxes[i].type == Moof && boxes[i + 1].type == Mdat)
@@ -183,10 +185,18 @@ namespace Core.Tools
                             i++; // 跳过 mdat
                         }
                     }
-
-                    Log.Info(nameof(RepairStructure), $"fMP4 结构修复完成: 输入={inputPath}, 输出={outputPath}, 跳过断裂点={scanResult.RecoveryCount}, 有效片段对={pairCount}");
-                    return true;
                 }
+
+                // 未提取到 init segment 或任何有效片段对，说明输入并非有效 fMP4，判定修复失败并清理空输出文件
+                if (!initWritten || pairCount == 0)
+                {
+                    Log.Warn(nameof(RepairStructure), $"fMP4 结构修复失败，输入不是有效的 fMP4 或未提取到有效片段: 输入={inputPath}, init={(initWritten ? "有" : "无")}, 有效片段对={pairCount}");
+                    try { File.Delete(outputPath); } catch { }
+                    return false;
+                }
+
+                Log.Info(nameof(RepairStructure), $"fMP4 结构修复完成: 输入={inputPath}, 输出={outputPath}, 跳过断裂点={scanResult.RecoveryCount}, 有效片段对={pairCount}");
+                return true;
             }
             catch (Exception ex)
             {
