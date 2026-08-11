@@ -217,5 +217,56 @@ namespace Core.Network
 
             return result;
         }
+
+        /// <summary>
+        /// 请求指定URL并收集整个响应过程（含重定向链）中Set-Cookie设置的所有Cookie。
+        /// 用于扫码登录新流程：poll成功后data.url中只携带一次性ticket，需要请求该crossDomain链接换取正式Cookie。
+        /// 使用独立的HttpClient和CookieContainer，避免污染共享 client's Cookie 容器。
+        /// </summary>
+        /// <param name="url">目标URL（一般为poll返回的crossDomain链接）</param>
+        /// <param name="referer">Referer</param>
+        /// <returns>收集到的Cookie集合，失败时返回空集合</returns>
+        public static CookieCollection GetResponseCookies(string url, string referer = "")
+        {
+            CookieCollection result = new CookieCollection();
+            try
+            {
+                var container = new CookieContainer();
+                using (var handler = new HttpClientHandler
+                {
+                    CookieContainer = container,
+                    UseCookies = true,
+                    AllowAutoRedirect = true,
+                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
+                })
+                using (var client = new HttpClient(handler) { Timeout = TimeSpan.FromSeconds(15) })
+                using (var request = new HttpRequestMessage(HttpMethod.Get, url))
+                {
+                    if (!string.IsNullOrEmpty(Config.Core_RunConfig._HTTP_UA))
+                        request.Headers.TryAddWithoutValidation("User-Agent", Config.Core_RunConfig._HTTP_UA);
+                    if (!string.IsNullOrEmpty(referer))
+                    {
+                        try { request.Headers.Referrer = new Uri(referer); }
+                        catch { }
+                    }
+                    using (HttpResponseMessage response = client.Send(request))
+                    {
+                        // 读取并丢弃响应体，确保请求完整结束（cookie已在container中）
+                        using (var stream = response.Content.ReadAsStream())
+                        using (var reader = new StreamReader(stream, Encoding.UTF8))
+                        {
+                            _ = reader.ReadToEnd();
+                        }
+                        Log.Info(nameof(GetResponseCookies), $"ticket换取Cookie完成，HTTP状态码:{(int)response.StatusCode}，最终地址:{response.RequestMessage?.RequestUri}");
+                    }
+                    result = container.GetAllCookies();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Error(nameof(GetResponseCookies), $"请求crossDomain链接换取Cookie失败:{ex.Message}", ex, false);
+            }
+            return result;
+        }
     }
 }

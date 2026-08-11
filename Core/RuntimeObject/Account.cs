@@ -20,6 +20,7 @@ namespace Core.RuntimeObject
     {
         public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
         private static AccountInformation _accountInformation = new();
+        private static readonly object _accountLock = new();//账号信息读写锁，防止多线程下赋值与写文件之间被其他线程篡改
         public static Nav_Class.Data nav_info = new Nav_Class.Data();
         public static AccountInformation AccountInformation
         {
@@ -30,14 +31,15 @@ namespace Core.RuntimeObject
                     string[] files = Directory.GetFiles(Config.Core_RunConfig._ConfigDirectory, $"*{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
                     {
+                        //注意：_ValidAccount存的是裸UID，匹配时必须只取文件名部分（去掉目录前缀），否则永远匹配不上
                         if(Config.Core_RunConfig._ValidAccount=="-1")
                         {
-                            Config.Core_RunConfig._ValidAccount = files[0].Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "");
+                            Config.Core_RunConfig._ValidAccount = Path.GetFileName(files[0]).Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "");
                         }
                         string ACC = files[0];
                         foreach (var item in files)
                         {
-                            if (item.Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "") == Config.Core_RunConfig._ValidAccount)
+                            if (Path.GetFileName(item).Replace($"{Config.Core_RunConfig._UserInfoCoinfFileExtension}", "") == Config.Core_RunConfig._ValidAccount)
                             {
                                 ACC = item;
                                 break;
@@ -83,13 +85,17 @@ namespace Core.RuntimeObject
                 string Message = $"更新登录态缓存:[{MethodBase.GetCurrentMethod().Name}]]";
                 OperationQueue.Add(Opcode.Account.UpdateLoginStateCache, Message);
                 Log.Info(nameof(AccountInformation), Message);
-                _accountInformation = value;
-                //Core.Config.Core._LoginStatus = value.State;
-                if (!string.IsNullOrEmpty(_accountInformation.Uid) && _accountInformation.State)
+                lock (_accountLock)
                 {
-                    Encryption.EncryptFile(JsonSerializer.Serialize(AccountInformation), $"{Config.Core_RunConfig._ConfigDirectory}{_accountInformation.Uid}{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
+                    _accountInformation = value;
+                    //注意：判断、序列化内容、文件名都必须使用传入的value，不能用静态字段_accountInformation，
+                    //否则在赋值与写文件之间其他线程（如并发触发的重新登陆流程）可能将_accountInformation替换为空账号，
+                    //导致写出文件名为空UID的".Duser"文件
+                    if (!string.IsNullOrEmpty(value.Uid) && value.State)
+                    {
+                        Encryption.EncryptFile(JsonSerializer.Serialize(value), $"{Config.Core_RunConfig._ConfigDirectory}{value.Uid}{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
+                    }
                 }
-
             }
         }
 

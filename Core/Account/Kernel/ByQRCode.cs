@@ -235,43 +235,84 @@ namespace Core.Account.Kernel
                         Monitor.Dispose();
                         Refresher.Dispose();
                         AccountInformation account = new AccountInformation();
-                        CookieBack_Templete cookies = new()
-                        {
-                            refresh_token = obj.data.refresh_token,
-                            timestamp = obj.data.timestamp,
-                            url = obj.data.url
-                        };
-                        string Querystring = cookies.url.Split('?')[1];
-                        string[] KeyValuePair = Regex.Split(Querystring, "&");
                         account.Cookies = new CookieCollection();
-                        for (int i = 0; i < KeyValuePair.Length - 1; i++)
+                        account.RefreshToken = obj.data.refresh_token;
+                        if (!string.IsNullOrEmpty(obj.data.url) && obj.data.url.Contains("ticket="))
                         {
-                            string[] tmp = Regex.Split(KeyValuePair[i], "=");
-                            switch (tmp[0])
+                            //新版流程：url的querystring中不再直接携带Cookie，只有一个一次性ticket，
+                            //需要请求该crossDomain链接，从响应的Set-Cookie头中换取正式Cookie
+                            CookieCollection cookies = Get.GetResponseCookies(obj.data.url, "https://passport.bilibili.com");
+                            Log.Info(nameof(MonitorCallback), $"扫码登录确认，新版ticket流程换取到{cookies.Count}个Cookie");
+                            //重定向链上同名Cookie会被多个响应重复设置，按名字去重（保留最后一个）
+                            //不按Domain过滤：crossDomain是biligame域名，Set-Cookie的Domain属性不一定是.bilibili.com，过滤会误丢
+                            Dictionary<string, Cookie> cookieMap = new Dictionary<string, Cookie>();
+                            foreach (Cookie cookie in cookies)
                             {
-                                case "bili_jct":
-                                    account.CsrfToken = tmp[1];
-                                    account.strCookies += KeyValuePair[i] + "; ";
-                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                    break;
-                                case "DedeUserID":
-                                    account.Uid = tmp[1];
-                                    account.strCookies += KeyValuePair[i] + "; ";
-                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                    break;
-                                case "Expires":
-                                    account.Expires_Cookies = DateTime.Parse("1970-01-01 08:00:00").AddSeconds(double.Parse(tmp[1]));
-                                    break;
-                                case "gourl":
-                                    break;
-
-                                default:
-                                    account.strCookies += KeyValuePair[i] + "; ";
-                                    account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
-                                    break;
+                                cookieMap[cookie.Name] = cookie;
+                                Log.Info(nameof(MonitorCallback), $"换取到Cookie:[{cookie.Name}]，Domain:[{cookie.Domain}]，过期时间:[{cookie.Expires}]");
                             }
+                            foreach (var item in cookieMap)
+                            {
+                                Cookie cookie = item.Value;
+                                account.Cookies.Add(cookie);
+                                account.strCookies += $"{cookie.Name}={cookie.Value}; ";
+                                switch (cookie.Name)
+                                {
+                                    case "bili_jct":
+                                        account.CsrfToken = cookie.Value;
+                                        break;
+                                    case "DedeUserID":
+                                        account.Uid = cookie.Value;
+                                        break;
+                                    case "SESSDATA":
+                                        if (cookie.Expires > DateTime.MinValue)
+                                            account.Expires_Cookies = cookie.Expires;
+                                        break;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(account.strCookies) && account.strCookies.Length >= 2)
+                                account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
                         }
-                        account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
+                        else if (!string.IsNullOrEmpty(obj.data.url) && obj.data.url.Contains("?"))
+                        {
+                            //旧版流程：Cookie直接以querystring参数的形式拼接在url中
+                            string Querystring = obj.data.url.Split('?')[1];
+                            string[] KeyValuePair = Regex.Split(Querystring, "&");
+                            for (int i = 0; i < KeyValuePair.Length - 1; i++)
+                            {
+                                string[] tmp = Regex.Split(KeyValuePair[i], "=");
+                                switch (tmp[0])
+                                {
+                                    case "bili_jct":
+                                        account.CsrfToken = tmp[1];
+                                        account.strCookies += KeyValuePair[i] + "; ";
+                                        account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                        break;
+                                    case "DedeUserID":
+                                        account.Uid = tmp[1];
+                                        account.strCookies += KeyValuePair[i] + "; ";
+                                        account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                        break;
+                                    case "Expires":
+                                        account.Expires_Cookies = DateTime.Parse("1970-01-01 08:00:00").AddSeconds(double.Parse(tmp[1]));
+                                        break;
+                                    case "gourl":
+                                        break;
+
+                                    default:
+                                        account.strCookies += KeyValuePair[i] + "; ";
+                                        account.Cookies.Add(new Cookie(tmp[0], tmp[1]) { Domain = ".bilibili.com" });
+                                        break;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(account.strCookies) && account.strCookies.Length >= 2)
+                                account.strCookies = account.strCookies.Substring(0, account.strCookies.Length - 2);
+                        }
+                        if (string.IsNullOrEmpty(account.Uid))
+                        {
+                            //解析失败防护：记录日志而不是让Timer线程未处理异常直接崩溃
+                            Log.Error(nameof(MonitorCallback), $"扫码登录确认成功，但未能解析出账号信息，B站返回的url格式可能已变更，url前缀:[{(obj.data.url ?? "").Split('?')[0]}]", null, false);
+                        }
                         account.LoginStatus = AccountInformation.LoginStatusEnum.ByQrCode;
                         Linq.ByQRCode.RaiseQrCodeStatus_Changed(Linq.ByQRCode.QrCodeStatus.Success, account);
                         OperationQueue.Add(Opcode.Account.ScanCodeConfirmation, "扫码登陆确认");

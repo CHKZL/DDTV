@@ -124,8 +124,15 @@ namespace Server.WebAppServices.Api
         [HttpPost(Name = "re_login")]
         public async Task<ActionResult> Post(PostCommonParameters commonParameters)
         {
-            await Login.QR();
-            return Content(MessageBase.MessagePack(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", code.LoginInfoFailure), "application/json");
+            bool isNewFlow = await Login.QR();
+            if (isNewFlow)
+            {
+                return Content(MessageBase.MessagePack(nameof(re_login), true, $"触发登陆功能，请在1分钟内使用get_login_qr获取登陆二维码进行登陆", code.LoginInfoFailure), "application/json");
+            }
+            else
+            {
+                return Content(MessageBase.MessagePack(nameof(re_login), true, $"已有登陆流程在进行中，请直接使用get_login_qr获取当前二维码进行登陆", code.LoginInfoFailure), "application/json");
+            }
         }
     }
     [Produces(MediaTypeNames.Application.Json)]
