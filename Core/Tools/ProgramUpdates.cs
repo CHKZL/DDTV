@@ -55,6 +55,17 @@ namespace Core.Tools
             }
         }
 
+        /// <summary>
+        /// 从版本字符串(可能带dev/release/test等前缀)中提取版本号，提取失败返回null
+        /// </summary>
+        private static Version ParseVersion(string raw)
+        {
+            if (string.IsNullOrEmpty(raw))
+                return null;
+            Match m = Regex.Match(raw, @"\d+\.\d+(\.\d+){0,2}");
+            return m.Success ? new Version(m.Value) : null;
+        }
+
         internal static bool GetCurrentVersion()
         {
             if (File.Exists(verFile))
@@ -67,8 +78,8 @@ namespace Core.Tools
                     if (VerItem.StartsWith("ver="))
                         ver = VerItem.Split('=')[1].TrimEnd();
                 }
-                ver = ver.ToLower().Replace("dev", "");
-                ver = ver.ToLower().Replace("release", "");
+                Version parsedVer = ParseVersion(ver);
+                ver = parsedVer?.ToString() ?? string.Empty;
                 if (!string.IsNullOrEmpty(type) && !string.IsNullOrEmpty(ver))
                 {
                     return true;
@@ -93,13 +104,13 @@ namespace Core.Tools
                         return false;
                     }
                     string DL_VerFileUrl = $"/{type}/{(Config.Core_RunConfig._DevelopmentVersion ? "dev" : "release")}/ver.ini";
-                    string R_Ver = Get(DL_VerFileUrl).TrimEnd().Replace("dev", "").Replace("release", "");
-                    if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
+                    string R_Ver = Get(DL_VerFileUrl).TrimEnd();
+                    //老版本
+                    Version Before = ParseVersion(ver);
+                    //新版本
+                    Version After = ParseVersion(R_Ver);
+                    if (Before != null && After != null)
                     {
-                        //老版本
-                        Version Before = new Version(ver);
-                        //新版本
-                        Version After = new Version(R_Ver);
                         if (After > Before)
                         {
                             Update_UpdateProgram update_UpdateProgram = new();
@@ -367,7 +378,7 @@ namespace Core.Tools
                     Log.Info(nameof(Update_UpdateProgram), "更新失败，版本标识文件内容错数");
                     return true;
                 }
-                if (ver.ToLower().StartsWith("dev"))
+                if (ver.ToLower().StartsWith("dev") || ver.ToLower().StartsWith("test"))
                 {
                     Isdev = true;
                 }
@@ -377,12 +388,12 @@ namespace Core.Tools
                 string R_Ver = Get(DL_VerFileUrl).TrimEnd();
                 Log.Info(nameof(Update_UpdateProgram), $"获取到当前服务端版本:{R_Ver}");
 
-                if (!string.IsNullOrEmpty(R_Ver) && R_Ver.Split('.').Length > 0)
+                //老版本
+                Version Before = ParseVersion(ver);
+                //新版本
+                Version After = ParseVersion(R_Ver);
+                if (Before != null && After != null)
                 {
-                    //老版本
-                    Version Before = new Version(ver.Replace("dev", "").Replace("release", ""));
-                    //新版本
-                    Version After = new Version(R_Ver.Replace("dev", "").Replace("release", ""));
                     if (After > Before)
                     {
                         Log.Info(nameof(Update_UpdateProgram), $"检测到新版本，获取远程文件树开始更新Update程序.......");

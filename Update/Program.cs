@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static Update.GetFileSchemaJSON;
@@ -373,6 +374,17 @@ namespace Update
             return (parallelCount, chunkCount);
         }
 
+        /// <summary>
+        /// 从版本字符串(可能带dev/release/test等前缀)中提取版本号，提取失败返回null
+        /// </summary>
+        private static Version? ParseVersion(string raw)
+        {
+            if (string.IsNullOrEmpty(raw))
+                return null;
+            Match m = Regex.Match(raw, @"\d+\.\d+(\.\d+){0,2}");
+            return m.Success ? new Version(m.Value) : null;
+        }
+
         public static bool checkVersion()
         {
             if (!File.Exists(verFile))
@@ -393,7 +405,7 @@ namespace Update
                 Console.WriteLine("更新失败，版本标识文件内容错数");
                 return false;
             }
-            if (ver.ToLower().StartsWith("dev"))
+            if (ver.ToLower().StartsWith("dev") || ver.ToLower().StartsWith("test"))
             {
                 Isdev = true;
             }
@@ -404,10 +416,10 @@ namespace Update
             R_ver = remoteVer;
             Console.WriteLine($"获取到当前服务端版本:{R_ver}");
 
-            if (!string.IsNullOrEmpty(R_ver) && R_ver.Split('.').Length > 0)
+            Version Before = ParseVersion(ver);
+            Version After = ParseVersion(R_ver);
+            if (Before != null && After != null)
             {
-                Version Before = new Version(ver.Replace("dev", "").Replace("release", ""));
-                Version After = new Version(R_ver.Replace("dev", "").Replace("release", ""));
                 if (After > Before)
                 {
                     Console.WriteLine($"检测到新版本，获取远程文件树开始更新.......");
