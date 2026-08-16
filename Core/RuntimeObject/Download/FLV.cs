@@ -45,11 +45,14 @@ namespace Core.RuntimeObject.Download
                     {
                         speedValues.RemoveAt(0);
                     }
-                    if (speedValues.Count > 1)
+                    //窗口时间跨度太小时不更新速度：DateTime.Now分辨率仅~15.6ms，
+                    //网络快时一个时钟滴答内就能读满窗口，按此计算会把速度放大到几百Mbps脱离实际
+                    double spanMs = speedValues.Count > 1 ? DateTime.Now.Subtract(speedValues[0].time).TotalMilliseconds : 0;
+                    if (spanMs >= 500)
                     {
-                        card.DownInfo.RealTimeDownloadSpe = (speedValues.Sum(x => x.size) / DateTime.Now.Subtract(speedValues[0].time).TotalMilliseconds) * 1000;
+                        card.DownInfo.RealTimeDownloadSpe = (speedValues.Sum(x => x.size) / spanMs) * 1000;
                     }
-                    else
+                    else if (speedValues.Count <= 1)
                     {
                         card.DownInfo.RealTimeDownloadSpe = 0;
                     }
@@ -90,11 +93,16 @@ namespace Core.RuntimeObject.Download
 
                 int retryCount = 0;
                 const int maxRetries = 3;
+                //单次流读取超时：ResponseHeadersRead模式下HttpClient.Timeout只覆盖到响应头返回为止，
+                //CDN下播后保持TCP连接但不再发数据时，ReadAsync会永久阻塞，必须自己控制读取超时。
+                //注意CTS必须在每次重试时新建：已取消的CTS无法通过CancelAfter复活，复用会让后续重试的读取立即失败
+                const int FlvReadTimeoutSeconds = 30;
 
                 using (FileStream fs = new FileStream(File, FileMode.Append, FileAccess.Write, FileShare.Read))
                 {
                     while (retryCount < maxRetries)
                     {
+                        using var readTimeoutCts = new CancellationTokenSource();
                         try
                         {
                             using var request = new HttpRequestMessage(HttpMethod.Get, DlwnloadURL);
@@ -143,7 +151,18 @@ namespace Core.RuntimeObject.Download
                                     return;
                                 }
 
-                                int read = await stream.ReadAsync(buffer, 0, buffer.Length);
+                                int read;
+                                //每次读取前重置倒计时，只要持续有数据就不会触发超时
+                                readTimeoutCts.CancelAfter(TimeSpan.FromSeconds(FlvReadTimeoutSeconds));
+                                try
+                                {
+                                    read = await stream.ReadAsync(buffer, 0, buffer.Length, readTimeoutCts.Token);
+                                }
+                                catch (OperationCanceledException) when (readTimeoutCts.IsCancellationRequested)
+                                {
+                                    Log.Warn(nameof(DlwnloadHls_avc_flv), $"[{card.Name}({card.RoomId})]FLV流超过{FlvReadTimeoutSeconds}秒没有新数据，判定流已中断");
+                                    read = 0;
+                                }
                                 if (read == 0)
                                 {
                                     break;
@@ -154,9 +173,12 @@ namespace Core.RuntimeObject.Download
                                 UpdateSpeed(read);
                             }
 
-                            if (!RoomInfo.GetLiveStatus(card.RoomId))
+                            //流中断后确认是否真的下播：绕过缓存连续确认，防止API失败时缓存残留"开播"状态导致无效重试
+                            if (ConfirmStopLive(card.RoomId, card))
                             {
-                                hlsState = DownloadTaskState.StopLive;
+                                //与HLS路径的StopLive处理对齐：收尾时检查文件(过小清理/加入文件列表/触发自动修复)，
+                                //不能直接返回StopLive状态，否则正常下播的录像永远不会进入文件列表和修复队列
+                                hlsState = CheckAndHandleFile(File, ref card);
                                 return;
                             }
 

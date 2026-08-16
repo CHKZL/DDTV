@@ -65,7 +65,7 @@ namespace Core.RuntimeObject.Download
                         hlsState = HandleHlsError(card, hostClass);
                         if (!Reconnection && hlsState == DownloadTaskState.NoHLSStreamExists)//初次任务，等待HLS流生成，等待时间根据配置文件来
                         {
-                            Thread.Sleep(Config.Core_RunConfig._HlsWaitingTime * 1000);
+                            InterruptibleSleep(Config.Core_RunConfig._HlsWaitingTime * 1000, card);//可被打断，取消/切割时不用干等
                         }
                         hlsState = HandleHlsError(card, hostClass);
                         switch (hlsState)
@@ -92,6 +92,8 @@ namespace Core.RuntimeObject.Download
                     long currentLocation = 0;
                     long StartLiveTime = card.live_time.Value;
                     string lastMapUri = string.Empty;
+                    //最后一次下载到新分片的时间，用于"无新分片"看门狗
+                    DateTime lastSegmentTime = DateTime.Now;
 
                     stopWatch.Start();
                     int RetryCount = 0;
@@ -147,6 +149,40 @@ namespace Core.RuntimeObject.Download
                                 hlsState = CheckAndHandleFile(File, ref card, card.live_time.Value != StartLiveTime ? true : false);
                                 return;
                             }
+                            //无新分片看门狗：主播异常断流(主播端崩溃/推流网络中断等)时，CDN常继续提供不含#EXT-X-ENDLIST的旧m3u8，
+                            //此时流侧信号(ENDLIST/host刷新失败)都无法发现下播，会在这里无限空转。
+                            //超过阈值没有下载到任何新分片时，主动确认房间是否真的还在开播。
+                            //阈值取3倍分片时长，钳制在[60,300]秒：下限避免正常直播误触发，
+                            //上限防止m3u8异常内容解析出巨大TARGETDURATION导致看门狗永不触发。
+                            //注意TryParse会把"NaN"等字符串解析为NaN(double.TryParse认为合法)，
+                            //NaN会让大小比较恒为false使看门狗失效，所以非有限值一律回退到60秒兜底
+                            double targetDuration = hostClass.eXTM3U.Targetduration;
+                            double noSegmentTimeout = double.IsFinite(targetDuration) && targetDuration > 0 ? Math.Clamp(targetDuration * 3, 60, 300) : 60;
+                            if ((DateTime.Now - lastSegmentTime).TotalSeconds > noSegmentTimeout)
+                            {
+                                if (ConfirmStopLive(card.RoomId, card))
+                                {
+                                    Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]超过{noSegmentTimeout}秒没有新分片，且已确认直播间下播，进行收尾处理");
+                                    hlsState = CheckAndHandleFile(File, ref card);
+                                    return;
+                                }
+                                if (card.DownInfo.Unmark || card.DownInfo.IsCut)
+                                {
+                                    //确认期间用户取消/手动切割，交给下一轮 ShouldFinalizeRecording 处理
+                                    continue;
+                                }
+                                if (IsDefinitelyLive(card.RoomId))
+                                {
+                                    //直播间明确仍在开播但长时间没有新分片，判定为断流，按主播重新推流处理，结束当前任务由外层重连重新拉流
+                                    Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]直播间仍在开播但超过{noSegmentTimeout}秒没有新分片，判定为断流，结束当前任务准备重连");
+                                    hlsState = CheckAndHandleFile(File, ref card, true);
+                                    return;
+                                }
+                                //未能确认房间状态(接口故障)：不拆除当前任务，重置看门狗计时，下个周期再确认，
+                                //避免API故障期间反复拆任务产生空文件和无效修复
+                                Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]超过{noSegmentTimeout}秒没有新分片，但房间状态查询失败，无法确认是否下播，等待下个周期重试");
+                                lastSegmentTime = DateTime.Now;
+                            }
                             //刷新Host信息，获取最新的直播流片段
                             bool isHlsHostAvailable = RefreshHlsHost_avc(card, ref hostClass);
                             if (!isHlsHostAvailable)
@@ -161,17 +197,23 @@ namespace Core.RuntimeObject.Download
                                         hlsState = CheckAndHandleFile(File, ref card);
                                         return;
                                     case DownloadTaskState.Default:
+                                        //直播间还在开播但本次没刷出流，按日志所说等待后重试，连续多次失败才放弃
+                                        RetryCount++;
                                         if (RetryCount > 5)
                                         {
+                                            Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]连续{RetryCount}次刷新Host均未获取到有效直播流，放弃本次HLS任务");
                                             CheckAndHandleFile(File, ref card);
                                             hlsState = DownloadTaskState.NoHLSStreamExists;
+                                            return;
                                         }
-                                        RetryCount++;
-                                        return;
+                                        Thread.Sleep(2000);//配合循环末尾的1秒等待，实现3秒后重试
+                                        break;
                                 }
                             }
                             else
                             {
+                                //刷新成功，重置连续失败计数
+                                RetryCount = 0;
                                 if (InitialRequest)
                                 {
                                     string DebugFile = string.Empty;
@@ -251,6 +293,11 @@ namespace Core.RuntimeObject.Download
                                 }
                                 foreach (var item in hostClass.eXTM3U.eXTINFs)
                                 {
+                                    //分片之间检查取消/切割，避免一周期多分片时取消要等整个周期
+                                    if (card.DownInfo.Unmark || card.DownInfo.IsCut)
+                                    {
+                                        break;
+                                    }
                                     if (long.TryParse(item.FileName, out long index) && (index > currentLocation || currentLocation == 0))
                                     {
                                         string DebugFile = string.Empty;
@@ -264,6 +311,11 @@ namespace Core.RuntimeObject.Download
                                 values.Add((downloadSizeForThisCycle, DateTime.Now));
                                 //计算这个Task下载的文件大小
                                 DownloadFileSizeForThisTask += downloadSizeForThisCycle;
+                                //下载到新分片则刷新看门狗计时
+                                if (downloadSizeForThisCycle > 0)
+                                {
+                                    lastSegmentTime = DateTime.Now;
+                                }
                                 //计算下载速度和任务大小
                                 values = UpdateDownloadSpeed(values, card, downloadSizeForThisCycle);
                                 if (hostClass.eXTM3U.IsEND)
@@ -275,7 +327,7 @@ namespace Core.RuntimeObject.Download
                                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                         {
                                             CheckAndHandleFile(File, ref card);
-                                            Thread.Sleep(1000 * 10);
+                                            InterruptibleSleep(1000 * 10, card);//可被打断，取消/切割时不用干等10秒
                                         }
                                         return;
                                     }
@@ -286,7 +338,7 @@ namespace Core.RuntimeObject.Download
                                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                         {
                                             CheckAndHandleFile(File, ref card);
-                                            Thread.Sleep(1000 * 10);
+                                            InterruptibleSleep(1000 * 10, card);//可被打断，取消/切割时不用干等10秒
                                         }
                                         return;
                                     }
@@ -443,7 +495,13 @@ namespace Core.RuntimeObject.Download
             {
                 values.RemoveAt(0);
             }
-            card.DownInfo.RealTimeDownloadSpe = (values.Sum(x => x.size) / DateTime.Now.Subtract(values[0].time).TotalMilliseconds) * 1000;
+            //样本不足2个或窗口时间跨度太小时不更新速度：单样本的跨度≈0会算出天文数字(任务首个周期必现)，
+            //且DateTime.Now分辨率仅~15.6ms，过小的跨度会把速度放大到脱离实际
+            double spanMs = values.Count > 1 ? DateTime.Now.Subtract(values[0].time).TotalMilliseconds : 0;
+            if (spanMs >= 500)
+            {
+                card.DownInfo.RealTimeDownloadSpe = (values.Sum(x => x.size) / spanMs) * 1000;
+            }
             card.DownInfo.DownloadSize += downloadSizeForThisCycle;
             return values;
         }

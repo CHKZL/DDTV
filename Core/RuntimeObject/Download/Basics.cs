@@ -53,7 +53,11 @@ namespace Core.RuntimeObject.Download
                     if (result.TaskState == DownloadTaskState.SuccessfulButNotStream || result.TaskState == DownloadTaskState.NoHLSStreamExists)
                     {
                         //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
-                        await Task.Delay(1000 * 15);
+                        //分片等待以便用户取消/切割能及时生效，不用干等15秒
+                        for (int i = 0; i < 30 && !roomCard.DownInfo.Unmark && !roomCard.DownInfo.IsCut; i++)
+                        {
+                            await Task.Delay(500);
+                        }
                     }
                     break;
                 case RecordingMode.Auto:
@@ -67,7 +71,11 @@ namespace Core.RuntimeObject.Download
                         if (result.TaskState == DownloadTaskState.SuccessfulButNotStream || result.TaskState == DownloadTaskState.NoHLSStreamExists)
                         {
                             //落到FLV都还没流，应该是下播了但是没关直播间，这里手动等15秒再检测，不然疯狂刷屏
-                            await Task.Delay(1000 * 15);
+                            //分片等待以便用户取消/切割能及时生效，不用干等15秒
+                            for (int i = 0; i < 30 && !roomCard.DownInfo.Unmark && !roomCard.DownInfo.IsCut; i++)
+                            {
+                                await Task.Delay(500);
+                            }
                         }
                     }
                     break;
@@ -149,6 +157,85 @@ namespace Core.RuntimeObject.Download
         /// </summary>
         internal static bool ShouldFinalizeRecording(RoomCardClass card, long startLiveTime)
             => card.DownInfo.Unmark || card.DownInfo.IsCut || card.live_time.Value != startLiveTime;
+
+        /// <summary>
+        /// 确认直播间是否确实已下播：绕过 live_status 缓存直接查询房间接口，
+        /// 需连续多次明确返回"未开播"才认定下播；查询失败(风控/网络错误)不计入确认次数，
+        /// 避免API抖动造成误判停录，也避免缓存残留"开播"状态导致漏判。
+        /// </summary>
+        /// <param name="roomId">房间号</param>
+        /// <param name="card">房间卡片(用于在用户取消/切割时立即放弃确认，交还原有流程处理)</param>
+        /// <param name="requiredConfirmations">需要连续确认"未开播"的次数</param>
+        /// <param name="intervalMs">两次确认之间的间隔(毫秒)</param>
+        /// <param name="maxAttempts">最大尝试次数(查询失败也消耗)，防止接口持续失败时一直卡在这里</param>
+        /// <returns>true=已确认下播；false=仍在开播、用户已取消或接口持续失败无法确认</returns>
+        internal static bool ConfirmStopLive(long roomId, RoomCardClass card, int requiredConfirmations = 3, int intervalMs = 3000, int maxAttempts = 6)
+        {
+            int confirmed = 0;
+            for (int attempt = 0; attempt < maxAttempts && confirmed < requiredConfirmations; attempt++)
+            {
+                //用户取消或手动切割优先，交还给原有流程处理
+                if (card != null && (card.DownInfo.Unmark || card.DownInfo.IsCut))
+                {
+                    return false;
+                }
+                RoomInfo_Class roomInfo = GetRoomInfo(roomId);
+                if (roomInfo != null && roomInfo.code == 0 && roomInfo.data != null && roomInfo.data.room_id > 0)
+                {
+                    if (roomInfo.data.live_status == 1)
+                    {
+                        //明确还在开播，直接判定未下播
+                        return false;
+                    }
+                    confirmed++;
+                    Log.Debug(nameof(ConfirmStopLive), $"房间{roomId}第{confirmed}/{requiredConfirmations}次确认为未开播状态");
+                }
+                else
+                {
+                    Log.Warn(nameof(ConfirmStopLive), $"房间{roomId}下播确认查询失败(第{attempt + 1}次)，不计入确认次数");
+                }
+                if (confirmed < requiredConfirmations)
+                {
+                    Thread.Sleep(intervalMs);
+                }
+            }
+            bool stopConfirmed = confirmed >= requiredConfirmations;
+            Log.Info(nameof(ConfirmStopLive), $"房间{roomId}下播确认结果：{(stopConfirmed ? "已确认下播" : "未能确认下播(仍在开播或接口持续失败)")}");
+            return stopConfirmed;
+        }
+
+        /// <summary>
+        /// 单次直连查询确认直播间是否"明确在播"：仅当接口成功且live_status==1时返回true，查询失败返回false。
+        /// 用于区分"还在开播"与"接口故障无法确认"两种场景，避免故障期间误拆录制任务。
+        /// </summary>
+        /// <param name="roomId">房间号</param>
+        /// <returns>true=接口明确返回开播中；false=未开播或查询失败</returns>
+        internal static bool IsDefinitelyLive(long roomId)
+        {
+            RoomInfo_Class roomInfo = GetRoomInfo(roomId);
+            return roomInfo != null && roomInfo.code == 0 && roomInfo.data != null && roomInfo.data.room_id > 0 && roomInfo.data.live_status == 1;
+        }
+
+        /// <summary>
+        /// 可被用户取消(Unmark)/手动切割(IsCut)打断的同步等待：分片轮询标志位，被打断时提前返回。
+        /// 用于录制收尾/初始等待等固定等待，避免用户点取消后还要干等整个等待周期。
+        /// </summary>
+        /// <param name="milliseconds">等待时长(毫秒)</param>
+        /// <param name="card">房间卡片</param>
+        internal static void InterruptibleSleep(int milliseconds, RoomCardClass card)
+        {
+            int waited = 0;
+            while (waited < milliseconds)
+            {
+                if (card.DownInfo.Unmark || card.DownInfo.IsCut)
+                {
+                    return;
+                }
+                int slice = Math.Min(200, milliseconds - waited);
+                Thread.Sleep(slice);
+                waited += slice;
+            }
+        }
 
         /// <summary>
         /// 如果目录不存在，则创建目录

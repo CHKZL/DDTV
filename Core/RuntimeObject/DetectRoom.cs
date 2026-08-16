@@ -129,8 +129,11 @@ namespace Core.RuntimeObject
                             //设置为重连模式
                             Reconnection = true;
                         }
-                        //如果检测到还在开播，且用户没有取消，那么就再来一次
-                        while ((RoomInfo.GetLiveStatus(roomCard.RoomId) && !roomCard.DownInfo.Unmark) && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special);
+                        //如果检测到还在开播，且用户没有取消，那么就再来一次。
+                        //下播判定用ConfirmStopLive绕过缓存连续确认：API失败时GetLiveStatus会返回残留的"开播"缓存值，
+                        //曾导致下播后do-while无限重连录制。本地状态判断(用户取消/付费直播特殊状态)放在最前，
+                        //避免付费直播等场景每次循环都白白跑一轮下播确认的API查询。
+                        while (!roomCard.DownInfo.Unmark && roomCard.DownInfo.Status != RoomCardClass.DownloadStatus.Special && !Basics.ConfirmStopLive(roomCard.RoomId, roomCard));
 
                         //执行shell  
                         if (OperatingSystem.IsLinux() && Config.Core_RunConfig._Linux_Only_ShellSwitch)
