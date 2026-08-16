@@ -23,6 +23,12 @@ namespace Core.RuntimeObject
         /// </summary>
         public static DetectRoom detectRoom = new();
         /// <summary>
+        /// 录制占位锁：IsDownload的检查+置位必须在此锁内原子完成。
+        /// 手动触发(UI/API线程)和定时巡检(Timer线程池)可同时进入DetectRoom_LiveStart，
+        /// 不加锁的check-then-set会让两个线程都通过检查，导致同一房间双开录制、同名文件双写损坏
+        /// </summary>
+        private static readonly object _recStartLock = new();
+        /// <summary>
         /// 新增录制结束事件
         /// </summary>
         public static event EventHandler<EventArgs> RecEndEvent;
@@ -77,17 +83,22 @@ namespace Core.RuntimeObject
                 
                 if (roomCard.IsAutoRec || triggerTypes.Contains(TriggerType.ManuallyTriggeringTasks) || roomCard.AppointmentRecord)
                 {
-                    if (roomCard.DownInfo.IsDownload)
+                    //检查+置位必须在锁内原子完成，防止手动触发与定时巡检并发进入导致双开录制。
+                    //置位后立即进入try(中间无任何可抛异常的语句)，由finally统一复位，清理语义与原来一致
+                    lock (_recStartLock)
                     {
-                        Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
-                        return;
+                        if (roomCard.DownInfo.IsDownload)
+                        {
+                            Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})触发录制事件，但目前该房间已有录制任务，跳过本次录制任务");
+                            return;
+                        }
+                        roomCard.DownInfo.IsDownload = true;
                     }
                     try
                     {
-                        // IsDownload 作为"已有录制任务"的占位锁(见上方 IsDownload 检查)放在录制 try 内部，
-                        // 由下方 finally 统一重置。这样弹幕初始化等任何前置步骤抛异常时，IsDownload、
+                        // IsDownload 作为"已有录制任务"的占位锁(见上方锁内占位)，由下方 finally 统一重置。
+                        // 这样弹幕初始化等任何前置步骤抛异常时，IsDownload、
                         // LiveChatListener、Register 条目都会被同一个 finally 清理干净，不会泄漏。
-                        roomCard.DownInfo.IsDownload = true;
                         if (roomCard.IsRecDanmu)
                         {
                             if (roomCard.DownInfo.LiveChatListener == null)
@@ -159,7 +170,11 @@ namespace Core.RuntimeObject
                         OperationQueue.Add(Opcode.Download.RecordingEnd, msg, roomCard.UID);
                         Log.Info(nameof(DetectRoom_LiveStart), msg);
                         roomCard.DownInfo.Unmark = false;
-                        roomCard.DownInfo.IsDownload = false;
+                        //复位同样走占位锁，与置位构成配对临界区，保证其他线程锁内读到的是最新值
+                        lock (_recStartLock)
+                        {
+                            roomCard.DownInfo.IsDownload = false;
+                        }
 
                         if (roomCard.DownInfo.LiveChatListener != null)
                         {

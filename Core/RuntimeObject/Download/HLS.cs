@@ -84,12 +84,22 @@ namespace Core.RuntimeObject.Download
                                 CheckAndHandleFile(File, ref card);
                                 Log.Info(nameof(HandleHlsError), $"[{card.Name}({card.RoomId})]直播间开播中，但没获取到HLS流，降级到FLV模式");
                                 return;
+                            case DownloadTaskState.Default:
+                                //开播中、有HLS流但m3u8暂时没分片(主播刚开播切片窗口未生成)时会走到这里。
+                                //必须等待后重试：否则while会立即重进，每轮都是playinfo+m3u8的全量HTTP请求，
+                                //形成无间隔热循环狂刷B站API，有触发风控(-412)的风险
+                                Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]HLS流已就绪但暂未生成切片，3秒后重试");
+                                InterruptibleSleep(3000, card);//可被打断，取消/切割时不用干等
+                                break;
                         }
                     }
                     //Log.Info(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]开始监听重连");
                     List<(long size, DateTime time)> values = new();
                     bool InitialRequest = true;
                     long currentLocation = 0;
+                    //分片下载失败重试状态：记录失败的分片号和已连续失败的轮数，用于"下轮补下"与"连续失败放弃"的判定
+                    long failedSegmentIndex = -1;
+                    int failedSegmentRounds = 0;
                     long StartLiveTime = card.live_time.Value;
                     //上一轮init segment的解码配置签名(视频宽高/编码参数、音频采样率/声道/AudioSpecificConfig)。
                     //注意：不能按Map_URI文件名或init segment逐字节内容比较——部分CDN的m3u8中每个分片都有
@@ -310,9 +320,42 @@ namespace Core.RuntimeObject.Download
                                         string DebugFile = string.Empty;
                                         //DebugFile = $"{item.FileName}_BP.m4s";
                                         //Log.Info("test",$"index:{index} currentLocation:{currentLocation}");
-                                        downloadSizeForThisCycle += WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}", DebugFile);
-                                        currentLocation = index;
-                                    }                                  
+                                        long written = WriteToFile(fs, $"{hostClass.host}{hostClass.base_url}{item.FileName}.{item.ExtensionName}?{hostClass.extra}", DebugFile);
+                                        if (written > 0)
+                                        {
+                                            downloadSizeForThisCycle += written;
+                                            currentLocation = index;
+                                            failedSegmentIndex = -1;
+                                            failedSegmentRounds = 0;
+                                        }
+                                        else
+                                        {
+                                            //下载失败(WriteToFile内部已重试3次)：不能无条件推进currentLocation，否则该分片永久缺失形成空洞。
+                                            //先break保住分片顺序，下轮播放列表窗口内还有它，可以再补；连续2轮(约6次尝试)仍失败才放弃该分片，
+                                            //防止卡死在CDN的永久坏分片上导致后续分片全部积压
+                                            if (index == failedSegmentIndex)
+                                            {
+                                                failedSegmentRounds++;
+                                            }
+                                            else
+                                            {
+                                                failedSegmentIndex = index;
+                                                failedSegmentRounds = 1;
+                                            }
+                                            if (failedSegmentRounds >= 2)
+                                            {
+                                                Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]分片{item.FileName}连续{failedSegmentRounds}轮下载失败，放弃该分片继续录制，录像将缺失约1个分片的内容");
+                                                currentLocation = index;
+                                                failedSegmentIndex = -1;
+                                                failedSegmentRounds = 0;
+                                            }
+                                            else
+                                            {
+                                                Log.Warn(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]分片{item.FileName}下载失败(0字节)，暂停本轮下载，下轮将从该分片重试");
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 hostClass.eXTM3U.eXTINFs = new();
                                 values.Add((downloadSizeForThisCycle, DateTime.Now));
@@ -369,13 +412,12 @@ namespace Core.RuntimeObject.Download
                             Log.Error(nameof(DlwnloadHls_avc_mp4), $"[{card.Name}({card.RoomId})]录制循环中出现未知错误，写入日志", e, true);
                             if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                                 Thread.Sleep(1000);
-                            if (card.DownInfo.IsCut)
-                                return;
+                            //IsCut时不在这里直接return：那样会以Recording状态裸退出，文件不进文件列表也不走自动修复，
+                            //交给下一轮循环顶部的ShouldFinalizeRecording→CheckAndHandleFile统一收尾(返回Cut状态)
                         }
                         if (!card.DownInfo.Unmark && !card.DownInfo.IsCut)
                             Thread.Sleep(1000);
-                        if (card.DownInfo.IsCut)
-                            return;
+                        //同上：IsCut交给循环顶部统一收尾，不直接return
                     }
                 }
             }, CancellationToken.None, TaskCreationOptions.LongRunning, TaskScheduler.Default);

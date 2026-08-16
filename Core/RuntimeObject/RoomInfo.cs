@@ -596,16 +596,24 @@ namespace Core.RuntimeObject
         /// <returns>如果成功设置了值，则返回true；否则，返回false</returns>
         internal static bool SetRoomCardByUid(long UID, RoomCardClass value)
         {
+            //拒绝写入null：ToRoomCard在API数据异常时会返回null，一旦写进字典，
+            //后续所有GetCardForUID/SetRoomCardByUid访问该房间都会NRE，该房间永久失能
+            if (value == null)
+            {
+                Log.Warn(nameof(SetRoomCardByUid), $"拒绝将null房间卡写入字典，UID:{UID}，保留原有房间数据");
+                return false;
+            }
             lock (RoomCardLock)
             {
                 //roomInfos的key就是UID，直接upsert，无需遍历查找
-                if (roomInfos.TryGetValue(UID, out RoomCardClass? oldCard) && oldCard.RoomId > 0 && oldCard.RoomId != value.RoomId)
+                //oldCard加判空：防御历史版本已写入的脏null数据
+                if (roomInfos.TryGetValue(UID, out RoomCardClass? oldCard) && oldCard != null && oldCard.RoomId > 0 && oldCard.RoomId != value.RoomId)
                 {
                     //RoomId变化时清理旧索引（同UID换房间号的极端情况）
                     _roomIdToUid.TryRemove(oldCard.RoomId, out _);
                 }
                 roomInfos[UID] = value;
-                if (value != null && value.RoomId > 0)
+                if (value.RoomId > 0)
                 {
                     _roomIdToUid[value.RoomId] = UID;
                 }
@@ -1205,7 +1213,7 @@ namespace Core.RuntimeObject
                         RoomCardClass card = new RoomCardClass()
                         {
                             UID = data.uid,
-                            Title = new() { Value = data.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
+                            Title = new() { Value = (data.title ?? "").Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
                             RoomId = data.room_id,
                             live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) },
                             live_status = new() { Value = data.live_status, ExpirationTime = DateTime.Now.AddSeconds(3) },
@@ -1236,7 +1244,7 @@ namespace Core.RuntimeObject
                     else
                     {
                         OldCard.UID = data.uid;
-                        OldCard.Title = new() { Value = data.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
+                        OldCard.Title = new() { Value = (data.title ?? "").Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) };
                         OldCard.RoomId = data.room_id;
                         OldCard.live_time = new() { Value = data.live_time, ExpirationTime = DateTime.Now.AddSeconds(30) };
 
