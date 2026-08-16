@@ -120,7 +120,139 @@ namespace Core.RuntimeObject.Download
                     Log.Error(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})完成录制任务后修复时出现意外错误，文件:{result.FileName}");
                 }
             }
+            //记录强制合并的分片组：自动切割(大小/时间/标题/分辨率/编码参数变化等)产生的分片归入当前组；
+            //手动切割(IsCut→Cut)是用户主动要求的分段，作为合并边界，其后的分片另起一组，不跨边界合并
+            if (result.TaskState == DownloadTaskState.Success ||
+                result.TaskState == DownloadTaskState.Cut ||
+                result.TaskState == DownloadTaskState.AnchorReStream)
+            {
+                var mergeGroups = roomCard.DownInfo.DownloadFileList.ForceMergeGroups;
+                if (mergeGroups.Count == 0)
+                {
+                    mergeGroups.Add(new());
+                }
+                if (!string.IsNullOrEmpty(result.FileName) && System.IO.File.Exists(result.FileName))
+                {
+                    //Cut/AnchorReStream路径不经过CheckAndHandleFile的大小检查，这里统一过滤过小分片：
+                    //0字节/损坏分片进concat列表会导致整组合并失败
+                    long fileLength = new System.IO.FileInfo(result.FileName).Length;
+                    if (fileLength > Config.Core_RunConfig._AutomaticFileCleaningThreshold)
+                    {
+                        mergeGroups[^1].Add(result.FileName);
+                    }
+                    else
+                    {
+                        Log.Info(nameof(HandleRecordingAsync), $"{roomCard.Name}({roomCard.RoomId})分片[{result.FileName}]大小({fileLength}字节)低于清理阈值，不加入强制合并组");
+                    }
+                }
+                if (result.TaskState == DownloadTaskState.Cut)
+                {
+                    mergeGroups.Add(new());
+                }
+            }
             roomCard.DownInfo.IsCut = false;
+        }
+
+        /// <summary>
+        /// 整场直播结束后执行强制合并：把记录的分片组异步重编码合并为单文件。
+        /// 分片之间编码参数(分辨率/SPS/PPS/音频参数)可能不同，不能用-c copy流拷贝拼接(会花屏)，必须整体重编码。
+        /// 注意：该方法立即返回，合并任务在后台执行；调用前必须深拷贝分片组数据，
+        /// 因为随后的DownloadCompletedReset会清空DownloadFileList
+        /// </summary>
+        /// <param name="name">主播名(仅用于日志)</param>
+        /// <param name="roomId">房间号(仅用于日志)</param>
+        /// <param name="groups">分片组(已过滤掉不足2个分片的组，且为独立副本，内容为各分片的_original文件路径)</param>
+        /// <param name="fileList">本场会话的文件列表对象(用于等待本场修复任务完成；必须在DownloadCompletedReset替换它之前捕获)</param>
+        internal static void ForceMergeSessionVideos(string name, long roomId, List<List<string>> groups, RoomCardClass.DownloadInfo.DownloadFile fileList)
+        {
+            Task.Run(async () =>
+            {
+                //等待本场的修复任务全部完成再选合并输入：修复进行中_fix正在写入(读了会截断)、
+                //修复完成后original可能已被删除。修复都是-c copy，正常几分钟内完成，超时也继续按现状尝试
+                int waitedMs = 0;
+                const int maxWaitMs = 30 * 60 * 1000;
+                if (fileList != null && fileList.TranscodingCount > 0)
+                {
+                    Log.Info(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]本场还有{fileList.TranscodingCount}个修复任务在进行，等待完成后再合并分片");
+                }
+                while (fileList != null && fileList.TranscodingCount > 0 && waitedMs < maxWaitMs)
+                {
+                    await Task.Delay(5000);
+                    waitedMs += 5000;
+                }
+                if (fileList != null && fileList.TranscodingCount > 0)
+                {
+                    Log.Warn(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]等待修复任务完成超时(30分钟)，按当前文件状态尝试合并");
+                }
+
+                foreach (var group in groups)
+                {
+                    try
+                    {
+                        //选择合并输入：优先用修复后的_fix文件(时间轴已标准化，且修复成功后original可能已被删除)，
+                        //没有_fix(未开修复或修复失败)时回退到original；两者都不存在说明文件已丢失，放弃本组合并
+                        List<string> inputs = new();
+                        bool missing = false;
+                        foreach (var frag in group)
+                        {
+                            string fixFile = frag.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4");
+                            if (System.IO.File.Exists(fixFile))
+                            {
+                                inputs.Add(fixFile);
+                            }
+                            else if (System.IO.File.Exists(frag))
+                            {
+                                inputs.Add(frag);
+                            }
+                            else
+                            {
+                                Log.Warn(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]分片[{frag}]及其修复文件都不存在，放弃本组({group.Count}个分片)合并");
+                                missing = true;
+                                break;
+                            }
+                        }
+                        if (missing)
+                        {
+                            continue;
+                        }
+
+                        //输出文件以组内第一个分片命名，重编码统一输出MP4
+                        string outputFile = group[0].Replace("_original.mp4", "_merged.mp4").Replace("_original.flv", "_merged.mp4");
+                        if (outputFile == group[0])
+                        {
+                            outputFile = group[0] + "_merged.mp4";
+                        }
+                        Log.Info(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]开始强制合并{inputs.Count}个分片到[{outputFile}]，重编码耗时较长，请耐心等待");
+                        Tools.Transcode transcode = new Tools.Transcode();
+                        bool success = await transcode.MergeSessionFragmentsAsync(inputs, outputFile);
+                        if (success)
+                        {
+                            Log.Info(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]强制合并完成:[{outputFile}]");
+                            OperationQueue.Add(Opcode.Download.ForceMerge, $"强制合并完成:{outputFile}", 0);
+                            //复用"修复后删除源文件"的用户偏好：开启时合并成功后删除_original源分片(修复可能已删，存在才删)。
+                            //注意不删_fix文件：它是修复管线的最终产物，合并输出万一有问题时用户还有分段可用
+                            if (Config.Core_RunConfig._DeleteOriginalFileAfterRepair)
+                            {
+                                foreach (var frag in group)
+                                {
+                                    if (System.IO.File.Exists(frag))
+                                    {
+                                        Tools.FileOperations.Delete(frag, $"强制合并成功，按配置删除源分片(合并输出:{outputFile})");
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Log.Warn(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]强制合并失败，源分片已全部保留，输出文件:[{outputFile}]");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]强制合并分片时出现意外错误，源分片不受影响", ex);
+                    }
+                }
+            });
         }
 
         /// <summary>

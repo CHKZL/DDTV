@@ -578,8 +578,8 @@ namespace Core
 
             private static string ForceMerge = "false";
             /// <summary>
-            /// 录制完成强制合并为一个视频文件
-            /// 默认值：true
+            /// 录制完成强制合并为一个视频文件(需要整体重编码，CPU开销大)
+            /// 默认值：false
             /// </summary>
             public bool _ForceMerge
             {
@@ -589,6 +589,25 @@ namespace Core
                     if (value.ToString() != ForceMerge)
                     {
                         ForceMerge = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string ForceMerge_Arguments = "-y -f concat -safe 0 -i \"{list}\" -c:v libx264 -preset veryfast -crf 20 -c:a aac -b:a 320k \"{after}\"";
+            /// <summary>
+            /// 强制合并的执行参数({list}为分片列表文件，{after}为输出文件；分片间编码参数可能不同，必须重编码，不能用-c copy，否则会花屏)
+            /// 默认值：-y -f concat -safe 0 -i "{list}" -c:v libx264 -preset veryfast -crf 20 -c:a aac -b:a 320k "{after}"
+            /// </summary>
+            public string _ForceMerge_Arguments
+            {
+                get => ForceMerge_Arguments;
+                set
+                {
+                    if (value.ToString() != ForceMerge_Arguments)
+                    {
+                        ForceMerge_Arguments = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
                     }

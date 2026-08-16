@@ -161,6 +161,22 @@ namespace Core.RuntimeObject
                         RecEndEvent?.Invoke(history, new EventArgs());
 
                         SMTP.TriggerEvent(roomCard, SMTP.SMTP_EventType.RecEnd);
+
+                        //整场直播结束(确认下播/用户取消)后的强制合并：把自动切割产生的分片重编码合并为单文件。
+                        //手动切割(IsCut)是合并边界，不跨边界合并。这里必须深拷贝分片组数据、并捕获当前文件列表引用——
+                        //finally里的DownloadCompletedReset会替换DownloadFileList，而合并任务在后台异步执行
+                        if (Config.Core_RunConfig._ForceMerge)
+                        {
+                            var mergeGroups = roomCard.DownInfo.DownloadFileList.ForceMergeGroups
+                                .Where(g => g.Count >= 2)
+                                .Select(g => new List<string>(g))
+                                .ToList();
+                            if (mergeGroups.Count > 0)
+                            {
+                                Log.Info(nameof(DetectRoom_LiveStart), $"{roomCard.Name}({roomCard.RoomId})本场直播产生了{mergeGroups.Sum(g => g.Count)}个分片，开始后台强制合并(整体重编码，CPU占用较高)");
+                                Basics.ForceMergeSessionVideos(roomCard.Name, roomCard.RoomId, mergeGroups, roomCard.DownInfo.DownloadFileList);
+                            }
+                        }
                     }
                     finally
                     {

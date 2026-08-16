@@ -180,6 +180,10 @@ namespace Core.LogModule
             /// 下播提醒
             /// </summary>
             EndBroadcastingReminder=40110,
+            /// <summary>
+            /// 强制合并分片
+            /// </summary>
+            ForceMerge=40111,
         }
     }
 }

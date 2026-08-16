@@ -89,7 +89,8 @@ RecordingMode=1
 | `AutomaticRepair` | 布尔 | `true` | 录制完成后自动进行时间轴修复/封装转码（需要 ffmpeg）。开启时文件以 `_fix.mp4` 结尾，关闭时保留 `_original` 原始文件 |
 | `AutomaticRepair_Arguments` | 字符串 | `-y -i "{before}" -c copy "{after}"` | 修复/转码时传给 ffmpeg 的参数模板，`{before}` 和 `{after}` 会被替换为输入输出文件路径 |
 | `DeleteOriginalFileAfterRepair` | 布尔 | `true` | 修复成功后删除原始文件 |
-| `ForceMerge` | 布尔 | `false` | 录制完成后把本次录制的多个分段强制合并为一个视频文件 |
+| `ForceMerge` | 布尔 | `false` | 整场直播结束后，把自动切割（大小/时间/标题/分辨率/编码参数变化）产生的多个分片强制合并为一个视频文件。手动切割产生的分段不参与合并。**注意：分片间编码参数可能不同，合并必须整体重编码，CPU 开销很大，耗时约等于整场录像时长，低配机器慎用** |
+| `ForceMerge_Arguments` | 字符串 | `-y -f concat -safe 0 -i "{list}" -c:v libx264 -preset veryfast -crf 20 -c:a aac -b:a 192k "{after}"` | 强制合并时传给 ffmpeg 的参数模板，`{list}` 会被替换为分片列表文件路径，`{after}` 为输出文件路径。**必须使用重编码参数，不能用 `-c copy` 流拷贝，否则分片编码参数不同会导致花屏**。合并成功后是否删除源分片由 `DeleteOriginalFileAfterRepair` 控制；合并失败时源分片全部保留 |
 | `TranscodeFileDifference` | 浮点 | `0.05` | 修复后文件与最终文件可接受的最大体积误差比例（默认 5%）。误差超过该比例时保留原始文件，防止修复后内容丢失 |
 | `DetectErroneousFilesFixThem` | 布尔 | `false` | 检测到修复后的文件大小不符合预期时，尝试再次修复 |
 | `CutAccordingToSize` | 整数（字节） | `0` | 按文件大小切割视频，`0` 为不切割。例如 1GB 填 `1073741824`。房间列表中的 `RoomCutAccordingToSize` 可单独覆盖本项 |

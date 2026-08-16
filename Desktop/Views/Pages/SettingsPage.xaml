@@ -666,6 +666,48 @@
                             </StackPanel>
 
                         </ui:CardExpander>
+                        <ui:CardExpander Icon="{ui:SymbolIcon DocumentLink20}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="强制合并分片" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="整场直播结束后，把自动切割产生的多个分片合并为一个视频文件（手动切割的分片不参与合并）" />
+                                    </Grid>
+                                    <ui:ToggleSwitch Name="ForceMerge_SwitchControl" IsChecked="{Binding _ForceMerge, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0,24,0">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ui:TextBlock Grid.Row="0" Margin="10,0,0,0" FontSize="13" FontWeight="Bold" Foreground="{ui:ThemeResource SystemFillColorCriticalBrush}" TextWrapping="Wrap" Text="⚠ 警告：分片之间编码参数(分辨率等)可能不同，合并必须对整场录像完整重编码，非常消耗CPU性能，耗时约等于整场录像时长！低配机器、多房间同时录制的环境请谨慎开启！" />
+                                    <Grid Grid.Row="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Label Grid.Row="0" Margin="10,0,0,0" Content="强制合并的执行参数"/>
+                                        <ui:TextBox Grid.Row="1" Grid.Column="0" Name="ForceMerge_Arguments_InputBox" Text="{Binding _ForceMerge_Arguments, Mode=OneWay}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="请使用&quot;{list}&quot;来标识分片列表文件，使用&quot;{after}&quot;来标识输出文件。注意：必须重编码，不能使用-c copy流拷贝参数，否则分片编码参数不同会导致花屏！默认为：&#x0a;-y -f concat -safe 0 -i &quot;{list}&quot; -c:v libx264 -preset veryfast -crf 20 -c:a aac -b:a 320k &quot;{after}&quot;"/>
+                                    </Grid>
+                                    <Label Grid.Row="2" Margin="10,0,0,0" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Content="合并成功后是否删除源分片，由&quot;修复完成后删除原始文件&quot;开关控制；合并失败时源分片全部保留"/>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
                         <ui:CardExpander Icon="{ui:SymbolIcon Cut20}">
                             <ui:CardExpander.Header>
                                 <Grid>

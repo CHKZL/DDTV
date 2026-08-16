@@ -45,10 +45,13 @@ namespace Core.Tools
         {
             List<string> LogText = new List<string>();
             string LogTextAsString = string.Empty; // 用来保存LogText转成字符串的结果
+            //捕获当前任务的文件列表引用再计数：录制会话结束时DownloadCompletedReset会把DownloadFileList替换成新对象，
+            //如果每次都用Card.DownInfo.DownloadFileList现取，开始计数落在旧对象、结束计数落在新对象，计数永远失衡
+            var fileList = Card?.DownInfo.DownloadFileList;
             try
             {
-                if (Card != null)
-                    Card.DownInfo.DownloadFileList.TranscodingCount++;
+                if (fileList != null)
+                    fileList.TranscodingCount++;
                 // 创建ProcessStartInfo对象，设置ffmpeg的路径和参数
                 var process = new Process
                 {
@@ -158,8 +161,8 @@ namespace Core.Tools
                 }
 
             }
-            if (Card != null)
-                Card.DownInfo.DownloadFileList.TranscodingCount++;
+            if (fileList != null)
+                fileList.TranscodingCount--;
 
             LogText = null;
         }
@@ -254,6 +257,133 @@ namespace Core.Tools
 
             }
             LogText = null;
+        }
+
+        /// <summary>
+        /// 将多个分片文件整体重编码合并为单个MP4文件。
+        /// 注意：分片之间的编码参数(分辨率/SPS/PPS/音频采样率等)大概率不同——DDTV正是在检测到这些参数变化时才切割的。
+        /// 这种分片用-c copy流拷贝拼接，解码器会拿第一段的参数集去解后续段的码流，导致花屏/绿屏，
+        /// 因此合并必须整体重编码(解码→拼接→重新编码)，CPU开销大、耗时约等于整场录像时长。
+        /// 本方法只负责合并本身，不删除任何源文件，源文件清理由调用方决定
+        /// </summary>
+        /// <param name="inputFiles">待合并的输入文件路径列表(按时间顺序)</param>
+        /// <param name="outputFile">合并输出文件路径</param>
+        /// <returns>是否合并成功；失败时源文件全部保留</returns>
+        public async Task<bool> MergeSessionFragmentsAsync(List<string> inputFiles, string outputFile)
+        {
+            List<string> LogText = new List<string>();
+            string listFilePath = string.Empty;
+            try
+            {
+                //输入验证：至少2个文件且全部存在
+                if (inputFiles == null || inputFiles.Count < 2)
+                {
+                    Log.Warn(nameof(MergeSessionFragmentsAsync), $"强制合并跳过：分片数量不足({inputFiles?.Count ?? 0}个)");
+                    return false;
+                }
+                foreach (var path in inputFiles)
+                {
+                    if (!File.Exists(path))
+                    {
+                        Log.Warn(nameof(MergeSessionFragmentsAsync), $"强制合并跳过：分片文件不存在[{path}]，源分片全部保留");
+                        return false;
+                    }
+                }
+
+                //生成concat分片列表文件：文件名带GUID，避免多个合并任务并发时互相覆盖(旧的MergeFragmentsToFile用固定list.txt有这个坑)
+                //必须写无BOM的UTF-8：Encoding.UTF8会带BOM，ffmpeg concat demuxer会把BOM当成第一行内容的一部分导致解析失败
+                string outputDir = Path.GetDirectoryName(Path.GetFullPath(outputFile));
+                listFilePath = Path.Combine(outputDir, $"force_merge_{Guid.NewGuid():N}.txt");
+                using (var writer = new StreamWriter(listFilePath, false, new UTF8Encoding(false)))
+                {
+                    foreach (var path in inputFiles)
+                    {
+                        //ffmpeg concat格式：路径用单引号包裹，路径中的单引号转义为 '\''，统一用正斜杠
+                        string escaped = Path.GetFullPath(path).Replace("\\", "/").Replace("'", "'\\''");
+                        writer.WriteLine($"file '{escaped}'");
+                    }
+                }
+
+                string arguments = Config.Core_RunConfig._ForceMerge_Arguments
+                    .Replace("{list}", listFilePath)
+                    .Replace("{after}", outputFile);
+                var process = new Process
+                {
+                    StartInfo = new ProcessStartInfo()
+                    {
+                        FileName = GetFFMPEGPath(),
+                        Arguments = arguments,
+                        RedirectStandardError = true,
+                        UseShellExecute = false,
+                        CreateNoWindow = true,
+                        RedirectStandardOutput = true,
+                        StandardOutputEncoding = Encoding.UTF8,
+                        StandardErrorEncoding = Encoding.UTF8,
+                    }
+                };
+                process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                {
+                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch (Exception) { }
+                };
+                process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
+                {
+                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch (Exception) { }
+                };
+                process.Start();
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
+                await process.WaitForExitAsync();
+                //WaitForExitAsync只保证进程退出，异步输出流可能还没读完，再同步等一次把缓冲区刷完，否则失败日志可能缺尾部
+                process.WaitForExit();
+
+                //合并结果校验：进程退出码为0、输出文件存在且大小不为0
+                //重编码后体积可能与源总和差异较大(取决于编码参数)，只按"非空"校验，不按比例卡死
+                if (process.ExitCode == 0 && File.Exists(outputFile) && new FileInfo(outputFile).Length > 0)
+                {
+                    return true;
+                }
+                Log.Warn(nameof(MergeSessionFragmentsAsync), $"强制合并失败(Exit Code:{process.ExitCode})，源分片全部保留，输出文件:[{outputFile}]");
+                WriteMergeFailLog(outputFile, LogText);
+                return false;
+            }
+            catch (Exception e)
+            {
+                Log.Error(nameof(MergeSessionFragmentsAsync), $"强制合并任务出现未知错误:{e}", e, true);
+                WriteMergeFailLog(outputFile, LogText);
+                return false;
+            }
+            finally
+            {
+                if (!string.IsNullOrEmpty(listFilePath) && File.Exists(listFilePath))
+                {
+                    try { File.Delete(listFilePath); } catch (Exception) { }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 合并失败时把ffmpeg输出写到日志文件，便于排查
+        /// </summary>
+        private static void WriteMergeFailLog(string outputFile, List<string> logText)
+        {
+            try
+            {
+                if (logText.Count == 0)
+                {
+                    return;
+                }
+                using (StreamWriter fileStream = new StreamWriter(outputFile + "_merge日志.log", true, Encoding.UTF8))
+                {
+                    foreach (var item in logText)
+                    {
+                        fileStream.WriteLine(item);
+                    }
+                }
+                Log.Info(nameof(WriteMergeFailLog), $"强制合并失败，输出merge_log文件[{outputFile + "_merge日志.log"}]");
+            }
+            catch (Exception)
+            {
+            }
         }
 
         /// <summary>

@@ -1774,6 +1774,11 @@ namespace Core.RuntimeObject
                 /// </summary>
                 public string CurrentOperationVideoFile { get; set; } = string.Empty;
                 /// <summary>
+                /// 整场直播中待强制合并的视频分片组：自动切割(大小/时间/标题/分辨率/编码参数变化)产生的分片归入当前组，
+                /// 手动切割(IsCut)是用户主动要求的分段，作为合并边界，其后的分片另起一组
+                /// </summary>
+                public List<List<string>> ForceMergeGroups { get; set; } = new();
+                /// <summary>
                 /// 是否正在生成快照
                 /// </summary>
                 public bool SnapshotGenerationInProgress { get; set; } = false;

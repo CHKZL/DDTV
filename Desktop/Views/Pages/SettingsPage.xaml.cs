@@ -215,6 +215,16 @@ public partial class SettingsPage
             return false;
         }
 
+        //强制合并参数检查：开启时必须包含{list}和{after}占位符
+        if ((bool)ForceMerge_SwitchControl.IsChecked &&
+            (string.IsNullOrEmpty(ForceMerge_Arguments_InputBox.Text) ||
+             !ForceMerge_Arguments_InputBox.Text.Contains("{list}") ||
+             !ForceMerge_Arguments_InputBox.Text.Contains("{after}")))
+        {
+            MainWindow.SnackbarService.Show("保存失败", "强制合并的执行参数不能为空，且必须包含{list}和{after}占位符", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }
+
 
         #endregion
 
@@ -411,6 +421,13 @@ public partial class SettingsPage
             Config.Core_RunConfig._AutomaticRepair = (bool)AutomaticRepair_SwitchControl.IsChecked;
         }
         Config.Core_RunConfig._AutomaticRepair_Arguments = AutomaticRepair_Arguments_InputBox.Text;
+
+        //强制合并分片
+        if (Config.Core_RunConfig._ForceMerge != ForceMerge_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._ForceMerge = (bool)ForceMerge_SwitchControl.IsChecked;
+        }
+        Config.Core_RunConfig._ForceMerge_Arguments = ForceMerge_Arguments_InputBox.Text;
 
         //高级修复
         if (Config.Core_RunConfig._DetectErroneousFilesFixThem != DetectErroneousFilesFixThem_InputBox.IsChecked)
