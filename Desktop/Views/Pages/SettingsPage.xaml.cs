@@ -297,6 +297,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._ZoomOutMode = ZoomOutMode_ComboBox.SelectedIndex;
         }
+        //关闭按钮行为配置保存
+        if (Config.Core_RunConfig._CloseButtonAction != CloseButtonAction_ComboBox.SelectedIndex)
+        {
+            Config.Core_RunConfig._CloseButtonAction = CloseButtonAction_ComboBox.SelectedIndex;
+        }
         //开播卡片配置保存
         if (Config.Core_RunConfig._SystemCardReminder != SystemCardReminder_ToggleSwitch.IsChecked)
         {

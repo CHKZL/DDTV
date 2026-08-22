@@ -326,12 +326,79 @@ namespace Desktop
             {
                 e.Cancel = true;
 
-                bool shouldExit = await ShowExitConfirmationAsync();
-                if (shouldExit)
+                int action = Config.Core_RunConfig._CloseButtonAction;
+                if (action == 0)
                 {
-                    Environment.Exit(Core.Init.ExitCodes.FatalError);
+                    (int choice, bool remember) = await ShowCloseActionDialogAsync();
+                    if (choice != 0)
+                    {
+                        if (remember)
+                        {
+                            //勾选"不再提示"，记住用户本次的选择
+                            Config.Core_RunConfig._CloseButtonAction = choice;
+                        }
+                        action = choice;
+                    }
+                }
+
+                switch (action)
+                {
+                    case 1:
+                        //最小化到托盘后台（与MainWindow_StateChanged的最小化到托盘路径保持一致）
+                        this.Hide();
+                        Services.UiActivity.SetBackground(true);
+                        break;
+                    case 2:
+                        DataPage.Timer_DataPage?.Dispose();
+                        DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
+                        Environment.Exit(Core.Init.ExitCodes.FatalError);
+                        break;
+                    //case 0：用户未做出有效选择，维持窗口现状
                 }
             }
+        }
+
+        /// <summary>
+        /// 弹出关闭按钮行为询问对话框（最小化到托盘/退出），支持勾选"不再提示"记住选择
+        /// 返回(行为, 是否记住)：行为 1:最小化到托盘  2:退出  0:未做出有效选择
+        /// </summary>
+        private async Task<(int Action, bool Remember)> ShowCloseActionDialogAsync()
+        {
+            var rememberCheckBox = new System.Windows.Controls.CheckBox
+            {
+                Content = "记住我的选择，不再提示",
+                Margin = new Thickness(0, 14, 0, 0)
+            };
+            var messageBox = new Wpf.Ui.Controls.MessageBox
+            {
+                Title = "关闭确认",
+                Content = new System.Windows.Controls.StackPanel
+                {
+                    Children =
+                    {
+                        new System.Windows.Controls.TextBlock
+                        {
+                            Text = "点击关闭按钮时，您希望DDTV做什么？\r\n最小化到托盘：程序将继续在后台运行，录制任务不受影响\r\n退出：结束所有录制任务和播放窗口",
+                            TextWrapping = TextWrapping.Wrap
+                        },
+                        rememberCheckBox
+                    }
+                },
+                PrimaryButtonText = "最小化到托盘",
+                SecondaryButtonText = "退出",
+                IsCloseButtonEnabled = false,
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
+
+            var result = await messageBox.ShowDialogAsync();
+
+            return result switch
+            {
+                Wpf.Ui.Controls.MessageBoxResult.Primary => (1, rememberCheckBox.IsChecked == true),
+                Wpf.Ui.Controls.MessageBoxResult.Secondary => (2, rememberCheckBox.IsChecked == true),
+                _ => (0, false)
+            };
         }
 
         /// <summary>
