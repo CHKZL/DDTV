@@ -54,7 +54,10 @@ namespace Desktop
 					Icon = new BitmapImage(new Uri("pack://application:,,,/Assets/DDTV.ico", UriKind.Absolute)),
 					ContextMenu = _contextMenu
 				};
-				_notifyIconService.SetParentWindow(mainWindow);
+				//注意：这里不能调用SetParentWindow，WPF-UI的NotifyIconService.SetParentWindow内部会订阅主窗口Closing事件并直接Dispose托盘图标，
+				//而主窗口的FluentWindow_Closing会取消关闭(e.Cancel=true)等待用户确认，Closing事件即使被取消其余订阅者仍会被调用，
+				//导致点击关闭按钮弹确认框时托盘图标即被注销；用户选"否"后窗口还在但图标已消失，再最小化到托盘就再也找不回窗口。
+				//无参Register()内部会自动使用Application.Current.MainWindow作为父窗口，行为一致且没有这个自动注销的副作用。
 				_notifyIconService.Register();
 			}
 		}
