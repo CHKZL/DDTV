@@ -1486,6 +1486,25 @@ namespace Core
                 }
             }
 
+            private static string CloseButtonAction = "0";
+            /// <summary>
+            /// 点击主窗口关闭按钮时的行为  0:每次询问  1:最小化到托盘  2:退出程序
+            /// 默认值：0
+            /// </summary>
+            public int _CloseButtonAction
+            {
+                get => ParseInt(CloseButtonAction);
+                set
+                {
+                    if (value.ToString() != CloseButtonAction)
+                    {
+                        CloseButtonAction = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             private static string SystemCardReminder = "true";
             /// <summary>
             /// 开播后Desktop版是否触发系统卡片提醒

@@ -152,12 +152,12 @@ namespace Core.Tools
             {
                 var scanResult = preScannedResult ?? ScanStructure(inputPath);
                 var boxes = scanResult.Boxes;
-                byte[] copyBuffer = new byte[64 * 1024]; // 64KB 流式拷贝缓冲区
+                byte[] copyBuffer = new byte[1024 * 1024]; // 1MB 流式拷贝缓冲区
                 bool initWritten = false;
                 int pairCount = 0;
 
-                using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read))
-                using (var outFs = new FileStream(outputPath, FileMode.Create, FileAccess.Write))
+                using (var fs = new FileStream(inputPath, FileMode.Open, FileAccess.Read, FileShare.Read, 1024 * 1024, FileOptions.SequentialScan))
+                using (var outFs = new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.None, 1024 * 1024, FileOptions.SequentialScan))
                 {
                     // 提取 init segment (ftyp + moov)
                     for (int i = 0; i < boxes.Count; i++)

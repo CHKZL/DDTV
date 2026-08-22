@@ -80,6 +80,22 @@
                             </Grid>
                         </ui:CardControl>
 
+                        <ui:CardControl Padding="20,10,20,10" Header="点击主窗口关闭按钮时的行为（在关闭确认框中勾选不再提示后，可在此修改）" Icon="{ui:SymbolIcon Dismiss20}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ComboBox Name="CloseButtonAction_ComboBox" Grid.Row="0" Grid.Column="1" SelectedIndex="{Binding _CloseButtonAction,Mode=OneWay}" Margin="0,0,5,0">
+                                        <ComboBoxItem Content="每次询问"/>
+                                        <ComboBoxItem Content="最小化到托盘" />
+                                        <ComboBoxItem Content="退出程序" />
+                                    </ComboBox>
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                         <ui:CardControl Padding="20,10,20,10" Header="阻止系统休眠（打开后会阻止系统进入休眠，防止录制失败）" Icon="{ui:SymbolIcon Sleep20}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
