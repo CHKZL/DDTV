@@ -349,9 +349,11 @@ namespace Desktop
                         Services.UiActivity.SetBackground(true);
                         break;
                     case 2:
-                        DataPage.Timer_DataPage?.Dispose();
-                        DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-                        Environment.Exit(Core.Init.ExitCodes.FatalError);
+                        //有直播间正在录制时先弹退出确认框（显示录制中的直播间数量），确认后才真正退出
+                        if (await Services.ExitService.ConfirmExitIfRecordingAsync(this))
+                        {
+                            Services.ExitService.Exit();
+                        }
                         break;
                     //case 0：用户未做出有效选择，维持窗口现状
                 }
@@ -399,35 +401,6 @@ namespace Desktop
                 Wpf.Ui.Controls.MessageBoxResult.Secondary => (2, rememberCheckBox.IsChecked == true),
                 _ => (0, false)
             };
-        }
-
-        /// <summary>
-        /// 执行退出确认逻辑（供外部调用）
-        /// </summary>
-        public async Task<bool> ShowExitConfirmationAsync()
-        {
-            var messageBox = new Wpf.Ui.Controls.MessageBox
-            {
-                Title = "关闭确认",
-                Content = "确认要关闭DDTV吗？\r\n关闭后所有录制任务以及播放窗口均会结束。",
-                PrimaryButtonText = "是",
-                SecondaryButtonText = "否",
-                IsCloseButtonEnabled = false,
-                Owner = this,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner
-            };
-
-            var result = await messageBox.ShowDialogAsync();
-
-            if (result == Wpf.Ui.Controls.MessageBoxResult.Primary)
-            {
-                DataPage.Timer_DataPage?.Dispose();
-                DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-                IsProgrammaticClose = true;
-                return true;
-            }
-
-            return false;
         }
 
         /// <summary>

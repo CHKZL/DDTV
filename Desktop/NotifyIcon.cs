@@ -91,17 +91,16 @@ namespace Desktop
 		}
 
 		/// <summary>
-		/// 右键退出菜单项点击事件，调用主窗口的退出确认逻辑。
+		/// 右键退出菜单项点击事件，走统一的退出服务（有录制时弹确认框，无录制直接退出）。
 		/// </summary>
 		private async void RightClickExit(object sender, RoutedEventArgs e)
 		{
 			MainWindow mainWindow = Application.Current.MainWindow as MainWindow;
 			if (mainWindow != null)
 			{
-				bool shouldExit = await mainWindow.ShowExitConfirmationAsync();
-				if (shouldExit)
+				if (await Services.ExitService.ConfirmExitIfRecordingAsync(mainWindow))
 				{
-					Environment.Exit(Core.Init.ExitCodes.FatalError);
+					Services.ExitService.Exit();
 				}
 			}
 		}
