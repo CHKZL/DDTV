@@ -134,7 +134,13 @@ jobs:
         run: |
           TAG_NAME="${{ github.ref_name }}"
           VERSION_NUMBER=$(echo $TAG_NAME | sed -n -E 's/^test([0-9]+\.[0-9]+\.[0-9]+)$/\1/p')
-          if [ -z "$VERSION_NUMBER" ]; then echo "Tag $TAG_NAME 不符合 testX.Y.Z 格式，无法生成版本号"; exit 1; fi
+          if [ -z "$VERSION_NUMBER" ]; then
+            if [ "${{ github.event_name }}" = "pull_request" ]; then
+              TAG_NAME="PR${{ github.event.pull_request.number }}"
+            fi
+            VERSION_NUMBER="5.0.0"
+            echo "非 test tag 触发(${{ github.event_name }}),使用占位版本号 $VERSION_NUMBER"
+          fi
           COMMIT_COUNT=$(git rev-list --count HEAD)
           FINAL_VERSION="${VERSION_NUMBER}.${COMMIT_COUNT}"
           echo ${FINAL_VERSION}
@@ -146,7 +152,11 @@ jobs:
         run: |
           $TAG_NAME = "${{ github.ref_name }}"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
-          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') { Write-Error "Tag $TAG_NAME 不符合 testX.Y.Z 格式，无法生成版本号"; exit 1 }
+          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') {
+            if ("${{ github.event_name }}" -eq "pull_request") { $TAG_NAME = "PR${{ github.event.pull_request.number }}" }
+            $VERSION_NUMBER = "5.0.0"
+            Write-Output "非 test tag 触发(${{ github.event_name }}),使用占位版本号 $VERSION_NUMBER"
+          }
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
           Write-Output $FINAL_VERSION
@@ -220,7 +230,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           echo "type=DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}" > Server/build_output/bin/ver.ini
-          echo "ver=${{ github.ref_name }}" >> Server/build_output/bin/ver.ini
+          echo "ver=${{ github.head_ref || github.ref_name }}" >> Server/build_output/bin/ver.ini
           
       - name: Add VersionFile (Windows)  
         if: runner.os == 'Windows'
@@ -229,7 +239,7 @@ jobs:
           $bat_file_path = "Server/build_output/bin/ver.ini"
           $command = @"
           type=DDTV-Server-${{ matrix.os }}-${{ matrix.runtime }}
-          ver=${{ github.ref_name }}
+          ver=${{ github.head_ref || github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
       
@@ -267,7 +277,7 @@ jobs:
           push:    false
           repo:    ddtv/server
           path:    ${{ github.workspace }}/Server/build_output
-          version: ${{ github.ref_name }}
+          version: ${{ github.head_ref || github.ref_name }}
           runtime: ${{ matrix.runtime }}
           os_id:                ${{ contains(matrix.runtime, 'musl') && 'alpine' || 'debian' }}
           dotnet-image-version: ${{ contains(matrix.runtime, 'musl') && '10.0-alpine' || '10.0' }}
@@ -332,7 +342,11 @@ jobs:
         run: |
           $TAG_NAME = "${{ github.ref_name }}"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
-          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') { Write-Error "Tag $TAG_NAME 不符合 testX.Y.Z 格式，无法生成版本号"; exit 1 }
+          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') {
+            if ("${{ github.event_name }}" -eq "pull_request") { $TAG_NAME = "PR${{ github.event.pull_request.number }}" }
+            $VERSION_NUMBER = "5.0.0"
+            Write-Output "非 test tag 触发(${{ github.event_name }}),使用占位版本号 $VERSION_NUMBER"
+          }
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
           Write-Output $FINAL_VERSION
@@ -425,7 +439,7 @@ jobs:
           $bat_file_path = "Desktop/build_output/bin/ver.ini"
           $command = @"
           type=DDTV-Desktop-${{ matrix.os }}-${{ matrix.runtime }}
-          ver=${{ github.ref_name }}
+          ver=${{ github.head_ref || github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
 
@@ -505,7 +519,11 @@ jobs:
         run: |
           $TAG_NAME = "${{ github.ref_name }}"
           $VERSION_NUMBER = $TAG_NAME -replace ".*?(\d+\.\d+\.\d+).*", '$1'
-          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') { Write-Error "Tag $TAG_NAME 不符合 testX.Y.Z 格式，无法生成版本号"; exit 1 }
+          if ($VERSION_NUMBER -notmatch '^\d+\.\d+\.\d+$') {
+            if ("${{ github.event_name }}" -eq "pull_request") { $TAG_NAME = "PR${{ github.event.pull_request.number }}" }
+            $VERSION_NUMBER = "5.0.0"
+            Write-Output "非 test tag 触发(${{ github.event_name }}),使用占位版本号 $VERSION_NUMBER"
+          }
           $COMMIT_COUNT = git rev-list --count HEAD
           $FINAL_VERSION = "$VERSION_NUMBER.$COMMIT_COUNT"
           Write-Output $FINAL_VERSION
@@ -563,7 +581,7 @@ jobs:
           $bat_file_path = "Client/build_output/bin/ver.ini"
           $command = @"
           type=DDTV-Client-${{ matrix.os }}-${{ matrix.runtime }}
-          ver=${{ github.ref_name }}
+          ver=${{ github.head_ref || github.ref_name }}
           "@
           Set-Content -Path $bat_file_path -Value $command
         
