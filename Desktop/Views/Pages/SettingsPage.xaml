@@ -852,6 +852,27 @@
                             </Grid>
                         </ui:CardControl>
 
+                        <ui:CardControl Padding="15,20,20,20" Header="没有有效视频文件时，仍然保存弹幕文件（会产生没有对应视频的独立弹幕文件）" Icon="{ui:SymbolIcon CommentText20}" ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Width="500">
+                                    <TextBlock Text="默认情况下，录制结束时如果没有有效的视频文件（没有可用的视频流，或录到的文件低于最小文件大小阈值被自动清理），弹幕/礼物/上舰/SC内容会被丢弃不保存，避免产生没有对应视频的孤儿文件。&#x0a;开启本开关后，即使视频文件不存在，弹幕相关文件也会照常保存，成为没有对应视频的独立文件。" TextWrapping="Wrap"/>
+                                </ToolTip>
+                            </ToolTipService.ToolTip>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
+                                    <ui:ToggleSwitch Name="KeepDanmuWhenNoVideoFile_SwitchControl" IsChecked="{Binding _KeepDanmuWhenNoVideoFile, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                </Grid>
+                            </Grid>
+                        </ui:CardControl>
+
                         <ui:CardExpander Icon="{ui:SymbolIcon TextBulletListSquareShield20}">
                             <ui:CardExpander.Header>
                                 <Grid>

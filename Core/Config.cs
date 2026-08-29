@@ -1027,6 +1027,29 @@ namespace Core
                 }
             }
 
+            private static string KeepDanmuWhenNoVideoFile = "false";
+            /// <summary>
+            /// 录制结束没有有效视频文件时(无可用视频流/文件低于清理阈值被自动删除)仍然保存弹幕文件。
+            /// 开启后弹幕/礼物/上舰/SC文件会照常落盘，成为没有对应视频的独立文件
+            /// 默认值：false
+            /// </summary>
+            public bool _KeepDanmuWhenNoVideoFile
+            {
+                get
+                {
+                    return ParseBool(KeepDanmuWhenNoVideoFile);
+                }
+                set
+                {
+                    if (value.ToString() != KeepDanmuWhenNoVideoFile)
+                    {
+                        KeepDanmuWhenNoVideoFile = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             private static string DefaultResolution = "10000";
             /// <summary>
             /// 录制默认清晰度 默认值：10000    可选值：流畅:80  高清:150  超清:250  蓝光:400  原画:10000  4K:20000  杜比:30000

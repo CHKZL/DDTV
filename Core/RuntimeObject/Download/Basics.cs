@@ -85,9 +85,11 @@ namespace Core.RuntimeObject.Download
             {
                 roomCard.DownInfo.LiveChatListener.File = result.FileName.Replace("_original.mp4", "").Replace("_original.flv", "");
                 // NoHLSStreamExists 和 SuccessfulButNotStream 都表示"没有可用视频流"，弹幕应只清不存，
-                // 否则会把弹幕/礼物/上舰/SC 写到根本没创建的 _original.flv 名下，产生孤儿文件
-                bool noVideoStream = result.TaskState == DownloadTaskState.SuccessfulButNotStream
-                                  || result.TaskState == DownloadTaskState.NoHLSStreamExists;
+                // 否则会把弹幕/礼物/上舰/SC 写到根本没创建的 _original.flv 名下，产生孤儿文件。
+                // 开启_KeepDanmuWhenNoVideoFile时用户明确接受孤儿弹幕文件，照常保存
+                bool noVideoStream = (result.TaskState == DownloadTaskState.SuccessfulButNotStream
+                                  || result.TaskState == DownloadTaskState.NoHLSStreamExists)
+                                  && !Config.Core_RunConfig._KeepDanmuWhenNoVideoFile;
                 Danmu.SaveDanmu(roomCard.DownInfo.LiveChatListener, noVideoStream, ref roomCard);
             }
             //如果是付费直播，结束当前录制任务

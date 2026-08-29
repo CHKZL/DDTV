@@ -466,6 +466,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._DeleteOriginalFileAfterRepair = (bool)DeleteOriginalFileAfterRepair_SwitchControl.IsChecked;
         }
+        //无有效视频文件时仍保存弹幕开关
+        if (Config.Core_RunConfig._KeepDanmuWhenNoVideoFile != KeepDanmuWhenNoVideoFile_SwitchControl.IsChecked)
+        {
+            Config.Core_RunConfig._KeepDanmuWhenNoVideoFile = (bool)KeepDanmuWhenNoVideoFile_SwitchControl.IsChecked;
+        }
         //设置屏蔽词
         if (Config.Core_RunConfig._BlockBarrageList != BlockBarrageList_TextBox.Text)
         {
