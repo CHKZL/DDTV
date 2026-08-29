@@ -29,12 +29,29 @@
 
 ## 快速开始
 
-### 环境要求
+### 普通用户
+
+无需安装任何开发环境，直接前往 [Releases](https://github.com/CHKZL/DDTV/releases) 页面下载对应平台的压缩包，解压即用：
+
+| 你的情况 | 下载哪个版本 |
+|---|---|
+| Windows 用户（推荐） | **Desktop**：带完整 GUI、开播提醒、在线观看等全部功能 |
+| Windows 用户（轻量） | **Client**：精简桌面壳，内嵌 WEBUI |
+| Linux / macOS / 服务器 / NAS | **Server**：无头模式，通过浏览器访问 WEBUI 管理 |
+| Docker 用户 | 见下方 [Docker 部署](#docker-部署) |
+
+下载后解压运行即可，已内置运行环境，无需安装 .NET。
+
+> **注意**：Linux / macOS 平台需要自行安装 `ffmpeg` 并加入 PATH，否则录制文件的自动修复/转码功能不可用。
+
+### 开发者
+
+#### 环境要求
 
 * [.NET 10 SDK](https://dotnet.microsoft.com/download)
 * 非 Windows 平台需自行安装 `ffmpeg` 并加入 PATH（录制修复/转码功能依赖）
 
-### 构建与运行
+#### 构建与运行
 
 ```bash
 dotnet build DDTV.sln              # 构建整个解决方案
