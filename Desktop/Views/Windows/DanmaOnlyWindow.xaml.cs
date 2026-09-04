@@ -1,6 +1,5 @@
-﻿using Core.LiveChat;
+using Core.LiveChat;
 using Core.RuntimeObject;
-using Notification.Wpf;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -293,7 +292,7 @@ namespace Desktop.Views.Windows
             string T = DanmaOnly_DanmaInput.Text;
             if (string.IsNullOrEmpty(T) || T.Length > 40/*Core.Config.Core_RunConfig._MaximumLengthDanmu*/)
             {
-                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为40");
+                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为40", HudNotification.HudLevel.Notice);
                 return;
             }
             Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
@@ -344,18 +343,11 @@ namespace Desktop.Views.Windows
                 SetNotificatom("打开窗口置顶", $"{roomCard.Name}({roomCard.RoomId})窗口置顶已打开");
             }
         }
-        private void SetNotificatom(string Title, string Message = "'")
+        private void SetNotificatom(string Title, string Message = "'", HudNotification.HudLevel level = HudNotification.HudLevel.Success)
         {
             Dispatcher.Invoke(() =>
             {
-                MainWindow.notificationManager.Show(new NotificationContent
-                {
-                    Title = Title,
-                    Message = Message,
-                    Type = NotificationType.Success,
-                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString("#00CC33")
-
-                });
+                HudNotification.Notify("/// DANMAKU", Message, Title, level);
             });
 
         }

@@ -7,7 +7,6 @@ using Desktop.Views.Pages;
 using Desktop.Views.Windows;
 using LibVLCSharp.Shared;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Wpf;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -24,10 +23,6 @@ namespace Desktop
     /// </summary>
     public partial class MainWindow : FluentWindow
     {
-        /// <summary>
-        /// 系统托盘通知
-        /// </summary>
-        public static NotificationManager notificationManager = new NotificationManager();
         /// <summary>
         /// 确认窗口
         /// </summary>
@@ -260,12 +255,7 @@ namespace Desktop
             {
                 Dispatcher.InvokeAsync(() =>
                 {
-                    notificationManager.Show(new NotificationContent
-                    {
-                        Title = "DDTV-开播提醒",
-                        Message = $"【{roomCard.Name}】的直播开始啦",
-                        Type = NotificationType.Information
-                    });
+                    Views.Windows.HudNotification.NotifyLiveReminder(roomCard.Name, roomCard.Title.Value, roomCard.RoomId);
                 });
             }
         }

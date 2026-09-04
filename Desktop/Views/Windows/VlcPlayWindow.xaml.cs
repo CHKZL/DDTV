@@ -1,4 +1,4 @@
-﻿using Core;
+using Core;
 using Core.LiveChat;
 using Core.LogModule;
 using Core.RuntimeObject;
@@ -8,7 +8,6 @@ using Desktop.Views.Windows.DanMuCanvas.BarrageParameters;
 using LibVLCSharp.Shared;
 using LibVLCSharp.WPF;
 using Microsoft.Extensions.DependencyInjection;
-using Notification.Wpf;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -944,14 +943,7 @@ namespace Desktop.Views.Windows
         {
             Dispatcher.Invoke(() =>
             {
-                MainWindow.notificationManager.Show(new NotificationContent
-                {
-                    Title = Title,
-                    Message = Message,
-                    Type = NotificationType.Success,
-                    Background = (System.Windows.Media.Brush)new BrushConverter().ConvertFromString("#00CC33")
-
-                });
+                HudNotification.Notify("/// PLAYER", Message, Title, HudNotification.HudLevel.Success);
             });
 
         }

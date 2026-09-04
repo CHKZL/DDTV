@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="Desktop.Views.Pages.SettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -120,17 +120,44 @@
                             </Grid>
                         </ui:CardControl>
 
-                        <ui:CardControl Padding="20,10,20,10" Header="开播系统卡片提醒" Icon="{ui:SymbolIcon MegaphoneLoud28}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid Grid.Column="1" VerticalAlignment="Center"  HorizontalAlignment="Right">
-                                    <ui:ToggleSwitch Name="SystemCardReminder_ToggleSwitch" Height="35" IsChecked="{Binding _SystemCardReminder, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                        <ui:CardExpander Icon="{ui:SymbolIcon MegaphoneLoud28}">
+                            <ui:CardExpander.Header>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid Grid.Column="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <ui:TextBlock Grid.Row="0" Grid.Column="0" FontSize="16" FontTypography="Body" Text="桌面通知胶囊提醒" />
+                                        <ui:TextBlock Grid.Row="1" Grid.Column="0" FontSize="12" Foreground="{ui:ThemeResource TextFillColorSecondaryBrush}" Text="开播、播放器操作等事件在屏幕顶部弹出胶囊提醒（HUD）" />
+                                        <ui:ToggleSwitch Name="SystemCardReminder_ToggleSwitch" IsChecked="{Binding _SystemCardReminder, Mode=OneWay}" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Margin="0,0,16,0" OffContent="关" OnContent="开" />
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </ui:CardControl>
+                            </ui:CardExpander.Header>
+                            <StackPanel Margin="24,0.5,24,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Grid.Row="0" Grid.Column="0" Margin="10,0,0,0" Content="胶囊展示时长（秒，可选1-30）" />
+                                    <ui:NumberBox Name="HudNotificationDuration_NumberBox" Grid.Row="1" Grid.Column="0" Margin="10,0,10,0" Width="200" HorizontalAlignment="Left" PlaceholderText="5" Minimum="1" Maximum="30" Value="{Binding _HudNotificationDuration, Mode=OneWay}"/>
+                                    <ui:Button Grid.Row="1" Grid.Column="1" Content="测试弹窗效果" VerticalAlignment="Center" HorizontalAlignment="Right" Click="HudNotification_Test_Click"/>
+                                </Grid>
+                            </StackPanel>
+                        </ui:CardExpander>
 
                         <ui:CardExpander Icon="{ui:SymbolIcon Send20}">
                             <ui:CardExpander.Header>

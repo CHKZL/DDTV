@@ -1,4 +1,4 @@
-﻿using Core.LogModule;
+using Core.LogModule;
 using Core.RuntimeObject;
 using Core.Tools;
 using System.ComponentModel;
@@ -1546,6 +1546,26 @@ namespace Core
                         SystemCardReminder = value.ToString();
                         OnPropertyChanged();
                         ModifyConfig(value);
+                    }
+                }
+            }
+
+            private static string HudNotificationDuration = "5";
+            /// <summary>
+            /// Desktop顶部通知胶囊(HUD)的展示时长(秒)，可选范围1-30
+            /// 默认值：5
+            /// </summary>
+            public int _HudNotificationDuration
+            {
+                get => ParseInt(HudNotificationDuration);
+                set
+                {
+                    int clamped = Math.Clamp(value, 1, 30);
+                    if (clamped.ToString() != HudNotificationDuration)
+                    {
+                        HudNotificationDuration = clamped.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(clamped);
                     }
                 }
             }

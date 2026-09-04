@@ -307,6 +307,12 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._SystemCardReminder = (bool)SystemCardReminder_ToggleSwitch.IsChecked;
         }
+        //通知胶囊展示时长配置保存（配置属性内部会夹取到1-30）
+        double? hudDuration = HudNotificationDuration_NumberBox.Value;
+        if (hudDuration.HasValue && !double.IsNaN(hudDuration.Value) && Config.Core_RunConfig._HudNotificationDuration != (int)hudDuration.Value)
+        {
+            Config.Core_RunConfig._HudNotificationDuration = (int)hudDuration.Value;
+        }
         //API_Url配置保存
         Config.Core_RunConfig._MainDomainName = MainDomainName_TextBox.Text;
         Config.Core_RunConfig._LiveDomainName = LiveDomainName_TextBox.Text;
@@ -657,6 +663,14 @@ public partial class SettingsPage
             }
 
         }
+    }
+
+    /// <summary>
+    /// 测试通知胶囊按钮：忽略开关强制弹出一次开播提醒HUD，方便调整时长后立即预览效果
+    /// </summary>
+    private void HudNotification_Test_Click(object sender, RoutedEventArgs e)
+    {
+        Views.Windows.HudNotification.NotifyLiveReminder("测试主播", "动画效果测试", 123456, force: true);
     }
 
     private void Send_TestMail_Button_Click(object sender, RoutedEventArgs e)
