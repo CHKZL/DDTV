@@ -93,9 +93,14 @@ namespace Desktop.Views.Windows
             {
                 return;
             }
+            // 必须在Stop之前取当前值：Storyboard停止后动画属性会回退到本地初始值
+            double current = Capsule.Opacity;
+            double scaleX = Capsule.RenderTransform is ScaleTransform st ? st.ScaleX : 1;
             StopAll();
+            // 回写为本地值，让渐隐从当前可见状态开始而不是从初始的透明状态开始
+            Capsule.Opacity = current;
 
-            var fade = new DoubleAnimation(Capsule.Opacity, 0, OverflowFade)
+            var fade = new DoubleAnimation(current, 0, OverflowFade)
             {
                 EasingFunction = new CubicEase { EasingMode = EasingMode.EaseIn },
             };
@@ -104,8 +109,10 @@ namespace Desktop.Views.Windows
 
             if (Capsule.RenderTransform is ScaleTransform scale)
             {
-                scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(scale.ScaleX, 0.92, OverflowFade));
-                scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(scale.ScaleY, 0.92, OverflowFade));
+                scale.ScaleX = scaleX;
+                scale.ScaleY = scaleX;
+                scale.BeginAnimation(ScaleTransform.ScaleXProperty, new DoubleAnimation(scaleX, 0.92, OverflowFade));
+                scale.BeginAnimation(ScaleTransform.ScaleYProperty, new DoubleAnimation(scaleX, 0.92, OverflowFade));
             }
         }
 

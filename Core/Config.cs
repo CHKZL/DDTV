@@ -1590,6 +1590,25 @@ namespace Core
                 }
             }
 
+            private static string UseHudNotification = "true";
+            /// <summary>
+            /// Desktop通知样式  true:顶部通知胶囊(HUD)  false:Windows托盘通知
+            /// 默认值：true
+            /// </summary>
+            public bool _UseHudNotification
+            {
+                get => ParseBool(UseHudNotification);
+                set
+                {
+                    if (value.ToString() != UseHudNotification)
+                    {
+                        UseHudNotification = value.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(value);
+                    }
+                }
+            }
+
             private static string DevelopmentVersion = "false";
             /// <summary>
             /// 是否接受开发版更新

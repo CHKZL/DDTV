@@ -307,6 +307,11 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._SystemCardReminder = (bool)SystemCardReminder_ToggleSwitch.IsChecked;
         }
+        //通知方式配置保存
+        if (Config.Core_RunConfig._UseHudNotification != UseHudNotification_ToggleSwitch.IsChecked)
+        {
+            Config.Core_RunConfig._UseHudNotification = (bool)UseHudNotification_ToggleSwitch.IsChecked;
+        }
         //通知胶囊展示时长配置保存（配置属性内部会夹取到1-30）
         double? hudDuration = HudNotificationDuration_NumberBox.Value;
         if (hudDuration.HasValue && !double.IsNaN(hudDuration.Value) && Config.Core_RunConfig._HudNotificationDuration != (int)hudDuration.Value)

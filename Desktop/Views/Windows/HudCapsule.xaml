@@ -5,7 +5,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="64"
              Width="540" Height="64"
-             HorizontalAlignment="Center">
+             HorizontalAlignment="Center"
+             VerticalAlignment="Top">
 
     <!-- 胶囊：固定 540×64，全圆角；内容分三列：图标块 / 标题组 / 明细 -->
     <Border x:Name="Capsule"

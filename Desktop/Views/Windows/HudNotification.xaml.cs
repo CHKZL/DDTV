@@ -79,11 +79,17 @@ namespace Desktop.Views.Windows
         /// <param name="detail">右侧明细小字（为空则不显示）</param>
         /// <param name="level">级别，决定主色与默认图标</param>
         /// <param name="iconData">自定义描边图标路径数据，为空时按级别取默认图标</param>
-        /// <param name="force">为true时忽略设置页的开关强制弹出（测试按钮用）</param>
+        /// <param name="force">为true时忽略设置页的总开关强制弹出（测试按钮用）</param>
         public static void Notify(string tag, string headline, string detail = "", HudLevel level = HudLevel.Info, string? iconData = null, bool force = false)
         {
             if (!force && !Core.Config.Core_RunConfig._SystemCardReminder)
             {
+                return;
+            }
+            // 通知方式路由：关闭HUD样式时走Windows原生通知（测试按钮也走这里，方便对比两种样式）
+            if (!Core.Config.Core_RunConfig._UseHudNotification)
+            {
+                Services.WindowsToastNotification.Show(headline, detail);
                 return;
             }
             var dispatcher = Application.Current?.Dispatcher;
@@ -111,9 +117,9 @@ namespace Desktop.Views.Windows
 
         private void Play(string tag, string headline, string detail, HudLevel level, string? iconData)
         {
-            // 上限与窗口高度跟随配置（多留1个槽位给溢出过渡动画）
+            // 上限与窗口高度跟随配置（多留1个槽位给溢出过渡动画），不超过工作区高度
             int maxVisible = Math.Clamp(Core.Config.Core_RunConfig._HudNotificationMaxCount, 1, 10);
-            Height = 8 + (maxVisible + 1) * CapsuleSlot;
+            Height = Math.Min(8 + (maxVisible + 1) * CapsuleSlot, SystemParameters.WorkArea.Height - 16);
 
             PlaceTopCenter();
             if (!IsVisible)

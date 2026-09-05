@@ -143,6 +143,14 @@
                                 </Grid>
                             </ui:CardExpander.Header>
                             <StackPanel Margin="24,0.5,24,0">
+                                <Grid Margin="0,0,0,10">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" Margin="10,0,0,0" VerticalAlignment="Center" Content="通知方式（HUD胶囊 / Windows系统通知）" />
+                                    <ui:ToggleSwitch Name="UseHudNotification_ToggleSwitch" Grid.Column="1" IsChecked="{Binding _UseHudNotification, Mode=OneWay}" Margin="0,0,10,0" OffContent="系统" OnContent="HUD" />
+                                </Grid>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
