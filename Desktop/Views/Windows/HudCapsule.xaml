@@ -1,0 +1,87 @@
+<UserControl x:Class="Desktop.Views.Windows.HudCapsule"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="540" d:DesignHeight="64"
+             Width="540" Height="64"
+             HorizontalAlignment="Center">
+
+    <!-- 胶囊：固定 540×64，全圆角；内容分三列：图标块 / 标题组 / 明细 -->
+    <Border x:Name="Capsule"
+            CornerRadius="32"
+            Background="#FF191C20"
+            BorderBrush="#FF2C3138"
+            BorderThickness="1"
+            Opacity="0"
+            Cursor="Hand"
+            MouseLeftButtonDown="Capsule_MouseLeftButtonDown">
+        <Border.RenderTransform>
+            <ScaleTransform ScaleX="0.85" ScaleY="0.85"/>
+        </Border.RenderTransform>
+
+        <Grid Margin="12,0,16,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40"/>   <!-- 图标块 -->
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="*"/>    <!-- 标题组 -->
+                <ColumnDefinition Width="Auto"/> <!-- 明细 -->
+            </Grid.ColumnDefinitions>
+
+            <!-- 图标块：40×40 圆角方块，底色 = 主色 17% 透明，描边图标 = 主色 -->
+            <Border x:Name="GlyphTile"
+                    Grid.Column="0"
+                    Width="40" Height="40"
+                    CornerRadius="12"
+                    Background="#2BFFB020"
+                    VerticalAlignment="Center"
+                    Opacity="0">
+                <Border.RenderTransform>
+                    <TranslateTransform X="-18"/>
+                </Border.RenderTransform>
+                <Path x:Name="GlyphPath"
+                      Width="24" Height="24"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Stretch="Uniform"
+                      StrokeThickness="2"
+                      StrokeStartLineCap="Round"
+                      StrokeEndLineCap="Round"
+                      Stroke="#FFFFB020"
+                      Fill="#00000000"/>
+            </Border>
+
+            <!-- 标题组：小标签 + 主标题 -->
+            <StackPanel x:Name="HeadlineGroup"
+                        Grid.Column="2"
+                        Orientation="Vertical"
+                        VerticalAlignment="Center"
+                        Opacity="0">
+                <StackPanel.RenderTransform>
+                    <TranslateTransform Y="10"/>
+                </StackPanel.RenderTransform>
+                <TextBlock x:Name="TagText"
+                           Text="/// SYSTEM LINK"
+                           FontSize="9"
+                           Foreground="#FFF2F4F8"
+                           Opacity="0.45"/>
+                <TextBlock x:Name="HeadlineText"
+                           Text="状态标题"
+                           FontSize="19" FontWeight="SemiBold"
+                           Foreground="#FFF2F4F8"
+                           TextTrimming="CharacterEllipsis"/>
+            </StackPanel>
+
+            <!-- 明细：右侧小字 -->
+            <TextBlock x:Name="DetailText"
+                       Grid.Column="3"
+                       Text=""
+                       FontSize="12"
+                       Foreground="#FFF2F4F8"
+                       Opacity="0"
+                       MaxWidth="180"
+                       TextTrimming="CharacterEllipsis"
+                       VerticalAlignment="Center"
+                       Margin="12,0,0,0"/>
+        </Grid>
+    </Border>
+</UserControl>

@@ -146,6 +146,7 @@
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <Grid.RowDefinitions>
@@ -154,7 +155,9 @@
                                     </Grid.RowDefinitions>
                                     <Label Grid.Row="0" Grid.Column="0" Margin="10,0,0,0" Content="胶囊展示时长（秒，可选1-30）" />
                                     <ui:NumberBox Name="HudNotificationDuration_NumberBox" Grid.Row="1" Grid.Column="0" Margin="10,0,10,0" Width="200" HorizontalAlignment="Left" PlaceholderText="5" Minimum="1" Maximum="30" Value="{Binding _HudNotificationDuration, Mode=OneWay}"/>
-                                    <ui:Button Grid.Row="1" Grid.Column="1" Content="测试弹窗效果" VerticalAlignment="Center" HorizontalAlignment="Right" Click="HudNotification_Test_Click"/>
+                                    <Label Grid.Row="0" Grid.Column="1" Margin="10,0,0,0" Content="最大堆叠数量（可选1-10）" />
+                                    <ui:NumberBox Name="HudNotificationMaxCount_NumberBox" Grid.Row="1" Grid.Column="1" Margin="10,0,10,0" Width="200" HorizontalAlignment="Left" PlaceholderText="4" Minimum="1" Maximum="10" Value="{Binding _HudNotificationMaxCount, Mode=OneWay}"/>
+                                    <ui:Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="2" Content="测试弹窗效果" VerticalAlignment="Center" HorizontalAlignment="Right" Click="HudNotification_Test_Click"/>
                                 </Grid>
                             </StackPanel>
                         </ui:CardExpander>

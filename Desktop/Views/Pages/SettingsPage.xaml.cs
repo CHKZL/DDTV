@@ -313,6 +313,12 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._HudNotificationDuration = (int)hudDuration.Value;
         }
+        //通知胶囊堆叠数量配置保存（配置属性内部会夹取到1-10）
+        double? hudMaxCount = HudNotificationMaxCount_NumberBox.Value;
+        if (hudMaxCount.HasValue && !double.IsNaN(hudMaxCount.Value) && Config.Core_RunConfig._HudNotificationMaxCount != (int)hudMaxCount.Value)
+        {
+            Config.Core_RunConfig._HudNotificationMaxCount = (int)hudMaxCount.Value;
+        }
         //API_Url配置保存
         Config.Core_RunConfig._MainDomainName = MainDomainName_TextBox.Text;
         Config.Core_RunConfig._LiveDomainName = LiveDomainName_TextBox.Text;

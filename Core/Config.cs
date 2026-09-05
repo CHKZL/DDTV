@@ -1570,6 +1570,26 @@ namespace Core
                 }
             }
 
+            private static string HudNotificationMaxCount = "4";
+            /// <summary>
+            /// Desktop顶部通知胶囊(HUD)的最大堆叠数量，超出时最旧的渐隐消失，可选范围1-10
+            /// 默认值：4
+            /// </summary>
+            public int _HudNotificationMaxCount
+            {
+                get => ParseInt(HudNotificationMaxCount);
+                set
+                {
+                    int clamped = Math.Clamp(value, 1, 10);
+                    if (clamped.ToString() != HudNotificationMaxCount)
+                    {
+                        HudNotificationMaxCount = clamped.ToString();
+                        OnPropertyChanged();
+                        ModifyConfig(clamped);
+                    }
+                }
+            }
+
             private static string DevelopmentVersion = "false";
             /// <summary>
             /// 是否接受开发版更新
