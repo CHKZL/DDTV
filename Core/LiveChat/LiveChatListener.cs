@@ -30,7 +30,7 @@ namespace Core.LiveChat
     {
         #region Properties
         private ClientWebSocket m_client;
-        private HttpMessageInvoker m_wsInvoker;
+        private HttpMessageInvoker? m_wsInvoker;
         private byte[] m_ReceiveBuffer;
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
@@ -280,6 +280,12 @@ namespace Core.LiveChat
                     Log.Warn(LogPrefix, $"房间{RoomId}弹幕服务器TLS协商失败(0x80090302 要求的函数不受支持)，此为用户系统TLS配置异常(如TLS 1.3被异常开启)导致，尝试使用TLS 1.2重连", null, true);
                     m_client.Dispose();
                     m_client = new ClientWebSocket();
+                    try
+                    {
+                        //优先TLS 1.2分支可能已创建过invoker，覆盖前先释放，避免泄漏
+                        m_wsInvoker?.Dispose();
+                    }
+                    catch (Exception) { }
                     m_wsInvoker = CreateTls12Invoker();
                     await m_client.ConnectAsync(new Uri(URL), m_wsInvoker, new CancellationTokenSource().Token);
                     _preferTls12[RoomId] = true;
@@ -362,7 +368,7 @@ namespace Core.LiveChat
         /// </summary>
         public static bool IsSchannelUnsupportedFunction(Exception ex)
         {
-            for (Exception e = ex; e != null; e = e.InnerException)
+            for (Exception? e = ex; e != null; e = e.InnerException)
             {
                 if (e is System.ComponentModel.Win32Exception w32 && w32.NativeErrorCode == unchecked((int)0x80090302))
                 {
