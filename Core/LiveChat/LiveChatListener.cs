@@ -1,5 +1,6 @@
-﻿using AngleSharp.Dom;
+using AngleSharp.Dom;
 using Core.LogModule;
+using System.Collections.Concurrent;
 using Core.Network;
 using Core.Network.Methods;
 using Core.RuntimeObject;
@@ -10,7 +11,9 @@ using System.Diagnostics;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.WebSockets;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -27,12 +30,28 @@ namespace Core.LiveChat
     {
         #region Properties
         private ClientWebSocket m_client;
+        private HttpMessageInvoker m_wsInvoker;
         private byte[] m_ReceiveBuffer;
         private CancellationTokenSource m_innerRts;
         private DanMuWssInfo WssInfo = new();
         private bool _disposed = false;
         public bool _Cancel = false;
         private bool _isReconnecting = false;
+
+        /// <summary>
+        /// 各房间Schannel TLS协商失败(0x80090302)的抑制截止时间。
+        /// 该错误源于用户系统TLS配置异常，修复并重启前重连不可能成功，
+        /// 窗口期内跳过连接尝试，避免无限重连刷错误日志
+        /// </summary>
+        private static readonly ConcurrentDictionary<long, DateTime> _tlsFailSuppressUntil = new();
+        /// <summary>
+        /// 系统默认TLS协商失败、TLS 1.2回退连接成功过的房间，后续连接直接固定TLS 1.2
+        /// </summary>
+        private static readonly ConcurrentDictionary<long, bool> _preferTls12 = new();
+        /// <summary>
+        /// TLS协商失败后的重连抑制窗口时长
+        /// </summary>
+        private static readonly TimeSpan _tlsFailSuppressWindow = TimeSpan.FromMinutes(10);
 
         public long RoomId { get; set; } = 0;
         public string Name { get; set; } = string.Empty;
@@ -69,6 +88,11 @@ namespace Core.LiveChat
         {
             try
             {
+                if (_tlsFailSuppressUntil.TryGetValue(RoomId, out DateTime suppressUntil) && DateTime.Now < suppressUntil)
+                {
+                    Log.Info(nameof(LiveChatListener) + "_" + nameof(Connect), $"房间{RoomId}此前因系统TLS协商失败(0x80090302)无法连接弹幕服务器，{suppressUntil:HH:mm:ss}前暂停重复连接尝试");
+                    return;
+                }
                 m_ReceiveBuffer = new byte[1024 * 512];
                 State = true;
 
@@ -113,6 +137,13 @@ namespace Core.LiveChat
             try
             {
                 m_client?.Dispose();
+            }
+            catch (Exception) { }
+
+            try
+            {
+                m_wsInvoker?.Dispose();
+                m_wsInvoker = null;
             }
             catch (Exception) { }
 
@@ -228,7 +259,32 @@ namespace Core.LiveChat
 
                 // 随机选择一个服务器连接
                 string URL = "wss://" + WssInfo.data.host_list[new Random().Next(0, WssInfo.data.host_list.Count)].host + "/sub";
-                await m_client.ConnectAsync(new Uri(URL), new CancellationTokenSource().Token);
+                try
+                {
+                    if (_preferTls12.ContainsKey(RoomId))
+                    {
+                        //该房间曾在系统默认TLS协商失败后通过TLS 1.2回退连接成功，直接固定TLS 1.2
+                        m_wsInvoker = CreateTls12Invoker();
+                        await m_client.ConnectAsync(new Uri(URL), m_wsInvoker, new CancellationTokenSource().Token);
+                    }
+                    else
+                    {
+                        await m_client.ConnectAsync(new Uri(URL), new CancellationTokenSource().Token);
+                    }
+                }
+                catch (Exception connectEx) when (IsSchannelUnsupportedFunction(connectEx))
+                {
+                    //系统Schannel TLS协商失败(0x80090302 要求的函数不受支持)，典型原因是用户系统TLS配置异常
+                    //(如"优化"工具强行开启TLS 1.3、限制密码套件、杀软HTTPS扫描)。
+                    //弹幕服务器支持TLS 1.2，重建客户端并固定TLS 1.2重试一次，绕过本机异常的协商路径
+                    Log.Warn(LogPrefix, $"房间{RoomId}弹幕服务器TLS协商失败(0x80090302 要求的函数不受支持)，此为用户系统TLS配置异常(如TLS 1.3被异常开启)导致，尝试使用TLS 1.2重连", null, true);
+                    m_client.Dispose();
+                    m_client = new ClientWebSocket();
+                    m_wsInvoker = CreateTls12Invoker();
+                    await m_client.ConnectAsync(new Uri(URL), m_wsInvoker, new CancellationTokenSource().Token);
+                    _preferTls12[RoomId] = true;
+                    Log.Info(LogPrefix, $"房间{RoomId}已通过TLS 1.2成功连接弹幕服务器；若其他应用也出现TLS错误，请检查系统TLS配置(注册表Schannel项、系统优化工具、杀软HTTPS扫描)");
+                }
 
                 // 发送认证信息
                 await _sendObject(7, new
@@ -278,9 +334,53 @@ namespace Core.LiveChat
             }
             catch (Exception e)
             {
-                Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生错误", e, true);
+                if (IsSchannelUnsupportedFunction(e))
+                {
+                    //TLS 1.2回退后仍然失败，属于用户系统TLS配置异常，修复前重连不可能成功：
+                    //首次记录完整堆栈和用户指引，随后进入抑制窗口，避免无限重连刷错误日志
+                    bool isFirstFailure = !_tlsFailSuppressUntil.TryGetValue(RoomId, out DateTime suppressUntil) || DateTime.Now >= suppressUntil;
+                    _tlsFailSuppressUntil[RoomId] = DateTime.Now.Add(_tlsFailSuppressWindow);
+                    if (isFirstFailure)
+                    {
+                        Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生错误：系统TLS协商失败(0x80090302 要求的函数不受支持)，TLS 1.2回退亦未成功。此为用户系统TLS配置异常(如优化工具强行开启TLS 1.3、限制密码套件、杀软HTTPS扫描)导致，修复系统TLS配置前弹幕无法连接，{(int)_tlsFailSuppressWindow.TotalMinutes}分钟内暂停重复尝试", e, true);
+                    }
+                    else
+                    {
+                        Log.Warn(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"房间{RoomId}弹幕连接仍因系统TLS协商失败(0x80090302)无法建立", null, true);
+                    }
+                }
+                else
+                {
+                    Log.Error(nameof(LiveChatListener) + "_" + nameof(ConnectAsync), $"LiveChatListener连接发生错误", e, true);
+                }
                 Dispose();
             }
+        }
+
+        /// <summary>
+        /// 判断异常链是否为Schannel TLS协商失败(SEC_E_UNSUPPORTED_FUNCTION, 0x80090302)
+        /// </summary>
+        public static bool IsSchannelUnsupportedFunction(Exception ex)
+        {
+            for (Exception e = ex; e != null; e = e.InnerException)
+            {
+                if (e is System.ComponentModel.Win32Exception w32 && w32.NativeErrorCode == unchecked((int)0x80090302))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 创建固定TLS 1.2的HttpMessageInvoker，供WebSocket连接时绕过系统异常的默认TLS协商路径。
+        /// net10的ClientWebSocketOptions不提供协议版本设置，需通过SocketsHttpHandler.SslOptions控制；
+        /// invoker所有权归本实例，Close时一并释放
+        /// </summary>
+        private static HttpMessageInvoker CreateTls12Invoker()
+        {
+            SocketsHttpHandler handler = new() { SslOptions = { EnabledSslProtocols = SslProtocols.Tls12 } };
+            return new HttpMessageInvoker(handler, disposeHandler: true);
         }
 
         /// <summary>
