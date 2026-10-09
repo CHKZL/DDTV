@@ -79,6 +79,35 @@ namespace Desktop.Views.Control
         }
 
         /// <summary>
+        /// 黑听模式（纯音频）打开播放窗口：只播放直播音频，不渲染视频画面和弹幕
+        /// </summary>
+        private async void MenuItem_AudioOnlyPlayWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Models.DataCard dataCard = GetDataCard(sender);
+            try
+            {
+                string hlsUrl = await GetHlsStreamUrlAsync(dataCard.Uid);
+                if (!string.IsNullOrEmpty(hlsUrl))
+                {
+                    //取流结果直接传给播放窗复用，避免开窗后再发起一次重复的取流请求
+                    Windows.VlcPlayWindow vlcPlayWindow = new Windows.VlcPlayWindow(dataCard.Uid, hlsUrl, true);
+                    vlcPlayWindow.Show();
+                }
+                else
+                {
+                    Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id, dataCard.Uid);
+                    WebPlayWindow.Show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.Warn(nameof(MenuItem_AudioOnlyPlayWindow_Click), "检测HLS流失败", ex);
+                Windows.WebPlayWindow WebPlayWindow = new Windows.WebPlayWindow(dataCard.Room_Id, dataCard.Uid);
+                WebPlayWindow.Show();
+            }
+        }
+
+        /// <summary>
         /// 异步获取HLS流地址，获取不到（无HLS流或请求失败）时返回null
         /// </summary>
         public async Task<string> GetHlsStreamUrlAsync(long uid)

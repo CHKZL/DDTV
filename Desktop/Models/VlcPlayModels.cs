@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Windows;
 
 namespace Desktop.Models
@@ -15,6 +15,14 @@ namespace Desktop.Models
         public Visibility LoadingVisibility { set; get; } = Visibility.Visible;
         public Visibility MessageVisibility { set; get; } = Visibility.Collapsed;
         public string MessageText { set; get; }
+        /// <summary>
+        /// 黑听模式（纯音频）信息面板的可见性
+        /// </summary>
+        public Visibility AudioOnlyVisibility { set; get; } = Visibility.Collapsed;
+        /// <summary>
+        /// 黑听模式面板上展示的房间信息文本
+        /// </summary>
+        public string AudioOnlyRoomText { set; get; }
 
     }
 }

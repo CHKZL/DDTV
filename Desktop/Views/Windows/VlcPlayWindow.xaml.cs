@@ -106,10 +106,15 @@ namespace Desktop.Views.Windows
         /// 首次播放直接复用，避免开窗后重复发起一次取流请求拉长首屏时间；仅首次播放使用，重连仍重新取流
         /// </summary>
         private readonly string _presetStreamUrl;
+        /// <summary>
+        /// 黑听模式（纯音频播放）：media级禁用视频解码渲染，且不连接弹幕
+        /// </summary>
+        private readonly bool _isAudioOnly;
 
-        public VlcPlayWindow(long uid, string presetStreamUrl = null)
+        public VlcPlayWindow(long uid, string presetStreamUrl = null, bool audioOnly = false)
         {
             _presetStreamUrl = presetStreamUrl;
+            _isAudioOnly = audioOnly;
             InitializeComponent();
             vlcPlayModels = new();
             CurrentWindowClarity = Core_RunConfig._DefaultPlayResolution;
@@ -130,8 +135,22 @@ namespace Desktop.Views.Windows
                 return;
             }
 
-            this.Title = $"{roomCard.Name}({roomCard.RoomId}) - {roomCard.Title.Value}";
-            Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器");
+            this.Title = $"{roomCard.Name}({roomCard.RoomId}) - {roomCard.Title.Value}{(_isAudioOnly ? " [黑听]" : "")}";
+            Log.Info(nameof(VlcPlayWindow), $"房间号:[{roomCard.RoomId}],打开播放器{(_isAudioOnly ? "(黑听模式)" : "")}");
+
+            if (_isAudioOnly)
+            {
+                //黑听窗口没有视频画面，使用紧凑尺寸并展示纯音频信息面板；隐藏弹幕/全屏相关入口
+                this.Width = 520;
+                this.Height = 300;
+                vlcPlayModels.AudioOnlyRoomText = $"{roomCard.Name} · {roomCard.Title.Value}";
+                vlcPlayModels.OnPropertyChanged("AudioOnlyRoomText");
+                vlcPlayModels.AudioOnlyVisibility = Visibility.Visible;
+                vlcPlayModels.OnPropertyChanged("AudioOnlyVisibility");
+                SwitchDanmaExhibition_Menu.Visibility = Visibility.Collapsed;
+                SwitchDanmaSend_Menu.Visibility = Visibility.Collapsed;
+                FullScreen_MenuItem.Visibility = Visibility.Collapsed;
+            }
 
             _mediaPlayer = new LibVLCSharp.Shared.MediaPlayer(SharedLibVLC);
 
@@ -155,18 +174,22 @@ namespace Desktop.Views.Windows
         {
             //首次播放优先使用调用方预取的流地址（为空时PlaySteam内部会自行取流）
             PlaySteam(_presetStreamUrl);
-            Dispatcher.Invoke(() =>
+            //黑听模式不创建弹幕渲染器、不连接弹幕服务器，彻底省掉弹幕链路开销
+            if (!_isAudioOnly)
             {
-                barrageConfig = new BarrageConfig(DanmaCanvas, this.Width);
-            });
-            if (Core_RunConfig._PlayWindowDanmaSwitch)
-            {
-                SetDanma();
+                Dispatcher.Invoke(() =>
+                {
+                    barrageConfig = new BarrageConfig(DanmaCanvas, this.Width);
+                });
+                if (Core_RunConfig._PlayWindowDanmaSwitch)
+                {
+                    SetDanma();
+                }
+                Dispatcher.Invoke(() =>
+                {
+                    DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
+                });
             }
-            Dispatcher.Invoke(() =>
-            {
-                DanmaCanvas.Opacity = Core_RunConfig._PlayWindowDanMuFontOpacity;
-            });
         }
 
         /// <summary>
@@ -232,8 +255,8 @@ namespace Desktop.Views.Windows
                 Thread.Sleep(3000);
                 vlcPlayModels.LoadingVisibility = Visibility.Collapsed;
                 vlcPlayModels.OnPropertyChanged("LoadingVisibility");
-                //初始化宽高比
-                if (!InitializeAspectRatio)
+                //初始化宽高比（黑听模式没有视频轨，跳过）
+                if (!InitializeAspectRatio && !_isAudioOnly)
                 {
                     if (_mediaPlayer != null && _mediaPlayer.Media != null && _mediaPlayer.Media.Tracks.Length > 0)
                     {
@@ -472,6 +495,12 @@ namespace Desktop.Views.Windows
                                 staleMedia.Dispose();
                             }
                             var media = new Media(SharedLibVLC, Url, FromType.FromLocation);
+                            if (_isAudioOnly)
+                            {
+                                //黑听模式：media级禁用视频轨，不解码不渲染只出声音；LibVLC实例为多窗口共享，
+                                //不能加实例级--no-video，必须逐media添加
+                                media.AddOption(":no-video");
+                            }
                             _mediaPlayer.Media = media;
                             if (_mediaPlayer.Play())
                             {
@@ -595,8 +624,8 @@ namespace Desktop.Views.Windows
                 DanmaCanvas.Visibility = Visibility.Visible;
             }
             DateTime now = DateTime.Now;
-            // 检查是否为双击（两次点击间隔小于系统双击时间）
-            if ((now - lastClickTime).TotalMilliseconds <= SystemInformation.DoubleClickTime)
+            // 检查是否为双击（两次点击间隔小于系统双击时间）；黑听窗口无视频画面，不切全屏
+            if (!_isAudioOnly && (now - lastClickTime).TotalMilliseconds <= SystemInformation.DoubleClickTime)
             {
                 ToggleFullScreen();
             }
@@ -882,10 +911,13 @@ namespace Desktop.Views.Windows
                     }
                 }
             }
-            //全屏回车
+            //全屏回车（黑听窗口无视频画面，不切全屏）
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
             {
-                FullScreenSwitch();
+                if (!_isAudioOnly)
+                {
+                    FullScreenSwitch();
+                }
             }
             //F5刷新
             else if (e.KeyStates == Keyboard.GetKeyStates(Key.F5))
