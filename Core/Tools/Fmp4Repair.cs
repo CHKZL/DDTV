@@ -1,5 +1,6 @@
 using Core.LogModule;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -58,21 +59,24 @@ namespace Core.Tools
                         int read = fs.Read(header, 0, 8);
                         if (read < 8) break;
 
-                        uint size = (uint)((header[0] << 24) | (header[1] << 16) | (header[2] << 8) | header[3]);
+                        //box头4字节是大端无符号32位长度，转uint再提升为long保证符号正确
+                        long size = (uint)((header[0] << 24) | (header[1] << 16) | (header[2] << 8) | header[3]);
                         uint type = (uint)((header[4] << 24) | (header[5] << 16) | (header[6] << 8) | header[7]);
 
                         if (size == 0)
                         {
-                            size = (uint)(fileLen - offset);
+                            //size==0表示box延伸到文件尾，直接用long避免>4GB文件被uint截断
+                            size = fileLen - offset;
                         }
                         else if (size == 1)
                         {
                             if (offset + 16 <= fileLen)
                             {
                                 fs.Seek(offset + 8, SeekOrigin.Begin);
-                                
-                                fs.Read(extSize, 0, 8);
-                                size = (uint)((extSize[0] << 24) | (extSize[1] << 16) | (extSize[2] << 8) | extSize[3]);
+
+                                if (fs.Read(extSize, 0, 8) < 8) break;
+                                //largesize是大端64位整数，必须读完整8字节（原实现只取高4字节，<4GB的box会得到0被误判为损坏）
+                                size = BinaryPrimitives.ReadInt64BigEndian(extSize);
                             }
                             else break;
                         }
@@ -125,8 +129,8 @@ namespace Core.Tools
                             if (!found) break;
                         }
 
-                        result.Boxes.Add((offset, type, (long)size));
-                        offset += (long)size;
+                        result.Boxes.Add((offset, type, size));
+                        offset += size;
                     }
                 }
             }

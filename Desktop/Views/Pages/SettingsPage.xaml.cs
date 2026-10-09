@@ -230,7 +230,8 @@ public partial class SettingsPage
 
         #region 播放窗口设置
         //弹幕速度设置
-        if (string.IsNullOrEmpty(PlayWindowDanmaSpeed_InputBox.Text) && int.Parse(PlayWindowDanmaSpeed_InputBox.Text) > 0)
+        //NumberBox清空或输入非法内容时Value为null；原写法int.Parse("")会直接抛异常崩溃
+        if (string.IsNullOrEmpty(PlayWindowDanmaSpeed_InputBox.Text) || !PlayWindowDanmaSpeed_InputBox.Value.HasValue || PlayWindowDanmaSpeed_InputBox.Value <= 0)
         {
             MainWindow.SnackbarService.Show("保存失败", "请检查确播放窗口弹幕速度参数配置正确且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
             return false;
@@ -238,9 +239,15 @@ public partial class SettingsPage
         #endregion
 
         #region 需要重启的关键参数修改检查
+        //远程端口检查：NumberBox清空时Value为null，直接int.Parse(Text)会抛异常崩溃
+        if (string.IsNullOrEmpty(DesktopPort_InputControl.Text) || !DesktopPort_InputControl.Value.HasValue || DesktopPort_InputControl.Value < 1 || DesktopPort_InputControl.Value > 65535)
+        {
+            MainWindow.SnackbarService.Show("保存失败", "请检查确保远程连接端口配置正确（1-65535）且不为空", ControlAppearance.Danger, new SymbolIcon(SymbolRegular.SaveSearch20), TimeSpan.FromSeconds(8));
+            return false;
+        }
         Reboot = Config.Core_RunConfig._DesktopRemoteServer != (bool)DesktopRemoteServer_SwitchControl.IsChecked
             || Config.Core_RunConfig._DesktopIP != DesktopIP_InputControl.Text
-            || Config.Core_RunConfig._DesktopPort != int.Parse(DesktopPort_InputControl.Text)
+            || Config.Core_RunConfig._DesktopPort != (int)DesktopPort_InputControl.Value
             || Config.Core_RunConfig._DesktopAccessKeyId != DesktopAccessKeyId_InputControl.Text
             || Config.Core_RunConfig._DesktopAccessKeySecret != DesktopAccessKeySecret_InputControl.Text
             || Config.Core_RunConfig._RecFileDirectory != RecPathInputBox.Text
@@ -331,7 +338,8 @@ public partial class SettingsPage
         if (Config.Core_RunConfig._PreventWindowsHibernation != PreventWindowsHibernation_ToggleSwitch.IsChecked)
         {
             Config.Core_RunConfig._PreventWindowsHibernation = (bool)PreventWindowsHibernation_ToggleSwitch.IsChecked;
-            if (Config.Core_RunConfig._SystemCardReminder)
+            //判断条件必须是本开关自身（与MainWindow启动初始化逻辑一致），此前误用了_SystemCardReminder
+            if (Config.Core_RunConfig._PreventWindowsHibernation)
             {
                 WindowsAPI.CloseWindowsHibernation();
             }
@@ -435,7 +443,9 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._RecordingMode = (RecordingMode)RecordingMode_ComboBox.SelectedIndex + 1;
         }
-        Config.Core_RunConfig._HlsWaitingTime = (int)HlsWaitingTime_InputControl.Value;
+        //NumberBox清空时Value为null，强转(int)会抛InvalidOperationException；null时保留当前配置
+        if (HlsWaitingTime_InputControl.Value.HasValue)
+            Config.Core_RunConfig._HlsWaitingTime = (int)HlsWaitingTime_InputControl.Value;
 
         //快捷修复\转码
         if (Config.Core_RunConfig._AutomaticRepair != AutomaticRepair_SwitchControl.IsChecked)
@@ -506,8 +516,8 @@ public partial class SettingsPage
         {
             Config.Core_RunConfig._PlayWindowDanmaSwitch = (bool)PlayWindowDanmaSwitch_CheckBox.IsChecked;
         }
-        //弹幕字号设置
-        if (Config.Core_RunConfig._PlayWindowDanmaFontSize != (int)PlayWindowDanmaSize.Value)
+        //弹幕字号设置（NumberBox清空时Value为null，null时保留当前配置）
+        if (PlayWindowDanmaSize.Value.HasValue && Config.Core_RunConfig._PlayWindowDanmaFontSize != (int)PlayWindowDanmaSize.Value)
         {
             Config.Core_RunConfig._PlayWindowDanmaFontSize = (int)PlayWindowDanmaSize.Value;
         }
@@ -515,10 +525,6 @@ public partial class SettingsPage
         if (Config.Core_RunConfig._PlayWindowDanmaSpeed != (int)PlayWindowDanmaSpeed_InputBox.Value)
         {
             Config.Core_RunConfig._PlayWindowDanmaSpeed = (int)PlayWindowDanmaSpeed_InputBox.Value;
-        }
-        if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically != PlayWindowDanmaSpeed_CheckBox.IsChecked)
-        {
-            Config.Core_RunConfig._PlayDanmaSpeed_Dynamically = (bool)PlayWindowDanmaSpeed_CheckBox.IsChecked;
         }
         //弹幕速度是否跟随播放大小变化动态变化
         if (Config.Core_RunConfig._PlayDanmaSpeed_Dynamically != PlayWindowDanmaSpeed_CheckBox.IsChecked)
@@ -542,8 +548,8 @@ public partial class SettingsPage
         #endregion
 
         #region 弹幕发送设置
-        //弹幕最长字数设置
-        if (Config.Core_RunConfig._MaximumLengthDanmu != (int)MaximumLengthDanmu_InputBox.Value)
+        //弹幕最长字数设置（NumberBox清空时Value为null，null时保留当前配置）
+        if (MaximumLengthDanmu_InputBox.Value.HasValue && Config.Core_RunConfig._MaximumLengthDanmu != (int)MaximumLengthDanmu_InputBox.Value)
         {
             Config.Core_RunConfig._MaximumLengthDanmu = (int)MaximumLengthDanmu_InputBox.Value;
         }

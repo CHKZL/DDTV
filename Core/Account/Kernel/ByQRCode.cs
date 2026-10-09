@@ -34,6 +34,11 @@ namespace Core.Account.Kernel
         private static int MonitorCallCount = 0;
 
         /// <summary>
+        /// 监视器回调重入占位（0=空闲，1=执行中）
+        /// </summary>
+        private static int _monitorCallbackRunning = 0;
+
+        /// <summary>
         /// 刷新监视器
         /// </summary>
         private static Timer Refresher;
@@ -210,6 +215,31 @@ namespace Core.Account.Kernel
         /// <param name="o">oauthKey</param>
         private static void MonitorCallback(object o)
         {
+            //System.Threading.Timer回调可重入：轮询的同步HTTP耗时超过间隔时会并发执行，
+            //竞态MonitorCallCount/Monitor.Dispose，用Interlocked占位串行化
+            if (Interlocked.Exchange(ref _monitorCallbackRunning, 1) == 1)
+                return;
+            try
+            {
+                MonitorCallbackCore(o);
+            }
+            catch (Exception e)
+            {
+                //Timer线程上的未处理异常会直接崩溃进程（如B站/代理返回HTML错误页导致反序列化失败）
+                Log.Error(nameof(MonitorCallback), $"扫码登录状态轮询出现错误:{e.ToString()}", e, false);
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _monitorCallbackRunning, 0);
+            }
+        }
+
+        /// <summary>
+        /// 状态监视器回调的实际处理逻辑
+        /// </summary>
+        /// <param name="o">oauthKey</param>
+        private static void MonitorCallbackCore(object o)
+        {
             MonitorCallCount++;
             if (MonitorCallCount > 30 && MonitorCallCount < 60)
             {
@@ -226,6 +256,10 @@ namespace Core.Account.Kernel
             if (!string.IsNullOrEmpty(str))
             {
                 MonitorCallBack_Templete obj = JsonSerializer.Deserialize<MonitorCallBack_Templete>(str);
+
+                //B站可能返回{"code":-404,"data":null}这类结构，data为空时直接跳过本轮
+                if (obj?.data == null)
+                    return;
 
                 switch (obj.data.code)
                 {

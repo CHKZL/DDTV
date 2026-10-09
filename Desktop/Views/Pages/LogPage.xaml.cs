@@ -51,9 +51,14 @@ public partial class LogPage
         {
             lock (_pendingLock)
             {
-                if (logClass.Message.Contains("触发DesktopTips") && logClass.Message.Split('=').Length > 1 && long.TryParse(logClass.Message.Split('=')[1], out long Count))
+                //Split一次缓存复用，避免每条日志重复分配
+                if (logClass.Message.Contains("触发DesktopTips"))
                 {
-                    _pendingErrorCount += Count;
+                    var parts = logClass.Message.Split('=');
+                    if (parts.Length > 1 && long.TryParse(parts[1], out long Count))
+                    {
+                        _pendingErrorCount += Count;
+                    }
                 }
                 _pendingLogs.Add(logClass);
                 if (_flushScheduled)

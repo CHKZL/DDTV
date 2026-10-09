@@ -50,13 +50,17 @@ namespace Core.Tools
                     else if (list[i].Contains("#EXTINF"))
                     {
                         double.TryParse(list[i].Split(':')[1].Split(',')[0], out double Duration);
-                        hostClass.eXTM3U.eXTINFs.Add(new()
+                        //畸形m3u8边界防护：#EXTINF在首行或末行时取不到前/后行，跳过该分片而不是让整个解析抛异常
+                        if (i > 0 && i + 1 < list.Length)
                         {
-                            Duration = Duration,
-                            Aux = list[i - 1].Split(':')[1],
-                            FileName = list[i + 1].Split('.')[0],
-                            ExtensionName = list[i + 1].Split(".")[1]
-                        });
+                            hostClass.eXTM3U.eXTINFs.Add(new()
+                            {
+                                Duration = Duration,
+                                Aux = list[i - 1].Split(':')[1],
+                                FileName = list[i + 1].Split('.')[0],
+                                ExtensionName = list[i + 1].Split(".")[1]
+                            });
+                        }
                     }
                     else if (list[i].Contains("#EXT-X-ENDLIST"))
                     {
@@ -71,7 +75,9 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
-                Log.Error(nameof(SerializedM3U8), $"M3U8解析发生致命错误，错误的解析原文：{str}", e, true);
+                //原文只截前500字符：整份m3u8进错误日志噪音太大，且定位问题只需头部内容
+                string preview = str != null && str.Length > 500 ? str.Substring(0, 500) + "...(已截断)" : str;
+                Log.Error(nameof(SerializedM3U8), $"M3U8解析发生致命错误，错误的解析原文(前500字符)：{preview}", e, true);
                 return hostClass;
             }
         }

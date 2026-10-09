@@ -636,6 +636,7 @@ namespace Core.RuntimeObject
             string Message = string.Empty;
             RoomCardClass roomCard = new();
             long key = UID != 0 ? UID : RoomId;
+            long uid = 0;
             if (key != 0)
             {
                 if ((UID != 0 && GetCardForUID(UID, ref roomCard)) || (RoomId != 0 && GetCardForRoomId(RoomId, ref roomCard)))
@@ -655,12 +656,13 @@ namespace Core.RuntimeObject
                     if (!Batch)
                         Log.Info(nameof(AddRoom), Message);
                 }
-                else if (RoomId != 0 && GetUid(RoomId) != 0)
+                else if (RoomId != 0 && (uid = GetUid(RoomId)) > 0)
                 {
+                    //_GetUid失败返回-1，必须判>0（原!=0判断会把-1当成功，添加UID=-1的幽灵房间）
                     State = 1;
-                    ModifyRoomSettings(GetUid(RoomId), IsAutoRec, IsRemind, IsRecDanmu, true);
-                    Message = $"添加房间成功-RoomId模式,UID:{UID}[{IsAutoRec},{IsRecDanmu},{IsRemind}]";
-                    OperationQueue.Add(Opcode.Room.SuccessfullyAddedRoom, Message, UID);
+                    ModifyRoomSettings(uid, IsAutoRec, IsRemind, IsRecDanmu, true);
+                    Message = $"添加房间成功-RoomId模式,UID:{uid}[{IsAutoRec},{IsRecDanmu},{IsRemind}]";
+                    OperationQueue.Add(Opcode.Room.SuccessfullyAddedRoom, Message, uid);
                     if (!Batch)
                         Log.Info(nameof(AddRoom), Message);
                 }
@@ -1779,9 +1781,9 @@ namespace Core.RuntimeObject
                 /// </summary>
                 public List<List<string>> ForceMergeGroups { get; set; } = new();
                 /// <summary>
-                /// 是否正在生成快照
+                /// 是否正在生成快照（0=空闲，1=生成中；用Interlocked原子操作防并发重入，不能用属性因为Interlocked需要字段引用）
                 /// </summary>
-                public bool SnapshotGenerationInProgress { get; set; } = false;
+                public int SnapshotGenerationInProgress = 0;
             }
 
             public DownloadInfo Clone()

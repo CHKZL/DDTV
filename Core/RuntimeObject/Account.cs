@@ -21,13 +21,21 @@ namespace Core.RuntimeObject
         public static event EventHandler<EventArgs> LoginFailureEvent;//登陆失效事件
         private static AccountInformation _accountInformation = new();
         private static readonly object _accountLock = new();//账号信息读写锁，防止多线程下赋值与写文件之间被其他线程篡改
+        /// <summary>
+        /// 上次尝试从磁盘加载账号信息的时间（未登录时该getter会被几乎每次HTTP请求触发，加冷却避免每次都扫盘+触发事件风暴；
+        /// 登录成功的写入走setter不经过此路径，冷却不会妨碍重新登录）
+        /// </summary>
+        private static DateTime _lastAccountLoadAttempt = DateTime.MinValue;
+        private static readonly TimeSpan _accountLoadCooldown = TimeSpan.FromSeconds(60);
         public static Nav_Class.Data nav_info = new Nav_Class.Data();
         public static AccountInformation AccountInformation
         {
             get
             {
-                if (_accountInformation == null || string.IsNullOrEmpty(_accountInformation.strCookies) )
+                if ((_accountInformation == null || string.IsNullOrEmpty(_accountInformation.strCookies))
+                    && DateTime.Now - _lastAccountLoadAttempt > _accountLoadCooldown)
                 {
+                    _lastAccountLoadAttempt = DateTime.Now;
                     string[] files = Directory.GetFiles(Config.Core_RunConfig._ConfigDirectory, $"*{Config.Core_RunConfig._UserInfoCoinfFileExtension}");
                     if (files.Length > 0)
                     {

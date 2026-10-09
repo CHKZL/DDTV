@@ -19,6 +19,19 @@ namespace Core.Network
     public class Post
     {
         /// <summary>
+        /// 常规POST请求的共享client（不带独立Cookie容器时复用，避免每次请求重建TCP/TLS连接并堆积TIME_WAIT；与Get.cs的单例模式一致）
+        /// </summary>
+        private static readonly Lazy<HttpClient> _sharedClient = new Lazy<HttpClient>(() =>
+        {
+            var handler = new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
+                AllowAutoRedirect = true
+            };
+            return new HttpClient(handler, disposeHandler: false);
+        });
+
+        /// <summary>
         /// POST方法
         /// （已现代化为 HttpClient 实现，保持原签名与行为以保证兼容）
         /// </summary>
@@ -54,14 +67,15 @@ namespace Core.Network
                     {
                         if (i > 0)
                             builder.Append("&");
-                        builder.AppendFormat("{0}", item.Key);
+                        builder.AppendFormat("{0}", System.Web.HttpUtility.UrlEncode(item.Key, Encoding.UTF8));
                         i++;
                     }
                     else
                     {
                         if (i > 0)
                             builder.Append("&");
-                        builder.AppendFormat("{0}={1}", item.Key, item.Value);
+                        //表单键值必须URL编码，值含&、=、+或非ASCII字符会破坏表单结构
+                        builder.AppendFormat("{0}={1}", System.Web.HttpUtility.UrlEncode(item.Key, Encoding.UTF8), System.Web.HttpUtility.UrlEncode(item.Value ?? string.Empty, Encoding.UTF8));
                         i++;
                     }
                 }
@@ -76,20 +90,26 @@ namespace Core.Network
 
             for (int attempt = 0; attempt < maxAttempts; attempt++)
             {
-                // 为了尽可能接近原有每次请求都新建请求对象的行为，这里为每次尝试创建新的 HttpClient（在 handler 中根据 cookieContainer 设置 Cookie 支持）
-                var handler = new HttpClientHandler
-                {
-                    ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
-                    AllowAutoRedirect = true
-                };
-
+                //带独立Cookie容器的少数路径（登录换票等）每次新建client；常规请求复用静态共享实例
+                HttpClient client;
+                HttpClient perCallClient = null;
                 if (cookieContainer != null)
                 {
-                    handler.UseCookies = true;
-                    handler.CookieContainer = cookieContainer;
+                    var handler = new HttpClientHandler
+                    {
+                        ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
+                        AllowAutoRedirect = true,
+                        UseCookies = true,
+                        CookieContainer = cookieContainer
+                    };
+                    perCallClient = new HttpClient(handler, disposeHandler: true);
+                    client = perCallClient;
                 }
-
-                using (var client = new HttpClient(handler, disposeHandler: true))
+                else
+                {
+                    client = _sharedClient.Value;
+                }
+                try
                 {
                     // 我们使用 CancellationTokenSource 来精确控制单次请求超时，而不是依赖 HttpClient.Timeout（和原实现行为一致）
                     using (var cts = new CancellationTokenSource(singleRequestTimeoutMs))
@@ -98,22 +118,18 @@ namespace Core.Network
                         {
                             using (var request = new HttpRequestMessage(HttpMethod.Post, url))
                             {
-                                // ContentType 的原代码逻辑有一个看起来是反向的判断：
-                                // if (string.IsNullOrEmpty(contenttype)) req.ContentType = contenttype;
-                                // 为了保证行为不变，我们保留相同的条件（即仅当 contenttype 为空时才设置 ContentType）
                                 var content = new ByteArrayContent(contentBytes ?? Array.Empty<byte>());
 
-                                if (string.IsNullOrEmpty(contenttype))
+                                //contenttype非空时设置Content-Type（历史版本条件写反导致永远不设置，已修正）
+                                if (!string.IsNullOrEmpty(contenttype))
                                 {
-                                    // 与原实现保持一致（只有在 contenttype 为空时设置）
-                                    // 这里可能会抛出格式异常，如果传入非法 contenttype 且为空条件成立，保持原有潜在问题以保证兼容性
                                     try
                                     {
-                                        content.Headers.ContentType = MediaTypeHeaderValue.Parse(contenttype ?? string.Empty);
+                                        content.Headers.ContentType = MediaTypeHeaderValue.Parse(contenttype);
                                     }
                                     catch
                                     {
-                                        // 保持原实现的宽松性，忽略解析错误（原实现也不会校验）
+                                        // 忽略非法contenttype，保持宽松
                                     }
                                 }
 
@@ -205,7 +221,12 @@ namespace Core.Network
                             continue;
                         }
                     } // cts
-                } // client
+                }
+                finally
+                {
+                    //仅每次新建的client需要释放；共享client常驻复用
+                    perCallClient?.Dispose();
+                }
 
                 // 如果已经取得非空结果则跳出外层循环
                 if (!string.IsNullOrEmpty(result))

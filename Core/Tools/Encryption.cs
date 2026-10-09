@@ -25,10 +25,9 @@ namespace Core.Tools
         {
             try
             {
-                FileStream file = new FileStream(fileName, FileMode.Open);
-                MD5 md5 = new MD5CryptoServiceProvider();
+                using FileStream file = new FileStream(fileName, FileMode.Open);
+                using MD5 md5 = MD5.Create();
                 byte[] retVal = md5.ComputeHash(file);
-                file.Close();
 
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < retVal.Length; i++)
@@ -39,7 +38,8 @@ namespace Core.Tools
             }
             catch (Exception ex)
             {
-                throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message);
+                //保留原始堆栈，便于排查
+                throw new Exception("GetMD5HashFromFile() fail,error:" + ex.Message, ex);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Core.Tools
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = encoding.GetBytes(source);
             string encrypt;
-            Aes aes = Aes.Create();
+            using Aes aes = Aes.Create();
             using (MemoryStream mStream = new MemoryStream())
             {
                 using (CryptoStream cStream = new CryptoStream(mStream, aes.CreateEncryptor(btKey, btIv), CryptoStreamMode.Write))
@@ -155,7 +155,6 @@ namespace Core.Tools
                     encrypt = Convert.ToBase64String(mStream.ToArray());
                 }
             }
-            aes.Clear();
             return encrypt;
         }
 
@@ -184,7 +183,7 @@ namespace Core.Tools
             byte[] btIv = ivVal.FormatByte(encoding);
             byte[] byteArray = Convert.FromBase64String(source);
             string decrypt;
-            Aes aes = Aes.Create();
+            using Aes aes = Aes.Create();
             using (MemoryStream mStream = new MemoryStream())
             {
                 using (CryptoStream cStream = new CryptoStream(mStream, aes.CreateDecryptor(btKey, btIv), CryptoStreamMode.Write))
@@ -194,7 +193,6 @@ namespace Core.Tools
                     decrypt = encoding.GetString(mStream.ToArray());
                 }
             }
-            aes.Clear();
             return decrypt;
         }
         #endregion

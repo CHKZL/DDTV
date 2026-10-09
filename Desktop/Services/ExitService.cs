@@ -50,7 +50,8 @@ namespace Desktop.Services
             DataPage.Timer_DataPage?.Dispose();
             LoginStatus.Timer_LoginStatus?.Dispose();
             MainWindow.IsProgrammaticClose = true;
-            Environment.Exit(Core.Init.ExitCodes.FatalError);
+            //正常退出应用Normal退出码，让外部脚本/守护进程能区分正常退出与崩溃
+            Environment.Exit(Core.Init.ExitCodes.Normal);
         }
     }
 }

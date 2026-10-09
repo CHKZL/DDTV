@@ -36,7 +36,7 @@ namespace Core.Network
                     {
                         try
                         {
-                            var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
+                            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
 
                             if (!string.IsNullOrEmpty(referer))
                                 requestMessage.Headers.Referrer = new Uri(referer);
@@ -131,7 +131,7 @@ namespace Core.Network
                     {
                         try
                         {
-                            var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
+                            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
 
                             if (!string.IsNullOrEmpty(referer))
                                 requestMessage.Headers.Referrer = new Uri(referer);
@@ -194,8 +194,9 @@ namespace Core.Network
 
                 var client = new HttpClient(handler)
                 {
-                    // 设置默认请求超时时间（但我们在每次请求中使用 CancellationTokenSource 覆盖）
-                    Timeout = TimeSpan.FromSeconds(3)
+                    // 必须为无限：HttpClient.Timeout覆盖从发送到响应体读完的全程且无法被CancellationToken覆盖，
+                    // 传输阶段超时由GetFileToByte内的逐次读取watchdog控制（与FLV.cs模式一致）
+                    Timeout = Timeout.InfiniteTimeSpan
                 };
 
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("*/*"));
@@ -215,7 +216,7 @@ namespace Core.Network
             private static HttpClient _httpClient => _httpClientLazy.Value;
 
             /// <summary>
-            /// 同步获取网络byte数据流，并写入文件流（单次请求超时1秒，最多重试maxRetries次）。
+            /// 同步获取网络byte数据流，并写入文件流（连接超时headerTimeoutSeconds秒，传输空闲超时readTimeoutSeconds秒，最多重试maxRetries次）。
             /// 额外：将下载内容同时再保存一份到 "./Temporary/"，文件名为 "yyyyMMddTHHmmssfff.mp4"。
             /// </summary>
             /// <param name="fs">目标文件流</param>
@@ -227,16 +228,18 @@ namespace Core.Network
             public static long GetFileToByte(FileStream fs, string URL, bool IsCookie = false, string referer = "", int maxRetries = 3, string DebugExpInfo = "")
             {
                 const int bufferSize = 81920;
-                // 1. 将超时时间设置为2秒
-                const int requestTimeoutSeconds = 2;
+                //连接/响应头超时：防止对端无响应时SendAsync永久阻塞（HttpClient.Timeout已设为无限，必须自行控制）
+                const int headerTimeoutSeconds = 15;
+                //单次读取空闲超时：只要持续收到数据就不触发，与FLV.cs的watchdog模式一致
+                const int readTimeoutSeconds = 30;
 
                 for (int retries = 0; retries <= maxRetries; retries++)
                 {
-                    using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(requestTimeoutSeconds)))
+                    using (var cts = new CancellationTokenSource())
                     {
                         try
                         {
-                            var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
+                            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
 
                             if (!string.IsNullOrEmpty(referer))
                                 requestMessage.Headers.Referrer = new Uri(referer);
@@ -244,6 +247,7 @@ namespace Core.Network
                             if (IsCookie && RuntimeObject.Account.AccountInformation != null && RuntimeObject.Account.AccountInformation.State)
                                 requestMessage.Headers.Add("Cookie", RuntimeObject.Account.AccountInformation.strCookies);
 
+                            cts.CancelAfter(TimeSpan.FromSeconds(headerTimeoutSeconds));
                             using (HttpResponseMessage response = _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, cts.Token).GetAwaiter().GetResult())
                             {
                                 response.EnsureSuccessStatusCode(); // 如果HTTP状态码不是成功的，会抛出HttpRequestException
@@ -256,11 +260,21 @@ namespace Core.Network
                                     using (var ms = new MemoryStream())
                                     {
                                         // 先完整下载到内存，避免网络异常时污染 FileStream
-                                        dataStream.CopyToAsync(ms, bufferSize, cts.Token).GetAwaiter().GetResult();
-                                        byte[] downloadedData = ms.ToArray();
+                                        // 每次读取前重置倒计时：网络慢但不断流时不超时，readTimeoutSeconds秒无新数据才判定中断
+                                        byte[] buffer = new byte[bufferSize];
+                                        int read;
+                                        while (true)
+                                        {
+                                            cts.CancelAfter(TimeSpan.FromSeconds(readTimeoutSeconds));
+                                            read = dataStream.ReadAsync(buffer, 0, buffer.Length, cts.Token).GetAwaiter().GetResult();
+                                            if (read <= 0)
+                                                break;
+                                            ms.Write(buffer, 0, read);
+                                        }
 
-                                        // 下载完成后一次性写入 FileStream
-                                        fs.Write(downloadedData, 0, downloadedData.Length);
+                                        // 下载完成后从内存一次性写入 FileStream
+                                        // WriteTo直接写出内部缓冲，避免ToArray再复制一份完整副本（每个分片少一倍LOH分配）
+                                        ms.WriteTo(fs);
 
                                         // 如果启用了调试导出，同时写入临时文件
                                         if (!string.IsNullOrEmpty(DebugExpInfo))
@@ -269,11 +283,14 @@ namespace Core.Network
                                             var directory = Path.GetDirectoryName(tempPath);
                                             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
                                                 Directory.CreateDirectory(directory);
-                                            System.IO.File.WriteAllBytes(tempPath, downloadedData);
+                                            using (var debugFs = new FileStream(tempPath, FileMode.Create, FileAccess.Write, FileShare.Read))
+                                            {
+                                                ms.WriteTo(debugFs);
+                                            }
                                         }
 
-                                        //Log.Debug(nameof(GetFileToByte), $"成功下载 {downloadedData.Length} 字节。URL: {URL}");
-                                        return downloadedData.Length;
+                                        //Log.Debug(nameof(GetFileToByte), $"成功下载 {ms.Length} 字节。URL: {URL}");
+                                        return ms.Length;
                                     }
                                 }
                                 catch
@@ -343,7 +360,7 @@ namespace Core.Network
                     {
                         try
                         {
-                            var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
+                            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, URL);
 
                             if (!string.IsNullOrEmpty(referer))
                                 requestMessage.Headers.Referrer = new Uri(referer);

@@ -290,9 +290,11 @@ namespace Desktop.Views.Windows
             //Danmu.ReconnectRoomDanmaObjects(roomCard);
             //return;
             string T = DanmaOnly_DanmaInput.Text;
-            if (string.IsNullOrEmpty(T) || T.Length > 40/*Core.Config.Core_RunConfig._MaximumLengthDanmu*/)
+            int maxlen = Core.Config.Core_RunConfig._MaximumLengthDanmu;
+            if (maxlen < 1) maxlen = 40;
+            if (string.IsNullOrEmpty(T) || T.Length > maxlen)
             {
-                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为40", HudNotification.HudLevel.Notice);
+                SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为{maxlen}", HudNotification.HudLevel.Notice);
                 return;
             }
             Danmu.SendDanmu(roomCard.RoomId.ToString(), T);
@@ -306,7 +308,9 @@ namespace Desktop.Views.Windows
             //检测输入框长度，超过长度则截断
             System.Windows.Controls.TextBox? textBox = sender as System.Windows.Controls.TextBox;
             int maxlen = Core.Config.Core_RunConfig._MaximumLengthDanmu;
-            if (textBox != null && textBox.Text.Length > Core.Config.Core_RunConfig._MaximumLengthDanmu)
+            if (maxlen < 1)
+                return;
+            if (textBox != null && textBox.Text.Length > maxlen)
             {
                 int selectionStart = textBox.SelectionStart;
                 textBox.Text = textBox.Text.Substring(0, maxlen);
@@ -319,8 +323,12 @@ namespace Desktop.Views.Windows
             if (e.KeyStates == Keyboard.GetKeyStates(Key.Enter))
             {
                 string T = DanmaOnly_DanmaInput.Text;
-                if (string.IsNullOrEmpty(T) && T.Length > 40)
+                int maxlen = Core.Config.Core_RunConfig._MaximumLengthDanmu;
+                if (maxlen < 1) maxlen = 40;
+                //为空或超长都不发送（此前&&写反导致守卫完全失效）
+                if (string.IsNullOrEmpty(T) || T.Length > maxlen)
                 {
+                    SetNotificatom("弹幕过长或为空", $"输入的弹幕长度为0或者超过最大长度限制，目前限制长度为{maxlen}", HudNotification.HudLevel.Notice);
                     return;
                 }
                 Danmu.SendDanmu(roomCard.RoomId.ToString(), T);

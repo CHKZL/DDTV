@@ -27,7 +27,7 @@ namespace Core.Tools
 
                 }
             };
-            var image = writer.WriteAsImageSharp<Rgba32>(text);
+            using var image = writer.WriteAsImageSharp<Rgba32>(text);
 
             int[,] points = new int[image.Width, image.Height];
 

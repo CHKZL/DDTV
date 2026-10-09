@@ -363,7 +363,8 @@ namespace Core.Tools
                 else
                 {
                     Log.Info(nameof(Update_UpdateProgram), "更新失败，没找到版本标识文件");
-                    return true;
+                    //失败应返回false：返回true会带着空type进入更新流程，拼出"//release/..."的畸形URL白跑一轮网络请求
+                    return false;
                 }
                 string[] Ver = File.ReadAllLines(FI);
                 foreach (string VerItem in Ver)
@@ -376,7 +377,7 @@ namespace Core.Tools
                 if (string.IsNullOrEmpty(type) || string.IsNullOrEmpty(ver))
                 {
                     Log.Info(nameof(Update_UpdateProgram), "更新失败，版本标识文件内容错数");
-                    return true;
+                    return false;
                 }
                 if (ver.ToLower().StartsWith("dev") || ver.ToLower().StartsWith("test"))
                 {
@@ -696,10 +697,13 @@ namespace Core.Tools
                         re_run:
 
                             var config = new AmazonS3Config() { ServiceURL = endpoint, MaxErrorRetry = 2, Timeout = TimeSpan.FromSeconds(20) };
-                            var ossClient = new AmazonS3Client(AKID, AKSecret, config);
-                            GetObjectResponse response = ossClient.GetObjectAsync(Bucket, url).Result;
-                            StreamReader reader = new StreamReader(response.ResponseStream);
-                            string File_Url = reader.ReadToEndAsync().Result;
+                            string File_Url;
+                            using (var ossClient = new AmazonS3Client(AKID, AKSecret, config))
+                            {
+                                using GetObjectResponse response = await ossClient.GetObjectAsync(Bucket, url);
+                                using StreamReader reader = new StreamReader(response.ResponseStream);
+                                File_Url = await reader.ReadToEndAsync();
+                            }
 
 
                             string downloadPath = $"{Core.Config.Core_RunConfig._TemporaryFileDirectory}new_ffmpeg.zip";
@@ -738,10 +742,10 @@ namespace Core.Tools
                         }
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-
-                    throw;
+                    //Timer回调(async void)中重抛异常会直接崩溃进程，只能记录日志
+                    Log.Error(nameof(CheckUpdateFFmpegAsync), $"检查FFMPEG更新出现未知错误:{e.ToString()}", e, false);
                 }
             }
 
@@ -751,6 +755,8 @@ namespace Core.Tools
                 {
                     using (HttpClient client = new HttpClient())
                     {
+                        //HttpClient.Timeout覆盖整个响应体读取：ffmpeg压缩包约150MB，默认100秒在慢速网络必超时
+                        client.Timeout = TimeSpan.FromMinutes(10);
                         HttpResponseMessage response = await client.GetAsync(url);
                         response.EnsureSuccessStatusCode();
                         using (var fs = new FileStream(destinationPath, FileMode.Create, FileAccess.Write, FileShare.None))

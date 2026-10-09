@@ -303,7 +303,8 @@ namespace Desktop
             {
                 DataPage.Timer_DataPage?.Dispose();
                 DataSource.LoginStatus.Timer_LoginStatus?.Dispose();
-                Environment.Exit(Core.Init.ExitCodes.FatalError);
+                //用户主动关闭窗口属正常退出，用Normal退出码
+                Environment.Exit(Core.Init.ExitCodes.Normal);
             }
         }
 

@@ -16,7 +16,6 @@ namespace Desktop.Views.Windows
     /// </summary>
     public partial class QrLogin : FluentWindow
     {
-        bool _Close = false;
         public QrLogin()
         {
             InitializeComponent();

@@ -205,14 +205,8 @@ namespace Core.Network.Methods
 
         private static string GetMd5Hash(string input)
         {
-            MD5 md5Hash = MD5.Create();
-            byte[] data = md5Hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(input));
-            StringBuilder sBuilder = new StringBuilder();
-            for (int i = 0; i < data.Length; i++)
-            {
-                sBuilder.Append(data[i].ToString("x2"));
-            }
-            return sBuilder.ToString();
+            //MD5.HashData静态方法无需创建/释放实例；ToHexString输出大写，B站wbi签名要求小写
+            return Convert.ToHexString(MD5.HashData(System.Text.Encoding.UTF8.GetBytes(input))).ToLowerInvariant();
         }
 
         #endregion

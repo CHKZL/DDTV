@@ -73,11 +73,20 @@ namespace Desktop.Views.Windows.DanMuCanvas.BarrageParameters
             {
                 return cache;
             }
-            string[] parts = colorConfig.Split(',');
-            byte R = Convert.ToByte(parts[0], 16);
-            byte G = Convert.ToByte(parts[1], 16);
-            byte B = Convert.ToByte(parts[2], 16);
-            cache = CreateFrozenBrush(Color.FromRgb(R, G, B));
+            Color color;
+            try
+            {
+                //配置格式"RR,GG,BB"（十六进制）；格式损坏时回退白色，而不是让弹幕因异常静默消失
+                string[] parts = colorConfig.Split(',');
+                if (parts.Length != 3)
+                    throw new FormatException($"颜色配置[{colorConfig}]不是三段式");
+                color = Color.FromRgb(Convert.ToByte(parts[0], 16), Convert.ToByte(parts[1], 16), Convert.ToByte(parts[2], 16));
+            }
+            catch (Exception)
+            {
+                color = Colors.White;
+            }
+            cache = CreateFrozenBrush(color);
             cacheKey = colorConfig;
             return cache;
         }

@@ -178,6 +178,8 @@ public partial class ToolsPage
 
 		try
 		{
+			//先下载到临时文件，完成后再改名覆盖：避免下载中断留下半截exe被误判为"已安装"
+			string tempDownloadPath = mkvmergePath + ".tmp";
 			// 确保目标目录存在
 			Directory.CreateDirectory(System.IO.Path.GetDirectoryName(mkvmergePath)!);
 
@@ -201,11 +203,12 @@ public partial class ToolsPage
 			}
 
 			using var stream = await response.Content.ReadAsStreamAsync();
-			using var fileStream = new FileStream(mkvmergePath, FileMode.Create, FileAccess.Write, FileShare.None);
+			using var fileStream = new FileStream(tempDownloadPath, FileMode.Create, FileAccess.Write, FileShare.None);
 
 			var buffer = new byte[81920];
 			long totalRead = 0;
 			int read;
+			int lastReportedPercent = -1;
 			// 循环读取并写入文件，同时更新进度
 			while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
 			{
@@ -214,14 +217,22 @@ public partial class ToolsPage
 				if (canReportProgress)
 				{
 					double percent = (double)totalRead / total * 100;
-					// 在UI线程上更新进度环和进度文本
-					Dispatcher.Invoke(() =>
+					//按整数百分比节流并用BeginInvoke异步投递：原实现每80KB同步Invoke一次，下载线程反复阻塞等UI线程
+					if ((int)percent != lastReportedPercent)
 					{
-						MkvmergeDownloadProgressRing.Progress = percent;
-						MkvmergeDownloadProgressText.Text = $"下载进度：{percent:F0}%";
-					});
+						lastReportedPercent = (int)percent;
+						Dispatcher.BeginInvoke(() =>
+						{
+							MkvmergeDownloadProgressRing.Progress = percent;
+							MkvmergeDownloadProgressText.Text = $"下载进度：{percent:F0}%";
+						});
+					}
 				}
 			}
+
+			// 下载完成，临时文件改名覆盖到目标路径（先关闭文件流释放占用）
+			fileStream.Dispose();
+			File.Move(tempDownloadPath, mkvmergePath, true);
 
 			// 下载完成，显示100%
 			Dispatcher.Invoke(() =>
@@ -242,6 +253,8 @@ public partial class ToolsPage
 		}
 		catch (Exception ex)
 		{
+			//清理可能残留的半截临时文件
+			try { if (File.Exists(mkvmergePath + ".tmp")) File.Delete(mkvmergePath + ".tmp"); } catch { }
 			// 下载失败，恢复按钮并提示
 			Dispatcher.Invoke(() =>
 			{

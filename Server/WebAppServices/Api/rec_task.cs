@@ -91,9 +91,10 @@ namespace Server.WebAppServices.Api
         /// <param name="uid"></param>
         /// <returns></returns>
         [HttpPost(Name = "generate_snapshot")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] long uid = 0)
+        public async Task<ActionResult> Post(PostCommonParameters commonParameters, [FromForm] long uid = 0)
         {
-            var message = Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(uid);
+            //快照涉及大文件拷贝，异步等待避免阻塞请求线程
+            var message = await Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(uid);
             return Content(MessageBase.MessagePack(nameof(generate_snapshot),message,message.state?"创建快照成功":"创建快照失败", message.state?MessageCode.code.ok:MessageCode.code.OperationFailed), "application/json");
         }
     }

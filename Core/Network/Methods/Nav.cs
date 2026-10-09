@@ -1,6 +1,5 @@
 ﻿using Core.Account;
 using Core.LogModule;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,8 +72,12 @@ namespace Core.Network.Methods
             {
               
                 public long mid { get; set; }
-              
-                [JsonIgnore]
+
+                //注意：此[JsonIgnore]是Newtonsoft的且必须保持是Newtonsoft的——它只对Server的API响应序列化
+                //（MessageBase用JsonConvert）生效，用于在get_nav接口响应中屏蔽wbi_img；
+                //本类的反序列化走System.Text.Json（不读Newtonsoft特性），User.cs依赖wbi_img被正常填充提取wbi签名密钥，
+                //切勿"修正"为System.Text.Json.Serialization.JsonIgnore，否则会打断wbi签名
+                [Newtonsoft.Json.JsonIgnore]
                 public Wbi_Img wbi_img { get; set; }
             }
             public class Wbi_Img

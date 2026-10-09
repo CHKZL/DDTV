@@ -125,7 +125,8 @@ namespace Core.LiveChat
             if (TimeStopwatch != null)
             {
                 TimeStopwatch.Stop();
-                TimeStopwatch = null;
+                //不置null：在途弹幕处理仍会读取ElapsedMilliseconds，置null会让订阅者NRE；
+                //Stopwatch是纯托管对象无需释放，重连时(:425)会重新创建
             }
 
             try
@@ -220,7 +221,6 @@ namespace Core.LiveChat
                 int attempt = 0;
                 const int MaxRetryAttempts = 3;
                 const int RetryDelayWhenNoHosts = 5000;
-                const int NormalRetryDelay = 1000;
                 const string LogPrefix = $"{nameof(LiveChatListener)}_{nameof(ConnectAsync)}";
 
                 // 重试获取WSS信息
@@ -250,15 +250,16 @@ namespace Core.LiveChat
                         await Task.Delay(RetryDelayWhenNoHosts);
                         Log.Warn(LogPrefix, "LiveChatListener连接成功，但是获取到的host_list为空，5秒后重试", null, true);
                     }
-                    else
+                    else if (WssInfo == null)
                     {
-                        await Task.Delay(NormalRetryDelay);
+                        //GetWssInfo失败时保持原有重试间隔，避免空转；成功拿到host_list时不再无谓延迟，直接出循环去连接
+                        await Task.Delay(1000);
                     }
 
                 } while (WssInfo == null || WssInfo.data.host_list.Count < 1);
 
                 // 随机选择一个服务器连接
-                string URL = "wss://" + WssInfo.data.host_list[new Random().Next(0, WssInfo.data.host_list.Count)].host + "/sub";
+                string URL = "wss://" + WssInfo.data.host_list[Random.Shared.Next(WssInfo.data.host_list.Count)].host + "/sub";
                 try
                 {
                     if (_preferTls12.ContainsKey(RoomId))
@@ -564,7 +565,8 @@ namespace Core.LiveChat
                     {
                         if (length == 4)
                         {
-                            int popularity = buffer[3] + buffer[2] * 255 + buffer[1] * 255 * 255 + buffer[0] * 255 * 255 * 255;
+                            //大端32位解码，进制是256不是255
+                            int popularity = buffer[3] + (buffer[2] << 8) + (buffer[1] << 16) + (buffer[0] << 24);
                             _parse("{\"cmd\":\"LiveP\",\"LiveP\":" + popularity + ",\"roomID\":" + RoomId + "}");
                         }
                         break;
@@ -575,18 +577,22 @@ namespace Core.LiveChat
                         {
                             if (IsBrotli)
                             {
-                                do
+                                //游标遍历：原实现每条消息都整体复制剩余buffer，N条消息的包产生O(N×M)拷贝
+                                int offset = 0;
+                                while (offset + 16 <= length)
                                 {
-                                    int len = buffer[3] + (buffer[2] * 256) + (buffer[1] * 256 * 256) + (buffer[0] * 256 * 256 * 256);
-                                    byte[] a = new byte[len - 16];
-                                    Array.Copy(buffer, 16, a, 0, len - 16);
-                                    string jsonBody = Encoding.UTF8.GetString(a, 0, len - 16);
+                                    int len = buffer[offset + 3] + (buffer[offset + 2] << 8) + (buffer[offset + 1] << 16) + (buffer[offset] << 24);
+                                    //畸形包头保护：长度非法或越过实际数据边界时丢弃剩余部分
+                                    if (len < 16 || (long)offset + len > length)
+                                    {
+                                        Log.Warn(nameof(ProcessDanmakuData), $"房间{RoomId}弹幕包内消息长度异常(len:{len},offset:{offset},总长:{length})，丢弃剩余数据", null, false);
+                                        break;
+                                    }
+                                    string jsonBody = Encoding.UTF8.GetString(buffer, offset + 16, len - 16);
                                     jsonBody = Regex.Unescape(jsonBody);
                                     _parse(jsonBody);
-                                    byte[] b = new byte[buffer.Length - len];
-                                    Array.Copy(buffer, len, b, 0, buffer.Length - len);
-                                    buffer = b;
-                                } while (buffer.Length > 0);
+                                    offset += len;
+                                }
                             }
                             else
                             {

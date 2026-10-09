@@ -83,7 +83,8 @@ namespace Core.Network.Methods
                 return null;
             }
             string LT = "{\"uids\":[" + string.Join(",", UIDList.Where(uid => uid != 0)) + "]}";
-            string WebText = Post.PostBody($"{Config.Core_RunConfig._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT);
+            //发送的是JSON，Content-Type必须声明为application/json（修正PostBody的条件后默认参数是表单类型，不适用此处）
+            string WebText = Post.PostBody($"{Config.Core_RunConfig._LiveDomainName}/room/v1/Room/get_status_info_by_uids", null, true, LT, contenttype: "application/json");
             UidsInfo_Class UserInfo_Class = new();
             try
             {

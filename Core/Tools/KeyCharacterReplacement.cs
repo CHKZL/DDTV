@@ -80,7 +80,7 @@ namespace Core.Tools
                 .Replace("{Time}", dateTime.ToString("HH_mm_ss"))
                 .Replace("{TITLE}", CheckFilenames(roomCardClass.Title.Value))
                 .Replace("{Title}", CheckFilenames(roomCardClass.Title.Value))
-                .Replace("{R}",new Random().Next(1000,9999).ToString())
+                .Replace("{R}",Random.Shared.Next(1000,9999).ToString())
                 .Replace("{CWD}",WorkPath);
 
             if(Config.Core_RunConfig._Linux_Only_ShellSwitch)
@@ -135,13 +135,12 @@ namespace Core.Tools
         /// <returns></returns>
         public static string GetRandomStr(string chars, int length)
         {
-            Random random = new Random();
             if (string.IsNullOrEmpty(chars))
             {
                 chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghizklmnopqrstuvwxyz0123456789";
             }
             return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
+              .Select(s => s[Random.Shared.Next(s.Length)]).ToArray());
         }
     }
 }

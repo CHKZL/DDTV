@@ -179,7 +179,8 @@ namespace Core.LogModule
             //惰性启动消费者线程（保证LogInit之前的日志也能入队）
             if (Interlocked.CompareExchange(ref _consumerStarted, 1, 0) == 0)
             {
-                Task.Factory.StartNew(LogConsumerLoop, TaskCreationOptions.LongRunning);
+                //Task.Factory.StartNew对async委托会返回Task<Task>，专用线程在第一个await即退出，LongRunning意图落空；Task.Run正确解包
+                Task.Run(LogConsumerLoop);
             }
             if (!_logChannel.Writer.TryWrite(logClass))
             {
@@ -220,7 +221,7 @@ namespace Core.LogModule
                                     {
                                         ErrorText += $"错误堆栈\n{logClass.exception.ToString()}";
                                     }
-                                    lock (LogDB.streamWriter)
+                                    lock (LogDB.ErrorFileLock)
                                     {
                                         LogDB.streamWriter.WriteLine(ErrorText);
                                     }
@@ -264,7 +265,7 @@ namespace Core.LogModule
                     //错误文本日志每批统一Flush一次，避免每条日志强制落盘
                     if (hasErrorLog && LogDB.streamWriter != null)
                     {
-                        lock (LogDB.streamWriter)
+                        lock (LogDB.ErrorFileLock)
                         {
                             LogDB.streamWriter.Flush();
                         }

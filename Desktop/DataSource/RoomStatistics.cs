@@ -51,8 +51,13 @@ namespace Desktop.DataSource
                 (int MonitoringCount, int LiveCount, int RecCount) count;
                 if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    count = await NetWork.Post.PostBody<(int MonitoringCount, int LiveCount, int RecCount)>(
+                    var (success, value) = await NetWork.Post.TryPostBody<(int MonitoringCount, int LiveCount, int RecCount)>(
                         $"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/room_statistics");
+                    //请求失败返回的default(0,0,0)不是真实数据：保留旧值跳过本轮，
+                    //否则网络抖动会把标题刷成0并让退出确认误判"无录制任务"
+                    if (!success)
+                        return;
+                    count = value;
                 }
                 else
                 {

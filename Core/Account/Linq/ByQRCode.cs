@@ -120,7 +120,8 @@ namespace Core.Account.Linq
         /// <exception cref="Exceptions.InvalidColorValue">传入了错误的颜色值</exception>
         public static QR_Object LoginByQrCode(string strForeground = "#FF000000", string strBackground = "#FFFFFFFF", bool IsBorderVisable = false)
         {
-            Regex reg = new Regex("#[0-9A-Fa-f]{6,8}");
+            //必须全串锚定：未锚定时"xyz#FF0000abc"这类含合法子串的非法颜色也会通过校验
+            Regex reg = new Regex("^#[0-9A-Fa-f]{6,8}$");
             if (reg.IsMatch(strForeground) && reg.IsMatch(strBackground))
             {
                 return LoginByQrCode(ColorTranslator.FromHtml(strForeground), ColorTranslator.FromHtml(strBackground), IsBorderVisable);

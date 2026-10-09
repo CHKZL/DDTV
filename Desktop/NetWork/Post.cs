@@ -21,8 +21,21 @@ namespace Desktop.NetWork
         /// <param name="url">URL</param>
         /// <param name="_dic">POST要发送的键值对</param>
         /// <param name="TimeoutPeriod">超时时间</param>
-        /// <returns>请求返回体</returns>
+        /// <returns>请求返回体；失败时返回default（需要区分失败与真实默认值的调用方请使用TryPostBody）</returns>
         public static async Task<T> PostBody<T>(string url, Dictionary<string, string> _dic = null, TimeSpan TimeoutPeriod = default(TimeSpan))
+        {
+            var (_, result) = await TryPostBody<T>(url, _dic, TimeoutPeriod);
+            return result;
+        }
+
+        /// <summary>
+        /// 同步POST方法（带成功标志，用于区分"请求失败"与"真实返回默认值"——default也可能是合法业务值）
+        /// </summary>
+        /// <param name="url">URL</param>
+        /// <param name="_dic">POST要发送的键值对</param>
+        /// <param name="TimeoutPeriod">超时时间</param>
+        /// <returns>(是否请求成功, 请求返回体)</returns>
+        public static async Task<(bool Success, T Result)> TryPostBody<T>(string url, Dictionary<string, string> _dic = null, TimeSpan TimeoutPeriod = default(TimeSpan))
         {
 
             if (!string.IsNullOrEmpty(url) && url.Length > 5 && url.Substring(0, 4) != "http")
@@ -67,7 +80,7 @@ namespace Desktop.NetWork
                     var responseString = await response.Content.ReadAsStringAsync();
                     OperationQueue.pack<T> A = JsonConvert.DeserializeObject<OperationQueue.pack<T>>(responseString);
 
-                    return A.data;
+                    return (true, A.data);
                 }
                 finally
                 {
@@ -97,7 +110,7 @@ namespace Desktop.NetWork
                     Log.Warn(nameof(PostBody), $"发起Post请求超时({(Core.Config.Core_RunConfig._DesktopRemoteServer?"远程模式":"本地模式")}),URL:[{url}]", ex);
                 }
 
-                return default;
+                return (false, default);
             }
         }
     }

@@ -40,7 +40,9 @@ namespace Desktop
                 Host.CreateDefaultBuilder()
                     .ConfigureWebHostDefaults(webBuilder =>
                     {
-                        Task.Run(() => Service.CreateHostBuilder(args).Build().Run());
+                        //内层Host启动失败（如端口被占）时异常会进入未观察Task，静默无日志；ContinueWith补观察
+                        Task.Run(() => Service.CreateHostBuilder(args).Build().Run())
+                            .ContinueWith(t => Log.Error(nameof(Application), "内层WebHost运行失败", t.Exception, false), TaskContinuationOptions.OnlyOnFaulted);
 
                         webBuilder.UseStartup<Server.Startup>();
                         string rurl = $"{Config.Core_RunConfig._IP}:{Config.Core_RunConfig._Port}";

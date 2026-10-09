@@ -14,7 +14,9 @@ namespace Core.Tools
         {
             if (Config.Core_RunConfig._Linux_Only_ShellSwitch)
             {
-                Process process = new Process
+                //下播钩子等调用方处于录制收尾流程：命令挂死会永久卡住该房间的收尾，必须有超时兜底
+                const int timeoutMs = 60 * 1000;
+                using Process process = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -26,9 +28,21 @@ namespace Core.Tools
                     }
                 };
                 process.Start();
-                string result = process.StandardOutput.ReadToEnd();
-                process.WaitForExit();
-                return result;
+                //先异步读stdout再等退出：若顺序ReadToEnd，进程挂死时连超时判断都到不了
+                var stdoutTask = process.StandardOutput.ReadToEndAsync();
+                if (!process.WaitForExit(timeoutMs))
+                {
+                    try { process.Kill(); } catch { }
+                    Core.LogModule.Log.Warn(nameof(Shell), $"Shell命令执行超过{timeoutMs / 1000}秒未退出，已强制结束:{Command}", null, false);
+                }
+                //进程退出或被Kill后stdout管道关闭，读取任务随即完成；极端情况Kill失败则最多再等5秒
+                try
+                {
+                    if (stdoutTask.Wait(TimeSpan.FromSeconds(5)))
+                        return stdoutTask.Result;
+                }
+                catch { }
+                return string.Empty;
             }
             else
             {

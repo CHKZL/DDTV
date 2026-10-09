@@ -36,6 +36,8 @@ namespace Core.RuntimeObject
         /// 录制完成历史记录
         /// </summary>
         public static List<History> histories = new();
+        /// <summary>histories写入锁：录制线程写入时整体替换列表（写时复制），UI线程枚举永远读到稳定快照，不会抛"集合已修改"</summary>
+        private static readonly object _historiesLock = new();
         public class History
         {
             public string Name { set; get; } = "";
@@ -109,7 +111,9 @@ namespace Core.RuntimeObject
                             }
                             else
                             {
-                                roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
+                                //重复开播检测时会走到这里多次，不去重会一直积累重复条目
+                                if (!roomCard.DownInfo.LiveChatListener.Register.Contains("DetectRoom_LiveStart"))
+                                    roomCard.DownInfo.LiveChatListener.Register.Add("DetectRoom_LiveStart");
                                 Danmu.ReconnectRoomDanmaObjects(roomCard);
                             }
                             if (roomCard.DownInfo.LiveChatListener != null)
@@ -157,7 +161,12 @@ namespace Core.RuntimeObject
                             Time = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                             Title = roomCard.Title.Value
                         };
-                        histories.Add(history);
+                        //写时复制整体替换：读者（HistoryPage枚举/索引）拿到的始终是稳定快照
+                        lock (_historiesLock)
+                        {
+                            var newList = new List<History>(histories) { history };
+                            histories = newList;
+                        }
                         RecEndEvent?.Invoke(history, new EventArgs());
 
                         SMTP.TriggerEvent(roomCard, SMTP.SMTP_EventType.RecEnd);

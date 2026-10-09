@@ -277,7 +277,9 @@ public partial class DefaultPage
             {
                 int memory = (int)((double)(1 - ((double)systemResourceClass.Memory.Available / (double)systemResourceClass.Memory.Total)) * 100);
                 SetMemoryUsageRate(memory);
-                if (int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
+                //无磁盘信息（无机械盘/WMI查询失败）时HDDInfo可能为空，直接索引会越界
+                if (systemResourceClass.HDDInfo != null && systemResourceClass.HDDInfo.Count > 0
+                    && int.TryParse(systemResourceClass.HDDInfo[0].Used.Replace("%", ""), out int hdd))
                 {
                     SetHardDiskUsageRate(hdd);
                 }

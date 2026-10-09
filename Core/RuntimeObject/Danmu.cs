@@ -154,32 +154,46 @@ namespace Core.RuntimeObject
             string Message = "保存弹幕相关文件";
             if (!DeleteCurrentContent)
             {
-                if (liveChatListener != null && liveChatListener.DanmuMessage != null)
+                var danmuMessage = liveChatListener?.DanmuMessage;
+                if (danmuMessage != null)
                 {
+                    //四个列表由WebSocket接收线程持续Add，先持锁浅拷贝快照再在锁外枚举，
+                    //否则保存时的枚举与Add竞争会抛出"集合已修改"异常导致整个保存失败
+                    List<DanmuInfo> danmuSnapshot;
+                    List<GiftInfo> giftSnapshot;
+                    List<GuardBuyInfo> guardBuySnapshot;
+                    List<SuperChatInfo> superChatSnapshot;
+                    lock (danmuMessage.MessageLock)
+                    {
+                        danmuSnapshot = danmuMessage.Danmu != null ? new List<DanmuInfo>(danmuMessage.Danmu) : null;
+                        giftSnapshot = danmuMessage.Gift != null ? new List<GiftInfo>(danmuMessage.Gift) : null;
+                        guardBuySnapshot = danmuMessage.GuardBuy != null ? new List<GuardBuyInfo>(danmuMessage.GuardBuy) : null;
+                        superChatSnapshot = danmuMessage.SuperChat != null ? new List<SuperChatInfo>(danmuMessage.SuperChat) : null;
+                    }
 
                     string File = liveChatListener.File + $"_{liveChatListener.SaveCount}";
-                    if (liveChatListener.DanmuMessage.Danmu != null && liveChatListener.DanmuMessage.Danmu.Count > 0)
+                    if (danmuSnapshot != null && danmuSnapshot.Count > 0)
                     {
-                        FileInfo fileInfo = SaveDanmu(liveChatListener.DanmuMessage.Danmu, File, liveChatListener.Name, liveChatListener.RoomId);
+                        FileInfo fileInfo = SaveDanmu(danmuSnapshot, File, liveChatListener.Name, liveChatListener.RoomId);
 
                         Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存弹幕相关文件为{File}");
                         card.DownInfo.DownloadFileList.DanmuFile.Add(fileInfo.FullName);
                     }
-                    if (liveChatListener.DanmuMessage.Gift != null && liveChatListener.DanmuMessage.Gift.Count > 0)
+                    if (giftSnapshot != null && giftSnapshot.Count > 0)
                     {
-                        FileInfo fileInfo = SevaGift(liveChatListener.DanmuMessage.Gift, File);
+                        FileInfo fileInfo = SevaGift(giftSnapshot, File);
                         Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存送礼记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.GiftFile.Add(fileInfo.FullName);
                     }
-                    if (liveChatListener.DanmuMessage.GuardBuy != null && liveChatListener.DanmuMessage.GuardBuy.Count > 0)
+                    if (guardBuySnapshot != null && guardBuySnapshot.Count > 0)
                     {
-                        FileInfo fileInfo = SevaGuardBuy(liveChatListener.DanmuMessage.GuardBuy, File);
+                        FileInfo fileInfo = SevaGuardBuy(guardBuySnapshot, File);
                         Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存上舰记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.GuardFile.Add(fileInfo.FullName);
                     }
-                    if (liveChatListener.DanmuMessage.SuperChat != null && liveChatListener.DanmuMessage.SuperChat.Count > 0)
+                    if (superChatSnapshot != null && superChatSnapshot.Count > 0)
                     {
-                        FileInfo fileInfo = SevaSuperChat(liveChatListener.DanmuMessage.SuperChat, File);
+                        FileInfo fileInfo = SevaSuperChat(superChatSnapshot, File);
                         Log.Info(nameof(SaveDanmu), $"{liveChatListener.Name}({liveChatListener.RoomId})保存SC记录相关文件为{File}");
                         card.DownInfo.DownloadFileList.SCFile.Add(fileInfo.FullName);
                     }
@@ -264,8 +278,8 @@ namespace Core.RuntimeObject
         /// <returns></returns>
         public static FileInfo SaveDanmu(List<DanmuInfo> danmuInfo, string FileName, string Name, long roomId, bool IsTemporary = false)
         {
-            string XML = string.Empty;
-            XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+            //StringBuilder拼接：原+=循环在大直播间是O(n²)拷贝
+            var XML = new StringBuilder("<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
             "<i>" +
             "<chatserver>chat.bilibili.com</chatserver>" +
             "<chatid>0</chatid>" +
@@ -275,26 +289,26 @@ namespace Core.RuntimeObject
             $"<app>{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name + "-" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString()}</app>" +
             $"<real_name>{Name}</real_name>" +
             $"<roomid>{roomId}</roomid>" +
-            $"<source>k-v</source>";
+            $"<source>k-v</source>");
             int i = 1;
             List<DanmuInfo> DanmaList = danmuInfo.DeepClone();
             foreach (var item in DanmaList)
             {
-                XML += $"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n";
+                XML.Append($"<d p=\"{item.time:f4},{item.type},{item.size},{item.color},{item.timestamp / 1000},{item.pool},{item.uid},{i}\">{XMLEscape(item.Message)}</d>\r\n");
                 i++;
             }
 
-            XML += "</i>";
-            File.WriteAllText(FileName + ".xml", XML);
+            XML.Append("</i>");
+            File.WriteAllText(FileName + ".xml", XML.ToString());
             if (true)
             {
-                string Gift = "时间,昵称,Uid,弹幕内容";
+                var Gift = new StringBuilder("时间,昵称,Uid,弹幕内容");
                 foreach (var item in DanmaList)
                 {
-                    Gift += $"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",", "，")}";
+                    Gift.Append($"\r\n{item.time},{item.Nickname},{item.uid},{item.Message.Replace(",", "，")}");
                 }
 
-                File.WriteAllText(FileName + "_弹幕.csv", Gift, Encoding.UTF8);
+                File.WriteAllText(FileName + "_弹幕.csv", Gift.ToString(), Encoding.UTF8);
             }
             DanmaList = null;
             return new FileInfo(FileName + ".xml");
@@ -322,14 +336,14 @@ namespace Core.RuntimeObject
         /// <param name="FileName"></param>
         public static FileInfo SevaGift(List<GiftInfo> GiftInfo, string FileName)
         {
-            string Gift = "视频时间,送礼人昵称,送礼人Uid,礼物名称,礼物数量,礼物单价,时间戳";
+            var Gift = new StringBuilder("视频时间,送礼人昵称,送礼人Uid,礼物名称,礼物数量,礼物单价,时间戳");
             List<GiftInfo> A = GiftInfo.DeepClone();
             foreach (var item in A)
             {
-                Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{item.GiftName},{item.Amount},{item.Price},{item.Timestamp}";
+                Gift.Append($"\r\n{item.Time},{item.UserName},{item.UserId},{item.GiftName},{item.Amount},{item.Price},{item.Timestamp}");
             }
             A = null;
-            File.WriteAllText(FileName + "_礼物.csv", Gift, Encoding.UTF8);
+            File.WriteAllText(FileName + "_礼物.csv", Gift.ToString(), Encoding.UTF8);
             return new FileInfo(FileName + "_礼物.csv");
         }
         /// <summary>
@@ -339,15 +353,15 @@ namespace Core.RuntimeObject
         /// <param name="FileName"></param>
         public static FileInfo SevaGuardBuy(List<GuardBuyInfo> guardBuyInfos, string FileName)
         {
-            string Gift = "视频时间,送礼人昵称,送礼人Uid,上舰类型,上舰时间,每月价格,时间戳";
+            var Gift = new StringBuilder("视频时间,送礼人昵称,送礼人Uid,上舰类型,上舰时间,每月价格,时间戳");
             List<GuardBuyInfo> A = guardBuyInfos.DeepClone();
             foreach (var item in A)
             {
                 string Level = item.GuardLevel == 1 ? "总督" : item.GuardLevel == 2 ? "提督" : item.GuardLevel == 3 ? "舰长" : item.GuardLevel.ToString();
-                Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{Level},{item.Number},{item.Price},{item.Timestamp}";
+                Gift.Append($"\r\n{item.Time},{item.UserName},{item.UserId},{Level},{item.Number},{item.Price},{item.Timestamp}");
             }
             A = null;
-            File.WriteAllText(FileName + "_舰队.csv", Gift, Encoding.UTF8);
+            File.WriteAllText(FileName + "_舰队.csv", Gift.ToString(), Encoding.UTF8);
             return new FileInfo(FileName + "_舰队.csv");
         }
         /// <summary>
@@ -357,14 +371,14 @@ namespace Core.RuntimeObject
         /// <param name="FileName"></param>
         public static FileInfo SevaSuperChat(List<SuperChatInfo> superChatInfos, string FileName)
         {
-            string Gift = "视频时间,送礼人昵称,送礼人Uid,SC金额,消息原文,翻译消息,时间戳";
+            var Gift = new StringBuilder("视频时间,送礼人昵称,送礼人Uid,SC金额,消息原文,翻译消息,时间戳");
             List<SuperChatInfo> A = superChatInfos.DeepClone();
             foreach (var item in A)
             {
-                Gift += $"\r\n{item.Time},{item.UserName},{item.UserId},{item.Price},{item.Message},{item.MessageTrans},{item.Timestamp}";
+                Gift.Append($"\r\n{item.Time},{item.UserName},{item.UserId},{item.Price},{item.Message},{item.MessageTrans},{item.Timestamp}");
             }
             A = null;
-            File.WriteAllText(FileName + "_SC.csv", Gift, Encoding.UTF8);
+            File.WriteAllText(FileName + "_SC.csv", Gift.ToString(), Encoding.UTF8);
             return new FileInfo(FileName + "_SC.csv");
         }
         #endregion
@@ -372,6 +386,10 @@ namespace Core.RuntimeObject
         #region Public Class
         public class DanmuMessage
         {
+            /// <summary>
+            /// 弹幕/礼物/舰队/SC列表的写入（WebSocket接收线程）与快照（保存线程）共用锁
+            /// </summary>
+            public object MessageLock { get; } = new object();
             public string FileName { set; get; }
             public Stopwatch TimeStopwatch { set; get; }
             /// <summary>

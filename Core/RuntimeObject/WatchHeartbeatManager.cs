@@ -26,6 +26,14 @@ namespace Core.RuntimeObject
         /// <param name="roomId">真实房间号(长号)</param>
         /// <param name="anchorUid">主播UID</param>
         /// <param name="tag">注册方标识(如"VlcPlayWindow")，用于多窗口引用计数</param>
+        private static readonly object _sessionLock = new();
+
+        /// <summary>
+        /// 注册一个观看者
+        /// </summary>
+        /// <param name="roomId">真实房间号(长号)</param>
+        /// <param name="anchorUid">主播UID</param>
+        /// <param name="tag">注册方标识(如"VlcPlayWindow")，用于多窗口引用计数</param>
         public static void Register(long roomId, long anchorUid, string tag)
         {
             if (!Config.Core_RunConfig._PlayWindowWatchHeartbeat)
@@ -36,13 +44,17 @@ namespace Core.RuntimeObject
             {
                 return;
             }
-            var session = _sessions.GetOrAdd(roomId, rid =>
+            //GetOrAdd的valueFactory可被并发执行多次，会启动无人引用的孤儿心跳会话，改为锁内检查-创建
+            lock (_sessionLock)
             {
-                var s = new HeartbeatSession(rid, anchorUid);
-                s.Start();
-                return s;
-            });
-            session.AddTag(tag);
+                if (!_sessions.TryGetValue(roomId, out var session))
+                {
+                    session = new HeartbeatSession(roomId, anchorUid);
+                    _sessions[roomId] = session;
+                    session.Start();
+                }
+                session.AddTag(tag);
+            }
         }
 
         /// <summary>
@@ -50,11 +62,14 @@ namespace Core.RuntimeObject
         /// </summary>
         public static void Unregister(long roomId, string tag)
         {
-            if (_sessions.TryGetValue(roomId, out var session) && session.RemoveTag(tag))
+            lock (_sessionLock)
             {
-                if (_sessions.TryRemove(roomId, out var s))
+                if (_sessions.TryGetValue(roomId, out var session) && session.RemoveTag(tag))
                 {
-                    s.Stop();
+                    if (_sessions.TryRemove(roomId, out var s))
+                    {
+                        s.Stop();
+                    }
                 }
             }
         }

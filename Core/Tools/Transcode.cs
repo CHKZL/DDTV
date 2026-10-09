@@ -72,7 +72,11 @@ namespace Core.Tools
                 {
                     try
                     {
-                        LogText.Add(e.Data);
+                        //stderr/stdout读取线程并发，List<T>非线程安全，必须加锁
+                        lock (LogText)
+                        {
+                            LogText.Add(e.Data);
+                        }
                     }
                     catch (Exception)
                     {
@@ -82,7 +86,10 @@ namespace Core.Tools
                 {
                     try
                     {
-                        LogText.Add(e.Data);
+                        lock (LogText)
+                        {
+                            LogText.Add(e.Data);
+                        }
                     }
                     catch (Exception)
                     {
@@ -95,6 +102,8 @@ namespace Core.Tools
                 process.Start();
                 // 开始异步读取错误输出
                 process.BeginErrorReadLine();
+                // 必须成对调用：stdout管道无人读取时ffmpeg写满缓冲即阻塞，WaitForExitAsync将永久挂起
+                process.BeginOutputReadLine();
                 process.Exited += delegate (object sender, EventArgs e)
                 {
                     Process P = (Process)sender;
@@ -137,8 +146,6 @@ namespace Core.Tools
                         }
                     }
                 }
-                if (process != null)
-                    process = null;
             }
             catch (Exception e)
             {
@@ -204,11 +211,11 @@ namespace Core.Tools
 
                 process.ErrorDataReceived += (sender, e) =>
                 {
-                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch { }
+                    try { if (!string.IsNullOrEmpty(e.Data)) lock (LogText) { LogText.Add(e.Data); } } catch { }
                 };
                 process.OutputDataReceived += (sender, e) =>
                 {
-                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch { }
+                    try { if (!string.IsNullOrEmpty(e.Data)) lock (LogText) { LogText.Add(e.Data); } } catch { }
                 };
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -240,7 +247,6 @@ namespace Core.Tools
                     Log.Info(nameof(FixDurationWithMkvToolnixAsync), "MKVToolNix 修复任务完成:" + P.StartInfo.Arguments);
                 };
                 await process.WaitForExitAsync();
-                process = null;
             }
             catch (Exception e)
             {
@@ -323,17 +329,18 @@ namespace Core.Tools
                 };
                 process.ErrorDataReceived += delegate (object sender, DataReceivedEventArgs e)
                 {
-                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch (Exception) { }
+                    try { if (!string.IsNullOrEmpty(e.Data)) lock (LogText) { LogText.Add(e.Data); } } catch (Exception) { }
                 };
                 process.OutputDataReceived += delegate (object sender, DataReceivedEventArgs e)
                 {
-                    try { if (!string.IsNullOrEmpty(e.Data)) LogText.Add(e.Data); } catch (Exception) { }
+                    try { if (!string.IsNullOrEmpty(e.Data)) lock (LogText) { LogText.Add(e.Data); } } catch (Exception) { }
                 };
                 process.Start();
                 process.BeginErrorReadLine();
                 process.BeginOutputReadLine();
                 await process.WaitForExitAsync();
-                //WaitForExitAsync只保证进程退出，异步输出流可能还没读完，再同步等一次把缓冲区刷完，否则失败日志可能缺尾部
+                //.NET 7+的WaitForExitAsync已保证进程退出且重定向输出流读到EOF（回调全部执行完），
+                //下面的同步WaitForExit只是冗余保险，可安全保留
                 process.WaitForExit();
 
                 //合并结果校验：进程退出码为0、输出文件存在且大小不为0
@@ -492,8 +499,8 @@ namespace Core.Tools
             }
             catch (Exception ex)
             {
-                // 清理失败不影响合并结果，但应记录警告
-                Console.WriteLine($"合并成功，但清理临时文件时发生警告: {ex.Message}");
+                // 清理失败不影响合并结果，但应记录警告（走日志框架而不是Console，保证进统一日志通道）
+                Log.Warn(nameof(Transcode), $"合并成功，但清理临时文件时发生警告: {ex.Message}", null, false);
             }
 
             // 5. 成功完成

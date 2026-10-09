@@ -8,7 +8,7 @@ namespace Core
 {
     public class Example
     {
-        string T = "A‮‭‮B";
+        string T = "A‮\u202D‮B";
         #region Private Properties
 
         #endregion

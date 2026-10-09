@@ -25,8 +25,11 @@ namespace Desktop.DataSource
                 bool status = false;
                 if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                 {
-                    bool loginStatus = await NetWork.Post.PostBody<bool>(
+                    var (success, loginStatus) = await NetWork.Post.TryPostBody<bool>(
                         $"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/login/get_login_status");
+                    //请求失败不等于登录失效：网络抖动时直接跳过本轮，避免误触发登录失效流程
+                    if (!success)
+                        return;
                     if (!loginStatus)
                     {
                         status = true;

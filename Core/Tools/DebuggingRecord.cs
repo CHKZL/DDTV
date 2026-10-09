@@ -94,6 +94,8 @@ namespace Core.Tools
             }
             catch (Exception e)
             {
+                //快照失败不能静默：调用方拿到空串，这里必须留日志
+                Log.Warn(nameof(GenerateReportSnapshot), $"生成Debug快照失败:{e.Message}", e, false);
                 return "";
             }
             finally

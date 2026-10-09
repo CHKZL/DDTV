@@ -31,7 +31,7 @@ namespace Core.Network
 
             var client = new HttpClient(handler, disposeHandler: true)
             {
-                // 默认 Timeout 保持一个宽容值；实际每次请求使用 CancellationTokenSource 精确控制 8000ms
+                // 默认 Timeout 保持一个宽容值；实际每次请求使用 CancellationTokenSource 精确控制 3000ms
                 Timeout = TimeSpan.FromSeconds(30)
             };
 
@@ -58,11 +58,6 @@ namespace Core.Network
 
             try
             {
-                if (url.Contains("getDanmuInfo"))
-                {
-                    ;
-                }
-
                 if (IsRid)
                 {
                     url = Core.Network.Methods.User.GetRidURL(url);

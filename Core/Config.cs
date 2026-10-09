@@ -707,20 +707,20 @@ namespace Core
                 }
             }
 
-            private static string Key = "34D3D9‭9D34894461‭91AB9B8‭582454669";
+            private static string Key = "34D3D9\u202D9D34894461\u202D91AB9B8\u202D582454669";
             /// <summary>
             /// 默认的AES加密秘钥（字符串）
-            /// 默认值：34D3D9‭9D34894461‭91AB9B8‭582454669
+            /// 默认值：34D3D9\u202D9D34894461\u202D91AB9B8\u202D582454669
             /// </summary>
             public string _Key
             {
                 get => Key;
             }
 
-            private static string IV = "B3FF‭40627013‭F53F";
+            private static string IV = "B3FF\u202D40627013\u202DF53F";
             /// <summary>
             /// 默认的AES加密初始化向量（字符串）
-            /// 默认值：B3FF‭40627013‭F53F
+            /// 默认值：B3FF\u202D40627013\u202DF53F
             /// </summary>
             public string _IV
             {

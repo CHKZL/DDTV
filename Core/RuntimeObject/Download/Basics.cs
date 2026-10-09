@@ -16,6 +16,21 @@ namespace Core.RuntimeObject.Download
 {
     public class Basics
     {
+        //弹幕屏蔽词缓存：原实现每条弹幕/礼物都执行一次Split('|')分配新数组，配置不变时复用缓存
+        //（整体替换引用，赋值是原子的，读者要么看到旧配置要么看到新配置，不会看到撕裂状态）
+        private sealed class BlockWordsCache { public string Raw; public string[] Words; }
+        private static BlockWordsCache _blockWordsCache;
+        private static string[] GetBlockWords()
+        {
+            string raw = Core.Config.Core_RunConfig._BlockBarrageList ?? string.Empty;
+            var cache = _blockWordsCache;
+            if (cache == null || cache.Raw != raw)
+            {
+                cache = new BlockWordsCache { Raw = raw, Words = raw.Split('|') };
+                _blockWordsCache = cache;
+            }
+            return cache.Words;
+        }
 
         #region internal Method
 
@@ -114,7 +129,8 @@ namespace Core.RuntimeObject.Download
                     ////$"-y -i \"{before}\" -c copy \"{after}\""
                     string before = result.FileName;
                     string after = result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4");
-                    transcode.TranscodeAsync(before, after, roomCard);
+                    //修复任务有意fire-and-forget：TranscodeAsync内部有全量try/catch兜底，此处不阻塞录制收尾流程
+                    _ = transcode.TranscodeAsync(before, after, roomCard);
                     roomCard.DownInfo.DownloadFileList.VideoFile.Add(result.FileName.Replace("_original.mp4", "_fix.mp4").Replace("_original.flv", "_fix.mp4"));
                 }
                 catch (Exception ex)
@@ -169,6 +185,9 @@ namespace Core.RuntimeObject.Download
         {
             Task.Run(async () =>
             {
+                //整个后台任务兜底：等待段等不在foreach内层try里的代码若抛异常，fire-and-forget的Task会变成未观察异常
+                try
+                {
                 //等待本场的修复任务全部完成再选合并输入：修复进行中_fix正在写入(读了会截断)、
                 //修复完成后original可能已被删除。修复都是-c copy，正常几分钟内完成，超时也继续按现状尝试
                 int waitedMs = 0;
@@ -253,6 +272,11 @@ namespace Core.RuntimeObject.Download
                     {
                         Log.Error(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]强制合并分片时出现意外错误，源分片不受影响", ex);
                     }
+                }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(nameof(ForceMergeSessionVideos), $"[{name}({roomId})]强制合并后台任务出现未处理异常", ex);
                 }
             });
         }
@@ -603,16 +627,27 @@ namespace Core.RuntimeObject.Download
             PlayInfo_Class.Codec? codec = format.codec.FirstOrDefault(x => x.codec_name == codec_name);
             if (codec == null)
                 return hostClass;
-            int R = new Random().Next(0, codec.url_info.Count - 1);
+            if (codec.url_info == null || codec.url_info.Count == 0)
+                return hostClass;
+            //Next的上界是排他的：原Next(0, Count-1)导致最后一个CDN节点永远选不中，Count==0时还会抛异常
+            int R = Random.Shared.Next(codec.url_info.Count);
             //Log.Debug("_GetHost",$"骰娘随机到了{R}号CDN");
             var urlInfo = codec.url_info[R];
+
+            string baseUrl = codec.base_url ?? string.Empty;
+            string lastSegment = baseUrl.Split('/').Last();
+            //base_url去掉最后一段作为目录前缀；原Replace(lastSegment,"")在最后一段为空串（base_url以/结尾）时会抛ArgumentException，
+            //且Replace会替换所有出现位置，改为只去掉末尾一段
+            string baseUrlPrefix = lastSegment.Length > 0 && baseUrl.EndsWith(lastSegment)
+                ? baseUrl.Substring(0, baseUrl.Length - lastSegment.Length)
+                : baseUrl;
 
             hostClass = new()
             {
                 Effective = true,
                 host = urlInfo.host,
-                base_url = codec.base_url.Replace($"{codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1]}", ""),
-                uri_name = codec.base_url.Split('/')[codec.base_url.Split('/').Length - 1],
+                base_url = baseUrlPrefix,
+                uri_name = lastSegment,
                 extra = urlInfo.extra
             };
             return hostClass;
@@ -657,92 +692,120 @@ namespace Core.RuntimeObject.Download
                 {
                     case DanmuMessageEventArgs Danmu:
                         {
-                            string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
+                            string[] BlockWords = GetBlockWords();
                             if (BlockWords.Any(word => !string.IsNullOrEmpty(word) && Danmu.Message.Contains(word)))
                             {
                                 return;
                             }
-                            liveChatListener.DanmuMessage.Danmu.Add(new Danmu.DanmuInfo
+                            var danmuMessage = liveChatListener.DanmuMessage;
+                            if (danmuMessage == null)
+                                break;
+                            //列表另有保存线程在持锁快照，Add必须与快照互斥
+                            lock (danmuMessage.MessageLock)
                             {
-                                color = Danmu.MessageColor,
-                                pool = 0,
-                                size = 25,
-                                timestamp = Danmu.Timestamp,
-                                type = Danmu.MessageType,
-                                time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                                uid = Danmu.UserId,
-                                Message = Danmu.Message,
-                                Nickname = Danmu.UserName,
-                                LV = Danmu.GuardLV
-                            });
+                                danmuMessage.Danmu.Add(new Danmu.DanmuInfo
+                                {
+                                    color = Danmu.MessageColor,
+                                    pool = 0,
+                                    size = 25,
+                                    timestamp = Danmu.Timestamp,
+                                    type = Danmu.MessageType,
+                                    time = liveChatListener.TimeStopwatch?.ElapsedMilliseconds / 1000.00 ?? 0,
+                                    uid = Danmu.UserId,
+                                    Message = Danmu.Message,
+                                    Nickname = Danmu.UserName,
+                                    LV = Danmu.GuardLV
+                                });
+                            }
 
                             break;
                         }
                     case SuperchatEventArg SuperchatEvent:
                         {
-
-                            liveChatListener.DanmuMessage.SuperChat.Add(new Danmu.SuperChatInfo()
+                            var danmuMessage = liveChatListener.DanmuMessage;
+                            if (danmuMessage == null)
+                                break;
+                            lock (danmuMessage.MessageLock)
                             {
-                                Message = SuperchatEvent.Message,
-                                MessageTrans = SuperchatEvent.messageTrans,
-                                Price = SuperchatEvent.Price,
-                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                                Timestamp = SuperchatEvent.Timestamp,
-                                UserId = SuperchatEvent.UserId,
-                                UserName = SuperchatEvent.UserName,
-                                TimeLength = SuperchatEvent.TimeLength
-                            });
+                                danmuMessage.SuperChat.Add(new Danmu.SuperChatInfo()
+                                {
+                                    Message = SuperchatEvent.Message,
+                                    MessageTrans = SuperchatEvent.messageTrans,
+                                    Price = SuperchatEvent.Price,
+                                    Time = liveChatListener.TimeStopwatch?.ElapsedMilliseconds / 1000.00 ?? 0,
+                                    Timestamp = SuperchatEvent.Timestamp,
+                                    UserId = SuperchatEvent.UserId,
+                                    UserName = SuperchatEvent.UserName,
+                                    TimeLength = SuperchatEvent.TimeLength
+                                });
+                            }
                             break;
                         }
                     case GuardBuyEventArgs GuardBuyEvent:
                         {
-
-                            liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                            var danmuMessage = liveChatListener.DanmuMessage;
+                            if (danmuMessage == null)
+                                break;
+                            lock (danmuMessage.MessageLock)
                             {
-                                GuardLevel = GuardBuyEvent.GuardLevel,
-                                GuradName = GuardBuyEvent.GuardName,
-                                Number = GuardBuyEvent.Number,
-                                Price = GuardBuyEvent.Price,
-                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                                Timestamp = GuardBuyEvent.Timestamp,
-                                UserId = GuardBuyEvent.UserId,
-                                UserName = GuardBuyEvent.UserName
-                            });
+                                danmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                                {
+                                    GuardLevel = GuardBuyEvent.GuardLevel,
+                                    GuradName = GuardBuyEvent.GuardName,
+                                    Number = GuardBuyEvent.Number,
+                                    Price = GuardBuyEvent.Price,
+                                    Time = liveChatListener.TimeStopwatch?.ElapsedMilliseconds / 1000.00 ?? 0,
+                                    Timestamp = GuardBuyEvent.Timestamp,
+                                    UserId = GuardBuyEvent.UserId,
+                                    UserName = GuardBuyEvent.UserName
+                                });
+                            }
                             break;
                         }
                     case GuardRenewEventArgs guardRenewEvent:
                         {
-
-                            liveChatListener.DanmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                            var danmuMessage = liveChatListener.DanmuMessage;
+                            if (danmuMessage == null)
+                                break;
+                            lock (danmuMessage.MessageLock)
                             {
-                                GuardLevel = guardRenewEvent.GuardLevel,
-                                GuradName = guardRenewEvent.GuardName,
-                                Number = guardRenewEvent.Number,
-                                Price = guardRenewEvent.Price,
-                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                                Timestamp = guardRenewEvent.Timestamp,
-                                UserId = guardRenewEvent.UserId,
-                                UserName = guardRenewEvent.UserName
-                            });
+                                danmuMessage.GuardBuy.Add(new Danmu.GuardBuyInfo()
+                                {
+                                    GuardLevel = guardRenewEvent.GuardLevel,
+                                    GuradName = guardRenewEvent.GuardName,
+                                    Number = guardRenewEvent.Number,
+                                    Price = guardRenewEvent.Price,
+                                    Time = liveChatListener.TimeStopwatch?.ElapsedMilliseconds / 1000.00 ?? 0,
+                                    Timestamp = guardRenewEvent.Timestamp,
+                                    UserId = guardRenewEvent.UserId,
+                                    UserName = guardRenewEvent.UserName
+                                });
+                            }
                             break;
                         }
                     case SendGiftEventArgs sendGiftEventArgs:
                         {
-                            string[] BlockWords = Core.Config.Core_RunConfig._BlockBarrageList.Split('|');
+                            string[] BlockWords = GetBlockWords();
                             if (BlockWords.Any(word => !string.IsNullOrEmpty(word) && sendGiftEventArgs.GiftName.Contains(word)))
                             {
                                 return;
                             }
-                            liveChatListener.DanmuMessage.Gift.Add(new Danmu.GiftInfo()
+                            var danmuMessage = liveChatListener.DanmuMessage;
+                            if (danmuMessage == null)
+                                break;
+                            lock (danmuMessage.MessageLock)
                             {
-                                Amount = sendGiftEventArgs.Amount,
-                                GiftName = sendGiftEventArgs.GiftName,
-                                Price = sendGiftEventArgs.GiftPrice,
-                                Time = liveChatListener.TimeStopwatch.ElapsedMilliseconds / 1000.00,
-                                Timestamp = sendGiftEventArgs.Timestamp,
-                                UserId = sendGiftEventArgs.UserId,
-                                UserName = sendGiftEventArgs.UserName
-                            });
+                                danmuMessage.Gift.Add(new Danmu.GiftInfo()
+                                {
+                                    Amount = sendGiftEventArgs.Amount,
+                                    GiftName = sendGiftEventArgs.GiftName,
+                                    Price = sendGiftEventArgs.GiftPrice,
+                                    Time = liveChatListener.TimeStopwatch?.ElapsedMilliseconds / 1000.00 ?? 0,
+                                    Timestamp = sendGiftEventArgs.Timestamp,
+                                    UserId = sendGiftEventArgs.UserId,
+                                    UserName = sendGiftEventArgs.UserName
+                                });
+                            }
                             break;
                         }
                     case MessageEventArgs messageEventArgs:

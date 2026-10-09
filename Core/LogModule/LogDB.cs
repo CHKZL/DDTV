@@ -15,6 +15,39 @@ namespace Core.LogModule
         internal static string dbPath = string.Empty;
         internal static string ErrorFilePath = string.Empty;
         internal static StreamWriter streamWriter = default;
+        /// <summary>数据库操作专用锁（SQLiteConn字段会被重新赋值，不能锁可变字段）</summary>
+        internal static readonly object DbLock = new();
+        /// <summary>错误文本日志写入专用锁（streamWriter字段会被重新赋值，不能锁可变字段）</summary>
+        internal static readonly object ErrorFileLock = new();
+        /// <summary>DB写入失败记录标志（0=未记录，1=已记录）：仅首次失败写错误txt，恢复后重置，避免与日志通道形成自激循环</summary>
+        private static int _dbWriteErrorLogged = 0;
+
+        /// <summary>
+        /// 记录DB写入失败：直接写错误txt而不是走Log通道（Error日志会重新进入写库队列→再次失败→再产生Error，形成自激循环）
+        /// </summary>
+        private static void LogDbWriteError(string operation, Exception e)
+        {
+            if (System.Threading.Interlocked.Exchange(ref _dbWriteErrorLogged, 1) == 1)
+                return;
+            try
+            {
+                if (streamWriter != null)
+                {
+                    lock (ErrorFileLock)
+                    {
+                        streamWriter.WriteLine($"\n{DateTime.Now}:[Error][LogDB]{operation}写入日志数据库失败（后续失败将静默，恢复后重置）:{e}");
+                        streamWriter.Flush();
+                    }
+                }
+            }
+            catch { }
+        }
+
+        /// <summary>DB写入成功后重置失败记录标志</summary>
+        private static void ResetDbWriteErrorFlag()
+        {
+            System.Threading.Interlocked.Exchange(ref _dbWriteErrorLogged, 0);
+        }
 
 
 
@@ -43,8 +76,10 @@ namespace Core.LogModule
                         dbPath = GetDbFileName();
                     }
                     //连接实例日志数据库
-                    lock (SQLiteConn)
+                    lock (DbLock)
                     {
+                        //重初始化前释放旧连接，避免旧连接持有的文件句柄泄漏
+                        try { SQLiteConn?.Close(); SQLiteConn?.Dispose(); } catch { }
                         SQLiteConn = new SqliteConnection($"Data Source = {dbPath}");
                         SQLiteConn.Open();
                         if (!isLoadDb)
@@ -57,7 +92,7 @@ namespace Core.LogModule
                 }
                 catch (Exception e)
                 {
-                    Log.Error(nameof(LogDB), "日志数据库初始化失败");
+                    Log.Error(nameof(LogDB), $"日志数据库初始化失败:{e}", e, false);
                     return false;
                 }
             }
@@ -79,6 +114,8 @@ namespace Core.LogModule
                 });
                 string date = DateTime.Now.ToString("yyyy-MM-ddTHH-mm-ss-fffff");
                 ErrorFilePath = $"{Core.Config.Core_RunConfig._LogFileDirectory}/DDTVCoreErrorLog_{date}.txt";
+                //重初始化前释放旧writer，避免旧句柄占用文件
+                try { streamWriter?.Dispose(); } catch { }
                 streamWriter = new StreamWriter(ErrorFilePath, true, Encoding.UTF8);
                 return $"{Core.Config.Core_RunConfig._LogFileDirectory}/DDTVCoreLog_{date}.sqlite";
             }
@@ -143,7 +180,7 @@ namespace Core.LogModule
                     {
                         SQLiteConn = new();
                     }
-                    lock (SQLiteConn)
+                    lock (DbLock)
                     {
                         if (SQLiteConn.State != ConnectionState.Open || logClasses == null || logClasses.Count == 0)
                         {
@@ -169,12 +206,13 @@ namespace Core.LogModule
                             cmd.ExecuteNonQuery();
                         }
                         transaction.Commit();
+                        ResetDbWriteErrorFlag();
                         return true;
                     }
                 }
                 catch (Exception e)
                 {
-                    Log.Error(nameof(LogDB), $"日志数据库批量写入出现未知错误:{e.ToString()}");
+                    LogDbWriteError("批量写入", e);
                     return false;
                 }
             }
@@ -191,7 +229,7 @@ namespace Core.LogModule
                     {
                         SQLiteConn = new();
                     }
-                    lock (SQLiteConn)
+                    lock (DbLock)
                     {
                         if (logClass != null && logClass.Source != null)
                         {
@@ -215,6 +253,7 @@ namespace Core.LogModule
                                 cmd.Dispose();
                                 if (i > 0)
                                 {
+                                    ResetDbWriteErrorFlag();
                                     return true;
                                 }
                                 else
@@ -235,7 +274,7 @@ namespace Core.LogModule
                 }
                 catch (Exception e)
                 {
-                    Log.Error(nameof(LogDB), $"日志数据库写入出现未知错误:{e.ToString()}");
+                    LogDbWriteError("单条写入", e);
                     return false;
                 }
             }

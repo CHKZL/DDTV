@@ -301,7 +301,7 @@ namespace Desktop.Views.Control
                 }
                 else
                 {
-                    message = Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(dataCard.Uid);
+                    message = await Core.RuntimeObject.Download.Snapshot.CreateRecordingSnapshot(dataCard.Uid);
                 }
 
                 if (!message.state)

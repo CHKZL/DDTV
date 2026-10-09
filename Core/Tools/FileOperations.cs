@@ -2,11 +2,13 @@
 using Core.RuntimeObject;
 using Masuit.Tools;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using static Core.Network.Methods.Room;
 
@@ -84,8 +86,10 @@ namespace Core.Tools
         }
 
 
-        private static List<(string File, string Message)> _DelFileList = new();
-        private static bool DelState = false;
+        private static readonly ConcurrentQueue<(string File, string Message, int Attempts)> _DelFileQueue = new();
+        private static int _delLoopStarted = 0;
+        /// <summary>单个文件的最大删除重试次数（约每秒重试一次），超限记日志后放弃，防止被占用文件永久滞留队列空转</summary>
+        private const int MaxDeleteAttempts = 60;
 
         /// <summary>
         /// 删除文件队列
@@ -94,31 +98,37 @@ namespace Core.Tools
         /// <param name="Message"></param>
         public static void Delete(string Path, string Message = "")
         {
-            if (!DelState)
+            _DelFileQueue.Enqueue((Path, Message, 0));
+            //CAS占位保证只启动一个消费循环（原check-then-set竞态可能起多个循环并发读写List）
+            if (Interlocked.CompareExchange(ref _delLoopStarted, 1, 0) == 0)
             {
-                DelState = true;
-                Task.Run(() =>
+                Task.Run(async () =>
                 {
                     while (true)
                     {
                         try
                         {
-                            for (int i = 0; i < _DelFileList.Count; i++)
+                            while (_DelFileQueue.TryDequeue(out var item))
                             {
                                 try
                                 {
-                                    File.Delete(_DelFileList[i].File);
-                                    Log.Info(nameof(Delete), $"删除文件:[{_DelFileList[i].Message}]{_DelFileList[i]}");
-                                    _DelFileList.RemoveAt(i);
-                                    i--;
+                                    File.Delete(item.File);
+                                    Log.Info(nameof(Delete), $"删除文件:[{item.Message}]{item.File}");
                                 }
                                 catch (Exception)
                                 {
-                                    if (!File.Exists(_DelFileList[i].File))
+                                    if (!File.Exists(item.File))
                                     {
-                                        Log.Info(nameof(Delete), $"要删除文件不存在[{_DelFileList[i].Message}]:{_DelFileList[i]}");
-                                        _DelFileList.RemoveAt(i);
-                                        i--;
+                                        Log.Info(nameof(Delete), $"要删除文件不存在[{item.Message}]:{item.File}");
+                                    }
+                                    else if (item.Attempts + 1 >= MaxDeleteAttempts)
+                                    {
+                                        Log.Warn(nameof(Delete), $"文件持续被占用，重试{MaxDeleteAttempts}次后放弃删除:{item.File}", null, false);
+                                    }
+                                    else
+                                    {
+                                        //删除失败（通常是被占用）：重排回队尾下轮再试
+                                        _DelFileQueue.Enqueue((item.File, item.Message, item.Attempts + 1));
                                     }
                                 }
                             }
@@ -127,11 +137,10 @@ namespace Core.Tools
                         {
                             Log.Error(nameof(Delete), "清理文件出现意外的错误，稍后重试，错误堆栈已写日志", e, true);
                         }
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                     }
                 });
             }
-            _DelFileList.Add((Path, Message));
         }
 
         /// <summary>
