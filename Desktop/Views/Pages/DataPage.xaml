@@ -25,6 +25,10 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid Margin="20,0,20,10" Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -35,19 +39,29 @@
 
             </Grid.ColumnDefinitions>
 
-            <ComboBox Name="CardTypeComboBox" SelectedIndex="0" Grid.Column="0" Margin="0,0,5,0" SelectionChanged="CardTypeComboBox_SelectionChanged">
+            <ComboBox Name="CardTypeComboBox" SelectedIndex="0" Grid.Row="0" Grid.Column="0" Margin="0,0,5,0" SelectionChanged="CardTypeComboBox_SelectionChanged">
                 <ComboBoxItem Content="全部房间"/>
                 <ComboBoxItem Content="录制中" />
                 <ComboBoxItem Content="开播中" />
                 <ComboBoxItem Content="未开播" />
                 <ComboBoxItem Content="开播但未录制" />
-                <ComboBoxItem Content="提醒状态开" />
             </ComboBox>
-            <ComboBox Name="PageComboBox" Width="100" SelectedIndex="0" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Left" ItemsSource="{Binding PageComboBoxItems}" SelectionChanged="PageComboBox_SelectionChanged">
+            <ComboBox Name="PageComboBox" Width="100" SelectedIndex="0" Grid.Row="0" Grid.Column="1" Margin="0,0,5,0" HorizontalAlignment="Left" ItemsSource="{Binding PageComboBoxItems}" SelectionChanged="PageComboBox_SelectionChanged">
             </ComboBox>
-            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Column="2" FontSize="16" Margin="20,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" KeyDown="ScreenNameBox_KeyDown" />
-            <Button Grid.Column="3" FontSize="16" Margin="0,0,0,0" Height="36" Content="搜索" HorizontalAlignment="Right" Click="ScreenName_Click"/>
-            <Grid Grid.Column="4"  Margin="15,0,0,0" VerticalAlignment="Center"  ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="初次录制时如果需要同时录制弹幕，请先打开弹幕，再打开录制。&#x0a;否则第一次只会录制视频。">
+            <ui:AutoSuggestBox Name="ScreenNameBox" Width="200" Grid.Row="0" Grid.Column="2" FontSize="16" Margin="20,0,10,0"  Icon="{ui:SymbolIcon Search24}" PlaceholderText="输入昵称点击搜索" HorizontalAlignment="Left" KeyDown="ScreenNameBox_KeyDown" />
+            <Button Grid.Row="0" Grid.Column="3" FontSize="16" Margin="0,0,0,0" Height="36" Content="搜索" HorizontalAlignment="Right" Click="ScreenName_Click"/>
+
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="0,8,8,0" VerticalAlignment="Center">
+                <CheckBox Name="RecConfigCheckBox" Content="录制" IsThreeState="True" IsChecked="False" Checked="ConfigFilterCheckBox_Changed" Unchecked="ConfigFilterCheckBox_Changed" Indeterminate="ConfigFilterCheckBox_Changed" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Horizontal" Margin="0,8,8,0" VerticalAlignment="Center">
+                <CheckBox Name="DanmuConfigCheckBox" Content="弹幕" IsThreeState="True" IsChecked="False" Checked="ConfigFilterCheckBox_Changed" Unchecked="ConfigFilterCheckBox_Changed" Indeterminate="ConfigFilterCheckBox_Changed" />
+            </StackPanel>
+            <StackPanel Grid.Row="1" Grid.Column="2" Orientation="Horizontal" Margin="0,8,8,0" VerticalAlignment="Center">
+                <CheckBox Name="RemindConfigCheckBox" Content="提醒" IsThreeState="True" IsChecked="False" Checked="ConfigFilterCheckBox_Changed" Unchecked="ConfigFilterCheckBox_Changed" Indeterminate="ConfigFilterCheckBox_Changed" />
+            </StackPanel>
+
+            <Grid Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" Margin="15,8,0,0" VerticalAlignment="Center"  ToolTipService.InitialShowDelay="100" ToolTipService.Placement="MousePoint" ToolTipService.ToolTip="初次录制时如果需要同时录制弹幕，请先打开弹幕，再打开录制。&#x0a;否则第一次只会录制视频。">
                 <StackPanel>
                     <TextBlock TextWrapping="Wrap">
                         <Run Text="卡片三兄弟："/>
@@ -60,7 +74,7 @@
                     </TextBlock>
                 </StackPanel>
             </Grid>
-            <ui:DropDownButton Grid.Column="5" FontSize="16" Margin="0,0,5,0" Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" HorizontalAlignment="Right">
+            <ui:DropDownButton Grid.Row="0" Grid.Column="5" FontSize="16" Margin="0,0,5,0" Content="添加房间" Icon="{ui:SymbolIcon Addcircle12}" HorizontalAlignment="Right">
                 <ui:DropDownButton.Flyout>
                     <ContextMenu>
                         <MenuItem Header="用房间号添加一个房间" Click="AddRoomCardForRoomId_Click"/>
@@ -94,5 +108,3 @@
 
 
 </Page>
-
-    

@@ -99,11 +99,14 @@ namespace Server.WebAppServices.Api
         /// <param name="page">【非必填】获取的页数，当分页数量不为0时有效</param>
         /// <param name="type">【非必填】返回数据类型(0：全部  1：录制中  2：开播中  3：未开播   4：开但未录制   5: 全部以原始字母顺序排列返回)</param>
         /// <param name="screen_name">【非必填】搜索的昵称含有对应字符串的房间</param>
+        /// <param name="auto_rec">【非必填】自动录制配置筛选，true为开启，false为关闭</param>
+        /// <param name="rec_danmu">【非必填】弹幕录制配置筛选，true为开启，false为关闭</param>
+        /// <param name="remind">【非必填】开播提醒配置筛选，true为开启，false为关闭</param>
         /// <returns></returns>
         [HttpPost(Name = "batch_complete_room_information")]
-        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] _Room.SearchType type=_Room.SearchType.All, [FromForm] string screen_name = "")
+        public ActionResult Post(PostCommonParameters commonParameters, [FromForm] int quantity = 0, [FromForm] int page = 0, [FromForm] _Room.SearchType type=_Room.SearchType.All, [FromForm] string screen_name = "", [FromForm] bool? auto_rec = null, [FromForm] bool? rec_danmu = null, [FromForm] bool? remind = null)
         {
-            Core.RuntimeObject._Room.Overview.CardData completeRoomInfoRes = Core.RuntimeObject._Room.Overview.GetCardOverview(quantity,page,type,screen_name);
+            Core.RuntimeObject._Room.Overview.CardData completeRoomInfoRes = Core.RuntimeObject._Room.Overview.GetCardOverview(quantity,page,type,screen_name,auto_rec,rec_danmu,remind);
             if(completeRoomInfoRes==null)
             {
                 return Content(MessageBase.MessagePack(nameof(batch_complete_room_information), "", "请求错误", code.ParameterError), "application/json");

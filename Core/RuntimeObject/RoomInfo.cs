@@ -29,12 +29,12 @@ namespace Core.RuntimeObject
         /// </summary>
         public class Overview
         {
-            public static CardData GetCardOverview(int quantity = 0,int page = 0, _Room.SearchType type=_Room.SearchType.All,string screen_name = "")
+            public static CardData GetCardOverview(int quantity = 0,int page = 0, _Room.SearchType type=_Room.SearchType.All,string screen_name = "", bool? autoRec = null, bool? recDanmu = null, bool? remind = null)
             {
                 try
                 {
                     CardData completeRoomInfoRes = new CardData();
-                    var roomList = _Room.GetCardListClone(type, screen_name);
+                    var roomList = _Room.GetCardListClone(type, screen_name, autoRec, recDanmu, remind);
                     completeRoomInfoRes.total = roomList.Count;
                     if (quantity == 0)
                     {
@@ -477,7 +477,7 @@ namespace Core.RuntimeObject
         /// <param name="type">返回数据类型</param>
         /// <param name="Screen">搜索的昵称含有对应字符串的对象</param>
         /// <returns></returns>
-        public static Dictionary<long, RoomCardClass> GetCardListClone(SearchType type = SearchType.All, string Screen = "")
+        public static Dictionary<long, RoomCardClass> GetCardListClone(SearchType type = SearchType.All, string Screen = "", bool? autoRec = null, bool? recDanmu = null, bool? remind = null)
         {
             Dictionary<long, RoomCardClass> keyValuePairs = new();
             switch (type)
@@ -538,6 +538,20 @@ namespace Core.RuntimeObject
                         .ToDictionary(x => x.Key, x => x.Value);
                     break;
             }
+            //配置筛选独立于开播/录制状态筛选，可组合使用
+            if (autoRec.HasValue)
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.IsAutoRec == autoRec.Value).ToDictionary(x => x.Key, x => x.Value);
+            }
+            if (recDanmu.HasValue)
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.IsRecDanmu == recDanmu.Value).ToDictionary(x => x.Key, x => x.Value);
+            }
+            if (remind.HasValue)
+            {
+                keyValuePairs = keyValuePairs.Where(x => x.Value.IsRemind == remind.Value).ToDictionary(x => x.Key, x => x.Value);
+            }
+
             //如果昵称字符串不为空，搜索昵称符合条件的人返回
             if (!string.IsNullOrEmpty(Screen))
             {

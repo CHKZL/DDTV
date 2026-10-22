@@ -36,35 +36,29 @@ namespace Desktop.DataSource
                     if (Core.Config.Core_RunConfig._DesktopRemoteServer || Core.Config.Core_RunConfig._LocalHTTPMode)
                     {
                         Dictionary<string, string> dir = new Dictionary<string, string>();
-                        if (!string.IsNullOrEmpty(DataPage.screen_name))
+                        dir = new Dictionary<string, string>()
                         {
-                            dir = new Dictionary<string, string>()
-                            {
-                                {"screen_name",DataPage.screen_name }
-                            };
-                        }
-                        else
-                        {
-                            dir = new Dictionary<string, string>()
-                            {
-                                {"quantity","102" },
-                                {"page",DataPage.PageIndex.ToString() },
-                                {"type",DataPage.CardType.ToString() },
-                                {"screen_name","" }
-                            };
-                        }
+                            {"quantity", string.IsNullOrEmpty(DataPage.screen_name) ? "102" : "0" },
+                            {"page", string.IsNullOrEmpty(DataPage.screen_name) ? DataPage.PageIndex.ToString() : "0" },
+                            {"type", string.IsNullOrEmpty(DataPage.screen_name) ? DataPage.CardType.ToString() : "0" },
+                            {"screen_name", DataPage.screen_name }
+                        };
+                        AddOptionalFilter(dir, "auto_rec", DataPage.GetRecConfigFilter());
+                        AddOptionalFilter(dir, "rec_danmu", DataPage.GetDanmuConfigFilter());
+                        AddOptionalFilter(dir, "remind", DataPage.GetRemindConfigFilter());
                         Cards = await NetWork.Post.PostBody<Core.RuntimeObject._Room.Overview.CardData>($"{Config.Core_RunConfig._DesktopIP}:{Config.Core_RunConfig._DesktopPort}/api/get_rooms/batch_complete_room_information", dir);
                     }
                     else
                     {
-                        if (!string.IsNullOrEmpty(DataPage.screen_name))
-                        {
-                            Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(0, 0, Core.RuntimeObject._Room.SearchType.All, DataPage.screen_name);
-                        }
-                        else
-                        {
-                            Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(102, DataPage.PageIndex, (_Room.SearchType)DataPage.CardType);
-                        }
+                        bool hasSearch = !string.IsNullOrEmpty(DataPage.screen_name);
+                        Cards = Core.RuntimeObject._Room.Overview.GetCardOverview(
+                            hasSearch ? 0 : 102,
+                            hasSearch ? 0 : DataPage.PageIndex,
+                            hasSearch ? _Room.SearchType.All : (_Room.SearchType)DataPage.CardType,
+                            DataPage.screen_name,
+                            DataPage.GetRecConfigFilter(),
+                            DataPage.GetDanmuConfigFilter(),
+                            DataPage.GetRemindConfigFilter());
                     }
 
                     if (Cards == null)
@@ -170,6 +164,14 @@ namespace Desktop.DataSource
                 catch (Exception ex)
                 {
                     Log.Error(nameof(RefreshRoomCardsAsync), "刷新房间卡片数据时发生异常", ex);
+                }
+            }
+
+            private static void AddOptionalFilter(Dictionary<string, string> parameters, string key, bool? value)
+            {
+                if (value.HasValue)
+                {
+                    parameters[key] = value.Value.ToString();
                 }
             }
 
