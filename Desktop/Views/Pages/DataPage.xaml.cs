@@ -29,10 +29,15 @@ public partial class DataPage
 
     public static System.Threading.Timer Timer_DataPage;
     public static int CardType = 0;
+    //复选框筛选：null=不筛选，true=已开启，false=未开启
+    public static bool? RecConfigFilter;
+    public static bool? DanmuConfigFilter;
+    public static bool? RemindConfigFilter;
     public static int PageCount = 0;
     public static int PageIndex = 1;
     public static string screen_name = string.Empty;
     public static int Width = 0;
+    private static DataPage? CurrentPageInstance;
     /// <summary>
     /// 房间列表页当前是否可见（导航进入/离开时由Loaded/Unloaded维护）。
     /// 页面不可见时3秒定时刷新直接跳过——看不见的数据刷了也是白耗CPU和网络请求
@@ -42,6 +47,7 @@ public partial class DataPage
     public DataPage()
     {
         InitializeComponent();
+        CurrentPageInstance = this;
         try
         {
             Init();
@@ -208,6 +214,11 @@ public partial class DataPage
                     PageComboBoxItems.Add($"第{i}页");
                 }
                 PageIndex = 1;
+                if (PageCount > 0 && CurrentPageInstance?.PageComboBox != null)
+                {
+                    CurrentPageInstance.PageComboBox.SelectedIndex = 0;
+                    CurrentPageInstance.PageComboBox.Text = "第1页";
+                }
             }
         });
     }
@@ -275,15 +286,58 @@ public partial class DataPage
     private void CardTypeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         CardType = CardTypeComboBox.SelectedIndex;
-        if (PageComboBox != null && string.IsNullOrEmpty(PageComboBox.Text) && PageComboBox.Items.Count > 0)
+        ResetFilterPage();
+    }
+
+    private void ConfigFilterCheckBox_Changed(object sender, RoutedEventArgs e)
+    {
+        if (sender == RecConfigCheckBox)
+        {
+            RecConfigFilter = GetConfigFilterValue(RecConfigCheckBox);
+        }
+        else if (sender == DanmuConfigCheckBox)
+        {
+            DanmuConfigFilter = GetConfigFilterValue(DanmuConfigCheckBox);
+        }
+        else if (sender == RemindConfigCheckBox)
+        {
+            RemindConfigFilter = GetConfigFilterValue(RemindConfigCheckBox);
+        }
+        ResetFilterPage();
+    }
+
+    private void ResetFilterPage()
+    {
+        PageIndex = 1;
+        if (PageComboBox != null && PageComboBox.Items.Count > 0)
         {
             PageComboBox.SelectedIndex = 0;
             PageComboBox.Text = "第1页";
         }
+        RequestImmediateRefresh();
+    }
+
+    public static bool? GetRecConfigFilter() => RecConfigFilter;
+    public static bool? GetDanmuConfigFilter() => DanmuConfigFilter;
+    public static bool? GetRemindConfigFilter() => RemindConfigFilter;
+
+    private static bool? GetConfigFilterValue(System.Windows.Controls.CheckBox checkBox)
+    {
+        // 未勾选表示不筛选，横线表示未开启，勾选表示已开启。
+        return checkBox.IsChecked switch
+        {
+            true => true,
+            null => false,
+            _ => null
+        };
     }
 
     private void PageComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
+        if (PageComboBox.SelectedIndex < 0)
+        {
+            return;
+        }
         PageIndex = PageComboBox.SelectedIndex + 1;
         try
         {
