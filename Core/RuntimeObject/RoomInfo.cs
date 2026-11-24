@@ -1037,28 +1037,39 @@ namespace Core.RuntimeObject
         /// <param name="UIDList"></param>
         internal static void _BatchUpdateRoomStatusForLiveStream(List<long> UIDList)
         {
-
             UidsInfo_Class uidsInfo_Class = GetRoomList(UIDList);
-            UIDList = null;
-            if (uidsInfo_Class != null && uidsInfo_Class.data != null && uidsInfo_Class.data.Count > 0)
+            ApplyRoomStatusResponse(uidsInfo_Class);
+        }
+
+        internal static void ApplyRoomStatusResponse(UidsInfo_Class uidsInfo_Class)
+        {
+            if (uidsInfo_Class == null)
             {
-                foreach (var item in uidsInfo_Class.data)
+                return;
+            }
+            if (uidsInfo_Class.code != 0)
+            {
+                string message = !string.IsNullOrEmpty(uidsInfo_Class.message) ? uidsInfo_Class.message : uidsInfo_Class.msg;
+                Log.Warn(nameof(ApplyRoomStatusResponse), $"获取房间状态失败，保留现有房间数据，code:{uidsInfo_Class.code}，message:{message}");
+                return;
+            }
+            if (uidsInfo_Class.data == null || uidsInfo_Class.data.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in uidsInfo_Class.data)
+            {
+                long.TryParse(item.Key, out long uid);
+                if (uid > 0)
                 {
-                    long.TryParse(item.Key, out long uid);
-                    if (uid > 0)
+                    RoomCardClass roomCard = new();
+                    if (_Room.GetCardForUID(uid, ref roomCard))
                     {
-                        RoomCardClass roomCard = new();
-                        if (_Room.GetCardForUID(uid, ref roomCard))
-                        {
-                            _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard));
-                        }
-                        roomCard = null;
+                        _Room.SetRoomCardByUid(uid, ToRoomCard(item.Value, roomCard, uidsInfo_Class.code));
                     }
                 }
             }
-            uidsInfo_Class = null;
-
-
         }
 
         #endregion
@@ -1202,7 +1213,34 @@ namespace Core.RuntimeObject
         }
 
 
-        private static RoomCardClass ToRoomCard(UidsInfo_Class.Data data, RoomCardClass OldCard)
+        private static readonly ConcurrentDictionary<long, DateTime> EmptyNicknameWarningTimes = new();
+        private static readonly TimeSpan EmptyNicknameWarningInterval = TimeSpan.FromMinutes(10);
+
+        internal static string MergeNickname(string currentName, string incomingName)
+        {
+            return string.IsNullOrWhiteSpace(incomingName) ? currentName ?? string.Empty : incomingName;
+        }
+
+        private static void UpdateNickname(RoomCardClass roomCard, string incomingName, long responseCode, string source)
+        {
+            string currentName = roomCard.Name;
+            roomCard.Name = MergeNickname(currentName, incomingName);
+            if (!string.IsNullOrWhiteSpace(incomingName) || string.IsNullOrWhiteSpace(currentName))
+            {
+                return;
+            }
+
+            DateTime now = DateTime.UtcNow;
+            if (EmptyNicknameWarningTimes.TryGetValue(roomCard.UID, out DateTime lastWarning) && now - lastWarning < EmptyNicknameWarningInterval)
+            {
+                return;
+            }
+            EmptyNicknameWarningTimes[roomCard.UID] = now;
+            string valueKind = incomingName is null ? "null" : incomingName.Length == 0 ? "empty" : "whitespace";
+            Log.Warn(nameof(ToRoomCard), $"忽略{source}返回的空昵称，保留原昵称，UID:{roomCard.UID}，code:{responseCode}，值类型:{valueKind}");
+        }
+
+        internal static RoomCardClass ToRoomCard(UidsInfo_Class.Data data, RoomCardClass OldCard, long responseCode = 0)
         {
             try
             {
@@ -1226,7 +1264,7 @@ namespace Core.RuntimeObject
                             area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) },
-                            Name = data.uname,
+                            Name = MergeNickname(string.Empty, data.uname),
                             face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) },
                             tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) },
@@ -1268,7 +1306,7 @@ namespace Core.RuntimeObject
                         OldCard.area_v2_name = new() { Value = data.area_v2_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.area_v2_parent_name = new() { Value = data.area_v2_parent_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.area_v2_parent_id = new() { Value = data.area_v2_parent_id, ExpirationTime = DateTime.Now.AddMinutes(1) };
-                        OldCard.Name = data.uname;
+                        UpdateNickname(OldCard, data.uname, responseCode, "get_status_info_by_uids");
                         OldCard.face = new() { Value = data.face, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.tag_name = new() { Value = data.tag_name, ExpirationTime = DateTime.Now.AddMinutes(1) };
                         OldCard.tags = new() { Value = data.tags, ExpirationTime = DateTime.Now.AddMinutes(1) };
@@ -1370,7 +1408,7 @@ namespace Core.RuntimeObject
             }
         }
 
-        private static RoomCardClass ToRoomCard(UserInfo userInfo, RoomCardClass OldCard)
+        internal static RoomCardClass ToRoomCard(UserInfo userInfo, RoomCardClass OldCard)
         {
             try
             {
@@ -1382,7 +1420,7 @@ namespace Core.RuntimeObject
                         {
                             UID = userInfo.data.mid,
                             RoomId = userInfo.data.live_room.roomid,
-                            Name = userInfo.data.name,
+                            Name = MergeNickname(string.Empty, userInfo.data.name),
                             url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue },
                             roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) },
                             Title = new() { Value = userInfo.data.live_room.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) },
@@ -1398,7 +1436,7 @@ namespace Core.RuntimeObject
                     {
                         OldCard.UID = userInfo.data.mid;
                         OldCard.RoomId = userInfo.data.live_room.roomid;
-                        OldCard.Name = userInfo.data.name;
+                        UpdateNickname(OldCard, userInfo.data.name, userInfo.code, "x/space/wbi/acc/info");
                         OldCard.url = new() { Value = $"https://live.bilibili.com/{userInfo.data.live_room.roomid}", ExpirationTime = DateTime.MaxValue };
                         OldCard.roomStatus = new() { Value = userInfo.data.live_room.liveStatus, ExpirationTime = DateTime.Now.AddSeconds(3) };
                         OldCard.Title = new() { Value = userInfo.data.live_room.title.Replace("/", "-").Replace("\\", "-"), ExpirationTime = DateTime.Now.AddSeconds(30) };

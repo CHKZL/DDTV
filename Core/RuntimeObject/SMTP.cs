@@ -31,6 +31,11 @@ namespace Core.RuntimeObject
             }
         }
 
+        internal static string GetDisplayName(RoomCardClass room)
+        {
+            return string.IsNullOrWhiteSpace(room.Name) ? $"UID:{room.UID}" : room.Name;
+        }
+
         private static void SMTP_MailEvent(object? sender, SMTP_EventType e)
         {
             var (subject, body) = e switch
@@ -41,19 +46,19 @@ namespace Core.RuntimeObject
                 ),
                 SMTP_EventType.StartLive when sender is RoomCardClass room && Config.Core_RunConfig._Email_StartLive_Enable => (
                     "开播提醒",
-                    $"你设置了开播提醒的主播【{room.Name}({room.RoomId})）】开始主直播啦！"
+                    $"你设置了开播提醒的主播【{GetDisplayName(room)}({room.RoomId})）】开始主直播啦！"
                 ),
                 SMTP_EventType.RecEnd when sender is RoomCardClass room && Config.Core_RunConfig._Email_RecEnd_Enable=> (
                     "录制结束提示",
-                    $"你设置的录制直播间【{room.Name}({room.RoomId})）】录制任务结束"
+                    $"你设置的录制直播间【{GetDisplayName(room)}({room.RoomId})）】录制任务结束"
                 ),
                 SMTP_EventType.TranscodingFail when sender is (RoomCardClass room,string ErrorStr)  && Config.Core_RunConfig._Email_TranscodingFail_Enable=> (
                     "修复或转码失败",
-                    $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复任务失败！，详细错误：\r\n{ErrorStr}"
+                    $"直播间【{GetDisplayName(room)}({room.RoomId})）】的录制后转码或修复任务失败！，详细错误：\r\n{ErrorStr}"
                 ),
                 SMTP_EventType.AbandonTranscod when sender is RoomCardClass room && Config.Core_RunConfig._Email_TranscodingFail_Enable=> (
                     "放弃转码",
-                    $"直播间【{room.Name}({room.RoomId})）】的录制后转码或修复的输出文件小于预期，放弃删除源文件！"
+                    $"直播间【{GetDisplayName(room)}({room.RoomId})）】的录制后转码或修复的输出文件小于预期，放弃删除源文件！"
                 ),
                 _ => (string.Empty, string.Empty)
             };

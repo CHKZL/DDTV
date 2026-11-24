@@ -49,6 +49,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.100'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Check .NET SDK version
         run: dotnet --version   
@@ -126,10 +128,30 @@ jobs:
         shell: pwsh
 
       - name: Build Server
-        run: cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Server && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Move Update (Linux or macOS)
         if: runner.os != 'Windows'
@@ -265,6 +287,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.100'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Check .NET SDK version
         run: dotnet --version   
@@ -308,10 +332,30 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Desktop && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Move Update (Windows)  
         if: runner.os == 'Windows'
@@ -415,6 +459,8 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.100'
+          cache: true
+          cache-dependency-path: '**/*.csproj'
 
       - name: Check .NET SDK version
         run: dotnet --version   
@@ -458,10 +504,30 @@ jobs:
         shell: pwsh
 
       - name: Build
-        run: cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Client && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Build Update
-        run: cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output
+        shell: bash
+        run: |
+          for i in 1 2 3; do
+            if (cd Update && dotnet publish --runtime ${{ matrix.runtime }} --configuration Release --self-contained true --output build_update_output); then
+              exit 0
+            fi
+            echo "Publish attempt $i failed, retrying in 20s..."
+            sleep 20
+          done
+          echo "Publish failed after 3 attempts"
+          exit 1
 
       - name: Move Update (Windows)  
         if: runner.os == 'Windows'

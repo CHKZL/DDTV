@@ -202,7 +202,10 @@ namespace Desktop.DataSource
             {
                 target.Room_Id = source.Room_Id;
                 target.Title = source.Title;
-                target.Nickname = source.Nickname;
+                if (!string.IsNullOrWhiteSpace(source.Nickname))
+                {
+                    target.Nickname = source.Nickname;
+                }
                 target.IsRec = source.IsRec;
                 target.IsDanmu = source.IsDanmu;
                 target.IsRemind = source.IsRemind;
@@ -227,7 +230,7 @@ namespace Desktop.DataSource
                     Uid = item.uid,
                     Room_Id = item.roomId,
                     Title = item.roomInfo.title,
-                    Nickname = item.userInfo.name,
+                    Nickname = string.IsNullOrWhiteSpace(item.userInfo.name) ? string.Empty : item.userInfo.name,
                     IsRec = item.userInfo.isAutoRec,
                     IsDanmu = item.userInfo.isRecDanmu,
                     IsRemind = item.userInfo.isRemind,
